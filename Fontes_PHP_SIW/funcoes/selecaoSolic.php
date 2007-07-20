@@ -56,25 +56,24 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
         ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       else
         ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-      
       $l_cont = 0;
       $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
       $l_sigla = f($l_RS1,'sigla');
-      foreach ($l_RS as $l_row) {
+      foreach ($l_RS as $l_row1) {
         if ($l_sigla==='GCCCAD') {
-          if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)){
+          if (nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)){
             if ($l_cont==0) {
               ShowHTML('          <option value="">---');
               $l_cont += 1;
             }
-            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
+            ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'" SELECTED>'.f($l_row1,'titulo'));
           } else {
-            if (nvl(f($l_row,'qtd_projeto'),0)==0) {
+            if (nvl(f($l_row1,'qtd_projeto'),0)==0) {
               if ($l_cont==0) {
                 ShowHTML('          <option value="">---');
                 $l_cont += 1;
               }
-              ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));
+              ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'">'.f($l_row1,'titulo'));
             }
           }          
         } else {
@@ -82,10 +81,10 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
             ShowHTML('          <option value="">---');
             $l_cont += 1;
           }
-          if (nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0))
-            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'" SELECTED>'.f($l_row,'titulo'));
+          if (nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0))
+            ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'" SELECTED>'.f($l_row1,'titulo'));
           else
-            ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'">'.f($l_row,'titulo'));      
+            ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'">'.f($l_row1,'titulo'));      
         }
       } 
       if ($l_cont==0) {

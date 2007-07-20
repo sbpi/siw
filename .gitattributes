@@ -656,6 +656,7 @@ Fontes_PHP_SIW/classes/sp/db_getColunaColuna.php -text
 Fontes_PHP_SIW/classes/sp/db_getCompanyData.php -text
 Fontes_PHP_SIW/classes/sp/db_getContaBancoData.php -text
 Fontes_PHP_SIW/classes/sp/db_getContaBancoList.php -text
+Fontes_PHP_SIW/classes/sp/db_getContasCronograma.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutraParte.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutroRep.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvPreposto.php -text
@@ -780,6 +781,7 @@ Fontes_PHP_SIW/classes/sp/db_getPersonList.php -text
 Fontes_PHP_SIW/classes/sp/db_getPessoaTel.php -text
 Fontes_PHP_SIW/classes/sp/db_getPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/db_getPrefixo.php -text
+Fontes_PHP_SIW/classes/sp/db_getPrestacaoContas.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcSP.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getProcTabs.php -text
@@ -981,6 +983,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCoPesEnd.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesTel.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCodigoExterno.php -text
 Fontes_PHP_SIW/classes/sp/dml_putColuna.php -text
+Fontes_PHP_SIW/classes/sp/dml_putContasCronograma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvDadosBacario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvDadosBancario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvOutraParte.php -text
@@ -1074,6 +1077,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPrestacaoContas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgQualitativa_IS.php -text
@@ -1347,6 +1351,7 @@ Fontes_PHP_SIW/funcoes/selecaoPessoaOrigem.php -text
 Fontes_PHP_SIW/funcoes/selecaoPessoaTT.php -text
 Fontes_PHP_SIW/funcoes/selecaoPlanoEstrategico.php -text
 Fontes_PHP_SIW/funcoes/selecaoPlanoSubordination.php -text
+Fontes_PHP_SIW/funcoes/selecaoPrestacaoSub.php -text
 Fontes_PHP_SIW/funcoes/selecaoPrioridade.php -text
 Fontes_PHP_SIW/funcoes/selecaoProbabilidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoProcedimentoTransp.php -text
@@ -1397,6 +1402,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoParam.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPessoa.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto2.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoPrestacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoReajuste.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoRecurso_PE.php -text
@@ -1459,6 +1465,7 @@ Fontes_PHP_SIW/mod_dm/triagem.php -text
 Fontes_PHP_SIW/mod_dm/validatriagem.php -text
 Fontes_PHP_SIW/mod_dm/visualdemanda.php -text
 Fontes_PHP_SIW/mod_dm/visualtriagem.php -text
+Fontes_PHP_SIW/mod_eo/relatorios.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text

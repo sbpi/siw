@@ -741,9 +741,30 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
 }
 
 // =========================================================================
+// Exibe sinalizador para pesquisa de preço
+// -------------------------------------------------------------------------
+function ExibeSinalPesquisa($l_legenda,$l_inicio, $l_fim,$l_dias_aviso=0) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/db_getCLParametro.php');
+  $RS_Parametro = db_getCLParametro::getInstanceOf($dbms,$w_cliente,null,null);
+  foreach($RS_Parametro as $row_parametro) { $RS_Parametro = $row_parametro; break; }
+  if ($l_legenda) {
+    $l_string .= '<tr valign="top">';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Pesquisa com mais de '.f($RS_Parametro,'dias_validade_pesquisa').' dias.';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Pesquisa com '.f($RS_Parametro,'dias_aviso_pesquisa').' dias ou menos de validade.';
+    $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Pesquisa válida. ';
+  } else {
+    if ($l_fim<addDays(time(),-1)) $l_string .= '<img title="Pesquisa com mais de '.f($RS_Parametro,'dias_validade_pesquisa').' dias." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
+    elseif ($l_dias_aviso<=time()) $l_string .= '<img title="Pesquisa com '.f($RS_Parametro,'dias_aviso_pesquisa').' dias ou menos de validade." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
+    else                           $l_string .= '<img title="Pesquisa válida." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Exibe imagem da solicitação informada
 // -------------------------------------------------------------------------
-function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0) {
+function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
   extract($GLOBALS);
   $l_string = '';
   $l_imagem = '';
@@ -780,6 +801,20 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída após a data prevista.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída antes da data prevista.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída na data prevista.';
+    } elseif (substr($l_tipo,0,2)=='PD') {
+      // Viagens
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center"><td>Registro cancelado';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=10 heigth=10 align="center"><td>Início próximo';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=10 heigth=10 align="center"><td>Não iniciada';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=10 heigth=10 align="center"><td>Tramitação em atraso';
+      $l_string .= '<td><td>';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=10 heigth=10 align="center"><td>Em andamento';
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center"><td>Tramitação em atraso';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Pendente prestação de contas';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Encerrada';
     }
   } else {
     if ($l_tipo=='ETAPA') {
@@ -865,12 +900,12 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } 
       } 
     } elseif (substr($l_tipo,0,2)=='GD') {
-      // Tarefas e demandas eventuais
+      // Tarefas, demandas eventuais e demandas de triagem
       if ($l_tramite!='AT') {
         if ($l_tramite=='CA') {
           $l_imagem = $conImgCancel;
           $l_title  = 'Registro cancelado.';
-        } elseif ($l_tramite=='CI') {
+        } elseif ($l_tramite=='CI' || $l_restricao=='SEMEXECUCAO') {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
@@ -1028,6 +1063,39 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           $l_title  = 'Execução concluída na data prevista.';
         } 
       } 
+    } elseif (substr($l_tipo,0,2)=='PD') {
+      // Viagens
+      if ($l_tramite=='CA') {
+        $l_imagem = $conImgCancel;
+        $l_title  = 'Registro cancelado.';
+      } elseif ($l_fim<addDays(time(),-1)) {
+        if ($l_tramite=='AT') {
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Missão encerrada.';
+        } elseif ($l_tramite!='EE') {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Missão com tramitação em atraso.';
+        } else {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Missão pendente de prestação de contas.';
+        } 
+      } elseif ($l_inicio>time()) {
+        if ($l_dias_aviso<=time()) {
+          $l_imagem = $conImgAviso;
+          $l_title  = 'Missão com início próximo.';
+        } else {
+          $l_imagem = $conImgNormal;
+          $l_title  = 'Missão não iniciada.';
+        } 
+      } else {
+        if ($l_tramite!='EE') {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Missão em andamento com tramitação em atraso.';
+        } else {
+          $l_imagem = $conImgStNormal;
+          $l_title  = 'Missão em andamento.';
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='PE') {
       // Projetos
       if ($l_tramite!='AT') {
@@ -1072,7 +1140,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     }
  
     if ($l_imagem!='') {
-      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10 align="center">';
+      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
     }
   }
 
@@ -1517,7 +1585,7 @@ function MascaraBeneficiario($cgccpf) {
 // =========================================================================
 // Rotina de envio de e-mail
 // -------------------------------------------------------------------------
-function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
+function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   extract($GLOBALS);
   
   include_once($w_dir_volta.'classes/mail/email_message.php');
@@ -1607,6 +1675,9 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments = null) {
       }
       $i++;
     }
+  }
+  if (is_array($w_attachments)) {
+    foreach($w_attachments as $l_attach) $email_message->AddFilePart($l_attach);
   }
   $email_message->SetEncodedEmailHeader('From',$from_address,$from_name);
   $email_message->SetEncodedEmailHeader("Reply-To",$reply_address,$reply_name);
@@ -1783,7 +1854,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
 
     $w_html .= chr(10).'</DT>';
     $w_html .= chr(10).'<DT>Dados do formulário:';
-    foreach($_POST as $chv => $vlr) { $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+    foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
 
     $w_html .= chr(10).'</DT>';
     $w_html .= chr(10).'   <br><br></font>';
@@ -2171,6 +2242,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 3: return date('d/m/Y, H:i:s',$w_dt_grade);                  break;
         case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
         case 5: return date('d/m/y',$w_dt_grade);                         break;
+        case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
       }
     } else {
       return $w_dt_grade;

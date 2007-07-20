@@ -4906,7 +4906,7 @@ function Grava() {
       dml_putAcordoTermo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
         $_REQUEST['w_atividades'],$_REQUEST['w_produtos'],$_REQUEST['w_requisitos'],
         $_REQUEST['w_codigo_externo'],$_REQUEST['w_vincula_projeto'],
-        $_REQUEST['w_vincula_demanda'],$_REQUEST['w_vincula_viagem']);
+        $_REQUEST['w_vincula_demanda'],$_REQUEST['w_vincula_viagem'],$_REQUEST['w_prestacao_contas']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

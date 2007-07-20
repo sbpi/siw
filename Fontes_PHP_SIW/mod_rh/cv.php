@@ -29,6 +29,7 @@ include_once($w_dir_volta.'classes/sp/dml_putCVIdent.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVProducao.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVEscola.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVIdioma.php');
+include_once($w_dir_volta.'classes/sp/dml_putCVCargo.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVCurso.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVHist.php');
 include_once($w_dir_volta.'classes/sp/dml_putCVExperiencia.php');
@@ -166,7 +167,7 @@ function Inicial() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (!(strpos('P',$O)===false)) {
+  if (strpos('P',$O)!==false) {
     Validate('p_nome','Nome','1','','3','40','1','1');
     Validate('P4','Linhas por página','1','1','1','4','','0123456789');
   } 
@@ -177,7 +178,7 @@ function Inicial() {
   if ($w_troca >'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.\'.$w_troca.\'.focus();\'');
-  } elseif (!(strpos('P',$O)===false)){
+  } elseif (strpos('P',$O)!==false){
     BodyOpen('onLoad=\'document.Form.P4.focus()\';');
   } else {
     BodyOpen('onLoad=this.focus();');
@@ -232,7 +233,7 @@ function Inicial() {
       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),$RS->PageCount,$P3,$P4,count($RS));
     } 
     ShowHTML('</tr>');
-  } elseif (!(strpos('P',$O)===false)) {
+  } elseif (strpos('P',$O)!==false) {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
@@ -475,7 +476,7 @@ function Identificacao() {
     ShowHTML('<HR>');
   } 
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
+  if (strpos('IAEV',$O)!==false) {
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
       $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -728,7 +729,7 @@ function Historico() {
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
+  if (strpos('IAEV',$O)!==false) {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -809,7 +810,7 @@ function Idiomas() {
     // Recupera todos os registros para a listagem
     $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,null);
     $RS = SortArray($RS,'nome','asc');
-  } elseif (!(strpos('AEV',$O)===false && $w_troca=='')) {
+  } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do registro informado
     $RS = db_getCVIdioma::getInstanceOf($dbms,$w_usuario,$w_chave);
     foreach ($RS as $row) {$RS=$row; break;}
@@ -822,10 +823,10 @@ function Idiomas() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('I',$O)===false)) {
+    if (strpos('I',$O)!==false) {
       Validate('w_chave','Idioma','SELECT','1','1','10','','1');
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -891,8 +892,8 @@ function Idiomas() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -982,8 +983,8 @@ function Experiencia() {
   } if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'EXPERIENCIA');
-    $RS = SortArray($RS,'entrada','desc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+    $RS = SortArray($RS,'saida','asc','entrada','desc');
+  } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'EXPERIENCIA');
     foreach ($RS as $row) {$RS=$row;    break;}
     $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
@@ -1008,7 +1009,7 @@ function Experiencia() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
     checkbranco();
@@ -1016,7 +1017,7 @@ function Experiencia() {
     SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_empregador','Empregador','1','1','1','60','1','1');
       Validate('w_nm_area','Área do conhecimento','','1','1','92','1','1');
       Validate('w_entrada','Data entrada','DATA','1','10','10','','1');      
@@ -1120,8 +1121,8 @@ function Experiencia() {
     ShowHTML('   <li>Indique sempre a que área do conhecimento a experiência está vinculada (Ex: contabilidade, administração etc);');
     ShowHTML('   <li>Se a área do conhecimento ou o cargo desempenhado não forem localizados, busque por um nome mais abrangente ou entre em contato com o gestor do sistema.');
     ShowHTML('   </ul>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
@@ -1207,11 +1208,11 @@ function Cargos() {
     }
   } 
   $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_sq_cvpesexp,'EXPERIENCIA');
- foreach($RS as $row) { $RS = $row; break; }
+  foreach($RS as $row) { $RS = $row; break; }
   $w_nome_empregador = f($RS,'empregador'); 
   if ($O=='L') {
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,null,'CARGO');
-  } elseif ((strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera o conjunto de informações comum a todos os serviços
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_sq_cvpesexp,$w_sq_cvpescargo,'CARGO');
     foreach($RS as $row) { $RS = $row; break; }
@@ -1224,7 +1225,7 @@ function Cargos() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<title>Cargos de uma experiência profissional</title>');
-  if ((strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
     checkbranco();
@@ -1232,7 +1233,7 @@ function Cargos() {
     SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sq_area_conhecimento','Área do conhecimento','SELECT','1','1','10','','1');
       Validate('w_especialidades','Especialidades','1','1','1','255','QWERTYUIOPASDFGHJKLZXCVBNM; ','1');
       ShowHTML(' if (document.Form.w_especialidades.value.indexOf(\';\')==-1){');
@@ -1261,7 +1262,7 @@ function Cargos() {
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (!(strpos('IA',$O)===false)) {
+  if (strpos('IA',$O)!==false) {
     BodyOpen('onLoad=\'document.Form.w_especialidades.focus()\';');
   } else {
     BodyOpen('onLoad=\'this.focus()\';');
@@ -1305,8 +1306,8 @@ function Cargos() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_cvpessoa" value="'.$w_sq_cvpessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_cvpescargo" value="'.$w_sq_cvpescargo.'">');
@@ -1384,7 +1385,7 @@ function Escolaridade() {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'ACADEMICA');
     $RS = SortArray($RS,'ordem','desc','inicio','desc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'ACADEMICA');
     foreach ($RS as $row) {$RS=$row; break;}
@@ -1403,13 +1404,13 @@ function Escolaridade() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
     SaltaCampo();
     formatadatama();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sq_formacao','Formação','SELECT','1','1','10','','1');
       ShowHTML('  if (theForm.w_sq_formacao.selectedIndex > 3 && (theForm.w_sq_area_conhecimento.value==\'\' || theForm.w_nome.value==\'\')) { ');
       ShowHTML('     alert(\'Se formação acadêmica for graduação ou acima, informe a área do conhecimento e o nome do curso\'); ');
@@ -1490,8 +1491,8 @@ function Escolaridade() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled = ' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -1574,7 +1575,7 @@ function Extensao() {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'CURSO');
     $RS = SortArray($RS,'ordem','desc','carga_horaria','desc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'CURSO');
     foreach ($RS as $row) {$RS=$row; break;}
@@ -1588,13 +1589,13 @@ function Extensao() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
     formatadata();
     SaltaCampo();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sq_formacao','Tipo de extensão','SELECT','1','1','10','','1');
       Validate('w_nm_area','Área do conhecimento','','1','1','92','1','1');
       Validate('w_nome','Nome','1','1','5','80','1','1');
@@ -1670,8 +1671,8 @@ function Extensao() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
@@ -1748,7 +1749,7 @@ function Producao() {
     // Recupera todos os registros para a listagem
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,null,'PRODUCAO');
     $RS = SortArray($RS,'ordem','desc','data','desc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     // Recupera os dados do endereço informado
     $RS = db_getCVAcadForm::getInstanceOf($dbms,$w_usuario,$w_chave,'PRODUCAO');
     foreach ($RS as $row) {$RS=$row;    break;}
@@ -1761,13 +1762,13 @@ function Producao() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
     formatadata();
     SaltaCampo();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_sq_formacao','Tipo da produção','SELECT','1','1','10','','1');
       Validate('w_nm_area','Área do conhecimento','','1','5','92','1','1');
       Validate('w_nome','Nome','1','1','1','80','1','1');
@@ -1842,8 +1843,8 @@ function Producao() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');    
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled = ' DISABLED ';
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -2071,8 +2072,8 @@ function Grava() {
               } 
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
-              if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.')===false));
+              if (strpos($Field['name'],'.')!==false) {
+                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];

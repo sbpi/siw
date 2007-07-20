@@ -87,11 +87,13 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         $l_tipo  = 0;
       } 
 
-      // Verifica se a viagem foi vinculada a pelo menos uma tarefa
-      if ($l_existe_rs4==0) {
-         $l_erro .= '<li>É obrigatório vincular a PCD a pelo menos uma atividade ou demanda eventual.';
-         $l_tipo  = 0;
-      } 
+/**
+*       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
+*       if ($l_existe_rs4==0) {
+*          $l_erro .= '<li>É obrigatório vincular a PCD a pelo menos uma atividade ou demanda eventual.';
+*          $l_tipo  = 0;
+*       } 
+*/
 
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
     if (Nvl(f($l_rs_tramite,'ordem'),'---')>'1') {

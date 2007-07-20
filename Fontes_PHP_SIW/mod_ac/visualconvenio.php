@@ -143,6 +143,8 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($RS,'produtos')),'---').'</td>';
       $w_html.=chr(13).'      <tr><td><font size="1"><b>Código para a outra parte:</b></td>';
       $w_html.=chr(13).'          <td>'.Nvl(f($RS,'codigo_externo'),'---').'</td></tr>';
+      $w_html.=chr(13).'      <tr><td><font size="1"><b>Prestação de contas:</b></td>';
+      $w_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_prestacao_contas'),'---').'</td></tr>';
       if (Nvl(f($RS,'cd_modalidade'),'')=='F' || Nvl(f($RS,'cd_modalidade'),'')=='I') {
         $w_html.=chr(13).'          <tr><td colspan="2"><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">';
         $w_html.=chr(13).'          <td width="30%"><font size="1"><b>Pemite vinculação de projetos?</b></td>';

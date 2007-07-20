@@ -453,11 +453,8 @@ function FormataValor() {
   ShowHTML("    var tecla = teclapres.keyCode;");
   ShowHTML("    ant_vr = campo.value;");
   ShowHTML("    vr = campo.value;");
-  ShowHTML("    vr = vr.replace( ',', '' );");
-  ShowHTML("    vr = vr.replace( '.', '' );");
-  ShowHTML("    vr = vr.replace( '.', '' );");
-  ShowHTML("    vr = vr.replace( '.', '' );");
-  ShowHTML("    vr = vr.replace( '.', '' );");
+  ShowHTML("    vr = vr.replace(/\\$|\\./g,'');");
+  ShowHTML("    vr = vr.replace(/\\$|\\,/g,'');");
   ShowHTML("    tam = vr.length + 1;");
   ShowHTML("    if (tam < tammax && tecla != 8){ tam = vr.length + 1 ; }");
   ShowHTML("    if (tecla == 8 ) { tam = tam - 1 ; }");
@@ -937,6 +934,15 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "   ".$Form.$VariableName.".focus();"."\r\n".
     "   return (false);"."\r\n".
     "}"."\r\n";
+  } elseif (strtoupper($DataType)=="VALOR") {
+    print "  var V1 = ".$Form.$VariableName.".value;"."\r\n"; 
+    print "  V1 = V1.toString().replace(/\\$|\\./g,''); "."\r\n";
+    print "  V1 = V1.toString().replace(',','.'); "."\r\n";
+    print "  if (isNaN(V1)) { "."\r\n";
+    print "    alert('" . $DisplayName . " não é um valor válido!.'); "."\r\n";
+    print "    ".$Form.$VariableName.".focus(); "."\r\n";
+    print "    return false; "."\r\n";
+    print "  } "."\r\n";
   }
 }
 ?>

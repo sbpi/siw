@@ -66,6 +66,7 @@ include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoBaseGeografica.php');
 include_once($w_dir_volta.'funcoes/selecaoInteresse.php');
 include_once($w_dir_volta.'funcoes/selecaoInfluencia.php');
+include_once($w_dir_volta.'funcoes/selecaoPrestacaoSub.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
@@ -81,7 +82,7 @@ include_once($w_dir_volta.'classes/sp/dml_putProjetoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoDescritivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapa.php');
 include_once($w_dir_volta.'classes/sp/dml_putCronograma.php');
-include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapaInter.php');  
+include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapaInter.php');
 include_once($w_dir_volta.'visualprojeto.php');
 
 // =========================================================================
@@ -934,6 +935,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_inicio_etapa" value="'.$w_inicio_etapa.'">');
     ShowHTML('<INPUT type="hidden" name="w_fim_etapa" value="'.$w_fim_etapa.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -960,8 +962,12 @@ function Geral() {
       if ($w_sq_menu_relac=='CLASSIF') {
         SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
       } else {
-        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),null);
+        SelecaoSolic('Vinculação:',null,null,$w_cliente,nvl($w_solic_pai,$w_chave_pai),$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
       }
+    }
+    if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
+      $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
     }
     ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');

@@ -116,9 +116,9 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
 $w_troca        = $_REQUEST['w_troca'];
 
-if (!(strpos('PDTRECHO,PDVINC',nvl($SG,'nulo'))===false)) {
+if (strpos('PDTRECHO,PDVINC',nvl($SG,'nulo'))!==false) {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
-} elseif (!(strpos($SG,'ENVIO')===false)) {
+} elseif (strpos($SG,'ENVIO')!==false) {
     $O='V';
 } elseif ($O=='') {
   // Se for acompanhamento, entra na filtragem
@@ -208,7 +208,7 @@ function Inicial() {
   global $w_Disabled;
 
   if ($O=='L') {
-    if (!(strpos(strtoupper($R),'GR_')===false) || !(strpos(strtoupper($R),'PROJETO')===false)) {
+    if (strpos(strtoupper($R),'GR_')!==false || strpos(strtoupper($R),'PROJETO')!==false) {
       $w_filtro='';
       if ($p_projeto>'') {
         $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
@@ -275,7 +275,7 @@ function Inicial() {
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
     } else {
       if (Nvl($_REQUEST['p_agrega'],'')=='GRPDACAO') {
         $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
@@ -291,7 +291,7 @@ function Inicial() {
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
       } 
     } 
 
@@ -313,7 +313,7 @@ function Inicial() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (!(strpos('CP',$O)===false)) {
+  if (strpos('CP',$O)!==false) {
     if ($P1!=1 || $O=='C') {
       // Se não for cadastramento ou se for cópia        
       Validate('p_codigo','Número da PCD','','','2','60','1','1');
@@ -338,7 +338,7 @@ function Inicial() {
   if ($w_Troca>'') {
     // Se for recarga da página
     BodyOpen('onLoad=\'document.Form.'.$w_Troca.'.focus();\'');
-  } elseif (!(strpos('CP',$O)===false)) {
+  } elseif (strpos('CP',$O)!==false) {
     BodyOpen('onLoad=\'document.Form.p_projeto.focus()\';');
   } elseif ($P1==2) {
     BodyOpen(null);
@@ -363,7 +363,7 @@ function Inicial() {
         ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
-    if ((strpos(strtoupper($R),'GR_')===false) && (strpos(strtoupper($R),'PROJETO')===false)) {
+    if (strpos(strtoupper($R),'GR_')===false && strpos(strtoupper($R),'PROJETO')===false) {
       if ($w_copia>'') {
         // Se for cópia
         if (MontaFiltro('GET')>'') {
@@ -406,21 +406,7 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        if (f($row,'concluida')=='N') {
-          if (f($row,'fim')<addDays(time(),-1)) {
-            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        } else {
-          if (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
-          } 
-        } 
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
         if (Nvl($_REQUEST['p_agrega'],'')=='GRPDACAO') {
           ShowHTML('        <td align="center">'.f($row,'codigo_acao'));
@@ -431,7 +417,7 @@ function Inicial() {
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'inicio_real')),'-').'</td>');
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim_real')),'-').'</td>');
           if ($P1>1) {
-            ShowHTML('        <td align="right">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>');
+            ShowHTML('        <td align="right">'.formatNumber(f($row,'custo_real')).'&nbsp;</td>');
             $w_parcial += f($row,'custo_real');
             ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
           } 
@@ -439,7 +425,7 @@ function Inicial() {
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>');
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
           if ($P1>1) {
-            ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
+            ShowHTML('        <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;</td>');
             $w_parcial += f($row,'valor');
             ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
           } 
@@ -494,7 +480,7 @@ function Inicial() {
         if (ceil(count($RS)/$P4)>1) { 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total desta página&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
@@ -510,7 +496,7 @@ function Inicial() {
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           ShowHTML('          <td colspan='.$w_colspan.' align="right"><b>Total da listagem&nbsp;</td>');
-          ShowHTML('          <td align="right"><b>'.number_format($w_total,2,',','.').'&nbsp;</td>');
+          ShowHTML('          <td align="right"><b>'.formatNumber($w_total).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
         } 
@@ -529,7 +515,7 @@ function Inicial() {
       } 
       ShowHTML('</tr>');
     } 
-  } elseif (!(strpos('CP',$O)===false)) {
+  } elseif (strpos('CP',$O)!==false) {
     if ($O=='C') {
       // Se for cópia
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar a PCD que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
@@ -649,6 +635,7 @@ function Geral() {
     $w_aviso            = $_REQUEST['w_aviso'];
     $w_dias             = $_REQUEST['w_dias'];
     $w_inicio_real      = $_REQUEST['w_inicio_real'];
+    $w_inicio_atual     = $_REQUEST['w_inicio_real'];
     $w_fim_real         = $_REQUEST['w_fim_real'];
     $w_concluida        = $_REQUEST['w_concluida'];
     $w_data_conclusao   = $_REQUEST['w_data_conclusao'];
@@ -675,7 +662,7 @@ function Geral() {
     $w_uf               = $_REQUEST['w_uf'];
     $w_tipo_missao      = $_REQUEST['w_tipo_missao'];
   } else {
-    if (!(strpos('AEV',$O)===false) || $w_copia>'') {
+    if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados da PCD
       if ($w_copia>'') {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
@@ -706,6 +693,9 @@ function Geral() {
         $w_tipo_missao      = f($RS,'tp_missao');
         $w_justif_dia_util  = f($RS,'justificativa_dia_util');
         $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
+        if (strpos('AEV',$O)!==false) {
+          $w_inicio_atual   = FormataDataEdicao(f($RS,'inicio'));
+        } 
         $w_fim              = FormataDataEdicao(f($RS,'fim'));
         $w_inclusao         = f($RS,'inclusao');
         $w_ultima_alteracao = f($RS,'ultima_alteracao');
@@ -812,7 +802,7 @@ function Geral() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'this.focus()\';');
-  } elseif (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('EV',$O)!==false) {
     BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
@@ -820,19 +810,19 @@ function Geral() {
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  if (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
       if ($O=='V') $w_Erro=Validacao($w_sq_solicitacao,$sg);
     } 
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
-    ShowHTML('<INPUT type="hidden" name="w_inicio_atual" value="'.$w_inicio.'">');
+    ShowHTML('<INPUT type="hidden" name="w_inicio_atual" value="'.$w_inicio_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_atividade_ant" value="'.$w_atividade_ant.'">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
     ShowHTML('<INPUT type="hidden" name="w_sq_prop" value="'.$w_sq_prop.'">');
@@ -976,7 +966,7 @@ function OutraParte() {
   $w_pessoa_atual   = $_REQUEST['w_pessoa_atual'];
 
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-  if ($w_sq_pessoa=='' && (strpos($_REQUEST['Botao'],'Selecionar')===false)) {
+  if ($w_sq_pessoa=='' && strpos($_REQUEST['Botao'],'Selecionar')===false) {
     $w_sq_pessoa    = f($RS,'sq_prop');
     $w_pessoa_atual = f($RS,'sq_prop');
   } elseif (strpos($_REQUEST['Botao'],'Selecionar')===false) {
@@ -1052,7 +1042,7 @@ function OutraParte() {
     $w_cnpj                 = $_REQUEST['w_cnpj'];
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
   } else {
-    if ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
+    if (strpos($_REQUEST['Botao'],'Alterar')===false && strpos($_REQUEST['Botao'],'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
       // Recupera os dados do beneficiário em co_pessoa
       $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
       if (!count($RS)<=0) {
@@ -1122,7 +1112,7 @@ function OutraParte() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Procurar')===false) || !(strpos($_REQUEST['Botao'],'Alterar')===false)) {
+  if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Procurar')!==false || strpos($_REQUEST['Botao'],'Alterar')!==false) {
     // Se o beneficiário ainda não foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Procurar") {');
     Validate('w_nome','Nome','','1','4','20','1','');
@@ -1148,7 +1138,7 @@ function OutraParte() {
     Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
     Validate('w_nr_fax','Fax','1','',7,25,'1','1');
     Validate('w_nr_celular','Celular','1','',7,25,'1','1');
-    if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
+    if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
       Validate('w_sq_banco','Banco','SELECT',1,1,10,'1','1');
       Validate('w_sq_agencia','Agencia','SELECT',1,1,10,'1','1');
       if ($w_exige_operacao=='S') Validate('w_operacao','Operação','1','1',1,6,'','0123456789');
@@ -1183,9 +1173,9 @@ function OutraParte() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+  if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
     // Se o beneficiário ainda não foi selecionado
-    if (!(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+    if (strpos($_REQUEST['Botao'],'Procurar')!==false) {
       // Se está sendo feita busca por nome
       BodyOpenClean('onLoad=\'this.focus()\';');
     } else {
@@ -1201,8 +1191,8 @@ function OutraParte() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IA',$O)===false)) {
-    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+  if (strpos('IA',$O)!==false) {
+    if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       // Se o beneficiário ainda não foi selecionado
       ShowHTML('<FORM action="'.$w_dir.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     } else {
@@ -1221,9 +1211,9 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
-    if (($w_cpf=='' && $w_cnpj=='') || !(strpos($_REQUEST['Botao'],'Alterar')===false) || !(strpos($_REQUEST['Botao'],'Procurar')===false)) {
+    if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       $w_nome=$_REQUEST['w_nome'];
-      if (!(strpos($_REQUEST['Botao'],'Alterar')===false)) {
+      if (strpos($_REQUEST['Botao'],'Alterar')!==false) {
         $w_cpf  = '';
         $w_cnpj = '';
         $w_nome = '';
@@ -1305,7 +1295,7 @@ function OutraParte() {
       ShowHTML('          <td title="Se a outra parte informar um número de fax, informe-o neste campo."><b>Fa<u>x</u>:</b><br><input '.$w_Disabled.' accesskey="X" type="text" name="w_nr_fax" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_nr_fax.'"></td>');
       ShowHTML('          <td title="Se a outra parte informar um celular institucional, informe-o neste campo."><b>C<u>e</u>lular:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_nr_celular" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_nr_celular.'"></td>');
       ShowHTML('          </table>');
-      if (!(strpos('CREDITO,DEPOSITO',$w_forma_pagamento)===false)) {
+      if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
         ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Dados bancários</td></td></tr>');
@@ -1410,7 +1400,7 @@ function Trechos() {
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-  } elseif (!(strpos('AE',$O)===false)) {
+  } elseif (strpos('AE',$O)!==false) {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,$w_chave_aux,$SG);
     foreach($RS as $row) { $RS = $row; break; }
     $w_pais_orig    = f($RS,'pais_orig');
@@ -1453,7 +1443,7 @@ function Trechos() {
   ScriptOpen('JavaScript');
   CheckBranco();
   FormataData();
-  SaltaCammpo();
+  SaltaCampo();
   FormataHora();
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
@@ -1529,7 +1519,7 @@ function Trechos() {
         ShowHTML('      </tr>');
       } 
     } 
-  } elseif (!(strpos('IA',$O)===false)) {
+  } elseif (strpos('IA',$O)!==false) {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1545,7 +1535,7 @@ function Trechos() {
     SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_orig,$w_pais_orig,null,'w_uf_orig',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_orig\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade_orig,$w_pais_orig,$w_uf_orig,'w_cidade_orig',null,null);
     ShowHTML('          <td><b><u>S</u>aída:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_data_saida" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_saida.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
-    ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_saida" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_saida.'" onKeyDown="FormataHora(this,event);"></td>');
+    ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_saida" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_saida.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" ></td>');
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Destino</td></td></tr>');
@@ -1555,7 +1545,7 @@ function Trechos() {
     SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf_dest,$w_pais_dest,null,'w_uf_dest',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade_dest\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade_dest,$w_pais_dest,$w_uf_dest,'w_cidade_dest',null,null);
     ShowHTML('          <td><b><u>C</u>hegada:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_data_chegada" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_chegada.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onFocus="if (document.Form.w_data_chegada.value==\'\') { document.Form.w_data_chegada.value = document.Form.w_data_saida.value; }"> '.ExibeCalendario('Form','w_data_chegada').'</td>');
-    ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_chegada" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_chegada.'" onKeyDown="FormataHora(this,event);"></td>');
+    ShowHTML('          <td><b><u>H</u>ora local:</b><br><input '.$w_Disabled.' accesskey="H" type="text" name="w_hora_chegada" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hora_chegada.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" ></td>');
     ShowHTML('      <tr><td colspan="5"><table border="0" width="100%">');
     ShowHTML('      <tr><td align="center" colspan="5" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="5">');
@@ -1899,9 +1889,9 @@ function DadosFinanceiros() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_menu   = $_REQUEST['w_menu'];
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $w_adicional          = Nvl(number_format(f($RS,'valor_adicional'),2,',','.'),0);
-  $w_desc_alimentacao   = Nvl(number_format(f($RS,'desconto_alimentacao'),2,',','.'),0);
-  $w_desc_transporte    = Nvl(number_format(f($RS,'desconto_transporte'),2,',','.'),0);
+  $w_adicional          = Nvl(formatNumber(f($RS,'valor_adicional')),0);
+  $w_desc_alimentacao   = Nvl(formatNumber(f($RS,'desconto_alimentacao')),0);
+  $w_desc_transporte    = Nvl(formatNumber(f($RS,'desconto_transporte')),0);
   Cabecalho();
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');
@@ -2068,7 +2058,7 @@ function DadosFinanceiros() {
   } else {
     MontaRadioNS('<b>Auxílio-Alimentação?</b>',$w_aux_alimentacao,'w_aux_alimentacao');
   } 
-  ShowHTML('            <td><b>Valor R$: </b><input type="text" name="w_vlr_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS,'valor_alimentacao'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-alimentação."></td>');
+  ShowHTML('            <td><b>Valor R$: </b><input type="text" name="w_vlr_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_alimentacao'),0)).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-alimentação."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr valign="top">');
   if (Nvl(f($RS,'valor_transporte'),0)>0) {
@@ -2076,7 +2066,7 @@ function DadosFinanceiros() {
   } else {
     MontaRadioNS('<b>Auxílio-Transporte?</b>',$w_aux_transporte,'w_aux_transporte');
   } 
-  ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS,'valor_transporte'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
+  ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_transporte'),0)).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>');
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
@@ -2089,8 +2079,8 @@ function DadosFinanceiros() {
       $w_vetor_trechos[$i][3] = f($row,'nm_destino');
       $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'),3);
       $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'),3);
-      $w_vetor_trechos[$i][6] = number_format(Nvl(f($row,'quantidade'),0),1,',','.');
-      $w_vetor_trechos[$i][7] = number_format(Nvl(f($row,'valor'),0),2,',','.');
+      $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
+      $w_vetor_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
       $w_vetor_trechos[$i][8] = f($row,'saida');
       $w_vetor_trechos[$i][9] = f($row,'chegada');
       if ($i>1) {
@@ -2456,7 +2446,7 @@ function Anotar() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if (!(strpos('V',$O)===false)) {
+  if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     Validate('w_observacao','Anotação','','1','1','2000','1','1');
@@ -2607,7 +2597,7 @@ function Concluir() {
   ShowHTML('          <tr>');
   ShowHTML('              <td align="center">'.FormataDataEdicao($w_inicio_real).'</td>');
   ShowHTML('              <td align="center">'.FormataDataEdicao($w_fim_real).'</td>');
-  ShowHTML('              <td align="right">'.number_format($w_custo_real,2,',','.').'</td>');
+  ShowHTML('              <td align="right">'.formatNumber($w_custo_real).'</td>');
   ShowHTML('          </tr>');
   ShowHTML('          </table>');
   ShowHTML('      <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>Conferi a documentação necessária para prestação de contas desta PCD.</TEXTAREA></td>');
@@ -3148,7 +3138,7 @@ function Emissao() {
      ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs14\\insrsid12326642\\charrsid2128030  AUX\\'cdLIO-ALIMENTA\\'c7\\'c3O       SIM (   )   N\\'c3O ( X )     -                  \\cell }\\pard ");
   }
   ShowHTML("\\qc \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid12326642\\charrsid5664258 Valor R$\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid16481867 {");
-  ShowHTML("\\fs16\\insrsid16481867 " . number_format(nvl(f($RS,'valor_alimentacao'),0),2,',','.') . "}{\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard ");
+  ShowHTML("\\fs16\\insrsid16481867 " . formatNumber(nvl(f($RS,'valor_alimentacao'),0)) . "}{\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard ");
   ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\fs16\\insrsid12326642\\charrsid5664258 \\trowd \\irow29\\irowband29");
   ShowHTML("\\ts11\\trrh90\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone ");
   ShowHTML("\\clcfpat8\\clcbpat8\\clbgdcross\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth5732\\clcbpatraw8\\clcfpatraw8\\clbgdcross \\cellx4292\\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone ");
@@ -3164,7 +3154,7 @@ function Emissao() {
      ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs14\\insrsid12326642\\charrsid2128030 AUX\\'cdLIO-TRANSPORTE          SIM (   )   N\\'c3O ( X )     -                  \\cell }\\pard ");
   }
   ShowHTML("\\qc \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid12326642\\charrsid5664258 Valor R$\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid16481867 {");
-  ShowHTML("\\fs16\\insrsid16481867 " . number_format(nvl(f($RS,'valor_transporte'),0),2,',','.') . "}{\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard ");
+  ShowHTML("\\fs16\\insrsid16481867 " . formatNumber(nvl(f($RS,'valor_transporte'),0)) . "}{\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid12326642\\charrsid5664258 \\cell }\\pard ");
   ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\fs16\\insrsid12326642\\charrsid5664258 \\trowd \\irow30\\irowband30");
   ShowHTML("\\ts11\\trrh90\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrnone ");
   ShowHTML("\\clcfpat8\\clcbpat8\\clbgdcross\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth5732\\clcbpatraw8\\clcfpatraw8\\clbgdcross \\cellx4292\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrnone ");
@@ -3220,8 +3210,8 @@ function Emissao() {
       $w_vetor_trechos[$i][3] = f($row,'nm_destino');
       $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
       $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-      $w_vetor_trechos[$i][6] = number_format(Nvl(f($row,'quantidade'),0),1,',','.');
-      $w_vetor_trechos[$i][7] = number_format(Nvl(f($row,'valor'),0),2,',','.');
+      $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
+      $w_vetor_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
       $w_vetor_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
       $w_vetor_trechos[$i][9] = Nvl(f($row,'valor'),0);
       if ($i>1) {
@@ -3241,7 +3231,7 @@ function Emissao() {
       ShowHTML("\\clcfpat8\\clcbpat16\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2796\\clcbpatraw16\\clcfpatraw8 \\cellx10280\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard ");     
       ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 ".$w_vetor_trechos[$i][3]. "\\cell }\\pard \\qc \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {");
       ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 ". $w_vetor_trechos[$i][4] . "\\cell }\\pard \\qc \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid6649499 {\\fs16\\insrsid16481867\\charrsid5664258 ". $w_vetor_trechos[$i][5] . "\\cell }\\pard ");
-      ShowHTML("\\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 ". $w_vetor_trechos[$i][6] . "\\cell ". $w_vetor_trechos[$i][7] . "\\cell ". number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.') . "\\cell }\\pard ");
+      ShowHTML("\\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 ". $w_vetor_trechos[$i][6] . "\\cell ". $w_vetor_trechos[$i][7] . "\\cell ". formatNumber(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9])) . "\\cell }\\pard ");
       ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 ");
       ShowHTML("{ \\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow34\\irowband34\\ts11\\trrh90\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb");
       ShowHTML("\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth4037\\clshdrawnil \\cellx2597\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth1003\\clshdrawnil ");
@@ -3284,7 +3274,7 @@ function Emissao() {
   ShowHTML("\\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrtbl \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone ");
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrnone \\clbrdrr\\brdrs\\brdrw10 \\clcfpat8\\clcbpat16\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2796\\clcbpatraw16\\clcfpatraw8 ");
   ShowHTML("\\cellx10280\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 ");
-  ShowHTML("{\\fs16\\insrsid16481867\\charrsid13388689 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (a) subtotal\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . number_format(nvl($w_total,0),2,',','.') . "\\cell ");
+  ShowHTML("{\\fs16\\insrsid16481867\\charrsid13388689 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (a) subtotal\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . formatNumber(nvl($w_total,0)) . "\\cell ");
   ShowHTML("}\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {");
   ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow39\\irowband39\\ts11\\trrh164\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvmrg\\clvertalb\\clbrdrt\\brdrtbl \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb");
   ShowHTML("\\brdrtbl \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484");
@@ -3293,7 +3283,7 @@ function Emissao() {
   ShowHTML("\\clvmrg\\clvertalb\\clbrdrt\\brdrtbl \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrtbl \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone ");
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 \\clcfpat8\\clcbpat8\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2796\\clcbpatraw8\\clcfpatraw8 ");
   ShowHTML("\\cellx10280\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 ");
-  ShowHTML("{\\fs18\\insrsid16481867 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (b) adicional\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . number_format(nvl(f($RS,'valor_adicional'),0),2,',','.') . "\\cell }\\pard ");
+  ShowHTML("{\\fs18\\insrsid16481867 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (b) adicional\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . formatNumber(nvl(f($RS,'valor_adicional'),0)) . "\\cell }\\pard ");
   ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {");
   ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow40\\irowband40\\ts11\\trrh119\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvmrg\\clvertalb\\clbrdrt\\brdrtbl \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb");
   ShowHTML("\\brdrtbl \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484");
@@ -3303,7 +3293,7 @@ function Emissao() {
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 \\clcfpat8\\clcbpat8\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2796\\clcbpatraw8\\clcfpatraw8 ");
   ShowHTML("\\cellx10280\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 ");
   ShowHTML("{\\fs18\\insrsid16481867\\charrsid13388689 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (c) desconto aux\\'edlio-alimenta\\'e7\\'e3o\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid6649499 {");
-  ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 " . number_format(nvl(f($RS,'desconto_alimentacao'),0),2,',','.') . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard ");
+  ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 " . formatNumber(nvl(f($RS,'desconto_alimentacao'),0)) . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard ");
   ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow41\\irowband41");
   ShowHTML("\\ts11\\trrh90\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvmrg\\clvertalb\\clbrdrt\\brdrtbl \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrtbl \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 ");
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl");
@@ -3313,7 +3303,7 @@ function Emissao() {
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 \\clcfpat8\\clcbpat8\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2796\\clcbpatraw8\\clcfpatraw8 ");
   ShowHTML("\\cellx10280\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrnone \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 ");
   ShowHTML("{\\fs18\\insrsid16481867\\charrsid13388689 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 (d) desconto aux\\'edlio-transporte\\cell }\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid6649499 {");
-  ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 " . number_format(nvl(f($RS,'desconto_transporte'),0),2,',','.') . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard ");
+  ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 " . formatNumber(nvl(f($RS,'desconto_transporte'),0)) . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard ");
   ShowHTML("\\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow42\\irowband42");
   ShowHTML("\\ts11\\trrh90\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvmrg\\clvertalb\\clbrdrt\\brdrtbl \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrnone \\clbrdrr\\brdrs\\brdrw10\\brdrcf1 ");
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth6120\\clshdrawnil \\cellx4680\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2804\\clshdrawnil \\cellx7484\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl");
@@ -3327,7 +3317,7 @@ function Emissao() {
   ShowHTML("\\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth74\\clshdrawnil \\cellx10354\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 \\~}{");
   ShowHTML("\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 \\~}{\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 \\~}{\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }{");
   ShowHTML("\\fs16\\insrsid16481867\\charrsid5664258 \\~}{\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }{\\fs16\\insrsid16481867\\charrsid5664258 \\~}{\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }{\\b\\fs12\\insrsid16481867\\charrsid5664258  TOTAL (a + b - c - d)\\cell ");
-  ShowHTML("}\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . number_format(Nvl(w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0),2,',','.') . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {");
+  ShowHTML("}\\pard \\qr \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {\\fs16\\insrsid16481867\\charrsid5664258 " . formatNumber(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0)) . "\\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0\\pararsid12326642 {");
   ShowHTML("\\f1\\fs16\\insrsid16481867\\charrsid5664258 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\fs16\\insrsid16481867\\charrsid5664258 \\trowd \\irow43\\irowband43");
   ShowHTML("\\ts11\\trrh195\\trleft-1440\\trkeep\\trftsWidth3\\trwWidth11794\\trftsWidthB3\\trftsWidthA3\\trpaddfl3\\trpaddft3\\trpaddfb3\\trpaddfr3 \\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrnone ");
   ShowHTML("\\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth2182\\clshdrawnil \\cellx742\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl\\brdrnone \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrnone \\cltxlrtb\\clNoWrap\\clftsWidth3\\clwWidth745\\clshdrawnil \\cellx1487\\clvertalb\\clbrdrt\\brdrnone \\clbrdrl");
@@ -3620,7 +3610,7 @@ function InformarPassagens() {
   $w_menu   = $_REQUEST['w_menu'];
 
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $w_valor_passagem     = number_format(f($RS,'valor_passagem'),2,',','.');
+  $w_valor_passagem     = formatNumber(f($RS,'valor_passagem'));
   $w_pta                = f($RS,'pta');
   $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
   Cabecalho();
@@ -4084,7 +4074,7 @@ function RelatorioViagem($w_chave) {
   $l_html .= "\\trbrdrb\\brdrs\\brdrw10 \\trbrdrr\\brdrs\\brdrw10 \\trbrdrh\\brdrs\\brdrw10 \\trbrdrv\\brdrs\\brdrw10 \\trftsWidth1\\trpaddl70\\trpaddr70\\trpaddfl3\\trpaddfr3 \\clvertalt\\clbrdrt\\brdrs\\brdrw10 \\clbrdrl\\brdrs\\brdrw10 \\clbrdrb\\brdrs\\brdrw10 \\clbrdrr\\brdrs\\brdrw10 ";
   $l_html .= "\\cltxlrtb\\clftsWidth3\\clwWidth9430\\clshdrawnil \\cellx9360\\row }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\insrsid1469200 Autoriza\\'e7\\'e3o do Afastamento: " . f($RS,"codigo_interno");
   $l_html .= "\\par ";
-  $l_html .= "\\par Percurso: " .strtolower($w_percurso). "     \\par Di\\'e1rias recebidas: Qtd: " .number_format($w_diaria,1,',','.'). " Valor: " .number_format($w_valor,2,',','.');
+  $l_html .= "\\par Percurso: " .strtolower($w_percurso). "     \\par Di\\'e1rias recebidas: Qtd: " .formatNumber($w_diaria,1,',','.'). " Valor: " .formatNumber($w_valor);
   $l_html .= "\\par ";
   $l_html .= "\\par }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\tx5040\\tx5220\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\insrsid1469200 Sa\\'edda: " .FormataDataEdicao(f($RS,"inicio")). "                                         Chegada:  " .FormataDataEdicao(f($RS,"fim")). "";
   $l_html .= "\\par }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\insrsid1469200 \\cell }\\pard \\ql \\li0\\ri0\\widctlpar\\intbl\\aspalpha\\aspnum\\faauto\\adjustright\\rin0\\lin0 {\\insrsid1469200 \\trowd \\irow1\\irowband1\\lastrow ";
@@ -4152,14 +4142,14 @@ function SolicMail($p_solic,$p_tipo) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
-    $w_anexos         = null;
+    $w_anexos         = array();
 
     // Recupera os dados da PCD
     $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
     $w_sg_tramite = f($RSM,'sg_tramite');
     $w_nome       = f($RSM,'codigo_interno');
 
-      // Se for o trâmite de prestação de contas, envia e-mail ao proposto com o relatório de viagem anexado
+    // Se for o trâmite de prestação de contas, envia e-mail ao proposto com o relatório de viagem anexado
     if ($w_sg_tramite=='EE') {
       // Configura o nome dos arquivo recebido e do arquivo registro
       $w_file = $conFilePhysical.$w_cliente.'/'.'relatorio_'.str_replace('/','-',$w_nome).'.doc';
@@ -4180,12 +4170,15 @@ function SolicMail($p_solic,$p_tipo) {
             fclose($handle);
           } else {
             fclose($handle);
-            $w_anexos = $w_file;
+            $w_anexos[0] = array(
+              "FileName"=>$w_file,
+              "Content-Type"=>"automatic/name",
+              "Disposition"=>"attachment"
+            );
           }
         }
       }
     } 
-
     $w_html='<HTML>'.$crlf;
     $w_html .= BodyOpenMail(null).$crlf;
     $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -4255,10 +4248,10 @@ function SolicMail($p_solic,$p_tipo) {
           $w_html .= $crlf.'          <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
           $w_html .= $crlf.'            <tr>';
           if (Nvl(f($RS1,'valor_alimentacao'),0)>0) $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_alimentacao'),0),2,',','.').'</b></td>';
+          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_alimentacao'),0)).'</b></td>';
           $w_html .= $crlf.'            <tr>';
           if (Nvl(f($RS1,'valor_transporte'),0)>0) $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.number_format(Nvl(f($RS1,'valor_transporte'),0),2,',','.').'</b></td>';
+          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_transporte'),0)).'</b></td>';
           $w_html .= $crlf.'          </table></td></tr>';
         }  
 
@@ -4275,8 +4268,8 @@ function SolicMail($p_solic,$p_tipo) {
             $w_vetor_trechos[$i][3] = f($row,'nm_destino');
             $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
             $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-            $w_vetor_trechos[$i][6] = number_format(Nvl(f($row,'quantidade'),0),1,',','.');
-            $w_vetor_trechos[$i][7] = number_format(Nvl(f($row,'valor'),0),2,',','.');
+            $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
+            $w_vetor_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
             $w_vetor_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
             $w_vetor_trechos[$i][9] = Nvl(f($row,'valor'),0);
             if ($i>1) {
@@ -4305,7 +4298,7 @@ function SolicMail($p_solic,$p_tipo) {
             $w_html .= $crlf.'       <td align="center">'.$w_vetor_trechos[$i][5].'</td>';
             $w_html .= $crlf.'       <td align="right">'.$w_vetor_trechos[$i][6].'</td>';
             $w_html .= $crlf.'       <td align="right">'.$w_vetor_trechos[$i][7].'</td>';
-            $w_html .= $crlf.'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.').'</td>';
+            $w_html .= $crlf.'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9])).'</td>';
             $w_html .= $crlf.'     </tr>';
             $w_total += ($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]);
             $i += 1;
@@ -4314,23 +4307,23 @@ function SolicMail($p_solic,$p_tipo) {
           $w_html .= $crlf.'        <tr>';
           $w_html .= $crlf.'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
           $w_html .= $crlf.'          <td colspan="2"><b>(a) subtotal:</b></td>';
-          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0),2,',','.').'</td>';
+          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)).'</td>';
           $w_html .= $crlf.'        </tr>';
           $w_html .= $crlf.'        <tr>';
           $w_html .= $crlf.'          <td colspan="2"><b>(b) adicional:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'valor_adicional'),0),2,',','.').'</td>';
+          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'valor_adicional'),0)).'</td>';
           $w_html .= $crlf.'        </tr>';
           $w_html .= $crlf.'        <tr>';
           $w_html .= $crlf.'          <td colspan="2"><b>(c) desconto auxílio-alimentação:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'desconto_alimentacao'),0),2,',','.').'</td>';
+          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'desconto_alimentacao'),0)).'</td>';
           $w_html .= $crlf.'        </tr>';
           $w_html .= $crlf.'        <tr>';
           $w_html .= $crlf.'          <td colspan="2"><b>(d) desconto auxílio-transporte:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.number_format(Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'desconto_transporte'),0)).'</td>';
           $w_html .= $crlf.'        </tr>';
           $w_html .= $crlf.'        <tr>';
           $w_html .= $crlf.'          <td colspan="2"><b>Total(a + b - c - d):</b></td>';
-          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0)).'</td>';
           $w_html .= $crlf.'        </tr>';
           $w_html .= $crlf.'        </table></td></tr>';
         } 
@@ -4661,7 +4654,7 @@ function Grava() {
                   } 
                   // Se já há um nome para o arquivo, mantém 
                   $w_file = basename($Field['tmp_name']);
-                  if (!(strpos($Field['name'],'.')===false)) {
+                  if (strpos($Field['name'],'.')!==false) {
                     $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
                   }
                   $w_tamanho = $Field['size'];

@@ -69,7 +69,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'          <td>Início da vigência:<br><b>'.FormataDataEdicao(f($RS,'inicio_real')).' </b></td>';
       $w_html .= chr(13).'          <td>Término da vigência:<br><b>'.FormataDataEdicao(f($RS,'fim_real')).' </b></td>';
       if ($w_tipo_visao==0) {
-        $w_html .= chr(13).'          <td>Valor realizado:<br><b>'.number_format(f($RS,'custo_real'),2,',','.').' </b></td>';
+        $w_html .= chr(13).'          <td>Valor realizado:<br><b>'.formatNumber(f($RS,'custo_real')).' </b></td>';
       } 
       $w_html .= chr(13).'          </table>';
       if ($w_tipo_visao==0) {
@@ -246,11 +246,11 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html .= chr(13).'          <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
     $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'">';
     if (Nvl(f($RS,'valor_alimentacao'),0)>0) $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-alimentação: <b>Não</b></td>';
-    $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS,'valor_alimentacao'),0),2,',','.').'</b></td>';
+    $w_html .= chr(13).'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS,'valor_alimentacao'),0)).'</b></td>';
     $w_html .= chr(13).'            </tr>';
     $w_html .= chr(13).'            <tr bgcolor="'.$w_TrBgColor.'">';
     if (Nvl(f($RS,'valor_transporte'),0)>0) $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= chr(13).'           <td>Auxílio-transporte: <b>Não</b></td>';
-    $w_html .= chr(13).'              <td>Valor R$: <b>'.number_format(Nvl(f($RS,'valor_transporte'),0),2,',','.').'</b></td>';
+    $w_html .= chr(13).'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS,'valor_transporte'),0)).'</b></td>';
     $w_html .= chr(13).'            </tr>';
     $w_html .= chr(13).'          </table></td></tr>';
   } 
@@ -268,8 +268,8 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_vetor_trechos[$i][3] = f($row,'nm_destino');
       $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
       $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-      $w_vetor_trechos[$i][6] = number_format(Nvl(f($row,'quantidade'),0),1,',','.');
-      $w_vetor_trechos[$i][7] = number_format(Nvl(f($row,'valor'),0),2,',','.');
+      $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
+      $w_vetor_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
       $w_vetor_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
       $w_vetor_trechos[$i][9] = Nvl(f($row,'valor'),0);
       if ($i>1) {
@@ -298,7 +298,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'       <td align="center">'.$w_vetor_trechos[$i][5].'</td>';
       $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][6].'</td>';
       $w_html .= chr(13).'       <td align="right">'.$w_vetor_trechos[$i][7].'</td>';
-      $w_html .= chr(13).'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]),2,',','.').'</td>';
+      $w_html .= chr(13).'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9])).'</td>';
       $w_html .= chr(13).'     </tr>';
       $w_total += ($w_vetor_trechos[$i][8]*$w_vetor_trechos[$i][9]);
       $i += 1;
@@ -307,23 +307,23 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
     $w_html .= chr(13).'          <td colspan="2"><b>(a) subtotal:</b></td>';
-    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0),2,',','.').'</td>';
+    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)).'</td>';
     $w_html .= chr(13).'        </tr>';
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td colspan="2"><b>(b) adicional:</b></td>';
-    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.number_format(Nvl(f($RS,'valor_adicional'),0),2,',','.').'</td>';
+    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.formatNumber(Nvl(f($RS,'valor_adicional'),0)).'</td>';
     $w_html .= chr(13).'        </tr>';
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td colspan="2"><b>(c) desconto auxílio-alimentação:</b></td>';
-    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.number_format(Nvl(f($RS,'desconto_alimentacao'),0),2,',','.').'</td>';
+    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.formatNumber(Nvl(f($RS,'desconto_alimentacao'),0)).'</td>';
     $w_html .= chr(13).'        </tr>';
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td colspan="2"><b>(d) desconto auxílio-transporte:</b></td>';
-    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.number_format(Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColor.'">'.formatNumber(Nvl(f($RS,'desconto_transporte'),0)).'</td>';
     $w_html .= chr(13).'        </tr>';
     $w_html .= chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
     $w_html .= chr(13).'          <td colspan="2"><b>Total(a + b - c - d):</b></td>';
-    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.number_format(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0),2,',','.').'</td>';
+    $w_html .= chr(13).'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0)).'</td>';
     $w_html .= chr(13).'        </tr>';
     $w_html .= chr(13).'        </table></td></tr>';
   } 
@@ -369,7 +369,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
       $w_html .= chr(13).'        <tr><td colspan="2"><b>Nº do PTA/Ticket: </b>'.f($RS,'PTA').'</td>';
       $w_html .= chr(13).'        <tr><td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS,'emissao_bilhete')).'</td>';
-      $w_html .= chr(13).'            <td><b>Valor das passagens R$: </b>'.number_format(Nvl(f($RS,'valor_passagem'),0),2,',','.').'</td>';
+      $w_html .= chr(13).'            <td><b>Valor das passagens R$: </b>'.formatNumber(Nvl(f($RS,'valor_passagem'),0)).'</td>';
       $w_html .= chr(13).'      </table>';
       $w_html .= chr(13).'    </td>';
     }

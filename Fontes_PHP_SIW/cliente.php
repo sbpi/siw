@@ -1713,6 +1713,7 @@ function Grava() {
             foreach($RS as $row) {
               if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
                 $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
+                $w_volta = 'w_assinatura';
               }
             }
           } 
@@ -1721,6 +1722,7 @@ function Grava() {
         $RS = db_getBankHouseList::getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
         if (count($RS)<=0) {
           $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
+          $w_volta = 'w_agencia';
         } else {
           foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
         }
@@ -1728,8 +1730,8 @@ function Grava() {
         if ($w_mensagem>'') {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\''.$w_mensagem.'\');');
-          ShowHTML('  history.back(1);');
           ScriptClose();
+          retornaFormulario($w_volta);
         } 
       } 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

@@ -399,7 +399,7 @@ function Mesa() {
           reset($RS_Viagem);
           $w_cor = $w_cor=$conTrBgColor;
           if (count($RS_Viagem)==0) {
-            ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=6 align="center"><b>Não foram encontrados registros.');
+            ShowHTML('                  <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=4 align="center"><b>Não foram encontrados registros.');
           } else {
             foreach($RS_Viagem as $row) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -407,21 +407,7 @@ function Mesa() {
               ShowHTML('                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_saida')),'-').'</td>');
               ShowHTML('                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_chegada')),'-').'</td>');
               ShowHTML('                    <td nowrap>');
-              if (f($row,'concluida')=='N') {
-                if (f($row,'fim')<addDays(time(),-1)) {
-                  ShowHTML('                      <img src="'.$conImgAtraso.'" border=0 width=10 heigth=10>');
-                } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
-                  ShowHTML('                     <img src="'.$conImgAviso.'" border=0 width=10 height=10>');
-                } else {
-                  ShowHTML('                      <img src="'.$conImgNormal.'" border=0 width=10 height=10>');
-                } 
-              } else {
-                if (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
-                  ShowHTML('                      <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10>');
-                } else {
-                  ShowHTML('                      <img src="'.$conImgOkNormal.'" border=0 width=10 height=10>');
-                } 
-              } 
+              ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
               ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
               $w_texto   = f($row,'trechos');
               $w_trechos = explode(' - ',f($row,'trechos'));
@@ -442,6 +428,7 @@ function Mesa() {
             }
           }
           ShowHTML('                </table><br>');
+          ShowHTML('        <tr><td><font size="1"><b>Legenda:</b><table border=0>'.ExibeImagemSolic('PD',null,null,null,null,null,null,null, null,true).'</table>');
         }
 
         // Exibe afastamentos do usuário logado

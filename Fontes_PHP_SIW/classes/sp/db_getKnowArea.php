@@ -14,7 +14,7 @@ class db_getKnowArea {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'SP_GETKNOWAREA';
      $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
-                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        20),
+                   'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        30),
                    'p_tipo'                      =>array($p_tipo,                                          B_VARCHAR,         1),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

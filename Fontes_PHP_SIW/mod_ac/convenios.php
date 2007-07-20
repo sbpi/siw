@@ -1128,6 +1128,7 @@ function Termo() {
     $w_vincula_projeto  = $_REQUEST['w_vincula_projeto'];
     $w_vincula_demanda  = $_REQUEST['w_vincula_demanda'];
     $w_vincula_viagem   = $_REQUEST['w_vincula_viagem'];
+    $w_prestacao_contas = $_REQUEST['w_prestacao_contas'];
     $w_chave            = $_REQUEST['w_chave'];
     $w_sq_menu          = $_REQUEST['w_sq_menu'];
   } else {
@@ -1141,6 +1142,7 @@ function Termo() {
         $w_vincula_projeto  = f($RS,'vincula_projeto');
         $w_vincula_demanda  = f($RS,'vincula_demanda');
         $w_vincula_viagem   = f($RS,'vincula_viagem');
+        $w_prestacao_contas = f($RS,'prestacao_contas');
         $w_sq_tipo_acordo   = f($RS,'sq_tipo_acordo');
         $w_sq_menu          = f($RS,'sq_menu');
       } 
@@ -1215,6 +1217,8 @@ function Termo() {
     ShowHTML('      <tr><td>Os dados deste bloco permitem a identificação pela outra parte e configuram as possibilidades de vinculação com outros tipos de documento.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><b><u>C</u>ódigo do convênio para a outra parte:</b><br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'" title="Informe, se desejar, o código pelo qual este acordo é reconhecido pela outra parte."></td>');
+    ShowHTML('<tr valign="top">');
+    MontaRadioNS('<b>Pemite prestação de contas?</b>',$w_prestacao_contas,'w_prestacao_contas');    
     if (Nvl($w_cd_modalidade,'')=='F' || Nvl($w_cd_modalidade,'')=='I') {
       ShowHTML('          <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
       MontaRadioNS('<b>Pemite vinculação de projetos?</b>',$w_vincula_projeto,'w_vincula_projeto');
@@ -1223,7 +1227,7 @@ function Termo() {
         MontaRadioNS('<b>Pemite vinculação de viagem?</b>',$w_vincula_viagem,'w_vincula_viagem');
       }
       ShowHTML('      </tr></table>');
-    } 
+    }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -3612,7 +3616,7 @@ function Grava() {
       dml_putAcordoTermo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
         $_REQUEST['w_atividades'],$_REQUEST['w_produtos'],$_REQUEST['w_requisitos'],
         $_REQUEST['w_codigo_externo'],$_REQUEST['w_vincula_projeto'],
-        $_REQUEST['w_vincula_demanda'],$_REQUEST['w_vincula_viagem']);
+        $_REQUEST['w_vincula_demanda'],$_REQUEST['w_vincula_viagem'],$_REQUEST['w_prestacao_contas']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();

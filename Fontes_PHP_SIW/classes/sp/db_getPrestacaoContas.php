@@ -14,7 +14,7 @@ class db_getPrestacaoContas {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_GETPRESTACAOCONTAS';
      $params=array('p_cliente'      =>array($p_cliente,         B_INTEGER,        32),
                    'p_chave'        =>array(tvl($p_chave),      B_INTEGER,        32),
-                   "p_chave_pai"    =>array($p_chave_pai,       B_NUMERIC,        32),
+                   'p_chave_pai'    =>array($p_chave_pai,       B_NUMERIC,        32),
                    'p_nome'         =>array(tvl($p_nome),       B_VARCHAR,        60),
                    'p_tipo'         =>array(tvl($p_tipo),       B_VARCHAR,         1),
                    'p_ativo'        =>array(tvl($p_ativo),      B_VARCHAR,         1),
