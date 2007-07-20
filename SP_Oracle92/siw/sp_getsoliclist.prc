@@ -1316,7 +1316,7 @@ begin
                                                  )
                 inner join siw_solicitacao b  on (a2.servico_fornecedor= b.sq_menu and
                                                   a2.sq_siw_tramite    = b.sq_siw_tramite and
-                                                  b.sq_menu            = coalesce(p_menu, b.sq_menu) 
+                                                  b.sq_menu            = coalesce(p_menu, b.sq_menu)
                                                  )
                 inner   join siw_menu      b2 on (b.sq_menu            = b2.sq_menu)
                   inner join siw_modulo    b3 on (b2.sq_modulo         = b3.sq_modulo)

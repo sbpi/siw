@@ -3211,6 +3211,7 @@ SP_Oracle92/siw/sp_getAcordoAditivo.prc -text
 SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
+SP_Oracle92/siw/sp_getContasCronograma.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
@@ -3535,6 +3536,7 @@ SP_Oracle92/siw/sp_putcoform.prc -text
 SP_Oracle92/siw/sp_putcogrdef.prc -text
 SP_Oracle92/siw/sp_putcoidioma.prc -text
 SP_Oracle92/siw/sp_putcoluna.prc -text
+SP_Oracle92/siw/sp_putcontascronograma.prc -text
 SP_Oracle92/siw/sp_putcopais.prc -text
 SP_Oracle92/siw/sp_putcopesconban.prc -text
 SP_Oracle92/siw/sp_putcopesend.prc -text

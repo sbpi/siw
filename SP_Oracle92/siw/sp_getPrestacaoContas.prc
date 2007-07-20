@@ -3,8 +3,8 @@ create or replace procedure sp_getPrestacaoContas
     p_chave     in number   default null,
     p_chave_pai in number   default null,
     p_nome      in varchar2 default null,
-    p_ativo     in varchar2 default null,
     p_tipo      in varchar2 default null,
+    p_ativo     in varchar2 default null,
     p_restricao in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
@@ -29,7 +29,7 @@ begin
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
                 left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
-                              from siw_contas x
+                              from siw_contas_cronograma x
                             group by x.sq_prestacao_contas
                            )      b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
           where a.cliente = p_cliente
@@ -42,7 +42,7 @@ begin
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
                 left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
-                              from siw_contas x
+                              from siw_contas_cronograma x
                             group by x.sq_prestacao_contas
                            )      b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
           where a.cliente = p_cliente
@@ -72,6 +72,20 @@ begin
             and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
          connect by prior a.sq_prestacao_pai = a.sq_prestacao_contas
          order by 5;
+   Elsif upper(p_restricao) = 'PAI' Then
+     -- Recupera apenas os registros pais
+      open p_result for
+         select  a.sq_prestacao_contas as chave, a.sq_prestacao_pai, a.nome, a.tipo,
+                montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo
+           from ac_prestacao_contas a
+          where a.cliente     = p_cliente
+            and a.sq_prestacao_pai is null
+            and (p_chave      is null or (p_chave     is not null and a.sq_prestacao_contas = p_chave))
+            and (p_chave_pai  is null or (p_chave_pai is not null and a.sq_prestacao_pai = p_chave_pai))
+            and (p_nome       is null or (p_nome      is not null and a.nome = p_nome))
+            and (p_tipo       is null or (p_tipo      is not null and a.tipo = p_tipo))
+            and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
+         order by 5;
    Elsif p_restricao = 'EXISTE' Then
       -- Verifica se há outro registro com o mesmo nome ou sigla
       open p_result for 
@@ -92,8 +106,8 @@ begin
          select a.sq_prestacao_contas as chave, a.cliente, a.nome,
                 a.descricao, a.tipo, a.ativo, 
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
-           from ac_prestacao_contas    a
-                inner join siw_contas  b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
+           from ac_prestacao_contas              a
+                inner join siw_contas_cronograma b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
           where a.cliente             = p_cliente
             and a.sq_prestacao_contas = p_chave
          order by a.nome;
@@ -110,7 +124,7 @@ begin
                                group by sq_prestacao_pai
                               ) b on (a.sq_prestacao_contas = b.sq_prestacao_pai)
                    left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
-                                 from siw_contas x
+                                 from siw_contas_cronograma x
                                group by x.sq_prestacao_contas
                               ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
                               
@@ -131,7 +145,7 @@ begin
                               group by sq_prestacao_pai
                              ) b on (a.sq_prestacao_contas = b.sq_prestacao_pai)
                    left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
-                                 from siw_contas x
+                                 from siw_contas_cronograma x
                                group by x.sq_prestacao_contas
                               ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
                              
