@@ -815,7 +815,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,              cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                b.valor,              cast(b.inicio as date)-cast(3 as integer) as aviso,
                 case when b.sq_solic_pai is null 
                      then case when b3.sq_peobjetivo is null
                                then case when n.sq_cc is null
