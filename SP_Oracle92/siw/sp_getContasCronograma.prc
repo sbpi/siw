@@ -28,9 +28,17 @@ begin
            from siw_contas_cronograma          a
                 inner join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
           where a.sq_siw_solicitacao   =  p_siw_solicitacao
-            and a.sq_contas_cronograma <> p_chave
             and ((p_chave is null) or (p_chave is not null and a.sq_contas_cronograma <> p_chave))
             and ((p_tipo  is null) or (p_tipo  is not null and b.tipo                  = p_tipo));
+   Elsif p_restricao = 'PRESTACAO' Then
+      open p_result for     
+         select a.sq_contas_cronograma as chave, a.sq_siw_solicitacao, a.sq_prestacao_contas, a.inicio, a.fim, a.limite,
+                b.tipo, b.nome nm_prestacao_contas,
+                case b.tipo when 'P' then 'Parcial' else 'Final' end as nm_tipo
+           from siw_contas_cronograma          a
+                inner join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
+          where a.sq_contas_cronograma not in (select x.sq_contas_cronograma
+                                                 from siw_contas_registro x);
    End If;
 end SP_GetContasCronograma;
 /
