@@ -3219,6 +3219,7 @@ SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getContasCronograma.prc -text
+SP_Oracle92/siw/sp_getContasRegistro.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
 SP_Oracle92/siw/sp_getConvOutroRep.prc -text
 SP_Oracle92/siw/sp_getConvPreposto.prc -text
@@ -3468,6 +3469,7 @@ SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
+SP_Oracle92/siw/sp_putContasRegistro.prc -text
 SP_Oracle92/siw/sp_putConvDadosBancario.prc -text
 SP_Oracle92/siw/sp_putConvOutraParte.prc -text
 SP_Oracle92/siw/sp_putConvOutroRep.prc -text

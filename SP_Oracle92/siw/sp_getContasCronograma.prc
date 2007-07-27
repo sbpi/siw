@@ -14,9 +14,14 @@ begin
       open p_result for     
          select a.sq_contas_cronograma as chave, a.sq_siw_solicitacao, a.sq_prestacao_contas, a.inicio, a.fim, a.limite,
                 b.tipo, b.nome nm_prestacao_contas,
-                case b.tipo when 'P' then 'Parcial' else 'Final' end as nm_tipo
-           from siw_contas_cronograma          a
-                inner join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
+                case b.tipo when 'P' then 'Parcial' else 'Final' end as nm_tipo,
+                d.nome, c.inicio as solic_ini, c.fim as solic_fim,
+                e.titulo
+           from siw_contas_cronograma            a
+                inner   join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
+                inner   join siw_solicitacao     c on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                  left  join pj_projeto          e on (c.sq_siw_solicitacao  = e.sq_siw_solicitacao)
+                  inner join siw_menu            d on (c.sq_menu             = d.sq_menu)
           where ((p_chave             is null) or (p_chave             is not null and a.sq_contas_cronograma = p_chave))
             and ((p_siw_solicitacao   is null) or (p_siw_solicitacao   is not null and a.sq_siw_solicitacao   = p_siw_solicitacao))
             and ((p_prestacao_contas  is null) or (p_prestacao_contas  is not null and a.sq_prestacao_contas  = p_prestacao_contas))
@@ -37,8 +42,7 @@ begin
                 case b.tipo when 'P' then 'Parcial' else 'Final' end as nm_tipo
            from siw_contas_cronograma          a
                 inner join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
-          where a.sq_contas_cronograma not in (select x.sq_contas_cronograma
-                                                 from siw_contas_registro x);
+          where a.sq_siw_solicitacao = p_siw_solicitacao;
    End If;
 end SP_GetContasCronograma;
 /

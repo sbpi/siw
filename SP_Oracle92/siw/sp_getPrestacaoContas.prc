@@ -127,12 +127,12 @@ begin
                                  from siw_contas_cronograma x
                                group by x.sq_prestacao_contas
                               ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
-                              
              where a.cliente     = p_cliente
                and a.sq_prestacao_pai is null
-               and (p_nome       is null or (p_nome    is not null and a.nome  = p_nome))
-               and (p_tipo       is null or (p_tipo    is not null and a.tipo  = p_tipo))
-               and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
+               and (p_chave      is null or (p_chave   is not null and a.sq_prestacao_contas = p_chave))
+               and (p_nome       is null or (p_nome    is not null and a.nome                = p_nome))
+               and (p_tipo       is null or (p_tipo    is not null and a.tipo                = p_tipo))
+               and (p_ativo      is null or (p_ativo   is not null and a.ativo               = p_ativo))
             order by a.nome;
       Else
          open p_result for
