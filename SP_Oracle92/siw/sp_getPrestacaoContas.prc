@@ -24,7 +24,7 @@ begin
    Elsif upper(p_restricao) = 'SUBTODOS' Then
      -- Recupera as prestacoes aos quais o atual pode ser subordinado
       open p_result for
-         select a.sq_prestacao_contas as chave,a.nome,
+         select a.sq_prestacao_contas as chave,a.nome, a.sq_prestacao_contas, a.sq_prestacao_pai,
                 montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
@@ -37,7 +37,7 @@ begin
    Elsif upper(p_restricao) = 'SUBPARTE' Then
      -- Se for alteração, não deixa vincular a si mesmo nem a algum filho
       open p_result for
-         select a.sq_prestacao_contas as chave,a.nome,
+         select a.sq_prestacao_contas as chave,a.nome, a.sq_prestacao_pai,
                 montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
@@ -111,6 +111,34 @@ begin
           where a.cliente             = p_cliente
             and a.sq_prestacao_contas = p_chave
          order by a.nome;
+   Elsif p_restricao = 'CRONOGRAMA' Then
+      open p_result for
+         select a.sq_prestacao_contas as chave, a.cliente, a.sq_prestacao_pai, a.nome, a.descricao, a.ativo, a.tipo, coalesce(b.filho,0) as filho,
+                montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
+                coalesce(c.qtd,0) as qtd_solic, coalesce(d.qtd,0) as qtd_prj
+           from ac_prestacao_contas a
+                left  join siw_contas_cronograma e on (a.sq_prestacao_contas = e.sq_prestacao_contas)
+                left  join (select sq_prestacao_pai, count(sq_prestacao_contas) as filho 
+                              from ac_prestacao_contas x 
+                             where cliente = p_cliente 
+                            group by sq_prestacao_pai
+                            ) b on (a.sq_prestacao_contas = b.sq_prestacao_pai)
+                 left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
+                              from siw_contas_cronograma x
+                            group by x.sq_prestacao_contas
+                           ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
+                left  join (select x.sq_prestacao_contas, count(distinct(x.sq_siw_solicitacao)) qtd
+                              from siw_contas_cronograma x
+                            group by x.sq_prestacao_contas
+                           ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
+          where a.cliente     = p_cliente
+            and a.sq_prestacao_pai is null
+            and (p_chave      is null or (p_chave     is not null and a.sq_prestacao_contas  = p_chave))
+            and (p_chave_pai  is null or (p_chave_pai is not null and e.sq_contas_cronograma = p_chave_pai))
+            and (p_nome       is null or (p_nome      is not null and a.nome                 = p_nome))
+            and (p_tipo       is null or (p_tipo      is not null and a.tipo                 = p_tipo))
+            and (p_ativo      is null or (p_ativo     is not null and a.ativo                = p_ativo))
+         order by a.nome;   
    Elsif p_restricao is not null Then
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
