@@ -28,7 +28,7 @@ begin
                 montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
-                left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
+                left  join (select x.sq_prestacao_contas, count(distinct(x.sq_siw_solicitacao)) qtd 
                               from siw_contas_cronograma x
                             group by x.sq_prestacao_contas
                            )      b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
@@ -41,7 +41,7 @@ begin
                 montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
                 coalesce(b.qtd,0) as qtd_solic
            from ac_prestacao_contas a
-                left  join (select x.sq_prestacao_contas, count(x.sq_siw_solicitacao) qtd 
+                left  join (select x.sq_prestacao_contas, count(distinct(x.sq_siw_solicitacao)) qtd 
                               from siw_contas_cronograma x
                             group by x.sq_prestacao_contas
                            )      b on (a.sq_prestacao_contas = b.sq_prestacao_contas)
@@ -116,7 +116,7 @@ begin
          open p_result for
             select a.sq_prestacao_contas as chave, a.cliente, a.sq_prestacao_pai, a.nome, a.descricao, a.ativo, a.tipo, coalesce(b.filho,0) as filho,
                    montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo,
-                   coalesce(c.qtd,0) as qtd_solic
+                   coalesce(c.qtd,0) as qtd_solic, coalesce(d.qtd,0) as qtd_prj
               from ac_prestacao_contas a
                    left  join (select sq_prestacao_pai, count(sq_prestacao_contas) as filho 
                                  from ac_prestacao_contas x 
@@ -127,6 +127,10 @@ begin
                                  from siw_contas_cronograma x
                                group by x.sq_prestacao_contas
                               ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
+                   left  join (select x.sq_prestacao_contas, count(distinct(x.sq_siw_solicitacao)) qtd
+                                 from siw_contas_cronograma x
+                               group by x.sq_prestacao_contas
+                              ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
              where a.cliente     = p_cliente
                and a.sq_prestacao_pai is null
                and (p_chave      is null or (p_chave   is not null and a.sq_prestacao_contas = p_chave))
@@ -137,7 +141,7 @@ begin
       Else
          open p_result for
             select a.sq_prestacao_contas as chave, a.cliente, a.sq_prestacao_pai, a.nome, a.descricao, a.tipo, a.ativo, coalesce(b.filho,0) as filho,
-                montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo
+                montanomeprestacaocontas(a.sq_prestacao_contas) as nome_completo, coalesce(d.qtd,0) as qtd_prj
               from ac_prestacao_contas a
                    left join (select sq_prestacao_pai, count(sq_prestacao_contas) as filho 
                                 from ac_prestacao_contas x 
@@ -148,7 +152,10 @@ begin
                                  from siw_contas_cronograma x
                                group by x.sq_prestacao_contas
                               ) c on (a.sq_prestacao_contas = c.sq_prestacao_contas)
-                             
+                   left  join (select x.sq_prestacao_contas, count(distinct(x.sq_siw_solicitacao)) qtd
+                                 from siw_contas_cronograma x
+                               group by x.sq_prestacao_contas
+                              ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
              where a.cliente     = p_cliente
                and a.sq_prestacao_pai = p_restricao
                and (p_nome       is null or (p_nome    is not null and a.nome   = p_nome))
