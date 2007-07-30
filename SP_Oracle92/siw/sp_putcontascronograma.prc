@@ -26,6 +26,12 @@ begin
       -- Exclui registro
       delete siw_contas_registro   where sq_contas_cronograma = p_chave;
       delete siw_contas_cronograma where sq_contas_cronograma = p_chave;
+   Elsif p_operacao = 'F' Then
+      -- Exclui registro
+      delete siw_contas_registro   where sq_contas_cronograma in (select x.sq_contas_cronograma
+                                                                    from siw_contas_cronograma x
+                                                                   where x.sq_siw_solicitacao = p_siw_solicitacao);
+      delete siw_contas_cronograma where sq_siw_solicitacao = p_siw_solicitacao;
    End If;
 end SP_PutContasCronograma;
 /

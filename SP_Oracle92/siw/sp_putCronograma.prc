@@ -20,14 +20,14 @@ begin
            valor_previsto,          valor_real)
       Values
          ( w_chave,                 p_chave,              p_inicio,    p_fim,
-           p_valor_previsto,        coalesce(p_valor_real,0));
+           p_valor_previsto,        p_valor_real);
    Elsif p_operacao = 'A' Then 
       -- Alteração do cronograma quando o projeto está na fase de cadastramento
       Update pj_rubrica_cronograma set
           inicio                    = p_inicio,
           fim                       = p_fim,
           valor_previsto            = p_valor_previsto,
-          valor_real                = coalesce(p_valor_real,0)
+          valor_real                = p_valor_real
       where sq_rubrica_cronograma   = p_chave_aux;
 
    Elsif p_operacao = 'V' Then 

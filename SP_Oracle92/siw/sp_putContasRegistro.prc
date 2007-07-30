@@ -4,7 +4,8 @@ create or replace procedure SP_PutContasRegistro
     p_contas_cronograma   in number    default null,
     p_prestacao_contas    in number    default null,
     p_pendencia           in varchar2  default null,
-    p_observacao          in varchar2  default null
+    p_observacao          in varchar2  default null,
+    p_usuario             in number    default null
    ) is
    w_chave    number(18);
 begin
@@ -17,6 +18,10 @@ begin
          ( sq_contas_registro,   sq_contas_cronograma, sq_prestacao_contas, pendencia,   observacao)
       Values
          ( w_chave,              p_contas_cronograma,  p_prestacao_contas,  p_pendencia, p_observacao);
+      update siw_contas_cronograma set
+         sq_pessoa_atualizacao = p_usuario,
+         ultima_atualizacao    = sysdate
+       where sq_contas_cronograma = p_contas_cronograma; 
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro na tabela de cronograma da rubrica
       delete siw_contas_registro where sq_contas_cronograma = p_contas_cronograma;
