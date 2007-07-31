@@ -14,15 +14,16 @@ begin
                 e.sq_solic_missao,
                 f.concluida, f.aviso_prox_conc,
                 b.fim-f.dias_aviso as aviso,
-                g.sq_siw_solicitacao sq_projeto, g.titulo nm_projeto
-           from siw_solicitacao            b
-                inner join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and 
-                                                  Nvl(b1.sigla,'-')    <> 'CA'
-                                                 )
-                inner join gd_demanda      c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
-                inner join pd_missao_solic e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
-                inner join gd_demanda      f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
-                left  join pj_projeto      g  on (b.sq_solic_pai       = g.sq_siw_solicitacao)
+                g.sq_siw_solicitacao sq_projeto, g1.titulo nm_projeto
+           from siw_solicitacao             b
+                inner  join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and 
+                                                   Nvl(b1.sigla,'-')    <> 'CA'
+                                                  )
+                inner  join gd_demanda      c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                inner  join pd_missao_solic e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                inner  join gd_demanda      f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                left   join pj_projeto      g  on (b.sq_solic_pai       = g.sq_siw_solicitacao)
+                  left join siw_solicitacao g1 on (g.sq_siw_solicitacao = g1.sq_siw_solicitacao)
           where (p_chave     is null or (p_chave     is not null and e.sq_solic_missao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and b.sq_siw_solicitacao = p_chave_aux));
    End If;         

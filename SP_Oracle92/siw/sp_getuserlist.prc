@@ -33,7 +33,11 @@ begin
         and (p_lotacao     is null or (p_lotacao     is not null and c.sq_unidade        = p_lotacao))
         and (p_gestor      is null or (p_gestor      is not null and (a.gestor_sistema   = p_gestor or 
                                                                       a.gestor_seguranca = p_gestor)))
-        and (p_nome        is null or (p_nome        is not null and acentos(b.nome)     like '%'||acentos(p_nome)||'%'))
+        and (p_nome        is null or (p_nome        is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or
+                                                                      b.nome_resumido_ind like '%'||acentos(p_nome)||'%'
+                                                                     )
+                                      )
+            )
         and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf))
         and (p_interno     is null or (p_interno     is not null and e.interno           = p_interno));
 end SP_GetUserList;

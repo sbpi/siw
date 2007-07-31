@@ -38,7 +38,7 @@ begin
                 a.perc_conclusao, a.fim_real fim_real_etapa, a.sq_unidade, a.inicio_previsto, a.inicio_real inicio_real_etapa, a.pacote_trabalho,
                 a.peso,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
-                b.sq_siw_solicitacao sq_projeto, b.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
+                b.sq_siw_solicitacao sq_projeto, c.codigo_interno, c.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
                 i.sq_menu, i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
                 i.concluida, i.aviso_prox_conc, i.aviso, i.sg_tramite, i.nm_tramite, w_inicio as ini_prox_per, w_fim as fim_prox_per,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
@@ -84,10 +84,10 @@ begin
       open p_result for 
          select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, a.fim_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, 
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
-                b.sq_siw_solicitacao as sq_projeto, b.titulo as nm_projeto, 
+                b.sq_siw_solicitacao as sq_projeto, c.codigo_interno, c.titulo as nm_projeto, 
                 c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,
                 c1.sq_pessoa as resp_projeto, c1.nome_resumido as nm_resp_projeto, 
-                c2.titulo as nm_programa,
+                c3.titulo as nm_programa,
                 c7.nome as nm_cc, 
                 case when c4.sq_peobjetivo is not null then c4.nome else c5.nome end as nm_objetivo,
                 e.sq_siw_solicitacao, 
@@ -145,14 +145,15 @@ begin
   ElsIf p_restricao = 'REL_DET' Then
       open p_result for 
          select distinct a.sq_siw_solicitacao as sq_projeto,
-                e.titulo as nm_projeto
+                e1.titulo as nm_projeto, e1.codigo_interno
            from siw_solicitacao  a
-                inner       join siw_menu         d on (a.sq_menu             = d.sq_menu)
-                inner       join pj_projeto       e on (a.sq_siw_solicitacao  = e.sq_siw_solicitacao)
-                inner       join siw_tramite      f on (a.sq_siw_tramite      = f.sq_siw_tramite)
+                inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
+                inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo      = b2.sq_peobjetivo)
+                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
                   left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
                 left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
                   left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)

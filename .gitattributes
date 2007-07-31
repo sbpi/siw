@@ -3014,11 +3014,11 @@ SP_Oracle92/siw/TG_GP_CONTRATO_COLAB_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text
-SP_Oracle92/siw/TG_PD_MISSAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_UP.trg -text
 SP_Oracle92/siw/TG_SG_AUTENTICACAO_IN_UP.trg -text
+SP_Oracle92/siw/TG_SIW_SOLIC_IN.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text

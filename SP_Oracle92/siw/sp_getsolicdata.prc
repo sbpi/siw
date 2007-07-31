@@ -57,7 +57,7 @@ begin
                 g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
                 h.nome nm_cidade,
-                i.sq_projeto_etapa,   j.titulo nm_etapa,             k.titulo nm_projeto,
+                i.sq_projeto_etapa,   j.titulo nm_etapa,             k1.titulo nm_projeto,
                 montaordem(j.sq_projeto_etapa) as cd_ordem,
                 l.sq_siw_restricao,   l.descricao as ds_restricao,
                 case l.risco when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao
@@ -98,6 +98,7 @@ begin
                 left         join pj_etapa_demanda          i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                   left       join pj_projeto_etapa          j  on (i.sq_projeto_etapa    = j.sq_projeto_etapa)
                 left         join pj_projeto                k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
+                  left       join siw_solicitacao           k1 on (k.sq_siw_solicitacao  = k1.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,2) in ('PJ','OR') Then
       -- Recupera as demandas que o usuário pode ver
@@ -121,6 +122,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.codigo_interno,     b.codigo_externo,              b.titulo,
                 b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) meses_projeto,
                 case when b.sq_solic_pai is null 
                      then case when b4.sq_peobjetivo is null
@@ -138,7 +140,7 @@ begin
                 b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
-                d.sq_unidade_resp,    d.titulo,                      d.prioridade,
+                d.sq_unidade_resp,    d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.aviso_prox_conc_pacote, d.perc_dias_aviso_pacote,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
@@ -180,8 +182,8 @@ begin
                 m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
                 m.sigla sg_acordo,
                 n.sq_menu sq_menu_pai,
-                o.sq_siw_solicitacao sq_programa, o.codigo_interno cd_programa, o.titulo nm_programa,
-                acentos(d.titulo,1) as ac_titulo,
+                o.sq_siw_solicitacao sq_programa, o1.codigo_interno cd_programa, o1.titulo nm_programa,
+                acentos(b.titulo,1) as ac_titulo,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao) as ide,
                 calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao) as idc
            from siw_menu                                     a 
@@ -234,7 +236,7 @@ begin
                                                                    )
                   left             join ct_cc                g  on (b.sq_cc               = g.sq_cc)
                 left               join eo_unidade           c  on (a.sq_unid_executora   = c.sq_unidade)
-                left               join (select x.sq_siw_solicitacao sq_acordo, x.codigo_interno cd_acordo,
+                left               join (select x.sq_siw_solicitacao sq_acordo, y.codigo_interno cd_acordo,
                                                 w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
                                                 v.sigla
                                            from ac_acordo                      x
@@ -245,6 +247,7 @@ begin
                                         )                    m  on (b.sq_solic_pai        = m.sq_acordo)
                 left               join siw_solicitacao      n  on (b.sq_solic_pai        = n.sq_siw_solicitacao)
                 left               join pe_programa          o  on (b.sq_solic_pai        = o.sq_siw_solicitacao)
+                  left             join siw_solicitacao      o1 on (o.sq_siw_solicitacao  = o1.sq_siw_solicitacao)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,2) = 'GC' Then
       -- Recupera os acordos que o usuário pode ver
@@ -282,8 +285,8 @@ begin
                 c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
                 d.inicio inicio_real, d.fim fim_real,                d.duracao,
-                d.valor_inicial,      d.valor_atual,                 d.codigo_interno,
-                d.codigo_externo,     d.objeto,                      d.atividades,
+                d.valor_inicial,      d.valor_atual,                 b.codigo_interno,
+                b.codigo_externo,     d.objeto,                      d.atividades,
                 d.produtos,           d.requisitos,                  d.observacao,
                 d.dia_vencimento,     d.vincula_projeto,             d.vincula_demanda,
                 d.vincula_viagem,     d.aviso_prox_conc,             d.dias_aviso,
@@ -296,7 +299,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.inicio,             d.informacoes,                 d.codigo_deposito,
                 d.empenho,            d.processo,                    d.assinatura,
-                d.publicacao,         d.titulo,                      d.sq_lcmodalidade,
+                d.publicacao,         b.titulo,                      d.sq_lcmodalidade,
                 d.numero_certame,     d.numero_ata,                  d.tipo_reajuste,
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
                 d.sq_lcfonte_recurso, d.sq_especificacao_despesa,    d.financeiro_unico,
@@ -327,7 +330,7 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 f.nome nm_cidade,
-                m.titulo nm_projeto,
+                m2.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 coalesce(o1.ativo,'N') as st_sol,
@@ -395,7 +398,7 @@ begin
                                           from pj_rubrica
                                         group by sq_siw_solicitacao
                                        )                    m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
-                   
+                     left         join siw_solicitacao      m2 on (m.sq_siw_solicitacao       = m2.sq_siw_solicitacao)
                    left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                    left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                      inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
@@ -445,10 +448,10 @@ begin
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
-                d.pessoa,             d.codigo_interno,              d.sq_acordo_parcela,
+                d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
-                d.codigo_externo,     d.observacao,                  
+                b.codigo_externo,     d.observacao,                  
                 d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_forma_pagamento,          d.sq_agencia,
                 d.operacao_conta,     d.numero_conta,                d.sq_pais_estrang,
@@ -476,12 +479,12 @@ begin
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 f.nome nm_cidade,
-                m.codigo_interno cd_acordo,
+                m1.codigo_interno cd_acordo,
                 coalesce(m4.existe,0) as notas_acordo,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                case nvl(m2.sq_siw_solicitacao,0) when 0 then q.titulo             else m2.titulo end nm_projeto,
+                case nvl(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end nm_projeto,
                 case nvl(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end sq_projeto,
                 case nvl(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end qtd_rubrica
            from siw_menu                                    a 
@@ -539,6 +542,7 @@ begin
                    left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                      left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                        left       join pj_projeto           m2 on (m1.sq_solic_pai            = m2.sq_siw_solicitacao)
+                         left     join siw_solicitacao      m5 on (m2.sq_siw_solicitacao      = m5.sq_siw_solicitacao)
                          left     join (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
                                           from pj_rubrica
                                         group by sq_siw_solicitacao
@@ -548,6 +552,7 @@ begin
                                         group by x.sq_siw_solicitacao
                                        )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
+                     left         join siw_solicitacao      q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
                      left         join (select sq_siw_solicitacao, count(sq_projeto_rubrica) qtd_rubrica
                                           from pj_rubrica
                                         group by sq_siw_solicitacao
@@ -607,13 +612,13 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' when 'C' then 'Complementação' end  nm_tipo_missao,
                 d1.reserva,           d1.pta,                        d1.justificativa_dia_util,
                 d1.emissao_bilhete,   d1.pagamento_diaria,           d1.pagamento_bilhete,
                 d1.boletim_numero,    d1.boletim_data,               d1.valor_alimentacao,
                 d1.valor_transporte,  d1.desconto_alimentacao,       d1.desconto_transporte,
-                d1.valor_adicional,   d1.codigo_externo,             d1.tipo tipo_missao,
+                d1.valor_adicional,   d1.tipo tipo_missao,
                 d1.sq_pais_estrang,   d1.aba_code,                   d1.swift_code,
                 d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
                 d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
@@ -653,6 +658,7 @@ begin
                       left             join pe_plano                   b4 on (b3.sq_plano                = b4.sq_plano)
                     inner              join gd_demanda                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner            join pd_missao                  d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner          join siw_solicitacao           d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                         inner          join co_pessoa                  d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           left         join sg_autenticacao           d21 on (d2.sq_pessoa               = d21.sq_pessoa)
                           inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
@@ -826,8 +832,8 @@ begin
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_siw_solicitacao sq_programa,
-                d.sq_pehorizonte,     d.sq_penatureza,               d.codigo_interno cd_programa,
-                d.titulo,             d.publico_alvo,                d.estrategia, 
+                d.sq_pehorizonte,     d.sq_penatureza,               b.codigo_interno cd_programa,
+                b.titulo,             d.publico_alvo,                d.estrategia, 
                 d.ln_programa,        d.situacao_atual,              d.exequivel, 
                 d.justificativa_inexequivel,                         d.outras_medidas, 
                 d.inicio_real,        d.fim_real,                    d.custo_real, 

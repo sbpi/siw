@@ -33,7 +33,8 @@ begin
                                                                       c.sq_pessoa      = p_cliente
                                                                      ) 
                                      inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
-                           where (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
+                           where b.sigla <> 'PA' -- O módulo de protocolo não tem intervenções pela mesa de trabalho
+                             and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and ((c.sigla <> 'PJCAD' and (c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15)) or
                                   (C.sigla =  'PJCAD' and coalesce(e.sigla,'---') <> 'CI' and f.acesso >= 8)
                                  )

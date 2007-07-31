@@ -90,7 +90,7 @@ begin
       );
            
       -- Recupera o código interno  do acordo, gerado por trigger
-      select codigo_interno into p_codigo_interno from fn_lancamento where sq_siw_solicitacao = w_chave;
+      select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
 
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
@@ -219,17 +219,18 @@ begin
          If w_existe = 0 Then
             w_sequencial := 1;
          Else
-            select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
+            select Nvl(max(to_number(replace(replace(replace(b.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
               into w_sequencial
               from fn_lancamento a
-             where codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
+                   inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+             where b.codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
                and a.cliente                = p_cliente;
          End If;
          
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
-         update fn_lancamento a set
+         update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          
@@ -242,7 +243,7 @@ begin
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_reg.ano_corrente||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
-         update fn_lancamento a set
+         update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          

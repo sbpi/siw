@@ -134,13 +134,7 @@ begin
                 case b.autorizado when 'S' then 'Sim' else 'Não' end as nm_autorizado,
                 d.nome as nm_servico, d.sq_menu,
                 e.sq_siw_solicitacao,
-                case when e.sq_siw_solicitacao is not null 
-                     then e.codigo_interno
-                     else case when f.sq_siw_solicitacao is not null
-                               then f.codigo_interno
-                               else trim(to_char(c.sq_siw_solicitacao))
-                          end
-                end as cd_servico
+                coalesce(c.codigo_interno, trim(to_char(c.sq_siw_solicitacao))) as cd_servico
            from siw_solic_recurso_alocacao       a
                 inner     join siw_solic_recurso b on (a.sq_solic_recurso   = b.sq_solic_recurso)
                   inner   join siw_solicitacao   c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)

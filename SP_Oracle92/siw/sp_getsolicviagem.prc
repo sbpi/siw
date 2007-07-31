@@ -99,7 +99,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complemento' end nm_tp_missao,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -126,6 +126,7 @@ begin
                                       )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner    join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -147,7 +148,7 @@ begin
                                       )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                     left outer   join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                       left outer join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                  inner          join (select distinct t3.sq_solic_missao, t1.sq_siw_solicitacao sq_projeto, t1.titulo nm_projeto
+                  inner          join (select distinct t3.sq_solic_missao, t1.sq_siw_solicitacao sq_projeto, t2.titulo nm_projeto
                                          from pj_projeto                   t1
                                               inner   join siw_solicitacao t2 on (t1.sq_siw_solicitacao = t2.sq_solic_pai)
                                                 inner join pd_missao_solic t3 on (t2.sq_siw_solicitacao = t3.sq_siw_solicitacao)
@@ -155,7 +156,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and m.sq_projeto = p_projeto))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 join pj_etapa_demanda x3 on (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) where x2.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d11.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
@@ -224,7 +225,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complemento' end nm_tp_missao,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -252,6 +253,7 @@ begin
                                       )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner    join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -273,7 +275,7 @@ begin
                                       )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                     left outer   join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                       left outer join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-                  inner          join (select distinct t3.sq_solic_missao, t1.sq_siw_solicitacao sq_projeto, t1.titulo nm_projeto
+                  inner          join (select distinct t3.sq_solic_missao, t1.sq_siw_solicitacao sq_projeto, t2.titulo nm_projeto
                                          from pj_projeto                   t1
                                               inner   join siw_solicitacao t2 on (t1.sq_siw_solicitacao = t2.sq_solic_pai)
                                                 inner join pd_missao_solic t3 on (t2.sq_siw_solicitacao = t3.sq_siw_solicitacao)
@@ -286,7 +288,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and m.sq_projeto = p_projeto))
             and (p_atividade      is null or (p_atividade   is not null and n.sq_atividade = p_atividade))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d11.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
@@ -355,7 +357,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complemento' end nm_tp_missao,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -382,6 +384,7 @@ begin
                                       )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner    join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -415,7 +418,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x , siw_solicitacao y where x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.sq_solic_pai = p_projeto and x.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x where x.sq_siw_solicitacao = p_atividade and x.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d11.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
@@ -499,7 +502,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d1.codigo_interno,
+                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complemento' end nm_tp_missao,
                 decode(d1.tipo,'I','Inicial','P','Prorrogação','Complemento') nm_tp_missao,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
@@ -527,6 +530,7 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner            join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner          join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        inner        join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
                         inner        join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner      join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner      join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -562,7 +566,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x , siw_solicitacao y where x.sq_siw_solicitacao = y.sq_siw_solicitacao and y.sq_solic_pai = p_projeto and x.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x.sq_siw_solicitacao)) from pd_missao_solic x where x.sq_siw_solicitacao = p_atividade and x.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d11.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))

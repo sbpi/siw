@@ -18,6 +18,7 @@ create or replace procedure SP_PutProjetoGeral
     p_valor               in number    default null,
     p_data_hora           in varchar2  default null,
     p_unid_resp           in number    default null,
+    p_codigo              in varchar2  default null,
     p_titulo              in varchar2  default null,
     p_prioridade          in number    default null,
     p_aviso               in varchar2  default null,
@@ -98,14 +99,14 @@ begin
          inicio,             fim,           inclusao,            ultima_alteracao,
          conclusao,          valor,         opiniao,             data_hora,
          sq_unidade,         sq_cc,         sq_solic_pai,        sq_cidade_origem,
-         palavra_chave,      sq_peobjetivo)
+         palavra_chave,      sq_peobjetivo, codigo_interno,      titulo)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_descricao,         p_justificativa,
          p_inicio,           p_fim,         sysdate,             sysdate,
          null,               p_valor,       null,                p_data_hora,
          p_unidade,          p_sqcc,        p_solic_pai,         p_cidade,
-         p_palavra_chave,    p_objetivo
+         p_palavra_chave,    p_objetivo,    p_codigo,            p_titulo
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -113,18 +114,18 @@ begin
 
       -- Insere registro em pj_projeto
       Insert into pj_projeto
-         ( sq_siw_solicitacao,  sq_unidade_resp, titulo,            prioridade,
-           aviso_prox_conc,     dias_aviso,      inicio_real,       fim_real,
-           concluida,           data_conclusao,  nota_conclusao,    custo_real,
-           proponente,          sq_tipo_pessoa,  vincula_contrato,   vincula_viagem,
-           aviso_prox_conc_pacote, perc_dias_aviso_pacote
+         ( sq_siw_solicitacao,  sq_unidade_resp,  prioridade,        aviso_prox_conc,
+           dias_aviso,          inicio_real,      fim_real,          concluida,
+           data_conclusao,      nota_conclusao,   custo_real,        proponente,
+           sq_tipo_pessoa,      vincula_contrato, vincula_viagem,    aviso_prox_conc_pacote, 
+           perc_dias_aviso_pacote
          )
       (select
-           w_chave,             p_unid_resp,     p_titulo,          p_prioridade,
-           p_aviso,             p_dias,          null,              null,
-           'N',                 null,            null,              0,
-           p_proponente,        p_sq_tipo_pessoa,Nvl(p_vincula_contrato,'N'), Nvl(p_vincula_viagem,'N'),
-           p_aviso_pacote,      p_dias_pacote
+           w_chave,              p_unid_resp,     p_prioridade,      p_aviso,
+           p_dias,               null,            null,              'N',
+           null,                 null,            0,                 p_proponente,
+           p_sq_tipo_pessoa,     Nvl(p_vincula_contrato,'N'),        Nvl(p_vincula_viagem,'N'),
+           p_aviso_pacote,       p_dias_pacote
         from dual
       );
 
@@ -301,6 +302,8 @@ begin
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           sq_peobjetivo    = p_objetivo,
+          codigo_interno   = p_codigo,
+          titulo           = trim(p_titulo),
           sq_cc            = p_sqcc,
           sq_solic_pai     = p_solic_pai,
           descricao        = coalesce(p_descricao,descricao),
@@ -319,7 +322,6 @@ begin
       Update pj_projeto set
           sq_unidade_resp  = p_unid_resp,
           proponente       = p_proponente,
-          titulo           = trim(p_titulo),
           prioridade       = p_prioridade,
           aviso_prox_conc  = p_aviso,
           dias_aviso       = p_dias,

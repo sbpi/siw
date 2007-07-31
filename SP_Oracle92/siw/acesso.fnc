@@ -490,7 +490,12 @@ begin
          from sg_tramite_pessoa a 
         where a.sq_pessoa          = p_usuario
           and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-          and a.sq_siw_tramite     = w_sq_siw_tramite;
+          and a.sq_siw_tramite     = w_sq_siw_tramite
+          and (w_sg_modulo <> 'PA' or
+               (w_sg_modulo = 'PA' and
+                0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+               )
+              );
        If w_existe > 0 Then Result := Result + 16; End If;
     Else
        If w_executor = p_usuario Then Result := Result + 16; End If;
@@ -506,7 +511,12 @@ begin
       from sg_tramite_pessoa a 
      where a.sq_pessoa          = p_usuario
        and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-       and a.sq_siw_tramite     = w_sq_siw_tramite;
+       and a.sq_siw_tramite     = w_sq_siw_tramite
+       and (w_sg_modulo <> 'PA' or
+            (w_sg_modulo = 'PA' and
+             0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+            )
+           );
     If w_existe > 0 and w_destinatario = 'N' Then 
        Result := Result + 16; 
     Else

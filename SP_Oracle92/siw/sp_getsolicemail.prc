@@ -13,7 +13,7 @@ begin
             case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
             b.fim-d.dias_aviso aviso, e.nome nm_unidade_resp, e.sigla sg_unidade_resp, 
             e4.nome nm_tit_resp, e3.email em_tit_resp, e6.nome nm_sub_resp, e5.email em_sub_resp, 
-            m.titulo nm_projeto, n.nome nm_cc, 
+            m1.titulo nm_projeto, n.nome nm_cc, 
             q.titulo nm_etapa, MontaOrdem(q.sq_projeto_etapa) cd_ordem,
             o.nome nm_solic, o1.email em_solic, 
             o.nome_resumido||' ('||o2.sigla||')' nm_resp, 
@@ -62,6 +62,7 @@ begin
                         left outer join or_acao_ppa        r2 on (r1.sq_acao_ppa_pai         = r2.sq_acao_ppa)
                       left outer join or_prioridade        r4 on (r.sq_orprioridade          = r4.sq_orprioridade)
                   left outer     join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                    left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                   left outer     join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                   left outer     join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                     inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
@@ -83,11 +84,11 @@ begin
             a6.nome nm_tit_exec, a5.email em_tit_exec, a8.nome nm_sub_exec, a7.email em_sub_exec, 
             b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao, b.inicio, b.fim, 
             b1.nome nm_tramite, b1.ordem or_tramite, b1.sigla sg_tramite,
-            d.titulo, d.aviso_prox_conc, d.dias_aviso, d.proponente,
+            b.titulo, d.aviso_prox_conc, d.dias_aviso, d.proponente,
             case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
             b.fim-d.dias_aviso aviso, e.nome nm_unidade_resp, e.sigla sg_unidade_resp, 
             e4.nome nm_tit_resp, e3.email em_tit_resp, e6.nome nm_sub_resp, e5.email em_sub_resp, 
-            d.titulo nm_projeto, n.nome nm_cc, 
+            b.titulo nm_projeto, n.nome nm_cc, 
             null nm_etapa, null cd_ordem,
             o.nome_resumido nm_solic, o1.email em_solic, 
             o.nome_resumido||' ('||o2.sigla||')' nm_resp,
@@ -118,10 +119,10 @@ begin
                   inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                   inner          join pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner        join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
-                      left outer join eo_unidade_resp e1 on (e.sq_unidade             = e1.sq_unidade and
-                                                             e1.tipo_respons          = 'T'           and
-                                                             e1.fim                   is null
-                                                            )
+                      left outer join eo_unidade_resp      e1 on (e.sq_unidade             = e1.sq_unidade and
+                                                                  e1.tipo_respons          = 'T'           and
+                                                                  e1.fim                   is null
+                                                                 )
                         left outer join sg_autenticacao    e3 on (e1.sq_pessoa              = e3.sq_pessoa)
                         left outer join co_pessoa          e4 on (e1.sq_pessoa              = e4.sq_pessoa)
                       left outer join eo_unidade_resp e2 on (e.sq_unidade             = e2.sq_unidade and
@@ -147,4 +148,3 @@ begin
             );
 end SP_GetSolicEmail;
 /
-

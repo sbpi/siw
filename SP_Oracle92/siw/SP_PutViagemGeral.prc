@@ -135,7 +135,7 @@ begin
       );
            
       -- Recupera o código interno  do acordo, gerado por trigger
-      select codigo_interno into p_codigo_interno from pd_missao where sq_siw_solicitacao = w_chave;
+      select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
 
       -- Se a demanda foi copiada de outra, grava os dados complementares
       If p_copia is not null Then
@@ -250,7 +250,7 @@ begin
          If w_existe = 0 Then
             w_sequencial := 1;
          Else
-            select Nvl(max(to_number(replace(replace(replace(b.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
+            select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
               into w_sequencial
               from siw_solicitacao        a
                      inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
@@ -261,7 +261,7 @@ begin
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
-         update pd_missao a set
+         update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          

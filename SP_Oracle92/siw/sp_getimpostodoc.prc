@@ -12,7 +12,7 @@ begin
              a.quitacao_retencao, a.quitacao_imposto, a.solic_retencao, a.solic_imposto,
              b.sq_lancamento_doc, b.valor vl_doc, b.data, b.numero, b.serie, b.patrimonio, 
              b.calcula_tributo,
-             c.cliente, c.codigo_interno,
+             c.cliente, d.codigo_interno,
              d.fim, d.conclusao, d.valor,
              e.sq_tipo_lancamento, e.nome nm_tipo_lancamento, e.descricao ds_tipo_lancamento, 
              e.receita, e.despesa, e.ativo at_tipo_lancamento,
@@ -35,4 +35,3 @@ begin
              inner     join fn_imposto         g on (a.sq_imposto         = g.sq_imposto);
 End SP_GetImpostoDoc;
 /
-

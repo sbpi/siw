@@ -5,7 +5,7 @@ create or replace procedure SP_GetPrograma
 begin
    -- Recupera os grupos de veículos
    open p_result for 
-         select a.sq_siw_solicitacao, a.codigo_interno, a.titulo nm_programa, 
+         select a.sq_siw_solicitacao, c.codigo_interno, c.titulo nm_programa, 
                 b.sq_plano, b.cliente, b.titulo nm_plano,
                 c.valor
            from pe_programa              a

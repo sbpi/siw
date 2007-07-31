@@ -49,13 +49,13 @@ begin
          cadastrador,        executor,           inicio,              fim,
          inclusao,           ultima_alteracao,   data_hora,           sq_unidade,
          sq_solic_pai,       sq_cidade_origem,   palavra_chave,       sq_peobjetivo,
-         valor)
+         valor,              titulo,             codigo_interno)
       (select 
          w_Chave,            p_menu,             a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,         p_inicio,            p_fim,
          sysdate,            sysdate,            p_data_hora,         p_unidade,
          p_solic_pai,        c.sq_cidade_padrao, p_parcerias,         p_objetivo,
-         p_valor
+         p_valor,            p_titulo,           p_codigo
          from siw_tramite              a
               inner   join siw_menu    b on (a.sq_menu   = b.sq_menu)
                 inner join siw_cliente c on (b.sq_pessoa = c.sq_pessoa)
@@ -66,12 +66,10 @@ begin
       -- Insere registro em pj_projeto
       insert into pe_programa
          ( sq_siw_solicitacao,  cliente,          sq_pehorizonte,    sq_penatureza, 
-           sq_unidade_resp,     codigo_interno,   titulo,            ln_programa,
-           aviso_prox_conc,     dias_aviso)
+           sq_unidade_resp,     ln_programa,      aviso_prox_conc,   dias_aviso)
       (select
            w_chave,             a.sq_pessoa,      p_horizonte,       p_natureza,
-           p_unid_resp,         p_codigo,         p_titulo,          p_ln_programa, 
-           p_aviso,             p_dias
+           p_unid_resp,         p_ln_programa,    p_aviso,           p_dias
          from siw_menu a
         where a.sq_menu = p_menu
       );
@@ -112,14 +110,14 @@ begin
           fim              = p_fim,
           valor            = p_valor,
           ultima_alteracao = sysdate,
+          codigo_interno   = p_codigo,
+          titulo           = trim(p_titulo),
           palavra_chave    = p_parcerias
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de projetos
       Update pe_programa set
-          codigo_interno   = p_codigo,
           sq_unidade_resp  = p_unid_resp,
-          titulo           = trim(p_titulo),
           ln_programa      = p_ln_programa,
           aviso_prox_conc  = p_aviso,
           dias_aviso       = p_dias

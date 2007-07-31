@@ -17,7 +17,7 @@ begin
                 b.tipo, b.nome nm_prestacao_contas,
                 case b.tipo when 'P' then 'Parcial' else 'Final' end as nm_tipo,
                 d.nome, c.inicio as solic_ini, c.fim as solic_fim,
-                e.titulo,
+                c.titulo,
                 f.nome_resumido
            from siw_contas_cronograma            a
                 inner   join ac_prestacao_contas b on (a.sq_prestacao_contas = b.sq_prestacao_contas)

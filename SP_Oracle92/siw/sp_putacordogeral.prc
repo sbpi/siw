@@ -72,13 +72,13 @@ begin
          cadastrador,        descricao,     justificativa,       inicio,
          fim,                inclusao,      ultima_alteracao,    valor,
          data_hora,          sq_unidade,    sq_cc,               sq_cidade_origem,
-         sq_solic_pai)
+         sq_solic_pai,       titulo,        codigo_interno)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,   p_justificativa,     p_inicio,
          p_fim,              sysdate,       sysdate,             p_valor,
          p_data_hora,        p_unid_resp,   p_sqcc,              p_cidade,
-         p_projeto
+         p_projeto,          p_titulo,      p_codigo
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -93,15 +93,13 @@ begin
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
-           processo,            assinatura,        publicacao,           codigo_interno,
-           vincula_projeto,     titulo
+           processo,            assinatura,        publicacao,           vincula_projeto
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
-           p_numero_processo,   p_assinatura,      p_publicacao,         p_codigo,
-           w_vincula_projeto,   p_titulo
+           p_numero_processo,   p_assinatura,      p_publicacao,         w_vincula_projeto
         from dual
       );
 
@@ -129,7 +127,7 @@ begin
       
       If p_codigo is null Then
          -- Recupera o código interno  do acordo, gerado por trigger
-         select codigo_interno into p_codigo_interno from ac_acordo where sq_siw_solicitacao = w_chave;
+         select codigo_interno into p_codigo_interno from siw_solicitacao where sq_siw_solicitacao = w_chave;
       Else
          p_codigo_interno := p_codigo;
       End If;
@@ -222,6 +220,7 @@ begin
          sq_unidade       = p_unid_resp,
          sq_cc            = p_sqcc,
          sq_cidade_origem = p_cidade,
+         titulo           = p_titulo,
          sq_solic_pai     = p_projeto
       where sq_siw_solicitacao = p_chave;
       
@@ -239,13 +238,12 @@ begin
           sq_forma_pagamento = p_sq_forma_pagamento ,
           empenho            = p_numero_empenho,
           processo           = p_numero_processo,
-          titulo             = p_titulo,
           assinatura         = p_assinatura,
           publicacao         = p_publicacao
       where sq_siw_solicitacao = p_chave;
       
       If p_codigo is not null Then
-         update ac_acordo set codigo_interno = p_codigo where sq_siw_solicitacao = p_chave;
+         update siw_solicitacao set codigo_interno = p_codigo where sq_siw_solicitacao = p_chave;
       End If;
       
       If Nvl(p_sq_tipo_pessoa,0) = 1 Then
@@ -359,15 +357,16 @@ begin
          Else
             select nvl(max(replace(translate(a.codigo_interno,'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'),'/'||w_ano,'')),0)+1
               into w_sequencial
-              from ac_acordo a
+              from siw_solicitacao      a
+                   inner join ac_acordo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
              where instr(a.codigo_interno,'/'||to_char(p_inicio,'yyyy')) > 0
-               and a.cliente                = p_cliente;
+               and b.cliente                = p_cliente;
          End If;
          
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
-         update ac_acordo a set
+         update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          
@@ -380,7 +379,7 @@ begin
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_reg.ano_corrente||Nvl(w_reg.sufixo,'');
 
          -- Atualiza o código interno do acordo para o sequencial encontrato
-         update ac_acordo a set
+         update siw_solicitacao a set
             codigo_interno = p_codigo_interno
          where a.sq_siw_solicitacao = w_chave;
          

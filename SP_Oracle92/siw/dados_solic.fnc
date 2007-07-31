@@ -30,45 +30,16 @@ create or replace function dados_solic(p_chave in number) return varchar2 is
             coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
             a2.sigla as sg_modulo,
             b.sq_siw_solicitacao,
-            coalesce(p1.codigo_interno, to_char(p2.sq_siw_solicitacao), to_char(p3.sq_siw_solicitacao), 
-                     pv.codigo,         pw.codigo,                      to_char(px.sq_siw_solicitacao), 
-                     py.codigo,         pz.codigo,                      to_char(b.sq_siw_solicitacao)
-                    ) as codigo,
-            coalesce(p1.titulo,         p2.titulo,                      p3.destino,
-                     pv.titulo,         pw.titulo,                      px.assunto,
-                     py.titulo,         pz.titulo,                      coalesce(b.descricao,b.justificativa)
-                    ) as titulo
+            coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo,
+            coalesce(b.titulo, c.destino, d.assunto, b.descricao, b.justificativa) as titulo
        from siw_menu                             a
             left  join siw_menu                  a1 on (a.sq_menu             = a1.sq_menu_pai and
                                                         a1.sigla              like '%VISUAL%'
                                                        )
             inner join siw_modulo                a2 on (a.sq_modulo           = a2.sq_modulo)
             inner join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
-            left  join pe_programa               p1  on (b.sq_siw_solicitacao = p1.sq_siw_solicitacao)
-            left  join pj_projeto                p2  on (b.sq_siw_solicitacao = p2.sq_siw_solicitacao)
-            left  join sr_solicitacao_transporte p3  on (b.sq_siw_solicitacao = p3.sq_siw_solicitacao)
-            left  join (select x.sq_siw_solicitacao as chave, 
-                               x.prefixo||'.'||substr(1000000+x.numero_documento,2,6)||'/'||x.ano||'-'||substr(100+x.digito,2,2) as codigo,
-                               y.descricao as titulo
-                          from pa_documento           x
-                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                       )                         pv  on (b.sq_siw_solicitacao = pv.chave)
-            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno as codigo, y.descricao as titulo
-                          from pd_missao              x
-                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                       )                         pw  on (b.sq_siw_solicitacao = pw.chave)
-            left  join gd_demanda                px  on (b.sq_siw_solicitacao = px.sq_siw_solicitacao)
-            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno as codigo, y.descricao as titulo
-                          from fn_lancamento          x
-                               join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                       )                         py  on (b.sq_siw_solicitacao = py.chave)
-            left  join (select x.sq_siw_solicitacao as chave, x.codigo_interno as codigo,
-                               coalesce(x.titulo, w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')') as titulo
-                          from ac_acordo                     x
-                               left   join   co_pessoa       w on (x.outra_parte        = w.sq_pessoa)
-                               inner  join   siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                 left join ct_cc             z on (y.sq_cc              = z.sq_cc)
-                       )                         pz  on (b.sq_siw_solicitacao = pz.chave)
+            left  join sr_solicitacao_transporte c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+            left  join gd_demanda                d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
       where b.sq_siw_solicitacao = p_chave;
 begin
   if p_chave is not null then

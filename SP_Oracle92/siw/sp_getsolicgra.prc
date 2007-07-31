@@ -82,7 +82,7 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 d2.nome nm_envolv,
-                m.titulo nm_projeto,
+                m1.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic,
                 p.nome_resumido nm_exec
@@ -96,6 +96,7 @@ begin
                           inner join eo_unidade         d2 on (d1.sq_unidade              = d2.sq_unidade)
                       inner   join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left outer join pj_projeto        m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                        left     join siw_solicitacao   m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                       left outer join ct_cc             n  on (b.sq_cc                    = n.sq_cc)
                       left outer join co_pessoa         o  on (b.solicitante              = o.sq_pessoa)
                       left outer join co_pessoa         p  on (b.executor                 = p.sq_pessoa)
@@ -162,7 +163,7 @@ begin
                 b1.sigla sg_tramite,  b1.ativo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
-                d.sq_unidade_resp,    d.titulo,                      d.prioridade,
+                d.sq_unidade_resp,    b.titulo,                      d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
@@ -172,30 +173,31 @@ begin
                 e.vinculada vinc_resp,e.adm_central adm_resp,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 d2.nome nm_envolv,
-                m.titulo nm_projeto,
+                m1.titulo nm_projeto,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic,
                 p.nome_resumido nm_exec
            from siw_menu             a 
-                   inner      join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
-                   inner      join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
-                      inner   join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner   join pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
-                        inner join pj_projeto_envolv    d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
-                          inner join eo_unidade         d2 on (d1.sq_unidade              = d2.sq_unidade)
-                      inner   join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
-                      left outer join pj_projeto        m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
-                      left outer join ct_cc             n  on (b.sq_cc                    = n.sq_cc)
-                      left outer join co_pessoa         o  on (b.solicitante              = o.sq_pessoa)
-                      left outer join co_pessoa         p  on (b.executor                 = p.sq_pessoa)
-                   left outer join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                   inner      join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
-                                      from siw_solic_log
-                                    group by sq_siw_solicitacao
-                                   )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                     left outer join pj_projeto_log     k  on (j.chave                    = k.sq_siw_solic_log)
-                       left outer join sg_autenticacao  l  on (k.destinatario             = l.sq_pessoa)
+                   inner        join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                   inner        join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
+                      inner     join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                      inner     join pj_projeto           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                        inner   join eo_unidade           e  on (d.sq_unidade_resp          = e.sq_unidade)
+                        inner   join pj_projeto_envolv    d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                          inner join eo_unidade           d2 on (d1.sq_unidade              = d2.sq_unidade)
+                      inner     join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                      left      join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
+                        left    join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
+                      left      join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
+                      left      join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                      left      join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                   left         join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                   inner        join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
+                                        from siw_solic_log
+                                      group by sq_siw_solicitacao
+                                     )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                     left       join pj_projeto_log       k  on (j.chave                    = k.sq_siw_solic_log)
+                       left     join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -206,7 +208,7 @@ begin
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and b.fim-sysdate+1 <=p_prazo))
