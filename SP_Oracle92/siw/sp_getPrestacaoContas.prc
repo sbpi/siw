@@ -133,8 +133,8 @@ begin
                            ) d on (a.sq_prestacao_contas = d.sq_prestacao_contas)
           where a.cliente     = p_cliente
             and a.sq_prestacao_pai is null
+            and e.sq_contas_cronograma = p_chave_pai
             and (p_chave      is null or (p_chave     is not null and a.sq_prestacao_contas  = p_chave))
-            and (p_chave_pai  is null or (p_chave_pai is not null and e.sq_contas_cronograma = p_chave_pai))
             and (p_nome       is null or (p_nome      is not null and a.nome                 = p_nome))
             and (p_tipo       is null or (p_tipo      is not null and a.tipo                 = p_tipo))
             and (p_ativo      is null or (p_ativo     is not null and a.ativo                = p_ativo))

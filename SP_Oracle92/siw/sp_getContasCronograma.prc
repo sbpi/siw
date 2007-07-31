@@ -24,7 +24,7 @@ begin
                 inner   join siw_solicitacao     c on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
                   left  join pj_projeto          e on (c.sq_siw_solicitacao  = e.sq_siw_solicitacao)
                   inner join siw_menu            d on (c.sq_menu             = d.sq_menu)
-                inner   join co_pessoa           f on (a.sq_pessoa_atualizacao = f.sq_pessoa)
+                left    join co_pessoa           f on (a.sq_pessoa_atualizacao = f.sq_pessoa)
           where ((p_chave             is null) or (p_chave             is not null and a.sq_contas_cronograma = p_chave))
             and ((p_siw_solicitacao   is null) or (p_siw_solicitacao   is not null and a.sq_siw_solicitacao   = p_siw_solicitacao))
             and ((p_prestacao_contas  is null) or (p_prestacao_contas  is not null and a.sq_prestacao_contas  = p_prestacao_contas))
