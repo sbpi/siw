@@ -93,13 +93,13 @@ begin
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
-           processo,            assinatura,        publicacao,           vincula_projeto
+           processo,            vincula_projeto
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
-           p_numero_processo,   p_assinatura,      p_publicacao,         w_vincula_projeto
+           p_numero_processo,   w_vincula_projeto
         from dual
       );
 
@@ -237,9 +237,7 @@ begin
           dias_aviso         = p_dias,
           sq_forma_pagamento = p_sq_forma_pagamento ,
           empenho            = p_numero_empenho,
-          processo           = p_numero_processo,
-          assinatura         = p_assinatura,
-          publicacao         = p_publicacao
+          processo           = p_numero_processo
       where sq_siw_solicitacao = p_chave;
       
       If p_codigo is not null Then

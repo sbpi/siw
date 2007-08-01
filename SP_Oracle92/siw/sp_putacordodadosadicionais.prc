@@ -29,7 +29,6 @@ begin
       sq_especificacao_despesa = p_espec_despesa,
       sq_lcmodalidade          = p_sq_lcmodalidade,
       empenho                  = p_numero_empenho,
-      processo                 = p_numero_processo,
       assinatura               = p_assinatura,
       publicacao               = p_publicacao,
       financeiro_unico         = p_financeiro_unico
