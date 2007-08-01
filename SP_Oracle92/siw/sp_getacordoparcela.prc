@@ -18,12 +18,12 @@ begin
          select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 a.sq_acordo_aditivo, a.valor_inicial, a.valor_excedente, a.valor_reajuste,
-                b.sq_siw_solicitacao sq_lancamento, e.codigo_interno cd_lancamento, 
+                b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
                 b.vencimento dt_lancamento, b.valor vl_lancamento, b.sg_tramite fn_tramite,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao
            from ac_acordo_parcela                  a
                 left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
-                                      x.vencimento, 
+                                      y.codigo_interno, x.vencimento, 
                                       z.sigla sg_tramite
                                  from fn_lancamento                x
                                       inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -35,7 +35,6 @@ begin
                                                          a.sq_siw_solicitacao = c.sq_siw_solicitacao
                                                         )
                 inner    join ac_acordo            d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                  inner  join siw_solicitacao      e on (d.sq_siw_solicitacao = e.sq_siw_solicitacao)
           where (p_chave             is null or (p_chave             is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_aditivo           is null or (p_aditivo           is not null and c.sq_acordo_aditivo  = p_aditivo))
