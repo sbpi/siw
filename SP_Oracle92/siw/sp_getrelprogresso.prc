@@ -163,6 +163,101 @@ begin
             and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
             and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
             and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)));
-  End If;
+  ElsIf p_restricao = 'REL_ATUAL' Then
+      open p_result for 
+         select distinct '1.ETAPA' as bloco, a.sq_siw_solicitacao as sq_projeto,
+                e1.titulo as nm_projeto, e1.codigo_interno, 
+                to_char(h.ultima_atualizacao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_atualizacao, 
+                i.sq_pessoa, i.nome, i.nome_resumido,
+                acentos(e1.titulo) as ordena
+           from siw_solicitacao                   a
+                inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
+                inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
+                  left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
+                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
+                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
+                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
+                left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
+                                    from pj_projeto_etapa x
+                                  group by sq_siw_solicitacao
+                                 )                g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                  left      join pj_projeto_etapa h  on (g.sq_siw_solicitacao = h.sq_siw_solicitacao and
+                                                         g.ultima_atualizacao = h.ultima_atualizacao
+                                                        )
+                    left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
+          where d.sq_pessoa      = p_cliente
+            and 'CA'             <> coalesce(f.sigla,'-')
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
+            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
+            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)))
+         UNION
+         select distinct '2.RISCO' as bloco, a.sq_siw_solicitacao as sq_projeto,
+                e1.titulo as nm_projeto, e1.codigo_interno, 
+                to_char(h.ultima_atualizacao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_atualizacao, 
+                i.sq_pessoa, i.nome, i.nome_resumido,
+                acentos(e1.titulo) as ordena
+           from siw_solicitacao                   a
+                inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
+                inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
+                  left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
+                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
+                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
+                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
+                left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
+                                    from siw_restricao x
+                                   where x.risco = 'S'
+                                  group by sq_siw_solicitacao
+                                 )                g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                  left      join siw_restricao    h  on (g.sq_siw_solicitacao = h.sq_siw_solicitacao and
+                                                         g.ultima_atualizacao = h.ultima_atualizacao
+                                                        )
+                    left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
+          where d.sq_pessoa      = p_cliente
+            and 'CA'             <> coalesce(f.sigla,'-')
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
+            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
+            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)))
+         UNION
+         select distinct '3.PROBLEMA' as bloco, a.sq_siw_solicitacao as sq_projeto,
+                e1.titulo as nm_projeto, e1.codigo_interno, 
+                to_char(h.ultima_atualizacao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_atualizacao, 
+                i.sq_pessoa, i.nome, i.nome_resumido,
+                acentos(e1.titulo) as ordena
+           from siw_solicitacao                   a
+                inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
+                inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
+                  left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
+                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
+                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
+                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
+                left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
+                                    from siw_restricao x
+                                   where x.problema = 'S'
+                                  group by sq_siw_solicitacao
+                                 )                g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                  left      join siw_restricao    h  on (g.sq_siw_solicitacao = h.sq_siw_solicitacao and
+                                                         g.ultima_atualizacao = h.ultima_atualizacao
+                                                        )
+                    left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
+          where d.sq_pessoa      = p_cliente
+            and 'CA'             <> coalesce(f.sigla,'-')
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
+            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
+            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)));  End If;
 end SP_GetRelProgresso;
 /
