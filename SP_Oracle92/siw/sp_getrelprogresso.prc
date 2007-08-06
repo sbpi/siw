@@ -89,14 +89,13 @@ begin
                 c1.sq_pessoa as resp_projeto, c1.nome_resumido as nm_resp_projeto, 
                 c3.titulo as nm_programa,
                 c7.nome as nm_cc, 
-                case when c4.sq_peobjetivo is not null then c4.nome else c5.nome end as nm_objetivo,
                 e.sq_siw_solicitacao, 
                 f.assunto as nm_tarefa, f.fim_real, 
                 g.solicitante, 
                 i.nome_resumido as nm_resp_tarefa, i.nome_resumido,
                 g.inicio, 
                 h.nome_resumido as nm_resp_etapa, 
-                case when k.sq_plano is not null then k.titulo else c6.titulo end as nm_plano, 
+                case when c4.sq_plano is not null then c4.titulo else c5.titulo end as nm_plano, 
                 m1.sq_unidade, m1.nome as nm_unidade,
                 calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao, w_fim) as ide,
                 calculaIGC(c.sq_siw_solicitacao) as igc, calculaIDC(c.sq_siw_solicitacao, w_fim) as idc
@@ -113,10 +112,8 @@ begin
                   inner       join siw_menu         d  on (c.sq_menu             = d.sq_menu)
                   left        join pe_programa      c2 on (c.sq_solic_pai        = c2.sq_siw_solicitacao)
                     left      join siw_solicitacao  c3 on (c2.sq_siw_solicitacao = c3.sq_siw_solicitacao)
-                      left    join pe_objetivo      c4 on (c3.sq_peobjetivo      = c4.sq_peobjetivo)
-                        left  join pe_plano         k  on (c4.sq_plano           = k.sq_plano)
-                  left        join pe_objetivo      c5 on (c.sq_peobjetivo       = c5.sq_peobjetivo)
-                    left      join pe_plano         c6 on (c5.sq_plano           = c6.sq_plano)
+                      left    join pe_plano         c4 on (c3.sq_plano           = c4.sq_plano)
+                  left        join pe_plano         c5 on (c.sq_plano            = c5.sq_plano)
                   left        join ct_cc            c7 on (c.sq_cc               = c7.sq_cc)
                 left          join pj_etapa_demanda e  on (a.sq_projeto_etapa    = e.sq_projeto_etapa)
                   left        join gd_demanda       f  on (e.sq_siw_solicitacao  = f.sq_siw_solicitacao)
@@ -127,7 +124,19 @@ begin
           where d.sq_pessoa      = p_cliente
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and c.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and (c.sq_peobjetivo     = p_objetivo or c3.sq_peobjetivo = p_objetivo)))
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao_objetivo
+                                                                                 where (sq_siw_solicitacao = c.sq_siw_solicitacao and
+                                                                                        sq_plano           = c.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                                    or (sq_siw_solicitacao = c3.sq_siw_solicitacao and
+                                                                                        sq_plano           = c3.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                               )
+                                            )
+                )
             and (p_plano         is null or (p_plano       is not null and (c4.sq_plano         = p_plano    or c5.sq_plano      = p_plano)))
             and (p_chave         is not null or 
                  (p_chave        is null and
@@ -146,23 +155,31 @@ begin
       open p_result for 
          select distinct a.sq_siw_solicitacao as sq_projeto,
                 e1.titulo as nm_projeto, e1.codigo_interno
-           from siw_solicitacao  a
+           from siw_solicitacao                   a
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
                   inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
                 inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
-                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
-                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
-                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
           where d.sq_pessoa      = p_cliente
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
-            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)));
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao_objetivo
+                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
+                                                                                        sq_plano           = a.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
+                                                                                        sq_plano           = b1.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                               )
+                                            )
+                )
+            and (p_plano         is null or (p_plano       is not null and (b1.sq_plano          = p_plano    or a.sq_plano = p_plano)));
   ElsIf p_restricao = 'REL_ATUAL' Then
       open p_result for 
          select distinct '1.ETAPA' as bloco, a.sq_siw_solicitacao as sq_projeto,
@@ -177,10 +194,6 @@ begin
                 inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
-                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
-                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
-                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
                                     from pj_projeto_etapa x
                                   group by sq_siw_solicitacao
@@ -193,8 +206,20 @@ begin
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
-            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)))
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao_objetivo
+                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
+                                                                                        sq_plano           = a.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
+                                                                                        sq_plano           = b1.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                               )
+                                            )
+                )
+            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)))
          UNION
          select distinct '2.RISCO' as bloco, a.sq_siw_solicitacao as sq_projeto,
                 e1.titulo as nm_projeto, e1.codigo_interno, 
@@ -208,10 +233,6 @@ begin
                 inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
-                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
-                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
-                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
                                     from siw_restricao x
                                    where x.risco = 'S'
@@ -225,8 +246,20 @@ begin
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
-            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)))
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao_objetivo
+                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
+                                                                                        sq_plano           = a.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
+                                                                                        sq_plano           = b1.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                               )
+                                            )
+                )
+            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)))
          UNION
          select distinct '3.PROBLEMA' as bloco, a.sq_siw_solicitacao as sq_projeto,
                 e1.titulo as nm_projeto, e1.codigo_interno, 
@@ -240,10 +273,6 @@ begin
                 inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
-                  left      join pe_objetivo      b2 on (b1.sq_peobjetivo     = b2.sq_peobjetivo)
-                  left      join pe_plano         b3 on (b2.sq_plano          = b3.sq_plano)
-                left        join pe_objetivo      c  on (a.sq_peobjetivo      = c.sq_peobjetivo)
-                  left      join pe_plano         c1 on (c.sq_plano           = c1.sq_plano)
                 left        join (select sq_siw_solicitacao, max(x.ultima_atualizacao) as ultima_atualizacao
                                     from siw_restricao x
                                    where x.problema = 'S'
@@ -257,7 +286,20 @@ begin
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and (a.sq_peobjetivo      = p_objetivo or b1.sq_peobjetivo = p_objetivo)))
-            and (p_plano         is null or (p_plano       is not null and (b2.sq_plano          = p_plano    or c.sq_plano = p_plano)));  End If;
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao_objetivo
+                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
+                                                                                        sq_plano           = a.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
+                                                                                        sq_plano           = b1.sq_plano and
+                                                                                        sq_peobjetivo      = p_objetivo
+                                                                                       )
+                                                                               )
+                                            )
+                )
+            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)));
+  End If;
 end SP_GetRelProgresso;
 /

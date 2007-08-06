@@ -27,11 +27,11 @@ begin
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
-                left join (select sq_plano, count(sq_siw_solicitacao) as qtd
-                             from pe_objetivo x 
-                                  inner join siw_solicitacao y on (x.sq_peobjetivo = y.sq_peobjetivo)
+                left join (select x.sq_plano, count(sq_siw_solicitacao) as qtd
+                             from pe_plano x 
+                                  inner join siw_solicitacao y on (x.sq_plano = y.sq_plano)
                             where cliente = p_cliente 
-                           group by sq_plano
+                           group by x.sq_plano
                           ) d on (a.sq_plano = d.sq_plano)
                 left join (select y.sq_plano, count(x.sq_menu) as qtd
                              from pe_plano_menu       x 
@@ -48,11 +48,11 @@ begin
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
-                left join (select sq_plano, count(sq_siw_solicitacao) as qtd
-                             from pe_objetivo x 
-                                  inner join siw_solicitacao y on (x.sq_peobjetivo = y.sq_peobjetivo)
+                left join (select x.sq_plano, count(sq_siw_solicitacao) as qtd
+                             from pe_plano x 
+                                  inner join siw_solicitacao y on (x.sq_plano = y.sq_plano)
                             where cliente = p_cliente 
-                           group by sq_plano
+                           group by x.sq_plano
                           ) d on (a.sq_plano = d.sq_plano)
                 left join (select y.sq_plano, count(x.sq_menu) as qtd
                              from pe_plano_menu       x 
@@ -149,11 +149,11 @@ begin
                                where cliente = p_cliente 
                               group by sq_plano
                              ) c on (a.sq_plano = c.sq_plano)
-                   left join (select sq_plano, count(sq_siw_solicitacao) as qtd
-                                from pe_objetivo x 
-                                     inner join siw_solicitacao y on (x.sq_peobjetivo = y.sq_peobjetivo)
+                   left join (select x.sq_plano, count(sq_siw_solicitacao) as qtd
+                                from pe_plano x 
+                                     inner join siw_solicitacao y on (x.sq_plano = y.sq_plano)
                                where cliente = p_cliente 
-                              group by sq_plano
+                              group by x.sq_plano
                              ) d on (a.sq_plano = d.sq_plano)
              where a.cliente      = p_cliente
                and a.sq_plano_pai is null
@@ -183,11 +183,11 @@ begin
                                where cliente = p_cliente 
                               group by sq_plano
                              ) c on (a.sq_plano = c.sq_plano)
-                   left join (select sq_plano, count(sq_siw_solicitacao) as qtd
-                                from pe_objetivo x 
-                                     inner join siw_solicitacao y on (x.sq_peobjetivo = y.sq_peobjetivo)
+                   left join (select x.sq_plano, count(sq_siw_solicitacao) as qtd
+                                from pe_plano x 
+                                     inner join siw_solicitacao y on (x.sq_plano = y.sq_plano)
                                where cliente = p_cliente 
-                              group by sq_plano
+                              group by x.sq_plano
                              ) d on (a.sq_plano = d.sq_plano)
              where a.cliente      = p_cliente
                and a.sq_plano_pai = p_restricao

@@ -30,9 +30,9 @@ begin
                 b.palavra_chave,
                 b.fim-d.dias_aviso aviso,
                 case when b.sq_solic_pai is null 
-                     then case when b3.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b4.titulo
+                               else 'Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -74,8 +74,7 @@ begin
                 inner        join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner        join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
                   inner      join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
-                  left       join pe_objetivo               b3 on (b.sq_peobjetivo       = b3.sq_peobjetivo)
-                    left     join pe_plano                  b4 on (b3.sq_plano           = b4.sq_plano)
+                  left     join pe_plano                    b3 on (b.sq_plano            = b3.sq_plano)
                   left       join eo_unidade                b5 on (b.sq_unidade          = b5.sq_unidade)
                   inner      join gd_demanda                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
                     left     join gd_demanda_tipo           d1 on (d.sq_demanda_tipo     = d1.sq_demanda_tipo)
@@ -125,19 +124,18 @@ begin
                 b.codigo_interno,     b.codigo_externo,              b.titulo,
                 b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) meses_projeto,
                 case when b.sq_solic_pai is null 
-                     then case when b4.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b5.titulo
+                               else 'Plano: '||b2.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
-                b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
-                b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
-                b3.sq_plano_pai,      b3.titulo nm_plano,            b3.missao, 
-                b3.valores,           b3.visao_presente,             b3.visao_futuro, 
-                b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
+                b2.sq_plano,          b2.sq_plano_pai,               b2.titulo nm_plano,
+                b2.missao,            b2.valores,                    b2.visao_presente,
+                b2.visao_futuro,      b2.inicio inicio_plano,        b2.fim vim_plano,
+                b2.ativo st_plano,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.prioridade,
@@ -199,10 +197,7 @@ begin
                 inner              join siw_modulo           a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner              join siw_solicitacao      b  on (a.sq_menu             = b.sq_menu)
                   inner            join siw_tramite          b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
-                  left             join pe_objetivo          b2 on (b.sq_peobjetivo       = b2.sq_peobjetivo)
-                    left           join pe_plano             b3 on (b2.sq_plano           = b3.sq_plano)
-                    left           join pe_objetivo          b4 on (b.sq_peobjetivo       = b4.sq_peobjetivo)
-                      left         join pe_plano             b5 on (b4.sq_plano           = b5.sq_plano)
+                  left             join pe_plano             b2 on (b.sq_plano            = b2.sq_plano)
                   inner            join pj_projeto           d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
                       left         join co_pessoa            d1 on (d.outra_parte         = d1.sq_pessoa)
                       left         join co_cidade            d2 on (d.sq_cidade           = d2.sq_cidade)
@@ -273,9 +268,9 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 case when b.sq_solic_pai is null 
-                     then case when b3.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b4.titulo
+                               else 'Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -350,8 +345,7 @@ begin
                 inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                    left          join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
-                      left        join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
+                   left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                    inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                      inner        join ac_tipo_acordo       d1 on (d.sq_tipo_acordo           = d1.sq_tipo_acordo)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
@@ -438,9 +432,9 @@ begin
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,
                 case when b.sq_solic_pai is null 
-                     then case when b3.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b4.titulo
+                               else 'Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -500,8 +494,7 @@ begin
                 inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                    left          join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
-                      left        join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
+                   left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                    inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
@@ -596,9 +589,9 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 case when b.sq_solic_pai is null 
-                     then case when b3.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b4.titulo
+                               else 'Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -654,8 +647,7 @@ begin
                   inner                join siw_modulo                 a1 on (a.sq_modulo                = a1.sq_modulo)
                   inner                join siw_solicitacao            b  on (a.sq_menu                  = b.sq_menu)
                     inner              join siw_tramite                b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                    left               join pe_objetivo                b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
-                      left             join pe_plano                   b4 on (b3.sq_plano                = b4.sq_plano)
+                    left               join pe_plano                   b3 on (b.sq_plano                 = b3.sq_plano)
                     inner              join gd_demanda                 d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner            join pd_missao                  d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
                         inner          join siw_solicitacao           d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
@@ -719,9 +711,9 @@ begin
                 to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
                 case when b.sq_solic_pai is null 
-                     then case when b4.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b5.titulo
+                               else 'Plano: '||b4.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -771,8 +763,7 @@ begin
                   left       join siw_opiniao               b2 on (b.opiniao             = b2.sq_siw_opiniao)
                   left       join sr_solicitacao_transporte b3 on (b.sq_siw_solicitacao  = b3.sq_siw_solicitacao)
                     left     join sr_veiculo                l  on (b3.sq_veiculo         = l.sq_veiculo)
-                  left       join pe_objetivo               b4 on (b.sq_peobjetivo       = b4.sq_peobjetivo)
-                    left     join pe_plano                  b5 on (b4.sq_plano           = b5.sq_plano)
+                  left       join pe_plano                  b4 on (b.sq_plano            = b4.sq_plano)
                   inner      join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)
                     left     join eo_unidade_resp           e1 on (e.sq_unidade          = e1.sq_unidade and
                                                                    e1.tipo_respons       = 'T'           and
@@ -814,19 +805,18 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.observacao,
                 case when b.sq_solic_pai is null 
-                     then case when b2.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b3.titulo
+                               else 'Plano: '||b2.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
-                b2.sq_peobjetivo,     b2.sq_plano,                   b2.nome nm_objetivo, 
-                b2.sigla sg_objetivo, b2.descricao ds_objetivo,      b2.ativo st_objetivo,
-                b3.sq_plano_pai,      b3.titulo nm_plano,            b3.missao, 
-                b3.valores,           b3.visao_presente,             b3.visao_futuro, 
-                b3.inicio inicio_plano,b3.fim vim_plano,             b3.ativo st_plano,
+                b2.sq_plano,          b2.sq_plano_pai,               b2.titulo as nm_plano,
+                b2.missao,            b2.valores,                    b2.visao_presente,
+                b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
+                b2.ativo as st_plano,
                 b4.sq_unidade sq_unidade_adm, b4.nome nm_unidade_adm, b4.sigla sg_unidade_adm,
                 b5.sq_pessoa tit_adm, b6.sq_pessoa subst_adm,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -864,8 +854,7 @@ begin
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join pe_objetivo          b2 on (b.sq_peobjetivo            = b2.sq_peobjetivo)
-                        inner        join pe_plano             b3 on (b2.sq_plano                = b3.sq_plano)
+                      inner          join pe_plano             b2 on (b.sq_plano                 = b2.sq_plano)
                       inner          join eo_unidade           b4 on (b.sq_unidade               = b4.sq_unidade)
                         left         join eo_unidade_resp      b5 on (b4.sq_unidade              = b5.sq_unidade and
                                                                       b5.tipo_respons            = 'T'           and
@@ -926,9 +915,9 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
                 case when b.sq_solic_pai is null 
-                     then case when b6.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then '---'
-                               else 'Plano: '||b7.titulo
+                               else 'Plano: '||b6.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -991,8 +980,7 @@ begin
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       inner          join co_cidade                b4 on (b.sq_cidade_origem         = b4.sq_cidade)
                         inner        join co_pais                  b5 on (b4.sq_pais                 = b5.sq_pais)
-                      left           join pe_objetivo              b6 on (b.sq_peobjetivo            = b6.sq_peobjetivo)
-                        left         join pe_plano                 b7 on (b6.sq_plano                = b7.sq_plano)
+                      left           join pe_plano                 b6 on (b.sq_plano                 = b6.sq_plano)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)

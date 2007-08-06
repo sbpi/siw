@@ -8,7 +8,7 @@ create or replace procedure SP_PutProjetoGeral
     p_proponente          in varchar2  default null,
     p_cadastrador         in number    default null,
     p_executor            in number    default null,
-    p_objetivo            in number    default null,
+    p_plano               in number    default null,
     p_sqcc                in number    default null,
     p_solic_pai           in number    default null,
     p_descricao           in varchar2  default null,
@@ -99,14 +99,14 @@ begin
          inicio,             fim,           inclusao,            ultima_alteracao,
          conclusao,          valor,         opiniao,             data_hora,
          sq_unidade,         sq_cc,         sq_solic_pai,        sq_cidade_origem,
-         palavra_chave,      sq_peobjetivo, codigo_interno,      titulo)
+         palavra_chave,      sq_plano,      codigo_interno,      titulo)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_descricao,         p_justificativa,
          p_inicio,           p_fim,         sysdate,             sysdate,
          null,               p_valor,       null,                p_data_hora,
          p_unidade,          p_sqcc,        p_solic_pai,         p_cidade,
-         p_palavra_chave,    p_objetivo,    p_codigo,            p_titulo
+         p_palavra_chave,    p_plano,       p_codigo,            p_titulo
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -301,7 +301,7 @@ begin
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
-          sq_peobjetivo    = p_objetivo,
+          sq_plano         = p_plano,
           codigo_interno   = p_codigo,
           titulo           = trim(p_titulo),
           sq_cc            = p_sqcc,

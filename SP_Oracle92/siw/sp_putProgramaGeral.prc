@@ -3,7 +3,8 @@ create or replace procedure sp_putProgramaGeral
     p_chave               in number    default null,
     p_copia               in number    default null,
     p_menu                in number,
-    p_objetivo            in number    default null,
+    p_plano               in number    default null,
+    p_objetivo            in varchar2  default null,
     p_codigo              in varchar2  default null,
     p_titulo              in varchar2  default null,
     p_unidade             in number    default null,
@@ -24,11 +25,13 @@ create or replace procedure sp_putProgramaGeral
     p_dias                in number    default null,
     p_chave_nova          out number
    ) is
-   w_arq     varchar2(4000) := ', ';
-   w_chave   number(18);
-   w_log_sol number(18);
-   w_log_esp number(18);
-   w_ativ    number(18);
+   w_arq       varchar2(4000) := ', ';
+   w_chave     number(18);
+   w_log_sol   number(18);
+   w_log_esp   number(18);
+   w_ativ      number(18);
+   w_item      varchar2(18);
+   w_objetivo  varchar2(200) := p_objetivo ||',';
 
    cursor c_recursos is
      select * from pj_projeto_recurso where sq_siw_solicitacao = p_copia;
@@ -48,13 +51,13 @@ begin
          sq_siw_solicitacao, sq_menu,            sq_siw_tramite,      solicitante, 
          cadastrador,        executor,           inicio,              fim,
          inclusao,           ultima_alteracao,   data_hora,           sq_unidade,
-         sq_solic_pai,       sq_cidade_origem,   palavra_chave,       sq_peobjetivo,
+         sq_solic_pai,       sq_cidade_origem,   palavra_chave,       sq_plano,
          valor,              titulo,             codigo_interno)
       (select 
          w_Chave,            p_menu,             a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,         p_inicio,            p_fim,
          sysdate,            sysdate,            p_data_hora,         p_unidade,
-         p_solic_pai,        c.sq_cidade_padrao, p_parcerias,         p_objetivo,
+         p_solic_pai,        c.sq_cidade_padrao, p_parcerias,         p_plano,
          p_valor,            p_titulo,           p_codigo
          from siw_tramite              a
               inner   join siw_menu    b on (a.sq_menu   = b.sq_menu)
@@ -63,7 +66,7 @@ begin
           and a.sigla   = 'CI'
       );
       
-      -- Insere registro em pj_projeto
+      -- Insere registro em pe_programa
       insert into pe_programa
          ( sq_siw_solicitacao,  cliente,          sq_pehorizonte,    sq_penatureza, 
            sq_unidade_resp,     ln_programa,      aviso_prox_conc,   dias_aviso)
@@ -104,7 +107,7 @@ begin
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           sq_solic_pai     = p_solic_pai,
-          sq_peobjetivo    = p_objetivo,
+          sq_plano         = p_plano,
           solicitante      = p_solicitante,
           inicio           = p_inicio,
           fim              = p_fim,
@@ -199,6 +202,20 @@ begin
          -- Remove o registro na tabela de solicitações
          delete siw_solicitacao where sq_siw_solicitacao = p_chave;
       End If;
+   End If;
+   
+   If p_operacao in ('I','A') and p_objetivo is not null Then
+      -- Remove as vinculações existentes para a solicitação
+      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
+      -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
+      Loop
+         w_item  := Trim(substr(w_objetivo,1,Instr(w_objetivo,',')-1));
+         If Length(w_item) > 0 Then
+            insert into siw_solicitacao_objetivo(sq_siw_solicitacao, sq_plano, sq_peobjetivo) values (coalesce(w_chave,p_chave), p_plano, to_number(w_item));
+         End If;
+         w_objetivo := substr(w_objetivo,Instr(w_objetivo,',')+1,200);
+         Exit when w_objetivo is null;
+      End Loop;
    End If;
    
    -- Devolve a chave
