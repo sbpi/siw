@@ -9,6 +9,7 @@ create or replace procedure SP_PutProjetoGeral
     p_cadastrador         in number    default null,
     p_executor            in number    default null,
     p_plano               in number    default null,
+    p_objetivo            in varchar2  default null,    
     p_sqcc                in number    default null,
     p_solic_pai           in number    default null,
     p_descricao           in varchar2  default null,
@@ -36,13 +37,15 @@ create or replace procedure SP_PutProjetoGeral
     p_sq_tipo_pessoa      in varchar2  default null,
     p_chave_nova          out number
    ) is
-   w_arq     varchar2(4000) := ', ';
-   w_chave   number(18);
-   w_chave1  number(18);
-   w_log_sol number(18);
-   w_log_esp number(18);
-   w_ativ    number(18);
-   i         number(10) := 0;
+   w_arq       varchar2(4000) := ', ';
+   w_chave     number(18);
+   w_chave1    number(18);
+   w_log_sol   number(18);
+   w_log_esp   number(18);
+   w_ativ      number(18);
+   i           number(10) := 0;
+   w_item      varchar2(18);   
+   w_objetivo  varchar2(200) := p_objetivo ||',';   
 
    type tb_risco_pai is table of number(10) index by binary_integer;
    w_risco_pai tb_risco_pai;
@@ -454,6 +457,26 @@ begin
       End If;
    End If;
 
+   -- Devolve a chave
+   If p_chave is not null
+      Then p_chave_nova := p_chave;
+      Else p_chave_nova := w_chave;
+   End If;
+
+   If p_operacao in ('I','A') and p_objetivo is not null Then
+      -- Remove as vinculações existentes para a solicitação
+      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
+      -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
+      Loop
+         w_item  := Trim(substr(w_objetivo,1,Instr(w_objetivo,',')-1));
+         If Length(w_item) > 0 Then
+            insert into siw_solicitacao_objetivo(sq_siw_solicitacao, sq_plano, sq_peobjetivo) values (coalesce(w_chave,p_chave), p_plano, to_number(w_item));
+         End If;
+         w_objetivo := substr(w_objetivo,Instr(w_objetivo,',')+1,200);
+         Exit when w_objetivo is null;
+      End Loop;
+   End If;
+   
    -- Devolve a chave
    If p_chave is not null
       Then p_chave_nova := p_chave;
