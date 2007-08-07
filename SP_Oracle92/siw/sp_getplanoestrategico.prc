@@ -97,6 +97,20 @@ begin
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
         order by acentos(b.nome), acentos(a.nome);
+   Elsif p_restricao = 'OBJETOS' Then
+      -- Recupera os objetos ligados a um plano estratégico
+      open p_result for 
+         select a.sq_plano, a.titulo, 
+                c.sq_siw_solicitacao, coalesce(c.codigo_interno,to_char(c.sq_siw_solicitacao)) as codigo_interno, c.titulo,
+                d.nome, 
+                e.sq_peobjetivo, e.sigla, e.nome
+           from pe_plano                                a
+                inner     join siw_solicitacao_objetivo b  on (a.sq_plano           = b.sq_plano)
+                  inner   join siw_solicitacao          c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                    inner join siw_menu                 d  on (c.sq_menu            = d.sq_menu)
+                  inner   join pe_objetivo              e  on (b.sq_peobjetivo      = e.sq_peobjetivo)
+         where a.cliente = p_cliente
+           and (p_chave             is null or (p_chave is not null and a.sq_plano = p_chave));
    Elsif p_restricao = 'REGISTROS' Then
       -- Recupera os planos estratégicos existentes
       open p_result for 

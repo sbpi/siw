@@ -42,6 +42,11 @@ create or replace procedure sp_putProgramaGeral
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
+   If p_operacao <> 'I' Then
+      -- Remove as vinculações existentes para a solicitação
+      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
+   End If;
+
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_siw_solicitacao.nextval into w_Chave from dual;
@@ -205,8 +210,6 @@ begin
    End If;
    
    If p_operacao in ('I','A') and p_objetivo is not null Then
-      -- Remove as vinculações existentes para a solicitação
-      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
       -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
       Loop
          w_item  := Trim(substr(w_objetivo,1,Instr(w_objetivo,',')-1));

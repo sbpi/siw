@@ -91,6 +91,11 @@ create or replace procedure SP_PutProjetoGeral
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
+   If p_operacao <> 'I' Then -- Inclusão
+      -- Remove as vinculações existentes para a solicitação
+      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
+   End If;
+
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_siw_solicitacao.nextval into w_Chave from dual;
@@ -442,6 +447,7 @@ begin
          delete pj_projeto_envolv           where sq_siw_solicitacao = p_chave;
          delete pj_projeto_interes          where sq_siw_solicitacao = p_chave;
          delete pj_recurso_etapa            where sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa where sq_siw_solicitacao = p_chave);
+         delete pj_rubrica_cronograma       where sq_projeto_rubrica in (select sq_projeto_rubrica from pj_rubrica where sq_siw_solicitacao = p_chave);
          delete pj_rubrica                  where sq_siw_solicitacao = p_chave;
          delete pj_projeto_etapa            where sq_siw_solicitacao = p_chave;
          delete pj_projeto_recurso          where sq_siw_solicitacao = p_chave;
@@ -464,8 +470,6 @@ begin
    End If;
 
    If p_operacao in ('I','A') and p_objetivo is not null Then
-      -- Remove as vinculações existentes para a solicitação
-      delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
       -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
       Loop
          w_item  := Trim(substr(w_objetivo,1,Instr(w_objetivo,',')-1));
