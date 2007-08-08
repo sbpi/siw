@@ -29,6 +29,7 @@ create or replace procedure SP_PutProjetoEtapa
    ) is
    w_chave    number(18);
    w_pai      number(18);
+   w_existe   number(18);
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
@@ -120,7 +121,10 @@ begin
       delete pj_etapa_mensal a where a.sq_projeto_etapa = p_chave_aux;
 
       -- Recupera a etapa pai
-      select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
+      select count(sq_projeto_etapa) into w_existe from pj_projeto_etapa where sq_projeto_etapa = coalesce(p_chave_aux,0);
+      If w_existe > 0 Then
+         select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
+      End If;
 
       -- Remove o registro na tabela de etapas do projeto
       delete pj_projeto_etapa
