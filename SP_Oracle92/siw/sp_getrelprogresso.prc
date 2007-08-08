@@ -153,8 +153,9 @@ begin
                 );            
   ElsIf p_restricao = 'REL_DET' Then
       open p_result for 
-         select distinct a.sq_siw_solicitacao as sq_projeto,
-                e1.titulo as nm_projeto, e1.codigo_interno
+         select distinct a.sq_siw_solicitacao as sq_projeto, a.sq_plano, a.sq_solic_pai,
+                e1.titulo as nm_projeto, e1.codigo_interno,
+                b1.sq_plano as plano_pai
            from siw_solicitacao                   a
                 inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
                 inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
