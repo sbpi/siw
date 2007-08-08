@@ -84,18 +84,34 @@ begin
                                                 )
                 )
          order by a.titulo;
-   Elsif upper(p_restricao) = 'MENU' Then
+   Elsif upper(p_restricao) = 'MENU' or upper(p_restricao) = 'MENUVINC' Then
       -- Recupera os serviços que podem ser vinculados ao plano
       open p_result for
         select a.sq_menu, a.nome, a.acesso_geral, a.ultimo_nivel, a.tramite, 
-               b.sigla sg_modulo, b.nome nm_modulo, c.sq_plano
-          from siw_menu                 a
-               inner join siw_modulo    b on (a.sq_modulo = b.sq_modulo)
-               left  join pe_plano_menu c on (a.sq_menu   = c.sq_menu and
-                                              c.sq_plano  = p_chave
-                                             )
+               b.sigla as sg_modulo, b.nome as nm_modulo, c.sq_plano, 
+               coalesce(d.qtd,0) as qtd
+          from siw_menu                      a
+               inner   join siw_modulo       b on (a.sq_modulo      = b.sq_modulo)
+               left    join pe_plano_menu    c on (a.sq_menu        = c.sq_menu and
+                                                   c.sq_plano       = p_chave
+                                                  )
+               left    join (select x.sq_plano, x.sq_menu, count(x.sq_siw_solicitacao) as qtd
+                               from siw_solicitacao        x
+                                    inner join siw_tramite y on (x.sq_siw_tramite = y.sq_siw_tramite and
+                                                                 'CA'             <> y.sigla
+                                                                )
+                              where x.sq_plano is not null
+                             group by x.sq_plano, x.sq_menu
+                            )                d on (a.sq_menu        = d.sq_menu and
+                                                   c.sq_plano       = d.sq_plano
+                                                  )
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
+           and (upper(p_restricao)  = 'MENU' or
+                (upper(p_restricao) = 'MENUVINC' and
+                 c.sq_plano         is not null
+                )
+               )
         order by acentos(b.nome), acentos(a.nome);
    Elsif p_restricao = 'OBJETOS' Then
       -- Recupera os objetos ligados a um plano estratégico
