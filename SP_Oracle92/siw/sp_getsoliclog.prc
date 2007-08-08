@@ -36,10 +36,10 @@ begin
                    inner      join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
                    inner      join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
                      inner    join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                   left outer join gd_demanda_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                     left outer join co_pessoa       i on (h.destinatario       = i.sq_pessoa)
-                   left outer join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                     left outer join siw_arquivo     k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                   left       join gd_demanda_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                     left     join co_pessoa         i on (h.destinatario       = i.sq_pessoa)
+                   left       join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                     left     join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_demanda_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
@@ -75,17 +75,23 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
+                   coalesce(k.caminho,m.caminho) as caminho,
+                   coalesce(k.tipo,m.tipo) as tipo,
+                   coalesce(k.tamanho,m.tamanho) as tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from siw_solic_log   a
-                      inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
-                      inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                      inner      join siw_solicitacao g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                      left outer join pj_projeto_log  h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                        left outer join co_pessoa     i on (h.destinatario       = i.sq_pessoa)
-                        left outer join pj_projeto_log_arq j on (h.sq_projeto_log  = j.sq_projeto_log)
-                          left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
+              from siw_solic_log                         a
+                      inner      join co_pessoa          c on (a.sq_pessoa          = c.sq_pessoa)
+                      inner      join siw_tramite        e on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                      inner      join siw_solicitacao    g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                        inner    join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                      left       join pj_projeto_log     h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                        left     join co_pessoa          i on (h.destinatario       = i.sq_pessoa)
+                        left     join pj_projeto_log_arq j on (h.sq_projeto_log     = j.sq_projeto_log)
+                          left   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                      left       join siw_solic_log_arq  l on (a.sq_siw_solic_log   = l.sq_siw_solic_log)
+                        left     join siw_arquivo        m on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
+                          
              where a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_projeto_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
@@ -121,17 +127,22 @@ begin
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, 
                    e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
+                   coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
+                   coalesce(k.caminho,m.caminho) as caminho,
+                   coalesce(k.tipo,m.tipo) as tipo,
+                   coalesce(k.tamanho,m.tamanho) as tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from siw_solic_log   a
-                      inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
-                      inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                      inner      join siw_solicitacao g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                      left outer join pe_programa_log  h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                        left outer join co_pessoa     i on (h.destinatario       = i.sq_pessoa)
-                        left outer join pe_programa_log_arq j on (h.sq_programa_log  = j.sq_programa_log)
-                          left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
+              from siw_solic_log                            a
+                      inner      join co_pessoa             c on (a.sq_pessoa          = c.sq_pessoa)
+                      inner      join siw_tramite           e on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                      inner      join siw_solicitacao       g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                        inner    join siw_tramite           f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                      left       join pe_programa_log       h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                        left     join co_pessoa             i on (h.destinatario       = i.sq_pessoa)
+                        left     join pe_programa_log_arq   j on (h.sq_programa_log    = j.sq_programa_log)
+                          left   join siw_arquivo           k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                      left       join siw_solic_log_arq     l on (a.sq_siw_solic_log   = l.sq_siw_solic_log)
+                        left     join siw_arquivo           m on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_programa_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
@@ -142,13 +153,13 @@ begin
                    f.nome fase, f.nome tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from pe_programa_log  b 
-                      left outer join co_pessoa       d on (b.destinatario       = d.sq_pessoa)
-                      inner      join co_pessoa       c on (b.cadastrador        = c.sq_pessoa)
-                      inner      join siw_solicitacao g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                      left outer join pe_programa_log_arq j on (b.sq_programa_log  = j.sq_programa_log)
-                         left outer join siw_arquivo     k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
+              from pe_programa_log                        b 
+                      left       join co_pessoa           d on (b.destinatario       = d.sq_pessoa)
+                      inner      join co_pessoa           c on (b.cadastrador        = c.sq_pessoa)
+                      inner      join siw_solicitacao     g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                        inner    join siw_tramite         f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                      left       join pe_programa_log_arq j on (b.sq_programa_log    = j.sq_programa_log)
+                         left    join siw_arquivo         k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;

@@ -3309,6 +3309,7 @@ SP_Oracle92/siw/sp_getesquemaatributo.prc -text
 SP_Oracle92/siw/sp_getesquemainsert.prc -text
 SP_Oracle92/siw/sp_getesquemascript.prc -text
 SP_Oracle92/siw/sp_getesquematabela.prc -text
+SP_Oracle92/siw/sp_getetapaanexo.prc -text
 SP_Oracle92/siw/sp_getetapamensal.prc -text
 SP_Oracle92/siw/sp_getetapaorder.prc -text
 SP_Oracle92/siw/sp_getetniadata.prc -text
@@ -3535,6 +3536,7 @@ SP_Oracle92/siw/sp_putagreetype.prc -text
 SP_Oracle92/siw/sp_putarquivo.prc -text
 SP_Oracle92/siw/sp_putassunto_pa.prc -text
 SP_Oracle92/siw/sp_putatualizaetapa.prc -text
+SP_Oracle92/siw/sp_putbaseline.prc -text
 SP_Oracle92/siw/sp_putcall.prc -text
 SP_Oracle92/siw/sp_putcargo.prc -text
 SP_Oracle92/siw/sp_putcoagencia.prc -text
@@ -3586,6 +3588,7 @@ SP_Oracle92/siw/sp_putesquema.prc -text
 SP_Oracle92/siw/sp_putesquemaatributo.prc -text
 SP_Oracle92/siw/sp_putesquemascript.prc -text
 SP_Oracle92/siw/sp_putesquematabela.prc -text
+SP_Oracle92/siw/sp_putetapaarquivo.prc -text
 SP_Oracle92/siw/sp_putetapamensal.prc -text
 SP_Oracle92/siw/sp_puteventotrigger.prc -text
 SP_Oracle92/siw/sp_putfinanceiroconc.prc -text
