@@ -95,6 +95,7 @@ begin
                 i.nome_resumido as nm_resp_tarefa, i.nome_resumido,
                 g.inicio, 
                 h.nome_resumido as nm_resp_etapa, 
+                c4.sq_plano,
                 case when c4.sq_plano is not null then c4.titulo else c5.titulo end as nm_plano, 
                 m1.sq_unidade, m1.nome as nm_unidade,
                 calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao, w_fim) as ide,
