@@ -238,7 +238,8 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.codigo_interno,     b.codigo_externo,              b.titulo,
+                coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                b.codigo_externo,     b.titulo,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -352,7 +353,7 @@ begin
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and (r.sq_acao_ppa       = p_sq_acao_ppa or b.sq_solic_pai = p_sq_acao_ppa)))
-            and (p_sq_orprior     is null or (p_sq_orprior  is not null and r.sq_orprioridade    = p_sq_orprior))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano           = p_sq_orprior))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
@@ -992,6 +993,7 @@ begin
                 b2.ativo as st_plano,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
+                b.codigo_interno,
                 b.codigo_interno as cd_programa, b.titulo,           d.ln_programa,
                 d.exequivel,          d.inicio_real,                 d.fim_real,
                 d.custo_real,

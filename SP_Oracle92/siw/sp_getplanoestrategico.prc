@@ -87,8 +87,8 @@ begin
    Elsif upper(p_restricao) = 'MENU' or upper(p_restricao) = 'MENUVINC' Then
       -- Recupera os serviços que podem ser vinculados ao plano
       open p_result for
-        select a.sq_menu, a.nome, a.acesso_geral, a.ultimo_nivel, a.tramite, 
-               b.sigla as sg_modulo, b.nome as nm_modulo, c.sq_plano, 
+        select a.sq_menu, a.nome, a.acesso_geral, a.ultimo_nivel, a.tramite, a.sigla,
+               b.sigla as sg_modulo, b.ordem as or_modulo, b.nome as nm_modulo, c.sq_plano, 
                coalesce(d.qtd,0) as qtd
           from siw_menu                      a
                inner   join siw_modulo       b on (a.sq_modulo      = b.sq_modulo)

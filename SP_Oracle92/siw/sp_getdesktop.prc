@@ -17,7 +17,8 @@ begin
    If w_interno = 'S' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
+         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, 
+                v.sq_menu, v.nome as nm_servico, 
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd, y.qtd as qtd_solic
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
@@ -64,11 +65,11 @@ begin
            where v.tramite   = 'S' 
              and v.ativo     = 'S' 
              and v.sq_pessoa = p_cliente
-          order by nm_modulo, nm_servico;
+          order by or_modulo, nm_modulo, nm_servico;
    Else
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
-         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
+         select v.sq_menu, v.sq_pessoa, w.sq_modulo, w.ordem as or_modulo, w.nome as nm_modulo, w.sigla as sg_modulo, v.sq_menu, v.nome as nm_servico, 
                 v.link, v.imagem, v.p1, v.p2, v.p3, v.p4, v.sigla as sg_servico, x.qtd
          from siw_menu              v
               inner join siw_modulo w on (v.sq_modulo = w.sq_modulo)
@@ -93,7 +94,7 @@ begin
            where v.tramite   = 'S' 
              and v.ativo     = 'S' 
              and v.sq_pessoa = p_cliente
-          order by nm_modulo, nm_servico;
+          order by or_modulo, nm_modulo, nm_servico;
    End If;
 end SP_GetDeskTop;
 /
