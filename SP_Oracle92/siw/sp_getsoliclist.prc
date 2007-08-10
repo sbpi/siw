@@ -118,7 +118,7 @@ begin
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
-                m1.titulo as nm_projeto,
+                m1.titulo as nm_projeto, acentos(m1.titulo) as ac_titulo,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 o.nome_resumido_ind as nm_solic_ind,
@@ -239,7 +239,7 @@ begin
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
-                b.codigo_externo,     b.titulo,
+                b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -452,6 +452,7 @@ begin
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 round(months_between(d.fim,d.inicio)) as meses_acordo,
                 case when b.titulo is null then 'Não informado ('||d2.nome_resumido||')' else b.titulo end as nm_acordo,
+                acentos(b.titulo) as ac_titulo,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 d1.nome as nm_tipo_acordo,d1.sigla as sg_acordo,           d1.modalidade as cd_modalidade,
                 d2.nome as nm_outra_parte, d2.nome_resumido as nm_outra_parte_resumido,
@@ -974,7 +975,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      acentos(b.titulo) as ac_titulo,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -994,7 +995,7 @@ begin
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
                 b.codigo_interno,
-                b.codigo_interno as cd_programa, b.titulo,           d.ln_programa,
+                b.codigo_interno as cd_programa,                     d.ln_programa,
                 d.exequivel,          d.inicio_real,                 d.fim_real,
                 d.custo_real,
                 d1.nome as nm_horizonte, d1.ativo as st_horizonte, 
