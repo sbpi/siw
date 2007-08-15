@@ -23,7 +23,9 @@ create or replace procedure SP_PutFinanceiroGeral
     p_forma_atual         in number   default null,
     p_vencimento_atual    in date     default null,
     p_tipo_rubrica        in number   default null,
-    p_numero_processo     in varchar2 default null,    
+    p_numero_processo     in varchar2 default null,
+    p_per_ini             in date     default null,
+    p_per_fim             in date     default null,  
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -138,7 +140,12 @@ begin
                codigo_deposito  = null
          where sq_siw_solicitacao = p_chave;
       End If;
-
+   If p_per_ini is not null Then
+      update ac_acordo_parcela
+         set inicio = p_per_ini,
+             fim    = p_per_fim
+       where sq_acordo_parcela = p_sq_acordo_parcela;
+   End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
