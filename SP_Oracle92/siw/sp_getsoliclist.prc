@@ -1314,7 +1314,7 @@ begin
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 
-         select b.sq_siw_solicitacao, 
+         select b.sq_siw_solicitacao, b.codigo_interno,
                 case when d.sq_siw_solicitacao is not null 
                      then b.titulo
                      else case when e.sq_siw_solicitacao is not null

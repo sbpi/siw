@@ -37,6 +37,8 @@ create or replace procedure SP_PutFinanceiroGeral
    w_log_sol    number(18);
    w_log_esp    number(18);
    w_reg        fn_parametro%rowtype;
+   w_inicio     date;
+   w_fim        date;
 
    cursor c_arquivos is
       select t.sq_siw_arquivo from siw_solic_arquivo t where t.sq_siw_solicitacao = p_chave;
@@ -62,18 +64,25 @@ begin
           and a.sigla   = 'CI'
       );
       
+      -- Se for vinculado a parcela, recupera o período de referência
+      if p_sq_acordo_parcela is not null then
+         select inicio, fim into w_inicio, w_fim from ac_acordo_parcela where sq_acordo_parcela = p_sq_acordo_parcela;
+      else
+         w_inicio := null;
+         w_fim    := null;
+      end if;
       -- Insere registro em FN_LANCAMENTO
       Insert into fn_lancamento 
          ( sq_siw_solicitacao,   cliente,           sq_acordo_parcela,   sq_forma_pagamento,
            sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
            observacao,           aviso_prox_conc,   dias_aviso,          tipo,
-           processo 
+           processo,             referencia_inicio, referencia_fim
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
-           p_numero_processo
+           p_numero_processo,    w_inicio,          w_fim
       );
 
       -- Insere log da solicitação
@@ -121,7 +130,9 @@ begin
           dias_aviso         = p_dias,
           sq_forma_pagamento = p_sq_forma_pagamento,
           tipo               = p_tipo_rubrica,
-          processo           = p_numero_processo
+          processo           = p_numero_processo,
+          referencia_inicio  = p_per_ini,
+          referencia_fim     = p_per_fim
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
@@ -140,12 +151,6 @@ begin
                codigo_deposito  = null
          where sq_siw_solicitacao = p_chave;
       End If;
-   If p_per_ini is not null Then
-      update ac_acordo_parcela
-         set inicio = p_per_ini,
-             fim    = p_per_fim
-       where sq_acordo_parcela = p_sq_acordo_parcela;
-   End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
@@ -205,7 +210,7 @@ begin
 
    -- O tratamento a seguir é relativo ao código interno do lançamento.
    If p_operacao               in ('I','A')  and 
-      (to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') or
+      (to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') and
        to_char(p_vencimento,'yyyy') <> w_reg.ano_corrente
       )
       Then
