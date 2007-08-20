@@ -2944,6 +2944,7 @@ SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text
 SP_Oracle92/siw/MontaNomeMenu.fnc -text
 SP_Oracle92/siw/MontaNomePrestacaoContas.fnc -text
+SP_Oracle92/siw/MontaNomeTipoAcordo.fnc -text
 SP_Oracle92/siw/MontaNomeTipoMaterial.fnc -text
 SP_Oracle92/siw/MontaNomeTipoRecurso.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
