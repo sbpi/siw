@@ -1,7 +1,9 @@
 create or replace procedure SP_GetAgreeType
-   (p_chave     in number default null,
-    p_chave_aux in number default null,
+   (p_chave     in number   default null,
+    p_chave_aux in number   default null,
     p_cliente   in number,
+    p_nome      in varchar2 default null,
+    p_sigla     in varchar2 default null,
     p_restricao in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
@@ -95,6 +97,15 @@ begin
          where a.cliente               = p_cliente
            and a.sq_tipo_acordo_pai    = p_chave
          order by a.nome;
+   Elsif p_restricao = 'EXISTE' Then
+      -- Verifica se há outro registro com o mesmo nome ou sigla
+      open p_result for 
+      select a.sq_tipo_acordo
+        from ac_tipo_acordo a
+       where a.cliente = p_cliente 
+         and a.sq_tipo_acordo <> coalesce(p_chave,0)
+         and ((p_nome  is null) or (p_nome  is not null and a.nome  = p_nome))
+         and ((p_sigla is null) or (p_sigla is not null and a.sigla = p_sigla));
    End If;
 end SP_GetAgreeType;
 /
