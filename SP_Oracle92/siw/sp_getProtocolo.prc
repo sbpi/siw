@@ -49,7 +49,7 @@ begin
                                   group by sq_siw_solicitacao
                                 )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                  inner     join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log and
-                                                            ((p_restricao          = 'RELPAETIQ' and c.processo = 'S' and c.data_autuacao is not null) or 
+                                                            ((p_restricao          = 'RELPAETIQ') or 
                                                              (p_restricao          = 'RELPATRAM' and d.recebimento is null)
                                                             )
                                                            )
