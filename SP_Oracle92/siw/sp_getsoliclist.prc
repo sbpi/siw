@@ -542,7 +542,7 @@ begin
                       left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
-                      left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                      inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                         inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
@@ -563,6 +563,13 @@ begin
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from ac_acordo_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_tipo_acordo     in (select sq_tipo_acordo
+                                                                                                       from ac_tipo_acordo
+                                                                                                     connect by prior sq_tipo_acordo = sq_tipo_acordo_pai
+                                                                                                     start with sq_tipo_acordo = p_sq_orprior
+                                                                                                    )
+                                             )
+                )
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
