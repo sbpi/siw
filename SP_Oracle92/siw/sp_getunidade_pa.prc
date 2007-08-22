@@ -21,7 +21,7 @@ begin
                 case when a.sq_unidade_pai is null then a.numero_tramite       else d.numero_tramite       end as numero_tramite, 
                 case when a.sq_unidade_pai is null then a.numero_transferencia else d.numero_transferencia end as numero_transferencia, 
                 case when a.sq_unidade_pai is null then a.numero_eliminacao    else d.numero_eliminacao    end as numero_eliminacao,
-                coalesce(e.nome,b.nome)||coalesce(b.nome,'0') as ordena
+                a.prefixo||e.nome||coalesce(b.nome,'0') as ordena
            from pa_unidade                      a
                 inner   join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)
                   inner join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
