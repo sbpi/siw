@@ -292,7 +292,7 @@ begin
                and b.sq_pessoa            = p_cliente
                and (p_nome                is null or (p_nome  is not null and acentos(a.nome)  like '%'||acentos(p_nome)||'%'))
                and (p_sigla               is null or (p_sigla is not null and acentos(a.sigla) like '%'||acentos(p_sigla)||'%'))
-            order by nome;
+            order by a.nome;
       End If;
    End If;
 end SP_GetUorgList;

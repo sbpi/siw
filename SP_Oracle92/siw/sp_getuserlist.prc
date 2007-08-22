@@ -39,6 +39,7 @@ begin
                                       )
             )
         and (p_uf          is null or (p_uf          is not null and g.co_uf             = p_uf))
-        and (p_interno     is null or (p_interno     is not null and e.interno           = p_interno));
+        and (p_interno     is null or (p_interno     is not null and e.interno           = p_interno))
+        order by b.nome;
 end SP_GetUserList;
 /
