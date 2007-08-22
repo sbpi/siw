@@ -10,7 +10,8 @@ begin
    If p_restricao is null          or p_restricao = 'LICITACAO'        or p_restricao = 'ATIVO' or 
       p_restricao = 'CODIGO'       or p_restricao = 'CODIGONULL'       or p_restricao = 'MOD_PE' or 
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
-      p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO'
+      p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
+      p_restricao = 'MOD_CL_PAI'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -31,6 +32,7 @@ begin
                 left outer join lc_unidade         e on (a.sq_unidade         = e.sq_unidade)
                 left outer join pe_unidade         g on (a.sq_unidade         = g.sq_unidade)
                 left outer join pa_unidade         h on (a.sq_unidade         = h.sq_unidade)
+                left outer join cl_unidade         i on (a.sq_unidade         = i.sq_unidade)
           where b.sq_pessoa            = p_cliente
             and (p_restricao           is null or (p_restricao is not null and
                                                    (p_restricao         <> 'EXTERNO' and a.externo = 'N') or 
@@ -49,6 +51,7 @@ begin
                                                     (p_restricao = 'MOD_PE'       and g.sq_unidade is not null) or 
                                                     (p_restricao = 'MOD_PA'       and h.sq_unidade is not null) or 
                                                     (p_restricao = 'MOD_PA_PAI'   and h.sq_unidade is not null and h.sq_unidade_pai is null) or 
+                                                    (p_restricao = 'MOD_CL_PAI'   and i.sq_unidade is not null and i.sq_unidade_pai is null) or 
                                                     (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos = 'S') or 
                                                     (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento    = 'S') or 
                                                     (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao        = 'S')

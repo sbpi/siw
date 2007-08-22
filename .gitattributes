@@ -3455,6 +3455,7 @@ SP_Oracle92/siw/sp_getttprefixo.prc -text
 SP_Oracle92/siw/sp_getttramal.prc -text
 SP_Oracle92/siw/sp_getttramalusuarioativo.prc -text
 SP_Oracle92/siw/sp_getttusuario.prc -text
+SP_Oracle92/siw/sp_getunidade_cl.prc -text
 SP_Oracle92/siw/sp_getunidade_pa.prc -text
 SP_Oracle92/siw/sp_getunitpailist.prc -text
 SP_Oracle92/siw/sp_getunittypedata.prc -text
@@ -3685,6 +3686,7 @@ SP_Oracle92/siw/sp_putttramal.prc -text
 SP_Oracle92/siw/sp_putttramalusuario.prc -text
 SP_Oracle92/siw/sp_puttttronco.prc -text
 SP_Oracle92/siw/sp_putttusuariocentral.prc -text
+SP_Oracle92/siw/sp_putunidade_cl.prc -text
 SP_Oracle92/siw/sp_putunidade_pa.prc -text
 SP_Oracle92/siw/sp_putusuario.prc -text
 SP_Oracle92/siw/sp_putveiculo.prc -text
