@@ -11,7 +11,7 @@ create or replace procedure sp_getSolicSR
     p_atraso       in varchar2 default null,
     p_solicitante  in number   default null,
     p_unidade      in number   default null,
-    p_prioridade   in number   default null,
+    p_prioridade   in varchar2 default null,
     p_ativo        in varchar2 default null,
     p_proponente   in varchar2 default null,
     p_chave        in number   default null,
@@ -163,7 +163,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and a.sq_unid_executora  = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
-            and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b.opiniao is not null and b.opiniao = p_prioridade))
+            and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b3.sigla is not null and b3.sigla = p_prioridade))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (trunc(b.inicio)     between p_ini_i and p_ini_f)))
