@@ -982,7 +982,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,      acentos(b.titulo) as ac_titulo,
+                b.palavra_chave,      acentos(b.titulo) as ac_titulo,b.titulo,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
