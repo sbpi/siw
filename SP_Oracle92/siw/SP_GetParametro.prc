@@ -25,7 +25,15 @@ begin
                    a.despacho_autuar, a.despacho_arqsetorial, a.despacho_anexar, a.despacho_apensar,
                    a.despacho_eliminar, a.arquivo_central, a.limite_interessados, a.ano_corrente
               from pa_parametro  a
-             where a.cliente = p_cliente;             
+             where a.cliente = p_cliente; 
+      Elsif  p_modulo = 'CL' Then
+         -- Recupera os parametros do modulo de contratos
+         open p_result for
+            select a.cliente, a.ano_corrente,a.dias_validade_pesquisa, a.dias_aviso_pesquisa, 
+                   a.percentual_acrescimo, a.compra_central, a.pesquisa_central, a.contrato_central, 
+                   a.banco_ata_central, a.banco_preco_central, a.codificacao_central 
+              from cl_parametro a
+             where a.cliente = p_cliente;                         
       End If;
    End If;
 end SP_GetParametro;
