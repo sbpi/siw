@@ -18,6 +18,22 @@ begin
          where a.sq_pessoa = p_cliente
            and a.externo   = 'N'
            and a.link      is not null;
+   Elsif upper(p_operacao) = 'NUMERADOR' Then
+      -- Recupera os serviços que têm numeração própria
+      open p_result for
+        select a.sq_menu,
+               case when a.sq_modulo is null or p_modulo is not null then a.nome else a.nome||' ('||b.nome||')' end nome,
+               a.nome as nm_servico,
+               a.acesso_geral, a.ultimo_nivel, a.tramite, 
+               b.sigla sg_modulo, b.nome nm_modulo
+          from siw_menu              a
+               inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
+         where a.sq_pessoa = p_cliente
+           and 'S'         = a.tramite
+           and 1           = coalesce(a.numeracao_automatica,0)
+           and a.sq_menu   <> coalesce(p_chave,0)
+           and b.sigla     = case when p_modulo is null then b.sigla else p_modulo end
+        order by acentos(a.nome);
    Elsif upper(p_operacao) = 'X' Then
       -- Recupera os links vinculados a serviços
       open p_result for

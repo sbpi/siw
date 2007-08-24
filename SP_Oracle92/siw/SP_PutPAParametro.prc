@@ -29,11 +29,11 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pa_parametro
-         (cliente,          despacho_arqcentral,    despacho_emprestimo,    despacho_devolucao,      despacho_autuar,    despacho_arqsetorial, 
-          despacho_anexar,     despacho_apensar,      despacho_eliminar,       arquivo_central,  limite_interessados,    ano_corrente)
+         (cliente,           despacho_arqcentral,    despacho_emprestimo,    despacho_devolucao,    despacho_autuar,       despacho_arqsetorial, 
+          despacho_anexar,   despacho_apensar,       despacho_eliminar,      arquivo_central,       limite_interessados,   ano_corrente)
       values
-         (p_cliente,      p_despacho_arqcentral,  p_despacho_emprestimo,  p_despacho_devolucao,    p_despacho_autuar,   p_despacho_arqsetorial,
-          p_despacho_anexar, p_despacho_apensar,    p_despacho_eliminar,     p_arquivo_central,  p_limite_interessados,  p_ano_corrente);
+         (p_cliente,         p_despacho_arqcentral,  p_despacho_emprestimo,  p_despacho_devolucao,  p_despacho_autuar,     p_despacho_arqsetorial,
+          p_despacho_anexar, p_despacho_apensar,     p_despacho_eliminar,    p_arquivo_central,     p_limite_interessados, p_ano_corrente);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pa_parametro
