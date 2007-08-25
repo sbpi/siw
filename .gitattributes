@@ -2978,6 +2978,7 @@ SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle92/siw/SP_GetUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
+SP_Oracle92/siw/SP_PutCLEnvio.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text

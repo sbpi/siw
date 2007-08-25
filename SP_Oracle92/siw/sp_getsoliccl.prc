@@ -91,6 +91,7 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
+                b.sq_plano,           b.sq_cc,                       b.observacao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -106,11 +107,19 @@ begin
                 b2.acesso,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
-                --d.prioridade,d.aviso_prox_conc,    d.dias_aviso,
-                --case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
-                --cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                d.protocolo_siw,      d.sq_especie_documento,        d.sq_eoindicador,
+                d.sq_eoindicador,     d.sq_lcfonte_recurso,          d.sq_lcmodalidade,
+                d.sq_lcjulgamento,    d.sq_lcsituacao,               d.sq_unidade as sq_unidade_pai,
+                d.numero_original,    d.data_recebimento,            d.processo,
+                d.processo,           d.indice_base,                 d.tipo_reajuste,
+                d.limite_variacao,    d.data_homologacao,            d.data_diario_oficial,
+                d.pagina_diario_oficial, d.financeiro_unico,         d.decisao_judicial,
+                d.numero_ata,         d.numero_certame,              d.arp,
+                d.prioridade,d.aviso_prox_conc,    d.dias_aviso,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
+                cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
-                e.vinculada as vinc_resp,e.adm_central as adm_resp,
+                e.vinculada as vinc_resp,e.adm_central as adm_resp,     e.sigla sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m1.sq_menu as sq_menu_pai,
@@ -135,7 +144,7 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       inner          join cl_solicitacao       d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner        join eo_unidade           e  on (d.sq_unidade               = e.sq_unidade)
+                        inner        join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null
@@ -171,7 +180,7 @@ begin
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
-            --and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))            
+            and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))            
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and coalesce(b1.sigla,'-') <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.inicio between p_ini_i and p_ini_f)))

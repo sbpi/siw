@@ -27,13 +27,12 @@ create or replace procedure SP_PutCLGeral
    ) is
    w_arq       varchar2(4000) := ', ';
    w_chave     number(18);
-   w_chave1    number(18);
    w_log_sol   number(18);
    w_log_esp   number(18);
-   w_ativ      number(18);
-   i           number(10) := 0;
    w_item      varchar2(18);   
    w_objetivo  varchar2(200) := p_objetivo ||',';   
+   w_codigo    varchar(60);
+   w_unidade_pai number(18);
 
 
    cursor c_arquivos is
@@ -65,19 +64,37 @@ begin
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
       );
-
-      -- Insere registro em cl_projeto
-      Insert into cl_solicitacao
-         ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  nome_original,
-           data_recebimento     aviso_prox_conc,  dias_aviso,        sq_unidade
-         )
-      (select
-           w_chave,              p_prioridade,    p_decisao_judicial, p_nome_original, 
-           p_data_recebimento,   p_aviso,         p_dias,             a.sq_unidade
-        from cl_unidade a
-       where a.sq_unidade_pai = p_unidade
-      );
-
+      select sq_unidade_pai into w_unidade_pai from cl_unidade where sq_unidade = p_unidade;
+      -- Insere registro em cl_solicitacao
+      If w_unidade_pai is not null Then
+         Insert into cl_solicitacao
+            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
+              data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade
+            )
+         (select
+              w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
+              p_data_recebimento,   p_aviso,         p_dias,            a.sq_unidade_pai
+           from cl_unidade a
+          where a.sq_unidade = p_unidade
+         );
+      Else
+         Insert into cl_solicitacao
+            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
+              data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade
+            )
+         (select
+              w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
+              p_data_recebimento,   p_aviso,         p_dias,             p_unidade
+           from dual
+         );
+      
+      End If;
+      If p_codigo is null Then
+         geracodigointerno(w_chave,null,w_codigo);
+         update siw_solicitacao set
+                codigo_interno = w_codigo
+          where sq_siw_solicitacao = w_chave;
+      End If;
       -- Insere log da solicitação
       Insert Into siw_solic_log
          (sq_siw_solic_log,          sq_siw_solicitacao, sq_pessoa,
@@ -103,52 +120,75 @@ begin
          )
          where sq_siw_solicitacao = w_chave;
 
-         -- Complementa as informações do projeto
-         update cl_solicitacao set
+         -- Complementa as informações da solicitacao
          update cl_solicitacao set 
-                (sq_especie_documento, sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
-                 sq_lcmodalidade, sq_lcjulgamento, sq_lcsituacao, numero_original, data_recebimento
-                 processo, indice_base, tipo_reajuste, limite_variacao, data_homologacao, data_diario_oficial,
-                 pagina_diario_oficial, financeiro_unico, numero_ata, numero_certame) = 
-         (select sq_especie_documento, sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
-                 sq_lcmodalidade, sq_lcjulgamento, sq_lcsituacao, numero_original, data_recebimento
-                 processo, indice_base, tipo_reajuste, limite_variacao, data_homologacao, data_diario_oficial,
-                 pagina_diario_oficial, financeiro_unico, numero_ata, numero_certame)
-           where sq_siw_solicitacao = p_copia;
+                (sq_especie_documento,  sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
+                 sq_lcmodalidade,       sq_lcjulgamento,          sq_lcsituacao,  numero_original, 
+                 data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
+                 limite_variacao,       data_homologacao,         data_diario_oficial,
+                 pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame
+                ) = 
+         (select sq_especie_documento,  sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
+                 sq_lcmodalidade,       sq_lcjulgamento,          sq_lcsituacao,  numero_original, 
+                 data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
+                 limite_variacao,       data_homologacao,         data_diario_oficial,
+                 pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame 
+            from cl_solicitacao
+           where sq_siw_solicitacao = p_copia
+         )
          where sq_siw_solicitacao = w_chave;
-
+      End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
           sq_plano         = p_plano,
-          codigo_interno   = p_codigo,
           sq_cc            = p_sqcc,
           sq_solic_pai     = p_solic_pai,
-          justificativa    = coalesce(p_justificativa,justificativa),
+          sq_unidade       = p_unidade,
           solicitante      = p_solicitante,
+          justificativa    = p_justificativa,
+          observacao       = p_observacao,
           executor         = p_executor,
           inicio           = p_inicio,
           fim              = p_fim,
           ultima_alteracao = sysdate,
-          sq_cidade_origem = p_cidade,
+          sq_cidade_origem = p_cidade
       where sq_siw_solicitacao = p_chave;
-
-      -- Atualiza a tabela de projetos
-      Update cl_solicitacao set
-         ( prioridade,       decisao_judicial,     nome_original,
-           data_recebimento  aviso_prox_conc,      dias_aviso,        sq_unidade
-         ) = 
-      (select
-           p_prioridade,       p_decisao_judicial, p_nome_original, 
-           p_data_recebimento, p_aviso,            p_dias,            a.sq_unidade
-        from cl_unidade a
-       where a.sq_unidade_pai = p_unidade
-      )
-      where sq_siw_solicitacao = p_chave;
+      If p_codigo is not null Then
+         update siw_solicitacao set
+             codigo_interno = p_codigo
+          where sq_siw_solicitacao = p_chave;
+      End If;
+      select sq_unidade_pai into w_unidade_pai from cl_unidade where sq_unidade = p_unidade;
+      -- Atualiza a tabela de solicitacoes
+      If w_unidade_pai is not null Then
+         Update cl_solicitacao set
+            ( prioridade,       decisao_judicial,     numero_original,
+              data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade
+            ) = 
+         (select
+              p_prioridade,       p_decisao_judicial, p_numero_original, 
+              p_data_recebimento, p_aviso,            p_dias,            a.sq_unidade_pai
+           from cl_unidade a
+          where a.sq_unidade = p_unidade
+         )
+         where sq_siw_solicitacao = p_chave;
+      Else 
+         Update cl_solicitacao set
+            ( prioridade,       decisao_judicial,     numero_original,
+              data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade
+            ) = 
+         (select
+              p_prioridade,       p_decisao_judicial, p_numero_original, 
+              p_data_recebimento, p_aviso,            p_dias,            p_unidade
+           from dual
+         )
+         where sq_siw_solicitacao = p_chave;      
+      End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
-      select count(*) into w_log_esp from pj_projeto_log where sq_siw_solicitacao = p_chave;
+      select count(*) into w_log_esp from cl_solicitacao_log where sq_siw_solicitacao = p_chave;
 
       -- Se não tem atividades vinculadas nem foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.
@@ -179,12 +219,12 @@ begin
          end loop;
          w_arq := substr(w_arq, 3, length(w_arq));
 
-         -- Remove os registros vinculados ao projeto
+         -- Remove os registros vinculados a solicitacao
          delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
          delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
 
-         -- Remove o registro na tabela de projetos
-         delete pj_projeto                  where sq_siw_solicitacao = p_chave;
+         -- Remove o registro na tabela de solicitacao
+         delete cl_solicitacao              where sq_siw_solicitacao = p_chave;
 
          -- Remove o log da solicitação
          delete siw_solic_log               where sq_siw_solicitacao = p_chave;
