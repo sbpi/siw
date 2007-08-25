@@ -15,18 +15,31 @@ create or replace procedure sp_putUnidade_CL
     p_padrao               in  varchar2 default null,
     p_ativo                in  varchar2 default null
    ) is
-begin   
+begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into cl_unidade 
+<<<<<<< .mine
+         (sq_unidade,             cliente,            sq_unidade_pai,        realiza_compra,         solicita_compra,   registra_pesquisa,
+          registra_contrato,      registra_judicial,  controla_banco_ata,    controla_banco_preco,   codifica_item,     codificacao_restrita,
+          numero_compra,          numero_pesquisa,    unidade_padrao,        ativo) 
+=======
          (sq_unidade,          cliente,            sq_unidade_pai,        realiza_compra,         solicita_compra,   registra_pesquisa,
           registra_contrato,   registra_judicial,  controla_banco_ata,    controla_banco_preco,   codifica_item,     codificacao_restrita,
           unidade_padrao,      ativo) 
+>>>>>>> .r641
       values 
+<<<<<<< .mine
+         (p_chave,                p_cliente,           p_unidade_pai,        p_realiza_compra,       p_solicita_compra, p_registra_pesquisa,
+          p_registra_contrato,    p_registra_judicial, p_controla_banco_ata, p_controla_banco_preco, p_codifica_item,   p_codificacao_restrita,
+          p_nr_compra,            p_nr_pesquisa,       p_padrao,             p_ativo);
+=======
          (p_chave,             p_cliente,           p_unidade_pai,        p_realiza_compra,       p_solicita_compra, p_registra_pesquisa,
           p_registra_contrato, p_registra_judicial, p_controla_banco_ata, p_controla_banco_preco, p_codifica_item,   p_codificacao_restrita,
           p_padrao,            p_ativo);
+>>>>>>> .r641
    Elsif p_operacao = 'A' Then
+      
       update cl_unidade set
          sq_unidade_pai       = p_unidade_pai,
          realiza_compra       = p_realiza_compra,

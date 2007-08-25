@@ -2936,6 +2936,7 @@ SP_Oracle92/fbaj/sp_getalberlist.prc -text
 SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
+SP_Oracle92/siw/CL_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/CalculaIDC.fnc -text
 SP_Oracle92/siw/CalculaIDE.fnc -text
 SP_Oracle92/siw/CalculaIGC.fnc -text
@@ -2977,6 +2978,7 @@ SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle92/siw/SP_GetUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
+SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
@@ -3414,6 +3416,7 @@ SP_Oracle92/siw/sp_getsiwclimodlis.prc -text
 SP_Oracle92/siw/sp_getsolicanexo.prc -text
 SP_Oracle92/siw/sp_getsolicapoiolist.prc -text
 SP_Oracle92/siw/sp_getsolicareas.prc -text
+SP_Oracle92/siw/sp_getsoliccl.prc -text
 SP_Oracle92/siw/sp_getsolicdata.prc -text
 SP_Oracle92/siw/sp_getsolicemail.prc -text
 SP_Oracle92/siw/sp_getsolicetapa.prc -text

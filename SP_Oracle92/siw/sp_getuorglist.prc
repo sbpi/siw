@@ -102,6 +102,24 @@ begin
                        inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
              where c.sq_pessoa = p_cliente 
                and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));
+      Elsif p_restricao = 'CLCP' or p_restricao = 'CLLC' Then
+         open p_result for 
+            select a.sq_unidade, a.ativo, 
+                   case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                   b.nome, b.sigla,
+                   c.sq_pessoa_endereco, c.logradouro,
+                   f.nome nm_cidade, f.co_uf
+              from cl_unidade                        a
+                   inner     join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)
+                     inner   join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
+                       inner join co_cidade          f on (c.sq_cidade          = f.sq_cidade)
+             where c.sq_pessoa = p_cliente 
+               and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave))
+               and ((p_restricao <> 'CLCP' and p_restricao <> 'CLLC') or
+                    ((p_restricao = 'CLCP' and a.solicita_compra = 'S') or
+                     (p_restricao = 'CLLC' and a.realiza_compra  = 'S')
+                    )
+                   );
       Elsif p_restricao = 'PDUNIDLIM' Then
          open p_result for 
             select a.sq_unidade, a.ativo, 
@@ -123,6 +141,17 @@ begin
          open p_result for 
             select x.sq_unidade, y.nivel
               from pd_unidade x,
+                   (select sq_unidade, nome, level as nivel
+                      from eo_unidade a
+                    start with a.sq_unidade = p_chave
+                    connect by prior a.sq_unidade_pai = a.sq_unidade
+                   ) y
+            where x.sq_unidade = y.sq_unidade
+            order by y.nivel;
+      Elsif p_restricao = 'CLUNID' Then
+         open p_result for 
+            select x.sq_unidade, y.nivel
+              from cl_unidade x,
                    (select sq_unidade, nome, level as nivel
                       from eo_unidade a
                     start with a.sq_unidade = p_chave
