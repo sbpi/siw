@@ -1328,7 +1328,10 @@ begin
                                then e.titulo
                                else case when f.sq_siw_solicitacao is not null
                                          then f1.titulo
-                                         else null
+                                         else case when h.sq_siw_solicitacao is not null
+                                                   then b.codigo_interno
+                                                   else null
+                                              end
                                     end
                           end
                 end as titulo,
@@ -1365,6 +1368,7 @@ begin
                                                                         y1.sigla   = 'PJCAD')
                                group by x1.sq_solic_pai
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
+                left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
           where a.sq_menu        = p_restricao
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
@@ -1373,7 +1377,8 @@ begin
                  (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
-                 (b3.sigla = 'PE')
+                 (b3.sigla = 'PE') or
+                 (b3.sigla = 'CO')
                 )
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0

@@ -3225,6 +3225,7 @@ SP_Oracle92/siw/sp_getAcordoAditivo.prc -text
 SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
+SP_Oracle92/siw/sp_getCLSolicItem.prc -text
 SP_Oracle92/siw/sp_getContasCronograma.prc -text
 SP_Oracle92/siw/sp_getContasRegistro.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
@@ -3550,6 +3551,8 @@ SP_Oracle92/siw/sp_putatualizaetapa.prc -text
 SP_Oracle92/siw/sp_putbaseline.prc -text
 SP_Oracle92/siw/sp_putcall.prc -text
 SP_Oracle92/siw/sp_putcargo.prc -text
+SP_Oracle92/siw/sp_putclconc.prc -text
+SP_Oracle92/siw/sp_putclsolicitem.prc -text
 SP_Oracle92/siw/sp_putcoagencia.prc -text
 SP_Oracle92/siw/sp_putcobanco.prc -text
 SP_Oracle92/siw/sp_putcocidade.prc -text
