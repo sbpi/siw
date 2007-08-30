@@ -28,6 +28,7 @@ begin
     where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
+      delete cl_solicitacao_item_vinc where item_licitacao = p_chave_aux;
       delete cl_solicitacao_item where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'V' Then
       select sq_solicitacao_item.nextval into w_chave from dual;
@@ -40,6 +41,11 @@ begin
         (item_licitacao, item_pedido)
       values
         (w_chave, p_chave_aux2);
+   Elsif p_operacao = 'C' Then
+      -- Registra a quantidade autorizada para compra
+      update cl_solicitacao_item set 
+          quantidade_autorizada = p_quantidade
+    where sq_solicitacao_item = p_chave_aux;        
    End If;
 /*   If p_operacao = 'I' or p_operacao = 'A' Then
       select pesquisa_preco_menor into w_valor from cl_material where sq_material = p_material;
