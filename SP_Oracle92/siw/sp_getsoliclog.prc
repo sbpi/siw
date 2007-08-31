@@ -300,7 +300,7 @@ begin
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;      
-   Elsif w_modulo = 'SR' Then -- Se for o módulo de recursos logísticos
+   Elsif w_modulo in ('SR','CO') Then -- Se for o módulo de recursos logísticos ou de compras
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
@@ -427,52 +427,6 @@ begin
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
-   ElsIf w_modulo = 'CO' Then -- Se for o módulo de compras e licitacao
-      If p_restricao = 'LISTA' Then
-         -- Recupera os encaminhamentos de uma solicitacao
-         open p_result for 
-            select h.sq_cl_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
-                   case when h.sq_cl_log is null 
-                      then a.observacao 
-                      else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
-                   c.sq_pessoa,
-                   i.nome_resumido destinatario,
-                   i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from siw_solic_log                            a
-                   inner      join co_pessoa                c on (a.sq_pessoa          = c.sq_pessoa)
-                   inner      join siw_tramite              e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                   inner      join siw_solicitacao          g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                     inner    join siw_tramite              f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                   left       join cl_solicitacao_log       h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                     left     join co_pessoa                i on (h.destinatario       = i.sq_pessoa)
-                   left       join siw_solic_log_arq        j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                     left     join siw_arquivo              k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
-             where a.sq_siw_solicitacao = p_chave
-            UNION
-            select b.sq_cl_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
-                   c.sq_pessoa,
-                   d.nome_resumido destinatario,
-                   d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
-                   k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from cl_solicitacao_log                 b 
-                   left outer join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
-                   inner      join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
-                   inner      join siw_solicitacao    g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                     inner    join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                   left outer join cl_solicitacao_log_arq j on (b.sq_cl_log      = j.sq_cl_log)
-                     left outer join siw_arquivo      k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
-             where b.sq_siw_solic_log   is null
-               and b.sq_siw_solicitacao = p_chave;
-      End If;      
    End If;
 End SP_GetSolicLog;
 /

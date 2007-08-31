@@ -31,9 +31,9 @@ begin
        
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
-      conclusao      = to_date(p_fim,'dd/mm/yyyy, hh24:mi'),
+      conclusao      = coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate),
       executor       = p_executor,
-      valor          = p_valor,
+      valor          = coalesce(p_valor,valor),
       observacao     = p_nota_conclusao,
       sq_siw_tramite = (select sq_siw_tramite 
                           from siw_tramite 

@@ -149,10 +149,10 @@ begin
                                                                       e1.tipo_respons            = 'T'           and
                                                                       e1.fim                     is null
                                                                      )
-                          left       join eo_unidade_resp            e2 on (e.sq_unidade         = e2.sq_unidade and
-                                                                            e2.tipo_respons      = 'S'           and
-                                                                            e2.fim               is null
-                                                                           )
+                          left       join eo_unidade_resp      e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                      e2.tipo_respons            = 'S'           and
+                                                                      e2.fim                     is null
+                                                                     )
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join siw_solicitacao      m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_menu             m1 on (m.sq_menu                  = m1.sq_menu)
@@ -164,8 +164,6 @@ begin
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                     left            join cl_solicitacao_log   k  on (j.chave                    = k.sq_siw_solic_log)
-                       left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where (p_menu           is null or (p_menu        is not null and a.sq_menu            = p_menu))
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and b.sq_plano           = p_sq_orprior))
@@ -173,7 +171,7 @@ begin
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from pj_projeto_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
-            and (p_uorg_resp      is null or (p_uorg_resp   is not null and coalesce(b1.sigla,'-') <> 'AT' and l.sq_unidade = p_uorg_resp))
+            and (p_uorg_resp      is null or (p_uorg_resp   is not null and coalesce(b1.sigla,'-') <> 'AT' and e.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             and (p_processo       is null or (p_processo    = 'CLASSIF' and b.sq_cc is not null) or (p_processo <> 'CLASSIF' and m1.sq_menu = to_number(p_processo)))
@@ -188,15 +186,14 @@ begin
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and coalesce(b1.sigla,'-') <> 'AT' and b.fim+1-sysdate<0))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and ((p_tipo          = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo          = 2     and coalesce(b1.sigla,'-') = 'AT'   and b.solicitante        = p_pessoa) or
-                 (p_tipo          = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
-                 (p_tipo          = 3     and b2.acesso > 0) or
-                 (p_tipo          = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo          = 5     and coalesce(b1.sigla,'-') <> 'CA') or
-                 (p_tipo          = 6     and b1.ativo      = 'S' and b2.acesso > 0)
+            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 3     and b2.acesso > 0) or
+                 (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 5) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver

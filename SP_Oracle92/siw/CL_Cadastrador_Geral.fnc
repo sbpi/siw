@@ -3,8 +3,8 @@ create or replace function CL_Cadastrador_Geral
    p_usuario in number
   ) return varchar2 is
 /**********************************************************************************
-* Nome      : Gestor_Serviço
-* Finalidade: Verificar se o usuário é gestor de compras e licitações
+* Nome      : CL_Cadastrador_Geral
+* Finalidade: Verificar se o usuário é cadastrador geral de compras e licitações
 * Autor     : Celso Miguel Lago Filho
 * Data      : 24/08/2007, 15:30
 * Parâmetros:

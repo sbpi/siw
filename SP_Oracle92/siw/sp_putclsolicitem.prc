@@ -19,14 +19,14 @@ begin
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
       insert into cl_solicitacao_item
-        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,   motivo_cancelamento)
+        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,                 motivo_cancelamento)
       values
-        (w_chave,             p_chave,            p_material,  p_quantidade, p_cancelado, p_motivo_cancelamento);
+        (w_chave,             p_chave,            p_material,  p_quantidade, coalesce(p_cancelado,'N'), p_motivo_cancelamento);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update cl_solicitacao_item set 
           quantidade          = p_quantidade,
-          cancelado           = p_cancelado,
+          cancelado           = coalesce(p_cancelado,'N'),
           motivo_cancelamento = p_motivo_cancelamento
     where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'E' Then

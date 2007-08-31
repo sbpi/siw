@@ -150,7 +150,9 @@ begin
             order by y.nivel;
       Elsif p_restricao = 'CLUNID' Then
          open p_result for 
-            select x.sq_unidade, y.nivel
+            select x.sq_unidade, x.realiza_compra, x.solicita_compra, x.registra_pesquisa, x.registra_contrato, x.registra_judicial, 
+                   x.controla_banco_ata, x.controla_banco_preco, x.codifica_item, x.codificacao_restrita, x.unidade_padrao, x.ativo, 
+                   y.nivel
               from cl_unidade x,
                    (select sq_unidade, nome, level as nivel
                       from eo_unidade a

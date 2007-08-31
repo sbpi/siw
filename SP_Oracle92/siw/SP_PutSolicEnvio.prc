@@ -16,9 +16,6 @@ create or replace procedure SP_PutSolicEnvio
    w_tramite       number(18);
    w_sg_tramite    varchar2(2);
 begin
-   -- Recupera a próxima chave
-   select sq_siw_solic_log.nextval into w_chave from dual;
-   
    -- Se houve mudança no trâmite atual, recupera o trâmite para o qual está sendo enviada a solicitação
    If p_tramite <> nvl(p_novo_tramite, 0) Then
       If p_devolucao = 'N' Then

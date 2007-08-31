@@ -28,16 +28,19 @@ create or replace procedure SP_PutCLGeral
    w_arq       varchar2(4000) := ', ';
    w_chave     number(18);
    w_log_sol   number(18);
-   w_log_esp   number(18);
    w_item      varchar2(18);   
    w_objetivo  varchar2(200) := p_objetivo ||',';   
    w_codigo    varchar(60);
    w_unidade_pai number(18);
+   w_data        date;
 
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
 begin
+   -- Recupera a hora atual
+   w_data := sysdate;
+   
    If p_operacao <> 'I' Then -- Inclusão
       -- Remove as vinculações existentes para a solicitação
       delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
@@ -56,8 +59,8 @@ begin
          codigo_interno,     observacao)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
-         p_cadastrador,      p_executor,    p_justificativa,     p_inicio,
-         p_fim,              sysdate,       sysdate,             p_unidade,
+         p_cadastrador,      p_executor,    p_justificativa,     case p_decisao_judicial when 'S' then p_inicio else w_data end,
+         p_fim,              w_data,        w_data,              p_unidade,
          p_sqcc,             p_solic_pai,   p_cidade,            p_plano,
          p_codigo,           p_observacao
          from siw_tramite a
@@ -103,7 +106,7 @@ begin
          )
       (select
           sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
-          a.sq_siw_tramite,          sysdate,            'N',
+          a.sq_siw_tramite,          w_data,             'N',
           'Cadastramento inicial'
          from siw_tramite a
         where a.sq_menu = p_menu
@@ -151,7 +154,7 @@ begin
           executor         = p_executor,
           inicio           = p_inicio,
           fim              = p_fim,
-          ultima_alteracao = sysdate,
+          ultima_alteracao = w_data,
           sq_cidade_origem = p_cidade
       where sq_siw_solicitacao = p_chave;
       If p_codigo is not null Then
@@ -188,11 +191,10 @@ begin
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
-      select count(*) into w_log_esp from cl_solicitacao_log where sq_siw_solicitacao = p_chave;
 
       -- Se não tem atividades vinculadas nem foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.
-      If (w_log_sol + w_log_esp) > 1 Then
+      If w_log_sol > 1 Then
          -- Insere log de cancelamento
          Insert Into siw_solic_log
             (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa,
@@ -201,7 +203,7 @@ begin
             )
          (select
              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
-             a.sq_siw_tramite,          sysdate,              'N',
+             a.sq_siw_tramite,          w_data,               'N',
              'Cancelamento'
             from siw_solicitacao a
            where a.sq_siw_solicitacao = p_chave
