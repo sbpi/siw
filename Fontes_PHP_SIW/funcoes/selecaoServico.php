@@ -7,6 +7,8 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   extract($GLOBALS);
   if(Nvl($restricao,'')=='MENURELAC') {
     $RS = db_getMenuRelac::getInstanceOf($dbms, $chaveAux, $acordo, $acao, $viagem, 'SERVICO');
+  } elseif(Nvl($restricao,'')=='NUMERADOR') {
+    $RS = $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {
     if (Nvl($chaveAux,'')>'') $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'XVINC', $chaveAux, $modulo);
     else                      $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, $modulo);

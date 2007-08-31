@@ -95,9 +95,6 @@ function Inicial() {
   $w_sq_pessoa  = strtoupper(trim($_REQUEST['w_sq_pessoa']));
   $p_ordena     = strtoupper(trim($_REQUEST['p_ordena']));
   if ($O=='L') {
-    // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     $RS = db_getLancamento::getInstanceOf($dbms,$w_cliente,substr($SG,0,3),$p_dt_ini,$p_dt_fim,$w_sq_pessoa,'EE,ER');
     $RS = SortArray($RS,strtolower($p_ordena),'asc');
@@ -144,17 +141,11 @@ function Inicial() {
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean('onLoad=\'this.focus()\';');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
       if (substr($SG,2,1)=='R') {
-        ShowHTML('Contas a receber');
+        CabecalhoRelatorio($w_cliente,'Contas a receber',4,$w_chave);
       } elseif (substr($SG,2,1)=='D') {
-        ShowHTML('Contas a pagar');
+        CabecalhoRelatorio($w_cliente,'Contas a pagar',4,$w_chave);      
       } 
-      ShowHTML('</font><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</font></B>');
-      ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');      
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');      
-      ShowHTML('</TD></TR>');
-      ShowHTML('</B></TD></TR></TABLE>');
     } else {
       BodyOpen('onLoad=\'document.Form.p_dt_ini.focus()\';');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');

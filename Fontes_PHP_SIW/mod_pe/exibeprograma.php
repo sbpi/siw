@@ -43,10 +43,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
   // Se for listagem dos dados
   $l_html.=chr(13).'    <table width="100%" border="0">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
-  if (nvl(f($RS,'sq_peobjetivo'),'')!='') {
-    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</font></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">OBJETIVO: '.f($RS,'nm_objetivo').'</font></td></tr>';
-  }
+  if (nvl(f($RS,'sq_plano'),'')!='') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano')).'</font></td></tr>';
   // Se a classificação foi informada, exibe.
   if (Nvl(f($RS,'sq_cc'),'')>'') {
     $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CLASSIFICAÇÃO: '.f($RS,'cc_nome').' </td></tr>';
@@ -137,12 +134,35 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     }
   } 
 
+  // Objetivos estratégicos
+  $RS = db_getSolicObjetivo::getInstanceOf($dbms,$l_chave,null,null);
+  $RS = SortArray($RS,'nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+    $l_html .= chr(13).'          <tr valign="top">';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sigla</b></div></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
+    $l_html .= chr(13).'          </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS as $row) {
+      $l_html .= chr(13).'          <tr valign="top">';
+      $l_html .= chr(13).'            <td>'.f($row,'nome').'</td>';
+      $l_html .= chr(13).'            <td>'.f($row,'sigla').'</td>';
+      $l_html .= chr(13).'            <td>'.crlf2br(f($row,'descricao')).'</td>';
+      $l_html .= chr(13).'          </tr>';
+    } 
+    $l_html .= chr(13).'         </table></td></tr>';
+  }
+
   // Rubricas do projeto
   if(nvl($_REQUEST['p_rubrica'],'')!='') {
     $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RS = SortArray($RS,'codigo','asc');
     if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' ) {
-      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr align="center">';
@@ -291,7 +311,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'            <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Nº</td>';
@@ -333,7 +353,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,'VISUAL');
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['INDSOLIC']!='') { 
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0" width="5%" nowrap><div align="center"><b>Tipo</b></td>';
@@ -359,7 +379,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc','titulo','asc');
     if (count($RS)>0 && $l_nome_menu['METASOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -399,7 +419,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'nm_tipo_recurso','asc','nm_recurso','asc'); 
     if (count($RS)>0 && $l_nome_menu['RECSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -433,7 +453,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
     $RS = SortArray($RS,'problema','desc','criticidade','desc','nm_tipo_restricao','asc','nm_risco','asc'); 
     if (count($RS)>0 && $l_nome_menu['RESTSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>QUESTÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>QUESTÕES ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -560,7 +580,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       foreach($RS1 as $row) {
         if (nvl(f($row,'sq_solicitacao_interessado'),'nulo')!='nulo') {
           if ($l_cont==0) {
-            $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+            $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
             $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
             $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
             $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" width="10%" nowrap><div align="center"><b>Tipo de envolvimento</b></td>';
@@ -617,7 +637,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     if (count($RS)>0 && $l_nome_menu['INTERES']!='') {
       foreach ($RS as $row) {
         if ($l_cont==0) {
-          $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+          $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
           $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
           $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
           $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><b>Nome</b></td>';
@@ -646,7 +666,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0 && $l_nome_menu['AREAS']!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><div align="center"><b>Parte interessada</b></td>';
@@ -676,7 +696,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'tipo','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['RECURSO']!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECURSO'].'<hr color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECURSO'].' ('.count($RS).' )<hr color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'         <tr><td bgColor="#f0f0f0"><div align="center"><b>Tipo</b></td>';
@@ -701,7 +721,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0 && $l_nome_menu['ANEXO']!='') {
-      $l_html .= chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ANEXO'].' ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'            <tr><td bgColor="#f0f0f0"><div align="center"><b>Título</b></td>';
@@ -784,9 +804,9 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
         $l_html .=chr(13).'            <td nowrap>';    
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).ExibeImagemSolic(f($row1,'sigla'),f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null);
         if ($l_tipo=='WORD') {
-          $l_html .=chr(13).'        '.f($row1,'sq_siw_solicitacao').'&nbsp;';
+          $l_html .=chr(13).'        '.nvl(f($row1,'codigo_interno'),f($row1,'sq_siw_solicitacao')).'&nbsp;';
         } else {
-          $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row1,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row1,'sq_siw_solicitacao').'&nbsp;</a>';
+          $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row1,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row1,'codigo_interno'),f($row1,'sq_siw_solicitacao')).'&nbsp;</a>';
         }
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).'        '.exibeImagemRestricao(f($row1,'restricao'),'P');
         $l_html .=chr(13).'            <td align="left">'.f($row1,'titulo').'</td>';

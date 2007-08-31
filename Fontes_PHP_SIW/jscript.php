@@ -109,7 +109,15 @@ function Required() {
   ScriptOpen('JavaScript');
   ShowHTML('function required(){');
   if (count($w_campo_obrigatorio)>0) {
-    foreach($w_campo_obrigatorio as $k => $v) ShowHTML('  document.Form.'.$k.'.className='.$v.';');
+    foreach($w_campo_obrigatorio as $k => $v) {
+      if (strpos($k,'[')===false) {
+        ShowHTML('  document.Form.'.$k.'.className='.$v.';');
+      } else {
+        ShowHTML('  for (ind=1; ind < document.Form'.str_replace('[ind]','',$k).'.length; ind++) {');
+        ShowHTML('    document.Form'.$k.'.className='.$v.';');
+        ShowHTML('  }');
+      }
+    }
   } else {
     ShowHTML('  return true;');
   }
@@ -611,7 +619,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
   if ($ValueRequired>"") {
-    if(strpos($VariableName,'[')===false) $w_campo_obrigatorio[$VariableName]='"STIO"';
+    $w_campo_obrigatorio[$VariableName]='"STIO"';
     if (strtoupper($DataType)=="SELECT") { 
       print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; 
     } else { 

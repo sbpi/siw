@@ -139,13 +139,13 @@ function Imposto() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus()";');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -225,7 +225,7 @@ function Imposto() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       }  
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -304,13 +304,13 @@ function Documento(){
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus()";');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -381,7 +381,7 @@ function Documento(){
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -469,13 +469,13 @@ function Lancamento() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
+    BodyOpen('onLoad="document.Form.w_nome.focus()";');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus()";');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -551,7 +551,7 @@ function Lancamento() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

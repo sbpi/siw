@@ -105,11 +105,6 @@ function Demonstrativo() {
   //$p_fim     = $_REQUEST['p_fim'];
   $w_tipo    = $_REQUEST['w_tipo'];
   if ($O=='L') {
-    // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    if (f($RS,'logo')>'') {
-      $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    }
     if ($w_tipo=='WORD') {
       HeaderWord(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -124,15 +119,7 @@ function Demonstrativo() {
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0 cellpadding=0 cellspacing="3"><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,$w_embed).'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-      ShowHTML('DEMONSTRATIVO JURÍDICO/FINANCEIRO');
-      ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
-      if ($w_tipo!='WORD') {
-        ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-        ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.'Demonstrativo&R='.$w_pagina.$par.'&O=L&w_tipo=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      }
-      ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
+      CabecalhoRelatorio($w_cliente,'DEMONSTRATIVO JURÍDICO/FINANCEIRO',4,$w_acordo);      
     }
     ShowHTML('<table width="100%" align="center" border="0" cellpadding=0 cellspacing="3">');
     //ShowHTML('<tr><td colspan="4" align="right"  cellspacing=00><b>Ano</b>: '.$w_ano);
@@ -186,7 +173,7 @@ function Demonstrativo() {
             ShowHTML('<tr valign="bottom"><td align="left" colspan="2"><b>Execução do ano '.$w_ano.':</b>');
             ShowHTML('<td align="right" height="1%" colspan="2"><br>');
             for ($i=date('Y',f($row,'inicio')); $i<=date('Y',f($row,'fim')); $i++) {
-              if($w_ano!=$i)  ShowHTML('<a class="hl" href="'.$w_dir.$w_pagina.'Demonstrativo&R='.$w_pagina.$par.'&O=L&w_acordo='.$w_acordo.'&w_ano='.$i.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.$i.'&nbsp;</a>');
+              if($w_ano!=$i && $w_tipo!='WORD')  ShowHTML('<a class="hl" href="'.$w_dir.$w_pagina.'Demonstrativo&R='.$w_pagina.$par.'&O=L&w_acordo='.$w_acordo.'&w_ano='.$i.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.$i.'&nbsp;</a>');
             }
             ShowHTML('</td></tr>');
           }
@@ -195,7 +182,7 @@ function Demonstrativo() {
           $w_fim            = f($row,'fim_real');
           $w_sg_tramite     = f($row,'sg_tramite');
           $RS_Parc = db_getAcordoParcela::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'RELJUR',null,'01/01/'.$w_ano,'31/12/'.$w_ano,null,null,null,null);
-          $RS_Parc = SortArray($RS_Parc,'ordem','asc', 'dt_nota', 'asc');
+          $RS_Parc = SortArray($RS_Parc,'ordem','asc', 'dt_lancamento', 'asc', 'dt_nota', 'asc');
           if(count($RS_Parc)==0) {
             ShowHTML('   <tr><td colspan="4">');
             ShowHTML('    <table   height="40" width="100%" border="1">');
@@ -227,7 +214,6 @@ function Demonstrativo() {
                 $i += 1;
               }
             }
-
             $w_total = 0;
             $w_liq   = 0;
             $w_pago  = 0;
@@ -235,7 +221,7 @@ function Demonstrativo() {
             $j       = 0;
             $w_atual = '';
             foreach($RS_Parc as $row3) {
-              if ($w_atual!=f($row3,'sq_acordo_parcela')) {
+              if ($w_atual!=f($row3,'dt_lancamento')) {
                 $i += 1;
                 if(nvl(f($row3,'inicio'),'')!='') {
                   if (is_array($w_cancelamento)) {
@@ -280,14 +266,15 @@ function Demonstrativo() {
   
                 // Demais colunas
                 if(nvl(f($row3,'inicio'),'')!='') {
-                  $w_linha[$i][1] = FormataDataEdicao(f($row3,'inicio'),5).' a '.FormataDataEdicao(f($row3,'fim'),5);
+                  $w_linha[$i][1] = FormataDataEdicao(nvl(f($row3,'referencia_inicio'),f($row3,'inicio')),5).' a '.FormataDataEdicao(nvl(f($row3,'referencia_fim'),f($row3,'fim')),5);
                 } else {
                   $w_linha[$i][1] = '---';
                 }
                 $w_linha[$i][2] = FormataDataEdicao(f($row3,'vencimento'),5);
                 $w_linha[$i][3] = formatNumber(f($row3,'valor'));
                 if (Nvl(f($row3,'cd_lancamento'),'')>'') {
-                  $w_linha[$i][4] = '<A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row3,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.nvl(f($row3,'processo'),f($row3,'cd_lancamento')).'</a>';
+                  if($w_tipo!='WORD') $w_linha[$i][4] = '<A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row3,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.nvl(f($row3,'processo'),f($row3,'cd_lancamento')).'</a>';
+                  else                $w_linha[$i][4] = nvl(f($row3,'processo'),f($row3,'cd_lancamento'));
                   $w_linha[$i][5] = formatNumber(f($row3,'vl_lancamento'));
                   $w_linha[$i][6] = FormataDataEdicao(f($row3,'dt_lancamento'),5);
                   $w_linha[$i][7] = Nvl(FormataDataEdicao(f($row3,'quitacao'),5),'---');
@@ -301,7 +288,7 @@ function Demonstrativo() {
                 } 
                 $w_total += f($row3,'valor');
                 $j  = 8;
-                $w_atual = f($row3,'sq_acordo_parcela');
+                $w_atual = f($row3,'dt_lancamento');
               }
               if (nvl(f($row3,'sq_acordo_nota'),'')!='') {
                 if (f($row3,'abrange_inicial')=='S')   $w_linha[$i][$j+$w_nota[f($row3,'sq_acordo_nota')]] = f($row3,'valor_inicial');

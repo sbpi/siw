@@ -652,18 +652,20 @@ function Modulos() {
   $p_nome       = trim(strtoupper($_REQUEST['p_nome']));
   $p_sigla      = trim($_REQUEST['p_sigla']);
   $w_sq_modulo  = $_REQUEST['w_sq_modulo'];
+  $w_ordem      = $_REQUEST['w_ordem'];
 
   if ($O=='') $O='L';
 
   if (!(strpos('LP',$O)===false)) {
 
     $RS = db_getModList::getInstanceOf($dbms);
-    $RS = SortArray($RS,'nome','asc');
+    $RS = SortArray($RS,'ordem','asc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getModData::getInstanceOf($dbms,$w_sq_modulo);
     $w_nome             = f($RS,'nome');
     $w_sigla            = f($RS,'sigla');
     $w_objetivo_geral   = f($RS,'objetivo_geral');
+    $w_ordem            = f($RS,'ordem');
   } 
 
   Cabecalho();
@@ -677,6 +679,7 @@ function Modulos() {
       Validate('w_sigla','Sigla','1','1','1','3','1','1');
       Validate('w_objetivo_geral','Objetivo geral','1','1','1','4000','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      Validate('w_ordem','ordem','1','1','1','4','','0123456789');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
@@ -712,7 +715,7 @@ function Modulos() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
+    ShowHTML('          <td><b>Ordem</td>');
     ShowHTML('          <td><b>Nome</td>');
     ShowHTML('          <td><b>Sigla</td>');
     ShowHTML('          <td><b>Objetivo geral</td>');
@@ -724,7 +727,7 @@ function Modulos() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center">'.f($row,'sq_modulo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td>'.f($row,'objetivo_geral').'</td>');
@@ -748,6 +751,7 @@ function Modulos() {
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="60" maxlength="60" value="'.$w_nome.'"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>S</U>igla:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="STI" type="text" name="w_sigla" size="3" maxlength="3" value="'.$w_sigla.'"></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b>O<U>r</U>dem:<br><INPUT ACCESSKEY="R" '.$w_Disabled.' class="STI" type="text" name="w_ordem" size="4" maxlength="4" value="'.$w_ordem.'"></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>O</U>bjetivo geral:<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_objetivo_geral" rows=5 cols=75>'.$w_objetivo_geral.'</TEXTAREA></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -1007,7 +1011,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwModulo::getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral']);
+            $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();

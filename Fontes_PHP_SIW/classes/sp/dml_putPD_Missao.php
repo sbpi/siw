@@ -19,7 +19,7 @@ class dml_putPD_Missao {
                    'p_valor_adicional'           =>array(toNumber(tvl($p_valor_adicional)),                B_NUMERIC,      18,2),
                    'p_desconto_alimentacao'      =>array(toNumber(tvl($p_desconto_alimentacao)),           B_NUMERIC,      18,2),
                    'p_desconto_transporte'       =>array(toNumber(tvl($p_desconto_transporte)),            B_NUMERIC,      18,2),
-                   'p_pta'                       =>array(tvl($p_pta),                                      B_VARCHAR,        30),
+                   'p_pta'                       =>array(tvl($p_pta),                                      B_VARCHAR,       100),
                    'p_emissao_bilhete'           =>array(tvl($p_emissao_bilhete),                          B_DATE,           32),
                    'p_valor_passagem'            =>array(toNumber(tvl($p_valor_passagem)),                 B_NUMERIC,      18,2),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        30)

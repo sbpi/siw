@@ -3643,7 +3643,7 @@ function SolicMail($p_solic,$p_tipo) {
     if ($p_tipo==2) {
       // Se for tramitação
       // Encaminhamentos
-      $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+      $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
       $RS = SortArray($RS,'phpdt_data','desc');
       foreach ($RS as $row) {$RS = $row; break;}
       $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';

@@ -355,7 +355,7 @@ function Gerencial() {
       BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),3);
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {

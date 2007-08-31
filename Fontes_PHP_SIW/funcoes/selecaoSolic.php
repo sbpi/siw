@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção das solicitaçãoes, de acordo com o serviço selecionado
 // -------------------------------------------------------------------------
-function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
+function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$chaveAux3=null) {
   extract($GLOBALS);
   if ($chaveAux=='CLASSIF') {
     include_once($w_dir_volta.'funcoes/selecaoCC.php');
@@ -68,7 +68,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
             }
             ShowHTML('          <option value="'.f($l_row1,'sq_siw_solicitacao').'" SELECTED>'.f($l_row1,'titulo'));
           } else {
-            if (nvl(f($l_row1,'qtd_projeto'),0)==0) {
+            if (nvl(f($l_row1,'qtd_projeto'),0)==0 || nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chaveAux3,0)) {
               if ($l_cont==0) {
                 ShowHTML('          <option value="">---');
                 $l_cont += 1;

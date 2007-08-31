@@ -19,7 +19,7 @@ function selecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
       } else {
         $l_marcado = 'N';
         $l_chave   = $chave.',';
-        while (!(strpos($l_chave,',')===false)) {
+        while (strpos($l_chave,',')!==false) {
           $l_item  = trim(substr($l_chave,0,strpos($l_chave,',')));
           $l_chave = trim(substr($l_chave,(strpos($l_chave,',')+1),100));
           if ($l_item > '') {if (f($row,'sq_siw_tramite')==$l_item) $l_marcado = 'S'; }

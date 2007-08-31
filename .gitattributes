@@ -550,6 +550,9 @@ Fontes_PHP_SIW/classes/db/db_getPersonData.php -text
 Fontes_PHP_SIW/classes/db/db_getSiwCliModLis.php -text
 Fontes_PHP_SIW/classes/file/File.php -text
 Fontes_PHP_SIW/classes/gantt/gantt.class.php -text
+Fontes_PHP_SIW/classes/graph_barcode/BaseBarcode_class.php -text
+Fontes_PHP_SIW/classes/graph_barcode/C39Barcode_class.php -text
+Fontes_PHP_SIW/classes/graph_barcode/I25Barcode_class.php -text
 Fontes_PHP_SIW/classes/graph_hierarq/class.diagram-ext.php -text
 Fontes_PHP_SIW/classes/graph_hierarq/class.diagram.php -text
 Fontes_PHP_SIW/classes/graph_hierarq/class.xmlparser.php -text
@@ -630,6 +633,7 @@ Fontes_PHP_SIW/classes/sp/db_getBaseGeografica_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getCCTreeVision.php -text
 Fontes_PHP_SIW/classes/sp/db_getCLParametro.php -text
+Fontes_PHP_SIW/classes/sp/db_getCLSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getCTEspecificacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getCTEspecificacaoTree.php -text
 Fontes_PHP_SIW/classes/sp/db_getCV.php -text
@@ -637,6 +641,7 @@ Fontes_PHP_SIW/classes/sp/db_getCVAcadForm.php -text
 Fontes_PHP_SIW/classes/sp/db_getCVIdioma.php -text
 Fontes_PHP_SIW/classes/sp/db_getCVList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCV_Pessoa.php -text
+Fontes_PHP_SIW/classes/sp/db_getCadastrador_CL.php -text
 Fontes_PHP_SIW/classes/sp/db_getCadastrador_PD.php -text
 Fontes_PHP_SIW/classes/sp/db_getCall.php -text
 Fontes_PHP_SIW/classes/sp/db_getCargo.php -text
@@ -657,6 +662,7 @@ Fontes_PHP_SIW/classes/sp/db_getCompanyData.php -text
 Fontes_PHP_SIW/classes/sp/db_getContaBancoData.php -text
 Fontes_PHP_SIW/classes/sp/db_getContaBancoList.php -text
 Fontes_PHP_SIW/classes/sp/db_getContasCronograma.php -text
+Fontes_PHP_SIW/classes/sp/db_getContasRegistro.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutraParte.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvOutroRep.php -text
 Fontes_PHP_SIW/classes/sp/db_getConvPreposto.php -text
@@ -686,6 +692,7 @@ Fontes_PHP_SIW/classes/sp/db_getEsquemaAtributo.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaInsert.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaTabela.php -text
+Fontes_PHP_SIW/classes/sp/db_getEtapaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParent.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParents.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaMensal.php -text
@@ -823,6 +830,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicAcesso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicApoioList.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicAreas.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicCL.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtapa.php -text
@@ -838,6 +846,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicList_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicLog.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicObjetivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecursos.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
@@ -883,6 +892,7 @@ Fontes_PHP_SIW/classes/sp/db_getTrigEventos.php -text
 Fontes_PHP_SIW/classes/sp/db_getTrigger.php -text
 Fontes_PHP_SIW/classes/sp/db_getUniMedida_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnidadeMedida.php -text
+Fontes_PHP_SIW/classes/sp/db_getUnidade_CL.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnidade_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnidade_PE.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnitTypeData.php -text
@@ -967,6 +977,11 @@ Fontes_PHP_SIW/classes/sp/dml_putArquivo_PE.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaEtapa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaMeta_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putBaseLine.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLGeral.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLParametro.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLParametro1.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCTEspecificacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVCargo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVCurso.php -text
@@ -984,6 +999,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCoPesTel.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCodigoExterno.php -text
 Fontes_PHP_SIW/classes/sp/dml_putColuna.php -text
 Fontes_PHP_SIW/classes/sp/dml_putContasCronograma.php -text
+Fontes_PHP_SIW/classes/sp/dml_putContasRegistro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvDadosBacario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvDadosBancario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvOutraParte.php -text
@@ -1014,6 +1030,7 @@ Fontes_PHP_SIW/classes/sp/dml_putEsquemaAtributo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaInsert.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaTabela.php -text
+Fontes_PHP_SIW/classes/sp/dml_putEtapaArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaMensal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEventoTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFNParametro.php -text
@@ -1168,6 +1185,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTrigEvento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigger[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidadeMedida.php -text
+Fontes_PHP_SIW/classes/sp/dml_putUnidade_CL.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_PE.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuario.php -text
@@ -1263,6 +1281,7 @@ Fontes_PHP_SIW/funcoes/montaRadioMes.php -text
 Fontes_PHP_SIW/funcoes/montaStringOpcao.php -text
 Fontes_PHP_SIW/funcoes/montaTipoIndicador.php -text
 Fontes_PHP_SIW/funcoes/opcaoMenu.php -text
+Fontes_PHP_SIW/funcoes/retornaCadastrador_CL.php -text
 Fontes_PHP_SIW/funcoes/retornaCadastrador_PD.php -text
 Fontes_PHP_SIW/funcoes/retornaSimNao.php -text
 Fontes_PHP_SIW/funcoes/selecaoAbrangData.php -text
@@ -1292,6 +1311,7 @@ Fontes_PHP_SIW/funcoes/selecaoCidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidadeCentral.php -text
 Fontes_PHP_SIW/funcoes/selecaoClasseMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoColaborador.php -text
+Fontes_PHP_SIW/funcoes/selecaoContasCronograma.php -text
 Fontes_PHP_SIW/funcoes/selecaoCriticidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoDadoTipo.php -text
 Fontes_PHP_SIW/funcoes/selecaoDeficiencia.php -text
@@ -1442,13 +1462,20 @@ Fontes_PHP_SIW/mod_ac/gr_contratos.php -text
 Fontes_PHP_SIW/mod_ac/gr_convenios.php -text
 Fontes_PHP_SIW/mod_ac/rel_bolsista.php -text
 Fontes_PHP_SIW/mod_ac/relatorios.php -text
+Fontes_PHP_SIW/mod_ac/sqlnet.log -text
 Fontes_PHP_SIW/mod_ac/tabelas.php -text
 Fontes_PHP_SIW/mod_ac/validaacordo.php -text
 Fontes_PHP_SIW/mod_ac/validaconvenio.php -text
 Fontes_PHP_SIW/mod_ac/visualacordo.php -text
 Fontes_PHP_SIW/mod_ac/visualconvenio.php -text
 Fontes_PHP_SIW/mod_cl/catalogo.php -text
+Fontes_PHP_SIW/mod_cl/certame.php -text
+Fontes_PHP_SIW/mod_cl/pedido.php -text
 Fontes_PHP_SIW/mod_cl/tabelas.php -text
+Fontes_PHP_SIW/mod_cl/validacertame.php -text
+Fontes_PHP_SIW/mod_cl/validapedido.php -text
+Fontes_PHP_SIW/mod_cl/visualcertame.php -text
+Fontes_PHP_SIW/mod_cl/visualpedido.php -text
 Fontes_PHP_SIW/mod_dc/carga_arquivos.php -text
 Fontes_PHP_SIW/mod_dc/dc_consulta.php -text
 Fontes_PHP_SIW/mod_dc/dc_dicionario.php -text
@@ -1511,6 +1538,7 @@ Fontes_PHP_SIW/mod_pd/validaviagem.php -text
 Fontes_PHP_SIW/mod_pd/viagem.php -text
 Fontes_PHP_SIW/mod_pd/visualviagem.php -text
 Fontes_PHP_SIW/mod_pe/exibeprograma.php -text
+Fontes_PHP_SIW/mod_pe/graficos.php -text
 Fontes_PHP_SIW/mod_pe/indicador.php -text
 Fontes_PHP_SIW/mod_pe/programa.php -text
 Fontes_PHP_SIW/mod_pe/recurso.php -text

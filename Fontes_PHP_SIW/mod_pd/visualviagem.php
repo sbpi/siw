@@ -453,7 +453,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
         $w_html .= chr(13).'        <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-        if (Nvl(f($row,'caminho'),'')>'') {
+        if (Nvl(f($row,'caminho'),'')>'' && $l_P4!=1) {
           $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
         } else {
           $w_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
@@ -472,7 +472,11 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         } elseif (f($row,'origem')=='ANOTACAO') {
           $w_html .= chr(13).'        <td nowrap>Anotação</td>';
         } else {
-          $w_html .= chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
+          if(strpos(f($row,'despacho'),'***')!==false) {
+            $w_html.=chr(13).'        <td nowrap>---</td>';
+          } else {
+            $w_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
+          }
         } 
         $w_html .= chr(13).'      </tr>';
       } 

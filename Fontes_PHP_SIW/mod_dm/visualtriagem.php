@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados da demanda de triagem
 // -------------------------------------------------------------------------
-function VisualTriagem($l_chave,$operacao,$w_usuario) {
+function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
@@ -80,9 +80,11 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
     $l_html.=chr(13).'      <tr><td><b>Limite para conclusão:</b></td>';
     $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'limite_conclusao')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Solicitante:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
+    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_sol').'</td></tr>';
+    else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Setor solicitante:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_unidade').'</td></tr>';
+    else       $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade'),$TP).'</td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Proponente externo:</b></td>';
     $l_html.=chr(13).'        <td>'.Nvl(f($RS,'proponente'),'---').' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Local de execução:</b></td>';
@@ -90,14 +92,17 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
     $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
     $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Responsável:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
+    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_resp').'</td></tr>';
+    else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Setor responsável:</b></td>';
-    $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
+    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+    else       $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
     $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
     $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
-    $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+    else       $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       $l_html.=chr(13).'      <tr><td valign="top"><b>Etapa: </b></td>';
       $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
@@ -142,13 +147,16 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
         $l_html.=chr(13).'        <tr valign="top">';
         $l_html.=chr(13).'          <td nowrap>';
         $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
+        if($l_tipo=='WORD') $l_html.=chr(13).'          '.f($row,'sq_siw_solicitacao').'&nbsp;';
+        else       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
         if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-          $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
+          if($l_tipo=='WORD') $l_html.=chr(13).'            <td>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa').'</td>';
+          else       $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
         } else {
           $l_html.=chr(13).'            <td>---</td>';
         } 
-        $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+        if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($row,'nm_solic').'</td>';
+        else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
         $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
         $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
@@ -193,7 +201,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
         $l_html .= chr(13).'      <tr>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo_completo').'</td>';
         $l_html .= chr(13).'        <td>'.nvl(f($row,'codigo'),'---').'</td>';
-        $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,$l_chave).'</td>';
+        if($l_tipo=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nm_recurso').'</td>';
+        else       $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,$l_chave).'</td>';
         $l_html .= chr(13).'        <td align="center" nowrap>'.f($row,'nm_unidade_medida').'</td>';        
         $l_html .= chr(13).'      </tr>';
       } 
@@ -256,7 +265,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
             $l_novo = 'S';
           }
           $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
-          $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+          if($l_tipo=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+          else       $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
           $l_html.=chr(13).'      </tr>';
         } else {
           if ($l_cont==0) {
@@ -273,9 +283,11 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
           $l_html .= chr(13).'      <tr>';
           if ($l_novo=='S') {
             $l_html .= chr(13).'        <td align="center">*** ALTERAR ***</td>';
-            $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+            if($l_tipo=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+            else       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
           } else {
-            $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+            if($l_tipo=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+            else       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
             $l_html .= chr(13).'        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
             $l_html .= chr(13).'        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
           }
@@ -302,7 +314,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
           $l_cont = 1;
         }
         $l_html .= chr(13).'      <tr>';
-        $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+        if($l_tipo=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
+        else       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
         $l_html .= chr(13).'        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
         $l_html .= chr(13).'        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
         $l_html .= chr(13).'      </tr>';
@@ -350,7 +363,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
       $w_cor=$conTrBgColor;
       foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+        else       $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
         $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
@@ -399,18 +413,24 @@ function VisualTriagem($l_chave,$operacao,$w_usuario) {
         }
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td nowrap><font size="1">'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-        if (Nvl(f($row,'caminho'),'')>'') {
+        if (Nvl(f($row,'caminho'),'')>'' && $l_tipo!='WORD') {
           $l_html.=chr(13).'      <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
         } else {
           $l_html.=chr(13).'      <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
         } 
-        $l_html.=chr(13).'        <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
+        if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap><font size="1">'.f($row,'responsavel').'</td>';
+        else       $l_html.=chr(13).'        <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
         if (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
-          $l_html.=chr(13).'      <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
+          if($l_tipo=='WORD') $l_html.=chr(13).'      <td nowrap><font size="1">'.f($row,'destinatario').'</td>';
+          else       $l_html.=chr(13).'      <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
         } elseif (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')=='') {
           $l_html.=chr(13).'      <td nowrap><font size="1">Anotação</td>';
        } else {
-          $l_html.=chr(13).'      <td nowrap><font size="1">'.Nvl(f($row,'tramite'),'---').'</td>';
+          if(strpos(f($row,'despacho'),'***')!==false) {
+            $l_html.=chr(13).'        <td nowrap>---</td>';
+          } else {
+            $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
+          }
         } 
         $l_html.=chr(13).'      </tr>';
       } 

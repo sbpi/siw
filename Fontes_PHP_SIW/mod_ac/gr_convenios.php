@@ -56,10 +56,11 @@ include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 //                   = W   : Geração de documento no formato MS-Word (Office 2003)
 
 // Verifica se o usuário está autenticado
-// Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
+
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = strtoupper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -74,12 +75,15 @@ $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'gr_convenios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
+
 if ($O=='') $O='P';
+
 switch ($O) {
   case 'V': $w_TP=$TP.' - Gráfico'; break;
   case 'P': $w_TP=$TP.' - Filtragem'; break;
   default : $w_TP=$TP.' - Listagem'; 
 }
+
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
@@ -119,15 +123,21 @@ $p_agrega        = strtoupper($_REQUEST['p_agrega']);
 $p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
 $p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
 $p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
+
 // Recupera a configuração do serviço
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+
 // Recupera a configuração do serviço de origem
 $RS_Menu_Origem = db_getMenuData::getInstanceOf($dbms,$P2);
+
 // Carrega o segmento do cliente
 $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
 $w_segmento = f($RS,'segmento');
+
 Main();
+
 FechaSessao($dbms);
+
 exit;
 // =========================================================================
 // Pesquisa gerencial
@@ -153,7 +163,8 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $O=='W') {
     $w_filtro='';
     if (nvl($p_chave_pai,'')>'') {
-      $w_filtro.='<tr valign="top"><td align="right">Vinculação<td>['.exibeSolic($w_dir,$p_chave_pai,null,'S').']</td></tr>';
+      $RS = db_getSolicData::getInstanceOf($dbms,$p_chave_pai);
+      $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_chave_pai,f($RS,'dados_solic'),'S').'</b>]';
     }    
     if ($p_atividade>'') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
@@ -255,7 +266,7 @@ function Gerencial() {
     $w_pag=1;
     $w_linha=0.00;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {
     Cabecalho();
@@ -338,7 +349,7 @@ function Gerencial() {
       BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),3);
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {

@@ -418,6 +418,13 @@ function Menu() {
         $w_pede_descricao       = f($RS,'descricao');
         $w_pede_justificativa   = f($RS,'justificativa');
         $w_sigla                = f($RS,'sigla');
+        $w_numeracao            = f($RS,'numeracao_automatica');
+        $w_numerador            = f($RS,'servico_numerador');
+        $w_sequencial           = f($RS,'sequencial');
+        $w_sequencial_atual     = f($RS,'sequencial');
+        $w_ano_corrente         = f($RS,'ano_corrente');
+        $w_prefixo              = f($RS,'prefixo');
+        $w_sufixo               = f($RS,'sufixo');
       } elseif ($w_troca>'' && $O!='E') {
         $w_sq_menu_pai          = $_REQUEST['w_sq_menu_pai'];
         $w_sq_servico           = $_REQUEST['w_sq_servico'];
@@ -456,6 +463,13 @@ function Menu() {
         $w_envia_dia_util       = $_REQUEST['w_envia_dia_util'];
         $w_pede_descricao       = $_REQUEST['w_pede_descricao'];
         $w_pede_justificativa   = $_REQUEST['w_pede_justificativa'];
+        $w_numeracao            = $_REQUEST['w_numeracao'];
+        $w_numerador            = $_REQUEST['w_numerador'];
+        $w_sequencial           = $_REQUEST['w_sequencial'];
+        $w_sequencial_atual     = $_REQUEST['w_sequencial_atual'];
+        $w_ano_corrente         = $_REQUEST['w_ano_corrente'];
+        $w_prefixo              = $_REQUEST['w_prefixo'];
+        $w_sufixo               = $_REQUEST['w_sufixo'];
       } 
 
       if ($O=='I' || $O=='A') {
@@ -482,6 +496,15 @@ function Menu() {
         Validate('w_p4', 'P4', '1', '', '1', '18', '', '0123456789');
         ShowHTML('  if (theForm.w_tramite[0].checked) { ');
         Validate('w_sq_unidade_executora', 'Unidade executora', 'HIDDEN', '1', '1', '10', '', '0123456789');
+        if ($w_numeracao==1) {
+          Validate('w_sequencial','Sequencial','1',1,1,18,'','0123456789');
+          CompValor('w_sequencial','Sequencial','>=',nvl($w_sequencial_atual,0),nvl($w_sequencial_atual,0));
+          Validate('w_ano_corrente', 'Ano corrente', '1', 1, 4, 4, '', '0123456789');
+          Validate('w_prefixo','Prefixo','1','1',1,10,'1','1');
+          Validate('w_sufixo','Sufixo','1','',1,10,'1','1');
+        } elseif ($w_numeracao==2) {
+          Validate('w_numerador', 'Serviço numerador', 'SELECT', '1', '1', '18', '', '0123456789');
+        } 
         Validate('w_como_funciona', 'Como funciona', '', '1', '10', '1000', '1', '1');
         ShowHTML('  }');
       } 
@@ -501,6 +524,17 @@ function Menu() {
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
+    ShowHTML('function numeracao() {');
+    ShowHTML('  document.Form.action=\''.$w_pagina.$par.'\';');
+    ShowHTML('  if (document.Form.w_tramite[0].checked) {');
+    ShowHTML('    document.Form.w_troca.value=\'w_numeracao[0]\';');
+    ShowHTML('  } else if (document.Form.w_tramite[1].checked) {');
+    ShowHTML('    document.Form.w_troca.value=\'w_sequencial\';');
+    ShowHTML('  } else if (document.Form.w_tramite[2].checked) {');
+    ShowHTML('    document.Form.w_troca.value=\'w_numerador\';');
+    ShowHTML('  }');
+    ShowHTML('  document.Form.submit();');
+    ShowHTML('}');
     ShowHTML('function servico() {');
     ShowHTML('  if (document.Form.w_tramite[1].checked) {');
     ShowHTML('     document.Form.w_sq_unidade_executora.selectedIndex=0;');
@@ -557,6 +591,15 @@ function Menu() {
     ShowHTML('     document.Form.w_controla_ano[0].disabled=true;');
     ShowHTML('     document.Form.w_controla_ano[1].disabled=true;');
     ShowHTML('     document.Form.w_como_funciona.disabled=true;');
+    ShowHTML('     document.Form.w_numeracao.disabled=true;');
+    if ($w_numeracao==1) {
+      ShowHTML('     document.Form.w_sequencial.disabled=true;');
+      ShowHTML('     document.Form.w_ano_corrente.disabled=true;');
+      ShowHTML('     document.Form.w_prefixo.disabled=true;');
+      ShowHTML('     document.Form.w_sufixo.disabled=true;');
+    } elseif ($w_numeracao==2) {
+      ShowHTML('     document.Form.w_numerador.disabled=true;');
+    } 
     ShowHTML('  }');
     ShowHTML('  else if (document.Form.w_tramite[0].checked && document.Form.w_emite_os[0].disabled) {');
     ShowHTML('     document.Form.w_sq_unidade_executora.disabled=false;');
@@ -599,6 +642,15 @@ function Menu() {
     ShowHTML('     document.Form.w_pede_justificativa[0].checked=true;');
     ShowHTML('     document.Form.w_como_funciona.value=\'\';');
     ShowHTML('     document.Form.w_controla_ano[1].checked=true;');
+    ShowHTML('     document.Form.w_numeracao.disabled=false;');
+    if ($w_numeracao==1) {
+      ShowHTML('     document.Form.w_sequencial.disabled=false;');
+      ShowHTML('     document.Form.w_ano_corrente.disabled=false;');
+      ShowHTML('     document.Form.w_prefixo.disabled=false;');
+      ShowHTML('     document.Form.w_sufixo.disabled=false;');
+    } elseif ($w_numeracao==2) {
+      ShowHTML('     document.Form.w_numerador.disabled=false;');
+    } 
     ShowHTML('  }');
     ShowHTML('}');
     ScriptClose();
@@ -868,6 +920,7 @@ function Menu() {
     AbreForm('Form',$w_pagina.'Grava','POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sequencial_atual" value="'.$w_sequencial_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('      <tr><td><table width="100%" border=0>');
@@ -963,7 +1016,28 @@ function Menu() {
 
     selecaoUnidade('<u>U</u>nidade responsável pela execução do serviço:', 'U', 'Informe a unidade organizacional responsável pela execução deste serviço. Se a organização tiver mais de um endereço e o serviço for descentralizado, informe a unidade responsável pela execução na sede.', $w_sq_unidade_executora, null, 'w_sq_unidade_executora', null, null);
     ShowHTML('          </table>');
-    ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr align="left">');
+    ShowHTML('          <tr><td width="5%"><td colspan="3" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">');
+    ShowHTML('          <tr valign="top"><td colspan="3" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top">');
+    ShowHTML('              <td title="Existem serviços que necessitam de controle automático da numeração de suas solicitações. Informe \'Sim\' se for o caso desta opção."><b>Controla numeração automática?</b>');
+    if (nvl($w_numeracao,0)==0) {
+      ShowHTML('                 <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=0 checked onClick="numeracao();"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=1 onClick="numeracao();"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=2 onClick="numeracao();"> Vinculada a outro serviço');
+    } elseif ($w_numeracao==1) {
+      ShowHTML('                 <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=0 onClick="numeracao();"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=1 checked onClick="numeracao();"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=2 onClick="numeracao();"> Vinculada a outro serviço');
+    } elseif ($w_numeracao==2) {
+      ShowHTML('                 <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=0 onClick="numeracao();"> Não <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=1 onClick="numeracao();"> Sim <br><input '.$w_Disabled.' class="str" type="radio" name="w_numeracao" value=2 checked onClick="numeracao();"> Vinculada a outro serviço');
+    }
+    if ($w_numeracao==1) {
+      ShowHTML('      <td valign="top"><table width="100%" border="0" cellpadding=0 cellspacing=0><tr valign="top">');
+      ShowHTML('         <td><font size="1"><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
+      ShowHTML('         <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
+      ShowHTML('         <td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
+      ShowHTML('         <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+      ShowHTML('      </table>');
+    } elseif ($w_numeracao==2) {
+      selecaoServico('Serviço a ser utili<u>z</u>ado para numeração:', 'Z', 'Indique o serviço que irá fornecer a numeração.', $w_numerador, $w_sq_menu, null, 'w_numerador', 'NUMERADOR', null, null, null, null);
+    }
+    ShowHTML('            </table>');
+    ShowHTML('          <tr align="left">');
     ShowHTML('              <td title="Existem serviços que necessitam de uma Ordem de Serviço. Informe \'Sim\' se for o caso desta opção."><b>Emite OS?</b><br>');
     if ($w_emite_os=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_emite_os" value="N"> Não');
@@ -1990,13 +2064,17 @@ function Grava() {
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwMenu::getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_pai'], $_REQUEST['w_link'], $_REQUEST['w_p1'], 
-            $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], $_REQUEST['w_target'], 
-            $_REQUEST['w_emite_os'], $_REQUEST['w_consulta_opiniao'], $_REQUEST['w_envia_email'], $_REQUEST['w_exibe_relatorio'], 
-            $_REQUEST['w_como_funciona'], $_REQUEST['w_vinculacao'], $_REQUEST['w_data_hora'], $_REQUEST['w_envia_dia_util'], 
-            $_REQUEST['w_pede_descricao'], $_REQUEST['w_pede_justificativa'], $_REQUEST['w_finalidade'], $w_cliente, 
-            $_REQUEST['w_descricao'], $_REQUEST['w_acesso_geral'], $_REQUEST['w_modulo'], $_REQUEST['w_sq_unidade_executora'], 
-            $_REQUEST['w_tramite'], $_REQUEST['w_ultimo_nivel'], $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], 
-            $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao']);
+            $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], 
+            $_REQUEST['w_target'], $_REQUEST['w_emite_os'], $_REQUEST['w_consulta_opiniao'], $_REQUEST['w_envia_email'], 
+            $_REQUEST['w_exibe_relatorio'], $_REQUEST['w_como_funciona'], $_REQUEST['w_vinculacao'], 
+            $_REQUEST['w_data_hora'], $_REQUEST['w_envia_dia_util'], $_REQUEST['w_pede_descricao'], 
+            $_REQUEST['w_pede_justificativa'], $_REQUEST['w_finalidade'], $w_cliente, 
+            $_REQUEST['w_descricao'], $_REQUEST['w_acesso_geral'], $_REQUEST['w_modulo'], 
+            $_REQUEST['w_sq_unidade_executora'], $_REQUEST['w_tramite'], $_REQUEST['w_ultimo_nivel'], 
+            $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], 
+            $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao'], $_REQUEST['w_numeracao'],
+            $_REQUEST['w_numerador'], $_REQUEST['w_sequencial'], $_REQUEST['w_ano_corrente'], $_REQUEST['w_prefixo'], 
+            $_REQUEST['w_sufixo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();

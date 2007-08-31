@@ -43,13 +43,12 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   // Se for listagem dos dados
   $l_html.=chr(13).'    <table width="100%" border="0">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
-  if (nvl(f($RS,'sq_peobjetivo'),'')!='') {
-    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</font></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">OBJETIVO: '.f($RS,'nm_objetivo').'</font></td></tr>';
+  if (nvl(f($RS,'sq_plano'),'')!='') {
+    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,strtoupper(f($RS,'nm_plano'))).'</font></td></tr>';
   }
   // Se a classificação foi informada, exibe.
   if (Nvl(f($RS,'sq_cc'),'')>'') {
-    $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CLASSIFICAÇÃO: '.f($RS,'cc_nome').' </td></tr>';
+    $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CLASSIFICAÇÃO: '.f($RS,'cc_nome').' </td></tr>';//.f($RS,'nm_plano').  
   }
     
   // Se o acordo foi informado, exibe.
@@ -80,7 +79,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0">Ação: '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>';
     }
   }
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2"><b>PROJETO: '.f($RS,'titulo').' ('.f($RS,'sq_siw_solicitacao').')</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2"><b>PROJETO: '.f($RS,'titulo').' ('.nvl(f($RS,'codigo_interno'),f($RS,'sq_siw_solicitacao')).')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
      
   // Identificação do projeto
@@ -163,12 +162,35 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     }
   } 
 
+  // Objetivos estratégicos
+  $RS = db_getSolicObjetivo::getInstanceOf($dbms,$l_chave,null,null);
+  $RS = SortArray($RS,'nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+    $l_html .= chr(13).'          <tr valign="top">';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sigla</b></div></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
+    $l_html .= chr(13).'          </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS as $row) {
+      $l_html .= chr(13).'          <tr valign="top">';
+      $l_html .= chr(13).'            <td>'.f($row,'nome').'</td>';
+      $l_html .= chr(13).'            <td>'.f($row,'sigla').'</td>';
+      $l_html .= chr(13).'            <td>'.crlf2br(f($row,'descricao')).'</td>';
+      $l_html .= chr(13).'          </tr>';
+    } 
+    $l_html .= chr(13).'         </table></td></tr>';
+  }
+
   // Rubricas do projeto
   if(nvl($_REQUEST['p_rubrica'],'')!='') {
     $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
     $RS = SortArray($RS,'codigo','asc');
     if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' && $w_cliente!='10135') {
-      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr align="center">';
@@ -240,7 +262,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'         </table></td></tr>';
     } else {
       // Descritivo das rubricas
-      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td colspan="2"><b>Detalhamento das rubricas</b></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
@@ -257,7 +279,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
       $w_total_previsto  = 0;
-      $w_total_executado = 0;
+      $w_total_real = 0;
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr valign="top">';
         $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
@@ -298,8 +320,6 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
       $l_html .= chr(13).'          </tr>';      
       $w_cor=$conTrBgColor;
-      $w_total_previsto  = 0;
-      $w_total_executado = 0;
       foreach ($RS as $row) {
         $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null);
         $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
@@ -308,6 +328,8 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
         $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
         $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
         if (count($RS_Cronograma)>0) {
+          $w_rubrica_previsto = 0;
+          $w_rubrica_real     = 0;
           foreach ($RS_Cronograma as $row1) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             $l_html .= chr(13).'        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row1,'inicio'),5).' a '.FormataDataEdicao(f($row1,'fim'),5).'</td>';
@@ -351,7 +373,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,$l_chave,null,null,null);
     if (count($RS)>0) {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'            <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Nº</td>';
@@ -458,7 +480,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,'VISUAL');
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['INDSOLIC']!='') { 
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td valign="top" colspan="2">A tabela abaixo, apresenta somente indicadores não ligados a metas.';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
@@ -485,7 +507,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc','titulo','asc');
     if (count($RS)>0 && $l_nome_menu['METASOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -525,7 +547,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'nm_tipo_recurso','asc','nm_recurso','asc'); 
     if (count($RS)>0 && $l_nome_menu['RECSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECSOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -559,7 +581,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
     $RS = SortArray($RS,'problema','desc','criticidade','desc','nm_tipo_restricao','asc','nm_risco','asc'); 
     if (count($RS)>0 && $l_nome_menu['RESTSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>QUESTÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>QUESTÕES ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
@@ -719,7 +741,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       foreach($RS1 as $row) {
         if (nvl(f($row,'sq_solicitacao_interessado'),'nulo')!='nulo') {
           if ($l_cont==0) {
-            $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+            $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].' ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
             $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
             $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
             $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" width="10%" nowrap><div align="center"><b>Tipo de envolvimento</b></td>';
@@ -737,7 +759,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
           $l_html.=chr(13).'      </tr>';
         } else {
           if ($l_cont==0) {
-            $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+            $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RESP'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
             $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
             $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
             $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><b>Nome</b></td>';
@@ -776,7 +798,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     if (count($RS)>0 && $l_nome_menu['INTERES']!='') {
       foreach ($RS as $row) {
         if ($l_cont==0) {
-          $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+          $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INTERES'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
           $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
           $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
           $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0"><b>Nome</b></td>';
@@ -805,7 +827,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicAreas::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0 && $l_nome_menu['AREAS']!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['AREAS'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr><td bgColor="#f0f0f0" colspan=4><div align="center"><b>Parte interessada</b></td>';
@@ -870,7 +892,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRecurso::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'tipo','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['RECURSO']!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECURSO'].'<hr color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['RECURSO'].' ('.count($RS).')<hr color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'         <tr><td bgColor="#f0f0f0"><div align="center"><b>Tipo</b></td>';
@@ -895,7 +917,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS = SortArray($RS,'nome','asc');
     if (count($RS)>0 && $l_nome_menu['ANEXO']!='') {
-      $l_html .= chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ANEXO'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ANEXO'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'            <tr><td bgColor="#f0f0f0"><div align="center"><b>Título</b></td>';

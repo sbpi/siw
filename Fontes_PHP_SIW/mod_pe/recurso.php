@@ -277,19 +277,19 @@ function Inicial() {
   if ($w_troca>'') {
     if ($w_troca=='disponibilidade') {
       if ($w_disponibilidade==1) {
-        BodyOpen('onLoad=document.Form.w_limite_diario.focus();');
+        BodyOpen('onLoad=\'document.Form.w_limite_diario.focus()\';');
       } else {
-        BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+        BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
       }
     } else {
-      BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
     }
   } elseif (strpos('CIA',$O)!==false) {
-    BodyOpen('onLoad=document.Form.w_tp_vinculo.focus();');
+    BodyOpen('onLoad=\'document.Form.w_tp_vinculo.focus()\';');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad=\'this.focus()\';');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -428,7 +428,7 @@ function Inicial() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr valign="top">');
-    SelecaoVinculoRecurso('<U>V</U>inculaçao:','V','Indique a vinculação deste recurso.',$w_tp_vinculo,null,'w_tp_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_gestora.selectedIndex=0; document.Form.w_tipo_recurso.selectedIndex=0; document.Form.w_unidade_medida.selectedIndex=0; document.Form.w_codigo.value=\'\'; document.Form.w_troca.value=\'w_tp_vinculo\'; document.Form.submit();"');
+    SelecaoVinculoRecurso('<U>V</U>inculação:','V','Indique a vinculação deste recurso.',$w_tp_vinculo,null,'w_tp_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_gestora.selectedIndex=0; document.Form.w_tipo_recurso.selectedIndex=0; document.Form.w_unidade_medida.selectedIndex=0; document.Form.w_codigo.value=\'\'; document.Form.w_troca.value=\'w_tp_vinculo\'; document.Form.submit();"');
     if (nvl($w_tp_vinculo,'')!='') {
       SelecaoVinculoRecurso('registro','key','hint',$w_ch_vinculo,$w_tp_vinculo,'w_ch_vinculo','REGISTRO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_codigo.value=\'\'; document.Form.w_troca.value=\'w_ch_vinculo\'; document.Form.submit();"');
       ShowHTML('<INPUT type="hidden" name="w_nome" value="'.$w_nome.'">');

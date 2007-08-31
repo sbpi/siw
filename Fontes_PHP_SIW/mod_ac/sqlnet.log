@@ -1,0 +1,217 @@
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:05:47
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:05:55
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:05:59
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:00
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:02
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:05
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:07
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:08
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:09
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:06:12
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=XE.sbpi.com.br)(CID=(PROGRAM=)(HOST=mercurio.sbpi.com.br)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.4.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.4.0 - Production
+  Time: 27-AGO-2007 11:23:42
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 111

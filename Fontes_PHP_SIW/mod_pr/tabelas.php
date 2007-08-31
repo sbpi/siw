@@ -378,15 +378,15 @@ function CronPrestacao() {
       $RS = SortArray($RS,'fim','desc');
       if(count($RS)>0 && nvl($w_tipo,'P')=='P') {
         foreach($RS as $row){$RS=$row; break;}
-        ShowHTML('          <td><b><u>I</u>nício:</b><br><input READONLY accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(addDays(f($RS,'fim'),+1)).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início para a execução do cronograma."></td>');
+        ShowHTML('          <td><b><u>I</u>nício:</b><br><input READONLY accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(addDays(f($RS,'fim'),+1)).'" title="Data de início para a execução do cronograma."></td>');
       } else {
-        ShowHTML('          <td><b><u>I</u>nício:</b><br><input READONLY accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(f($RS_Solic,'inicio')).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início para a execução do cronograma."></td>');
+        ShowHTML('          <td><b><u>I</u>nício:</b><br><input READONLY accesskey="I" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(f($RS_Solic,'inicio')).'" title="Data de início para a execução do cronograma."></td>');
       }
     } else {
       ShowHTML('          <td><b>Início:</b><br>'.$w_inicio.'</td>');
     }
     if(nvl($w_tipo,'')=='F') {
-      ShowHTML('          <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(f($RS_Solic,'fim')).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data fim para a execução do cronograma."></td>');
+      ShowHTML('          <td><b><u>F</u>im:</b><br><input READONLY accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(f($RS_Solic,'fim')).'" title="Data fim para a execução do cronograma."></td>');
     } else {
       ShowHTML('          <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data fim para a execução do cronograma.">'.ExibeCalendario('Form','w_fim').'</td>');
     }

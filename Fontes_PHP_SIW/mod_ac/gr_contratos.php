@@ -186,7 +186,7 @@ function Gerencial() {
       $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_sq_orprior>''){
-      $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,'ALTERA');
+      $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null,null,'ALTERA');
       foreach($RS as $row) {$RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo do acordo <td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -223,7 +223,7 @@ function Gerencial() {
     if ($p_empenho>'')      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho.'</b>]';
     if ($p_processo>'')     $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]';
     if ($w_filtro>'')       $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>';
-    $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,4,
+    $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
@@ -286,7 +286,7 @@ function Gerencial() {
     $w_pag=1;
     $w_linha=0.00;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {
     Cabecalho();
@@ -371,7 +371,7 @@ function Gerencial() {
       BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),3);
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
@@ -937,8 +937,9 @@ function Gerencial() {
       }
     }
     ShowHTML('          </td></tr></table></td></tr>');    
-    ShowHTML('      <tr valign="top">');
-    SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',substr(f($RS_Menu_Origem,'sigla'),0,3).'GERAL',null);
+    ShowHTML('      <tr><td colspan=2><table width="100%" border=0><tr valign="top">');
+    SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',substr(f($RS_Menu_Origem,'sigla'),0,3).'TODOS',null);
+    ShowHTML('        </table></tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>C<u>h</u>ave:<br><INPUT ACCESSKEY="H" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
     ShowHTML('          <td><font size="1"><b>O<U>u</U>tra parte:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');

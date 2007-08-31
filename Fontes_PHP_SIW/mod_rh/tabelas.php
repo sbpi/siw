@@ -628,13 +628,13 @@ function DataEspecial() {
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($w_troca>'' && $w_troca!='w_data_especial') {
-      BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
     } elseif ($O=='I' || $O=='A') {
-      BodyOpen('onLoad=document.Form.w_tipo.focus();');
+      BodyOpen('onLoad=\'document.Form.w_tipo.focus()\';');
     } elseif ($O=='L'){
-      BodyOpen('onLoad=this.focus();');
+      BodyOpen('onLoad=\'this.focus()\';');
     } else {
-      BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+      BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } 
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

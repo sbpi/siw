@@ -922,7 +922,7 @@ function TipoGuarda() {
   Rodape();
 }
 // =========================================================================
-// Rotina da tabela de parâmetros do módulo de prootocolo e arquivo
+// Rotina da tabela de parâmetros do módulo de protocolo e arquivo
 // -------------------------------------------------------------------------
 function Parametro() {
   extract($GLOBALS);
@@ -1067,7 +1067,13 @@ function Assunto() {
       Validate('w_final_guarda','Guarda na fase final','SELECT','1','1','18','','1');
       Validate('w_final_anos','Nº de anos na fase final','1','','1','18','','1');
       Validate('w_destinacao_final','Destinação final do documento','SELECT','1','1','18','','1');
-    } 
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');      
+    } elseif ($O == 'E'){
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');        
+    }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
@@ -1078,11 +1084,11 @@ function Assunto() {
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
   } elseif ($O=='C' || $O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_chave_pai.focus();');
+    BodyOpen('onLoad=\'document.Form.w_chave_pai.focus();\'');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad=\'this.focus();\'');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1406,7 +1412,6 @@ function Grava() {
             retornaFormulario('w_descricao');
             break;
           } 
-
           // Testa a existência do sigla
           $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_chave'],''),$w_cliente,Nvl($_REQUEST['w_sigla'],''),null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
@@ -1495,7 +1500,6 @@ function Grava() {
       } 
       break;      
     default:
-      exibevariaveis();
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
       ScriptClose();

@@ -104,6 +104,36 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
 }
 
 // =========================================================================
+// Gravação da imagem da solicitação no log
+// -------------------------------------------------------------------------
+function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
+  extract($GLOBALS);
+  include_once($w_dir_volta.'classes/sp/dml_putBaseLine.php');
+  $l_caminho  = $conFilePhysical.$w_cliente.'/';
+  $l_nome_arq = $l_chave.'_'.time().'.html';
+  $l_arquivo  = $l_caminho.$l_nome_arq;
+  // Abre o arquivo de log
+  $l_arq = @fopen($l_arquivo, 'w');
+  fwrite($l_arq,'<HTML>');
+  fwrite($l_arq,'<HEAD>');
+  fwrite($l_arq,'<TITLE>Visualização de '.$l_nome.'</TITLE>');
+  fwrite($l_arq,'</HEAD>');
+  fwrite($l_arq,'<BASE HREF="'.$conRootSIW.'">');
+  fwrite($l_arq,'<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+  fwrite($l_arq,'<BODY>');
+  fwrite($l_arq,'<div align="center">');
+  fwrite($l_arq,'<table width="95%" border="0" cellspacing="3">');
+  fwrite($l_arq,'<tr><td colspan="2">');
+  fwrite($l_arq,$l_html);
+  fwrite($l_arq,'</table>');
+  fwrite($l_arq,'</div>');
+  fwrite($l_arq,'</BODY>');
+  fwrite($l_arq,'</HTML>');
+  @fclose($l_arq);
+  dml_putBaseLine::getInstanceOf($dbms,$w_cliente,$l_chave,$w_usuario,$l_tramite,$l_nome_arq,filesize($l_arquivo),'text/html',$l_nome_arq);
+}
+
+// =========================================================================
 // Gera um link para JavaScript, em função do navegador
 // -------------------------------------------------------------------------
 function montaURL_JS ($p_dir, $p_link) { 
@@ -111,6 +141,22 @@ function montaURL_JS ($p_dir, $p_link) {
   $l_link = str_replace($conRootSIW,'',$p_link);
   if (nvl($p_dir,'')!='') $l_link = str_replace($p_dir,'',$l_link);
   return $conRootSIW.$p_dir.$l_link;
+}
+
+// =========================================================================
+// Gera código de barras para o valor informado
+// -------------------------------------------------------------------------
+function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') { 
+  extract($GLOBALS);
+  if (strtoUpper($l_formato)=='C39') {
+    include_once($w_dir_volta.'classes/graph_barcode/C39Barcode_class.php');
+    $cb = new c39Barcode('cb1',$l_valor);
+ } else {
+    include_once($w_dir_volta.'/classes/graph_barcode/I25Barcode_class.php');
+    $cb = new I25Barcode('cb1',$l_valor);
+  }
+  $cb->setFactor($l_fator);  // Fator de aumento. Quanto maior, mais larga é cada barra do código.
+  return '<font size='.intVal($l_tamanho).'">'.$cb->getBarcode().'</font>';
 }
 
 // =========================================================================
@@ -172,6 +218,65 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
 }
+// =========================================================================
+// Declaração inicial para páginas OLE com Word
+// -------------------------------------------------------------------------
+function headerExcel($p_orientation='LANDSCAPE') {
+  extract($GLOBALS);
+  header('Content-type: application/excel',false);
+  header('Content-Disposition: attachment; filename=arquivo.xls');
+  ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
+  ShowHTML('xmlns:w="urn:schemas-microsoft-com:office:excel" ');
+  ShowHTML('xmlns="http://www.w3.org/TR/REC-html40"> ');
+  ShowHTML('<head> ');
+  ShowHTML('<meta http-equiv=Content-Type content="text/html; charset=windows-1252"> ');
+  ShowHTML('<meta name=ProgId content=Pdf.Document> ');
+  ShowHTML('<!--[if gte mso 9]><xml> ');
+  ShowHTML(' <w:ExcelDocument> ');
+  ShowHTML('  <w:View>Print</w:View> ');
+  ShowHTML('  <w:Zoom>BestFit</w:Zoom> ');
+  ShowHTML('  <w:SpellingState>Clean</w:SpellingState> ');
+  ShowHTML('  <w:GrammarState>Clean</w:GrammarState> ');
+  ShowHTML('  <w:HyphenationZone>21</w:HyphenationZone> ');
+  ShowHTML('  <w:Compatibility> ');
+  ShowHTML('   <w:BreakWrappedTables/> ');
+  ShowHTML('   <w:SnapToGridInCell/> ');
+  ShowHTML('   <w:WrapTextWithPunct/> ');
+  ShowHTML('   <w:UseAsianBreakRules/> ');
+  ShowHTML('  </w:Compatibility> ');
+  ShowHTML('  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> ');
+  //ShowHTML('  <w:DocumentProtection>forms</w:DocumentProtection> ');
+  ShowHTML(' </w:ExcelDocument> ');
+  ShowHTML('</xml><![endif]--> ');
+  ShowHTML('<style> ');
+  ShowHTML('<!-- ');
+  ShowHTML(' /* Style Definitions */ ');
+  ShowHTML('@page Section1 ');
+  if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
+     ShowHTML('    {size:8.5in 11.0in; ');
+     ShowHTML('    mso-page-orientation:portrait; ');
+     ShowHTML('    margin:2.0cm 2.0cm 2.0cm 2.0cm; ');
+     ShowHTML('    mso-header-margin:35.4pt; ');
+     ShowHTML('    mso-footer-margin:35.4pt; ');
+     ShowHTML('    mso-paper-source:0;} ');
+  } else {
+     ShowHTML('    {size:11.0in 8.5in; ');
+     ShowHTML('    mso-page-orientation:landscape; ');
+     ShowHTML('    margin:60.85pt 1.0cm 60.85pt 2.0cm; ');
+     ShowHTML('    mso-header-margin:35.4pt; ');
+     ShowHTML('    mso-footer-margin:35.4pt; ');
+     ShowHTML('    mso-paper-source:0;} ');
+  }
+  ShowHTML('div.Section1 ');
+  ShowHTML('    {page:Section1;} ');
+  ShowHTML('--> ');
+  ShowHTML('</style> ');
+  ShowHTML('</head> ');
+  BodyOpen('onLoad=this.focus();');
+  ShowHTML('<div class=Section1> ');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+}
 
 // =========================================================================
 // Montagem do cabeçalho de documentos Word
@@ -179,14 +284,15 @@ function headerWord($p_orientation='LANDSCAPE') {
 function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-  $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
+  $l_RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
   ShowHTML('<TABLE WIDTH="100%" BORDER=0>');
   ShowHTML('  <TR>');
-  if (nvl($p_pagina,0)>0) $l_colspan = 3; else $l_colspan = 2;
-  ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($RS,'LOGO').'">');
+  if (nvl($p_pagina,0)>0) $l_colspan = 4; else $l_colspan = 3;
+  ShowHTML('    <TD ROWSPAN='.$l_colspan.'><IMG ALIGN="LEFT" SRC="'.$conFileVirtual.$w_cliente.'/img/'.f($l_RS,'LOGO').'">');
   ShowHTML('    <TD ALIGN="RIGHT"><B><FONT SIZE=3 COLOR="#000000">'.$p_titulo.'</FONT>');
   ShowHTML('  </TR>');
-  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
   if (nvl($p_pagina,0)>0) ShowHTML('  <TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">Página: '.$p_pagina.'</B></TD></TR>');
   ShowHTML('  <TR><TD colspan=2><HR></td></tr>');
   ShowHTML('</TABLE>');
@@ -238,14 +344,25 @@ function LinkOrdena($p_label,$p_campo) {
 // =========================================================================
 // Montagem do cabeçalho de relatórios
 // -------------------------------------------------------------------------
-function CabecalhoRelatorio($p_cliente,$p_titulo) {
+function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   extract($GLOBALS);
-  $RS = db_getCustomerData::getInstanceOf($dbms,$p_cliente);
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="files/'.$w_cliente.'/img/'.f($RS,'logo').'><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-  ShowHTML($p_titulo);
-  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+  $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  if (f($RS_Logo,'logo')>'') {
+    $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
+  }
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo.'</font>');
+  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
+  if (($p_tipo!='WORD' && $w_tipo!='WORD') && ((strpos(strtoupper($w_pagina),'GR_'))===false)) {
+    ShowHTML('<TR><TD ALIGN="RIGHT">');
+    ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
+    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.jpg"></a>');
+    ShowHTML('</TD></TR>');
+  }
   ShowHTML('</FONT></B></TD></TR></TABLE>');
-  ShowHTML('<HR>');
 }
 
 // =========================================================================
@@ -563,6 +680,19 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 }
 
 // =========================================================================
+// Montagem da URL com os dados de um plano estratégico
+// -------------------------------------------------------------------------
+function ExibePlano($p_dir,$p_cliente,$p_plano,$p_tp,$p_nome) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pe/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Montagem da URL com os dados de uma pessoa com os pacontes vinculados
 // -------------------------------------------------------------------------
 function ExibeUnidadePacote($O,$p_cliente,$p_chave,$p_chave_aux,$p_unidade,$p_tp,$p_nome) {
@@ -722,9 +852,9 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
       $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 120%). ';
     } elseif ($l_tipo=='IDC') {
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 80% ou acima de 110%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 100,01% a 109,99%).';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (até 100%). ';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 70%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 70% a 89,99% ou acima de 120%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 120%). ';
     }
   } else {
     if ($l_tipo=='IDE') {
@@ -732,9 +862,9 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
       elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
       else                                             $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
     } elseif ($l_tipo=='IDC') {
-      if ($l_andamento < 80 || $l_andamento > 110) $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
-      elseif ($l_andamento > 100)                  $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
-      else                                         $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
+      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';  
     }
   }
   return $l_string;
@@ -1023,6 +1153,47 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } 
       } 
     } elseif (substr($l_tipo,0,2)=='PJ') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conImgCancel;
+          $l_title  = 'Registro cancelado.';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgAtraso;
+            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgAviso;
+            $l_title  = 'Execução não iniciada. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgNormal;
+            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conImgStAtraso;
+            $l_title  = 'Em execução. Fim previsto superado.';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conImgStAviso;
+            $l_title  = 'Em execução. Fim previsto próximo.';
+          } else {
+            $l_imagem = $conImgStNormal;
+            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAtraso;
+          $l_title  = 'Execução concluída após a data prevista.';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conImgOkAcima;
+          $l_title  = 'Execução concluída antes da data prevista.';
+        } else {
+          $l_imagem = $conImgOkNormal;
+          $l_title  = 'Execução concluída na data prevista.';
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='CL') {
       // Projetos
       if ($l_tramite!='AT') {
         if ($l_tramite=='CA') {
@@ -1597,7 +1768,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
 
   $subject                  = $w_subject;
-  $from_name                = $conSgSistema;
+  $from_name                = f($RS_Cliente,'siw_email_nome');
   $from_address             = f($RS_Cliente,'siw_email_conta');
   $reply_name               = $from_name;
   $reply_address            = $from_address;
@@ -1833,8 +2004,8 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.nvl($Err['sqltext'],'nenhum').'</blockquote></font></DT>';
     if (is_array($params)) {
       $w_html .= "<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
-      foreach ($params as $w_Item) {
-        $w_html .= chr(10).'['.$w_Item[0].']<br>';
+      foreach ($params as $w_chave => $w_valor) {
+        $w_html .= chr(10).$w_chave.' ['.$w_valor[0].']<br>';
       }
     }
     $w_html .= "   <br><br></font>";

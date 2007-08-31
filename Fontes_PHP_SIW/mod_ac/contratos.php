@@ -266,7 +266,7 @@ function Inicial() {
         $w_filtro .= '<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
       if ($p_sq_orprior>''){
-        $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,'ALTERA');
+        $RS = db_getAgreeType::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null,null,'ALTERA');
         foreach($RS as $row) {$RS = $row; break; }
         $w_filtro .= '<tr valign="top"><td align="right">Tipo do acordo <td>[<b>'.f($RS,'nome').'</b>]';
       } 
@@ -330,6 +330,10 @@ function Inicial() {
   }
   if ($w_tipo=='WORD') {
     HeaderWord();
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
+    ShowHTML('</HEAD>');
   } else {
     Cabecalho();
     ShowHTML('<HEAD>');
@@ -407,7 +411,13 @@ function Inicial() {
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  Estrutura_Texto_Abre();
+  if($w_tipo!='WORD') {
+    if ((strpos(strtoupper($R),'GR_'))===false) {
+       Estrutura_Texto_Abre();
+    } else {
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
+    }
+  }  
   if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -447,10 +457,6 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    if ($w_tipo!='WORD') {
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    } 
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -458,6 +464,10 @@ function Inicial() {
     if ($w_tipo!='WORD') {    
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
+      if($w_segmento=='Público') {
+        if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>');
+        else                        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Processo','processo').'</font></td>');
+      }
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
@@ -479,6 +489,10 @@ function Inicial() {
     } else {
       ShowHTML('          <td rowspan=2><b>Código</font></td>');
       ShowHTML('          <td rowspan=2><b>Título</font></td>');
+      if($w_segmento=='Público') {
+         if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>Empenho</font></td>');
+         else                        ShowHTML('          <td rowspan=2><b>Processo</font></td>');
+      }
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinculação</td>');
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
@@ -502,7 +516,11 @@ function Inicial() {
     } else {
       $w_parcial=0;
       $w_atual=0;
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      if($w_tipo!='WORD') {
+        $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      } else   {
+        $RS1=$RS;
+      }
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -511,6 +529,7 @@ function Inicial() {
         if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4=0&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'objeto').'">'.f($row,'codigo_interno').'&nbsp;</a>');
         else                 ShowHTML('        '.f($row,'codigo_interno').'');
         ShowHTML('        <td>'.f($row,'nm_acordo').'</td>');
+        if($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
         if ($_SESSION['INTERNO']=='S') {
           if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_tipo).'</td>');
           else                                 ShowHTML('        <td>---</td>');
@@ -745,11 +764,13 @@ function Inicial() {
     ScriptClose();
   } 
   ShowHTML('</table>');
-  Estrutura_Texto_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Rodape();
+  if ($p_tipo!='WORD') {
+    Estrutura_Texto_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+    Rodape();
+  }
 } 
 
 // =========================================================================
@@ -910,7 +931,7 @@ function Geral() {
     } 
   } 
   if (Nvl($w_sq_tipo_acordo,0)>0) {
-    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,$SG);
+    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,$SG);
     foreach($RS as $row) {
       $w_cd_modalidade    = f($row,'modalidade');
       $w_prazo_indeterm   = f($row,'prazo_indeterm');
@@ -934,6 +955,10 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     if($w_numeracao_automatica=='N') Validate('w_codigo_interno','Código interno','1',1,1,60,'1','1');
+    if($w_segmento=='Público') {
+      if (substr($SG,0,3)=='GCB') Validate('w_numero_processo','Número do empenho (modalidade/nível/mensalidade)','1','1',1,30,'1','1');
+      else                        Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
+    }
     Validate('w_titulo','Título','1',1,5,100,'1','1'); 
     Validate('w_sq_tipo_acordo','Tipo','SELECT',1,1,18,'','0123456789');
     if (substr($SG,0,3)!='GCB') Validate('w_objeto','Objeto','1',1,5,2000,'1','1');
@@ -1066,7 +1091,7 @@ function Geral() {
     BodyOpenClean('onLoad=\'this.focus()\';');
   } else {
     if($w_numeracao_automatica=='N')    BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';');
-    else                                BodyOpenClean('onLoad=\'document.Form.w_sq_tipo_acordo.focus()\';');
+    else                                BodyOpenClean('onLoad=\'document.Form.w_numero_processo.focus()\';');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1095,10 +1120,16 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+    ShowHTML('      <tr valign="top">');
     if($w_numeracao_automatica=='N') {
-      ShowHTML('      <tr>');
-      ShowHTML('          <td colspan=2><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
+      ShowHTML('          <td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
     }
+    if($w_segmento=='Público') {
+      if (substr($SG,0,3)=='GCB') ShowHTML('          <td><b>N<U>ú</U>mero do empenho (modalidade/nível/mensalidade)<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>'); 
+      else                        ShowHTML('          <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>');
+    }
+    ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o convênio."></td>');
     ShowHTML('      <tr>');
     SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$w_sq_tipo_acordo,null,$w_cliente,'w_sq_tipo_acordo',$SG,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_objeto\'; document.Form.submit();"');
@@ -1342,7 +1373,7 @@ function Termo() {
     } 
   } 
   if (Nvl($w_sq_tipo_acordo,0)>0) {
-    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,substr($SG,0,3).'GERAL');
+    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,substr($SG,0,3).'GERAL');
     foreach($RS as $row) {
       $w_cd_modalidade = f($row,'modalidade');
       break;
@@ -1484,7 +1515,6 @@ function DadosAdicionais() {
     $w_sq_lcfonte_recurso = $_REQUEST['w_sq_lcfonte_recurso'];
     $w_espec_despesa      = $_REQUEST['w_espec_despesa'];
     $w_sq_lcmodalidade    = $_REQUEST['w_sq_lcmodalidade'];
-    $w_numero_processo    = $_REQUEST['w_numero_processo'];
     $w_data_assinatura    = $_REQUEST['w_data_assinatura'];
     $w_data_publicacao    = $_REQUEST['w_data_publicacao'];
     $w_financeiro_unico   = $_REQUEST['w_financeiro_unico'];
@@ -1502,7 +1532,6 @@ function DadosAdicionais() {
     $w_sq_lcfonte_recurso = f($RS,'sq_lcfonte_recurso');
     $w_espec_despesa      = f($RS,'sq_especificacao_despesa');
     $w_sq_lcmodalidade    = f($RS,'sq_lcmodalidade');
-    $w_numero_processo    = f($RS,'processo');
     $w_data_assinatura    = FormataDataEdicao(f($RS,'assinatura'));
     $w_data_publicacao    = FormataDataEdicao(f($RS,'publicacao'));
     $w_financeiro_unico   = f($RS,'financeiro_unico');
@@ -1515,7 +1544,7 @@ function DadosAdicionais() {
   }
   
   if (Nvl($w_sq_tipo_acordo,0)>0) {
-    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,substr($SG,0,3).'GERAL');
+    $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,substr($SG,0,3).'GERAL');
     foreach($RS as $row) {
       $w_cd_modalidade = f($row,'modalidade');
       break;
@@ -1545,7 +1574,6 @@ function DadosAdicionais() {
     Validate('w_limite_variacao','Limite de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');
     Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
     Validate('w_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
-    if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCA') Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
     Validate('w_data_assinatura','Data Assinatura','DATA',1,10,10,'','0123456789/');
     if (substr($SG,0,3)!='GCB') Validate('w_data_publicacao','Data Publicação','DATA',1,10,10,'','0123456789/'); 
   } 
@@ -1594,8 +1622,6 @@ function DadosAdicionais() {
     selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione o a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
     selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
     ShowHTML('<tr valign="top">');
-    if (substr($SG,0,3)=='GCA' || substr($SG,0,3)=='GCD') ShowHTML('          <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>');
-    if (substr($SG,0,3)=='GCB') ShowHTML('          <td><b>N<U>ú</U>mero do empenho (modalidade/nível/mensalidade)<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>'); 
     ShowHTML('<tr valign="top">');
     ShowHTML('          <td><b><u>A</u>ssinatura do contrato:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_data_assinatura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_assinatura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_assinatura').'</td>');
     if (substr($SG,0,3)!='GCB') ShowHTML('          <td><b><u>P</u>ublicação D.O.:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_data_publicacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_publicacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_publicacao').'</td>');
@@ -3250,33 +3276,20 @@ function Visual() {
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = strtoupper(trim($_REQUEST['w_tipo']));
 
-  $RSM = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
-  $w_TP = 'Visualização de '.f($RSM,'nome');
-
   // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') {
-    $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  } 
   if ($w_tipo=='WORD') {
     HeaderWord(null);
-    CabecalhoWord($w_cliente,$w_TP,0);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
   } else {
     Cabecalho();
   } 
   ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - '.$w_TP.'</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'this.focus()\'; ');
+  BodyOpenClean('onLoad=\'this.focus()\';');
   if ($w_tipo!='WORD') {
-    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-    ShowHTML($w_TP);
-    ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</font></B>');
-    ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-    ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.'Visual&O=L&w_chave='.$w_chave.'&w_tipo=word&P1='.$P1.'&P2='.$P2.'&P3=1&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    ShowHTML('</B></TD></TR></TABLE>');
-//    ShowHTML('<HR>');
+    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
   } 
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></font></center>');
@@ -4637,8 +4650,8 @@ function SolicMail($p_solic,$p_tipo) {
     //  $w_html.=$crlf.'</tr>';
     //Recupera o último log
     $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc');
-    foreach ($RS as $row) { $RS = $row; break; }
+    $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
+    foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');
     if ($p_tipo == 2) { // Se for tramitação
       // Encaminhamento
@@ -4652,7 +4665,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
 
       // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
       $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
     }  
     $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
@@ -4744,7 +4757,7 @@ function Grava() {
           $_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_cidade'],  $_REQUEST['w_chave_pai'], 
           $_REQUEST['w_sq_tipo_acordo'], $_REQUEST['w_objeto'], $_REQUEST['w_sq_tipo_pessoa'], 
           $_REQUEST['w_sq_forma_pagamento'], $_REQUEST['w_forma_atual'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_etapa'],
-          $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], null,null,null,null,
+          $_REQUEST['w_codigo_interno'],$_REQUEST['w_titulo'], null,$_REQUEST['w_numero_processo'],null,null,
           &$w_chave_nova, $w_copia, &$w_codigo);
       if ($O=='I') {
         // Recupera os dados para montagem correta do menu
@@ -4877,7 +4890,7 @@ function Grava() {
             if(count($RS_Aditivo)>0) {
               dml_putFinanceiroGeral::getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),f($row,'sq_menu'),
                 null,null,null,null,null,null,null,null,null,null,null,null,
-                null,null,null,null,null,null,null,null,null,null,null);
+                null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         }       
@@ -5174,6 +5187,15 @@ function Grava() {
           dml_putAcordoEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
               $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               $w_file,$w_tamanho,$w_tipo,$w_nome);
+          //Rotina para gravação da imagem da versão da solicitacão no log.
+          if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+            $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+            $w_sg_tramite = f($RS,'sigla');
+            if($w_sg_tramite=='CI') {
+              $w_html = ShowHTML(VisualAcordo($_REQUEST['w_chave'],'L',$w_usuario,'4','1'));
+              CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+            }
+          }
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5186,6 +5208,15 @@ function Grava() {
         dml_putAcordoEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
           null,null,null,null);
+        //Rotina para gravação da imagem da versão da solicitacão no log.
+        if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+          $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+          $w_sg_tramite = f($RS,'sigla');
+          if($w_sg_tramite=='CI') {
+            $w_html = VisualAcordo($_REQUEST['w_chave'],'L',$w_usuario,'4','1');
+            CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+          }
+        }
         // Envia e-mail comunicando a inclusão
         SolicMail($_REQUEST['w_chave'],2);
         // Se for envio da fase de cadastramento, remonta o menu principal

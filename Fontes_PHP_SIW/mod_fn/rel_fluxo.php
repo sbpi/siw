@@ -129,19 +129,14 @@ function Inicial(){
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     if ($O=='L') {
       BodyOpenClean('onLoad=\'this.focus()\';');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" src="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
       if (!(strpos($SG,'FLUXOPR'))===false) {
+        CabecalhoRelatorio($w_cliente,'Fluxo de Caixa Previsto',4,$w_chave);
         ShowHTML('Fluxo de Caixa Previsto');
       } elseif (!(strpos($SG,'FLUXORE'))===false) {
-        ShowHTML('Fluxo de Caixa Realizado');
+        CabecalhoRelatorio($w_cliente,'Fluxo de Caixa Realizado',4,$w_chave);;
       } 
-      ShowHTML('</FONT><TR><TD WIDTH="50%" ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
-      ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&w_chave='.$w_chave.'&w_tipo_rel=word&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
     } else {
-      BodyOpen('onLoad=\'document.Form.Botao[0].focus()\';');
+      BodyOpen('onLoad=\'document.Form.Botao.focus()\';');
       ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     } 
     ShowHTML('<HR>');
@@ -262,7 +257,6 @@ function Inicial(){
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_Pagina.$par.'&R='.$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&O=P&SG='.$SG).'\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

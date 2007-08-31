@@ -94,7 +94,7 @@ switch ($O) {
   case 'V': $w_TP=$TP.' - Envio';       break;
   case 'H': $w_TP=$TP.' - Herança';     break;
   case 'T': $w_TP=$TP.' - Vinculação';  break;  
-  case 'T': $w_TP=$TP.' - Gerar ano';  break;
+  case 'D': $w_TP=$TP.' - Desativar';   break;
   default : $w_TP=$TP.' - Listagem'; 
 }
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -135,7 +135,7 @@ function TipoAcordo() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de Acordo</TITLE>');
   Estrutura_CSS($w_cliente);
-  if ($w_troca>'' && $O!='E') {
+  if ($w_troca>'' && strpos('EDT',$O)===false) {
     // Se for recarga da página
     $w_sq_tipo_acordo_pai   = $_REQUEST['w_sq_tipo_acordo_pai'];
     $w_nome                 = $_REQUEST['w_nome'];
@@ -147,13 +147,11 @@ function TipoAcordo() {
     $w_prazo_indeterminado  = $_REQUEST['w_prazo_indeterminado'];
     $w_modalidade           = $_REQUEST['w_modalidade'];
   } elseif ($O!='L') {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
     if ($O!='P' && $O!='H') {
       if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
         // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
         if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
-        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,'ALTERA');
+        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_sq_tipo_acordo_pai   = f($row,'sq_tipo_acordo_pai');
           $w_nome                 = f($row,'nome');
@@ -164,8 +162,8 @@ function TipoAcordo() {
           $w_prazo_indeterminado  = f($row,'prazo_indeterm');
           $w_modalidade           = f($row,'modalidade');
         }
-      } elseif ($O=='A') {
-        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,'ALTERA');
+      } elseif ($O=='A' || nvl($w_troca,'') > '') {
+        $RS = db_getAgreeType::getInstanceOf($dbms,$w_sq_tipo_acordo,null,$w_cliente,null,null,'ALTERA');
         foreach($RS as $row) {
           $w_sq_tipo_acordo_pai   = f($row,'sq_tipo_acordo_pai');
           $w_nome                 = f($row,'nome');
@@ -176,25 +174,19 @@ function TipoAcordo() {
           $w_prazo_indeterminado  = f($row,'prazo_indeterm');
           $w_modalidade           = f($row,'modalidade');
         }
-      } elseif ($w_troca>'') {
-        $w_sq_tipo_acordo_pai   = $_REQUEST['w_sq_tipo_acordo_pai'];
-        $w_nome                 = $_REQUEST['w_nome'];
-        $w_pessoa_fisica        = $_REQUEST['w_pessoa_fisica'];
-        $w_cliente              = $_REQUEST['w_cliente'];
-        $w_sigla                = $_REQUEST['w_sigla'];
-        $w_ativo                = $_REQUEST['w_ativo'];
-        $w_pessoa_fisica        = $_REQUEST['w_pessoa_fisica'];
-        $w_prazo_indeterminado  = $_REQUEST['w_prazo_indeterminado'];
-        $w_modalidade           = $_REQUEST['w_modalidade'];
-      } 
-      if ($O=='I' || $O=='A') {
-        Validate('w_nome','Nome','1','1','5','60','1','1');
-        Validate('w_sigla','Sigla','1','1','2','10','1','1');
-        ShowHTML('if (theForm.w_prazo_indeterminado[0].checked) {');
-        ShowHTML('  alert(\'Opção escolhida no campo prazo indetermindo é inválido!\')');
-        ShowHTML('  return false;');
-        ShowHTML('}');
-      } 
+      }
+    }
+  }
+  if (strpos('IADETH',$O)!==false) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if ($O=='I' || $O=='A') {
+      Validate('w_nome','Nome','1','1','5','60','1','1');
+      Validate('w_sigla','Sigla','1','1','2','10','1','1');
+      ShowHTML('if (theForm.w_prazo_indeterminado[0].checked) {');
+      ShowHTML('  alert(\'Opção escolhida no campo prazo indetermindo é inválido!\')');
+      ShowHTML('  return false;');
+      ShowHTML('}');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
@@ -204,26 +196,33 @@ function TipoAcordo() {
       ShowHTML('     return true; ');
       ShowHTML('  } ');
       ShowHTML('  else { return false; } ');
-    } 
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } elseif ($O=='T' || $O=='D'){
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');     
+    }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
     ScriptClose();
-  } 
+  }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I') {
     BodyOpen(null);
   } elseif ($O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
   } elseif ($O=='H') {
-    BodyOpen('onLoad=document.Form.w_heranca.focus();');
+    BodyOpen('onLoad="document.Form.w_heranca.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -234,14 +233,15 @@ function TipoAcordo() {
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
-    $RS = db_getAgreeType::getInstanceOf($dbms,null,null,$w_cliente,'PAI');
+    
+    $RS = db_getAgreeType::getInstanceOf($dbms,null,null,$w_cliente,null,null,'PAI');
     $w_ContOut=0;
     foreach($RS as $row) {
       $w_titulo  = f($row,'sigla');
       $w_ContOut = $w_ContOut+1;
       if (f($row,'Filho')>0) {
         ShowHTML('<A HREF=#"'.f($row,'sq_tipo_acordo').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome'));
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').' ( '.f($row,'qt_acordos').')');
         if (f($row,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
@@ -252,13 +252,13 @@ function TipoAcordo() {
         } 
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
-        $RS1 = db_getAgreeType::getInstanceOf($dbms,f($row,'sq_tipo_acordo'),null,$w_cliente,'FILHO');
+        $RS1 = db_getAgreeType::getInstanceOf($dbms,f($row,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
         foreach($RS1 as $row1) {
           $w_titulo = $w_titulo.' - '.f($row1,'nome');
           if (f($row1,'Filho')>0) {
             $w_ContOut = $w_ContOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'sq_tipo_acordo').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome'));
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome').' ( '.f($row1,'qt_acordos').')');
             if (f($row1,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
@@ -269,13 +269,13 @@ function TipoAcordo() {
             } 
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
-            $RS2 = db_getAgreeType::getInstanceOf($dbms,f($row1,'sq_tipo_acordo'),null,$w_cliente,'FILHO');
+            $RS2 = db_getAgreeType::getInstanceOf($dbms,f($row1,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
             foreach($RS2 as $row2) {
               $w_titulo = $w_titulo.' - '.f($row2,'nome');
               if (f($row2,'Filho')>0) {
                 $w_ContOut=$w_ContOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'sq_tipo_acordo').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome'));
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome').' ( '.f($row2,'qt_acordos').')');
                 if (f($row2,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row2,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row2,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
@@ -286,25 +286,57 @@ function TipoAcordo() {
                 } 
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
-                $RS3 = db_getAgreeType::getInstanceOf($dbms,f($row2,'sq_tipo_acordo'),null,$w_cliente,'FILHO');
+                $RS3 = db_getAgreeType::getInstanceOf($dbms,f($row2,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
                 foreach($RS3 as $row3) {
-                  $w_titulo=$w_titulo.' - '.f($row3,'nome');
-                  ShowHTML('<A HREF=#"'.f($row3,'sq_tipo_acordo').'"></A>');
-                  ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome'));
-                  if (f($row3,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
-                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
-                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
-                  if (f($row3,'ativo')=='S') {
-                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                  $w_titulo = $w_titulo.' - '.f($row3,'nome');
+                  if (f($row3,'Filho')>0) {
+                    $w_ContOut=$w_ContOut+1;
+                    ShowHTML('<A HREF=#"'.f($row3,'sq_tipo_acordo').'"></A>');
+                    ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row3,'nome').' ( '.f($row3,'qt_acordos').')');
+                    if (f($row3,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
+                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
+                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
+                    if (f($row3,'ativo')=='S') {
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                    } else {
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+                    } 
+                    ShowHTML('       </div></span>');
+                    ShowHTML('   <div style="position:relative; left:12;">');
+                    $RS4 = db_getAgreeType::getInstanceOf($dbms,f($row3,'sq_tipo_acordo'),null,$w_cliente,null,null,'FILHO');
+                    foreach($RS4 as $row4) {
+                      $w_titulo=$w_titulo.' - '.f($row4,'nome');
+                      ShowHTML('<A HREF=#"'.f($row4,'sq_tipo_acordo').'"></A>');
+                      ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row4,'nome').' ( '.f($row4,'qt_acordos').')');
+                      if (f($row4,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row4,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row4,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
+                      if (f($row4,'ativo')=='S') {
+                        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row4,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                      } else {
+                        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row4,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                      } 
+                      ShowHTML('    <BR>');
+                      $w_titulo=str_replace(' - '.f($row4,'nome'),'',$w_titulo);
+                    }
+                    ShowHTML('   </div>');
                   } else {
-                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                    ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row3,'nome').' ( '.f($row3,'qt_acordos').')');
+                    if (f($row3,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
+                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
+                    ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
+                    if (f($row3,'ativo')=='S') {
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+                    } else {
+                      ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row3,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+                    } 
+                    ShowHTML('    <BR>');
                   } 
-                  ShowHTML('    <BR>');
                   $w_titulo=str_replace(' - '.f($row3,'nome'),'',$w_titulo);
-                } 
+                }           
                 ShowHTML('   </div>');
               } else {
-                ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome'));
+                ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row2,'nome').' ( '.f($row2,'qt_acordos').')');
                 if (f($row2,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row2,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row2,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
@@ -318,34 +350,34 @@ function TipoAcordo() {
               $w_titulo=str_replace(' - '.f($row2,'nome'),'',$w_titulo);
             } 
             ShowHTML('   </div>');
-          } else {
-            ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome'));
-            if (f($row1,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
-            if (f($row1,'ativo')=='S') {
-              ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
             } else {
-              ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+              ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row1,'nome').' ( '.f($row1,'qt_acordos').')');
+              if (f($row1,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
+              ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
+              ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
+              if (f($row1,'ativo')=='S') {
+                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+              } else {
+                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row1,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+              } 
+              ShowHTML('    <BR>');
             } 
-            ShowHTML('    <BR>');
-          } 
-          $w_titulo=str_replace(' - '.f($row1,'nome'),'',$w_titulo);
+            $w_titulo=str_replace(' - '.f($row1,'nome'),'',$w_titulo);
         } 
         ShowHTML('   </div>');
-      } else {
-        ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row,'nome'));
-        if (f($row,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
-        if (f($row,'ativo')=='S') {
-          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
         } else {
-          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+          ShowHTML('    <img src="'.$w_imagem.'" border=0 align="center"> '.f($row,'nome').' ( '.f($row,'qt_acordos').')');
+          if (f($row,'ativo')=='S') $w_classe='HL'; else $w_classe='LH';
+          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo de acordos">AL</A>&nbsp');
+          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo de acordos">EX</A>&nbsp');
+          if (f($row,'ativo')=='S') {
+            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo de acordos seja associado a novos registros">Desativar</A>&nbsp');
+          } else {
+            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_sq_tipo_acordo='.f($row,'sq_tipo_acordo').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo de acordos seja associado a novos registros">Ativar</A>&nbsp');
+          } 
+          ShowHTML('    <BR>');
         } 
-        ShowHTML('    <BR>');
-      } 
-    } 
+    }
     if ($w_ContOut==0) {
       // Se não achou registros
       ShowHTML('Não foram encontrados registros.');
@@ -360,10 +392,17 @@ function TipoAcordo() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_tipo_acordo" value="'.$w_sq_tipo_acordo.'">');
+    if ($O != 'I') ShowHTML('<INPUT type="hidden" name="w_sq_tipo_acordo" value="'.$w_sq_tipo_acordo.'">');
     ShowHTML('      <tr><td valign="top"><table width="100%" border=0><tr valign="top">');
     ShowHTML('          <td><b><u>N</u>ome:<br><INPUT ACCESSKEY="D" TYPE="TEXT" class="sti" NAME="w_nome" SIZE=40 MAXLENGTH=60 VALUE="'.$w_nome.'" '.$w_Disabled.' TITLE="Nome do tipo de acordo."></td>');
-    SelecaoTipoAcordo('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_sq_tipo_acordo_pai,$w_sq_tipo_acordo,$w_cliente,'w_sq_tipo_acordo_pai','SUBORDINACAO',null);
+    ShowHTML('        <tr><td colspan=3><table width="100%" border=0><tr valign="top">');
+    if ($O!='I' && $O!='C') {
+      // Se for alteração, não deixa vincular a opção a ela mesma, nem a seus filhos
+      SelecaoTipoAcordo('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_sq_tipo_acordo_pai,$w_sq_tipo_acordo,$w_cliente,'w_sq_tipo_acordo_pai','SUBPARTE',null);
+    } else {
+      SelecaoTipoAcordo('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_sq_tipo_acordo_pai,$w_sq_tipo_acordo,$w_cliente,'w_sq_tipo_acordo_pai','SUBTODOS',null);
+    } 
+    ShowHTML('        </table></tr>');
     ShowHTML('      <tr><td valign="top"><b>S<u>i</u>gla:<br><INPUT ACCESSKEY="S" TYPE="TEXT" class="sti" NAME="w_sigla" SIZE=10 MAXLENGTH=10 VALUE="'.$w_sigla.'" '.$w_Disabled.' TITLE="Informe a sigla desejada para o tipo de acordo."></td>');
     ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo aplicar-se a pessoas fisicas."><b>Pessoa física?</b><br>');
     if ($w_pessoa_fisica=='S' || $w_pessoa_fisica=='') {
@@ -409,8 +448,19 @@ function TipoAcordo() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('      </td></tr>');
     ShowHTML('</FORM>');
     ShowHTML('  </table>');
   } elseif ($O=='H') {
@@ -506,10 +556,10 @@ function FormaPagamento(){
   } 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'')                BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
-  elseif ($O=='I' || $O=='A')     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
+  if ($w_troca>'')                BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  elseif ($O=='I' || $O=='A')     BodyOpen('onLoad="document.Form.w_nome.focus();"');
   elseif ($O=='L')                BodyOpen(null);
-  else                            BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
+  else                            BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -701,9 +751,9 @@ function Parametros() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    BodyOpenClean('onLoad="document.Form.'.$w_troca.'.focus();"');
   } else {
-    BodyOpenClean('onLoad=\'document.Form.w_sequencial.focus()\';');
+    BodyOpenClean('onLoad="document.Form.w_sequencial.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -760,7 +810,7 @@ function Modalidades() {
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
-  if ($w_troca > '' && $O=='E') {   
+  if ($w_troca > '' && $O!='E') {   
     $w_nome                 = $_REQUEST['w_nome'];
     $w_sigla                = $_REQUEST['w_sigla'];
     $w_descricao            = $_REQUEST['w_descricao'];
@@ -776,7 +826,7 @@ function Modalidades() {
     } else {
       $RS = SortArray($RS,'nome','asc'); 
     }
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
     //Recupera os dados do endereço informado
     $RS = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {
@@ -916,7 +966,7 @@ function FonteRecurso() {
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
-  if ($w_troca > '' && $O=='E') {   
+  if ($w_troca > '' && strpos('EDT',$O)===false) {   
     $w_codigo               = $_REQUEST['w_codigo'];
     $w_nome                 = $_REQUEST['w_nome'];
     $w_descricao            = $_REQUEST['w_descricao'];
@@ -927,7 +977,7 @@ function FonteRecurso() {
     // Recupera todos os registros para a listagem
     $RS = db_getLCFonteRecurso::getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
     $RS = SortArray($RS,'nome','asc'); 
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
     //Recupera os dados do endereço informado
     $RS = db_getLCFonteRecurso::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
     foreach ($RS as $row) {
@@ -1061,7 +1111,7 @@ function FonteRecurso() {
 }
 
 // =========================================================================
-// Rotina de especificacao de despesas
+// Rotina de especificação de despesas
 // -------------------------------------------------------------------------
 function EspecDespesa() {
   extract($GLOBALS);
@@ -1069,11 +1119,8 @@ function EspecDespesa() {
   $w_ImagemPadrao   = 'images/Folder/SheetLittle.gif';
   $w_heranca        = $_REQUEST['w_heranca'];
   $w_chave          = $_REQUEST['w_chave'];
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Especificação de despesa</TITLE>');
-  Estrutura_CSS($w_cliente);
-  if ($w_troca>'' && $O!='E') {
+
+  if ($w_troca>'' && strpos('EDT',$O)===false) {
     // Se for recarga da página
     $w_cliente       = $_REQUEST['w_cliente'];
     $w_chave_pai    = $_REQUEST['w_chave_pai'];
@@ -1084,56 +1131,52 @@ function EspecDespesa() {
     $w_valor        = $_REQUEST['w_valor'];
     $w_ultimo_nivel = $_REQUEST['w_ultimo_nivel'];
     $w_ativo        = $_REQUEST['w_ativo'];
-  } elseif ($O!='L') {
+  } elseif (strpos('PHG',$O)===false) {
+    if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
+      // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
+      if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
+      $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
+      foreach($RS as $row) {
+        $w_chave_pai    = f($row,'chave_pai');
+        $w_sq_cc        = f($row,'sq_cc');
+        $w_ano          = f($row,'ano');
+        $w_codigo       = f($row,'codigo');
+        $w_nome         = f($row,'nome');
+        $w_valor        = formatNumber(f($row,'valor'));
+        $w_ultimo_nivel = f($row,'ultimo_nivel');
+        $w_ativo        = f($row,'ativo');
+      }
+    } elseif ($O=='A' || nvl($w_troca,'')!='') {
+      $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
+      foreach($RS as $row) {
+        $w_chave_pai    = f($row,'chave_pai');
+        $w_sq_cc        = f($row,'sq_cc');
+        $w_ano          = f($row,'ano');
+        $w_codigo       = f($row,'codigo');
+        $w_nome         = f($row,'nome');
+        $w_valor        = formatNumber(f($row,'valor'));
+        $w_ultimo_nivel = f($row,'ultimo_nivel');
+        $w_ativo        = f($row,'ativo');
+      }
+    }
+  }
+  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Especificação de despesa</TITLE>');
+  Estrutura_CSS($w_cliente);
+  if ($O!='L') {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataValor();
     ValidateOpen('Validacao');
-    if ($O!='P' && $O!='H' && $O!='G') {
-      if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
-        // Se for herança, atribui a chave da opção selecionada para w_sq_tipo_acordo
-        if ($w_heranca>'') $w_sq_tipo_acordo=$w_heranca;
-        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
-        foreach($RS as $row) {
-          $w_chave_pai    = f($row,'chave_pai');
-          $w_sq_cc        = f($row,'sq_cc');
-          $w_ano          = f($row,'ano');
-          $w_codigo       = f($row,'codigo');
-          $w_nome         = f($row,'nome');
-          $w_valor        = formatNumber(f($row,'valor'));
-          $w_ultimo_nivel = f($row,'ultimo_nivel');
-          $w_ativo        = f($row,'ativo');
-        }
-      } elseif ($O=='A') {
-        $RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'ALTERA');
-        foreach($RS as $row) {
-          $w_chave_pai    = f($row,'chave_pai');
-          $w_sq_cc        = f($row,'sq_cc');
-          $w_ano          = f($row,'ano');
-          $w_codigo       = f($row,'codigo');
-          $w_nome         = f($row,'nome');
-          $w_valor        = formatNumber(f($row,'valor'));
-          $w_ultimo_nivel = f($row,'ultimo_nivel');
-          $w_ativo        = f($row,'ativo');
-        }
-      } elseif ($w_troca>'') {
-        $w_chave_pai    = $_REQUEST['w_chave_pai'];
-        $w_sq_cc        = $_REQUEST['w_sq_cc'];
-        $w_ano          = $_REQUEST['w_ano'];
-        $w_codigo       = $_REQUEST['w_codigo'];
-        $w_nome         = $_REQUEST['w_nome'];
-        $w_valor        = $_REQUEST['w_valor'];
-        $w_ultimo_nivel = $_REQUEST['w_ultimo_nivel'];
-        $w_ativo        = $_REQUEST['w_ativo'];
-      } 
-      if ($O=='I' || $O=='A') {
-        Validate('w_chave_pai','Especificação pai','SELECT','',1,18,'','0123456789');
-        if(nvl($w_chave_pai,'')=='') Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
-        Validate('w_ano','Ano','1','1','4','4','','1');
-        Validate('w_codigo','Código','1','1','1','10','1','1');
-        Validate('w_nome','Nome','1','1','3','70','1','1');
-        Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
-      } 
+    if ($O=='I' || $O=='A') {
+      Validate('w_chave_pai','Especificação pai','SELECT','',1,18,'','0123456789');
+      if(nvl($w_chave_pai,'')=='') Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
+      Validate('w_ano','Ano','1','1','4','4','','1');
+      Validate('w_codigo','Código','1','1','1','10','1','1');
+      Validate('w_nome','Nome','1','1','3','70','1','1');
+      Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
       Validate('w_heranca','Origem dos dados','SELECT','1','1','10','','1');
@@ -1146,7 +1189,9 @@ function EspecDespesa() {
     } elseif ($O=='G') {
       Validate('w_ano_origem','Ano de origem','SELECT','1','1','10','','1');
       Validate('w_ano_geracao','Ano de geração','SELECT','1','1','10','','1');
-    } 
+    } elseif($O=='E' || $O=='D' || $O=='T'){
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');    
+    }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
     ValidateClose();
@@ -1155,19 +1200,19 @@ function EspecDespesa() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I') {
     BodyOpen(null);
   } elseif ($O=='A') {
-    BodyOpen('onLoad=document.Form.w_chave_pai.focus();');
+    BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
   } elseif ($O=='H') {
-    BodyOpen('onLoad=document.Form.w_heranca.focus();');
+    BodyOpen('onLoad="document.Form.w_heranca.focus();"');
   } elseif ($O=='G') {
-    BodyOpen('onLoad=document.Form.w_heranca.focus();');
+    BodyOpen('onLoad="document.Form.w_heranca.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1202,7 +1247,7 @@ function EspecDespesa() {
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
         if (f($row,'ativo')=='S') {
-          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Impede que esta especificacao seja associado a novos registros">Desativar</A>&nbsp');
+          ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Impede que esta especificação seja associado a novos registros">Desativar</A>&nbsp');
         } else {
           ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Permite que esta especificação de despesa seja associado a novos registros">Ativar</A>&nbsp');
         } 
@@ -1354,9 +1399,20 @@ function EspecDespesa() {
     ShowHTML('          </table>');
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td></tr>');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    }
+    ShowHTML('        <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('      </td></tr>');    
     ShowHTML('</FORM>');
     ShowHTML('  </table>');
   } elseif ($O=='H') {
@@ -1368,7 +1424,7 @@ function EspecDespesa() {
     ShowHTML('    <table align="center" border="0">');
     ShowHTML('      <tr><td valign="top"><table border=0 cellspacing=0 cellpadding=0>');
     ShowHTML('      <tr>');
-    selecaoCTEspecificacao('<u>O</u>rigem:','O','Selecione na lista a especificacao de despesa a ser usado como origem de dados.',$w_heranca,null,null,null,'w_heranca',null,'HERANCA',null);
+    selecaoCTEspecificacao('<u>O</u>rigem:','O','Selecione na lista a especificação de despesa a ser usado como origem de dados.',$w_heranca,null,null,null,'w_heranca',null,'HERANCA',null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td align="center">&nbsp;');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000">');
@@ -1432,7 +1488,7 @@ function PrestacaoContas() {
   $w_copia        = $_REQUEST['w_copia'];
   $w_chave        = $_REQUEST['w_chave'];
 
-  if ($w_troca>'' && $O!='E' && $O!='D' && $O!='T') {
+  if ($w_troca>'' && strpos('EDT',$O)===false) {
     $w_cliente        = $_REQUEST['w_cliente'];
     $w_chave_pai      = $_REQUEST['w_chave_pai'];
     $w_nome           = $_REQUEST['w_nome'];
@@ -1493,26 +1549,31 @@ function PrestacaoContas() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="99%" border="0">');
   if ($O=='L') {
-    //ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Os números entre parênteses indicam a quantidade de recursos vinculados ao tipo.</ul></b></font></td>');
+    ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('        Orientação:<ul>');
+    ShowHTML('        <li>Os números entre parênteses indicam a quantidade de projetos que já têm esse modelo de prestação de contas associado.');
+    ShowHTML('        </ul></b></font></td>');
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
     $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'IS NULL');
     $w_contOut = 0;
+    $_qtd_projeto = 0;
     foreach($RS as $row) {
       $w_nome  = f($row,'nome');
       $w_contOut = $w_contOut+1;
+      $w_qtd_projeto = f($row,'qtd_prj');
       if (f($row,'Filho')>0) {
         ShowHTML('<A HREF=#"'.f($row,'chave').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').' ('.f($row,'qtd_prj').')');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
         if (f($row,'ativo')=='S') {
           ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=D&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Impede que este tipo seja associado a novos registros">Desativar</A>&nbsp');
         } else {
           ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
-        } 
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+        }
+        if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
@@ -1530,7 +1591,7 @@ function PrestacaoContas() {
             } else {
               ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
             } 
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+            if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
@@ -1548,7 +1609,7 @@ function PrestacaoContas() {
                 } else {
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
                 } 
-                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+                if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
@@ -1564,7 +1625,7 @@ function PrestacaoContas() {
                   } else {
                     ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Desativar</A>&nbsp');
                   } 
-                  ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+                  if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                   ShowHTML('    <BR>');
                   $w_nome = str_replace(' - '.f($row3,'nome'),'',$w_nome);
@@ -1580,7 +1641,7 @@ function PrestacaoContas() {
                 } else {
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
                 } 
-                ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+                if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
                 ShowHTML('    <BR>');
               } 
@@ -1597,7 +1658,7 @@ function PrestacaoContas() {
             } else {
               ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
             } 
-            ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+            if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
             ShowHTML('    <BR>');
           } 
@@ -1614,7 +1675,7 @@ function PrestacaoContas() {
         } else {
           ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Permite que este tipo seja associado a novos registros">Ativar</A>&nbsp');
         } 
-        ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
+        if($w_qtd_projeto==0) ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o tipo">EX</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&w_copia='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Insere um novo tipo a partir das informações deste registro">Copiar</A>&nbsp');
         ShowHTML('    <BR>');
       } 
@@ -1636,9 +1697,9 @@ function PrestacaoContas() {
     ShowHTML('      <tr valign="top">');
     if ($O!='I' && $O!='C') {
       // Se for alteração, não deixa vincular a opção a ela mesma, nem a seus filhos
-      selecaoPrestacaoSub('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave,$w_chave_pai,'w_chave_pai',null,'SUBPARTE','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"');
+      selecaoPrestacaoSub('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave_pai,$w_chave,'w_chave_pai',null,'SUBPARTE','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"');
     } else {
-      selecaoPrestacaoSub('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave,$w_chave_pai,'w_chave_pai',null,'SUBTODOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"');
+      selecaoPrestacaoSub('<u>S</u>ubordinação:','S','Se esta opção estiver subordinada a outra já existente, informe qual.',$w_chave_pai,$w_chave,'w_chave_pai',null,'SUBTODOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.submit();"');
     } 
     ShowHTML('      <tr valign="top"><td><b><u>N</u>ome:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="sti" NAME="w_nome" SIZE=30 MAXLENGTH=30 VALUE="'.$w_nome.'" '.$w_Disabled.' title="Nome do tipo."></td>');
     ShowHTML('      <tr valign="top"><td><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="G" class="sti" name="w_descricao" rows=5 cols=80 title="Informe a descricao deste tipo." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
@@ -1658,7 +1719,19 @@ function PrestacaoContas() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    } elseif ($O=='C') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Copiar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
   } else {
@@ -1691,7 +1764,27 @@ function Grava() {
   switch ($SG) {
     case 'TIPOACORDO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          // Testa a existência do nome
+          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe tipo de acordo com este nome!\');');
+            ScriptClose(); 
+            retornaFormulario('w_nome');
+            break;
+          } 
+          // Testa a existência do sigla
+          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,strtoupper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe tipo de acordo com esta sigla!\');');
+            ScriptClose(); 
+            retornaFormulario('w_sigla');
+            break;
+          } 
+        }
         dml_putAgreeType::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_acordo'],$_REQUEST['w_sq_tipo_acordo_pai'],$_REQUEST['w_cliente'],
             $_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_modalidade'],

@@ -133,15 +133,7 @@ function Rel_Unidades() {
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,$w_embed).'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-      ShowHTML('RELATÓRIO DE UNIDADES');
-      ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
-      if ($p_tipo!='WORD') {
-        ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-        ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&p_tipo=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      } 
-      ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE UNIDADES',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -249,6 +241,7 @@ function Rel_Unidades() {
           // Usuários
           if ($p_usuarios=='S') {
             $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,'S',null);
+            $RS1 = SortArray($RS1,'nome','asc');
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Pessoas ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
               ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');

@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getHorizonte_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getNatureza_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getObjetivo_PE.php');
@@ -193,8 +194,12 @@ function Plano() {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad="document.Form.w_titulo.focus();"');
+  } elseif ($O=='D' || $O=='T') {
+    BodyOpen('onLoad="this.focus(); document.Form.w_assinatura.focus();"');
   } elseif ($O=='H') {
     BodyOpen('onLoad="this.focus(); document.Form.w_heranca.focus();"');
+  } elseif ($O=='E') {
+    BodyOpen('onLoad="this.focus(); document.Form.w_assinatura.focus();"');
   } elseif ($O=='L') {
     BodyOpen('onLoad="this.focus();"');
   } else {
@@ -414,7 +419,17 @@ function Plano() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
   } elseif ($O=='H') {
@@ -482,14 +497,14 @@ function Plano() {
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {
-      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
-      if ($O=='I' || $O=='C') {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       } else {
-        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
-    } 
+    }    
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -989,6 +1004,199 @@ function Objetivo(){
   Estrutura_Fecha();
   Rodape();
 } 
+
+// =========================================================================
+// Rotina de tela de exibição de Plano Estrategico
+// -------------------------------------------------------------------------
+function Telaplano(){
+  extract($GLOBALS);
+  global $w_Disabled, $w_TP;
+
+  $w_sq_plano=$_REQUEST['w_sq_plano'];
+
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'REGISTROS');
+  foreach ($RS as $row) { $RS = $row; break; }
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>Plano Estratégico</TITLE>');
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  BodyOpen('onLoad="this.focus();"');
+  $w_TP = 'Planos estratégicos - Visualização de dados';
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border=0 width="100%">');
+  ShowHTML(' <tr><td>');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr><td colspan="2"><hr NOSHADE color=#000000 size="4"></td></tr>');  
+  ShowHTML('      <tr><td colspan="2" bgcolor="#f0f0f0"><b><font size="2">'.f($RS,'nome_completo').'</font></td>');
+  ShowHTML('      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');  
+  ShowHTML('      <tr valign="top"><td width="30%"><b>Missão:</b></td><td>'.crlf2br(f($RS,'missao')).'</td>');
+  ShowHTML('      <tr valign="top"><td><b>Valores (crenças):</b></td><td>'.crlf2br(f($RS,'valores')).'</td>');
+  ShowHTML('      <tr valign="top"><td><b>Visão do presente:</b></td><td>'.crlf2br(f($RS,'visao_presente')).'</td>');
+  ShowHTML('      <tr valign="top"><td><b>Visão do fututo: </b></td><td>'.crlf2br(f($RS,'visao_futuro')).'</td>');  
+
+  // Objetivos estratégicos
+  $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_sq_plano,null,$w_cliente,null,null,null,null);
+  $RS = SortArray($RS,'nome','asc');
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Objetivos Estratégicos ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');
+  ShowHTML('      <tr><td align="center" colspan=3>');
+  ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" border=0 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td><b>Nome</td>');
+  ShowHTML('          <td><b>Sigla</td>');
+  ShowHTML('          <td><b>Descrição</td>');
+  ShowHTML('          <td><b>Ativo</td>');
+  ShowHTML('        </tr>');
+  if (count($RS)<=0) {
+    // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+  } else {
+    // Lista os registros selecionados para listagem
+    $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+    foreach ($RS1 as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+      ShowHTML('        <td>'.f($row,'nome').'</td>');
+      ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+      ShowHTML('        <td align="justify">'.crlf2br(f($row,'descricao')).'</td>');
+      ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+      ShowHTML('      </tr>');
+    } 
+  } 
+  ShowHTML('         </center>');
+  ShowHTML('       </table>');
+  ShowHTML('      </td>');
+  ShowHTML('      </tr> ');
+
+  // Serviços
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
+  $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Serviços ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');
+  ShowHTML('      <tr><td align="center" colspan=3>');
+  ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" border=0 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td><b>Módulo</td>');
+  ShowHTML('          <td><b>Serviço</td>');
+  ShowHTML('          <td><b>Documentos vinculados</td>');
+  ShowHTML('        </tr>');
+  if (count($RS)<=0) {
+    // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+  } else {
+    // Lista os registros selecionados para listagem
+    $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+    $w_atual = '';
+    foreach ($RS1 as $row) {
+      if ($w_atual!=f($row,'nm_modulo')) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'nm_modulo').'</td>');
+        $w_atual = f($row,'nm_modulo');
+      } else {
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>&nbsp;</td>');
+      }
+      ShowHTML('        <td>'.f($row,'nome').'</td>');
+      ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
+      ShowHTML('      </tr>');
+    }
+  } 
+  ShowHTML('         </center>');
+  ShowHTML('       </table>');
+  ShowHTML('      </td>');
+  ShowHTML('      </tr> ');
+
+  // Documentos vinculados
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
+  $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
+  if (count($RS)>0) {
+    ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Documentos vinculados</b></font>');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=hier&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe diagrama hierárquico dos documentos vinculados ao plano.">DIAGRAMA HIERÁRQUICO</A>]');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=gantt&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe gráfico de Gantt dos documentos vinculados ao plano.">GRÁFICO DE GANTT</A>]');
+    ShowHTML('         <hr NOSHADE color=#000000 SIZE=1></td>');
+    ShowHTML('         </td>');
+    foreach ($RS as $row) {
+      if (f($row,'qtd')>0) {
+        ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.f($row,'qtd').')</b></font></td>');
+        $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+        $RS1 = SortArray($RS1,'codigo_interno','asc');
+        ShowHTML('<tr><td align="center" colspan=3>');
+        ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+        ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td rowspan=2><b>Código</td>');
+        ShowHTML('          <td rowspan=2><b>Título</td>');
+        ShowHTML('          <td rowspan=2><b>Responsável</td>');
+        ShowHTML('          <td colspan=2><b>Execução</td>');
+        ShowHTML('          <td rowspan=2><b>Fase atual</td>');
+        ShowHTML('        </tr>');
+        ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td><b>De</td>');
+        ShowHTML('          <td><b>Até</td>');
+        ShowHTML('        </tr>');
+        $w_cor = $conTrBgColor;
+        foreach($RS1 as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td nowrap>');
+          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+          ShowHTML('        '.str_replace(f($row,'nome').': ','',exibeSolic($w_dir_volta,f($row,'sq_siw_solicitacao'))));
+          if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; 
+          else                                      $w_titulo=Nvl(f($row,'titulo'),'-');
+          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'"><strike>'.$w_titulo.'</strike></td>');
+          else                            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'">'.$w_titulo.'</td>');
+          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
+          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');
+          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim')).'</td>');
+          ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
+        } 
+        ShowHTML('      </center>');
+        ShowHTML('    </table>');
+        ShowHTML('  </td>');
+        ShowHTML('</tr>');
+      }
+    }
+  } 
+  ShowHTML('         </center>');
+  ShowHTML('      </td>');
+  ShowHTML('      </tr> ');
+
+  // Arquivos
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,$w_sq_plano,null,null,null,null,'ARQUIVOS');  
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Arquivos ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1> </b></font></td>');  
+  ShowHTML('      <tr><td align="center" colspan=3>');
+  ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" border=0 CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+  ShowHTML('          <td><b>Título</td>');
+  ShowHTML('          <td><b>Descrição</td>');
+  ShowHTML('          <td><b>Tipo</td>');
+  ShowHTML('          <td><b>KB</td>');
+  ShowHTML('        </tr>');
+  if (count($RS)<=0) {
+    // Se não foram selecionados registros, exibe mensagem 
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+  } else {
+    // Lista os registros selecionados para listagem 
+    $w_cor = $conTrBgColor;
+    foreach($RS as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+      ShowHTML('        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+      ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+      ShowHTML('        <td>'.f($row,'tipo').'</td>');
+      ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
+      ShowHTML('        </td>');
+      ShowHTML('      </tr>');
+    } 
+  }  
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();   
+} 
+
 // ------------------------------------------------------------------------- 
 // Rotina de anexação de arquivos a planos estratégicos
 // ------------------------------------------------------------------------- 
@@ -1568,8 +1776,25 @@ function TipoRecurso() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='C') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Copiar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    } 
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('      </td></tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
@@ -1934,6 +2159,8 @@ function Unidade() {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
   } elseif (!(strpos('A',$O)===false)) {
     BodyOpen('onLoad="document.Form.w_descricao.focus()";');
+  } elseif ($O=='I') {
+    BodyOpen('onLoad="document.Form.w_chave.focus()";');
   } elseif ($O=='E') {
     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } else {
@@ -2464,6 +2691,7 @@ function Main() {
     case 'UNIDMED':            UnidadeMedida();     break;
     case 'UNIDADE':            Unidade();           break;
     case 'GRAVA':              Grava();             break;
+    case 'TELAPLANO';          Telaplano();         break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

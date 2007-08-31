@@ -21,6 +21,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicObjetivo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
@@ -147,15 +148,7 @@ function Rel_Executivo() {
         BodyOpenClean('onLoad=\'this.focus()\'; ');
       }
       ShowHTML('<center>');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,$w_embed).'"><TD ALIGN="RIGHT"><B><FONT SIZE=3 COLOR="#000000">');
-      ShowHTML('RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS');
-      ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
-      if ($p_tipo!='WORD') {
-        ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-        ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.'Rel_Executivo&R='.$w_pagina.$par.'&O=L&p_tipo=WORD&p_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      } 
-      ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',4,$p_plano);
     }
     ShowHTML('');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -179,7 +172,7 @@ function Rel_Executivo() {
       }
       foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
-        ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.strtoupper(f($row,'titulo')).'</b></td></tr>');
+        ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo'))).'</b></td></tr>');
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
         $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
@@ -241,8 +234,8 @@ function Rel_Executivo() {
                   ShowHTML('          <tr valign="top" align="center">');
                   ShowHTML('            <td nowrap>');    
                   ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
-                  if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row3,'sq_siw_solicitacao').'&nbsp;</a>');
-                  else                 ShowHTML('            '.f($row3,'sq_siw_solicitacao').''); 
+                  if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
+                  else                 ShowHTML('            '.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).''); 
                   ShowHTML('        '.exibeImagemRestricao(f($row,'restricao'),'P'));
                   ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
                   if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
@@ -414,11 +407,6 @@ function Rel_Programas() {
   $w_marca_bloco  = $_REQUEST['w_marca_bloco'];
 
   if ($O=='L') {
-    // Recupera o logo do cliente a ser usado nas listagens
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    if (f($RS,'logo')>'') {
-      $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    }
     if ($p_tipo=='WORD') {
       HeaderWord('portrait');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -432,37 +420,34 @@ function Rel_Programas() {
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,$w_embed).'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-      ShowHTML('RELATÓRIO DE DETALHAMENTO DE PROGRAMAS');
-      ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">'.DataHora().'</B>');
-      if ($p_tipo!='WORD') {
-        ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-        ShowHTML('&nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&p_tipo=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-      } 
-      ShowHTML('</TD></TR>');
-      ShowHTML('</FONT></B></TD></TR></TABLE>');
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',4);
     }
-    ShowHTML('<table width="100%" border="0" cellspacing="3">');
+    ShowHTML('<div align="center">');
+    ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
-    ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-    ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>CRITÉRIOS DE EXIBIÇÃO</b></td></tr>');
-    ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
-    ShowHTML('   <tr><td colspan="2"><table border=0>');
-    if ($p_plano) {
-      $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
-      foreach ($RS_Plano as $row) { $RS_Plano = $row; break; }
-      ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICO:<td>'.f($RS_Plano,'titulo').'</td></tr>');
+    if ($p_plano || $p_objetivo || $p_programa) {
+      ShowHTML('<table width="100%" border="0" cellspacing="3">');
+      ShowHTML('<tr><td colspan="2">');
+      ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+      ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>CRITÉRIOS DE EXIBIÇÃO</b></td></tr>');
+      ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
+      ShowHTML('   <tr><td colspan="2"><table border=0>');
+      if ($p_plano) {
+        $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
+        foreach ($RS_Plano as $row) { $RS_Plano = $row; break; }
+        ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICO:<td>'.f($RS_Plano,'titulo').'</td></tr>');
+      }
+      if ($p_objetivo) {
+        $RS_Objetivo = db_getObjetivo_PE::getInstanceOf($dbms,$p_plano,$p_objetivo,$w_cliente,null,null,null,null);
+        foreach ($RS_Objetivo as $row) {$RS_Objetivo=$row; break;}
+        ShowHTML('     <tr valign="top"><td>OBJETIVO ESTRATÉGICO:<td>'.f($RS_Objetivo,'nome').'</td></tr>');
+      }
+      if ($p_programa) {
+        $RS_Programa = db_getSolicData::getInstanceOf($dbms,$p_programa,'PEPRGERAL');
+        ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
+      }
+      ShowHTML('     </table>');
     }
-    if ($p_objetivo) {
-      $RS_Objetivo = db_getObjetivo_PE::getInstanceOf($dbms,$p_plano,$p_objetivo,$w_cliente,null,null,null,null);
-      foreach ($RS_Objetivo as $row) {$RS_Objetivo=$row; break;}
-      ShowHTML('     <tr valign="top"><td>OBJETIVO ESTRATÉGICO:<td>'.f($RS_Objetivo,'nome').'</td></tr>');
-    }
-    if ($p_programa) {
-      $RS_Programa = db_getSolicData::getInstanceOf($dbms,$p_programa,'PEPRGERAL');
-      ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
-    }
-    ShowHTML('     </table>');
     if($p_legenda=='S') {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>LEGENDAS</b></td></tr>');
@@ -495,6 +480,7 @@ function Rel_Programas() {
       }
       ShowHTML('     </table>');
     }
+    ShowHTML('     </table>');
   } elseif ($O=='P') {
     Cabecalho();
     ShowHTML('<HEAD>');

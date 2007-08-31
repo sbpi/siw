@@ -276,6 +276,10 @@ function Inicial() {
 
   if ($w_tipo=='WORD') {
     HeaderWord(); 
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    ShowHTML('<HEAD>');
+    ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
+    ShowHTML('</HEAD>');    
   } else {
     Cabecalho();
     ShowHTML('<HEAD>');
@@ -356,7 +360,13 @@ function Inicial() {
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  Estrutura_Texto_Abre();
+  if($w_tipo!='WORD') {
+    if ((strpos(strtoupper($R),'GR_'))===false) {
+      Estrutura_Texto_Abre();
+    } else {
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
+    }
+  }
   if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
@@ -392,10 +402,10 @@ function Inicial() {
       } 
     } 
     ShowHTML('    <td align="right">');
-    if ($w_tipo!='WORD') {
-      ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-      ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
-    } 
+    //if ($w_tipo!='WORD') {
+      //ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
+     // ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
+    //} 
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -429,7 +439,11 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      if($w_tipo!='WORD') {
+        $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      } else {
+        $RS1=$RS;
+      }
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -516,7 +530,7 @@ function Inicial() {
                    if (f($row,'sg_tramite')=='EE') {
                      ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'DadosExecucao&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GDTINF&w_menu='.$w_menu.MontaFiltro('GET').'" title="Informar dados da execucao.">IN</A>&nbsp');
                      ShowHTML('          <A class="HL" HREF="mod_pe/recurso.php?par=Solic&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Recursos&SG=RECSOLIC'.MontaFiltro('GET').'" title="Informar os recursos da demanda." target="Recurso">RC</A>&nbsp');
-                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Areas&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Partes interessada&SG=GDTAREAS'.MontaFiltro('GET').'" title="Informar as partes interessadas da demanda." target="Parte">PI</A>&nbsp');
+                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Areas&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Partes interessadas&SG=GDTAREAS'.MontaFiltro('GET').'" title="Informar as partes interessadas da demanda." target="Parte">PI</A>&nbsp');
                      ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da demanda.">CO</A>&nbsp');
                    }
                  } else {
@@ -1638,28 +1652,26 @@ function Visual() {
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = strtoupper(trim($_REQUEST['w_tipo']));
 
-  // Recupera o logo do cliente a ser usado nas listagens
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS,'logo')>'') {
-    $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
+  if ($w_tipo=='WORD') {
+    HeaderWord(null);
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+  } else {
+    Cabecalho();
   } 
-  cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\'; ');
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN=2><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">');
-  ShowHTML('Visualização de '.f($RS_Menu,'nome'));
-  ShowHTML('<TR><TD ALIGN="RIGHT"><B><FONT SIZE=2 COLOR="#000000">'.DataHora().'</font></B></TD></TR>');
-  ShowHTML('</B></TD></TR></TABLE>');
-  //ShowHTML('<HR>');
-  if ($w_tipo>'') {
+  if ($w_tipo!='WORD') {
+    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
+  } 
+  if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
   } 
   // Chama a rotina de visualização dos dados da demanda, na opção 'Listagem'
-  ShowHTML(VisualTriagem($w_chave,'L',$w_usuario));
-  if ($w_tipo>'') {
+  ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_tipo));
+  if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
   } 
   Rodape();
@@ -2164,8 +2176,8 @@ function SolicMail($p_solic,$p_tipo) {
     } 
     //Recupera o último log
     $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc');
-    foreach ($RS as $row) { $RS = $row; break; }
+    $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
+    foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');
     if ($p_tipo == 2) { // Se for tramitação
       // Encaminhamento
@@ -2179,7 +2191,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
 
       // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
       $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
     } 
     $w_html.= $crlf.'     <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
@@ -2469,6 +2481,15 @@ function Grava() {
             dml_putDemandaEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
                 $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
                 $w_file,$w_tamanho,$w_tipo,$w_nome);
+            //Rotina para gravação da imagem da versão da solicitacão no log.
+            if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+              $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+              $w_sg_tramite = f($RS,'sigla');
+              if($w_sg_tramite=='CI') {
+                $w_html = VisualTriagem($_REQUEST['w_chave'],'L',$w_usuario,'WORD');
+                CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+              }
+            }    
           } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -2481,6 +2502,14 @@ function Grava() {
           dml_putDemandaEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
             $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
             null,null,null,null);
+          if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+            $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+            $w_sg_tramite = f($RS,'sigla');
+            if($w_sg_tramite=='CI') {
+              $w_html = VisualTriagem($_REQUEST['w_chave'],'L',$w_usuario,'WORD');
+              CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+            }
+          }  
           // Envia e-mail comunicando a inclusão
           SolicMail($_REQUEST['w_chave'],2);
           // Se for envio da fase de cadastramento, remonta o menu principal

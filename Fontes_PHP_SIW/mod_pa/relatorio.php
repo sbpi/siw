@@ -295,15 +295,15 @@ function Etiqueta() {
     CheckBranco();
     ValidateOpen('Validacao');
     Validate('p_protocolo','Número de protocolo','1','1','20','20','','0123456789./-');
-    ShowHTML('  var i; ');
-    ShowHTML('  var w_erro=true; ');
-    ShowHTML('  for (i=0; i < theForm["p_posicao"].length; i++) {');
-    ShowHTML('    if (theForm["p_posicao"][i].checked) w_erro=false;');
-    ShowHTML('  }');
-    ShowHTML('  if (w_erro) {');
-    ShowHTML('    alert(\'Indique a posição de impressão da etiqueta!\'); ');
-    ShowHTML('    return false;');
-    ShowHTML('  }');
+//     ShowHTML('  var i; ');
+//     ShowHTML('  var w_erro=true; ');
+//     ShowHTML('  for (i=0; i < theForm["p_posicao"].length; i++) {');
+//     ShowHTML('    if (theForm["p_posicao"][i].checked) w_erro=false;');
+//     ShowHTML('  }');
+//     ShowHTML('  if (w_erro) {');
+//     ShowHTML('    alert(\'Indique a posição de impressão da etiqueta!\'); ');
+//     ShowHTML('    return false;');
+//     ShowHTML('  }');
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
     ScriptClose();
@@ -344,7 +344,7 @@ function Etiqueta() {
     ShowHTML('          <td rowspan=2><b>Unidade de Origem</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>Limite</td>');
-    ShowHTML('          <td rowspan=2><b>Operações</td>');
+    //ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Espécie</td>');
@@ -370,16 +370,17 @@ function Etiqueta() {
         ShowHTML('        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>');
         ShowHTML('        <td>'.f($row,'nm_origem_doc').'</td>');
         ShowHTML('        <td align="center">'.((nvl(f($row,'fim'),'')!='') ? date(d.'/'.m.'/'.y,f($row,'fim')) : '&nbsp;').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        //ShowHTML('        <td align="top" nowrap>');
 
         // Configura o texto que informa ao usuário a posição de impressão da etiqueta
-        if ($p_posicao=='S') $w_texto = 'Emitir na parte superior da folha';
-        elseif ($p_posicao=='M') $w_texto = 'Emitir no meio da folha';
-        else $w_texto = 'Emitir na parte inferior da folha';
+//         if ($p_posicao=='S') $w_texto = 'Emitir na parte superior da folha';
+//         elseif ($p_posicao=='M') $w_texto = 'Emitir no meio da folha';
+//         else $w_texto = 'Emitir na parte inferior da folha';
 
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'EmitirEtiqueta&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_posicao='.$p_posicao.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">'.$w_texto.'</A>&nbsp');
-        ShowHTML('        </td>');
+        //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'EmitirEtiqueta&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_posicao='.$p_posicao.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Emitir</A>&nbsp');
+        //ShowHTML('        </td>');
         ShowHTML('      </tr>');
+        $w_chave = f($row,'sq_siw_solicitacao');
         $w_atual = f($row,'guia_tramite');
       } 
     } 
@@ -387,9 +388,39 @@ function Etiqueta() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    ShowHTML('<tr><td align="center" colspan=3>');
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    ShowHTML('</tr>');
+    if (count($RS1)>0) {
+      ShowHTML('<tr><td align="center" colspan=3><br><br><br><br>');
+      // Recupera os dados do cliente
+      $RS_Cliente = db_getcustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+      // Recupera os dados do documento
+      $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PADGERAL');
+      ShowHTML('<table cellpadding=0 cellspacing=0 border=1>');
+      ShowHTML('<tr><td width="480"  height="200">');
+      ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
+      ShowHTML('    <tr><td colspan=2><font size=2><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
+      if(nvl(f($RS,'processo'),'')=='S') 
+        ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>'.f($RS,'protocolo').'</font>');
+      else
+        ShowHTML('    <tr><td><font size=2><b>DOCUMENTO: </b>'.f($RS,'protocolo').'</font>');
+      if(nvl(f($RS,'processo'),'')=='S')  
+        ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
+      else
+        ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
+      if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
+      else
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_origem')).'</font>');
+      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
+      if (strlen(Nvl(f($RS,'descricao'),'-'))>100) 
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');
+      else
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
+      ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(str_replace('/','',str_replace('-','',str_replace('.','',f($RS,'protocolo'))))));
+      ShowHTML('  </table>');
+      ShowHTML('<br></td></tr>');
+      ShowHTML('</table>');    
+      ShowHTML('</tr>');
+    }
   } elseif ($O=='P') {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
@@ -401,10 +432,10 @@ function Etiqueta() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><b><u>P</u>rotocolo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$p_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
-    ShowHTML('      <tr><td><b>Posição da etiqueta');
-    if ($p_posicao=='S') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha');
-    if ($p_posicao=='M') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="M"> Etiqueta localizada no meio da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="M"> Etiqueta localizada no meio da folha');
-    if ($p_posicao=='I') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="I"> Etiqueta localizada na parte inferior da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="I"> Etiqueta localizada na parte inferior da folha');
+//     ShowHTML('      <tr><td><b>Posição da etiqueta');
+//     if ($p_posicao=='S') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="S"> Etiqueta localizada na parte superior da folha');
+//     if ($p_posicao=='M') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="M"> Etiqueta localizada no meio da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="M"> Etiqueta localizada no meio da folha');
+//     if ($p_posicao=='I') ShowHTML('<br><input checked type="radio" name="p_posicao" class="STR" VALUE="I"> Etiqueta localizada na parte inferior da folha'); else ShowHTML('<br><input type="radio" name="p_posicao" class="STR" VALUE="I"> Etiqueta localizada na parte inferior da folha');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     ShowHTML('          </td>');
@@ -452,25 +483,32 @@ function EmitirEtiqueta () {
 
   // Recupera os dados do cliente
   $RS_Cliente = db_getcustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-
   // Recupera os dados do documento
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PADGERAL');
-
-  HeaderWord('PORTRAIT');
-  ShowHTML('<table width="'.$w_largura.'" cellpadding=0 cellspacing=0 border=0>');
+  //HeaderEtiqueta();
+  Cabecalho();
+  //ShowHTML('<table width="'.$w_largura.'" cellpadding=0 cellspacing=0 border=0>');
+  ShowHTML('<table cellpadding=0 cellspacing=0 border=0>');
   if ($w_posicao=='M') {
-    ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
+    //ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
+    //ShowHTML('<tr><td>&nbsp;</td>');
   } elseif ($w_posicao=='I') {
-    ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
-    ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
+    //ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
+    //ShowHTML('<tr><td>&nbsp;</td>');
   }
-  ShowHTML('<tr><td height="'.$w_altura.'">');
+  //ShowHTML('<tr><td height="'.$w_altura.'">');
+  ShowHTML('<tr><td width="480"  height="200">');
   ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
-  ShowHTML('    <tr><td><font size=4><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
-  ShowHTML('    <tr><td><hr noshade>');
-  ShowHTML('    <tr><td align="center"><font size=5><br><b>'.f($RS,'protocolo').'</b><br><br></font>');
-  ShowHTML('    <tr><td><hr noshade>');
-  ShowHTML('    <tr><td align="center"><font size=4><b>'.formataDataEdicao(f($RS,'data_autuacao')).'</b></font>');
+  ShowHTML('    <tr><td colspan=2><font size=2><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
+  ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>'.f($RS,'protocolo').'</font>');
+  if(nvl(f($RS,'processo'),'')=='S')  
+    ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
+  else
+    ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'fim')).'</font>');
+  ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
+  ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
+  ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
+  ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(f($RS,'protocolo')));
   ShowHTML('  </table>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');

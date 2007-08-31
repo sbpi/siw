@@ -253,7 +253,7 @@ function Gerencial() {
     $w_pag=1;
     $w_linha=0.00;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);    
   } else {
     Cabecalho();
@@ -323,7 +323,7 @@ function Gerencial() {
       BodyOpenClean('onLoad=this.focus();');
     } 
     if ($O=='L') {
-      ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),3);
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {

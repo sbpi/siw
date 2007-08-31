@@ -3365,10 +3365,9 @@ function SolicMail($p_solic,$p_tipo) {
     } 
     if ($p_tipo==2) {
       // Se for tramitação
-      // Encaminhamentos
       $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
-      $RS = SortArray($RS,'phpdt_data','desc');
-      foreach($RS as $row){$RS=$row; break;}
+      $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
+      foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
       $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>ÚLTIMO ENCAMINHAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $w_html.=$crlf.'      <tr><td><b>De: </b></td>';
       $w_html.=$crlf.'        <td>'.f($RS,'responsavel').'</td></tr>'; 
@@ -3378,7 +3377,7 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>'; 
 
       // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
+      $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
       $w_destinatarios = f($RS1,'email').'|'.f($RS1,'nome').'; ';
     } 
     $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFOMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  

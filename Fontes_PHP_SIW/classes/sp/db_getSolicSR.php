@@ -15,7 +15,7 @@ class db_getSolicSR {
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
         $p_acao_ppa, $p_orprior, $p_empenho=null, $p_processo=null) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICSR';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicSR';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
@@ -28,7 +28,7 @@ class db_getSolicSR {
                    'p_atraso'                    =>array(tvl($p_atraso),                                   B_VARCHAR,        90),
                    'p_solicitante'               =>array(tvl($p_solicitante),                              B_INTEGER,        32),
                    'p_unidade'                   =>array(tvl($p_unidade),                                  B_INTEGER,        32),
-                   'p_prioridade'                =>array(tvl($p_prioridade),                               B_INTEGER,        32),
+                   'p_prioridade'                =>array(tvl($p_prioridade),                               B_VARCHAR,        10),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,        10),
                    'p_proponente'                =>array(tvl($p_proponente),                               B_VARCHAR,        90),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

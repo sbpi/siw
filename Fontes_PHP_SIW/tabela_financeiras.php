@@ -173,15 +173,15 @@ function CentroCusto() {
   ShowHTML('</style> ');
   ShowHTML('</HEAD>');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_nome.focus();');
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
   } elseif ($O=='H') {
-    BodyOpen('onLoad=document.Form.w_heranca.focus();');
+    BodyOpen('onLoad="document.Form.w_heranca.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } 
   if ($O!='H') {
     Estrutura_Topo_Limpo();

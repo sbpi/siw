@@ -2,21 +2,22 @@
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class db_getPrestacaoContas
+* class db_getTipoRecurso
 *
 * { Description :- 
-*    Recupera dados da tabela de prestacao de contas
+*    Recupera dados da tabela de tipos de recursos
 * }
 */
 
-class db_getPrestacaoContas {
-   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_pai, $p_nome, $p_tipo, $p_ativo, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_GETPRESTACAOCONTAS';
+class db_getTipoRecurso {
+   function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_pai, $p_nome, $p_sigla, $p_gestora, $p_ativo, $p_restricao) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_GETTIPORECURSO';
      $params=array('p_cliente'      =>array($p_cliente,         B_INTEGER,        32),
                    'p_chave'        =>array(tvl($p_chave),      B_INTEGER,        32),
-                   "p_chave_pai"    =>array($p_chave_pai,       B_NUMERIC,        32),
-                   'p_nome'         =>array(tvl($p_nome),       B_VARCHAR,        60),
-                   'p_tipo'         =>array(tvl($p_tipo),       B_VARCHAR,         1),
+                   'p_chave_pai'    =>array($p_chave_pai,       B_NUMERIC,        32),
+                   'p_nome'         =>array(tvl($p_nome),       B_VARCHAR,        30),
+                   'p_sigla'        =>array(tvl($p_sigla),      B_VARCHAR,        10),
+                   'p_gestora'      =>array($p_gestora,         B_NUMERIC,        32),
                    'p_ativo'        =>array(tvl($p_ativo),      B_VARCHAR,         1),
                    'p_restricao'    =>array(tvl($p_restricao),  B_VARCHAR,        15),
                    'p_result'       =>array(null,               B_CURSOR,         -1)
