@@ -108,7 +108,7 @@ begin
                 inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                   inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
                                                           'AT'                  = coalesce(h.sigla,'-'))
-          where a.sq_solicitacao_item not in (select x.item_pedido from cl_solicitacao_item_vinc x)
+          where a.sq_solicitacao_item not in (select x.item_pedido from cl_solicitacao_item_vinc x);
    End If;
 end sp_getCLSolicItem;           
 /
