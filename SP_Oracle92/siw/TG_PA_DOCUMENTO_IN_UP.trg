@@ -6,7 +6,7 @@ declare
 begin
   If INSERTING Then
      PA_CriaParametro(:new.unidade_autuacao, w_chave);
-     :new.prefixo          := to_number(substr(w_chave,1,5));
+     :new.prefixo          := substr(w_chave,1,5);
      :new.numero_documento := to_number(substr(w_chave,7,6));
      :new.ano              := to_number(substr(w_chave,14,4));
      :new.digito           := to_number(substr(w_chave,19,2));

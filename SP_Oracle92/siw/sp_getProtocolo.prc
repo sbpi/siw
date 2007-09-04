@@ -44,19 +44,15 @@ begin
                  inner     join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
                  left      join co_pessoa            c3 on (c.pessoa_origem        = c3.sq_pessoa)
-                 inner     join (select sq_siw_solicitacao, max(sq_documento_log) as sq_documento_log
+                 left      join (select sq_siw_solicitacao, max(sq_documento_log) as sq_documento_log
                                    from pa_documento_log
                                   group by sq_siw_solicitacao
                                 )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
-                 inner     join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log and
-                                                            ((p_restricao          = 'RELPAETIQ') or 
-                                                             (p_restricao          = 'RELPATRAM' and d.recebimento is null)
-                                                            )
-                                                           )
-                   inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
-                   inner   join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
-                   left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
-                   left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
+                   left    join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
+                     left  join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
+                     left  join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
+                     left  join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
+                     left  join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
                left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
@@ -69,6 +65,9 @@ begin
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
+         and (p_restricao = 'RELPAETIQ' or 
+              (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null)
+             )
          and (p_tipo       = 1 or
               (p_tipo      = 2 and b1.acesso > 0)
              );
