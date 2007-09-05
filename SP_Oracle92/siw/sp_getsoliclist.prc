@@ -114,6 +114,7 @@ begin
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                d1.sq_demanda_tipo,   d1.reuniao,                    d1.nome as nm_demanda_tipo,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
@@ -145,6 +146,7 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao         = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                   = b3.sq_plano)
                       inner          join gd_demanda           d  on (b.sq_siw_solicitacao         = d.sq_siw_solicitacao)
+                      left           join gd_demanda_tipo      d1 on (d.sq_demanda_tipo            = d1.sq_demanda_tipo)
                         left         join eo_unidade           e  on (d.sq_unidade_resp            = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade                 = e1.sq_unidade and
                                                                       e1.tipo_respons              = 'T'           and

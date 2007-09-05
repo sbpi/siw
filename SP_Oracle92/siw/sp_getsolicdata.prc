@@ -47,7 +47,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.ordem,              d.sq_demanda_pai,              d.sq_demanda_tipo,
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
-                d1.nome nm_demanda_tipo,
+                d1.reuniao,           d1.nome as nm_demanda_tipo,
                 d2.nome_resumido nm_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,
