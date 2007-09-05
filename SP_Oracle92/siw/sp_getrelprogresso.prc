@@ -41,6 +41,7 @@ begin
                 b.sq_siw_solicitacao sq_projeto, c.codigo_interno, c.titulo nm_projeto, c.inicio inicio_projeto, c.fim fim_projeto,
                 i.sq_menu, i.sq_tarefa, i.nm_tarefa, i.solicitante, i.nm_resp_tarefa, i.inicio, i.fim, i.inicio_real, i.fim_real,
                 i.concluida, i.aviso_prox_conc, i.aviso, i.sg_tramite, i.nm_tramite, w_inicio as ini_prox_per, w_fim as fim_prox_per,
+                coalesce(o.qt_anexo,0) qt_anexo,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
            from pj_projeto_etapa               a
                 left     join co_pessoa        h on (a.sq_pessoa          = h.sq_pessoa)
@@ -67,6 +68,10 @@ begin
                                                                      )
                                       )
                               )                i on (e.sq_siw_solicitacao = i.sq_tarefa)
+                left     join (select x.sq_projeto_etapa, count(*) qt_anexo
+                                 from pj_projeto_etapa_arq x
+                               group by x.sq_projeto_etapa
+                              )                o on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where d.sq_pessoa       = p_cliente
             and j.sigla           <> 'CA'
             and ((i.sq_tarefa is null and a.pacote_trabalho = 'S') or i.sq_tarefa is not null)

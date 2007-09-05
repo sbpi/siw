@@ -30,8 +30,8 @@ begin
                 c.sq_pessoa substituto, c1.nome nm_sub_resp, c2.ativo st_sub_resp, c2.email em_sub_resp,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) , n.sq_menu p3,
+                coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) , n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 e.email, e.ativo st_resp, d.nome nm_resp
            from pj_projeto_etapa                    a
@@ -66,7 +66,7 @@ begin
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h  on (h.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -74,7 +74,7 @@ begin
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -96,7 +96,7 @@ begin
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
                 l.sigla as sg_unid_resp,
-                nvl(m.qt_ativ,0) qt_ativ,
+                coalesce(m.qt_ativ,0) qt_ativ,
                 (select count(sq_projeto_etapa) as qtd from siw_restricao_etapa where sq_siw_restricao = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado,
                 (select count(sq_projeto_etapa) as qtd_inter from siw_etapa_interessado where sq_unidade = coalesce(p_chave_aux,0) and sq_projeto_etapa = a.sq_projeto_etapa) as vinculado_inter
            from pj_projeto_etapa                         a
@@ -113,7 +113,7 @@ begin
                               from pj_etapa_demanda             x
                                    inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                      inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                      Nvl(z.sigla,'-')     <> 'CA'
+                                                                      coalesce(z.sigla,'-')     <> 'CA'
                                                                      )
                              group by x.sq_projeto_etapa, y.sq_menu
                             )                            m  on (a.sq_projeto_etapa = m.sq_projeto_etapa)
@@ -130,7 +130,7 @@ begin
               montaOrdem(a.sq_projeto_etapa) as cd_ordem,
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
               d.sigla as sg_setor,
-              nvl(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
+              coalesce(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
               SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
          from pj_projeto_etapa                  a
               inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
@@ -143,7 +143,7 @@ begin
                                from pj_etapa_demanda             x
                                     inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                       inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                       Nvl(z.sigla,'-')     <> 'CA'
+                                                                       coalesce(z.sigla,'-')     <> 'CA'
                                                                       )
                               group by x.sq_projeto_etapa, y.sq_menu
                             )                   e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
@@ -160,8 +160,8 @@ begin
                 b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) qt_contr, n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 acentos(a.titulo,1) as ac_titulo
            from pj_projeto_etapa                a
@@ -192,7 +192,7 @@ begin
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -200,7 +200,7 @@ begin
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
@@ -220,8 +220,8 @@ begin
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2, coalesce(i.qt_filhos,0) as qt_filhos, 
-                nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2, coalesce(i.qt_filhos,0) as qt_filhos, 
+                coalesce(n.qt_contr,0) qt_contr, n.sq_menu p3,
                 to_char(a.ultima_atualizacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
                 case base_geografica
                      when 1 then case o.padrao when 'S' then 'Nacional'              else 'Nacional - '||o.nome end
@@ -251,7 +251,7 @@ begin
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -264,7 +264,7 @@ begin
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )               n on (n.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -288,8 +288,9 @@ begin
                 b.sq_pessoa titular, c.sq_pessoa substituto, i.executor, i.solicitante,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                 d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
-                nvl(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                m.vincula_contrato pj_vincula_contrato, nvl(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
+                m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) qt_contr, n.sq_menu p3,
+                coalesce(o.qt_anexo,0) qt_anexo,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 acentos(a.titulo,1) as ac_titulo,
                 level
@@ -321,7 +322,7 @@ begin
                                        from pj_etapa_demanda             x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   h on (h.sq_projeto_etapa = a.sq_projeto_etapa)
@@ -329,10 +330,14 @@ begin
                                        from pj_etapa_contrato            x
                                             inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                               inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                               Nvl(z.sigla,'-')     <> 'CA'
+                                                                               coalesce(z.sigla,'-')     <> 'CA'
                                                                               )
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n on (n.sq_projeto_etapa = a.sq_projeto_etapa)                                
+                left           join (select x.sq_projeto_etapa, count(*) qt_anexo
+                                       from pj_projeto_etapa_arq x
+                                     group by x.sq_projeto_etapa
+                                )                   o on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.sq_projeto_etapa <> p_chave_aux2 and a.pacote_trabalho = 'N'))
          connect by prior a.sq_projeto_etapa = a.sq_etapa_pai

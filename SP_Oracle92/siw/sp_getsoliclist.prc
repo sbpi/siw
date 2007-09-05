@@ -266,7 +266,7 @@ begin
                 d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
-                e.vinculada as vinc_resp,e.adm_central as adm_resp,
+                e.vinculada as vinc_resp,e.adm_central as adm_resp, e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 m1.sq_menu as sq_menu_pai,
