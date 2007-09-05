@@ -663,6 +663,7 @@ begin
                 b.codigo_externo,     d.observacao,                  d.valor_imposto,
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
+                d.referencia_inicio,  d.referencia_fim,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa,    d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_resumido_ind as nm_pessoa_resumido_ind,
