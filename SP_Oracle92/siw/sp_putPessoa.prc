@@ -25,7 +25,8 @@ create or replace procedure sp_putPessoa
      p_nr_telefone         in varchar2  default null,
      p_nr_fax              in varchar2  default null,
      p_nr_celular          in varchar2  default null,
-     p_email               in varchar2  default null
+     p_email               in varchar2  default null,
+     p_chave_nova          out number
    ) is
    
    w_existe          number(4);
@@ -35,19 +36,33 @@ create or replace procedure sp_putPessoa
    w_tipo_endereco   number(18);
    w_chave_endereco  number(18);
    w_sq_tipo_vinculo number(18);
+   w_fornecedor      varchar(1);
+   w_cliente         varchar(1);
 begin
+    
    If p_operacao = 'I' Then
       -- Carrega a chave da tabela CO_TIPO_VINCULO
-      select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Outros' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
-     
+      If p_restricao = 'FORNECEDOR' Then
+         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         w_fornecedor := 'S';
+         w_cliente    := 'N';
+      Elsif p_restricao = 'CLIENTE' Then
+         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         w_cliente    := 'S';
+         w_fornecedor := 'N';
+      Else
+        select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Outros' and sq_tipo_pessoa = p_tipo_pessoa and cliente = p_cliente;
+         w_cliente    := 'N';
+         w_fornecedor := 'N';
+      End If;
       -- recupera a próxima chave da pessoa
       select sq_pessoa.nextval into w_chave_pessoa from dual;
       
       -- insere os dados da pessoa
       insert into co_pessoa
-        (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido)
+        (sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,   sq_tipo_pessoa,   nome,   nome_resumido, fornecedor, cliente)
       values
-        (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido);
+        (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido, w_fornecedor, w_cliente);
    Else -- Caso contrário, altera
       update co_pessoa
          set nome          = Nvl(p_nome, nome),
@@ -343,5 +358,6 @@ begin
          delete co_pessoa_telefone where sq_pessoa_telefone = w_chave_fone;
       End If;
    End If;
+   p_chave_nova := w_chave_pessoa;
 end sp_putPessoa;
 /

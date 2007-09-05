@@ -7,6 +7,12 @@ create or replace procedure SP_GetBenef
     p_tipo_pessoa        in number   default null,
     p_passaporte_numero  in varchar2 default null,
     p_sq_pais_passaporte in varchar2 default null,
+    p_fornecedor         in varchar2 default null,
+    p_pais               in number   default null,
+    p_regiao             in number   default null,
+    p_uf                 in varchar2 default null,
+    p_cidade             in number   default null,
+    p_restricao          in varchar2 default null,
     p_result      out sys_refcursor
    ) is
 begin
@@ -117,6 +123,11 @@ begin
         and (p_cpf                is null     or (p_cpf                is not null and (j.cpf               = p_cpf or n.username = p_cpf)))
         and (p_cnpj               is null     or (p_cnpj               is not null and k.cnpj               = p_cnpj))
         and (p_passaporte_numero  is null     or (p_passaporte_numero  is not null and j.passaporte_numero  = p_passaporte_numero))
-        and (p_sq_pais_passaporte is null     or (p_sq_pais_passaporte is not null and j.sq_pais_passaporte = p_sq_pais_passaporte));
+        and (p_sq_pais_passaporte is null     or (p_sq_pais_passaporte is not null and j.sq_pais_passaporte = p_sq_pais_passaporte))
+        and (p_fornecedor         is null     or (p_fornecedor         is not null and a.fornecedor         = p_fornecedor))
+        and (p_pais               is null     or (p_pais               is not null and h.sq_pais            = p_pais))
+        and (p_regiao             is null     or (p_regiao             is not null and h.sq_regiao          = p_regiao))
+        and (p_cidade             is null     or (p_cidade             is not null and h.sq_cidade          = p_cidade))
+        and (p_uf                 is null     or (p_uf                 is not null and h.co_uf              = p_uf));
 end SP_GetBenef;
 /
