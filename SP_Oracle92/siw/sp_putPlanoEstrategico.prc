@@ -56,7 +56,10 @@ begin
        where sq_plano = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
-      delete pe_plano where sq_plano = p_chave;
+      delete pe_plano_arq  where sq_plano = p_chave;
+      delete pe_plano_menu where sq_plano = p_chave;
+      delete pe_objetivo   where sq_plano = p_chave;
+      delete pe_plano      where sq_plano = p_chave;
    Elsif p_operacao = 'T' Then
       -- Ativa registro
       update pe_plano set ativo = 'S' where sq_plano = p_chave;
