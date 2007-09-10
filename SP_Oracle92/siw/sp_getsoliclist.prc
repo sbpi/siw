@@ -198,6 +198,7 @@ begin
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_demanda_pai       = p_sq_acao_ppa))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))            
+            and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = p_empenho))            
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador          = p_pessoa) or
                  (p_tipo         = 2     and coalesce(b1.sigla,'-') <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
                  --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
