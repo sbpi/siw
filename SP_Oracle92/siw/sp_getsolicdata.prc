@@ -37,7 +37,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b5.nome nm_unidade,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
@@ -131,7 +131,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b2.sq_plano,          b2.sq_plano_pai,               b2.titulo nm_plano,
                 b2.missao,            b2.valores,                    b2.visao_presente,
                 b2.visao_futuro,      b2.inicio inicio_plano,        b2.fim vim_plano,
@@ -275,7 +275,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_tipo_acordo,     d.outra_parte,                 d.preposto,
@@ -439,7 +439,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
@@ -597,7 +597,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
@@ -719,7 +719,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b2.nome  nm_opiniao,
                 b3.sq_veiculo,        b3.qtd_pessoas,                b3.carga,
                 b3.hodometro_saida,   b3.hodometro_chegada,          b3.destino,
@@ -813,7 +813,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b2.sq_plano,          b2.sq_plano_pai,               b2.titulo as nm_plano,
                 b2.missao,            b2.valores,                    b2.visao_presente,
                 b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
@@ -923,7 +923,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla sg_unid_origem,
                 case b5.padrao when 'S' then b4.nome||'-'||b4.co_uf else b4.nome||' ('||b5.nome||')' end as nm_cidade,
                 d.numero_original,    d.numero_documento,            d.ano,
