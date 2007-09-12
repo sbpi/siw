@@ -49,7 +49,13 @@ begin
             banco_ata_central       = p_banco_ata_central,
             banco_preco_central     = p_banco_preco_central,
             codificacao_central     = p_codificacao_central
-       where cliente = p_cliente;
+      where cliente = p_cliente;
+      
+      -- Atualiza as pesquisas de preço
+      update cl_item_fornecedor a set fim = a.inicio + p_dias_validade_pesquisa where a.sq_solicitacao_item is null;
+      
+      -- Atualiza os dados dos materiais
+      sp_ajustapesquisamaterial(p_cliente, null, 'TODOS');
    End If;
 end SP_PutCLParametro;
 /
