@@ -103,7 +103,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
-                b1.sigla as sg_tramite,  b1.ativo,
+                b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,

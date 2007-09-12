@@ -63,14 +63,18 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc
-           from cl_solicitacao_item                a
-                inner     join cl_material         b  on (a.sq_material         = b.sq_material)
-                inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
-                inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
-                inner     join cl_parametro        f  on (b.cliente             = f.cliente)
-                inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item = g.item_licitacao)
+                e.nome as nm_cc,
+                g.item_pedido,
+                h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
+                dados_solic(h.sq_siw_solicitacao) as dados_pai
+           from cl_solicitacao_item                     a
+                inner     join cl_material              b  on (a.sq_material         = b.sq_material)
+                inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
+                inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
+                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
+                inner     join cl_parametro             f  on (b.cliente             = f.cliente)
+                inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
+                  inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
@@ -98,7 +102,8 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc
+                e.nome as nm_cc,
+                dados_solic(g.sq_siw_solicitacao) as dados_solic
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -108,7 +113,8 @@ begin
                 inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                   inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
                                                           'AT'                  = coalesce(h.sigla,'-'))
-          where a.sq_solicitacao_item not in (select x.item_pedido from cl_solicitacao_item_vinc x);
+          where a.quantidade_autorizada > 0
+            and a.sq_solicitacao_item   not in (select x.item_pedido from cl_solicitacao_item_vinc x);
    End If;
 end sp_getCLSolicItem;           
 /
