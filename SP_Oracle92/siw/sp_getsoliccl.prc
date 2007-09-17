@@ -67,7 +67,7 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
- if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' Then
+ if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
