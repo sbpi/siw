@@ -11,7 +11,6 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamento.php');
-include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getHorizonte_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getNatureza_IS.php');
 include_once($w_dir_volta.'classes/sp/db_getProjeto_IS.php');

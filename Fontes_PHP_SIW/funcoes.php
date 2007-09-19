@@ -357,7 +357,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   if (($p_tipo!='WORD' && $w_tipo!='WORD') && ((strpos(strtoupper($w_pagina),'GR_'))===false)) {
     ShowHTML('<TR><TD ALIGN="RIGHT">');
     ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.jpg"></a>');
     ShowHTML('</TD></TR>');
@@ -644,21 +644,21 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
   if (strpos($l_texto,'|@|')!==false) {
     $l_array = explode('|@|', $l_texto);
     if (nvl($l_word,'')=='') {
-      $l_hint = 'Exibe as informações deste registro.';
-      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+      $l_hint = $l_array[4];
+      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
     } else {
-      $l_string = $l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
+      $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
     }
   } elseif (nvl($l_chave,'')!='') {
     include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
     $RS = db_getSolicData::getInstanceOf($dbms,$l_chave);
-    $l_hint = 'Exibe as informações deste registro.';
+    $l_hint = $l_array[4];
     $l_array = explode('|@|', f($RS,'dados_solic'));
     if (nvl($l_word,'')=='') {
       $l_hint = 'Exibe as informações deste registro.';
-      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
     } else {
-      $l_string = $l_array[0].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
+      $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
     }
   } else {
     $l_string = $l_texto;
@@ -888,6 +888,16 @@ function ExibeSinalPesquisa($l_legenda,$l_inicio, $l_fim,$l_dias_aviso=0) {
     elseif ($l_dias_aviso<=time()) $l_string .= '<img title="Pesquisa com '.f($RS_Parametro,'dias_aviso_pesquisa').' dias ou menos de validade." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
     else                           $l_string .= '<img title="Pesquisa válida." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
   }
+  return $l_string;
+}
+
+// =========================================================================
+// Exibe sinalizador para pesquisa de preço
+// -------------------------------------------------------------------------
+function exibeImagemAnexo($l_exibe=0) {
+  extract($GLOBALS);
+  $l_string = '';
+  if ($l_exibe>0) $l_string .= '<img title="Há arquivos disponíveis para download." src="'.$conRootSIW.$conImgDownload.'" border=0 width="14" height="14" align="center">';
   return $l_string;
 }
 

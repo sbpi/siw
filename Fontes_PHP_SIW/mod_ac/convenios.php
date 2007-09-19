@@ -1372,7 +1372,7 @@ function OutraParte() {
       }
     } elseif ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
         foreach($RS as $row) {
           $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -1606,7 +1606,7 @@ function OutraParte() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_sq_tipo_pessoa,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_sq_tipo_pessoa,null,null,null,null,null,null,null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1797,7 +1797,7 @@ function Representante() {
       }
     } elseif ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,null,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,null,null,null,null,null,null,null,null,null,null);
       if (!count($RS)<=0) {
         foreach($RS as $row) {
           $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -1988,7 +1988,7 @@ function Representante() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null);// Recupera apenas pessoas físicas
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null,null,null,null,null,null);// Recupera apenas pessoas físicas
         $RS = SortArray($RS,'nm_pessoa','asc');
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2127,7 +2127,7 @@ function DadosBancario() {
   } else {
     if ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
       if (count($RS)>0) {
         foreach($RS as $row) {
           $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -3425,12 +3425,12 @@ function Concluir() {
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
     // Recupera os dados da tarefa
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
     $w_html = '<HTML>'.$crlf;
     $w_html.=BodyOpenMail(null).$crlf;
     $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -3465,7 +3465,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'        <tr><td><b>Término vigência:</b></td>';
     $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'fim')).' </td></tr>';
     // Outra parte
-    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'outra_parte'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null);
+    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'outra_parte'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     if (count($RSM1)>0) {
       foreach($RSM1 as $row) {
         $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
@@ -3806,7 +3806,7 @@ function Grava() {
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (strpos(f($row,'caminho'),'.')!==false) {
-                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                 } else {
                   $w_file = basename(f($row,'caminho'));
                 }
@@ -3814,7 +3814,7 @@ function Grava() {
             } else {
               $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
               if (strpos($Field['name'],'.')!==false) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
             $w_tamanho = $Field['size'];
@@ -3879,7 +3879,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (strpos($Field['name'],'.')!==false) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];

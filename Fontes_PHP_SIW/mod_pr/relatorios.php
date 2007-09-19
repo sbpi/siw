@@ -315,11 +315,12 @@ function Rel_Progresso() {
                       if ($p_tipo!='WORD') {
                         ShowHTML(' '.ExibeEtapa('V',f($row1,'sq_projeto'),f($row1,'sq_projeto_etapa'),'Volta',10,f($row1,'cd_ordem'),$TP,$SG).'');
                       } else {
-                        ShowHTML(' '.f($row1,'cd_ordem').'');
+                        ShowHTML(' '.f($row1,'cd_ordem'));
                       }
-                      if (1==1 || f($row1,'pacote_trabalho')=='S' || substr(nvl(f($row1,'restricao'),'-'),0,1)=='S') {
-                        ShowHTML(' '.exibeImagemRestricao(f($row1,'restricao')).'</td>');
+                      if (f($row1,'pacote_trabalho')=='S' || substr(nvl(f($row1,'restricao'),'-'),0,1)=='S') {
+                        ShowHTML(' '.exibeImagemRestricao(f($row1,'restricao')));
                       }
+                      ShowHTML(' '.exibeImagemAnexo(f($row1,'qt_anexo')).'</td>');
                       ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.f($row1,'nm_etapa').'</b></tr></table>');
                       if ($p_tipo!='WORD') {
                         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'nm_resp_etapa')).'</b>');

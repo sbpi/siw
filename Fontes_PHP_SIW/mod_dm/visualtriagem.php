@@ -75,10 +75,16 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['GERAL'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr valign="top"><td><b>Tipo da demanda:</b></td>';
     $l_html.=chr(13).'        <td>'.f($RS,'nm_demanda_tipo').'</td></tr>';    
-    $l_html.=chr(13).'      <tr><td><b>Data da solicitação:</b></td>';
+    if (f($RS,'reuniao')=='N') {
+      $l_html.=chr(13).'      <tr><td><b>Data da solicitação:</b></td>';
+    } else {
+      $l_html.=chr(13).'      <tr><td><b>Data da reunião:</b></td>';
+    }
     $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'recebimento')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Limite para conclusão:</b></td>';
-    $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'limite_conclusao')).' </td></tr>';
+    if (f($RS,'reuniao')=='N') {
+      $l_html.=chr(13).'      <tr><td><b>Limite para conclusão:</b></td>';
+      $l_html.=chr(13).'          <td>'.FormataDataEdicao(f($RS,'limite_conclusao')).' </td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td><b>Solicitante:</b></td>';
     if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_sol').'</td></tr>';
     else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</td></tr>';
@@ -89,82 +95,84 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     $l_html.=chr(13).'        <td>'.Nvl(f($RS,'proponente'),'---').' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td><b>Local de execução:</b></td>';
     $l_html.=chr(13).'        <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
-    $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
-    $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Responsável:</b></td>';
-    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_resp').'</td></tr>';
-    else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Setor responsável:</b></td>';
-    if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
-    else       $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
-    $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
-    $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
-    // Exibe a vinculação
-    $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
-    if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-    else       $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
-    if (nvl(f($RS,'nm_etapa'),'')>'') {
-      $l_html.=chr(13).'      <tr><td valign="top"><b>Etapa: </b></td>';
-      $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
-    } 
-    // Se a classificação foi informada, exibe.
-    if (Nvl(f($RS,'sq_cc'),'')>'') {
-      $l_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
-      $l_html .= chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
-    }
-    $l_html.=chr(13).'        <tr><td><b>Início previsto:</b></td>';
-    $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'inicio')),'---').' </td></tr>';
-    $l_html.=chr(13).'        <tr><td><b>Término previsto:</b></td>';
-    $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'fim')),'---').' </td></tr>';
-    if ($w_tipo_visao==0) {
-      // Se for visão completa
-      $l_html.=chr(13).'      <tr valign="top"><td><B>Orçamento disponível: </b></td>';
-      if(Nvl(f($RS,'valor'),'')!='')  $l_html.=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
-      else                            $l_html.=chr(13).'        <td>---</td></tr>';
-    } 
-    $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
-    $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
-
-    $RSQuery = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
-            null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
-            null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);
-    $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
-    if (count($RSQuery)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SUBORDINADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $l_html.=chr(13).'        <tr><td align="right"><b>Registros: '.count($RSQuery);
-      $l_html.=chr(13).'        <tr><td align="center" colspan=3>';
-      $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'            <tr align="center">';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Nº</b></div></td>';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Etapa</b></div></td>';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Detalhamento</b></div></td>';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Fim previsto</b></div></td>';
-      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Fase atual</b></div></td>';
-      $l_html.=chr(13).'            </tr>';
-      foreach($RSQuery as $row) {
-        $l_html.=chr(13).'        <tr valign="top">';
-        $l_html.=chr(13).'          <td nowrap>';
-        $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if($l_tipo=='WORD') $l_html.=chr(13).'          '.f($row,'sq_siw_solicitacao').'&nbsp;';
-        else       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
-        if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
-          if($l_tipo=='WORD') $l_html.=chr(13).'            <td>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa').'</td>';
-          else       $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
-        } else {
-          $l_html.=chr(13).'            <td>---</td>';
-        } 
-        if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($row,'nm_solic').'</td>';
-        else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
-        if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
-        $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
-        $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
-        $l_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
-        $l_html.=chr(13).'        </tr>';
+    if (f($RS,'reuniao')=='N') {
+      $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
+      $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Responsável:</b></td>';
+      if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_resp').'</td></tr>';
+      else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Setor responsável:</b></td>';
+      if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+      else       $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
+      $l_html.=chr(13).'        <tr valign="top"><td><b>Palavras-chave:</b></td>';
+      $l_html.=chr(13).'          <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
+      // Exibe a vinculação
+      $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
+      if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+      else       $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+      if (nvl(f($RS,'nm_etapa'),'')>'') {
+        $l_html.=chr(13).'      <tr><td valign="top"><b>Etapa: </b></td>';
+        $l_html.=chr(13).'        <td>'.MontaOrdemEtapa(f($RS,'sq_projeto_etapa')).'. '.f($RS,'nm_etapa').'</td></tr>';
       } 
-      $l_html.=chr(13).'          </table>';
-      $l_html.=chr(13).'      </table>';
+      // Se a classificação foi informada, exibe.
+      if (Nvl(f($RS,'sq_cc'),'')>'') {
+        $l_html .= chr(13).'      <tr><td width="30%"><b>Classificação:<b></td>';
+        $l_html .= chr(13).'        <td>'.f($RS,'cc_nome').' </td></tr>';
+      }
+      $l_html.=chr(13).'        <tr><td><b>Início previsto:</b></td>';
+      $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'inicio')),'---').' </td></tr>';
+      $l_html.=chr(13).'        <tr><td><b>Término previsto:</b></td>';
+      $l_html.=chr(13).'          <td>'.Nvl(FormataDataEdicao(f($RS,'fim')),'---').' </td></tr>';
+      if ($w_tipo_visao==0) {
+        // Se for visão completa
+        $l_html.=chr(13).'      <tr valign="top"><td><B>Orçamento disponível: </b></td>';
+        if(Nvl(f($RS,'valor'),'')!='')  $l_html.=chr(13).'        <td>'.number_format(f($RS,'valor'),2,',','.').' </td></tr>';
+        else                            $l_html.=chr(13).'        <td>---</td></tr>';
+      } 
+      $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
+      $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
+
+      $RSQuery = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+              null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
+              null, null, null, null,null, null, null, f($RS,'sq_siw_solicitacao'), null);
+      $RSQuery = SortArray($RSQuery,'fim','asc','prioridade','asc');
+      if (count($RSQuery)>0) {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SUBORDINADAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $l_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+        $l_html.=chr(13).'        <tr><td align="right"><b>Registros: '.count($RSQuery);
+        $l_html.=chr(13).'        <tr><td align="center" colspan=3>';
+        $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'            <tr align="center">';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Nº</b></div></td>';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Etapa</b></div></td>';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Detalhamento</b></div></td>';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Fim previsto</b></div></td>';
+        $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div><b>Fase atual</b></div></td>';
+        $l_html.=chr(13).'            </tr>';
+        foreach($RSQuery as $row) {
+          $l_html.=chr(13).'        <tr valign="top">';
+          $l_html.=chr(13).'          <td nowrap>';
+          $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+          if($l_tipo=='WORD') $l_html.=chr(13).'          '.f($row,'sq_siw_solicitacao').'&nbsp;';
+          else       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
+          if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
+            if($l_tipo=='WORD') $l_html.=chr(13).'            <td>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa').'</td>';
+            else       $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
+          } else {
+            $l_html.=chr(13).'            <td>---</td>';
+          } 
+          if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($row,'nm_solic').'</td>';
+          else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+          if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
+          $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
+          $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
+          $l_html.=chr(13).'          <td>'.f($row,'nm_tramite').'</td>';
+          $l_html.=chr(13).'        </tr>';
+        } 
+        $l_html.=chr(13).'          </table>';
+        $l_html.=chr(13).'      </table>';
+      }
     }
 
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
@@ -172,7 +180,11 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
       if (Nvl(f($RS,'descricao'),'')>'' || Nvl(f($RS,'justificativa'),'')>'') {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
         if (Nvl(f($RS,'descricao'),'')>''){ 
-          $l_html.=chr(13).'      <tr valign="top"><td><b>Resultados da demanda:</b></td>';
+          if (f($RS,'reuniao')=='N') {
+            $l_html.=chr(13).'      <tr valign="top"><td><b>Resultados da demanda:</b></td>';
+          } else {
+            $l_html.=chr(13).'      <tr valign="top"><td><b>Pauta da reunião:</b></td>';
+          }
           $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).' </td></tr>';
         }
         if ($w_tipo_visao==0 && Nvl(f($RS,'justificativa'),'')>'') {
@@ -215,15 +227,17 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     // Dados da conclusão da demanda, se ela estiver nessa situação
     if (f($RS,'concluida')=='S' && Nvl(f($RS,'data_conclusao'),'')>'') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';
-      $l_html.=chr(13).'      <tr><td><b>Início previsto:</b></td>';
-      $l_html.=chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio_real')).' </td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Término previsto:</b></td>';
-      $l_html.=chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim_real')).' </td></tr>';
-      if ($w_tipo_visao==0) {
-        $l_html.=chr(13).'    <tr><td><b>Custo real:</b></td>';
-        $l_html.=chr(13).'      <td>'.number_format(f($RS,'custo_real'),2,',','.').' </td></tr>';
-      } 
+      if (f($RS,'reuniao')=='N') {
+        $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';
+        $l_html.=chr(13).'      <tr><td><b>Início previsto:</b></td>';
+        $l_html.=chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio_real')).' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Término previsto:</b></td>';
+        $l_html.=chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim_real')).' </td></tr>';
+        if ($w_tipo_visao==0) {
+          $l_html.=chr(13).'    <tr><td><b>Custo real:</b></td>';
+          $l_html.=chr(13).'      <td>'.number_format(f($RS,'custo_real'),2,',','.').' </td></tr>';
+        } 
+      }
       if ($w_tipo_visao==0) {
         $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Nota de conclusão:</b></td>';
         $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'nota_conclusao')).' </td></tr>';

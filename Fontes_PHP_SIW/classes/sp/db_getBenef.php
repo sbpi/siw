@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getBenef {
    function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_cpf, $p_cnpj, $p_nome, $p_tipo_pessoa,
-        $p_passaporte_numero, $p_sq_pais_passaporte) {
+        $p_passaporte_numero, $p_sq_pais_passaporte, $p_fornecedor, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_restricao=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getBenef';
      $params=array("p_cliente"              =>array($p_cliente,             B_NUMERIC,     32),
                    "p_sq_pessoa"            =>array($p_sq_pessoa,           B_NUMERIC,     32),
@@ -20,6 +20,12 @@ class db_getBenef {
                    "p_tipo_pessoa"          =>array($p_tipo_pessoa,         B_NUMERIC,     32),
                    "p_passaporte_numero"    =>array($p_passaporte_numero,   B_VARCHAR,     20),
                    "p_sq_pais_passaporte"   =>array($p_sq_pais_passaporte,  B_NUMERIC,     32),
+                   'p_fornecedor'           =>array(tvl($p_fornecedor),     B_VARCHAR,      1),
+                   'p_pais'                 =>array(tvl($p_pais),           B_INTEGER,     32),
+                   'p_regiao'               =>array(tvl($p_regiao),         B_INTEGER,     32),
+                   'p_uf'                   =>array(tvl($p_uf),             B_VARCHAR,     2),
+                   'p_cidade'               =>array(tvl($p_cidade),         B_INTEGER,     32),                   
+                   'p_restricao'            =>array(tvl($p_restricao),      B_VARCHAR,     30),
                    "p_result"               =>array(null,                   B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

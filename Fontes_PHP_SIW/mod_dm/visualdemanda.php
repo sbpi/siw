@@ -67,8 +67,6 @@ function VisualDemanda($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><b>['.$l_chave.'] '.crlf2br(f($RS,'assunto')).'</font></div></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    // Identificação da demanda
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['GERAL'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
 
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';

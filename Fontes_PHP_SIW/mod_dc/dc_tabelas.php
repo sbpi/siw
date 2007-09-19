@@ -109,7 +109,7 @@ function Eventos() {
     // Recupera todos os registros para a listagem
     $RS = db_getEventoTrigger::getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getEventoTrigger::getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
@@ -200,7 +200,7 @@ function Eventos() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -230,7 +230,7 @@ function TipoDado() {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoDado::getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getTipoDado::getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
@@ -321,7 +321,7 @@ function TipoDado() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -352,7 +352,7 @@ function TipoIndice() {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoIndice::getInstanceOf($dbms,null);
     $RS = SortArray($RS,'nome','asc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getTipoIndice::getInstanceOf($dbms,$w_chave);
     foreach ($RS as $row) {
@@ -446,7 +446,8 @@ function TipoIndice() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -571,7 +572,7 @@ function TipoSP() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -695,7 +696,7 @@ function tipotabela() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

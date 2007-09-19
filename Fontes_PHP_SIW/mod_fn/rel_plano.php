@@ -361,7 +361,7 @@ function Inicial() {
     ShowHTML('      <tr><td valign="top"><b><u>P</u>rocurar pelo nome:</b> (Informe qualquer parte do nome SEM ACENTOS)<br><INPUT ACCESSKEY="P" TYPE="text" class="sti" NAME="p_nome" VALUE="'.$p_nome.'" SIZE="20" MaxLength="20">');
     ShowHTML('              <INPUT class="stb" TYPE="button" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.O.value=\'P\'; document.Form.target=\'\'; if (Validacao(document.Form)) {document.Form.submit();}">');
     if ($p_nome>'') {
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null,null,null,null,null,null);
       $RS = SortArray($RS,'nm_pessoa','asc');
       ShowHTML('      <tr><td valign="top"><b><u>P</u>essoa:</b><br><SELECT ACCESSKEY="P" CLASS="STS" NAME="w_sq_pessoa">');
       ShowHTML('          <option value="">---');

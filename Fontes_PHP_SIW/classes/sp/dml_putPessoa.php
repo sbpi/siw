@@ -13,7 +13,7 @@ class dml_putPessoa  {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_restricao, $p_tipo_pessoa, $p_sq_pessoa, $p_cpf, $p_cnpj, $p_nome, 
         $p_nome_resumido, $p_sexo, $p_nascimento, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_passaporte, $p_sq_pais_passaporte, 
         $p_inscricao_estadual, $p_logradouro, $p_complemento, $p_bairro, $p_sq_cidade, $p_cep, $p_ddd, $p_nr_telefone, $p_nr_fax, 
-        $p_nr_celular, $p_email) {
+        $p_nr_celular, $p_email, $p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPessoa';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
@@ -41,7 +41,8 @@ class dml_putPessoa  {
                    'p_nr_telefone'               =>array(tvl($p_nr_telefone),                              B_VARCHAR,        25),
                    'p_nr_fax'                    =>array(tvl($p_nr_fax),                                   B_VARCHAR,        25),
                    'p_nr_celular'                =>array(tvl($p_nr_celular),                               B_VARCHAR,        25),
-                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60)
+                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60),
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)                   
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

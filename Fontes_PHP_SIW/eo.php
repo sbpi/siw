@@ -220,7 +220,7 @@ function Unidade() {
         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Locais</a>&nbsp');
         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>');
         ShowHTML('</li>');
-        ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+        ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
         $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc');
         foreach($RS1 as $row1) {
@@ -235,7 +235,7 @@ function Unidade() {
           ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
           ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
           ShowHTML('   </li>');
-          ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+          ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
           $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
           $RS2 = SortArray($RS2,'ordem','asc','nome','asc');
           foreach($RS2 as $row2) {
@@ -250,7 +250,7 @@ function Unidade() {
             ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
             ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
             ShowHTML('         </li>');
-            ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+            ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
             $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
             $RS3 = SortArray($RS3,'ordem','asc','nome','asc');
             foreach($RS3 as $row3) {
@@ -265,7 +265,7 @@ function Unidade() {
               ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
               ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
               ShowHTML('            </li>');
-              ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+              ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
               $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
               $RS4 = SortArray($RS4,'ordem','asc','nome','asc');
               foreach($RS4 as $row4) {
@@ -280,7 +280,7 @@ function Unidade() {
                 ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                 ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                 ShowHTML('               </li>');
-                ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+                ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                 $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
                 $RS5 = SortArray($RS5,'ordem','asc','nome','asc');
                 foreach($RS5 as $row5) {
@@ -295,7 +295,7 @@ function Unidade() {
                   ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                   ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                   ShowHTML('                  </li>');
-                  ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+                  ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                   $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
                   $RS6 = SortArray($RS6,'ordem','asc','nome','asc');
                   foreach($RS6 as $row6) {
@@ -310,7 +310,7 @@ function Unidade() {
                     ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                     ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                     ShowHTML('                     </li>');
-                    ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+                    ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                     $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
                     $RS7 = SortArray($RS7,'ordem','asc','nome','asc');
                     foreach($RS7 as $row7) {
@@ -325,7 +325,7 @@ function Unidade() {
                       ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                       ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                       ShowHTML('                        </li>');
-                      ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+                      ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                       $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
                       $RS8 = SortArray($RS8,'ordem','asc','nome','asc');
                       foreach($RS8 as $row8) {
@@ -340,7 +340,7 @@ function Unidade() {
                         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
                         ShowHTML('<a class="Xlink" href="#" onclick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
                         ShowHTML('                           </li>');
-                        ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:true;">');
+                        ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                         $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
                         $RS9 = SortArray($RS9,'ordem','asc','nome','asc');
                         foreach($RS9 as $row9) {

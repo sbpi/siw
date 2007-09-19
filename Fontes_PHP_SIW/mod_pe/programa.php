@@ -1606,7 +1606,9 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  // Recupera os dados do programa
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PEPR');
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
@@ -1658,6 +1660,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='</table>'.$crlf;
     $w_html.='</BODY>'.$crlf;
     $w_html.='</HTML>'.$crlf;
+    // Se o solicitante tiver ativo
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
@@ -1814,7 +1817,7 @@ function Grava() {
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (!(strpos(f($row,'caminho'),'.')===false)) {
-                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                 } else {
                   $w_file = basename(f($row,'caminho'));
                 }
@@ -1822,7 +1825,7 @@ function Grava() {
             } else {
               $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
             $w_tamanho = $Field['size'];

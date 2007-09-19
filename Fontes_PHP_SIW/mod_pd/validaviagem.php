@@ -40,7 +40,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
   // Recupera os dados do proposto
-  $l_rs1 = db_getBenef::getInstanceOf($dbms,$v_cliente,Nvl(f($l_rs_solic,'sq_prop'),0),null,null,null,null,null,null);
+  $l_rs1 = db_getBenef::getInstanceOf($dbms,$v_cliente,Nvl(f($l_rs_solic,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null);
   $l_existe_rs1 = count($l_rs1);
   if ($l_existe_rs1>0) {
     foreach($l_rs1 as $l_row) { $l_rs1 = $l_row; break; }

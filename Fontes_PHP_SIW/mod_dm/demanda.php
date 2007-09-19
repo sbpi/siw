@@ -949,7 +949,7 @@ function Geral() {
     if($O=='I') SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
     else        SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
     if($O=='I' && nvl($w_solicitante,'')>'') {
-     $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null, null, null, null, null, null);
+     $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null, null, null, null, null, null, null, null, null, null, null);
      foreach($RS1 as $row1){$RS1=$row1; break;}
      $w_sq_unidade_resp = f($RS1,'sq_unidade_benef');
     }
@@ -1892,8 +1892,10 @@ function Concluir() {
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RS  = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  // Recupera os dados da demanda
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'GDGERAL');
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
@@ -1906,8 +1908,6 @@ function SolicMail($p_solic,$p_tipo) {
     elseif ($p_tipo==2)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
     elseif ($p_tipo==3)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
     $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b><br><br><td></tr>'.$crlf;
-    // Recupera os dados da demanda
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'GDGERAL');
     $w_nome='Demanda '.f($RSM,'sq_siw_solicitacao');
     $w_html.=$crlf.'<tr><td align="center">';
     $w_html.=$crlf.'    <table width="99%" border="0">';
@@ -2154,7 +2154,7 @@ function Grava() {
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                   if (!(strpos(f($row,'caminho'),'.')===false)) {
-                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                   } else {
                     $w_file = basename(f($row,'caminho'));
                   }
@@ -2162,7 +2162,7 @@ function Grava() {
               } else {
                 $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 }
               } 
               $w_tamanho = $Field['size'];
@@ -2228,7 +2228,7 @@ function Grava() {
                 // Se já há um nome para o arquivo, mantém 
                 $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 }
                 $w_tamanho = $Field['size'];
                 $w_tipo    = $Field['type'];
@@ -2324,7 +2324,7 @@ function Grava() {
                 // Se já há um nome para o arquivo, mantém 
                 $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 }
                 $w_tamanho = $Field['size'];
                 $w_tipo    = $Field['type'];

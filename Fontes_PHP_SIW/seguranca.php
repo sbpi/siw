@@ -1788,7 +1788,7 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
@@ -1850,7 +1850,7 @@ function TelaUsuario() {
     ShowHTML('</table>');
   } else {
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null);
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad="this.focus();"');

@@ -67,6 +67,7 @@ $w_pagina       = 'pessoa.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 if (($par=='DESPESA' || $par=='TRECHO' || $par=='VISUAL') && $O=='A' && $_REQUEST['w_Handle']=='') $O='L';
+elseif($par=='FORNECEDORES' && ($O=='' || $O=='I' || $O=='A')) $O='P';
 
 // Configura o valor de O se for a tela de listagem
 switch ($O) {
@@ -555,7 +556,7 @@ function CadastraPessoa() {
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
   } elseif ($O=='A' || $w_sq_pessoa>'') {
     // Recupera os dados do beneficiário em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) {
         $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -775,7 +776,7 @@ function CadastraPessoa() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$_REQUEST['p_volta'].montaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.Nvl($_REQUEST['p_volta'],$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).montaFiltro('GET').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -910,7 +911,7 @@ function BuscaPessoa() {
   $w_pessoa     = $_REQUEST['w_pessoa'];
   $p_restricao  = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
   $p_campo      = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
-  $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,$p_cpf,$p_cnpj,$p_nome,null,null,null);
+  $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
   Cabecalho();
   ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
   ShowHTML('<HEAD>');
@@ -1015,7 +1016,7 @@ function BuscaPessoa() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Estrutura_Texto_Fecha();
-} 
+}
 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -1144,46 +1145,46 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I' || $O=='A') {
-        if ($_REQUEST['w_tipo_pessoa']==1) {
-          // Verifica se já existe pessoa física com o CPF informado
-          $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null);
-          if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
-            ScriptClose();
-            retornaFormulario('w_cpf');
-            exit;
-          }
-          // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
-          $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null);
-          if (count($RS)>0) {
-            foreach ($RS as $row) {
-              if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
-                ScriptOpen('JavaScript');
-                if (nvl(f($row,'identificador_primario'),'')=='') {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
-                } else {
-                  ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.\');');
-                }
-                ScriptClose();
-                retornaFormulario('w_cpf');
-                exit;
-              }
-            }
-          }
-        } else {
-          // Verifica se já existe pessoa jurídica com o CNPJ informado
-          $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null);
-          if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
-            ScriptClose();
-            retornaFormulario('w_cnpj');
-            exit;
-          }
-          
+         if ($_REQUEST['w_tipo_pessoa']==1) {
+           // Verifica se já existe pessoa física com o CPF informado
+           $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
+           if (count($RS)>0) {
+             ScriptOpen('JavaScript');
+             ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
+             ScriptClose();
+             retornaFormulario('w_cpf');
+             exit;
+           }
+           // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
+           $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+           if (count($RS)>0) {
+             foreach ($RS as $row) {
+               if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
+                 ScriptOpen('JavaScript');
+                 if (nvl(f($row,'identificador_primario'),'')=='') {
+                   ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nVerifique os dados e, se necessário, solicite ao gestor a alteração dos dados da pessoa já cadastrada.\');');
+                 } else {
+                   ShowHTML('  alert(\'Já existe pessoa cadastrada com o nome informado!\\nNeste caso é obrigatório informar o CPF.\');');
+                 }
+                 ScriptClose();
+                 retornaFormulario('w_cpf');
+                 exit;
+               }
+             }
+           }
+         } else {
+           // Verifica se já existe pessoa jurídica com o CNPJ informado
+           $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+           if (count($RS)>0) {
+             ScriptOpen('JavaScript');
+             ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
+             ScriptClose();
+             retornaFormulario('w_cnpj');
+             exit;
+           }
+           
           // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-          $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null);
+          $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) {
               if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {
@@ -1197,9 +1198,9 @@ function Grava() {
                 retornaFormulario('w_cnpj');
                 exit;
               }
-            }
-          }
-        }
+             }
+           }
+         }
       }
       
       dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,$SG,
@@ -1210,7 +1211,7 @@ function Grava() {
           $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
           $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
           $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-          $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email']);
+          $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.$_REQUEST['p_volta'].'&p_tp='.$_REQUEST['p_tp'].'&p_campo='.$_REQUEST['p_campo'].'&p_nome='.$_REQUEST['w_nome'].'&p_cpf='.$_REQUEST['w_cpf'].'&p_cnpj='.$_REQUEST['w_cnpj'].'\';');

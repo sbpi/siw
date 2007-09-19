@@ -444,15 +444,15 @@ function Criterio() {
   }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  If ($w_troca> '') {
-     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('IA',$O)===false)) {
-     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
-  } elseif ($O=='E') {
-     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus();"');
   } else {
-     BodyOpen('onLoad=\'document.focus()\';');
-  }
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -549,7 +549,7 @@ function Situacao() {
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
-  if ($w_troca > '') {   
+  if ($w_troca > '' && $O!='E') {   
     $w_nome         = $_REQUEST['w_nome'];
     $w_descricao    = $_REQUEST['w_descricao'];
     $w_ativo        = $_REQUEST['w_ativo'];
@@ -593,15 +593,15 @@ function Situacao() {
   }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  If ($w_troca> '') {
-     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
-  } elseif (!(strpos('IA',$O)===false)) {
-     BodyOpen('onLoad="document.Form.w_nome.focus()";');
-  } elseif ($O=='E') {
-     BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus();"');
   } else {
-     BodyOpen('onLoad="document.focus()";');
-  }
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');

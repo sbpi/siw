@@ -59,6 +59,7 @@ $conImgProblem  ='images/icone/problem.gif';
 $conImgRiskLow  ='images/icone/risk_low.gif';
 $conImgRiskMed  ='images/icone/risk_low.gif';
 $conImgRiskHig  ='images/icone/risk_medium.gif';
+$conImgDownload ='images/icone/application_put.png';
 
 //$conImgSmNormal = 'images/icone/smile_approve.gif';
 //$conImgSmAviso  = 'images/icone/smile_sleepy.gif';

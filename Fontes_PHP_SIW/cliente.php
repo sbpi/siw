@@ -683,7 +683,7 @@ function Enderecos() {
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
@@ -889,7 +889,7 @@ function Telefones() {
     ShowHTML('</tr>');
   } elseif (!(strpos('IAEV',$O)===false)) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
@@ -1800,19 +1800,19 @@ function Grava() {
               } 
 
               if ($Chv=='w_logo') {
-                $w_file = 'logo'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = 'logo'.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 $w_logo = $w_file;
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
               }
 
               if ($Chv=='w_logo1') {
-                $w_file  = 'logo1'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file  = 'logo1'.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 $w_logo1 = $w_file;
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
               } 
             
               if ($Chv=='w_fundo') {
-                $w_file  = 'fundo'.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file  = 'fundo'.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 $w_fundo = $w_file;
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($_REQUEST['w_sq_pessoa']).'/img/'.$w_file);
               } 

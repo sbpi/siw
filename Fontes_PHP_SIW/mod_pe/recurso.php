@@ -185,7 +185,7 @@ function Inicial() {
       case 'PESSOA': 
         include_once($w_dir_volta.'classes/sp/db_getBenef.php');
         include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
-        $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null);
+        $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,nvl($w_ch_vinculo,0),null,null,null,null,null,null,null,null,null,null,null);
         if (count($RS1)>0) {
           foreach($RS1 as $row) { $RS1 = $row; break; }
           $w_nome             = f($RS1,'nm_pessoa');
@@ -1259,9 +1259,9 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html .= chr(13).'              <tr bgcolor="'.$w_cor.'" valign="top">';
       $l_html .= chr(13).'                  <td>'.f($row_ano,'nm_servico');
-      if (f($row_ano,'nm_servico')=='Projetos')       $l_html .= chr(13).' <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row_ano,'cd_servico').'&w_tipo=Volta&P1='.$P1.'&P2='.f($row_ano,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row_ano,'cd_servico').'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
+      if (f($row_ano,'nm_servico')=='Projetos')       $l_html .= chr(13).' <td><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row_ano,'ch_servico').'&w_tipo=Volta&P1='.$P1.'&P2='.f($row_ano,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row_ano,'cd_servico').'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
       elseif (f($row_ano,'nm_servico')=='Programas')  $l_html .= chr(13).' <td><A class="HL" HREF="programa.php?par=Visual&O=L&w_chave='.f($row_ano,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.f($row_ano,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row_ano,'cd_servico').'</a>';
-      else                                            $l_html .= chr(13).' <td><A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row_ano,'cd_servico').'&w_tipo=&P1='.$P1.'&P2='.f($row_ano,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row_ano,'cd_servico').'</a>';
+      else                                            $l_html .= chr(13).' <td><A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row_ano,'ch_servico').'&w_tipo=&P1='.$P1.'&P2='.f($row_ano,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row_ano,'cd_servico').'</a>';
       $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'inicio'));
       $l_html .= chr(13).'                  <td align="center">'.formataDataEdicao(f($row_ano,'fim'));
       $l_html .= chr(13).'                  <td align="center">'.formatNumber(f($row_ano,'unidades_solicitadas'),1);

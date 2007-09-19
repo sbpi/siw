@@ -158,8 +158,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_html.=chr(13).'      <tr valign="top">';
         $w_html.=chr(13).'        <td><b>Alteração contratual:</b></td>';
         $w_html.=chr(13).'        <td><b>Limite: </b>'.formatNumber(nvl(f($RS,'limite_variacao'),0)).'%';
-        $w_html.=chr(13).'            <b>Acréscimo/Supressão: </b>'.formatNumber(nvl(f($RS,'limite_usado'),0)).'%';
-        $w_html.=chr(13).'            <b>Disponível: </b>'.formatNumber(nvl(f($RS,'limite_variacao') - nvl(f($RS,'limite_usado'),0),0)).'%';
+        $w_html.=chr(13).'            <b>Acréscimo/Supressão: </b>'.formatNumber(nvl(f($RS,'limite_usado'),0),6).'%';
+        $w_html.=chr(13).'            <b>Disponível: </b>'.formatNumber(nvl(f($RS,'limite_variacao') - nvl(f($RS,'limite_usado'),0),0),6).'%';
         if (substr($w_sigla,0,3)=='GCB'){ 
           $w_html.=chr(13).'          <tr valign="top">';
           $w_html.=chr(13).'          <td><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
@@ -223,7 +223,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_cancel = 0;
         $w_nota   = 0;
         foreach($RS1 as $row) {
-          $w_html.=chr(13).'      <trvalign="top">';
+          $w_html.=chr(13).'      <tr valign="top">';
           $w_html.=chr(13).'        <td nowrap>'.nvl(f($row,'cd_aditivo'),'---').'</td>';
           $w_html.=chr(13).'        <td nowrap>'.f($row,'sg_tipo_documento').' '.f($row,'numero').'&nbsp;';
           if (f($row,'abrange_inicial')=='S')   { $w_html.= '('.f($row,'sg_inicial').')';   $w_legenda_ini = ' ('.f($row,'sg_inicial').') Valor inicial'; }
@@ -375,7 +375,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $w_html.=chr(13).'          - '.f($row,'cpf').'</b>';
         else                                   $w_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
-          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null);
+          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $w_html.=chr(13).'      <tr><td colspan="2">';

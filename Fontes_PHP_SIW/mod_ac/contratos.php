@@ -1757,7 +1757,7 @@ function OutraParte() {
       }
   } elseif ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
     // Recupera os dados do beneficiário em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) {
         $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -2031,7 +2031,7 @@ function OutraParte() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_sq_tipo_pessoa,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_sq_tipo_pessoa,null,null,null,null,null,null,null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2267,7 +2267,7 @@ function Representante() {
       }
     } elseif ((strpos($_REQUEST['Botao'],'Alterar')===false) && (strpos($_REQUEST['Botao'],'Procurar')===false) && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,null,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,null,null,null,null,null,null,null,null,null,null);
       if (!count($RS)<=0) {
         foreach($RS as $row) {
           $w_sq_pessoa            = f($row,'sq_pessoa');
@@ -2458,7 +2458,7 @@ function Representante() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'&w_sq_acordo_outra_parte='.$w_sq_acordo_outra_parte.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null);// Recupera apenas pessoas físicas
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null,null,null,null,null,null);// Recupera apenas pessoas físicas
         $RS = SortArray($RS,'nm_pessoa','asc');
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -3767,7 +3767,6 @@ function Aditivos() {
   $w_troca      = $_REQUEST['w_troca'];
 
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
-  
   $w_contrato_ini   = f($RS_Solic,'inicio');
   $w_contrato_fim   = f($RS_Solic,'fim');
 
@@ -3812,7 +3811,7 @@ function Aditivos() {
       $w_fim                = FormataDataEdicao(f($row,'fim'));
       $w_doc_origem         = f($row,'documento_origem');
       $w_doc_data           = FormataDataEdicao(f($row,'documento_data'));
-      $w_variacao_valor     = formatNumber(f($row,'variacao_valor'));
+      $w_variacao_valor     = formatNumber(f($row,'variacao_valor'),6);
       $w_prorrogacao        = f($row,'prorrogacao');
       if($w_prorrogacao=='N') $w_revisao = 'N';
       else                    $w_revisao = f($row,'revisao');
@@ -3866,7 +3865,7 @@ function Aditivos() {
         if(f($RS_Solic,'limite_variacao')>0) {
           Validate('w_tipo','Acréscimo/Supressão','SELECT',1,1,18,'1','1');
           if(nvl($w_tipo,'')!='NAOAPLICA') {
-            Validate('w_variacao_valor','% de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');
+            Validate('w_variacao_valor','% de acréscimo/supressão','VALOR','1',8,18,'','0123456789.,');
             CompValor('w_variacao_valor','% de acréscimo/supressão','>',0,'0');
             CompValor('w_variacao_valor','% de acréscimo/supressão','<=',f($RS_Solic,'limite_variacao'),' ao limite de variação');
           }
@@ -3934,7 +3933,7 @@ function Aditivos() {
     $RS_Aditivo = SortArray($RS_Aditivo,'sq_acordo_aditivo','desc');
     foreach($RS_Aditivo as $row){$RS_Aditivo=$row; break;}
     ShowHTML('<tr valign="top"><td>');
-    if((count($RS)==0 || Nvl(f($RS_Aditivo,'qtd_parcela'),0)>0) || (f($RS_Aditivo,'prorrogacao')=='N'&&f($RS_Aditivo,'acrescimo')=='N')&&f($RS_Aditivo,'supressao')=='N') {
+    if($P1!=6 && ((count($RS)==0 || Nvl(f($RS_Aditivo,'qtd_parcela'),0)>0) || (f($RS_Aditivo,'prorrogacao')=='N'&&f($RS_Aditivo,'acrescimo')=='N')&&f($RS_Aditivo,'supressao')=='N')) {
       ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
     ShowHTML('        <a accesskey="F" class="ss" href="javascript:window.close(); this.opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
@@ -4069,13 +4068,13 @@ function Aditivos() {
         ShowHTML('          <option value="NAOAPLICA">Não se aplica');
       ShowHTML('          </select>');
       if ($w_tipo!='NAOAPLICA') {
-        ShowHTML('          <td><b>% de acré<u>s</u>cimo/supressão:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_variacao_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_variacao_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual de acréscimo ou supressão."></td>');
+        ShowHTML('          <td><b>% de acré<u>s</u>cimo/supressão:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_variacao_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_variacao_valor.'" onKeyDown="FormataValor(this,18,6,event);" title="Percentual de acréscimo ou supressão."></td>');
       } else {
-        ShowHTML('<INPUT type="hidden" name="w_variacao_valor" value="0,00">');
+        ShowHTML('<INPUT type="hidden" name="w_variacao_valor" value="0,000000">');
       }
     } else {
       ShowHTML('<INPUT type="hidden" name="w_tipo" value="NAOAPLICA">');
-      ShowHTML('<INPUT type="hidden" name="w_variacao_valor" value="0,00">');
+      ShowHTML('<INPUT type="hidden" name="w_variacao_valor" value="0,000000">');
     }
     if($w_prorrogacao=='S') {
       ShowHTML('      <tr><td><b>Va<u>l</u>or inicial:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,2,event);" title="Valor total do aditivo, referente ao valor inicial do contrato."></td>');
@@ -4228,7 +4227,10 @@ function Notas() {
       ShowHTML('      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     }
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td>');
+    if ($P1!=6) {
+      ShowHTML('    <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
     if($P1==2||$P1==6) ShowHTML('        <a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -4593,12 +4595,12 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
     // Recupera os dados da tarefa
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
     $w_html = '<HTML>'.$crlf;
     $w_html.=BodyOpenMail(null).$crlf;
     $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -4633,7 +4635,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'        <tr><td><b>Término vigência:</b></td>';
     $w_html.=$crlf.'          <td>'.FormataDataEdicao(f($RSM,'fim')).' </td></tr>';
     // Outra parte
-    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'outra_parte'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null);
+    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'outra_parte'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     if (count($RSM1)>0) {
       foreach($RSM1 as $row) {
         if (substr($SG,0,3)=='GCB')   $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>BOLSISTA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
@@ -5103,7 +5105,7 @@ function Grava() {
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (strpos(f($row,'caminho'),'.')!==false) {
-                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                 } else {
                   $w_file = basename(f($row,'caminho'));
                 }
@@ -5111,7 +5113,7 @@ function Grava() {
             } else {
               $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
               if (strpos($Field['name'],'.')!==false) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
             $w_tamanho = $Field['size'];
@@ -5176,7 +5178,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (strpos($Field['name'],'.')!==false) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];

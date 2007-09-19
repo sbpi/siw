@@ -242,6 +242,8 @@ function Inicial() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($w_tipo=='WORD'){
+    BodyOpenWord(null);
   } elseif ($O=='P'){
     BodyOpen('onLoad="document.Form.p_nome.focus();"');
   } elseif (strpos('CIA',$O)!==false) {
@@ -273,17 +275,27 @@ function Inicial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
-      ShowHTML('          <td><b> Operações </td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Última pesquisa</b></td>');
+      ShowHTML('          <td rowspan=2><b> Operações </td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</b></td>');
+      ShowHTML('          <td bgColor="#f0f0f0"><b>'.LinkOrdena('$ Médio','pesquisa_preco_medio').'</b></td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td><b>Tipo</td>');
-      ShowHTML('          <td><b>Código</td>');
-      ShowHTML('          <td><b>Nome</td>');
-      ShowHTML('          <td><b>Un.</td>');
+      ShowHTML('          <td rowspan=2><b>Tipo</td>');
+      ShowHTML('          <td rowspan=2><b>Código</td>');
+      ShowHTML('          <td rowspan=2><b>Nome</td>');
+      ShowHTML('          <td rowspan=2><b>Un.</td>');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Última pesquisa</b></td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr align="center">');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
+      ShowHTML('          <td bgColor="#f0f0f0"><b>$ Médio</b></td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
@@ -300,6 +312,13 @@ function Inicial() {
         if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         else                 ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+        if (nvl(f($row,'pesquisa_data'),'')=='') {
+          ShowHTML('            <td colspan=3 align="center">&nbsp;</td>');
+        } else {
+          ShowHTML('            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
+          ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
+          ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+        }
         if ($w_tipo!='WORD') {
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
@@ -312,6 +331,7 @@ function Inicial() {
     } 
     ShowHTML('      </center>');
     ShowHTML('    </table>');
+    ShowHTML('      <tr colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>');
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($w_tipo!='WORD') {
@@ -489,7 +509,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   if (nvl(f($l_rs,'pesquisa_data'),'')=='') {
     $l_html.=chr(13).'            <td colspan=6 align="center">Nenhuma pesquisa encontrada</td>';
   } else {
-    $l_html.=chr(13).'            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>';
+    $l_html.=chr(13).'            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($l_rs,'pesquisa_data'),f($l_rs,'pesquisa_validade'),f($l_rs,'pesquisa_aviso')).'</td>';
     $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_data')),'---').'</b></td>';
     $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_validade')),'---').'</b></td>';
     $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_menor'),4),'---').'</b></td>';

@@ -233,13 +233,15 @@ function ExibeDocs() {
          eval('$node1_'.i.' = &$node1->addItem(new XNode(null,LinkArquivo(\'hl\',$p_cliente,str_replace(\'@files/\',\'\',f($row,\'LINK\')),f($row,\'target\'),null,\'<img src="\'.$w_Imagem.\'" border=0>\'.f($row,\'nome\'),null),null,null,null));');
       else {
         if ($_REQUEST['w_cgccpf']>'')
-           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_cgccpf=\'.$_REQUEST[\'w_cgccpf\'].MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+          eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_cgccpf=\'.$_REQUEST[\'w_cgccpf\'].MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
         elseif ($_REQUEST['w_usuario']>'')
-              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_usuario=\'.$_REQUEST[\'w_usuario\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+          eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_usuario=\'.$_REQUEST[\'w_usuario\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
         elseif ($_REQUEST['w_sq_acordo']>'')
-              eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_sq_acordo=\'.$_REQUEST[\'w_sq_acordo\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
-        else
-           eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=\'.$O.\'&w_chave=\'.$_REQUEST[\'w_chave\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+          eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_sq_acordo=\'.$_REQUEST[\'w_sq_acordo\'].\'&w_menu=\'.f($row,\'menu_pai\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+        elseif ($_REQUEST['w_sq_pessoa']>'') {
+          eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=L&w_sq_pessoa=\'.$_REQUEST[\'w_sq_pessoa\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
+        } else
+          eval('$node'.i.' = &$node1->addItem(new XNode(f($row,\'nome\'),f($row,\'LINK\').\'&P1=\'.f($row,\'P1\').\'&P2=\'.f($row,\'P2\').\'&P3=\'.f($row,\'P3\').\'&P4=\'.f($row,\'P4\').\'&TP=\'.$w_titulo.\'&SG=\'.f($row,\'SIGLA\').\'&O=\'.$O.\'&w_chave=\'.$_REQUEST[\'w_chave\'].\'&w_menu=\'.f($row,\'menu_pai\').MontaFiltro(\'GET\'),$w_Imagem,$w_Imagem,f($row,\'target\')));');
       }
 
       if ($_REQUEST['O']=='I') break;
@@ -302,6 +304,8 @@ function ExibeDocs() {
           ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.$_REQUEST['TP'].' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O='.$_REQUEST['O'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].MontaFiltro('GET').'";\'>');
         } elseif ($_REQUEST['w_usuario']>'') {
           ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.$_REQUEST['TP'].' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O=L&w_usuario='.$_REQUEST['w_usuario'].MontaFiltro('GET').'";\'>');
+        } elseif ($_REQUEST['w_sq_pessoa']>'') {
+          ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.$_REQUEST['TP'].' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O='.$_REQUEST['O'].'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_menu='.f($row,'menu_pai').MontaFiltro('GET').'";\'>');
         } else {
           ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.$_REQUEST['TP'].' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O='.$_REQUEST['O'].'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.f($row,'menu_pai').MontaFiltro('GET').'";\'>');
         }

@@ -27,6 +27,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicObjetivo.php');
 include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
+include_once($w_dir_volta.'classes/sp/db_getCcData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
@@ -523,9 +524,9 @@ function Inicial() {
     ShowHTML('          <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     if ($O=='C') {
       // Se for cópia
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
     } else {
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -603,7 +604,6 @@ function Geral() {
           null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
-
       } else {
       $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
           null,null,null,null,null,null,null,null,null,null,
@@ -903,6 +903,12 @@ function Itens() {
   $w_chave              = $_REQUEST['w_chave'];
   $w_chave_aux          = $_REQUEST['w_chave_aux'];
 
+  $p_tipo_material      = $_REQUEST['p_tipo_material'];
+  $p_sq_cc              = $_REQUEST['p_sq_cc'];
+  $p_codigo             = $_REQUEST['p_codigo'];
+  $p_nome               = $_REQUEST['p_nome'];
+  $p_ordena             = $_REQUEST['p_ordena'];
+
   // Recupera os dados da solicitacao
   $RS_Solic = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,
           null,null,null,null,null,null,null,null,null,null,
@@ -914,13 +920,6 @@ function Itens() {
     $w_sq_material        = $_REQUEST['w_sq_material'];
     $w_quantidade         = $_REQUEST['w_quantidade'];
   } elseif ($O=='I') {
-    $p_chave         = $_REQUEST['p_chave'];
-    $p_tipo_material = $_REQUEST['p_tipo_material'];
-    $p_sq_cc         = $_REQUEST['p_sq_cc'];
-    $p_codigo        = $_REQUEST['p_codigo'];
-    $p_nome          = $_REQUEST['p_nome'];
-    $p_ordena        = $_REQUEST['p_ordena'];
-    $p_volta         = strtoupper($_REQUEST['p_volta']);
     if (montaFiltro('GET')!='') {
       $w_filtro='';
 
@@ -1122,8 +1121,8 @@ function Itens() {
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<tr><td>');
-    if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-    else                       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+    if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+    else                       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=P&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
@@ -1161,17 +1160,17 @@ function Itens() {
     ShowHTML('  </td>');
     ShowHTML('<tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('  </td>');    
     ShowHTML('</FORM>');
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      MontaBarra($w_dir.$w_pagina.$par.'&w_menu='.$w_menu.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } else {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+      MontaBarra($w_dir.$w_pagina.$par.'&w_menu='.$w_menu.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } 
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1207,15 +1206,15 @@ function Itens() {
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHA',null);
     ShowHTML('      <tr valign="top">');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',nvl($p_sq_cc,f($RS_Solic,'sq_cc')),null,'p_sq_cc','SIWSOLIC');
+    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sq_cc,null,'p_sq_cc','SIWSOLIC');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_menu='.$w_menu.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1234,6 +1233,7 @@ function Itens() {
   ShowHTML('</table>');
   ShowHTML('</center>');
 } 
+
 // ------------------------------------------------------------------------- 
 // Rotina de anexos 
 // ------------------------------------------------------------------------- 
@@ -1428,7 +1428,11 @@ function Visual() {
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de compra</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'this.focus()\'; ');
+  if ($w_tipo=='WORD') {
+    BodyOpenWord('onLoad=\'this.focus()\'; ');
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
+  }
   if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
@@ -1870,15 +1874,18 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
-  $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RS   = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  $RSM = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,5,
+          null,null,null,null,null,null,null,null,null,null,
+          $p_solic,null,null,null,null,null,null,
+          null,null,null,null,null,null,null,null,null,null,null);
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
     $w_anexos         = array();
 
     // Recupera os dados da PCD
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
     $w_sg_tramite = f($RSM,'sg_tramite');
     $w_nome       = f($RSM,'codigo_interno');
 
@@ -2205,7 +2212,7 @@ function Grava() {
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
           $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
           $_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
-          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],&$w_chave_nova,$_REQUEST['w_copia']);        
+          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N',&$w_chave_nova,$_REQUEST['w_copia']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();
@@ -2270,7 +2277,7 @@ function Grava() {
                 foreach ($RS as $row) {
                   if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                   if (!(strpos(f($row,'caminho'),'.')===false)) {
-                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                   } else {
                     $w_file = basename(f($row,'caminho'));
                   }
@@ -2278,7 +2285,7 @@ function Grava() {
               } else {
                 $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 }
               } 
               $w_tamanho = $Field['size'];
@@ -2343,7 +2350,7 @@ function Grava() {
                 // Se já há um nome para o arquivo, mantém 
                 $w_file = basename($Field['tmp_name']);
                 if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
                 }
                 $w_tamanho = $Field['size'];
                 $w_tipo    = $Field['type'];

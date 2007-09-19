@@ -368,9 +368,11 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_pessoa_resumido').'</td>');
       if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
       else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Data','vencimento').'</td>');
+      if (strpos('CONT',substr($SG,3))!==false) {
+        ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
+      }
+      ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Fase','nm_tramite').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
       ShowHTML('        </tr>');
     } else {
@@ -380,7 +382,6 @@ function Inicial() {
       else                                ShowHTML('          <td><b>Vinculação</td>');
       ShowHTML('          <td><b>Data</td>');
       ShowHTML('          <td><b>Valor</td>');
-      ShowHTML('          <td><b>Fase</td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
@@ -412,10 +413,16 @@ function Inicial() {
             ShowHTML('        <td>---</td>');
           }
         } 
-        ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento')),'-').'</td>');
+        if (strpos('CONT',substr($SG,3))!==false) {
+          if (nvl(f($row,'referencia_inicio'),'')!='') {
+            ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>');
+          } else {
+            ShowHTML('        <td align="center">-</td>');
+          }
+        }
+        ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento'),5),'-').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>');
         $w_parcial += Nvl(f($row,'valor'),0);
-        ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         if ($w_tipo!='WORD') {
           if ($_SESSION['INTERNO']=='S') {
             ShowHTML('        <td align="top" nowrap>');
@@ -483,7 +490,11 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
+          if (strpos('CONT',substr($SG,3))===false) {
+            ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
+          } else {
+            ShowHTML('          <td colspan=5 align="right"><b>Total desta página&nbsp;</td>');
+          }
           ShowHTML('          <td align="right"><b>'.formatNumber($w_parcial,2).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -495,7 +506,11 @@ function Inicial() {
             else                            $w_total += f($row,'valor');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
+          if (strpos('CONT',substr($SG,3))===false) {
+            ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
+          } else {
+            ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</td>');
+          }
           ShowHTML('          <td align="right"><b>'.formatNumber($w_total,2).'&nbsp;</td>');
           ShowHTML('          <td colspan=2>&nbsp;</td>');
           ShowHTML('        </tr>');
@@ -1031,7 +1046,7 @@ function OutraParte() {
     $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
   } elseif (strpos($_REQUEST['Botao'],'Alterar')===false && strpos($_REQUEST['Botao'],'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
     // Recupera os dados do beneficiário em co_pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS=$row; break;}
     if (count($RS) > 0) {
       $w_sq_pessoa            = f($RS,'sq_pessoa');
@@ -1255,7 +1270,7 @@ function OutraParte() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_tipo_pessoa,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,$w_tipo_pessoa,null,null,null,null,null,null,null);
         $RS = SortArray($RS,'nm_pessoa','asc');
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2352,8 +2367,8 @@ function BuscaParcela() {
       ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  function MarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_acordo_parcela[]"].value==undefined) ');
-      ShowHTML('       for (i=0; i < document.Form["w_sq_acordo_parcela[]"].length; i++) {');
+      ShowHTML('    if (document.Form["marca"].checked) {');
+      ShowHTML('       for (i=1; i < document.Form["w_sq_acordo_parcela[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_acordo_parcela[]"][i].checked=true;');
       ShowHTML('         document.Form["w_valor[]"][i].disabled=false;');
       ShowHTML('         document.Form["w_sq_tipo_lancamento[]"][i].disabled=false;');
@@ -2368,11 +2383,8 @@ function BuscaParcela() {
       ShowHTML('         document.Form["w_vencimento_atual[]"][i].disabled=false; ');
       ShowHTML('         document.Form["w_outra_parte[]"][i].disabled=false; ');
       ShowHTML('       } ');
-      ShowHTML('    else document.Form["w_sq_acordo_parcela[]"].checked=true;');
-      ShowHTML('  }');
-      ShowHTML('  function DesmarcaTodos() {');
-      ShowHTML('    if (document.Form["w_sq_acordo_parcela[]"].value==undefined) ');
-      ShowHTML('       for (i=0; i < document.Form["w_sq_acordo_parcela[]"].length; i++) {');
+      ShowHTML('    } else { ');
+      ShowHTML('       for (i=1; i < document.Form["w_sq_acordo_parcela[]"].length; i++) {');
       ShowHTML('         document.Form["w_sq_acordo_parcela[]"][i].checked=false;');
       ShowHTML('         document.Form["w_valor[]"][i].disabled=true;');
       ShowHTML('         document.Form["w_sq_tipo_lancamento[]"][i].disabled=true;');
@@ -2387,8 +2399,7 @@ function BuscaParcela() {
       ShowHTML('         document.Form["w_vencimento_atual[]"][i].disabled=true; ');
       ShowHTML('         document.Form["w_outra_parte[]"][i].disabled=true; ');
       ShowHTML('       } ');
-      ShowHTML('    ');
-      ShowHTML('    else document.Form["w_sq_acordo_parcela[]"].checked=false;');
+      ShowHTML('    }');
       ShowHTML('  }');
     } 
     CheckBranco();
@@ -2518,18 +2529,18 @@ function BuscaParcela() {
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td NOWRAP rowspan="2"><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
-    ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
+    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('            <td NOWRAP rowspan="2"><font size="2"><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
     ShowHTML('            <td rowspan="2"><b>Acordo</b></td>');
     ShowHTML('            <td rowspan="2"><b>Outra parte</b></td>');
-    ShowHTML('            <td rowspan="1" colspan="4"><b>Parcela</b></td>');
+    ShowHTML('            <td colspan="5"><b>Parcela</b></td>');
     ShowHTML('          </tr>');
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td rowspan="1"><b>Nº</b></td>');
-    ShowHTML('            <td rowspan="1"><b>Venc.</b></td>');
-    ShowHTML('            <td rowspan="1"><b>Tipo lançam.</b></td>');
-    ShowHTML('            <td rowspan="1"><b>Valor</b></td>');
+    ShowHTML('            <td><b>Nº</b></td>');
+    ShowHTML('            <td><b>Referência</b></td>');
+    ShowHTML('            <td><b>Venc.</b></td>');
+    ShowHTML('            <td><b>Tipo lançam.</b></td>');
+    ShowHTML('            <td><b>Valor</b></td>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -2552,17 +2563,22 @@ function BuscaParcela() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;        
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="center">');
         if (f($row,'notas_acordo')>0 && f($row,'notas_parcela')==0) {
-          ShowHTML('        <td align="center"><input disabled type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" onClick="valor('.$w_cont.');">');
+          ShowHTML('        <td align="center"><input disabled type="checkbox" name="w_dummy[]" value="'.f($row,'sq_acordo_parcela').'" onClick="valor('.$w_cont.');">');
         } else {
           ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_acordo_parcela[]" value="'.f($row,'sq_acordo_parcela').'" onClick="valor('.$w_cont.');">');
         }
-        ShowHTML('        <td title="'.f($row,'objeto').'"><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" target="_blank">'.f($row,'cd_acordo').'</a></td>');
+        ShowHTML('        <td title="'.str_replace('"','',f($row,'objeto')).'"><A class="hl" HREF="'.'mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GC'.substr($SG,2,1).'CAD" target="_blank">'.f($row,'cd_acordo').'</a></td>');
         ShowHTML('        <td>'.f($row,'nome_resumido').'</td>');
-        ShowHTML('        <td>'.substr(1000+f($row,'ordem'),1,3).'</td>');
+        ShowHTML('        <td align="center">'.substr(1000+f($row,'ordem'),1,3).'</td>');
         if (f($row,'notas_acordo')>0 && f($row,'notas_parcela')==0) {
-        ShowHTML('        <td colspan=3><b>Vincule pelo menos uma nota a esta parcela.</b></td>');
+          ShowHTML('        <td colspan=4><b>Vincule pelo menos uma nota a esta parcela.</b></td>');
         } else {
-          ShowHTML('        <td>'.FormataDataEdicao(f($row,'vencimento')).'</td>');
+          if (nvl(f($row,'inicio'),'')!='') {
+            ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>');
+          } else {
+            ShowHTML('        <td align="center">-</td>');
+          }
+          ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>');
           SelecaoTipoLancamento('','T', 'Selecione na lista o tipo de lançamento adequado.', f($row,'sq_tipo_lancamento'), $w_cliente, 'w_sq_tipo_lancamento[]', $SG, 'disabled');
           ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($row,'valor'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
         }
@@ -3178,12 +3194,12 @@ function SolicMail($p_solic,$p_tipo) {
   global $w_Disabled;
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
     // Recupera os dados da tarefa
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,substr($SG,0,3).'GERAL');
     $w_html='<HTML>'.$crlf;
     $w_html.=BodyOpenMail(null).$crlf;
     $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -3216,7 +3232,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.=$crlf.'          <td>Valor:<br><b>'.number_format(Nvl(f($RSM,'valor'),0),2,',','.').' </b></td>';
     $w_html.=$crlf.'          </table>';
     // Outra parte
-    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'pessoa'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null);
+    $RSM1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RSM,'pessoa'),0),null,null,null,Nvl(f($RSM,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     if (count($RSM1) > 0) {
       foreach ($RSM1 as $row)
       $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRA PARTE</td>';
@@ -3479,7 +3495,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];
@@ -3565,7 +3581,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];
@@ -3609,7 +3625,7 @@ function Grava() {
                 $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],$_REQUEST['w_vencimento_atual'][$i],
                 $w_tipo,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento
-            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null);
+            $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null);
             foreach ($RS as $row) {$RS=$row; break;}
             //Grava os dados da pessoa
             dml_putLancamentoOutra::getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),

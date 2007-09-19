@@ -111,7 +111,7 @@ function CentroCusto() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  if ($w_troca>'' && $O!='E') {
+  if ($w_troca>'' && strpos('EDT',$O)===false) {
     // Se for recarga da página
     $w_sq_cc_pai    = $_REQUEST['w_sq_cc_pai'];
     $w_nome         = $_REQUEST['w_nome'];
@@ -122,11 +122,8 @@ function CentroCusto() {
     $w_ativo        = $_REQUEST['w_ativo'];
     $w_regular      = $_REQUEST['w_regular'];
   } elseif ($O!='L') {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
     if ($O!='P' && $O!='H') {
-
-      if ($w_heranca>'' || ($O!='I' && $w_troca=='')) {
+      if ($w_heranca>'' || $O!='I') {
         // Se for herança, atribui a chave da opção selecionada para w_sq_cc
         if ($w_heranca>'') $w_sq_cc = $w_heranca;
         $RS = db_getCcData::getInstanceOf($dbms,$w_sq_cc);
@@ -147,6 +144,12 @@ function CentroCusto() {
         $w_ativo        = $_REQUEST['w_ativo'];
         $w_regular      = $_REQUEST['w_regular'];
       } 
+    }
+  }
+  if ($O!='L') {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if ($O!='P' && $O!='H') {
       if ($O=='I' || $O=='A') {
         Validate('w_nome','Nome','1','1','3','60','1','1');
         Validate('w_descricao','Descrição','1','1','5','500','1','1');
@@ -321,6 +324,7 @@ function CentroCusto() {
     if ($O=='I') {
       ShowHTML('      <tr><td><a accesskey="H" class="ss" href="#" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.'CENTROCUSTO&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_cc='.$w_sq_cc.'\',\'heranca\',\'top=70,left=10,width=780,height=200,toolbar=no,status=no,scrollbars=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000">');
+      ShowHTML('      <tr><td><b>');      
     } 
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -360,7 +364,17 @@ function CentroCusto() {
     ShowHTML('      </td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3"><input class="stb" type="submit" name="Botao" value="Gravar">&nbsp;');
+    if ($O=='E') {
+      ShowHTML('    <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } elseif ($O=='T') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Ativar">');
+    } elseif ($O=='D') {
+        ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
   } elseif ($O=='H') {
@@ -567,10 +581,12 @@ function Agencia() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
-    } else {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    } 
+      ShowHTML('    <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'&O=L&p_sq_banco='.$p_sq_banco.'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -780,10 +796,12 @@ function Banco() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
-    } else {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    } 
+      ShowHTML('    <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

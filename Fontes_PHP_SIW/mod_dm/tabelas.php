@@ -99,6 +99,7 @@ function TipoDemanda() {
     $w_sigla      = $_REQUEST['w_sigla'];
     $w_descricao  = $_REQUEST['w_descricao'];
     $w_sq_unidade = $_REQUEST['w_sq_unidade'];
+    $w_reuniao    = $_REQUEST['w_reuniao'];
     $w_ativo      = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
@@ -114,6 +115,7 @@ function TipoDemanda() {
     $w_sigla      = f($RS,'sigla');
     $w_descricao  = f($RS,'descricao');
     $w_sq_unidade = f($RS,'sq_unidade');
+    $w_reuniao    = f($RS,'reuniao');
     $w_ativo      = f($RS,'ativo');
   } 
   Cabecalho();
@@ -124,7 +126,7 @@ function TipoDemanda() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_sigla','Sigla','1','1','1','20','1','1');
-      Validate('w_desricao','Descrição','1','','4','30','1','1');
+      Validate('w_descricao','Descrição','1','','4','30','1','1');
       Validate('w_sq_unidade','Setor responsável','HIDDEN','',1,18,'','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -163,6 +165,7 @@ function TipoDemanda() {
     ShowHTML('          <td><b>Nome</td>');
     ShowHTML('          <td><b>Sigla</td>');
     ShowHTML('          <td><b>Setor</td>');
+    ShowHTML('          <td><b>Reunião</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -177,6 +180,7 @@ function TipoDemanda() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
         ShowHTML('        <td>'.Nvl(f($row,'nm_unidade'),'---').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_reuniao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -204,6 +208,8 @@ function TipoDemanda() {
     ShowHTML('        <tr valign="top"><td colspan="2"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75>'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('        <tr valign="top">');
     SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pela execução deste tipo demanda',$w_sq_unidade,null,'w_sq_unidade',null,null);    
+    ShowHTML('        <tr valign="top">');
+    MontaRadioNS('<b>Este tipo deve ter tratamento de reunião?</b>',$w_reuniao,'w_reuniao');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
@@ -251,7 +257,8 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E') {
           $RS = db_getTipoDemanda::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null,null,null,'VINCULADO');
-          if (count($RS)>0) {
+          foreach($RS as $row) { $RS = $row; break; }
+          if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Tipo de demanda vinculada a demanda!\');');
             ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&w_chave=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -269,7 +276,7 @@ function Grava() {
             break;
           }   
         } 
-        dml_putTipoDemanda::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_ativo']);
+        dml_putTipoDemanda::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_reuniao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

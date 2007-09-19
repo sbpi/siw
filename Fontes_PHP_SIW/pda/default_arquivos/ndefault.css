@@ -1,0 +1,293 @@
+BODY
+{
+    MARGIN: 0px;
+    FONT-FAMILY: Arial, Helvetica, sans-serif;
+    TEXT-ALIGN: center
+}
+#wrap
+{
+    MARGIN: 0px auto;
+    WIDTH: 300px;
+    TEXT-ALIGN: left
+}
+#wrap HR
+{
+    DISPLAY: none
+}
+#body
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    FLOAT: left;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    WIDTH: 300px;
+    PADDING-TOP: 0px
+}
+#bprint
+{
+    DISPLAY: none
+}
+#menu_esq
+{
+    FONT-SIZE: 11px;
+    FLOAT: left;
+    WIDTH: 172px;
+    COLOR: #ffffff
+}
+#menu_esq P
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#menu_esq UL
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#menu_esq UL LI
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px;
+    LIST-STYLE-TYPE: none
+}
+#menu_esq UL LI UL LI
+{
+    PADDING-RIGHT: 5px;
+    PADDING-LEFT: 25px;
+    BACKGROUND: #999999;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 0px;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ffffff 1px solid;
+    LIST-STYLE-TYPE: none
+}
+#menu_esq .abre
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 15px;
+    BACKGROUND: url(../img/ico_menu_mais.gif) #999999 no-repeat 0px 2px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    BORDER-TOP-STYLE: none;
+    PADDING-TOP: 0px;
+    BORDER-RIGHT-STYLE: none;
+    BORDER-LEFT-STYLE: none;
+    LIST-STYLE-TYPE: none;
+    BORDER-BOTTOM-STYLE: none
+}
+#menu_esq .aberto
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 15px;
+    BACKGROUND: url(../img/ico_menu_menos.gif) #999999 no-repeat 0px 2px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    BORDER-TOP-STYLE: none;
+    PADDING-TOP: 0px;
+    BORDER-RIGHT-STYLE: none;
+    BORDER-LEFT-STYLE: none;
+    LIST-STYLE-TYPE: none;
+    BORDER-BOTTOM-STYLE: none
+}
+#menu_esq .active
+{
+    FONT-WEIGHT: bold;
+    BACKGROUND: #8f8f8f
+}
+#identifica
+{
+    BACKGROUND: url(http://www.prefeitura.sp.gov.br/portal/images/cidade_saopaulo.gif) #273a40 no-repeat;
+    FLOAT: left;
+    WIDTH: 608px;
+    HEIGHT: 72px;
+    TEXT-ALIGN: right
+}
+#identifica P
+{
+    PADDING-RIGHT: 5px;
+    PADDING-LEFT: 5px;
+    FONT-SIZE: 11px;
+    PADDING-BOTTOM: 5px;
+    COLOR: #ffffff;
+    PADDING-TOP: 5px
+}
+#miolo
+{
+    FLOAT: left;
+    WIDTH: 488px
+}
+#col_dir
+{
+    FLOAT: left;
+    WIDTH: 120px
+}
+.tabela TABLE
+{
+    BORDER-RIGHT: #18345a 1px solid;
+    BORDER-TOP: #18345a 1px solid;
+    FONT-SIZE: 12px;
+    BORDER-LEFT: #18345a 1px solid;
+    WIDTH: 100%;
+    BORDER-BOTTOM: #18345a 1px solid
+}
+.tabela CAPTION
+{
+    DISPLAY: none;
+    FONT: bold 11px Arial, Helvetica, sans-serif;
+    COLOR: #18345a
+}
+.tabela TR
+{
+    BORDER-RIGHT: #ced5dd 1px solid;
+    PADDING-RIGHT: 0px;
+    BORDER-TOP: #ced5dd 1px solid;
+    PADDING-LEFT: 0px;
+    BACKGROUND: #f7f8fa;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    FONT: 12px Arial, Helvetica, sans-serif;
+    BORDER-LEFT: #ced5dd 1px solid;
+    COLOR: #18345a;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ced5dd 1px solid
+}
+.tabela TR
+{
+    BORDER-RIGHT: #ced5dd 1px solid;
+    PADDING-RIGHT: 0px;
+    BORDER-TOP: #ced5dd 1px solid;
+    PADDING-LEFT: 0px;
+    BACKGROUND: #f7f8fa;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    FONT: 12px Arial, Helvetica, sans-serif;
+    BORDER-LEFT: #ced5dd 1px solid;
+    COLOR: #18345a;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ced5dd 1px solid
+}
+.tabela TH
+{
+    PADDING-RIGHT: 4px;
+    PADDING-LEFT: 4px;
+    BACKGROUND: #d5dce6;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    FONT: bold 12px Arial, Helvetica, sans-serif;
+    PADDING-TOP: 2px
+}
+.tabela EM
+{
+    FONT: bold 12px Arial, Helvetica, sans-serif;
+    COLOR: #18345a
+}
+.tabela A
+{
+    FONT: 12px Arial, Helvetica, sans-serif;
+    COLOR: #ff6600;
+    TEXT-DECORATION: none
+}
+.tabela A:hover
+{
+    FONT: 12px Arial, Helvetica, sans-serif;
+    COLOR: #ff6600;
+    TEXT-DECORATION: underline
+}
+.tabela A:visited
+{
+    FONT: 12px Arial, Helvetica, sans-serif;
+    COLOR: #18345a;
+    TEXT-DECORATION: underline
+}
+.tabela A:active
+{
+    FONT: 12px Arial, Helvetica, sans-serif;
+    COLOR: #ff6600;
+    TEXT-DECORATION: underline
+}
+.tabela .tab_line1 TD
+{
+    BORDER-RIGHT: #ced5dd 1px solid;
+    PADDING-RIGHT: 4px;
+    BORDER-TOP: #ced5dd 1px solid;
+    PADDING-LEFT: 4px;
+    BACKGROUND: #f7f8fa;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    FONT: 12px Arial, Helvetica, sans-serif;
+    BORDER-LEFT: #ced5dd 1px solid;
+    COLOR: #18345a;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ced5dd 1px solid
+}
+.tabela .tab_line2 TD
+{
+    BORDER-RIGHT: #ced5dd 1px solid;
+    PADDING-RIGHT: 4px;
+    BORDER-TOP: #ced5dd 1px solid;
+    PADDING-LEFT: 4px;
+    BACKGROUND: #ebeff4;
+    PADDING-BOTTOM: 2px;
+    MARGIN: 2px;
+    FONT: 12px Arial, Helvetica, sans-serif;
+    BORDER-LEFT: #ced5dd 1px solid;
+    COLOR: #18345a;
+    PADDING-TOP: 2px;
+    BORDER-BOTTOM: #ced5dd 1px solid
+}
+#footer
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    BACKGROUND: url(footer_logo_bg.gif) #000000 no-repeat right 50%;
+    FLOAT: left;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    WIDTH: 300px;
+    PADDING-TOP: 0px;
+    HEIGHT: 50px
+}
+#footer P
+{
+    FONT-SIZE: 10px;
+    MARGIN: 20px 0px 0px 10px;
+    WIDTH: 770px;
+    COLOR: #ffffff
+}
+#footer UL
+{
+    PADDING-RIGHT: 0px;
+    PADDING-LEFT: 0px;
+    PADDING-BOTTOM: 0px;
+    MARGIN: 0px;
+    PADDING-TOP: 0px
+}
+#footer LI
+{
+    DISPLAY: inline;
+    LIST-STYLE-TYPE: none
+}
+#footer A
+{
+    COLOR: #ffffff;
+    TEXT-DECORATION: none
+}
+#footer A:hover
+{
+    COLOR: #ffffff;
+    TEXT-DECORATION: underline
+}
+#footer_p
+{
+    DISPLAY: none
+}

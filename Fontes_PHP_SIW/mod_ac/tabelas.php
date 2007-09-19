@@ -213,9 +213,7 @@ function TipoAcordo() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
-  } elseif ($O=='I') {
-    BodyOpen(null);
-  } elseif ($O=='A') {
+  } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad="document.Form.w_nome.focus();"');
   } elseif ($O=='H') {
     BodyOpen('onLoad="document.Form.w_heranca.focus();"');
@@ -385,10 +383,10 @@ function TipoAcordo() {
   } elseif ($O!='H') {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
-    if ($O=='I') {
+    //if ($O=='I') {
       ShowHTML('      <tr><td><a accesskey="H" class="SS" href="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca'.'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000"></td></tr>');
-    } 
+   // } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -862,15 +860,15 @@ function Modalidades() {
   }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  If ($w_troca> '') {
-     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('IA',$O)===false)) {
-     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
-  } elseif ($O=='E') {
-     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus();"');
   } else {
-     BodyOpen('onLoad=\'document.focus()\';');
-  }
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -939,7 +937,7 @@ function Modalidades() {
           ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
        }
     }
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L'.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1013,15 +1011,17 @@ function FonteRecurso() {
   }
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  If ($w_troca> '') {
-     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('IA',$O)===false)) {
-     BodyOpen('onLoad=\'document.Form.w_codigo.focus()\';');
-  } elseif ($O=='E') {
-     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I') {
+    BodyOpen('onLoad="document.Form.w_codigo.focus();"');
+  } elseif ($O=='A') {
+    BodyOpen('onLoad="document.Form.w_nome.focus();"');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus();"');
   } else {
-     BodyOpen('onLoad=\'document.focus()\';');
-  }
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -1092,7 +1092,7 @@ function FonteRecurso() {
           ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
        }
     }
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1201,9 +1201,7 @@ function EspecDespesa() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
-  } elseif ($O=='I') {
-    BodyOpen(null);
-  } elseif ($O=='A') {
+  } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
   } elseif ($O=='H') {
     BodyOpen('onLoad="document.Form.w_heranca.focus();"');

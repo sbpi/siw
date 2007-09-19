@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- INICIO teto (portal) -->
+<HTML>
+<HEAD>
+<TITLE>Prefeitura.SP - Saúde</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<SCRIPT LANGUAGE='JavaScript'><!--
+function Ajuda()
+{
+  document.Form.Botao.value = "Ajuda";
+}
+function Trim(TRIM_VALUE){
+  if(TRIM_VALUE.length < 1){ return""; }
+  TRIM_VALUE = RTrim(TRIM_VALUE);
+  TRIM_VALUE = LTrim(TRIM_VALUE);
+  if(TRIM_VALUE==""){ return ""; } else { return TRIM_VALUE; }
+}
+
+function RTrim(VALUE){
+  var w_space = String.fromCharCode(32);
+  var v_length = VALUE.length;
+  var strTemp = "";
+  if(v_length < 0){ return""; }
+  var iTemp = v_length -1;
+  while(iTemp > -1){
+    if(VALUE.charAt(iTemp) != w_space){
+      strTemp = VALUE.substring(0,iTemp +1);
+      break;
+    }
+    iTemp = iTemp-1;
+  }
+  return strTemp;
+}
+
+function LTrim(VALUE){
+  var w_space = String.fromCharCode(32);
+  if(v_length < 1){ return""; }
+  var v_length = VALUE.length;
+  var strTemp = "";
+  var iTemp = 0;
+  while(iTemp < v_length){
+    if(VALUE.charAt(iTemp) != w_space){
+      strTemp = VALUE.substring(iTemp,v_length);
+      break;
+    }
+    iTemp = iTemp + 1;
+  }
+  return strTemp;
+}
+
+function  (campo,teclapres) {
+    var tecla = teclapres.keyCode;
+    vr = campo.value;
+    vr = vr.replace( '-', '' );
+    vr = vr.replace( '.', '' );
+    vr = vr.replace( '.', '' );
+    tam = vr.length;
+    if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; }
+    if (tecla == 8 ){    tam = tam - 1 ; }
+    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){
+        if ( tam <= 2 ){
+             campo.value = vr ; }
+         if ( (tam > 2) && (tam <= 5) ){
+             campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; }
+         if ( (tam >= 6) && (tam <= 8) ){
+             campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; }
+         if ( (tam >= 9) && (tam <= 11) ){
+             campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; }
+    }
+}
+function modulo (dividendo,divisor) {
+  var quociente = 0;
+  var ModN = 0;
+  quociente = Math.floor(dividendo/divisor);
+  ModN = dividendo - (divisor*quociente);
+  return divisor - ModN;
+}
+function SaltaCampo(form,campo,tammax,event,prox){
+  var tecla = event.which;
+  vr = campo.value;
+  tam = vr.length;
+  frm = eval('document.'+form);
+  prox = eval('document.'+form+'.'+prox);
+  if (tecla != 0 && tecla != 9 && tecla != 16 ){
+    if ( tam == tammax ){
+      if ( prox ) {
+        prox.focus();
+      } else {
+        var ind_campo = -1;
+        for (var i=0;i < frm.elements.length;i++) {
+          if (frm.elements[i].name == campo.name && !frm.elements[i].disabled) {
+            ind_campo = i;
+            break;
+          }
+        }
+        var j = ind_campo+1;
+        var ind_prox = ind_campo;
+        for (var i=j;i < frm.elements.length;i++) {
+          tipo = frm.elements[i].type.toLowerCase();
+          if ((tipo=='text' || tipo=='file' || tipo=='password' || tipo=='select-one' || tipo=='select-multiple' || tipo=='textarea') && !frm.elements[i].disabled) {
+            ind_prox = i;
+            break;
+          }
+        }
+        frm.elements[ind_prox].focus();
+      }
+    }
+  }
+}
+function Validacao (theForm)
+{
+  if (theForm.Login1.value == '')
+  {
+    alert('Favor informar um valor para o campo CPF');
+    theForm.Login1.focus();
+    return (false);
+  }
+
+  if (theForm.Login1.value.length < 14 && theForm.Login1.value != '')
+  {
+    alert('Favor digitar pelo menos 14 posições no campo CPF');
+    theForm.Login1.focus();
+    return (false);
+  }
+
+  if (theForm.Login1.value.length > 14 && theForm.Login1.value != '')
+  {
+    alert('Favor digitar no máximo 14 posições no campo CPF');
+    theForm.Login1.focus();
+    return (false);
+  }
+
+  var checkOK = '0123456789-.,/: ';
+  var checkStr = theForm.Login1.value;
+  var allValid = true;
+  for (i = 0;  i < checkStr.length;  i++)
+  {
+    ch = checkStr.charAt(i);
+    if ((checkStr.charCodeAt(i) != 13) && (checkStr.charCodeAt(i) != 10) && (checkStr.charAt(i) != '\\')) {
+       for (j = 0;  j < checkOK.length;  j++) {
+         if (ch == checkOK.charAt(j))
+           break;
+       }
+       if (j == checkOK.length)
+       {
+         allValid = false;
+         break;
+       }
+    }
+  }
+  if (!allValid)
+  {
+    alert('Favor digitar apenas números no campo CPF.');
+    theForm.Login1.focus();
+    return (false);
+  }
+    var igual = 0;
+    var allValid = true;
+    var soma = 0;
+    var D1 = 0;
+    var D2 = 0;
+    var checkStr = theForm.Login1.value;
+    checkStr = checkStr.replace('.','');
+    checkStr = checkStr.replace('.','');
+    checkStr = checkStr.replace('-','');
+    igual = 0;
+    for (i = 1;  i < 10;  i++)
+    {
+      soma = soma + (checkStr.charAt(i-1)*(11-i));
+      if (checkStr.charAt(i) != checkStr.charAt(i-1)) igual = 1
+    }
+    if (igual == 0 && checkStr > '') {
+       alert('CPF inválido.');
+       theForm.Login1.focus();
+       return (false);
+    }
+    D1 = modulo(soma,11);
+    if (D1 > 9) { D1 = 0}
+    soma = 0;
+    for (i = 1;  i < 11;  i++)
+    {
+      soma = soma + (checkStr.charAt(i-1)*(12-i));
+    }
+    D2 = modulo(soma,11)
+    if (D2 > 9) { D2 = 0}
+    if ((D1 == checkStr.charAt(10-1)) && (D2 == checkStr.charAt(11-1))) { allValid = true}
+    else { allValid = false }
+    if (!allValid && checkStr > '') {
+       alert('CPF inválido.');
+       theForm.Login1.focus();
+       return (false);
+    }
+    if (igual == 0 && checkStr > '') {
+       alert('CPF inválido.');
+       theForm.Login1.focus();
+       return (false);
+    }
+  if (theForm.par.value == 'Senha') {
+     if (confirm('A senha será enviada para seu e-mail. Confirma?')) {
+     } else {
+       return false;
+     }
+  } else {
+  if (theForm.Password1.value == '')
+  {
+    alert('Favor informar um valor para o campo Senha');
+    theForm.Password1.focus();
+    return (false);
+  }
+
+  theForm.Password1.value = Trim(  theForm.Password1.value);
+  if (theForm.Password1.value.length < 3 && theForm.Password1.value != '')
+  {
+    alert('Favor digitar pelo menos 3 posições no campo Senha');
+    theForm.Password1.focus();
+    return (false);
+  }
+
+  if (theForm.Password1.value.length > 19 && theForm.Password1.value != '')
+  {
+    alert('Favor digitar no máximo 19 posições no campo Senha');
+    theForm.Password1.focus();
+    return (false);
+  }
+
+  var checkOK = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜàáâãçéêíîóôõúû0123456789-,.()-:;[]{}*&%$#@!/ºª?<>|=_ 0123456789-.,/: ';
+  var checkStr = theForm.Password1.value;
+  var allValid = true;
+  for (i = 0;  i < checkStr.length;  i++)
+  {
+    ch = checkStr.charAt(i);
+    if ((checkStr.charCodeAt(i) != 13) && (checkStr.charCodeAt(i) != 10) && (checkStr.charAt(i) != '\\')) {
+       for (j = 0;  j < checkOK.length;  j++) {
+         if (ch == checkOK.charAt(j))
+           break;
+       }
+       if (j == checkOK.length)
+       {
+         allValid = false;
+         break;
+       }
+    }
+  }
+  if (!allValid)
+  {
+    alert('Você digitou caracteres inválidos no campo Senha.');
+    theForm.Password1.focus();
+    return (false);
+  }
+  }
+  theForm.Password.value = theForm.Password1.value;
+  theForm.Password1.value = "";
+  theForm.Botao[0].disabled = true;
+  theForm.Botao[1].disabled = true;
+  theForm.Login.value = theForm.Login1.value;
+  theForm.Login1.value = "";
+  return (true);
+}
+--></SCRIPT>
+<link rel="stylesheet" type="text/css" href="/siw/classes/menu/xPandMenu.css">
+</HEAD>
+
+<BODY bgColor=#ffffff leftMargin=0 topMargin=0 marginheight="0" marginwidth="0" onLoad="document.Form.ama.focus()">
+<!-- FIM teto (portal) -->
+<SCRIPT type=text/javascript>
+<!--
+function open_form(file,width,height) { window.open(file,'form_friend','width='+width+'px,height='+height+'px'); }
+//-->
+</SCRIPT>
+<LINK href="default_arquivos/ndefault.css" type=text/css rel=stylesheet>
+<LINK href="default_arquivos/nbarra.css" type=text/css rel=stylesheet>
+<DIV id=wrap>
+  <DIV id=btop>
+    <DIV id=btop_pref_int>
+      <table width="100%" height="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+        <tr><td colspan="2"><table width="100%" cellpadding="0" cellspacing="0">
+            <tr><td><table width="100%" cellspacing="0" cellpadding="0" height="21">
+                <tr><td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                    <tr><td height="21" align="left" valign="center"><IMG title=prefeitura.sp.gov.br height=70 alt=prefeitura.sp.gov.br src="default_arquivos/img_cidade_40.gif" width=300 border=0></td>
+                        <td height="21" align="right" valign="center">
+                          <table cellpadding=0 cellspacing=0 border=0 width="100%"><tr><td align="right">
+
+                          </table></table>
+                          <td width=5></td>
+                          </table>
+                        </td>
+                    </tr>
+                </table></td></tr>
+            </table></td></tr>
+      </table></td>
+      </table>
+    </DIV>
+  </DIV>
+  <DIV id=body-zop>
+    <DIV id=btop_sec><H1>Secretaria Municipal de Saúde</H1></DIV>
+    <DIV id=body><!-- INICIO col_esq . //-->
+      <TABLE cellSpacing=0 cellPadding=0 width=300 border=0>
+        <TBODY>
+
+          <TR>
+            <TD height=21>
+              <DIV align=center>
+              <TABLE cellSpacing=0 cellPadding=0 width="40%" border=0>
+                <TBODY>
+                <TR>
+                  <TD height=19>
+                    <DIV align=center>
+                    <form method="post" action="/siw/pda/formulario.htm" name="Form">
+                    <INPUT TYPE="hidden" NAME="Login" id="Login" >
+                    <INPUT TYPE="hidden" NAME="Password" >
+                    <INPUT TYPE="hidden" NAME="par" VALUE="Log">
+                    <INPUT TYPE="hidden" NAME="p_dbms" VALUE="1">
+                    <INPUT TYPE="hidden" NAME="p_cliente" VALUE="9614">
+                    <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+                      <TBODY>
+                      <TR>
+                        <TD align="middle">
+                          <table width="100%" height="100%" border="0">
+                            <tr><td><font size="2"><p>&nbsp;</p>
+                            <tr><td align="right" width="43%"><font size="2"><b>AMA:</b></font><td width="57%" align="left">
+                                <SELECT name="ama">
+                                <OPTION>UBS/AMA VILA ORATÓRIO
+                                <OPTION>UBS/AMA CASTRO ALVES
+                                <OPTION>UBS/AMA FAZENDA DO CARMO
+                                <OPTION>UBS/AMA PRESIDENTE JK
+                                <OPTION>UBS/AMA JARDIM CONQUISTA III
+                                <OPTION>UBS/AMA JARDIM DAS LARAN.                                                                
+                                <OPTION>AE/AMA TEXIMA
+                                <OPTION>UBS/AMA JARDIM DAS OLIVEIRAS                                                                
+                                <OPTION>UBS/AMA JARDIM NÉLIA                                                                
+                                <OPTION>UBS/AMA VILA CARMOSINA                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM HELENA                                                                
+                                <OPTION>AE/AMA GUAIANASES                                                                
+                                <OPTION>UBS/AMA JARDIM ETELVINA                                                                
+                                <OPTION>AMA MAURICE PATE                                                                
+                                <OPTION>UBS/AMA CHÁCARA CRUZ.DO SUL                                                                
+                                <OPTION>UBS/AMA JARDIM INDEP.                                                                
+                                <OPTION>UBS/AMA JARDIM TIETE I                                                                
+                                <OPTION>UBS/AMA SÍTIO CASA PINTADA                                                                
+                                <OPTION>UBS/AMA JARDIM SÃO FRAN. II                                                                
+                                <OPTION>AMA TRIAGEM TATUAPÉ                                                                
+                                <OPTION>UBS/AMA VILA GUARANI                                                                
+                                <OPTION>AMA ALEXANDRE ZAIO                                                                
+                                <OPTION>UBS/AMA VILA CALIFORNIA
+                                <OPTION>UBS/AMA JARDIM LADEIRA ROSA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM PAULISTANO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM PERI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA SITIO DO MANDAQUI                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA CITY JARAGUÁ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA PERUS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA VILA PEREIRA BARRETO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA PARQUE M. DOMITILA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA/CEO PQ ANHANGUERA I                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM JOAMAR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA VILA GUILHERME                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA VILA NOVA JAGUARÉ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>AE/AMA VILA JOANIZA
+                                <OPTION>UBS/AMA JARDIM MIRIAM
+                                <OPTION>UBS/AMA VILA MISSIONÁRIA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM ICARAÍ
+                                <OPTION>PSM/AMA D. M. ANTONIETA
+                                <OPTION>UBS/AMA DR.GERALDO DA SILVA
+                                <OPTION>UARS/AMA JARDIM ANGELA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM CAPELA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA PQ NOVO S. AMARO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>AMA TRIAGEM CAMPO LIMPO                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                <OPTION>UBS/AMA JARDIM SÃO LUIZ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA VILA PREL
+                                <OPTION>PA/UBS/AMA PARELHEIROS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA JARDIM CAMPINAS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                <OPTION>UBS/AMA SACOMÃ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                </SELECT>
+                            <tr><td align="right"><font size="2"><b>Turno:</b></font><td align="left">
+                                <select name="ama1">
+                                <OPTION>00:00 às 06:00
+                                <OPTION>06:00 às 12:00
+                                <OPTION>12:00 às 18:00
+                                <OPTION>18:00 às 24:00
+                                </SELECT>
+                            <tr><td align="right"><td align="left"><font size="2"><b><input class="STB" type="submit" value="Acessar" name="Botao">
+                                <input class="STB" type="button" value="Sair" name="Botao1" onClick="history.go(-1)">
+                            </font></B></td> </tr>
+                            <tr><td><font size="2"><p>&nbsp;</p>
+                          </table>
+                      </TD></TR>
+                      </TBODY>
+                    </TABLE>
+                    </form>
+                </TD></TR>
+              </DIV>
+              </TBODY>
+              </TABLE>
+              <tr><td><font size="2">
+        </TBODY>
+      </TABLE><!-- FOOTER para tudo-->
+    </DIV>
+    <DIV id=footer> </DIV>
+  </DIV>
+  <!-- FIM DO FOOTER -->
+  <!-- INICIO chao (portal) --><!-- FIM chao (portal) -->
+</DIV>
+</BODY>
+</HTML>

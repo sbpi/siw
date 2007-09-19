@@ -403,7 +403,7 @@ function Principal() {
   
             if (nvl($w_usuario,'')=='') {
               include_once($w_dir_volta.'classes/sp/db_getBenef.php');
-              $RS_Pessoa = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,'SBPI SUPORTE',1,null,null);
+              $RS_Pessoa = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,'SBPI SUPORTE',1,null,null,null,null,null,null,null);
               foreach($RS_Pessoa as $row) { $RS_Pessoa = $row; break; }
               $w_usuario = f($RS_Pessoa,'sq_pessoa');
             }

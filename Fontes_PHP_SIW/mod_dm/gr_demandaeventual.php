@@ -35,6 +35,7 @@ include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoDemanda.php');
 
 // =========================================================================
 //  gr_demandaeventual.php
@@ -122,6 +123,7 @@ $p_agrega        = strtoupper($_REQUEST['p_agrega']);
 $p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
 $p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
 $p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
+$p_empenho       = strtolower($_REQUEST['p_empenho']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -145,7 +147,7 @@ exit;
 // -------------------------------------------------------------------------
 function Gerencial() {
   extract($GLOBALS);
-  
+
   // Verifica se o cliente tem o módulo de acordos contratado
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
@@ -184,6 +186,11 @@ function Gerencial() {
     if ($p_solicitante>'') {
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+    } 
+    if ($p_empenho>'') {
+      $RS = db_getTipoDemanda::getInstanceOf($dbms,$p_empenho,$w_cliente,null,null,null,null,null);
+      foreach ($RS as $row) {$RS = $row; break;}
+      $w_filtro.='<tr valign="top"><td align="right">Tipo da demanda <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_unidade>'') {
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
@@ -226,7 +233,7 @@ function Gerencial() {
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null);
+        $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, null, null, $p_empenho);
 
     switch ($p_agrega) {
       case 'GRDMETAPA':
@@ -264,6 +271,10 @@ function Gerencial() {
       case 'GRDMLOCAL':
         $w_TP = $TP.' - Por UF';
         $RS1  = SortArray($RS1,'co_uf','asc');
+        break;
+      case 'GRDMTIPDEM':
+        $w_TP = $TP.' - Por tipo de demanda';
+        $RS1  = SortArray($RS1,'nm_demanda_tipo','asc');
         break;
     } 
   } 
@@ -383,7 +394,7 @@ function Gerencial() {
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
           case 'GRDMETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
-          case 'GRDMPROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');        break;
+          case 'GRDMPROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');      break;
           case 'GRDMPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
           case 'GRDMRESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
           case 'GRDMRESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
@@ -391,6 +402,7 @@ function Gerencial() {
           case 'GRDMSETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
           case 'GRDMPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
           case 'GRDMLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
+          case 'GRDMTIPDEM':    ShowHTML('      document.Form.p_empenho.value=filtro;');        break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
@@ -403,6 +415,7 @@ function Gerencial() {
           case 'GRDMSETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');           break;
           case 'GRDMPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GRDMLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
+          case 'GRDMTIPDEM':    ShowHTML('    else document.Form.p_empenho.value=\''.$_REQUEST['p_empenho'].'\';');                     break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
         $RS2  = SortArray($RS2,'ordem','asc');
@@ -429,7 +442,7 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
           case 'GRDMETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
-          case 'GRDMPROJ':      if ($_REQUEST['p_chave_pai']=='')     ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');      break;
+          case 'GRDMPROJ':      if ($_REQUEST['p_chave_pai']=='')   ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
           case 'GRDMPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
           case 'GRDMRESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
           case 'GRDMRESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
@@ -437,6 +450,7 @@ function Gerencial() {
           case 'GRDMSETOR':     if ($_REQUEST['p_unidade']=='')     ShowHTML('<input type="Hidden" name="p_unidade" value="">');      break;
           case 'GRDMPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
           case 'GRDMLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
+          case 'GRDMTIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -677,6 +691,30 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
+          case 'GRDMTIPDEM':
+            if ($w_nm_quebra!=f($row,'nm_demanda_tipo')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
+                $w_linha = $w_linha + 1;
+              } 
+              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
+              } 
+              $w_nm_quebra  = f($row,'nm_demanda_tipo');
+              $w_chave      = f($row,'sq_demanda_tipo');
+              $w_qt_quebra  = 0;
+              $t_solic      = 0;
+              $t_cad        = 0;
+              $t_tram       = 0;
+              $t_conc       = 0;
+              $t_atraso     = 0;
+              $t_aviso      = 0;
+              $t_valor      = 0;
+              $t_acima      = 0;
+              $t_custo      = 0;
+            } 
+            break;
         } 
         if ($O=='W' && $w_linha>25) {
           // Se for geração de MS-Word, quebra a página
@@ -703,6 +741,7 @@ function Gerencial() {
             case 'GRDMSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
             case 'GRDMPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));     break;
             case 'GRDMLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
+            case 'GRDMTIPDEM':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_empenho'));        break;
           } 
           $w_linha = $w_linha + 1;
         } 
@@ -724,7 +763,7 @@ function Gerencial() {
         } else {
           $t_conc       = $t_conc + 1;
           $t_totconc    = $t_totconc + 1;
-          if (f($row,'valor')<f($row,'custo_real')) {
+          if (nvl(f($row,'valor'),0)<nvl(f($row,'custo_real'),0)) {
             $t_acima    = $t_acima + 1;
             $t_totacima = $t_totacima + 1;
           } 
@@ -780,6 +819,9 @@ function Gerencial() {
     } 
     if (Nvl($p_agrega,'GRDMRESP')=='GRDMRESP') ShowHTML('          <option value="GRDMRESP" selected>Responsável');   else ShowHTML('          <option value="GRDMRESP">Responsável');
     if ($p_agrega=='GRDMSETOR')     ShowHTML('          <option value="GRDMSETOR" selected>Setor responsável');       else ShowHTML('          <option value="GRDMSETOR">Setor responsável');
+    if (substr(f($RS_Menu,'sigla'),0,3)=='GDT') {
+      if ($p_agrega=='GRDMTIPDEM')  ShowHTML('          <option value="GRDMTIPDEM" selected>Tipo da demanda');        else ShowHTML('          <option value="GRDMTIPDEM">Tipo da demanda');
+    }
     if ($p_agrega=='GRDMLOCAL')     ShowHTML('          <option value="GRDMLOCAL" selected>UF');                      else ShowHTML('          <option value="GRDMLOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
@@ -820,6 +862,10 @@ function Gerencial() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td valign="top"><b>C<u>h</u>ave:<br><INPUT ACCESSKEY="H" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
     ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+    if (substr(f($RS_Menu,'sigla'),0,3)=='GDT') {
+      ShowHTML('      <tr valign="top">');
+      SelecaoTipoDemanda('<U>T</U>ipo da demanda:','T','Selecione o tipo desta demanda',$p_empenho,null,'p_empenho',null,null);
+    }
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
@@ -889,6 +935,7 @@ function ImprimeCabecalho() {
     case 'GRDMSETOR':   ShowHTML('          <td><b>Setor responsável</td>');    break;
     case 'GRDMPRIO':    ShowHTML('          <td><b>Prioridade</td>');           break;
     case 'GRDMLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
+    case 'GRDMTIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
   } 
   ShowHTML('          <td><b>Total</td>');
   ShowHTML('          <td><b>Cad.</td>');

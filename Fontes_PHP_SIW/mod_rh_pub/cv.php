@@ -1699,7 +1699,7 @@ function Grava() {
               // Se já há um nome para o arquivo, mantém 
               $w_file = basename($Field['tmp_name']);
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.')===false));
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.')===false));
               }
               $w_tamanho = $Field['size'];
               $w_tipo    = $Field['type'];

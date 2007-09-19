@@ -109,7 +109,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     } 
     $w_html.=chr(13).'          </table></td></tr>';    
     // Outra parte
-    $RS_Query = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null);
+    $RS_Query = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'pessoa'),0),null,null,null,Nvl(f($RS,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
     foreach ($RS_Query as $row) {$RS_Query = $row; break;}
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OUTRA PARTE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (count($RS_Query)<=0) {

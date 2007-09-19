@@ -269,10 +269,12 @@ function TipoVinculo() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     if ($O=='E') {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Excluir">');
-    } else {
-      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    } 
+      ShowHTML('    <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='I') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Incluir">');
+    } elseif ($O=='A') {
+        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
+    }
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

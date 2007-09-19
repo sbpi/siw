@@ -1667,7 +1667,8 @@ function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-  if(f($RS,'envia_mail_tramite')=='S') {
+  $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,f($RS_Menu,'sigla'));
+  if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
@@ -1681,7 +1682,6 @@ function SolicMail($p_solic,$p_tipo) {
     elseif ($p_tipo==3)   $w_html.='      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE PROGRAMA</b></font><br><br><td></tr>'.$crlf;
     $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
     // Recupera os dados da ação
-    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,f($RS_Menu,'sigla'));
     $w_nome = 'Programa '.f($RSM,'titulo');
     $w_html.=$crlf.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">';
     $w_html.=$crlf.'    <table width="99%" border="0">';
@@ -2416,7 +2416,7 @@ function Grava() {
               foreach ($RS as $row) {
                 if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
                 if (!(strpos(f($row,'caminho'),'.')===false)) {
-                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strrpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
                 } else {
                   $w_file = basename(f($row,'caminho'));
                 }
@@ -2424,7 +2424,7 @@ function Grava() {
             } else {
               $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
               if (!(strpos($Field['name'],'.')===false)) {
-                $w_file = $w_file.substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,10);
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
             $w_tamanho = $Field['size'];
@@ -2492,7 +2492,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se o destino for pessoa jurídica, pede unidade da pessoa
       if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
-        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null);
+        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
         if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
           ScriptOpen('JavaScript');
@@ -2537,7 +2537,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se o destino for pessoa jurídica, pede unidade da pessoa
       if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
-        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null);
+        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
         if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
           ScriptOpen('JavaScript');
