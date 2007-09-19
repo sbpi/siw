@@ -3602,6 +3602,8 @@ SP_Oracle92/siw/sp_putatualizaetapa.prc -text
 SP_Oracle92/siw/sp_putbaseline.prc -text
 SP_Oracle92/siw/sp_putcall.prc -text
 SP_Oracle92/siw/sp_putcargo.prc -text
+SP_Oracle92/siw/sp_putcldadosanalise.prc -text
+SP_Oracle92/siw/sp_putclitemfornecedor.prc -text
 SP_Oracle92/siw/sp_putclsolicitem.prc -text
 SP_Oracle92/siw/sp_putcoagencia.prc -text
 SP_Oracle92/siw/sp_putcobanco.prc -text
@@ -3668,6 +3670,7 @@ SP_Oracle92/siw/sp_putlancamentoitem.prc -text
 SP_Oracle92/siw/sp_putlancamentorubrica.prc -text
 SP_Oracle92/siw/sp_putlcarquivo.prc -text
 SP_Oracle92/siw/sp_putlccriterio.prc -text
+SP_Oracle92/siw/sp_putlcdadosanalise.prc -text
 SP_Oracle92/siw/sp_putlcfinalidade.prc -text
 SP_Oracle92/siw/sp_putlcfonte.prc -text
 SP_Oracle92/siw/sp_putlcfonterecurso.prc -text
