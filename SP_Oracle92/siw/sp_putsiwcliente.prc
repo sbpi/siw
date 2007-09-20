@@ -15,7 +15,11 @@ create or replace procedure SP_PutSiwCliente
     p_aviso_expiracao     in number,
     p_maximo_tentativas   in number,
     p_agencia_padrao      in number,
-    p_segmento            in number
+    p_segmento            in number,
+    p_mail_tramite        in varchar2,
+    p_mail_alerta         in varchar2,
+    p_georeferencia       in varchar2,
+    p_googlemaps_key      in varchar2
    ) is
    w_existe number(18);
    w_chave  number(18);
@@ -82,13 +86,15 @@ begin
            ( sq_pessoa,           sq_cidade_padrao,     ativacao, 
              tipo_autenticacao,   tamanho_min_senha,    tamanho_max_senha, 
              dias_vig_senha,      dias_aviso_expir,     maximo_tentativas, 
-             sq_agencia_padrao 
+             sq_agencia_padrao,   envia_mail_tramite,   envia_mail_alerta,
+             georeferencia,       googlemaps_key
            ) 
         values  
            ( w_chave,             p_cidade,             sysdate,
              1,                   p_minimo_senha,       p_maximo_senha,
              p_dias_vigencia,     p_aviso_expiracao,    p_maximo_tentativas,
-             p_agencia_padrao
+             p_agencia_padrao,    p_mail_tramite,       p_mail_alerta,
+             p_georeferencia,     p_googlemaps_key
            );
            
         -- Grava tipos de vínculo do cliente a partir do padrão definido para o segmento onde atua
@@ -202,7 +208,11 @@ begin
              tamanho_max_senha    = p_maximo_senha,
              dias_vig_senha       = p_dias_vigencia,
              dias_aviso_expir     = p_aviso_expiracao,
-             maximo_tentativas     = p_maximo_tentativas
+             maximo_tentativas     = p_maximo_tentativas,
+             envia_mail_tramite    = p_mail_tramite,
+             envia_mail_alerta     = p_mail_alerta,
+             georeferencia         = p_georeferencia,
+             googlemaps_key        = p_googlemaps_key
          where sq_pessoa      = p_chave;
          
          -- Atualiza segmento do cliente
@@ -256,4 +266,3 @@ begin
    End If;
 end SP_PutSiwCliente;
 /
-

@@ -50,6 +50,9 @@ begin
          padrao               = p_padrao
       where sq_pessoa_endereco= p_chave;
    Elsif p_operacao = 'E' Then
+      -- Remove as entradas do menu para o endereço indicado
+      delete siw_menu_endereco a where a.sq_pessoa_endereco = p_chave;
+      
       -- Exclui registro
       delete co_pessoa_endereco where sq_pessoa_endereco = p_chave;
    End If;

@@ -8,11 +8,13 @@ begin
    If p_restricao is null Then
       -- Recupera todos os endereços, independente do tipo
       open p_result for 
-         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-                d.nome nm_pais
+         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a.padrao, a.logradouro, a.sq_cidade, 
+                a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
+                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+                b.nome||', '||c.nome||', '||d.nome as google,
+                b.nome || '-' || c.co_uf as cidade, 
+                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+                d.nome as nm_pais
            from co_pessoa_endereco            a
                 inner   join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco)
                 inner   join co_cidade        b  on (a.sq_cidade        = b.sq_cidade)
@@ -26,10 +28,11 @@ begin
       -- Recupera apenas os endereços físicos
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-                d.nome nm_pais
+                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
+                b.nome||', '||c.nome||', '||d.nome as google,
+                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+                d.nome as nm_pais
            from co_pessoa_endereco            a
                 inner   join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
                                                      a1.internet        = 'N' and
@@ -47,10 +50,10 @@ begin
       -- Recupera apenas os endereços de e-mail
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-                d.nome nm_pais
+                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
+                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+                d.nome as nm_pais
            from co_pessoa_endereco              a
                 inner     join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
                                                        a1.email           = 'S'
@@ -66,10 +69,10 @@ begin
       -- Recupera apenas os endereços Web
       open p_result for 
         select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-               a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-               a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-               (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-               d.nome nm_pais
+               a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+               a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
+               (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+               d.nome as nm_pais
           from co_pessoa_endereco              a
                inner     join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
                                                       a1.internet        = 'S'
@@ -85,10 +88,10 @@ begin
       open p_result for 
            -- Recupera a lista de endereços de localização da unidade
           select a.sq_pessoa_endereco, a.sq_cidade, a.logradouro,
-                 c.nome || ' - ' || e.co_uf cidade, 
+                 c.nome || ' - ' || e.co_uf as cidade, 
                  l.nome, l.telefone, l.telefone2, l.ramal, l.fax, l.sq_localizacao, 
                  p.nome nm_pais, 
-                 case l.ativo when 'S' then'Sim' else 'Não' end ativo
+                 case l.ativo when 'S' then'Sim' else 'Não' end as ativo
             from co_pessoa_endereco          a
                  inner   join co_cidade      c on (a.sq_cidade          = c.sq_cidade)
                    inner join co_uf          e on (c.co_uf              = e.co_uf and
@@ -113,10 +116,10 @@ begin
       -- Recupera os endereços de email e internet
       open p_result for  
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-                d.nome nm_pais
+                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
+                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+                d.nome as nm_pais
            from co_pessoa_endereco              a
                 inner     join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
                                                        (a1.email          = 'S' or
@@ -134,10 +137,11 @@ begin
       -- Recupera todos os endereços, independente do tipo
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
-                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' endereco,
-                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf cidade, 
-                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) checked,
-                d.nome nm_pais
+                a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
+                a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
+                b.nome||', '||c.nome||', '||d.nome as google,
+                (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
+                d.nome as nm_pais
            from co_pessoa_endereco              a
                 inner     join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
                                                        a.padrao           = 'S'
