@@ -15,7 +15,8 @@ create or replace procedure SP_PutCLDados
     p_financeiro_unico      in varchar2 default null,
     p_data_homologacao      in date     default null,
     p_data_diario_oficial   in date     default null,
-    p_pagina_diario_oficial in number   default null
+    p_pagina_diario_oficial in number   default null,
+    p_ordem                 in number   default null
    ) is
 begin
    If p_operacao = 'D' Then
@@ -46,6 +47,12 @@ begin
       Update cl_solicitacao set
          sq_lcsituacao            = p_sq_lcsituacao
       Where sq_siw_solicitacao = p_chave;
+   ElsIf p_operacao = 'O' Then
+      -- Atualiza a ordem dos itens de uma licitação
+      Update cl_solicitacao_item set
+         ordem = p_ordem
+      Where sq_solicitacao_item = p_chave;
    End If;
+   
 end SP_PutCLDados;
 /

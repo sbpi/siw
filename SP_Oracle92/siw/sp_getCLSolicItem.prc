@@ -11,6 +11,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
@@ -173,21 +174,18 @@ begin
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
-   ElsIf p_restricao = 'VALIDACAOC' or p_restricao = 'VALIDACAOP' Then
+   ElsIf p_restricao = 'VALIDACAOC' Then
       -- Verifica a quantidade de pesquisas de preco inseridas para cada item da licitação
       open p_result for 
          select b.sq_material, count(c.sq_item_fornecedor) as qtd
            from siw_solicitacao                  a
                 inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                   left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
-                                                       ((p_restricao = 'VALIDACAOC' and 'S' = c.pesquisa) or 
-                                                        (p_restricao = 'VALIDACAOP' and 'N' = c.pesquisa)
-                                                       )
-                                                      )
+                                                       'N'                   = c.pesquisa)
           where a.sq_siw_solicitacao = p_solicitacao
-         having count(c.sq_item_fornecedor) < 2
+             having count(c.sq_item_fornecedor) < 2
          group by b.sq_material;
-   Elsif p_restricao = 'VALIDACAOG' Then
+   Elsif p_restricao = 'VALIDACAOG' or p_restricao = 'VALIDACAOP' Then
       -- Verifica a quantidade de propostas inseridas para cada item da licitação
       open p_result for 
          select b.sq_material, count(c.sq_item_fornecedor) as qtd
