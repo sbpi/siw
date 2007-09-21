@@ -76,16 +76,6 @@ begin
                 p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc 
            from dual
          );
-      If p_prorrogacao = 'N' Then
-         -- Verifica as datas de inicio e fim de uma aditivc que não é de prorrogacao
-         select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
-         select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
-         update ac_acordo_aditivo 
-            set inicio  = w_inicio_aditivo,
-                fim     = w_fim_aditivo,
-                duracao = null
-          where sq_acordo_aditivo = w_chave;
-      End If;         
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update ac_acordo_aditivo
@@ -111,17 +101,6 @@ begin
              parcela_acrescida  = p_parcela_acrescida,
              sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
-       
-      If p_prorrogacao = 'N' Then
-         -- Verifica as datas de inicio e fim de um aditivc que não é de prorrogação
-         select min(a.inicio) into w_inicio_aditivo from ac_acordo_parcela a where a.inicio >= p_inicio and a.sq_siw_solicitacao = p_chave_aux;
-         select max(a.fim)    into w_fim_aditivo    from ac_acordo_parcela a where a.fim    <= p_fim    and a.sq_siw_solicitacao = p_chave_aux;
-         update ac_acordo_aditivo 
-            set inicio  = w_inicio_aditivo,
-                fim     = w_fim_aditivo,
-                duracao = null
-          where sq_acordo_aditivo = p_chave;
-      End If;       
    Elsif p_operacao = 'E' Then
       If w_prorrogacao = 'N' Then
          -- Atualiza o valor da parcela e remove o vínculo com o aditivo

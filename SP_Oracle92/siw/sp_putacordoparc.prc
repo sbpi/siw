@@ -29,6 +29,7 @@ create or replace procedure SP_PutAcordoParc
    w_meses_parc  number(4);
    w_dias_1      number(5);
    w_dias_n      number(5);
+   w_dias        number(18);
    w_per_ini     date;
    w_per_fim     date;
    
@@ -333,32 +334,35 @@ begin
       select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
       select * into w_parcela from ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;
       
-      If to_char(w_parcela.inicio,'dd') = 1 and to_char(w_parcela.fim,'dd') = to_char(last_day(w_parcela.fim),'dd') Then
-         -- Parcela cobre todo o mês
-         w_valor := w_aditivo.parcela_acrescida;
-      Elsif to_char(w_parcela.inicio,'dd') <> 1 and to_char(w_parcela.fim,'dd') = to_char(last_day(w_parcela.fim),'dd') Then
-         -- Parcela termina no último dia mas não começa no primeiro dia
-         w_ultimo := 30;
-         If to_char(last_day(w_parcela.fim),'dd') < 30 Then 
-            w_ultimo := to_char(last_day(w_parcela.inicio),'dd'); 
-         End If;
-         w_dias_1 := to_date(w_ultimo||'/'||to_char(w_parcela.inicio,'mm/yyyy'),'dd/mm/yyyy') - w_parcela.inicio + 1 + (30-w_ultimo);
-         If w_dias_1 <= 0 Then 
-            w_dias_1 := 1; 
-         End If;
-         w_valor := round((w_dias_1/30) * w_aditivo.parcela_acrescida,2);
-      Elsif to_char(w_parcela.inicio,'dd') = 1 and to_char(w_parcela.fim,'dd') <> to_char(last_day(w_parcela.fim),'dd') Then
-         -- Parcela começa no primeiro dia mas não termina no último di
-         w_dias_n := w_parcela.fim - to_date('01/'||to_char(w_parcela.fim,'mm/yyyy'),'dd/mm/yyyy') + 1;
-         If w_dias_n > 30 Then w_dias_n := 30; End If;
-         w_valor := round((w_dias_n/30) * w_aditivo.parcela_acrescida,2);
+      
+      If to_char(w_aditivo.inicio,'mmyyyy') = to_char(w_aditivo.fim,'mmyyyy') Then
+         -- O mês incorpora todo o valor do aditivo
+         w_valor := w_aditivo.valor_acrescimo;
       Else
-         -- Início e fim da parcela não coincidem com início e fim do mês
-         w_dias_n := w_parcela.fim - w_parcela.inicio + 1;
-         If w_dias_n > 30 Then w_dias_n := 30; End If;
-         w_valor := round((w_dias_n/30) * w_aditivo.parcela_acrescida,2);
+         w_dias := w_aditivo.fim - w_aditivo.inicio;
+         If to_char(w_aditivo.inicio,'dd') > 1 and to_char(w_aditivo.inicio,'mm') = to_char(p_per_ini,'mm') Then
+            -- Parcela termina no último dia mas não começa no primeiro dia
+            w_ultimo := 30;
+            If to_char(last_day(p_per_fim),'dd') < 30 Then 
+               w_ultimo := to_char(last_day(p_per_ini),'dd'); 
+            End If;
+            w_dias_1 := to_date(w_ultimo||'/'||to_char(p_per_ini,'mm/yyyy'),'dd/mm/yyyy') - w_aditivo.inicio + 1 + (30-w_ultimo);
+            If w_dias_1 <= 0 Then 
+               w_dias_1 := 1; 
+            End If;
+            w_valor := round(w_dias_1 * (w_aditivo.valor_acrescimo/w_dias),2);
+         Elsif w_aditivo.fim <> p_per_fim and to_char(w_aditivo.fim,'mm') = to_char(p_per_fim,'mm') Then
+            -- Parcela começa no primeiro dia mas não termina no último dia
+            w_dias_n := w_aditivo.fim - p_per_ini + 1;
+            If w_dias_n > 30 Then w_dias_n := 30; End If;
+            w_valor := round(w_dias_n * (w_aditivo.valor_acrescimo/w_dias),2);
+         Else
+            -- O mês incorpora todo o valor mensal do aditivo
+            w_valor := w_aditivo.parcela_acrescida;
+         End If;
       End If;
 
+      -- Atualiza o valor da parcela
       update ac_acordo_parcela
          set sq_acordo_aditivo = p_aditivo,
              valor             = valor_inicial + valor_reajuste + w_valor,

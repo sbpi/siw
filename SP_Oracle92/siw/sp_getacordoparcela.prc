@@ -40,7 +40,11 @@ begin
             and (p_chave_aux         is null or (p_chave_aux         is not null and a.sq_acordo_parcela  = p_chave_aux))
             and (p_aditivo           is null or (p_aditivo           is not null and c.sq_acordo_aditivo  = p_aditivo))
             and ((p_restricao <> 'PERIODO'    and p_restricao <> 'PARCELA' and p_restricao is not null) or
-                  ((p_restricao = 'PERIODO'   and (a.inicio between p_dt_ini and p_dt_fim) or (a.fim    between p_dt_ini and p_dt_fim)) or
+                  ((p_restricao = 'PERIODO'   and (a.inicio between p_dt_ini and p_dt_fim) or 
+                                                  (a.fim    between p_dt_ini and p_dt_fim) or
+                                                  (p_dt_ini between a.inicio and a.fim) or
+                                                  (p_dt_fim between a.inicio and a.fim)
+                   ) or
                    (p_restricao is null       and (p_dt_ini is null or (p_dt_ini is not null and b.vencimento between p_dt_ini and p_dt_fim))) or
                    (p_restricao = 'PARCELA'   and a.sq_acordo_aditivo is null)
                   )
