@@ -118,7 +118,14 @@ begin
                 d.prioridade,         d.aviso_prox_conc,             d.dias_aviso,
                 d.sq_especificacao_despesa,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
+                case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
+                d1.nome as nm_espec_despesa, d1.codigo as cd_espec_despesa,
+                d2.nome as nm_eoindicador,
+                d3.nome as nm_lcfonterecurso, d3.codigo as cd_lcfonterecurso,
+                d4.nome as nm_lcmodalidade,
+                d5.nome as nm_lcjulgamento, d5.item tipo_julgamento,
+                d6.nome as nm_lcsituacao,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,     e.sigla sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
@@ -145,6 +152,12 @@ begin
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       inner          join cl_solicitacao       d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
+                        left         join ct_especificacao_despesa d1 on (d.sq_especificacao_despesa = d1.sq_especificacao_despesa)
+                        left         join eo_indicador         d2 on (d.sq_eoindicador           = d2.sq_eoindicador)
+                        left         join lc_fonte_recurso     d3 on (d.sq_lcfonte_recurso       = d3.sq_lcfonte_recurso)
+                        left         join lc_modalidade        d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)
+                        left         join lc_julgamento        d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)
+                        left         join lc_situacao          d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)
                         inner        join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and

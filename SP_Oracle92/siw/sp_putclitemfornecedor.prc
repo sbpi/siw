@@ -3,12 +3,10 @@ create or replace procedure SP_PutCLItemFornecedor
     p_cliente                  in number    default null,
     p_chave                    in number    default null,
     p_chave_aux                in number    default null,
-    p_material                 in number    default null,
     p_fornecedor               in number    default null,
     p_inicio                   in date      default null,
     p_fim                      in date      default null,
     p_valor                    in number    default null,
-    p_quantidade               in number    default null,
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
     p_embalagem                in varchar2  default null,
@@ -16,20 +14,27 @@ create or replace procedure SP_PutCLItemFornecedor
     p_vencedor                 in varchar2  default null,
     p_pesquisa                 in varchar2  default null
    ) is
+   w_material   number(18);
+   w_quantidade number(18,2);
   cursor c_itens is
     select x.sq_material from cl_solicitacao_item x where x.sq_siw_solicitacao = p_chave;
 begin
    If p_operacao = 'I' or p_operacao = 'A' Then
+      -- Recupera o material do item
+      select sq_material, quantidade into w_material, w_quantidade from cl_solicitacao_item where sq_solicitacao_item = p_chave_aux;
+      
       -- Insere registro na tabela CL_ITEM_FORNECEDOR
       insert into cl_item_fornecedor
         (sq_item_fornecedor,         sq_solicitacao_item, sq_material, fornecedor,   inicio,     fim,          valor_unidade,
          valor_item,                 ordem,               vencedor,    pesquisa,     fabricante, marca_modelo, embalagem)
       values
-        (sq_item_fornecedor.nextval, p_chave_aux,         p_material,  p_fornecedor, p_inicio,     p_fim,          p_valor, 
-         (p_valor*p_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem);
+        (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     p_fim,          p_valor, 
+         (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem);
       
       -- Atualiza a tabela CL_MATERIAL
-      sp_ajustapesquisamaterial(p_cliente,p_material);
+      If p_pesquisa = 'S' Then
+         sp_ajustapesquisamaterial(p_cliente,w_material);
+      End If;
         
    Elsif p_operacao = 'E' Then
       -- Exclui todos os registros de uma solicitacao
@@ -39,9 +44,11 @@ begin
                                          from cl_solicitacao_item x
                                         where x.sq_siw_solicitacao = p_chave);
       -- Ajusta os dados dos materiais que têm pesquisa válida
-      for crec in c_itens loop
-         sp_ajustapesquisamaterial(p_cliente,crec.sq_material);
-      end loop;
+      If p_pesquisa = 'S' Then
+         for crec in c_itens loop
+            sp_ajustapesquisamaterial(p_cliente,crec.sq_material);
+         end loop;
+      End If;
    End If;
 end SP_PutCLItemFornecedor;
 /

@@ -66,7 +66,9 @@ begin
                 e.nome as nm_cc,
                 g.item_pedido,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
-                dados_solic(h.sq_siw_solicitacao) as dados_pai
+                dados_solic(h.sq_siw_solicitacao) as dados_pai,
+                i.qtd_cotacao,
+                j.qtd_proposta
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -75,6 +77,20 @@ begin
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
                   inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
+                  left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
+                                  from siw_solicitacao                  x
+                                       inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
+                                         left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
+                                                                              'S'                   = z.pesquisa)
+                                group by y.sq_solicitacao_item
+                               )                        i on (a.sq_solicitacao_item  = i.sq_solicitacao_item)
+                  left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_proposta
+                                  from siw_solicitacao                  x
+                                       inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
+                                         left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
+                                                                              'N'                   = z.pesquisa)
+                                group by y.sq_solicitacao_item
+                               )                        j on (a.sq_solicitacao_item  = j.sq_solicitacao_item)                               
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
@@ -157,16 +173,83 @@ begin
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
-   ElsIf p_restricao = 'VALIDACAO' Then
+   ElsIf p_restricao = 'VALIDACAOC' or p_restricao = 'VALIDACAOP' Then
       -- Verifica a quantidade de pesquisas de preco inseridas para cada item da licitação
       open p_result for 
          select b.sq_material, count(c.sq_item_fornecedor) as qtd
            from siw_solicitacao                  a
                 inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-                  left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item)
+                  left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
+                                                       ((p_restricao = 'VALIDACAOC' and 'S' = c.pesquisa) or 
+                                                        (p_restricao = 'VALIDACAOP' and 'N' = c.pesquisa)
+                                                       )
+                                                      )
           where a.sq_siw_solicitacao = p_solicitacao
          having count(c.sq_item_fornecedor) < 2
          group by b.sq_material;
+   Elsif p_restricao = 'VALIDACAOG' Then
+      -- Verifica a quantidade de propostas inseridas para cada item da licitação
+      open p_result for 
+         select b.sq_material, count(c.sq_item_fornecedor) as qtd
+           from siw_solicitacao                  a
+                inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
+                                                       'N'                   = c.pesquisa)
+                inner   join cl_solicitacao      d on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+          where a.sq_siw_solicitacao = p_solicitacao
+         group by b.sq_material;   
+   
+   ElsIf p_restricao = 'PROPOSTA' or p_restricao = 'COTACAO' Then
+      -- Recuperas as propostas de um certame
+      open p_result for 
+         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+                a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
+                b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
+                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
+                b.pesquisa_data, b.pesquisa_validade, 
+                b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
+                case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
+                c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                e.nome as nm_cc,
+                g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
+                g.fornecedor,
+                h.nome_resumido nm_fornecedor,
+                i.qtd_proposta
+           from cl_solicitacao_item                     a
+                inner     join cl_material              b  on (a.sq_material         = b.sq_material)
+                inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
+                inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
+                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
+                inner     join cl_parametro             f  on (b.cliente             = f.cliente)
+                left      join cl_item_fornecedor       g  on (a.sq_solicitacao_item = g.sq_solicitacao_item and
+                                                               ((p_restricao = 'COTACAO'  and 'S' = g.pesquisa) or 
+                                                                (p_restricao = 'PROPOSTA' and 'N' = g.pesquisa)
+                                                               )
+                                                              )
+                  left    join co_pessoa                h on (g.fornecedor           = h.sq_pessoa)
+                left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_proposta
+                                from siw_solicitacao                  x
+                                     inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
+                                       left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
+                                                                            ((p_restricao = 'COTACAO'  and 'S' = z.pesquisa) or 
+                                                                             (p_restricao = 'PROPOSTA' and 'N' = z.pesquisa)
+                                                                            )
+                                                                           )                              
+                              group by y.sq_solicitacao_item
+                             )                           i on (a.sq_solicitacao_item  = i.sq_solicitacao_item)                                                                             
+          where (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao));
    End If;
 end sp_getCLSolicItem;           
 /

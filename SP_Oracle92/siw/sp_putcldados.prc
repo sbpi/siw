@@ -1,0 +1,51 @@
+create or replace procedure SP_PutCLDados
+   (p_operacao              in varchar2,
+    p_chave                 in number,
+    p_sq_lcmodalidade       in number   default null,    
+    p_numero_processo       in varchar2 default null,
+    p_numero_certame        in varchar2 default null,
+    p_tipo_reajuste         in number   default null,
+    p_indice_base           in varchar2 default null,
+    p_sq_eoindicador        in number   default null,
+    p_limite_variacao       in number   default null,
+    p_sq_lcfonte_recurso    in number   default null,
+    p_sq_espec_despesa      in number   default null,
+    p_sq_lcjulgamento       in number   default null,
+    p_sq_lcsituacao         in number   default null,
+    p_financeiro_unico      in varchar2 default null,
+    p_data_homologacao      in date     default null,
+    p_data_diario_oficial   in date     default null,
+    p_pagina_diario_oficial in number   default null
+   ) is
+begin
+   If p_operacao = 'D' Then
+      -- Atualiza a tabela da licitação com os dados da análise
+      Update cl_solicitacao set
+         sq_lcmodalidade          = p_sq_lcmodalidade,
+         processo                 = p_numero_processo,
+         numero_certame           = p_numero_certame,
+         tipo_reajuste            = p_tipo_reajuste,
+         indice_base              = p_indice_base,
+         sq_eoindicador           = p_sq_eoindicador,
+         limite_variacao          = p_limite_variacao,
+         sq_lcfonte_recurso       = p_sq_lcfonte_recurso,
+         sq_especificacao_despesa = p_sq_espec_despesa,
+         sq_lcjulgamento          = p_sq_lcjulgamento,
+         sq_lcsituacao            = p_sq_lcsituacao,
+         financeiro_unico         = p_financeiro_unico
+      Where sq_siw_solicitacao = p_chave;
+   ElsIf p_operacao = 'C' Then
+      -- Atualiza a tabela da licitação com os dados da conclusão
+      Update cl_solicitacao set
+         data_homologacao         = p_data_homologacao,
+         data_diario_oficial      = p_data_diario_oficial,
+         pagina_diario_oficial    = p_pagina_diario_oficial
+      Where sq_siw_solicitacao = p_chave;
+   ElsIf p_operacao = 'S' Then
+      -- Atualiza a tabela da licitação com os dados da conclusão
+      Update cl_solicitacao set
+         sq_lcsituacao            = p_sq_lcsituacao
+      Where sq_siw_solicitacao = p_chave;
+   End If;
+end SP_PutCLDados;
+/
