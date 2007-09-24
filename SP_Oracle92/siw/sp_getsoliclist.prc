@@ -1244,14 +1244,15 @@ begin
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
-            --and (p_assunto        is null or (p_assunto     is not null and acentos(d.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
+            and (p_assunto        is null or (p_assunto     is not null and d4.sq_assunto        = p_assunto))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_palavra        is null or (p_palavra     is not null and d.numero_documento   like '%'||p_palavra||'%'))
+            and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
+            and (p_empenho        is null or (p_empenho     is not null and d.numero_original    = p_empenho))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
@@ -1260,18 +1261,7 @@ begin
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
-                )
-            and ((instr(p_restricao,'PROJ')    = 0 and
-                  instr(p_restricao,'ETAPA')   = 0 and
-                  instr(p_restricao,'PROP')    = 0 and
-                  instr(p_restricao,'RESPATU') = 0 and
-                  substr(p_restricao,4,2)      <>'CC'
-                 ) or 
-                 ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
-                  (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
-                  (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
-                 )
-                );                
+                );
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
