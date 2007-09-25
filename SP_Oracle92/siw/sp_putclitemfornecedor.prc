@@ -40,6 +40,7 @@ begin
       -- Exclui todos os registros de uma solicitacao
       delete cl_item_fornecedor a
        where a.fornecedor          = p_fornecedor
+         and a.pesquisa            = p_pesquisa
          and a.sq_solicitacao_item in (select x.sq_solicitacao_item 
                                          from cl_solicitacao_item x
                                         where x.sq_siw_solicitacao = p_chave);

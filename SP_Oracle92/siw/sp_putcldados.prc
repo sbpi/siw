@@ -1,5 +1,5 @@
 create or replace procedure SP_PutCLDados
-   (p_operacao              in varchar2,
+   (p_restricao             in varchar2,
     p_chave                 in number,
     p_sq_lcmodalidade       in number   default null,    
     p_numero_processo       in varchar2 default null,
@@ -19,7 +19,7 @@ create or replace procedure SP_PutCLDados
     p_ordem                 in number   default null
    ) is
 begin
-   If p_operacao = 'D' Then
+   If p_restricao = 'DADOS' Then
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
@@ -35,24 +35,23 @@ begin
          sq_lcsituacao            = p_sq_lcsituacao,
          financeiro_unico         = p_financeiro_unico
       Where sq_siw_solicitacao = p_chave;
-   ElsIf p_operacao = 'C' Then
+   ElsIf p_restricao = 'CONCLUSAO' Then
       -- Atualiza a tabela da licitação com os dados da conclusão
       Update cl_solicitacao set
          data_homologacao         = p_data_homologacao,
          data_diario_oficial      = p_data_diario_oficial,
          pagina_diario_oficial    = p_pagina_diario_oficial
       Where sq_siw_solicitacao = p_chave;
-   ElsIf p_operacao = 'S' Then
-      -- Atualiza a tabela da licitação com os dados da conclusão
+   ElsIf p_restricao = 'SITUACAO' Then
+      -- Atualiza a situação da licitação
       Update cl_solicitacao set
          sq_lcsituacao            = p_sq_lcsituacao
       Where sq_siw_solicitacao = p_chave;
-   ElsIf p_operacao = 'O' Then
+   ElsIf p_restricao = 'ORDENACAO' Then
       -- Atualiza a ordem dos itens de uma licitação
       Update cl_solicitacao_item set
          ordem = p_ordem
       Where sq_solicitacao_item = p_chave;
    End If;
-   
 end SP_PutCLDados;
 /

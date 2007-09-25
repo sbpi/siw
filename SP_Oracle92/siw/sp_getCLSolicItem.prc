@@ -46,6 +46,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
@@ -101,6 +102,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
@@ -132,11 +134,12 @@ begin
                                                           'AT'                  = coalesce(h.sigla,'-'))
           where a.quantidade_autorizada > 0
             and a.sq_solicitacao_item   not in (select x.item_pedido from cl_solicitacao_item_vinc x);
-   ElsIf p_restricao = 'FORNECEDOR' Then
+   ElsIf p_restricao = 'FORNECEDORC' or p_restricao = 'FORNECEDORP' Then
       -- Recupera materiais e serviços
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
@@ -170,7 +173,11 @@ begin
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
                   inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
                 left      join cl_item_fornecedor       i on (a.sq_solicitacao_item  = i.sq_solicitacao_item and
-                                                              p_material             = i.fornecedor)                  
+                                                              p_material             = i.fornecedor          and
+                                                              ((p_restricao          = 'FORNECEDORC' and 'S' = i.pesquisa) or 
+                                                               (p_restricao          = 'FORNECEDORP' and 'N' = i.pesquisa)
+                                                               )
+                                                              )                  
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
@@ -181,7 +188,7 @@ begin
            from siw_solicitacao                  a
                 inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                   left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
-                                                       'N'                   = c.pesquisa)
+                                                       'S'                   = c.pesquisa)
           where a.sq_siw_solicitacao = p_solicitacao
              having count(c.sq_item_fornecedor) < 2
          group by b.sq_material;
@@ -202,6 +209,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
