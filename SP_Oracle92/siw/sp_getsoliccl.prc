@@ -116,7 +116,7 @@ begin
                 d.pagina_diario_oficial, d.financeiro_unico,         d.decisao_judicial,
                 d.numero_ata,         d.numero_certame,              d.arp,
                 d.prioridade,         d.aviso_prox_conc,             d.dias_aviso,
-                d.sq_especificacao_despesa,
+                d.sq_especificacao_despesa,                          d.interno,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
