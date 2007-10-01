@@ -17,26 +17,26 @@ create or replace procedure SP_GetBenef
    ) is
 begin
    open p_result for 
-     select a.sq_pessoa, a.nome nm_pessoa, a.nome_resumido, a.sq_pessoa_pai, 
-            a.cliente, a.fornecedor,
-            c.sq_tipo_pessoa, c.nome nm_tipo_pessoa,
-            d.sq_tipo_vinculo, d.nome nm_tipo_vinculo, d.interno, d.ativo vinculo_ativo,
-            e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero nr_conta,
+     select a.sq_pessoa, a.nome as nm_pessoa, a.nome_resumido, a.sq_pessoa_pai, 
+            a.cliente, a.fornecedor, 
+            c.sq_tipo_pessoa, c.nome as nm_tipo_pessoa,
+            d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.ativo as vinculo_ativo,
+            e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,
             e.nm_agencia, e.cd_banco, e.nm_banco,
             b.sq_pessoa_fax, b.nr_fax,
             f.sq_pessoa_telefone, f.ddd, f.nr_telefone,
             l.sq_pessoa_celular, l.nr_celular,
             g.sq_pessoa_endereco, g.logradouro, g.complemento, g.bairro, g.cep,
-            h.sq_cidade, h.nome nm_cidade, h.co_uf, h.sq_pais,
-            m.padrao pd_pais, m.nome nm_pais,
+            h.sq_cidade, h.nome as nm_cidade, h.co_uf, h.sq_pais,
+            m.padrao as pd_pais, m.nome as nm_pais,
             i.email,
-            coalesce(j.cpf,n.username) cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
+            coalesce(j.cpf,n.username) as cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
             j.sq_pais_passaporte, j.sexo,
-            k.cnpj, k.inscricao_estadual,
-            o.nome nm_pais_passaporte,
-            case sexo when 'F' then 'Feminino' else 'Masculino' end nm_sexo,
+            k.cnpj, k.inscricao_estadual, k.inicio_atividade, k.sede,
+            o.nome as nm_pais_passaporte,
+            case sexo when 'F' then 'Feminino' else 'Masculino' end as nm_sexo,
             n.sq_unidade as sq_unidade_benef,
-            p.sigla||'/'||q.sigla nm_unidade_benef,
+            p.sigla||'/'||q.sigla as nm_unidade_benef,
             case when k.cnpj is not null 
                  then k.cnpj
                  else case when j.cpf is not null 

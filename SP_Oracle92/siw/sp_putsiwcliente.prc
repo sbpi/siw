@@ -22,7 +22,7 @@ create or replace procedure SP_PutSiwCliente
     p_googlemaps_key      in varchar2
    ) is
    w_existe number(18);
-   w_chave  number(18);
+   w_chave  number(18) := p_chave;
    w_chave1 number(18);
    w_chave2 number(18);
    w_chave3 number(18);
