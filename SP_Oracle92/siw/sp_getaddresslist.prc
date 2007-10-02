@@ -32,17 +32,20 @@ begin
                 a.padrao, a.logradouro, a.sq_cidade, b.nome || '-' || c.co_uf as cidade, 
                 b.nome||', '||c.nome||', '||d.nome as google,
                 (select count(*) from siw_menu_endereco where sq_pessoa_endereco = a.sq_pessoa_endereco) as checked,
-                d.nome as nm_pais
-           from co_pessoa_endereco            a
-                inner   join co_tipo_endereco a1 on (a.sq_tipo_endereco = a1.sq_tipo_endereco and
-                                                     a1.internet        = 'N' and
-                                                     a1.email           = 'N'
-                                                    )
-                inner   join co_cidade        b  on (a.sq_cidade        = b.sq_cidade)
-                  inner join co_uf            c  on (b.co_uf            = c.co_uf and
-                                                     b.sq_pais          = c.sq_pais
-                                                    )
-                  inner join co_pais          d  on (b.sq_pais          = d.sq_pais)
+                d.nome as nm_pais,
+                f.sq_siw_coordenada, f.nome as nm_coordenada, f.latitude, f.longitude, f.icone, f.tipo
+           from co_pessoa_endereco                   a
+                inner   join co_tipo_endereco        a1 on (a.sq_tipo_endereco  = a1.sq_tipo_endereco and
+                                                            a1.internet         = 'N' and
+                                                            a1.email            = 'N'
+                                                           )
+                inner   join co_cidade               b  on (a.sq_cidade         = b.sq_cidade)
+                  inner join co_uf                   c  on (b.co_uf             = c.co_uf and
+                                                            b.sq_pais           = c.sq_pais
+                                                           )
+                  inner join co_pais                 d  on (b.sq_pais           = d.sq_pais)
+                left    join siw_coordenada_endereco e on (a.sq_pessoa_endereco = e.sq_pessoa_endereco)
+                  left  join siw_coordenada          f on (e.sq_siw_coordenada  = f.sq_siw_coordenada)
           where a.sq_pessoa = p_cliente
            and (p_chave is null or (p_chave is not null and a.sq_pessoa_endereco = p_chave))          
          order by acentos(a.logradouro);
