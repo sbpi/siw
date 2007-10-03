@@ -134,6 +134,45 @@ begin
                                                           'AT'                  = coalesce(h.sigla,'-'))
           where a.quantidade_autorizada > 0
             and a.sq_solicitacao_item   not in (select x.item_pedido from cl_solicitacao_item_vinc x);
+   ElsIf p_restricao = 'ARPITEM' Then
+      -- Recupera materiais e serviços
+      open p_result for 
+         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+                a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
+                a.ordem,
+                b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
+                b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
+                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
+                b.pesquisa_data, b.pesquisa_validade, 
+                b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
+                case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case b.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
+                c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                e.nome as nm_cc,
+                dados_solic(g.sq_siw_solicitacao) as dados_solic
+           from cl_solicitacao_item                a
+                inner     join cl_material         b  on (a.sq_material         = b.sq_material)
+                inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
+                inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
+                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
+                inner     join cl_parametro        f  on (b.cliente             = f.cliente)
+                inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao)
+                  inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
+                                                          'AT'                  <> coalesce(h.sigla,'-'))
+                inner     join cl_solicitacao      i  on (a.sq_siw_solicitacao  = i.sq_siw_solicitacao and
+                                                          'S'                   = i.arp)
+          where a.quantidade > 0
+            and a.sq_solicitacao_item   not in (select x.item_pedido from cl_solicitacao_item_vinc x);            
    ElsIf p_restricao = 'FORNECEDORC' or p_restricao = 'FORNECEDORP' Then
       -- Recupera materiais e serviços
       open p_result for 

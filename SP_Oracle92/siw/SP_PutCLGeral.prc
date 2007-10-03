@@ -24,6 +24,7 @@ create or replace procedure SP_PutCLGeral
     p_numero_original     in varchar2  default null,
     p_data_recebimento    in date      default null,
     p_arp                 in varchar2  default null,
+    p_interno             in varchar2  default null,
     p_chave_nova          out number
    ) is
    w_arq       varchar2(4000) := ', ';
@@ -82,12 +83,12 @@ begin
          Insert into cl_solicitacao
             ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
               data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp
+              arp,                 interno           
             )
          (select
               w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
               p_data_recebimento,   p_aviso,         w_dias,             a.sq_unidade_pai,
-              p_arp
+              p_arp,                p_interno
            from cl_unidade a
           where a.sq_unidade = p_unidade
          );
@@ -95,12 +96,12 @@ begin
          Insert into cl_solicitacao
             ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
               data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp
+              arp,                 interno
             )
          (select
               w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
               p_data_recebimento,   p_aviso,         w_dias,             p_unidade,
-              p_arp
+              p_arp,                p_interno
            from dual
          );
       
@@ -143,14 +144,14 @@ begin
                  data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
                  limite_variacao,       data_homologacao,         data_diario_oficial,
                  pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame,
-                 arp
+                 arp,                   interno
                 ) = 
          (select sq_especie_documento,  sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
                  sq_lcmodalidade,       sq_lcjulgamento,          sq_lcsituacao,  numero_original, 
                  data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
                  limite_variacao,       data_homologacao,         data_diario_oficial,
                  pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame,
-                 arp
+                 arp,                   interno
             from cl_solicitacao
            where sq_siw_solicitacao = p_copia
          )
@@ -183,12 +184,12 @@ begin
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
               data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade,
-              arp
+              arp,              interno
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            w_dias,            a.sq_unidade_pai,
-              p_arp
+              p_arp,              p_interno
            from cl_unidade a
           where a.sq_unidade = p_unidade
          )
@@ -197,12 +198,12 @@ begin
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
               data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade,
-              arp
+              arp,              interno
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            w_dias,            p_unidade,
-              p_arp
+              p_arp,              p_interno
            from dual
          )
          where sq_siw_solicitacao = p_chave;      
