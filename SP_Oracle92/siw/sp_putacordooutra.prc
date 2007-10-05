@@ -86,12 +86,7 @@ begin
       select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa     where nome = 'Jurídica';
       select count(*)       into w_existe         from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
       If w_existe > 0 Then
-         select a.sq_pessoa into w_chave_pessoa 
-           from co_pessoa_juridica   a
-                inner join co_pessoa b on (a.sq_pessoa = b.sq_pessoa)
-          where a.cliente = p_chave_aux 
-            and a.cnpj = p_cnpj 
-            and b.fornecedor = 'S';
+         select sq_pessoa into w_chave_pessoa from co_pessoa_juridica where cliente = p_chave_aux and cnpj = p_cnpj;
       Else
          w_chave_pessoa := 0;
       End If;
