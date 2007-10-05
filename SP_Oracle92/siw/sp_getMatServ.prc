@@ -7,6 +7,7 @@ create or replace procedure sp_getMatServ
     p_codigo        in varchar2  default null,
     p_nome          in varchar   default null,
     p_ativo         in varchar2  default null,
+    p_catalogo      in varchar2  default null,
     p_restricao     in varchar2  default null,
     p_result        out sys_refcursor) is
 begin
@@ -43,6 +44,7 @@ begin
             and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
+            and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo));
    Elsif p_restricao = 'COMPRA' Then
       -- Recupera materiais e serviços não vinculados a compra
@@ -77,6 +79,7 @@ begin
             and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
+            and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo));            
    ElsIf p_restricao = 'EXISTE' Then
       -- Verifica se o nome ou a codigo do material ou serviço já foi inserida
@@ -127,6 +130,7 @@ begin
             and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
+            and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo));
    End If;
 end sp_getMatServ;

@@ -221,28 +221,24 @@ begin
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
    ElsIf p_restricao = 'VALIDACAOC' Then
-      -- Verifica a quantidade de pesquisas de preco inseridas para cada item da licitação
+      -- Verifica a quantidade de pesquisas de preco válidas para cada item da licitação
       open p_result for 
-         select b.sq_material, count(c.sq_item_fornecedor) as qtd
-           from siw_solicitacao                  a
-                inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-                  left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
-                                                       'S'                   = c.pesquisa)
+         select b.sq_material, c.nome, c.codigo_interno, count(d.sq_item_fornecedor) as qtd
+           from siw_solicitacao                    a
+                inner     join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner   join cl_material         c on (b.sq_material         = c.sq_material)
+                    left  join cl_item_fornecedor  d on (c.sq_material         = d.sq_material and
+                                                         'S'                   = d.pesquisa
+                                                        )
           where a.sq_siw_solicitacao = p_solicitacao
-             having count(c.sq_item_fornecedor) < 2
-         group by b.sq_material;
-   Elsif p_restricao = 'VALIDACAOG' or p_restricao = 'VALIDACAOP' Then
+         group by b.sq_material, c.nome, c.codigo_interno;
+   Elsif p_restricao = 'VALIDACAOG' Then
       -- Verifica a quantidade de propostas inseridas para cada item da licitação
       open p_result for 
-         select b.sq_material, count(c.sq_item_fornecedor) as qtd
-           from siw_solicitacao                  a
-                inner   join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-                  left  join cl_item_fornecedor  c on (b.sq_solicitacao_item = c.sq_solicitacao_item and
-                                                       'N'                   = c.pesquisa)
-                inner   join cl_solicitacao      d on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
-          where a.sq_siw_solicitacao = p_solicitacao
-         group by b.sq_material;   
-   
+         select a.qtd as qt_itens, b.qtd as qt_fornecedores, c.qtd as qt_propostas
+           from (select count(*) as qtd from cl_solicitacao_item where sq_siw_solicitacao = p_solicitacao) a,
+                (select count(distinct(fornecedor)) as qtd from cl_solicitacao_item x join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item and y.pesquisa = 'N') where sq_siw_solicitacao = p_solicitacao) b,
+                (select count(y.sq_item_fornecedor) as qtd from cl_solicitacao_item x join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item and y.pesquisa = 'N') where sq_siw_solicitacao = p_solicitacao) c;
    ElsIf p_restricao = 'PROPOSTA' or p_restricao = 'COTACAO' Then
       -- Recuperas as propostas de um certame
       open p_result for 

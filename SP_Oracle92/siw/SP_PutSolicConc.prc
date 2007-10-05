@@ -14,6 +14,43 @@ create or replace procedure SP_PutSolicConc
    ) is
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+   
+   cursor c_vencedor is
+       select x.*
+         from (select b.sq_solicitacao_item, b.sq_material, c.fornecedor, sum(c.valor_item) as valor
+                 from siw_solicitacao                  a
+                      inner   join cl_solicitacao_item b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                        left  join cl_item_fornecedor  c  on (b.sq_solicitacao_item = c.sq_solicitacao_item and
+                                                              'N'                   = c.pesquisa)
+                      inner   join cl_solicitacao      d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+                where a.sq_siw_solicitacao = p_chave
+               group by b.sq_solicitacao_item, b.sq_material, c.fornecedor
+               order by 1,2,3
+               ) x,
+               (select b.sq_solicitacao_item, b.sq_material, min(c.valor_item) as valor
+                 from siw_solicitacao                  a
+                      inner   join cl_solicitacao_item b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                        left  join cl_item_fornecedor  c  on (b.sq_solicitacao_item = c.sq_solicitacao_item and
+                                                              'N'                   = c.pesquisa)
+                      inner   join cl_solicitacao      d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+                where a.sq_siw_solicitacao = p_chave
+               group by b.sq_solicitacao_item, b.sq_material
+               order by 1,2,3
+               ) y
+         where x.sq_solicitacao_item = y.sq_solicitacao_item
+           and x.sq_material         = y.sq_material
+           and x.valor               = y.valor;
+
+  cursor c_itens is
+       select b.sq_solicitacao_item, b.sq_material, max(c.valor_unidade) as maximo, min(c.valor_unidade) as minimo, avg(c.valor_unidade) as medio
+         from siw_solicitacao                  a
+              inner   join cl_solicitacao_item b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                left  join cl_item_fornecedor  c  on (b.sq_solicitacao_item = c.sq_solicitacao_item and
+                                                      'N'                   = c.pesquisa)
+              inner   join cl_solicitacao      d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+        where a.sq_siw_solicitacao = p_chave
+       group by b.sq_solicitacao_item, b.sq_material
+       order by 1,2,3;
 begin
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
@@ -42,6 +79,24 @@ begin
                        )
    Where sq_siw_solicitacao = p_chave;
 
+   -- Grava os itens de uma licitação, indicando o vencedor
+   for crec in c_vencedor loop
+       update cl_item_fornecedor 
+          set vencedor = 'S' 
+       where sq_solicitacao_item = crec.sq_solicitacao_item
+         and sq_material         = crec.sq_material
+         and fornecedor          = crec.fornecedor;
+   end loop;
+   
+   -- Grava os itens de uma licitação, indicando os preços mínimo, médio e máximo
+   for crec in c_itens loop
+       update cl_solicitacao_item a set
+          a.preco_menor = crec.minimo,
+          a.preco_maior = crec.maximo,
+          a.preco_medio = crec.medio
+       where sq_solicitacao_item = crec.sq_solicitacao_item;
+   end loop;
+   
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave
