@@ -25,6 +25,7 @@ create or replace procedure SP_PutCLGeral
     p_data_recebimento    in date      default null,
     p_arp                 in varchar2  default null,
     p_interno             in varchar2  default null,
+    p_especie_documento   in number    default null,
     p_chave_nova          out number
    ) is
    w_arq       varchar2(4000) := ', ';
@@ -83,12 +84,12 @@ begin
          Insert into cl_solicitacao
             ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
               data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp,                 interno           
+              arp,                 interno,          sq_especie_documento 
             )
          (select
               w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
               p_data_recebimento,   p_aviso,         w_dias,             a.sq_unidade_pai,
-              p_arp,                p_interno
+              p_arp,                p_interno,       p_especie_documento
            from cl_unidade a
           where a.sq_unidade = p_unidade
          );
@@ -96,12 +97,12 @@ begin
          Insert into cl_solicitacao
             ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
               data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp,                 interno
+              arp,                 interno,          sq_especie_documento
             )
          (select
               w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
               p_data_recebimento,   p_aviso,         w_dias,             p_unidade,
-              p_arp,                p_interno
+              p_arp,                p_interno,       p_especie_documento
            from dual
          );
       
@@ -183,13 +184,13 @@ begin
       If w_unidade_pai is not null Then
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
-              data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade,
-              arp,              interno
+              data_recebimento, aviso_prox_conc,      sq_unidade,
+              arp,              interno,              sq_especie_documento
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
-              p_data_recebimento, p_aviso,            w_dias,            a.sq_unidade_pai,
-              p_arp,              p_interno
+              p_data_recebimento, p_aviso,            a.sq_unidade_pai,
+              p_arp,              p_interno,          p_especie_documento
            from cl_unidade a
           where a.sq_unidade = p_unidade
          )
@@ -197,13 +198,13 @@ begin
       Else 
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
-              data_recebimento, aviso_prox_conc,      dias_aviso,        sq_unidade,
-              arp,              interno
+              data_recebimento, aviso_prox_conc,      sq_unidade,
+              arp,              interno,              sq_especie_documento
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
-              p_data_recebimento, p_aviso,            w_dias,            p_unidade,
-              p_arp,              p_interno
+              p_data_recebimento, p_aviso,            p_unidade,
+              p_arp,              p_interno,          p_especie_documento
            from dual
          )
          where sq_siw_solicitacao = p_chave;      

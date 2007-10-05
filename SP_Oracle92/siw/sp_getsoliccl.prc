@@ -126,6 +126,7 @@ begin
                 d4.nome as nm_lcmodalidade,
                 d5.nome as nm_lcjulgamento, d5.item tipo_julgamento,
                 d6.nome as nm_lcsituacao,
+                d7.nome as nm_especie_documento,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,     e.sigla sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
@@ -158,6 +159,7 @@ begin
                         left         join lc_modalidade        d4 on (d.sq_lcmodalidade          = d4.sq_lcmodalidade)
                         left         join lc_julgamento        d5 on (d.sq_lcjulgamento          = d5.sq_lcjulgamento)
                         left         join lc_situacao          d6 on (d.sq_lcsituacao            = d6.sq_lcsituacao)
+                        left         join pa_especie_documento d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                           left       join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and

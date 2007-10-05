@@ -281,6 +281,20 @@ begin
                inner   join pd_usuario      b on (a.sq_pessoa       = b.sq_pessoa)
           where a.sq_pessoa_pai   = p_cliente
             and (p_chave is null or (p_chave is not null and a.sq_pessoa = p_chave));
+   ElsIf p_restricao = 'CLUSUARIO' Then
+      -- Recupera os usuários do sistema que estiverem cadastrados na PD_UNIDADE
+      open p_result for   
+        select a.sq_pessoa chave, a.nome_resumido, a.nome_resumido_ind,
+               d.sq_unidade, d.sigla sg_unidade, d.nome nm_unidade, 
+               d.sigla||'('||e.nome||')' nm_local,
+               e.ramal
+          from co_pessoa                    a
+               left    join sg_autenticacao c on (a.sq_pessoa       = c.sq_pessoa)
+                 left  join  eo_unidade     d on (c.sq_unidade      = d.sq_unidade)
+                 left  join eo_localizacao  e on (c.sq_localizacao  = e.sq_localizacao)
+               inner   join cl_usuario      b on (a.sq_pessoa       = b.sq_pessoa)
+          where a.sq_pessoa_pai   = p_cliente
+            and (p_chave is null or (p_chave is not null and a.sq_pessoa = p_chave));            
    Else
       Loop
          l_item  := Trim(substr(l_tipo,1,Instr(l_tipo,',')-1));
