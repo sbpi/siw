@@ -42,7 +42,10 @@ create or replace procedure SP_PutSolicConc
            and x.valor               = y.valor;
 
   cursor c_itens is
-       select b.sq_solicitacao_item, b.sq_material, max(c.valor_unidade) as maximo, min(c.valor_unidade) as minimo, avg(c.valor_unidade) as medio
+       select b.sq_solicitacao_item, b.sq_material, 
+              coalesce(max(c.valor_unidade),0) as maximo, 
+              coalesce(min(c.valor_unidade),0) as minimo, 
+              coalesce(avg(c.valor_unidade),0) as medio
          from siw_solicitacao                  a
               inner   join cl_solicitacao_item b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                 left  join cl_item_fornecedor  c  on (b.sq_solicitacao_item = c.sq_solicitacao_item and

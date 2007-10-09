@@ -38,6 +38,7 @@ create or replace procedure SP_PutProjetoGeral
     p_chave_nova          out number
    ) is
    w_arq       varchar2(4000) := ', ';
+   w_coord     varchar2(4000) := ', ';
    w_chave     number(18);
    w_chave1    number(18);
    w_log_sol   number(18);
@@ -90,6 +91,9 @@ create or replace procedure SP_PutProjetoGeral
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
+
+   cursor c_coordenadas is
+      select sq_siw_coordenada from siw_coordenada_solicitacao where sq_siw_solicitacao = p_chave;
 begin
    If p_operacao <> 'I' Then -- Inclusão
       -- Remove as vinculações existentes para a solicitação
@@ -428,7 +432,16 @@ begin
          end loop;
          w_arq := substr(w_arq, 3, length(w_arq));
 
+         -- Monta string com a chave das coordenadas ligadas à solicitação informada
+         for crec in c_coordenadas loop
+            w_coord := w_coord || crec.sq_siw_coordenada;
+         end loop;
+         w_coord := substr(w_coord, 3, length(w_coord));
+
          -- Remove os registros vinculados ao projeto
+         delete siw_coordenada_solicitacao  where sq_siw_solicitacao = p_chave;
+         delete siw_coordenada              where sq_siw_coordenada in (w_coord);
+
          delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
          delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
 
