@@ -367,7 +367,7 @@ begin
   where a.sq_pessoa = p_usuario
     and a.sq_modulo = w_modulo;
  If w_existe > 0 or w_gestor_sistema = 'S' Then
-    Result := Result + 8;
+    Result := Result + 6;
  Else
     -- Verifica se é titular ou substituto de alguma unidade responsável por etapa
     select count(*) into w_existe
