@@ -5,7 +5,7 @@ create or replace procedure sp_getMatServ
     p_tipo_material in number    default null,
     p_sq_cc         in number    default null,
     p_codigo        in varchar2  default null,
-    p_nome          in varchar   default null,
+    p_nome          in varchar2  default null,
     p_ativo         in varchar2  default null,
     p_catalogo      in varchar2  default null,
     p_restricao     in varchar2  default null,
