@@ -114,6 +114,7 @@ begin
           sq_solic_pai     = p_solic_pai,
           sq_plano         = p_plano,
           solicitante      = p_solicitante,
+          sq_unidade       = p_unidade,
           inicio           = p_inicio,
           fim              = p_fim,
           valor            = p_valor,
