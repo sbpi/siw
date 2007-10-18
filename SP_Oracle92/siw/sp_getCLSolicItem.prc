@@ -223,6 +223,10 @@ begin
                                                           'S'                   = i.arp)
           where a.quantidade > 0
             and a.sq_solicitacao_item not in (select x.item_pedido from cl_solicitacao_item_vinc x)
+            and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material = p_tipo_material))
+            and (p_sq_cc         is null or (p_sq_cc         is not null and b.sq_cc            = p_sq_cc))
+            and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno   like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(b.nome)    like '%'||acentos(p_nome)||'%'))                        
             and ((p_invalida      is null and 0 = 1) or (p_invalida      is not null and p_invalida = 'S' and b.pesquisa_validade<sysdate-1))
    UNION
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
@@ -303,6 +307,10 @@ begin
                                                           'S'                   = i.arp)
           where a.quantidade > 0
             and a.sq_solicitacao_item not in (select x.item_pedido from cl_solicitacao_item_vinc x)
+            and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material = p_tipo_material))
+            and (p_sq_cc         is null or (p_sq_cc         is not null and b.sq_cc            = p_sq_cc))
+            and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno   like '%'||p_codigo||'%'))
+            and (p_nome          is null or (p_nome          is not null and acentos(b.nome)    like '%'||acentos(p_nome)||'%'))            
             and ((p_branco is null and 0 = 1) or (p_branco is not null and p_branco = 'S' and b.pesquisa_validade is null));
    ElsIf p_restricao = 'FORNECEDORC' or p_restricao = 'FORNECEDORP' Then
       -- Recupera materiais e serviços
