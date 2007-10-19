@@ -1331,7 +1331,14 @@ begin
                                          then f1.titulo
                                          else case when h.sq_siw_solicitacao is not null
                                                    then b.codigo_interno
-                                                   else null
+                                                   else case when i.sq_siw_solicitacao is not null
+                                                             then i.sq_siw_solicitacao||' - '||
+                                                                  case when length(i.assunto) > 50
+                                                                       then substr(replace(i.assunto,chr(13)||chr(10),' '),1,50)||'...'
+                                                                       else replace(i.assunto,chr(13)||chr(10),' ')
+                                                                  end
+                                                             else null
+                                                        end
                                               end
                                     end
                           end
@@ -1370,6 +1377,7 @@ begin
                                group by x1.sq_solic_pai
                               )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
           where a.sq_menu        = p_restricao
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
@@ -1378,6 +1386,7 @@ begin
                  (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
+                 (a1.sigla = 'DM' and b3.sigla = 'PR') or
                  (b3.sigla = 'PE') or
                  (b3.sigla = 'CO')
                 )
