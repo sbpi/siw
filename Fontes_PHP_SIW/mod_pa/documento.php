@@ -49,6 +49,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
 include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
+include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once('visualdocumento.php');
 include_once('visualGR.php');
 // =========================================================================
@@ -183,30 +184,21 @@ function Inicial() {
       if ($p_numero_orig>'') {
         $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Nº original do documento<td>[<b>'.$p_numero_orig.'</b>]';
       }
-      if ($p_prazo>'') $w_filtro=$w_filtro.' <tr valign="top"><td align="right">Data de término<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
         $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       }
       if ($p_unidade>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade de origem <td>[<b>'.f($RS,'nome').'</b>]';
       }
-      if ($p_usu_resp>'') {
-        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      if ($p_assunto>'') {
+       $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$p_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
+       foreach($RS as $row){$RS=$row; break;}
+       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_uorg_resp>'') {
-        $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
-        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
-      }
-      if ($p_parcerias>'')       $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Parcerias externas<td>[<b>'.$p_parcerias.'</b>]';
-      if ($p_assunto>'')          $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]';
-      if ($p_internas>'')          $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Parcerias internas <td>[<b>'.$p_internas.'</b>]';
-      if ($p_ini_i>'')            $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')            $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
-      if ($p_atraso=='S')         $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
-      if ($p_ativo=='S')  $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas programas com restrição</b>]';
+      if ($p_ini_i>'')            $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data recebimento entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_ini_i>'')            $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data limite conclusão entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
       if ($w_filtro>'')           $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PADCAD');
@@ -215,16 +207,16 @@ function Inicial() {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
-          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-          null, null, $p_empenho, $p_processo);
+          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+          $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+          null, null, $p_empenho, $p_numero_orig);
     } else {      
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
-          $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-          null, null, $p_empenho, $p_processo);
+          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+          $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+          null, null, $p_empenho, $p_numero_orig);
     } 
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -245,14 +237,12 @@ function Inicial() {
     CheckBranco();
     FormataData();
     SaltaCampo();
+    FormataProtocolo();
     ValidateOpen('Validacao');
     if (!(strpos('CP',$O)===false)) {
       if ($P1!=1 || $O=='C') {
         // Se não for cadastramento ou se for cópia
-        Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
-        Validate('p_parcerias','Proponente externo','','','2','90','1','');
-        Validate('p_assunto','Assunto','','','2','90','1','1');
-        Validate('p_internas','Palavras-chave','','','2','90','1','1');
+        Validate('p_numero_doc','Número de protocolo','1','','20','20','','0123456789./-');
         Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
         Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
         ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
@@ -459,31 +449,21 @@ function Inicial() {
     if ($P1!=1 || $O=='C') {
       // Se não for cadastramento ou se for cópia
       // Recupera dados da opçãa açãos
-      ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('      <tr>');
-      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-      SelecaoProgramaPPA('Programa <u>P</u>PA:','P',null,$w_cliente,$w_ano,$p_cd_programa,'p_cd_programa',null,null,$w_menu,null,null);
-      ShowHTML('      </tr>');
-      ShowHTML('          </table>');
       ShowHTML('      <tr valign="top">');
-      ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+      ShowHTML('          <td><b><u>P</u>rotocolo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_numero_doc" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$p_numero_doc.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+      ShowHTML('          <td valign="top"><b>Nº original do documento:<br><INPUT '.$w_Disabled.' class="STI" type="text" name="p_numero_orig" size="40" maxlength="90" value="'.$p_numero_orig.'"></td>');
       ShowHTML('      <tr valign="top">');
-      SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pelo programa na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
-      SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
+      SelecaoAssuntoRadio('Assun<u>t</u>o:','T','Clique na lupa para selecionar o assunto do documento.',$p_assunto,null,'p_assunto','FOLHA',null);
       ShowHTML('      <tr valign="top">');
-      SelecaoPessoa('Responsável atua<u>l</u>:','L','Selecione o responsável atual pela ação na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
-      SelecaoUnidade('<U>S</U>etor atual:','S','Selecione a unidade onde a ação se encontra na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
-      ShowHTML('          <td valign="top"><b>Propo<U>n</U>ente externo:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_parcerias" size="25" maxlength="90" value="'.$p_parcerias.'"></td>');
+      SelecaoPessoa('<u>P</u>essoa de origem:','P','Selecione a pessoa de origem.',$p_solicitante,null,'p_solicitante','USUARIOS');
+      SelecaoUnidade('<U>U</U>nidade de origem:','U',null,$p_unidade,null,'p_unidade',null,null);
       ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><b>A<U>s</U>sunto:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
-      ShowHTML('          <td valign="top" colspan=2><b>Pala<U>v</U>ras-chave:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_internas" size="25" maxlength="90" value="'.$p_internas.'"></td>');
-      ShowHTML('      <tr>');
-      ShowHTML('          <td valign="top"><b>Iní<u>c</u>io entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
-      ShowHTML('          <td valign="top"><b><u>T</u>érmino entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('          <td valign="top"><b>Data de recebimento entre:</b><br><input '.$w_Disabled.' type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('          <td valign="top"><b>Data de limite para conclusão entre:</b><br><input '.$w_Disabled.' type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
       if ($O!='C') {
         // Se não for cópia
         ShowHTML('      <tr>');
-        ShowHTML('          <td valign="top"><b>Exibe somente ações em atraso?</b><br>');
+        ShowHTML('          <td valign="top"><b>Exibe somente protocolos em atraso?</b><br>');
         if ($p_atraso=='S') ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
         else                ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
         SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase',null,null);
@@ -1985,7 +1965,7 @@ function Tramitacao() {
     SaltaCampo();
     CheckBranco();
     ValidateOpen('Validacao');
-    Validate('p_protocolo','Número de protocolo','1','','20','20','','0123456789./-');
+    Validate('p_protocolo','Número de protocolo','1','','20','20','','0123456789./-'); 
     Validate('p_ini','Início','DATA','','10','10','','0123456789/');
     Validate('p_fim','Término','DATA','','10','10','','0123456789/');
     ShowHTML('  if ((theForm.p_ini.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_ini.value == \'\' && theForm.p_fim.value != \'\')) {');

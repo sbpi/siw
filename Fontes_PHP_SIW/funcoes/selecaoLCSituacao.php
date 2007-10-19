@@ -1,11 +1,11 @@
 <?
-include_once($w_dir_volta.'classes/sp/db_getLCCriterio.php');
+include_once($w_dir_volta.'classes/sp/db_getLCSituacao.php');
 // =========================================================================
-// Montagem da seleção de julgamentos
+// Montagem da seleção de situações de um certame
 // -------------------------------------------------------------------------
-function selecaoLCJulgamento($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoLCSituacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getLCCriterio::getInstanceOf($dbms,null,$w_cliente,null,'S',null,null,$restricao);
+  $RS = db_getLCSituacao::getInstanceOf($dbms,null,$w_cliente,null,'S',null,null,$restricao);
   $RS = SortArray($RS,'nome','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

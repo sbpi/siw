@@ -69,6 +69,7 @@ $conImgSmNormal = 'images/BallGreen.png';
 $conImgSmAviso  = 'images/BallYellow.png';
 $conImgSmAtraso = 'images/BallRed.png';
 
+$conImgGeo      = 'images/icone/earth_16.png';
 
 //---------------------------Definições de banco
 

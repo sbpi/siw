@@ -90,7 +90,7 @@ $p_cidade       = strtoupper($_REQUEST['p_cidade']);
 $p_pais         = strtoupper($_REQUEST['p_pais']);
 $p_nome         = strtoupper($_REQUEST['p_nome']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_ordena       = strtoupper($_REQUEST['p_ordena']);
+$p_ordena       = $_REQUEST['p_ordena'];
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
@@ -295,7 +295,7 @@ function Geral() {
   $p_data_fim       = strtoupper($_REQUEST['p_data_fim']);
   $p_solicitante    = strtoupper($_REQUEST['p_solicitante']);
   $p_numero         = strtoupper($_REQUEST['p_numero']);
-  $p_ordena         = strtoupper($_REQUEST['p_ordena']);
+  $p_ordena         = $_REQUEST['p_ordena'];
   $p_localizacao    = strtoupper($_REQUEST['p_localizacao']);
   $p_lotacao        = strtoupper($_REQUEST['p_lotacao']);
   $p_nome           = strtoupper($_REQUEST['p_nome']);
@@ -324,8 +324,12 @@ function Geral() {
     $w_sq_banco             = $_REQUEST['w_sq_banco'];
     $w_sq_agencia           = $_REQUEST['w_sq_agencia'];
     $w_sq_segmento          = $_REQUEST['w_sq_segmento'];
+    $w_mail_tramite         = $_REQUEST['w_mail_tramite'];
+    $w_mail_alerta          = $_REQUEST['w_mail_alerta'];
+    $w_georeferencia        = $_REQUEST['w_georeferencia'];
+    $w_googlemaps_key       = $_REQUEST['w_googlemaps_key'];
   } else {
-    if (!(strpos('IAEV',$O)===false)) {
+    if (strpos('IAEV',$O)!==false) {
       // Recupera os dados do cliente a partir do CNPJ
       $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
       if (count($RS)>0) {
@@ -343,6 +347,7 @@ function Geral() {
           $w_inscricao_estadual     = f($RS,'inscricao_estadual');
           $w_inicio_atividade       = FormataDataEdicao(f($RS,'inicio_atividade'));
           $w_sede                   = f($RS,'sede');
+          $w_sq_segmento            = f($RS,'sq_segmento');
           $w_sq_tipo_vinculo        = f($RS,'sq_tipo_vinculo');
           $w_pais                   = f($RS,'sq_pais');
           $w_uf                     = f($RS,'co_uf');
@@ -354,9 +359,31 @@ function Geral() {
           $w_dias_aviso_expiracao   = f($RS,'dias_aviso_expir');
           $w_sq_banco               = f($RS,'sq_banco');
           $w_sq_agencia             = f($RS,'sq_agencia');
-          $w_sq_segmento            = f($RS,'sq_segmento');
+          $w_mail_tramite           = f($RS,'envia_mail_tramite');
+          $w_mail_alerta            = f($RS,'envia_mail_alerta');
+          $w_georeferencia          = f($RS,'georeferencia');
+          $w_googlemaps_key         = f($RS,'googlemaps_key');
         } 
-      } 
+      } elseif ($O=='I') {
+        // Recupera os dados do beneficiário em co_pessoa
+        $RS = db_getBenef::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
+        if (count($RS)>0) {
+          foreach($RS as $row) { $RS = $row; break; }
+          $w_sq_pessoa              = f($RS,'sq_pessoa');
+          $w_nome                   = f($RS,'nm_pessoa');
+          $w_nome_resumido          = f($RS,'nome_resumido');
+          $w_inscricao_estadual     = f($RS,'inscricao_estadual');
+          $w_inicio_atividade       = FormataDataEdicao(f($RS,'inicio_atividade'));
+          $w_sede                   = f($RS,'sede');
+          $w_sq_segmento            = f($RS,'sq_segmento');
+          $w_sq_tipo_vinculo        = f($RS,'sq_tipo_vinculo');
+          $w_pais                   = f($RS,'sq_pais');
+          $w_uf                     = f($RS,'co_uf');
+          $w_cidade                 = f($RS,'sq_cidade');
+          $w_sq_banco               = f($RS,'sq_banco');
+          $w_sq_agencia             = f($RS,'sq_agencia');
+        }
+      }
     } 
   } 
   Cabecalho();
@@ -398,6 +425,14 @@ function Geral() {
     Validate('w_maximo_tentativas','Máximo tentativas','1','1','1','2','','1');
     Validate('w_dias_vigencia_senha','Dias vigência','1','1','1','2','','1');
     Validate('w_dias_aviso_expiracao','Aviso expiração','1','1','1','2','','1');
+    Validate('w_googlemaps_key','Chave do Google Maps','1','',1,2000,'1','1');
+    ShowHTML('  if (theForm.w_georeferencia[0].checked) {');
+    ShowHTML('     if (theForm.w_googlemaps_key.value=="") {');
+    ShowHTML('        alert("Para usar o geo-referenciamento, indique a chave do Google Maps!");');
+    ShowHTML('        theForm.w_googlemaps_key.focus();');
+    ShowHTML('        return false;');
+    ShowHTML('     }');
+    ShowHTML('  }');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   } 
   ValidateClose();
@@ -413,7 +448,7 @@ function Geral() {
     } 
   } elseif ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('EV',$O)!==false) {
     BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
@@ -423,8 +458,8 @@ function Geral() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) {
+  if (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
       if ($O=='V') $w_Erro = Validacao($w_sq_solicitacao,$SG);
     } 
@@ -470,13 +505,7 @@ function Geral() {
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
       ShowHTML('          <tr><td valign="top"><b><u>I</u>nscrição estadual:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inscricao_estadual" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_inscricao_estadual.'" title="Inscrição estadual do cliente."></td>');
       ShowHTML('              <td valign="top"><b>Início da a<u>t</u>ividade:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_inicio_atividade" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_atividade.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de início das atividades do cliente, conforme contrato social."></td>');
-      ShowHTML('              <td valign="top" title="Marcar "Sim" se o CNPJ for o principal do cliente."><b>Sede?</b><br>');
-      if ($w_sede=='S' || $w_sede=='') {
-        ShowHTML('              <input class="str" type="RADIO" name="w_sede" value="S" CHECKED> Sim <input class="str" type="RADIO" name="w_sede" value="N"> Não ');
-      } else {
-        ShowHTML('              <input class="str" type="RADIO" name="w_sede" value="S"> Sim <input class="str" type="RADIO" name="w_sede" value="N" CHECKED> Não ');
-      } 
-      ShowHTML('              </td>');
+      MontaRadioSN('Sede',$w_sede,'w_sede','Indique SIM se o CNPJ for o principal do cliente.');
       ShowHTML('          </table>');
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -507,6 +536,28 @@ function Geral() {
       ShowHTML('              <td valign="top" colspan=2><b>Máximo <U>t</U>entativas:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="w_maximo_tentativas" size="2" maxlength="2" value="'.$w_maximo_tentativas.'" title="Máximo de tentativas inválidas antes de bloquear o acesso do usuário"></td>');
       ShowHTML('          <tr><td valign="top"><b>Dias <U>v</U>igência:<br><INPUT ACCESSKEY="V" '.$w_Disabled.' class="sti" type="text" name="w_dias_vigencia_senha" size="2" maxlength="2" value="'.$w_dias_vigencia_senha.'" title="Número de dias de vigência da senha de acesso"></td>');
       ShowHTML('              <td valign="top"><b><U>D</U>ias de aviso:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="w_dias_aviso_expiracao" size="2" maxlength="2" value="'.$w_dias_aviso_expiracao.'" title="Dias de aviso para o usuário antes que sua senha de acesso tenha sua vigência expirada"></td>');
+      ShowHTML('          </table>');
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração de e-mail</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td>Os dados abaixo serão utilizados nas rotinas de envio de e-mail, definindo se os envios automáticos ocorrerão e em que situação.</td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td><table border="0" width="100%">');
+      ShowHTML('          <tr valign="top">');
+      MontaRadioSN('<b>Envia e-mails nas tramitações de documentos?</b>',$w_mail_tramite,'w_mail_tramite','Indique SIM se desejar o envio de e-mails na tramitação e conclusão de documentos.');
+      MontaRadioSN('<b>Envia e-mails de alerta?</b>',$w_mail_alerta,'w_mail_alerta','Indique SIM se desejar o envio de e-mails de alerta de atraso ou de proximidade da data de conclusão.');
+      ShowHTML('          </table>');
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração do serviço de Geo-Referenciamento</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td>Os dados deste bloco informam ao sistema se o cliente deve ter acesso às funcionalidades de geo-referenciamento e, neste caso, a chave de acesso ao Web Service do Google Maps.</td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td><table border="0" width="100%">');
+      ShowHTML('          <tr valign="top">');
+      MontaRadioSN('<b>Ativa geo-referenciamento?</b>',$w_georeferencia,'w_georeferencia','Indique SIM se desejar ativar o geo-referenciamento para este cliente.');
+      ShowHTML('      <tr><td><b><u>C</u>have do Google Maps:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_googlemaps_key" class="STI" ROWS=5 cols=75 title="Informe a chave de acesso ao Web Service do Google Maps">'.$w_googlemaps_key.'</TEXTAREA></td>');
       ShowHTML('          </table>');
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -599,6 +650,9 @@ function Enderecos() {
     $w_nome                 = f($RS,'pessoa');
   } 
 
+  // Recupera os dados do cliente
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
+  
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -673,6 +727,9 @@ function Enderecos() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do endereço?\');">EX</A>&nbsp');
+        if (f($row,'email')=='N' && f($row,'internet')=='N' && f($RS_Cliente,'georeferencia')=='S') {
+          ShowHTML('          <A class="hl" HREF="mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=ENDERECO&w_sq_pessoa='.$w_sq_pessoa.'&w_chave='.f($row,'sq_pessoa_endereco').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
+        }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -681,20 +738,18 @@ function Enderecos() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
-      // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
-      if (count($RS)>0) {
-        $w_pais   = f($RS,'sq_pais');
-        $w_uf     = f($RS,'co_uf');
-        $w_cidade = f($RS,'sq_cidade_padrao');
+      if (count($RS_Cliente)>0) {
+        $w_pais   = f($RS_Cliente,'sq_pais');
+        $w_uf     = f($RS_Cliente,'co_uf');
+        $w_cidade = f($RS_Cliente,'sq_cidade_padrao');
       } 
     } 
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
@@ -887,7 +942,7 @@ function Telefones() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
@@ -900,7 +955,7 @@ function Telefones() {
         $w_cidade   = f($RS,'sq_cidade_padrao');
       } 
     } 
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
@@ -1095,7 +1150,7 @@ function ContasBancarias() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     if ($w_banco=='') {
       // Carrega os valores padrão para banco e agência
       $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa); 
@@ -1286,7 +1341,7 @@ function Modulos() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     if (!(strpos('AEV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -1376,7 +1431,7 @@ function Configuracao() {
     $w_logo1            = $_REQUEST['w_logo1'];
     $w_fundo            = $_REQUEST['w_fundo'];
     $w_upload_maximo    = $_REQUEST['w_upload_maximo'];
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     // Recupera a configuração do site do cliente
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
     $w_smtp_server      = f($RS,'smtp_server');
@@ -1423,7 +1478,7 @@ function Configuracao() {
   ShowHTML('</HEAD>');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('EV',$O)===false)) {
+  } elseif (strpos('EV',$O)!==false) {
     BodyOpen('onLoad=\'this.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_smtp_server.focus()\';');
@@ -1433,8 +1488,8 @@ function Configuracao() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+  if (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
     ShowHTML('<FORM action="'.$w_pagina.'Grava&O='.$O.'&SG='.$SG.'" method="POST" name="Form" onSubmit="return(Validacao(this));" ENCTYPE="multipart/form-data">');
     ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
     ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
@@ -1599,7 +1654,8 @@ function Grava() {
             $_REQUEST['w_sq_pessoa'],$_SESSION['P_CLIENTE'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
             $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
-            $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento']);
+            $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento'],
+            $_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta'],$_REQUEST['w_georeferencia'],$_REQUEST['w_googlemaps_key']);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
@@ -1608,27 +1664,6 @@ function Grava() {
           $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
           ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         } 
-        ScriptClose();
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      } 
-      break;
-    case 'CLIENTE':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putSiwCliente::getInstanceOf($dbms,$O,
-            $_REQUEST['w_sq_pessoa'],$_REQUEST['p_cliente'.'_session'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
-            $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
-            $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
-            $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas']);
-
-        ScriptOpen('JavaScript');
-        // Recupera a sigla do serviço pai, para fazer a chamada ao menu
-        $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-        ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

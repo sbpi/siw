@@ -2298,15 +2298,16 @@ function Grava() {
           }
 
           // verifica se não há nenhum plano "irmão" no mesmo período
-          $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,'IRMAOS');
-          if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Período deste plano não pode sobrepor o período de nenhum outro plano com a mesma vinculação!\');');
-            ScriptClose();
-            RetornaFormulario('w_inicio');
-            break;
-          }
-        } elseif ($O=='E') {
+/**
+*           $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],null,'IRMAOS');
+*           if (count($RS)>0) {
+*             ScriptOpen('JavaScript');
+*             ShowHTML('  alert(\'Período deste plano não pode sobrepor o período de nenhum outro plano com a mesma vinculação!\');');
+*             ScriptClose();
+*             RetornaFormulario('w_inicio');
+*             break;
+*           }
+*/        } elseif ($O=='E') {
            // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
           if (count($RS)<=1) {
             $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,null,null,'ARQUIVOS');

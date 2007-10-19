@@ -389,9 +389,9 @@ function Inicial() {
         ShowHTML('          <td rowspan=2><b>Serviço</td>');
         ShowHTML('          <td colspan=2><b>Data</td>');
       } elseif (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2) {
-        if ($P1==3) ShowHTML('          <td colspan=3><b>Data</td>'); else ShowHTML('          <td colspan=2><b>Data</td>');
-      } else {
-        if ($P1==3) ShowHTML('          <td colspan=4><b>Data</td>'); else ShowHTML('          <td colspan=3><b>Data</td>');
+        ShowHTML('          <td colspan=1><b>Data</td>');
+      } elseif (f($RS_Menu,'data_hora')>0) {
+        ShowHTML('          <td colspan=2><b>Data</td>');
       }
       ShowHTML('          <td rowspan=2><b>Solicitante</td>');
       if ($P1!=3) {
@@ -401,13 +401,12 @@ function Inicial() {
         ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       } 
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || ($P1==3)) {
+      if (f($RS_Menu,'data_hora')==1 || f($RS_Menu,'data_hora')==2 || $P1==3) {
         ShowHTML('          <td><b>Programada</td>');
-      } else {
+      } elseif (f($RS_Menu,'data_hora')>0) {
         ShowHTML('          <td><b>Início</td>');
-        ShowHTML('          <td><b>Fim</td>');
+        ShowHTML('          <td><b>Término</td>');
       }
-      ShowHTML('          <td><b>Inclusão</td>');
       if ($P1==3) ShowHTML('          <td><b>Conclusão</td>');
     } 
     ShowHTML('        </tr>');
@@ -421,7 +420,7 @@ function Inicial() {
 
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),nvl(f($row,'phpdt_inicio'),f($row,'phpdt_inclusao')),f($row,'phpdt_fim'),f($row,'phpdt_inicio'),f($row,'phpdt_conclusao'),'S',addDays(f($row,'fim'),-1),f($row,'sg_tramite'), null));
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),nvl(f($row,'phpdt_inicio'),f($row,'phpdt_inclusao')),f($row,'phpdt_programada'),f($row,'phpdt_inicio'),f($row,'phpdt_conclusao'),'S',addDays(f($row,'fim'),-1),f($row,'sg_tramite'), null));
         if ($w_tipo!='WORD') {
           ShowHTML('        <A class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'</a>');
         } else {

@@ -81,7 +81,7 @@ $p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
 $p_lotacao      = strtoupper($_REQUEST['p_lotacao']);
 $p_nome         = strtoupper($_REQUEST['p_nome']);
 $p_gestor       = strtoupper($_REQUEST['p_gestor']);
-$p_ordena       = strtoupper($_REQUEST['p_ordena']);
+$p_ordena       = $_REQUEST['p_ordena'];
 
 $w_pagina       = 'seguranca.php?par=';
 $w_Disabled     = 'ENABLED';

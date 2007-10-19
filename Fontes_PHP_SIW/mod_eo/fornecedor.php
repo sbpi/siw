@@ -66,7 +66,7 @@ $p_regiao       = strtoupper($_REQUEST['p_regiao']);
 $p_pais         = strtoupper($_REQUEST['p_pais']);
 $p_nome         = strtoupper($_REQUEST['p_nome']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_ordena       = strtoupper($_REQUEST['p_ordena']);
+$p_ordena       = $_REQUEST['p_ordena'];
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
@@ -126,9 +126,9 @@ function Inicial() {
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null,'S',$p_pais,$p_regiao,$p_uf,$p_cidade);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1]);
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome_indice','desc');
     } else {
-      $RS = SortArray($RS,'nm_pessoa','asc');
+      $RS = SortArray($RS,'nome_indice','asc');
     }
   }
 
@@ -182,7 +182,7 @@ function Inicial() {
   ShowHTML('          <td><b>'.LinkOrdena('Nome','nm_pessoa').'</td>');
   ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</td>');
   ShowHTML('          <td><b>'.LinkOrdena('Tipo','sq_tipo_pessoa').'</td>');
-  ShowHTML('          <td><b>CPF/CNPJ</td>');
+  ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
   ShowHTML('          <td><b>Operações</td>');
   ShowHTML('        </tr>');
   if (count($RS)<=0) {
@@ -192,7 +192,7 @@ function Inicial() {
     foreach($RS1 as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td>'.f($row,'nm_pessoa').'</td>');
+      ShowHTML('        <td>'.ExibeFornecedor(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nm_pessoa')).'</b></td>');
       if(nvl(f($row,'nm_cidade'),'')!='')ShowHTML('        <td>'.f($row,'nm_cidade').' - '.f($row,'co_uf').'</td>');
       else                               ShowHTML('        <td>---</td>');
       ShowHTML('        <td>'.f($row,'nm_tipo_pessoa').'</td>');
@@ -569,17 +569,17 @@ function Visual() {
   // Recupera o logo do cliente a ser usado nas listagens
   if ($w_tipo=='WORD') {
     HeaderWord(null);
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    CabecalhoWord($w_cliente,'Visualização de fornecedor',0);
   } else {
     Cabecalho();
   } 
   ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de fornecedor</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=\'this.focus()\';');
   if ($w_tipo!='WORD') {
-    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_sq_pessoa);  
+    CabecalhoRelatorio($w_cliente,'Visualização de fornecedor',4,$w_sq_pessoa);  
   } 
   if ($w_tipo>'' && $w_tipo!='WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></font></center>');

@@ -75,7 +75,7 @@ $TP         = $_REQUEST['TP'];
 $SG         = strtoupper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
-$p_ordena   = strtoupper($_REQUEST['p_ordena']);
+$p_ordena   = $_REQUEST['p_ordena'];
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
@@ -202,7 +202,7 @@ function Rel_Progresso() {
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
-    $RS = SortArray($RS,'nm_projeto','asc'); 
+    $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
@@ -239,7 +239,7 @@ function Rel_Progresso() {
             ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Unidade responsável: '.f($row,'nm_unidade').'</b></div></td></tr>');
           } 
           ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Execução prevista: '.FormataDataEdicao(f($row,'inicio_projeto')).' a '.FormataDataEdicao(f($row,'fim_projeto')).'</b></div></td></tr>');
-          
+
           // Recupera o próximo período
           // O tratamento abaixo deve estar compatível com o da stored procedure sp_getRelProgresso
           $w_inicio = addDays(toDate($p_fim),1);
@@ -270,6 +270,20 @@ function Rel_Progresso() {
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDE',f($row,'ide')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'ide')).'%</b></td>');
+            if ($p_tipo!='WORD') {
+              ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').' em '.date("d/m/Y").':</b>&nbsp;&nbsp;&nbsp;</td>');
+            } else  {
+              ShowHTML('   <tr><td><b>IGC em '.date("d/m/Y").':&nbsp;&nbsp;&nbsp;</b></td>');
+            }
+            ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'IDC')).'%</b></td></tr>');
+            if ($p_tipo!='WORD') {
+              ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').' em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
+            } else  { 
+              ShowHTML('   <tr><td><b>IDC em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
+            }
+            ShowHTML('       <td align="right">'.ExibeSmile('IDC',f($row,'IDC')).'&nbsp;');
+            ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'IDC')).'%</b></td>');
+
             ShowHTML('          </table>');
           }
 
@@ -285,11 +299,11 @@ function Rel_Progresso() {
                 case 4 : $w_label = 'ENTREGAS PREVISTAS PARA O PRÓXIMO PERÍODO ('.formataDataEdicao($w_inicio).' a '.formataDataEdicao($w_fim).')'; $w_restricao = 'PROENTR';   $w_mensagem = 'entrega prevista para o próximo período'; break;
               } 
               if(($w_restricao=='PROPREV'&& $p_prevista=='S')||($w_restricao=='PROREPORT'&& $p_realizada=='S')||($w_restricao=='PROPEND'&& $p_pendente=='S')||($w_restricao=='PROENTR'&& $p_proximo=='S')) {
-                ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="10"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
+                ShowHTML('          <tr><td bgColor="#f0f0f0" height="30" colspan="11"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
                 $RS1 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
                 $RS1 = SortArray($RS1,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
                 if(count($RS1)==0) {
-                  ShowHTML('          <tr><td colspan="10" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
+                  ShowHTML('          <tr><td colspan="11" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
                 } else {
                   ShowHTML('          <tr>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
@@ -299,6 +313,7 @@ function Rel_Progresso() {
                   ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Situação atual</b></div></td>');
                   ShowHTML('          </tr>');
                   ShowHTML('          <tr>');
@@ -320,7 +335,6 @@ function Rel_Progresso() {
                       if (f($row1,'pacote_trabalho')=='S' || substr(nvl(f($row1,'restricao'),'-'),0,1)=='S') {
                         ShowHTML(' '.exibeImagemRestricao(f($row1,'restricao')));
                       }
-                      ShowHTML(' '.exibeImagemAnexo(f($row1,'qt_anexo')).'</td>');
                       ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.f($row1,'nm_etapa').'</b></tr></table>');
                       if ($p_tipo!='WORD') {
                         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'nm_resp_etapa')).'</b>');
@@ -333,6 +347,7 @@ function Rel_Progresso() {
                       ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_real_etapa'),5),'---').'</td>');
                       ShowHTML('        <td nowrap align="right">'.f($row1,'perc_conclusao').' %</td>');
                       ShowHTML('        <td nowrap align="center">'.f($row1,'peso').'</td>');
+                      ShowHTML('        <td nowrap align="center">'.f($row1,'qt_anexo').'</td>');
                       ShowHTML('        <td>'.nvl(CRLF2BR(f($row1,'situacao_atual')),'---').' </td>');
                     }
                     if(nvl(f($row1,'sq_tarefa'),'')!='') {
@@ -656,7 +671,7 @@ function Rel_Projeto() {
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_DET');
-    $RS = SortArray($RS,'nm_projeto','asc'); 
+    $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
@@ -945,7 +960,7 @@ function Rel_Atualizacao() {
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_ATUAL');
-    $RS = SortArray($RS,'ordena','asc','bloco','asc'); 
+    $RS = SortArray($RS,'codigo_interno','asc','ordena','asc','bloco','asc'); 
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
@@ -973,7 +988,7 @@ function Rel_Atualizacao() {
           if ($w_atual!=f($row,'nm_projeto')) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             if ($w_atual!='' && $w_cont > 1) ShowHTML('   <tr><td colspan="4"><hr NOSHADE color=#000000 size=1></td></tr>');
-            ShowHTML('     <tr bgcolor="'.$w_cor.'"><td>'.f($row,'nm_projeto').'</td>');
+            ShowHTML('     <tr bgcolor="'.$w_cor.'"><td>'.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</td>');
             $w_atual = f($row,'nm_projeto');
           } else {
             ShowHTML('     <tr valign="top" bgcolor="'.$w_cor.'"><td>');

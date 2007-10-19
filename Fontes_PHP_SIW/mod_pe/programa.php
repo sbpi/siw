@@ -638,7 +638,20 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_plano','Plano estratégico','SELECT',1,1,18,'','0123456789');
+    Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
+    if(nvl($w_plano,'')!='') {
+      ShowHTML('  if (theForm["w_objetivo[]"]!=undefined) {');
+      ShowHTML('    var i; ');
+      ShowHTML('    var w_erro=true; ');  
+      ShowHTML('    for (i=1; i < theForm["w_objetivo[]"].length; i++) {');
+      ShowHTML('      if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
+      ShowHTML('    }');
+      ShowHTML('    if (w_erro) {');
+      ShowHTML('      alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
+      ShowHTML('      return false;');
+      ShowHTML('    }');
+      ShowHTML('  }');
+    }
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
     ShowHTML('  for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
@@ -651,7 +664,7 @@ function Geral() {
     Validate('w_codigo','Código do programa','1',1,1,20,'1','1');
     Validate('w_titulo','Programa','1',1,5,100,'1','1');
     Validate('w_sq_unidade','Unidade executora','SELECT',1,1,18,'','0123456789');
-    Validate('w_solicitante','Responsável monitoramento','SELECT',1,1,18,'','0123456789');
+    Validate('w_solicitante','Responsável','SELECT',1,1,18,'','0123456789');
     Validate('w_unid_resp','Área monitoramento','SELECT',1,1,18,'','0123456789');
     Validate('w_natureza','Natureza','SELECT',1,1,18,'','0123456789');
     Validate('w_horizonte','Horizonte','SELECT',1,1,18,'','0123456789');
@@ -707,6 +720,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_objetivo[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_codigo_atual" value="'.$w_codigo_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
@@ -732,7 +746,7 @@ function Geral() {
     ShowHTML('        <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade executora:','U','Selecione a unidade administratriva responsável pela execução do programa.',$w_sq_unidade,null,'w_sq_unidade','EXECUCAO',null);
     ShowHTML('      <tr valign="top">');
-    SelecaoPessoa('Respo<u>n</u>sável monitoramento:','N','Selecione o nome da pessoa responsável pelas informações no SISPLAM.',$w_solicitante,null,'w_solicitante','USUARIOS');
+    SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o nome da pessoa responsável pelo programa.',$w_solicitante,null,'w_solicitante','USUARIOS');
     SelecaoUnidade('<U>Á</U>rea monitoramento:','A','Selecione a unidade responsável pelo monitoramento deste programa.',$w_unid_resp,null,'w_unid_resp','PLANEJAMENTO',null);
     ShowHTML('        <tr valign="top">');
     SelecaoNatureza('Na<u>t</u>ureza:','T','Indique qual a natureza do programa com relação às suas ações.',$w_cliente,$w_natureza,'w_natureza',null,null);

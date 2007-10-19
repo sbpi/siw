@@ -73,16 +73,13 @@ function visualfornecedor($l_sq_pessoa,$O) {
     foreach ($l_RS as $row) {
       $w_html.=chr(13).'      <tr><td align="center" colspan="2">';
       $w_html.=chr(13).'        <TABLE WIDTH="100%" border="1" bordercolor="#00000">';
-      $w_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'"><td colspan=2><b>'.f($row,'endereco').'</td>';
-      $w_html.=chr(13).'          <tr><td width="5%" rowspan=4><td valign="top">Logradouro:<br><b>'.f($row,'logradouro').'</td></tr>';
+      $w_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'"><td colspan=2><b>'.f($row,'tipo_endereco').((f($row,'padrao')=='S') ? ' (Padrão)': '').'</td>';
+      $w_html.=chr(13).'          <tr><td width="5%" rowspan=4><td valign="top"><b>'.f($row,'endereco').'</td></tr>';
       $w_html.=chr(13).'          <tr><td valign="top"><table border=0 width="100%" cellspacing=0>';
       $w_html.=chr(13).'              <tr valign="top">';
       $w_html.=chr(13).'              <td valign="top">Complemento:<br><b>'.Nvl(f($row,'complemento'),'---').' </b></td>';
       $w_html.=chr(13).'              <td valign="top">Bairro:<br><b>'.Nvl(f($row,'bairro'),'---').' </b></td>';
       $w_html.=chr(13).'              <td valign="top">CEP:<br><b>'.Nvl(f($row,'cep'),'---').' </b></td>';
-      $w_html.=chr(13).'              <tr valign="top">';
-      $w_html.=chr(13).'              <td valign="top">País:<br><b>'.f($row,'nm_pais').' </b></td>';
-      $w_html.=chr(13).'              <td>Padrão?<br><b>'.str_replace('N','Não',str_replace('S','Sim',f($row,'padrao'))).'</td>';
       $w_html.=chr(13).'              </table>';
       $w_html.=chr(13).'          </table></td></tr>';
     } 

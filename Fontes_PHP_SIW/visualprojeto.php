@@ -536,6 +536,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>';
@@ -565,8 +566,9 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
               $w_total_peso      += nvl(f($row,'peso'),0);
             }
             $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+            $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
           } 
-          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,null);
+          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         }
       } elseif ($operacao=='T'){
         //Se for visualização total, ira visualizar as etapas e as tarefas correspondentes
@@ -582,18 +584,19 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
               $w_total_peso      += nvl(f($row,'peso'),0);
             }
             $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+            $w_total_anexo        += nvl(f($row,'qt_anexo'),0);
           } 
-          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,null);
+          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         } 
       } 
       $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=13><b>Observações:<ul>';
+      $l_html .= chr(13).'<tr><td colspan=14><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
       if ($w_tipo=='WORD') {
-        $l_html .= chr(13).'<tr><td colspan=13><table border=0>';
+        $l_html .= chr(13).'<tr><td colspan=14><table border=0>';
         $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         if ($w_tipo_visao!=2 && ($operacao=='T')){
           $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores das tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true);

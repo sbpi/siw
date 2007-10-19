@@ -13,7 +13,7 @@ class dml_putAcordoParc {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_aditivo, $p_ordem, $p_data, $p_valor, 
         $p_observacao, $p_tipo_geracao, $p_vencimento, $p_dia_vencimento, $p_valor_parcela, $p_valor_diferente, 
         $p_per_ini, $p_per_fim, $p_valor_inicial, $p_valor_excedente, $p_valor_reajuste) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOPARC';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoParc';
      $params=array('p_operacao'                 =>array($operacao,                                  B_VARCHAR,         1),
                    'p_chave'                    =>array(tvl($p_chave),                              B_INTEGER,        32),
                    'p_chave_aux'                =>array(tvl($p_chave_aux),                          B_INTEGER,        32),

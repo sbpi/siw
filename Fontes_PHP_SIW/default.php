@@ -178,7 +178,7 @@ function Valida() {
       $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
       $RS = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
       $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.$RS['DIAS_VIG_SENHA'].'</b> dias. O sistema irá recomendar a troca <b>'.$RS['DIAS_AVISO_EXPIR'].'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-      $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.$RS['MAXIMO_TENTATIVAS'].'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+      $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.$RS['MAXIMO_TENTATIVAS'].'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
       DesconectaBD();
       $w_html .= '         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.$crlf;
       $w_html .= '         </ol>'.$crlf;
@@ -279,7 +279,7 @@ function LogOn() {
   ShowHTML('            Usuário: <input class="cText" name="Login1" size="14" maxlength="14" value="'.$w_username.'" onkeyDown="FormataCPF(this,event)" onKeyUp="SaltaCampo(this.form.name,this,14,event);">');
   ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19">');
   ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
-  ShowHTML('            <input class="cButton" type="submit" value="Lembrar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');
+  ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu CPF e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');
   ShowHTML('        </font></td> </tr> ');
   ShowHTML('      </table> ');
   ShowHTML('  </tr> ');

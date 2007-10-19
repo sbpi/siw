@@ -49,6 +49,7 @@ include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
+include_once($w_dir_volta.'funcoes/selecaoEspecieDocumento.php');
 include_once('visualpedido.php');
 include_once('validapedido.php');
 
@@ -550,7 +551,6 @@ function Inicial() {
 function Geral() {
   extract($GLOBALS);
   global $w_Disabled;
-
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
@@ -596,6 +596,7 @@ function Geral() {
     $w_numero_original          = $_REQUEST['w_numero_original'];
     $w_data_recebimento         = $_REQUEST['w_data_recebimento'];
     $w_cidade                   = $_REQUEST['w_cidade'];
+    $w_especie_documento        = $_REQUEST['w_especie_documento'];
   } else {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
@@ -622,27 +623,28 @@ function Geral() {
         foreach($RS1 as $row) { $w_objetivo .= ','.f($row,'sq_peobjetivo'); }
         $w_objetivo = substr($w_objetivo,1);
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
-        $w_prioridade       = f($RS,'prioridade');
-        $w_aviso            = f($RS,'aviso_prox_conc');
-        $w_dias             = f($RS,'dias_aviso');
-        $w_chave_pai        = f($RS,'sq_solic_pai');
-        $w_sq_menu          = f($RS,'sq_menu');
-        $w_sq_unidade       = f($RS,'sq_unidade');
-        $w_sq_tramite       = f($RS,'sq_siw_tramite');
-        $w_solicitante      = f($RS,'solicitante');
-        $w_cadastrador      = f($RS,'cadastrador');
-        $w_executor         = f($RS,'executor');
-        $w_sqcc             = f($RS,'sq_cc');
-        $w_justificativa    = f($RS,'justificativa');
-        $w_observacao       = f($RS,'observacao');
-        $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
-        $w_fim              = FormataDataEdicao(f($RS,'fim'));
-        $w_inclusao         = f($RS,'inclusao');
-        $w_ultima_alteracao = f($RS,'ultima_alteracao');
-        $w_decisao_judicial = f($RS,'decisao_judicial');
-        $w_cidade           = f($RS,'cidade_origem');
-        $w_numero_original  = f($RS,'numero_original');
-        $w_data_recebimento = FormataDataEdicao(f($RS,'data_recebimento'));
+        $w_prioridade        = f($RS,'prioridade');
+        $w_aviso             = f($RS,'aviso_prox_conc');
+        $w_dias              = f($RS,'dias_aviso');
+        $w_chave_pai         = f($RS,'sq_solic_pai');
+        $w_sq_menu           = f($RS,'sq_menu');
+        $w_sq_unidade        = f($RS,'sq_unidade');
+        $w_sq_tramite        = f($RS,'sq_siw_tramite');
+        $w_solicitante       = f($RS,'solicitante');
+        $w_cadastrador       = f($RS,'cadastrador');
+        $w_executor          = f($RS,'executor');
+        $w_sqcc              = f($RS,'sq_cc');
+        $w_justificativa     = f($RS,'justificativa');
+        $w_observacao        = f($RS,'observacao');
+        $w_inicio            = FormataDataEdicao(f($RS,'inicio'));
+        $w_fim               = FormataDataEdicao(f($RS,'fim'));
+        $w_inclusao          = f($RS,'inclusao');
+        $w_ultima_alteracao  = f($RS,'ultima_alteracao');
+        $w_decisao_judicial  = f($RS,'decisao_judicial');
+        $w_cidade            = f($RS,'cidade_origem');
+        $w_numero_original   = f($RS,'numero_original');
+        $w_data_recebimento  = FormataDataEdicao(f($RS,'data_recebimento'));
+        $w_especie_documento = f($RS,'sq_especie_documento');
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
       } 
     } 
@@ -727,6 +729,7 @@ function Geral() {
     if($w_decisao_judicial=='S') {
       Validate('w_numero_original','Número original','','1',1,30,'1','1');
       Validate('w_data_recebimento','Data de recebimento','DATA',1,10,10,'','0123456789/');
+      Validate('w_especie_documento','Espécie documental','SELECT',1,1,18,'','0123456789');
     }
     Validate('w_justificativa','Justificativa','','1',3,2000,'1','1');
     Validate('w_observacao','Observação','','',3,2000,'1','1');
@@ -852,6 +855,7 @@ function Geral() {
       ShowHTML('       <tr valign="top">');
       ShowHTML('          <td valign="top"><b><U>N</U>úmero original:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_numero_original" size="30" maxlength="30" value="'.$w_numero_original.'"></td>');
       ShowHTML('          <td valign="top"><b><u>D</u>ata de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_recebimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de recebimento do pedido.">'.ExibeCalendario('Form','w_data_recibimento').'</td>');
+      selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$w_especie_documento,null,'w_especie_documento',null,null);
       ShowHTML ('         </table>');
     }
     ShowHTML('      <tr><td valign="top" colspan=2><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
@@ -937,7 +941,7 @@ function Itens() {
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','COMPRA');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,'COMPRA');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
@@ -945,10 +949,10 @@ function Itens() {
       $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     }
   } elseif (strpos('L',$O)!==false) {
-    $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null);
+    $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,null,null,null,null);
+    $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
@@ -1076,6 +1080,12 @@ function Itens() {
   ShowHTML('      </table>');
   ShowHTML('    </TABLE>');
   ShowHTML('</table>');
+
+  ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+  ShowHTML('  Orientação:<ul>');
+  ShowHTML('  <li>O campo quantidade, quando solicitado, deve ser informado com duas casas decimais. Ex: se quantidade for "25", informe "25,00", digitando apenas os números.');
+  ShowHTML('  <li>Se o item desejado não constar da lista, entre em contato com a área de padronização de materiais para criar um novo código.');
+  ShowHTML('  </ul></b></font></td>');
 
   if ($O=='L') {
     ShowHTML('<tr><td>');
@@ -1784,6 +1794,7 @@ function Concluir() {
 
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',4,18,'','1');
+  CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
   ShowHTML('  }');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1817,8 +1828,14 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_material[]" value="">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="100%" border="0">');
-  $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null);
+  $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
   $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+  ShowHTML('<tr><td colspan="4" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+  ShowHTML('  Orientação:<ul>');
+  ShowHTML('  <li>O campo quantidade, quando solicitado, deve ser informado com duas casas decimais. Ex: se quantidade for "25", informe "25,00", digitando apenas os números.');
+  ShowHTML('  <li>Se desejar não autorizar algum dos itens, informe 0,00 na sua quantidade.');
+  ShowHTML('  <li>A quantidade autorizada não pode ser maior que a solicitada.');
+  ShowHTML('  </ul></b></font></td>');
   ShowHTML('<tr><td colspan=4><b>Informe para cada item a quantidade autorizada para compra:</b>');
   ShowHTML('<tr><td align="center" colspan=4>');  
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2212,7 +2229,7 @@ function Grava() {
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
           $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
           $_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
-          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N',&$w_chave_nova,$_REQUEST['w_copia']);
+          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',$_REQUEST['w_especie_documento'],&$w_chave_nova,$_REQUEST['w_copia']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

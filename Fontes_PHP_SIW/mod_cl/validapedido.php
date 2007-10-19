@@ -34,13 +34,32 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   $l_tipo='';  
 
   // Recupera os itens do pedido de compra
-  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null);
+  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
+  
+  //-----------------------------------------------------------------------------------
+  // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
+  // através do JavaScript por envolver mais de uma tela
+  //-----------------------------------------------------------------------------------
+
+  //-----------------------------------------------------------------------------
+  // Verificações de integridade de dados da solicitação, feitas sempre que houver
+  // um encaminhamento.
+  //-----------------------------------------------------------------------------
+
   // Verifica se já foi inserido os itens do pedido
   if (count($l_rs_item)==0) {
     $l_erro.='<li>Informe pelo um item no pedido de compra.';
     $l_tipo=0; 
-  }
-  
+  } else {
+    // Verifica se foi indicado o proposto
+    foreach ($l_rs_item as $row) {
+      if (f($row,'exibe_catalogo')=='N' || f($row,'ativo')=='N') {
+        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
+        $l_tipo  = 0;
+      }
+    }
+  } 
+
   // Configura a variável de retorno com o tipo de erro e a mensagem
   $l_erro = $l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------

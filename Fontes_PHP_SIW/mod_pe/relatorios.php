@@ -69,7 +69,7 @@ $TP         = $_REQUEST['TP'];
 $SG         = strtoupper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
-$p_ordena   = strtoupper($_REQUEST['p_ordena']);
+$p_ordena   = $_REQUEST['p_ordena'];
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
@@ -177,7 +177,7 @@ function Rel_Executivo() {
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
         $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
         $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
-        $RS1 = SortArray($RS1,'titulo','asc');
+        $RS1 = SortArray($RS1,'cd_programa','asc','titulo','asc');
         if (count($RS1)==0) {
           ShowHTML('   <tr><td colspan="2" align="center"><font size="1"><b>Nenhum programa cadastrado.</b></td></tr>');
         } else {
@@ -224,7 +224,7 @@ function Rel_Executivo() {
                 $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
                 $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, f($row1,'sq_siw_solicitacao'), $p_atividade, 
                 null, null, $p_empenho, $p_processo);
-            $RS3 = SortArray($RS3,'titulo','asc'); 
+            $RS3 = SortArray($RS3,'codigo_interno','asc','titulo','asc'); 
             if (count($RS3)==0) {
               if ($p_projeto=='S') ShowHTML('          <tr><td colspan="15" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
             } else {

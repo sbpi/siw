@@ -1090,8 +1090,15 @@ function Geral() {
   } elseif (strpos('EV',$O)!==false) {
     BodyOpenClean('onLoad=\'this.focus()\';');
   } else {
-    if($w_numeracao_automatica=='N')    BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';');
-    else                                BodyOpenClean('onLoad=\'document.Form.w_numero_processo.focus()\';');
+    if($w_numeracao_automatica=='N') {
+      BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';');
+    } else {
+      if($w_segmento=='Público') {
+        BodyOpenClean('onLoad=\'document.Form.w_numero_processo.focus()\';');
+      } else {
+        BodyOpenClean('onLoad=\'document.Form.w_titulo.focus()\';');
+      }
+    }
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();

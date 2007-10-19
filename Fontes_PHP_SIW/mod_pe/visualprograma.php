@@ -32,15 +32,15 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</td></tr>';
     } 
     if ($l_formato=='WORD') {
+      $l_html.=chr(13).'   <tr><td><b>Responsável:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'nm_solic').'</td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Área monitoramento:</b></td>';
       $l_html.=chr(13).'       <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
-      $l_html.=chr(13).'   <tr><td><b>Responsável monitoramento:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($RS,'nm_solic').'</td></tr>';
     } else {
+      $l_html.=chr(13).'   <tr><td><b>Responsável:</b></td>';
+      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Área monitoramento:</b></td>';
       $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';
-      $l_html.=chr(13).'   <tr><td><b>Responsável monitoramento:</b></td>';
-      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</td></tr>';
     } 
     $l_html.=chr(13).'   <tr><td><b>Endereço Internet:</b></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS,'ln_programa'),'-').'</td></tr>';

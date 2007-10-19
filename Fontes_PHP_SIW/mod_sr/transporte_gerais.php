@@ -69,7 +69,7 @@
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_destino','Destino','1',1,5,200,'1','1');
+    Validate('w_destino','Destino','1',1,2,200,'1','1');
     Validate('w_procedimento','Procedimento','SELECT',1,1,18,'1','1');
     Validate('w_qtd_pessoas','Quantidade de pessoas','1',1,1,2,'1','1');    
     Validate('w_inicio','Data desejada para saída','DATAHORA',1,17,17,'','0123456789/,: ');

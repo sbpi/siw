@@ -548,7 +548,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   $l_form = '';
   // Os parâmetros informados prevalecem sobre os valores default
   if (nvl($l_pagina,'')!='') {
-    $l_form .= AbreForm('RetornaDados',$l_dir.$l_pagina.'?par='.$l_par,'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
+    $l_form .= AbreForm('RetornaDados',$l_dir.$l_pagina.$l_par,'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
   } else {
     $l_form .= AbreForm('RetornaDados',nvl($w_dir.$_POST['R'],$_SERVER['HTTP_REFERER']),'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
   }
@@ -675,6 +675,19 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
     $l_string='---';
   } else {
     $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
+// Montagem da URL com os dados de um fornecedor
+// -------------------------------------------------------------------------
+function ExibeFornecedor($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_eo/fornecedor.php?par=Visual&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Fornecedor\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste fornecedor!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -2794,10 +2807,17 @@ function BodyOpen($cProperties) {
    Required();
    $wProperties = $cProperties;
    if (nvl($wProperties,'')!='') {
-     $wProperties = str_replace('document.', 'required(); document.', $wProperties);
-     if (strpos($wProperties,'required()')===false) $wProperties = str_replace('this.focus', 'required(); this.focus', $wProperties);
-   } else {
-     $wProperties = ' onLoad=\'required();\' ';
+     if (strpos($wProperties,'"init')!==false) {
+       $wProperties = str_replace('init', 'required(); init', $wProperties);
+     } elseif (strpos($wProperties,'this.')!==false) {
+       $wProperties = str_replace('this.', 'required(); this.', $wProperties);
+     } elseif (strpos($wProperties,'"document.')!==false || strpos($wProperties,'=document.')!==false) {
+       $wProperties = str_replace('document.', 'required(); document.', $wProperties);
+       if (strpos($wProperties,'required()')===false) $wProperties = str_replace('this.focus', 'required(); this.focus', $wProperties);
+     } else {
+       $wProperties = str_replace('document.', 'required(); document.', $wProperties);
+       $wProperties = 'required(); '.$wProperties;
+     }
    }
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }

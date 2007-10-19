@@ -584,8 +584,8 @@ function Regiao() {
   if ($w_troca>'' && $O!='E')  {
     $w_nome         = $_REQUEST['w_nome'];
     $w_ordem        = $_REQUEST['w_ordem'];
-    $w_sigla        = $_REQUEST['sigla'];
-    $w_sq_pais      = $_REQUEST['sq_pais'];
+    $w_sigla        = $_REQUEST['w_sigla'];
+    $w_sq_pais      = $_REQUEST['w_sq_pais'];
   } elseif ($O=='L') {
     $RS = db_getRegionList::getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
     if ($p_ordena>'') { 
@@ -610,7 +610,7 @@ function Regiao() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_pais','País','1','1','1','10','','1');
       Validate('w_nome','Nome','1','1','3','20','1','1');
-      Validate('w_sigla','Sigla','1','','1','2','1','1');
+      Validate('w_sigla','Sigla','1','1','1','2','1','1');
       Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -992,7 +992,7 @@ function Grava() {
       $p_nome    = strtoupper($_REQUEST['p_nome']);
       $p_sq_pais = strtoupper($_REQUEST['p_sq_pais']);
       $p_co_uf   = strtoupper($_REQUEST['p_co_uf']);
-      $p_ordena  = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena  = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1028,7 +1028,7 @@ function Grava() {
       $p_nome   = strtoupper($_REQUEST['p_nome']);
       $p_codigo = strtoupper($_REQUEST['p_codigo']);
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-      $p_ordena = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena = $_REQUEST['p_ordena'];
 
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
@@ -1062,7 +1062,7 @@ function Grava() {
     case 'COREGIAO': 
       $p_nome    = strtoupper($_REQUEST['p_nome']);
       $p_sq_pais = strtoupper($_REQUEST['p_sq_pais']);
-      $p_ordena  = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena  = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1083,7 +1083,7 @@ function Grava() {
       $p_sq_pais    = strtoupper($_REQUEST['p_sq_pais']);
       $p_sq_regiao  = strtoupper($_REQUEST['p_sq_regiao']);
       $p_ativo      = strtoupper($_REQUEST['p_ativo']);
-      $p_ordena     = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena     = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {

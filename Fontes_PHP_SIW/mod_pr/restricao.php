@@ -133,13 +133,7 @@ function Restricao() {
   $w_tit_exec    = f($RS,'tit_exec');
   $w_subst_exec  = f($RS,'subst_exec');
   
-  if ($P1==1 ||
-      Nvl($w_solicitante,0) == $w_usuario || 
-      Nvl($w_tit_exec,0)    == $w_usuario || 
-      Nvl($w_sub_exec,0)    == $w_usuario || 
-      Nvl($w_titular,0)     == $w_usuario || 
-      Nvl($w_substituto,0)  == $w_usuario || 
-      RetornaGestor($w_chave,$w_usuario)=='S') {
+  if ($P1==1 || $P1==2) {
     $w_edita = true;
   } else {
     $w_edita = false;

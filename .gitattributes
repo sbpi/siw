@@ -550,6 +550,8 @@ Fontes_PHP_SIW/classes/db/db_getPersonData.php -text
 Fontes_PHP_SIW/classes/db/db_getSiwCliModLis.php -text
 Fontes_PHP_SIW/classes/file/File.php -text
 Fontes_PHP_SIW/classes/gantt/gantt.class.php -text
+Fontes_PHP_SIW/classes/googlemaps/license.txt -text
+Fontes_PHP_SIW/classes/googlemaps/nxgooglemapsapi.php -text
 Fontes_PHP_SIW/classes/graph_barcode/BaseBarcode_class.php -text
 Fontes_PHP_SIW/classes/graph_barcode/C39Barcode_class.php -text
 Fontes_PHP_SIW/classes/graph_barcode/I25Barcode_class.php -text
@@ -826,6 +828,7 @@ Fontes_PHP_SIW/classes/sp/db_getSiwArquivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSiwCliData.php -text
 Fontes_PHP_SIW/classes/sp/db_getSiwCliList.php -text
 Fontes_PHP_SIW/classes/sp/db_getSiwCliModLis.php -text
+Fontes_PHP_SIW/classes/sp/db_getSiwCoordenada.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicAcesso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicApoioList.php -text
@@ -978,12 +981,14 @@ Fontes_PHP_SIW/classes/sp/dml_putAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaEtapa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaMeta_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putBaseLine.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLDados.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLItemFornecedor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLParametro1.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLSolicItem.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCTEspecificacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVCargo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVCurso.php -text
@@ -1141,6 +1146,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSistema.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliConf.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliMod.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliente.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSiwCoordenada.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
@@ -1347,6 +1353,7 @@ Fontes_PHP_SIW/funcoes/selecaoIsProjeto.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCFonteRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCJulgamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCModalidade.php -text
+Fontes_PHP_SIW/funcoes/selecaoLCSituacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizador_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoMacroObjetivo.php -text
@@ -1475,6 +1482,7 @@ Fontes_PHP_SIW/mod_cl/arp.php -text
 Fontes_PHP_SIW/mod_cl/catalogo.php -text
 Fontes_PHP_SIW/mod_cl/certame.php -text
 Fontes_PHP_SIW/mod_cl/pedido.php -text
+Fontes_PHP_SIW/mod_cl/relatorios.php -text
 Fontes_PHP_SIW/mod_cl/tabelas.php -text
 Fontes_PHP_SIW/mod_cl/validacertame.php -text
 Fontes_PHP_SIW/mod_cl/validapedido.php -text
@@ -1508,6 +1516,8 @@ Fontes_PHP_SIW/mod_fn/rel_plano.php -text
 Fontes_PHP_SIW/mod_fn/tabelas.php -text
 Fontes_PHP_SIW/mod_fn/validalancamento.php -text
 Fontes_PHP_SIW/mod_fn/visuallancamento.php -text
+Fontes_PHP_SIW/mod_gr/exibe.php -text
+Fontes_PHP_SIW/mod_gr/selecao.php -text
 Fontes_PHP_SIW/mod_is/acao.php -text
 Fontes_PHP_SIW/mod_is/geragrafico.php -text
 Fontes_PHP_SIW/mod_is/gr_acao.php -text

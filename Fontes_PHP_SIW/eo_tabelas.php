@@ -92,7 +92,7 @@ function AreaAtuacao(){
   global $w_Disabled;
   $p_nome   = strtoupper($_REQUEST['p_nome']);
   $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-  $p_ordena = strtoupper($_REQUEST['p_ordena']);
+  $p_ordena = $_REQUEST['p_ordena'];
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   if ($w_troca>'' && $O!='E') {
@@ -283,7 +283,7 @@ function TipoUnidade() {
   global $w_Disabled;
   $p_nome   = strtoupper($_REQUEST['p_nome']);
   $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-  $p_ordena = strtoupper($_REQUEST['p_ordena']);
+  $p_ordena = $_REQUEST['p_ordena'];
  
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
@@ -634,7 +634,7 @@ function Grava() {
     case 'EOTPUNID':
       $p_nome   = strtoupper($_REQUEST['p_nome']);
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-      $p_ordena = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEOTipoUni::getInstanceOf($dbms, $O,
@@ -653,7 +653,7 @@ function Grava() {
     case 'EOAREAATU':
       $p_nome   = strtoupper($_REQUEST['p_nome']);
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-      $p_ordena = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEOAAtuac::getInstanceOf($dbms, $O,

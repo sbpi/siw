@@ -54,7 +54,7 @@ $TP         = $_REQUEST['TP'];
 $SG         = strtoupper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
-$p_ordena   = strtoupper($_REQUEST['p_ordena']);
+$p_ordena   = $_REQUEST['p_ordena'];
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';

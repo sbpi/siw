@@ -10,7 +10,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getMatServ {
-   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_tipo_material, $p_sq_cc, $p_codigo, $p_nome, $p_ativo, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_tipo_material, $p_sq_cc, $p_codigo, $p_nome, 
+          $p_ativo, $p_catalogo, $p_aviso, $p_invalida, $p_valida, $p_branco, $p_arp, $p_item, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMatServ';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_usuario'                   =>array(tvl($p_usuario),                                  B_INTEGER,        32),
@@ -20,6 +21,13 @@ class db_getMatServ {
                    'p_codigo'                    =>array(tvl($p_codigo),                                   B_VARCHAR,        30),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       110),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),
+                   'p_catalogo'                  =>array(tvl($p_catalogo),                                 B_VARCHAR,         1),
+                   'p_aviso'                     =>array(tvl($p_aviso),                                    B_VARCHAR,         1),
+                   'p_invalida'                  =>array(tvl($p_invalida),                                 B_VARCHAR,         1),
+                   'p_valida'                    =>array(tvl($p_valida),                                   B_VARCHAR,         1),
+                   'p_branco'                    =>array(tvl($p_branco),                                   B_VARCHAR,         1),
+                   'p_arp'                       =>array(tvl($p_arp),                                      B_VARCHAR,         1),
+                   'p_item'                      =>array(tvl($p_item),                                     B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        15),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

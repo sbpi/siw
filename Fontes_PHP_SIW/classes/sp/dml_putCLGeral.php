@@ -12,7 +12,7 @@ class dml_putCLGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante,$p_cadastrador, $p_executor, 
         $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_codigo, 
         $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_decisao_judicial, $p_numero_original, $p_data_recebimento, 
-        $p_arp, $p_chave_nova, $p_copia) {
+        $p_arp, $p_interno, $p_especie_documento, $p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'sp_putCLGeral';
      $params=array('p_operacao'             =>array($operacao,                    B_VARCHAR,         1),
@@ -40,6 +40,8 @@ class dml_putCLGeral {
                    'p_numero_original'      =>array(tvl($p_numero_original),      B_VARCHAR,        30),
                    'p_data_recebimento'     =>array(tvl($p_data_recebimento),     B_DATE,           32),
                    'p_arp'                  =>array(tvl($p_arp),                  B_VARCHAR,         1),
+                   'p_interno'              =>array(tvl($p_interno),              B_VARCHAR,         1),
+                   'p_especie_documento'    =>array(tvl($p_especie_documento),    B_INTEGER,        32),
                    'p_chave_nova'           =>array(&$p_chave_nova,               B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

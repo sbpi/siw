@@ -893,7 +893,7 @@ function Grava() {
       $p_codigo = strtoupper($_REQUEST['p_codigo']);
       $p_ativo  = strtoupper($_REQUEST['p_ativo']);
       $p_exige  = strtoupper($_REQUEST['p_exige']);      
-      $p_ordena = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if  ($_REQUEST['w_codigo']!= nvl($_REQUEST['w_codigo_atual'],'')) {
@@ -926,7 +926,7 @@ function Grava() {
       $p_nome       = strtoupper($_REQUEST['p_nome']);
       $p_sq_banco   = strtoupper($_REQUEST['p_sq_banco']);
       $p_ativo      = strtoupper($_REQUEST['p_ativo']);
-      $p_ordena     = strtoupper($_REQUEST['p_ordena']);
+      $p_ordena     = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoAgencia::getInstanceOf($dbms,$O,

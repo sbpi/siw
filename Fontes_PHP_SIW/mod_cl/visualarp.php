@@ -70,12 +70,12 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     }
-    if(f($RS,'decisao_judicial')=='S') {
-      $w_html.=chr(13).'      <tr><td><b>Número original: </b></td>';
-      $w_html.=chr(13).'        <td>'.f($RS,'numero_original').' </td></tr>';
-      $w_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td>';
-      $w_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
-    }
+    $w_html.=chr(13).'      <tr><td><b>Número original: </b></td>';
+    $w_html.=chr(13).'        <td>'.f($RS,'numero_original').' </td></tr>';
+    $w_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td>';
+    $w_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
+    $w_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td>';
+    $w_html.=chr(13).'         <td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
     $w_html.=chr(13).'          <tr><td><b>Justificativa:</b></td>';
     $w_html.=chr(13).'            <td>'.f($RS,'justificativa').' </td></tr>';
     $w_html.=chr(13).'      <tr><td><b>Observação:</b></td>';
@@ -106,7 +106,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     }
     
     //Listagem dos itens do pedido de compra
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null);
+    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';

@@ -102,6 +102,9 @@ exit;
 function Mesa() {
   extract($GLOBALS);
 
+  // Recupera os dados do cliente
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
   if ($O=="L") {
     // Verifica se o cliente tem o módulo de telefonia contratado
     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'TT');
@@ -135,6 +138,12 @@ function Mesa() {
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+  ShowHTML('    <td align="right">');
+
+  // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+  if (f($RS_Cliente,'georeferencia')=='S') {
+    ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+  }
 
   // Exibe, se necessário, sinalizador para alerta
   $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N');
@@ -152,7 +161,7 @@ function Mesa() {
         break;
       }
     }
-    ShowHTML('    <td align="right"><a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
+    ShowHTML('      <a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
   }
 
   ShowHTML('<tr><td colspan=2><hr>');
@@ -258,9 +267,6 @@ function Mesa() {
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
     $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
     
-    // Recupera os dados da unidade de lotação do usuário
-    $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-
     if (nvl($w_viagem,'')!='') {
       $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
       $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$w_usuario,'PD',4,

@@ -122,7 +122,7 @@ function Benef() {
   $p_data_fim       = strtoupper($_REQUEST['p_data_fim']);
   $p_solicitante    = strtoupper($_REQUEST['p_solicitante']);
   $p_numero         = strtoupper($_REQUEST['p_numero']);
-  $p_ordena         = strtoupper($_REQUEST['p_ordena']);
+  $p_ordena         = $_REQUEST['p_ordena'];
   $p_localizacao    = strtoupper($_REQUEST['p_localizacao']);
   $p_lotacao        = strtoupper($_REQUEST['p_lotacao']);
   $p_nome           = strtoupper($_REQUEST['p_nome']);
@@ -1203,7 +1203,7 @@ function Grava() {
          }
       }
       
-      dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,$SG,
+      dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,Nvl($_REQUEST['p_restricao'],$SG),
           $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
           $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
           $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],

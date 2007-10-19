@@ -254,6 +254,7 @@ function CompHora ($hour1, $DisplayName1, $Operator, $hour2, $DisplayName2) {
 }
 
 function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
+  if(strpos($Valor1,'[')===false) $Form = "  theForm."; else $Form = "theForm";
   switch ($Operator) {
     case "==":  $w_Operator=" igual a ";            break;
     case "!=":  $w_Operator=" diferente de ";       break;
@@ -264,9 +265,9 @@ function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
     case "<=":  $w_Operator=" menor ou igual a ";   break;
     case "=<":  $w_Operator=" menor ou igual a ";   break;
   }
-  print "  var V1 = theForm." . $Valor1 . ".value; "."\r\n";
+  print "  var V1 = ".$Form.$Valor1 . ".value; "."\r\n";
   if (strpos("1234567890", substr($Valor2,0,1))===false) {
-    print "   var V2 = theForm." . $Valor2 . ".value;"."\r\n";
+    print "   var V2 = ".$Form.$Valor2 . ".value;"."\r\n";
   } else {
     print "   var V2 = '" . $Valor2 . "';"."\r\n";
   }
@@ -277,15 +278,15 @@ function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
   print "     V2 = V2.toString().replace(',','.'); "."\r\n";
   print "     if (isNaN(V1)) { "."\r\n";
   print "        alert('" . $DisplayName1 . " não é um valor válido!.'); "."\r\n";
-  print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+  print "        ".$Form.$Valor1 . ".focus(); "."\r\n";
   print "        return false; "."\r\n";
   print "     } "."\r\n";
   print "     if (isNaN(V2)) { "."\r\n";
   print "        alert('" . $DisplayName2 . " não é um valor válido!.'); "."\r\n";
   if (strpos("1234567890",substr($Valor2,0,1))===false) {
-     print "        theForm." . $Valor2 . ".focus(); "."\r\n";
+     print "        ".$Form.$Valor2 . ".focus(); "."\r\n";
   } else {
-     print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+     print "        ".$Form.$Valor1 . ".focus(); "."\r\n";
   }
   print "        return false; "."\r\n";
   print "     } "."\r\n";
@@ -293,7 +294,7 @@ function CompValor ($Valor1, $DisplayName1, $Operator, $Valor2, $DisplayName2) {
   print "     var v2 = parseFloat(V2);"."\r\n";
   print "     if (!(v1 " . $Operator . " v2)) { "."\r\n";
   print "        alert('" . $DisplayName1 . " deve ser " .$w_Operator . $DisplayName2 . ".'); "."\r\n";
-  print "        theForm." . $Valor1 . ".focus(); "."\r\n";
+  print "        ".$Form.$Valor1 . ".focus(); "."\r\n";
   print "        return false; "."\r\n";
   print "     } "."\r\n";
   print "  } "."\r\n";
