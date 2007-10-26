@@ -41,10 +41,13 @@ begin
          select a.sq_cc, 
                 case when c.sq_cc is not null
                      then c.nome||' - '||b.nome||' - '||a.nome
-                     else b.nome||' - '||a.nome
+                     else case when b.sq_cc is not null
+                               then b.nome||' - '||a.nome
+                               else a.nome
+                          end
                 end nome
            from ct_cc                   a
-                inner        join ct_cc b on (a.sq_cc_pai          = b.sq_cc)
+                left outer   join ct_cc b on (a.sq_cc_pai          = b.sq_cc)
                   left outer join ct_cc c on (b.sq_cc_pai          = c.sq_cc)
           where a.ativo              = 'S'
             and a.cliente            = p_cliente

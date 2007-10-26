@@ -13,32 +13,35 @@ create or replace procedure SP_PutCLPesqFornecedor
     p_material                 in varchar2  default null
    ) is
 begin
-   If p_operacao = 'I' Then
-      -- Insere registro na tabela CL_ITEM_FORNECEDOR
-      insert into cl_item_fornecedor
-        (sq_item_fornecedor,         sq_solicitacao_item, sq_material, fornecedor,   inicio,     fim,          valor_unidade,
-         valor_item,                 pesquisa,            fabricante, marca_modelo, embalagem)
-      values
-        (sq_item_fornecedor.nextval, null,                p_material,   p_fornecedor, p_inicio,     p_fim,          p_valor, 
-         p_valor,     'S',                 p_fabricante, p_marca_modelo, p_embalagem);
-      
-      sp_ajustapesquisamaterial(p_cliente,p_material);
-   Elsif p_operacao = 'A' Then
-      update cl_item_fornecedor set
-        inicio = p_inicio,
-        fim    = p_fim,
-        valor_unidade = p_valor,
-        valor_item    = p_valor,
-        fabricante    = p_fabricante,
-        marca_modelo  = p_marca_modelo,
-        embalagem     = p_embalagem
-      where sq_item_fornecedor = p_chave;
-         
+   If p_operacao <> 'E' Then
+      If p_chave is null Then
+         -- Insere registro na tabela CL_ITEM_FORNECEDOR
+         insert into cl_item_fornecedor
+           (sq_item_fornecedor,         sq_solicitacao_item, sq_material,  fornecedor,     inicio,    fim,   valor_unidade,
+            valor_item,                 pesquisa,            fabricante,   marca_modelo,   embalagem, ordem)
+         values
+           (sq_item_fornecedor.nextval, null,                p_material,   p_fornecedor,   p_inicio,    p_fim, p_valor, 
+            p_valor,                    'S',                 p_fabricante, p_marca_modelo, p_embalagem, 0);
+         -- Atualiza a tabela de materiais
+         sp_ajustapesquisamaterial(p_cliente,p_material);
+      Elsif p_chave is not null Then
+         update cl_item_fornecedor set
+           inicio        = p_inicio,
+           fim           = p_fim,
+           valor_unidade = p_valor,
+           valor_item    = p_valor,
+           fabricante    = p_fabricante,
+           marca_modelo  = p_marca_modelo,
+           embalagem     = p_embalagem
+         where sq_item_fornecedor = p_chave;
+         -- Atualiza a tabela de materiais
+         sp_ajustapesquisamaterial(p_cliente,p_material);
+      End If;
    Elsif p_operacao = 'E' Then
-      -- Exclui todos os registros de uma solicitacao
+      -- Exclui pesquisa de preço
       delete cl_item_fornecedor a
        where a.sq_item_fornecedor = p_chave;
-      
+      -- Atualiza a tabela de materiais
       sp_ajustapesquisamaterial(p_cliente,p_material);
    End If;
 end SP_PutCLPesqFornecedor;

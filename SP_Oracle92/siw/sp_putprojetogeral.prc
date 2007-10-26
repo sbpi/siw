@@ -64,7 +64,10 @@ create or replace procedure SP_PutProjetoGeral
 
    w_etapa     tb_etapa;
    w_etapa_pai tb_etapa_pai;
-
+   
+   cursor c_rubricas is
+     select * from pj_rubrica    where ativo = 'S' and sq_siw_solicitacao = p_copia;
+     
    cursor c_riscos is
      select * from siw_restricao where risco = 'S' and sq_siw_solicitacao = p_copia;
 
@@ -308,6 +311,23 @@ begin
           for crec in c_etapa_risco loop
              insert into siw_restricao_etapa (sq_siw_restricao,                   sq_projeto_etapa)
              values                          (w_risco_pai(crec.sq_siw_restricao), w_etapa_pai(crec.sq_projeto_etapa));
+          end loop;
+          
+          -- Insere rubricas do projeto
+          for crec in c_rubricas loop
+             -- recupera a próxima chave da rubrica
+             select sq_projeto_rubrica.nextval into w_chave1 from dual;
+          
+             insert into pj_rubrica
+                (sq_projeto_rubrica, sq_siw_solicitacao,  sq_cc,        codigo,      nome,      descricao,      ativo,      aplicacao_financeira)
+             values 
+                (w_chave1,           w_chave,             crec.sq_cc ,  crec.codigo, crec.nome, crec.descricao, crec.ativo, crec.aplicacao_financeira);
+             
+             insert into pj_rubrica_cronograma
+               (sq_rubrica_cronograma,                sq_projeto_rubrica, inicio, fim, valor_previsto, valor_real)
+               (select sq_rubrica_cronograma.nextval, w_chave1, inicio,   fim,    valor_previsto,      valor_real 
+                  from pj_rubrica_cronograma
+                 where sq_projeto_rubrica = crec.sq_projeto_rubrica);
           end loop;
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
