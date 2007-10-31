@@ -173,7 +173,7 @@ begin
                                        inner join cl_solicitacao  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                        inner join siw_solicitacao w on (x.sq_siw_solicitacao = w.sq_siw_solicitacao)
                                        inner join siw_tramite     z on (w.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                        'AT'                <> z.sigla)
+                                                                        'AT'                 = z.sigla)
                                 group by x.sq_material, y.arp
                                )                   g  on (a.sq_material         = g.sq_material)
           where a.cliente         = p_cliente
@@ -217,7 +217,7 @@ begin
                                        inner join cl_solicitacao  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                        inner join siw_solicitacao w on (x.sq_siw_solicitacao = w.sq_siw_solicitacao)
                                        inner join siw_tramite     z on (w.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                        'AT'                <> z.sigla)
+                                                                        'AT'                 = z.sigla)
                                 group by x.sq_material, y.arp
                                )                   g  on (a.sq_material         = g.sq_material)                
           where a.cliente         = p_cliente
@@ -261,7 +261,7 @@ begin
                                        inner join cl_solicitacao  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                        inner join siw_solicitacao w on (x.sq_siw_solicitacao = w.sq_siw_solicitacao)
                                        inner join siw_tramite     z on (w.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                        'AT'                <> z.sigla)
+                                                                        'AT'                 = z.sigla)
                                 group by x.sq_material, y.arp
                                )                   g  on (a.sq_material         = g.sq_material)                
           where a.cliente         = p_cliente
@@ -305,7 +305,7 @@ begin
                                        inner join cl_solicitacao  y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                        inner join siw_solicitacao w on (x.sq_siw_solicitacao = w.sq_siw_solicitacao)
                                        inner join siw_tramite     z on (w.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                        'AT'                <> z.sigla)
+                                                                        'AT'                 = z.sigla)
                                 group by x.sq_material, y.arp
                                )                   g  on (a.sq_material         = g.sq_material)                
           where a.cliente         = p_cliente

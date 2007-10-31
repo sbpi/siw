@@ -16,7 +16,14 @@ create or replace procedure SP_PutCLSolicItem
    w_material number(18)   := p_material;
    w_existe   number(18);
    w_reg      cl_solicitacao_item%rowtype;
+   w_menu     siw_menu%rowtype;
 begin
+   -- recupera os dados do serviço
+   select b.* into w_menu
+     from siw_solicitacao     a
+          inner join siw_menu b on (a.sq_menu = b.sq_menu)
+     where a.sq_siw_solicitacao = p_chave;
+     
    If p_operacao = 'I' Then
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
@@ -33,8 +40,8 @@ begin
     where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'E' Then
       -- p_chave_aux2 é passado apenas pelo item da licitação
-      if p_chave_aux2 is not null then
-         -- Verifica se o item da licitação está ligado a mais de um item de pedido de copra
+      if substr(w_menu.sigla,1,4) = 'CLLC' then
+         -- Verifica se o item da licitação está ligado a mais de um item de pedido de compra
          select count(a.item_pedido) into w_existe
            from cl_solicitacao_item_vinc a
           where a.item_licitacao = p_chave_aux;
@@ -63,8 +70,42 @@ begin
          where sq_siw_solicitacao = p_chave;
 
          if w_existe <= 1 then
-            -- Se o item da licitação estiver vinculado a apenas um item de compra, remove o item da licitação
+            -- Verifica se é necessário remover o item da licitação.
             delete cl_solicitacao_item where sq_solicitacao_item = p_chave_aux;
+         end if;
+         
+      elsif substr(w_menu.sigla,1,4) = 'CLRP' then
+         -- Verifica se o item do pedido de arp está ligado a mais de um item de licitação
+         select count(a.item_licitacao) into w_existe
+           from cl_solicitacao_item_vinc a
+          where a.item_pedido = p_chave_aux2;
+         
+         -- Remove vínculo entre pedido de compra e item de licitação
+         delete cl_solicitacao_item_vinc where item_licitacao = p_chave_aux;
+
+         if w_existe > 1 then
+            -- Se o item do pedido de arp estiver vinculado a mais de um item da licitação, ajusta a quantidade
+            update cl_solicitacao_item a
+               set a.quantidade = (select sum(y.quantidade)
+                                     from cl_solicitacao_item_vinc       x
+                                          inner join cl_solicitacao_item y on (x.item_licitacao = y.sq_solicitacao_item)
+                                    where x.item_pedido = a.sq_solicitacao_item
+                                  )
+            where a.sq_solicitacao_item = p_chave_aux2;
+         end if;
+
+         -- Recupera dados para controle de quantidade e valor da solicitação
+         select quantidade, sq_material   into w_qtd, w_material from cl_solicitacao_item where sq_solicitacao_item = p_chave_aux2;
+         select coalesce(valor_unidade,0) into w_valor from cl_item_fornecedor where sq_solicitacao_item = p_chave_aux and sq_material = w_material and vencedor = 'S';
+  
+         -- Atualiza o valor da solicitação
+         update siw_solicitacao 
+            set valor = (coalesce(valor,0) - (w_valor*w_qtd))
+         where sq_siw_solicitacao = p_chave;
+
+         if w_existe <= 1 then
+            -- Verifica se é necessário remover o item do pedido de arp.
+            delete cl_solicitacao_item where sq_solicitacao_item = p_chave_aux2;
          end if;
          
       else
@@ -88,13 +129,15 @@ begin
        
       -- Atribui o material à variável local
       w_material := w_reg.sq_material;
-      w_qtd      := w_reg.quantidade_autorizada;
+      
+      -- Se for pedido de ARP, recebe p_quantidade. Se for licitação, recupera a quantidade autorizada do pedido de compra.
+      w_qtd := coalesce(p_quantidade, w_reg.quantidade_autorizada);
       
       -- Verifica se o item do pedido já consta da licitação
       select count(sq_solicitacao_item) into w_existe
         from cl_solicitacao_item a
        where a.sq_siw_solicitacao = p_chave
-         and a.sq_material        = w_reg.sq_material;
+         and a.sq_material        = w_material;
    
       if w_existe = 0 then
          -- Recupera o próximo valor da sequence
@@ -102,27 +145,30 @@ begin
 
          -- Insere registro
          insert into cl_solicitacao_item
-           (sq_solicitacao_item, sq_siw_solicitacao, sq_material,       quantidade)
+           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade)
          values
-           (w_chave,             p_chave,            w_reg.sq_material, w_reg.quantidade_autorizada);
+           (w_chave,             p_chave,            w_material,  w_qtd);
       Else
          -- Recupera a chave do item na licitação
          select a.sq_solicitacao_item into w_chave
            from cl_solicitacao_item a
           where a.sq_siw_solicitacao = p_chave
-            and a.sq_material        = w_reg.sq_material;
+            and a.sq_material        = w_material;
           
          -- Acresce a quantidade do item do pedido à quantidade já existente na licitação
          update cl_solicitacao_item 
-            set quantidade = quantidade + w_reg.quantidade_autorizada 
+            set quantidade = quantidade + w_qtd 
          where sq_solicitacao_item = w_chave;
       End If;
       
       -- Vincula o item da licitação com o item do pedido
-      insert into cl_solicitacao_item_vinc 
-        (item_licitacao, item_pedido)
-      values
-        (w_chave, p_chave_aux2);
+      if substr(w_menu.sigla,1,4) = 'CLRP' then
+         -- Tratamento para item de pedido de arp
+         insert into cl_solicitacao_item_vinc (item_licitacao, item_pedido) values (p_chave_aux2, w_chave);
+      else
+         -- Tratamento para item de licitação
+         insert into cl_solicitacao_item_vinc (item_licitacao, item_pedido) values (w_chave, p_chave_aux2);
+      end if;
    Elsif p_operacao = 'C' Then
       -- Registra a quantidade autorizada para compra e a quantidade comprada para a licitação
       update cl_solicitacao_item set 
@@ -132,7 +178,13 @@ begin
    
    If p_operacao <> 'E' Then
       -- Recupera o preço médio do material
-      select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
+      if substr(w_menu.sigla,1,4) = 'CLRP' then
+         -- Tratamento para item de pedido de arp
+         select coalesce(valor_unidade,0) into w_valor from cl_item_fornecedor where sq_solicitacao_item = p_chave_aux2 and sq_material = w_material and vencedor = 'S';
+      else
+         -- Tratamento para item de licitação
+         select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
+      end if;
 
       -- Atualiza o valor da solicitação
       If p_operacao = 'A' or p_operacao = 'C' Then
