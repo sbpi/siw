@@ -134,6 +134,7 @@ begin
                 g.item_pedido,
                 g.item_licitacao,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_licitacao,
+                l.qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.qtd_cotacao,
                 j.qtd_proposta,
@@ -147,6 +148,16 @@ begin
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_pedido)
                   inner   join cl_solicitacao_item      h on (g.item_licitacao       = h.sq_solicitacao_item)
                     inner join cl_solicitacao           k on (h.sq_siw_solicitacao   = k.sq_siw_solicitacao)
+                    left  join (select sum(x1.quantidade) as qtd_pedido, x2.item_licitacao
+                                  from cl_solicitacao_item                   x1
+                                       inner   join cl_solicitacao_item_vinc x2 on (x1.sq_solicitacao_item = x2.item_pedido)
+                                       inner   join siw_solicitacao          x3 on (x1.sq_siw_solicitacao  = x3.sq_siw_solicitacao)
+                                         inner join siw_menu                 x4 on (x3.sq_menu             = x4.sq_menu)
+                                         inner join siw_tramite              x5 on (x3.sq_siw_tramite      = x5.sq_siw_tramite)
+                                 where substr(x4.sigla,1,4) = 'CLRP'
+                                   and x5.sigla             = 'AT' 
+                                 group by x2.item_licitacao
+                               )                        l on (h.sq_solicitacao_item = l.item_licitacao)
                   left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
                                   from siw_solicitacao                  x
                                        inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
@@ -160,7 +171,7 @@ begin
                                          left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
                                                                               'N'                   = z.pesquisa)
                                 group by y.sq_solicitacao_item
-                               )                        j on (a.sq_solicitacao_item  = j.sq_solicitacao_item)                               
+                               )                        j on (a.sq_solicitacao_item  = j.sq_solicitacao_item)
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))

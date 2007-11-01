@@ -24,7 +24,7 @@ begin
      into l_menu,    l_tramite,        l_vinculacao, l_solicitante, l_cadastrador, l_unid_solic, l_unid_usu
      from siw_solicitacao            a
           inner join siw_menu        b on (a.sq_menu     = b.sq_menu)
-          inner join sg_autenticacao c on (a.solicitante = c.sq_pessoa)
+          left  join sg_autenticacao c on (a.solicitante = c.sq_pessoa)
     where sq_siw_solicitacao = p_solic;
    
    -- Retorna os responsáveis pela unidade da solicitação ou do usuário, dependendo do tipo de vinculação

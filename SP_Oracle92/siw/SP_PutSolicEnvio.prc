@@ -15,7 +15,11 @@ create or replace procedure SP_PutSolicEnvio
    w_chave_arq     number(18) := null;
    w_tramite       number(18);
    w_sg_tramite    varchar2(2);
+   w_menu          siw_menu%rowtype;
 begin
+   -- Recupera os dados do serviço
+   select * into w_menu from siw_menu where sq_menu = p_menu;
+   
    -- Se houve mudança no trâmite atual, recupera o trâmite para o qual está sendo enviada a solicitação
    If p_tramite <> nvl(p_novo_tramite, 0) Then
       If p_devolucao = 'N' Then
@@ -61,13 +65,12 @@ begin
       where a.sq_siw_tramite = p_tramite
         and b.sq_siw_tramite = w_tramite
    );
-
    Update siw_solicitacao set
       sq_siw_tramite        = w_tramite,
       conclusao             = null,
       executor              = null,
       observacao            = null,
-      valor                 = null,
+      valor                 = case substr(w_menu.sigla,1,2) when 'CL' then valor else null end,
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;
 
