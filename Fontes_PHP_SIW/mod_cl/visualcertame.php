@@ -87,10 +87,16 @@ function VisualCertame($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html.= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html.=chr(13).'      <tr><td width="30%"><b>Modalidade: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_lcmodalidade').' </td></tr>';
-      $w_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
-      $w_html.=chr(13).'        <td>'.f($RS,'processo').' </td></tr>';
+      if(nvl(f($RS,'processo'),'')!='') {
+        $w_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
+        $w_html.=chr(13).'        <td>'.f($RS,'processo').' </td></tr>';
+      }
       $w_html.=chr(13).'      <tr><td><b>Número do certame: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'numero_certame').' </td></tr>';
+      if(nvl(f($RS,'numero_ata'),'')!='') {
+        $w_html.=chr(13).'      <tr><td><b>Número da ata: </b></td>';
+        $w_html.=chr(13).'        <td>'.f($RS,'numero_ata').' </td></tr>';
+      }
       $w_html.=chr(13).'      <tr><td><b>Tipo reajuste: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_tipo_reajuste').' </td></tr>';
       if(f($RS,'tipo_reajuste')==1) {

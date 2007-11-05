@@ -28,6 +28,7 @@ include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putMatServ.php');
 include_once($w_dir_volta.'classes/sp/dml_putPessoa.php');
+include_once($w_dir_volta.'classes/sp/dml_putCLPesqFornecedor.php');
 
 // =========================================================================
 //  /catalogo.php
@@ -326,7 +327,7 @@ function Inicial() {
     }  
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -422,7 +423,7 @@ function Inicial() {
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td valign="top"><table border=0 width="90%" cellspacing=0>');
-    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,'',$P3,null,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
     ShowHTML('      <tr valign="top">');
@@ -452,14 +453,14 @@ function Inicial() {
     if($P1==1) {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td valign="top"><b>Validade:</b>');
-      if($p_aviso=='S') ShowHTML('          <BR><input type="CHECKBOX" name="p_aviso" value="S" CHECKED>Aviso');
-      else              ShowHTML('          <BR><input type="CHECKBOX" name="p_aviso" value="S">Aviso');
-      if($p_invalida=='S') ShowHTML('          <BR><input type="CHECKBOX" name="p_invalida" value="S" CHECKED>Inválida');
-      else                 ShowHTML('          <BR><input type="CHECKBOX" name="p_invalida" value="S">Inválida');
-      if($p_valida=='S') ShowHTML('          <BR><input type="CHECKBOX" name="p_valida" value="S" CHECKED>Válida');
-      else               ShowHTML('          <BR><input type="CHECKBOX" name="p_valida" value="S">Válida');
-      if($p_branco=='S') ShowHTML('          <BR><input type="CHECKBOX" name="p_branco" value="S" CHECKED>Sem pesquisa');
-      else               ShowHTML('          <BR><input type="CHECKBOX" name="p_branco" value="S">Sem pesquisa');
+      if($p_aviso=='S' || $P2 == 1) ShowHTML('          <BR><input type="CHECKBOX" name="p_aviso" value="S" CHECKED>Aviso');
+      else                          ShowHTML('          <BR><input type="CHECKBOX" name="p_aviso" value="S">Aviso');
+      if($p_invalida=='S' || $P2 == 1) ShowHTML('          <BR><input type="CHECKBOX" name="p_invalida" value="S" CHECKED>Inválida');
+      else                             ShowHTML('          <BR><input type="CHECKBOX" name="p_invalida" value="S">Inválida');
+      if($p_valida=='S' || $P2 == 1) ShowHTML('          <BR><input type="CHECKBOX" name="p_valida" value="S" CHECKED>Válida');
+      else                           ShowHTML('          <BR><input type="CHECKBOX" name="p_valida" value="S">Válida');
+      if($p_branco=='S' || $P2 == 1) ShowHTML('          <BR><input type="CHECKBOX" name="p_branco" value="S" CHECKED>Sem pesquisa');
+      else                           ShowHTML('          <BR><input type="CHECKBOX" name="p_branco" value="S">Sem pesquisa');
     } else {
       ShowHTML('<INPUT type="hidden" name="p_aviso" value="S">');
       ShowHTML('<INPUT type="hidden" name="p_invalida" value="S">');
@@ -605,6 +606,12 @@ function PesquisaPreco() {
     }
   } elseif ($O=='L') {  
     $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nm_fornecedor','asc');
+    } else {
+      $RS = SortArray($RS,'phpdt_fim','desc','nm_fornecedor','asc');
+    }    
   } elseif ($O=='P') {
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
   } 
@@ -757,7 +764,7 @@ function PesquisaPreco() {
   ShowHTML('</table>');
   if ($O=='L') {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.'Inicial&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Voltar</a>');
+    ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.'Inicial&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Voltar</a>');
     ShowHTML('    <td align="right">');
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
@@ -789,7 +796,7 @@ function PesquisaPreco() {
         }
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exclui deste registro.">EX</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
@@ -809,6 +816,7 @@ function PesquisaPreco() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_fornecedor" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_material" value="'.f($RS_Item,'chave').'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');    
     
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
@@ -878,9 +886,30 @@ function PesquisaPreco() {
     ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Pesquisa</td></td></tr>');
     ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('<tr><td>');
-    if($O=='I') $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
-    else        $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,'PESQMAT');
-    foreach($RS as $row){$RS=$row; break;}
+    if(nvl($w_chave_aux,'')=='') {
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      foreach ($RS as $row) {
+        $w_nome_item   = f($row,'nome');
+        $w_chave_item  = f($row,'chave');
+        $w_codigo_item = f($row,'codigo_interno');
+        $w_inicio_item = formataDataEdicao(time());
+        break;
+      }
+    } else {
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,'PESQMAT');
+      foreach ($RS as $row) {
+        $w_nome_item         = f($row,'nome');
+        $w_chave_item        = f($row,'chave');
+        $w_codigo_item       = f($row,'codigo_interno');
+        $w_inicio_item       = Nvl(formataDataEdicao(f($row,'phpdt_inicio')),formataDataEdicao(time()));
+        $w_fim_item          = formataDataEdicao(f($row,'phpdt_fim'));
+        $w_valor_item        = formatNumber(f($row,'valor_item'),4);
+        $w_fabricante_item   = f($row,'fabricante');
+        $w_marca_modelo_item = f($row,'marca_modelo');
+        $w_embalagem_item    = f($row,'embalagem');
+        break;
+      }      
+    }
     ShowHTML('    <TABLE WIDTH="100%" border=0>');
     ShowHTML('<tr><td colspan="6" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
@@ -898,12 +927,12 @@ function PesquisaPreco() {
     ShowHTML('            <td><b>Validade</td>');
     ShowHTML('          </tr>');
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-    ShowHTML('        <td>'.f($RS_Item,'codigo_interno').'</td>');
-    ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($RS_Item,'nome'),f($RS_Item,'chave'),$TP,null).'</td>');
-    ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl(formataDataEdicao(f($RS,'phpdt_inicio')),formataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
-    ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao(f($RS,'phpdt_fim')).'" onKeyDown="FormataData(this,event);" title=Data da validade da pesquisa de preço."></td>');
-    if(nvl(f($RS,'valor_item'),'')!='') {
-      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(f($RS,'valor_item'),4).'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+    ShowHTML('        <td>'.$w_codigo_item.'</td>');
+    ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,$w_nome_item,$w_chave_item,$TP,null).'</td>');
+    ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_item.'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
+    ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_item.'" onKeyDown="FormataData(this,event);" title=Data da validade da pesquisa de preço."></td>');
+    if(nvl($w_valor_item,'')!='') {
+      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_item.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
     } else {
       ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
     }
@@ -911,9 +940,9 @@ function PesquisaPreco() {
     ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="6">');
     ShowHTML('          <TABLE WIDTH="100%" border=0>');
     ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.f($RS,'fabricante').'"></td>');
-    ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.f($RS,'marca_modelo').'"></td>');
-    ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.f($RS,'embalagem').'"></td>');
+    ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante_item.'"></td>');
+    ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_marca_modelo_item.'"></td>');
+    ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.$w_embalagem_item.'"></td>');
     ShowHTML('        </table>');
     ShowHTML('        </tr>');        
     ShowHTML('        </table></tr>');
@@ -1266,12 +1295,12 @@ function Grava() {
             $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
       
         // Inseri as cotaçoes e atualiza a tabela de materiais
-        dml_putCLItemFornecedor::getInstanceOf($dbms,$O,$w_cliente,null,null,$w_chave_nova,
+        dml_putCLPesqFornecedor::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave_aux'],null,$w_chave_nova,
            $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_fabricante'],
-           $_REQUEST['w_marca_modelo'],$_REQUEST['w_embalagem'],0,'N','S');
+           $_REQUEST['w_marca_modelo'],$_REQUEST['w_embalagem'],$_REQUEST['w_sq_material']);
       
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$w_menu.'&w_chave='.$_REQUEST['w_chave'].'&w_pesquisa='.$_REQUEST['w_pesquisa'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$w_menu.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

@@ -2814,7 +2814,12 @@ function AtualizaEtapa() {
       $w_total_tarefa    = 0;
       $w_total_anexo     = 0;
       foreach ($RS as $row) {
-        if ($P1==2) {
+        if (Nvl(f($row,'tit_exec'),0)   == $w_usuario || 
+            Nvl(f($row,'sub_exec'),0)   == $w_usuario || 
+            Nvl(f($row,'titular'),0)    == $w_usuario || 
+            Nvl(f($row,'substituto'),0) == $w_usuario || 
+            Nvl(f($row,'solicitante'),0)== $w_usuario ||  
+            Nvl(f($row,'sq_pessoa'),0)  == $w_usuario) {          
           ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),$w_fase,'ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo')));
         } else {
           ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'N','ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo')));
@@ -4501,6 +4506,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $l_html .= chr(13).'        <td width="1%" nowrap align="right" >'.formatNumber($l_perc).' %</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
   $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_ativ1.'</td>';
+  $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_arquivo.'</td>';
   if ($l_oper == 'S') {
     $l_html .= chr(13).'        <td align="top" nowrap rowspan='.$l_row.'>';
     // Se for listagem de etapas no cadastramento do projeto, exibe operações de alteração, exclusão e recursos
@@ -4525,7 +4531,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     foreach ($RS_Contr as $row) {
       $l_contr1 .= chr(13).'<tr valign="top">';
       $l_contr1 .= chr(13).'  <td>';
-      ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+      $l_contr1 .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if($P4!=1) $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
       else       $l_contr1 = $l_contr1.chr(13).'  '.f($row,'sq_siw_solicitacao');
       $l_contr1 = $l_contr1.chr(13).' - '.Nvl(f($row,'titulo'),'-');

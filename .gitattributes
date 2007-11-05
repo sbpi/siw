@@ -987,6 +987,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCLGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLItemFornecedor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLParametro1.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLPesqFornecedor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCTEspecificacao.php -text
@@ -1484,6 +1485,7 @@ Fontes_PHP_SIW/mod_cl/certame.php -text
 Fontes_PHP_SIW/mod_cl/pedido.php -text
 Fontes_PHP_SIW/mod_cl/relatorios.php -text
 Fontes_PHP_SIW/mod_cl/tabelas.php -text
+Fontes_PHP_SIW/mod_cl/validaarp.php -text
 Fontes_PHP_SIW/mod_cl/validacertame.php -text
 Fontes_PHP_SIW/mod_cl/validapedido.php -text
 Fontes_PHP_SIW/mod_cl/visualarp.php -text

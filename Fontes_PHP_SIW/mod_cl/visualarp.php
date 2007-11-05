@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
-function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
+function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
   extract($GLOBALS);
   if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $w_html='';
@@ -105,8 +105,8 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'         </table></td></tr>';
     }
     
-    //Listagem dos itens do pedido de compra
-    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null,null);
+    //Listagem dos itens do pedido de ARP
+    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
     $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
@@ -126,7 +126,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'        </tr>';
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
@@ -145,16 +145,16 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         } else {
           $w_html.=chr(13).'        <td align="center">---</td>';
         }
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'pesquisa_preco_medio'),4).'</td>';
+        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>';
         if($w_sg_tramite=='AT') {
-          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada')),4).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).'</td>';
         } else {
-          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade')),4).'</td>';
+          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).'</td>';
         }
         if($w_sg_tramite=='AT') {
-          $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada'));
+          $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade_autorizada'));
         } else {
-          $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));
+          $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade'));
         }
         $w_html.=chr(13).'        </tr>';
       }
@@ -164,7 +164,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
     $w_html.=chr(13).'      </tr>';
     $w_html.=chr(13).'         </table></td></tr>';
-    $w_html.=chr(13).'      <tr><td colspan="2">(*) Calculado a partir do preço médio do item.';
+    $w_html.=chr(13).'      <tr><td colspan="2">(*) Calculado a partir do preço vencedor da ATA de ARP.';
   }
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados
@@ -193,7 +193,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'         </table></td></tr>';
     }
     // Se for envio, executa verificações nos dados da solicitação
-    $w_erro = ValidaPedido($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
+    $w_erro = ValidaARP($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
     if ($w_erro>'') {
       $w_html.=chr(13).'<tr><td colspan=2><font size=2>';
       $w_html.=chr(13).'<HR>';
@@ -207,7 +207,6 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
       $w_html.=chr(13).'  </font></td></tr>';
     }
-
 
     // Encaminhamentos
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
@@ -232,7 +231,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
           $w_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
           if ($w_ativo=='S') {
             // Recupera os responsáveis pelo tramite
-            $RS2 = db_getTramiteResp::getInstanceOf($dbms,$v_chave,null,null);
+            $RS2 = db_getTramiteResp::getInstanceOf($dbms,$v_chave,null,null);            
             $w_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
             $w_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
             if (count($RS2)>0) {

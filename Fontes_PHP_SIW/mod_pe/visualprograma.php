@@ -112,8 +112,16 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
         $l_html .= chr(13).'        <td nowrap>'.f($row,'nm_tipo_indicador').'</td>';
-        if ($l_formato=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
-        else                    $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nome'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+        if ($l_formato=='WORD') {
+          $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
+        } else {
+          $RS_Indic = db_getIndicador::getInstanceOf($dbms,$w_cliente,null,f($row,'chave'),null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'VISUALBASE');
+          if(count($RS_Indic)!=0) {
+            $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nome'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+          } else {
+            $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
+          }
+        }
         //$l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$l_p1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
         $l_html .= chr(13).'      </tr>';
       } 
@@ -142,8 +150,16 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
-        $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
-        $l_html .= chr(13).'        <td>'.f($row,'nm_base_geografica').'</td>';
+        if ($l_formato=='WORD') {
+          $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
+        } else {
+          $RS_Indic = db_getIndicador::getInstanceOf($dbms,$w_cliente,null,f($row,'sq_eoindicador'),null,null,null,null,'S',null,null,null,null,null,null,null,null,null,'VISUALBASE');
+          if(count($RS_Indic)!=0) {
+            $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+          } else {
+            $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
+          }
+        }        $l_html .= chr(13).'        <td>'.f($row,'nm_base_geografica').'</td>';
         $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
         $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        
         $l_html .= chr(13).'      </tr>';

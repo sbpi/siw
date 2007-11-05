@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putCLDados {
-   function getInstanceOf($dbms, $restricao, $p_chave, $p_sq_lcmodalidade, $p_numero_processo, $p_numero_certame, $p_tipo_reajuste, $p_indice_base, $p_sq_eoindicador, 
+   function getInstanceOf($dbms, $restricao, $p_chave, $p_sq_lcmodalidade, $p_numero_processo, $p_numero_certame, $p_numero_ata, $p_tipo_reajuste, $p_indice_base, $p_sq_eoindicador, 
                           $p_limite_variacao, $p_sq_lcfonte_recurso, $p_sq_espec_despesa, $p_sq_lcjulgamento, $p_sq_lcsituacao, 
                           $p_financeiro_unico, $p_homologacao, $p_data_diario, $p_pagina_diario, $p_ordem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCLDADOS';
@@ -19,6 +19,7 @@ class dml_putCLDados {
                    'p_sq_lcmodalidade'           =>array(tvl($p_sq_lcmodalidade),                          B_INTEGER,        32),                   
                    'p_numero_processo'           =>array(tvl($p_numero_processo),                          B_VARCHAR,        30),
                    'p_numero_certame'            =>array(tvl($p_numero_certame),                           B_VARCHAR,        30),
+                   'p_numero_ata'                =>array(tvl($p_numero_ata),                               B_VARCHAR,        30),
                    'p_tipo_reajuste'             =>array(tvl($p_tipo_reajuste),                            B_INTEGER,        32),
                    'p_indice_base'               =>array(tvl($p_indice_base),                              B_VARCHAR,         7),
                    'p_sq_eoindicador'            =>array(tvl($p_sq_eoindicador),                           B_INTEGER,        32),                   

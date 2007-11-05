@@ -3,7 +3,7 @@
 // Rotina de validação dos dados do certame
 // -------------------------------------------------------------------------
 
-function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
+function ValidaARP($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   extract($GLOBALS);
   // Se não encontrar erro, esta função retorna cadeia fazia.
   // Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
@@ -37,22 +37,22 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   
-  // Recupera os itens do certame
-  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
+  // Recupera os itens da arp
+  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
   // Verifica se já foi inserido os itens na licitacao
   if (count($l_rs_item)==0) {
-    $l_erro.='<li>Informe pelo um item para licitação.';
+    $l_erro.='<li>Informe pelo menos um item para ARP.';
     $l_tipo=0; 
   }
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
   if (count($l_rs_tramite)>0) {
     if(f($l_rs_tramite,'sigla')=='PP') {
       // Verifica se cada item possui no minimo duas pesquisas de preço
-      $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
+      $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
       if(count($l_rs_pesquisa)>0) {
         foreach($l_rs_pesquisa as $row) {
-          if (f($row,'qtd')<2) {
-            $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') '.((f($row,'qtd')>0) ? 'só tem '.f($row,'qtd').' pesquisa(s) de preço válida(s).' : 'não tem pesquisa de preço válida.');
+          if (f($row,'pesquisa_validade')<addDays(time(),-1)) {
+            $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') '.'não tem pesquisa de preço válida.';
             $l_tipo  = 0;
           }
         }
@@ -62,18 +62,10 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }
-    } elseif(f($l_rs_tramite,'sigla')=='EE')  {
-      $l_exibe=false;
-      if(nvl(f($l_rs_solic,'tipo_julgamento'),'')=='N') {
-        $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
-        foreach($l_rs_pesquisa as $row) {
-          if (f($row,'qt_propostas')==0) {
-            $l_erro .= '<li>A licitação não tem nenhuma proposta.';
-            $l_tipo  = 0;
-          } elseif (((f($row,'qt_itens') * f($row,'qt_fornecedores'))!=f($row,'qt_propostas'))) {
-            $l_erro .= '<li>Para critério de julgamento global é necessário que cada fornecedor cote todos os itens.';
-            $l_tipo  = 0;
-          }
+      foreach($l_rs_item as $l_row) {
+        if(nvl(f($l_row,'qtd_pedido'),0)>nvl(f($l_row,'qtd_licitacao'),0)) {
+          $l_erro.='<li>ERRO';
+          $l_tipo=0; 
         }
       }
     }
@@ -89,3 +81,4 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   return $l_erro;
 }
 ?>
+

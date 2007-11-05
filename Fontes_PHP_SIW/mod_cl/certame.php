@@ -2028,6 +2028,7 @@ function DadosAnalise() {
     $w_sq_lcmodalidade    = $_REQUEST['w_sq_lcmodalidade'];
     $w_numero_processo    = $_REQUEST['w_numero_processo'];
     $w_numero_certame     = $_REQUEST['w_numero_certame'];
+    $w_numero_ata         = $_REQUEST['w_numero_ata'];
     $w_tipo_reajuste      = $_REQUEST['w_tipo_reajuste'];
     $w_indice_base        = $_REQUEST['w_indice_base'];
     $w_sq_eoindicador     = $_REQUEST['w_sq_eoindicador'];
@@ -2037,6 +2038,7 @@ function DadosAnalise() {
     $w_sq_lcjulgamento    = $_REQUEST['w_sq_lcjulgamento'];
     $w_sq_lcsituacao      = $_REQUEST['w_sq_lcsituacao'];
     $w_financeiro_unico   = $_REQUEST['w_financeiro_unico'];
+    $w_arp                = $_REQUEST['w_arp'];
   } else {
     $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
             null,null,null,null,null,null,null,null,null,null,
@@ -2046,6 +2048,7 @@ function DadosAnalise() {
     $w_sq_lcmodalidade    = f($RS,'sq_lcmodalidade');
     $w_numero_processo    = f($RS,'processo');
     $w_numero_certame     = f($RS,'numero_certame');
+    $w_numero_ata         = f($RS,'numero_ata');
     $w_tipo_reajuste      = f($RS,'tipo_reajuste');
     $w_limite_variacao    = f($RS,'limite_variacao');
     $w_indice_base        = f($RS,'indice_base');    
@@ -2055,7 +2058,8 @@ function DadosAnalise() {
     $w_sq_espec_despesa   = f($RS,'sq_especificacao_despesa');
     $w_sq_lcjulgamento    = f($RS,'sq_lcjulgamento');
     $w_sq_lcsituacao      = f($RS,'sq_lcsituacao');
-    $w_financeiro_unico   = f($RS,'financeiro_unico');    
+    $w_financeiro_unico   = f($RS,'financeiro_unico');
+    $w_arp                = f($RS,'arp');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -2083,6 +2087,9 @@ function DadosAnalise() {
   Validate('w_sq_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
   Validate('w_sq_lcjulgamento','Critério de julgamento','SELECT','1',1,18,'','0123456789');
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
+  if($w_arp=='S') {
+    Validate('w_numero_ata','Número da ata','1','1',1,30,'1','1');
+  }
   ShowHTML('  var i; ');
   ShowHTML('  var w_erro=false; ');
   ShowHTML('  for (i=1; i < theForm["w_ordem[]"].length; i++) {');
@@ -2110,8 +2117,10 @@ function DadosAnalise() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_arp" value="'.$w_arp.'">');
   ShowHTML('<INPUT type="hidden" name="w_ordem[]" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_arp" value="">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
   ShowHTML('<tr valign="top">');
@@ -2133,6 +2142,9 @@ function DadosAnalise() {
   SelecaoLCJulgamento('<u>J</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
   ShowHTML('<tr valign="top">');
+  if($w_arp=='S') {
+    ShowHTML('          <td><b>Número da <u>a</u>ta:</b><br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata."></td>');
+  }
   MontaRadioSN('<b>Parcelas pagas em um única liquidação?</b>',$w_financeiro_unico,'w_financeiro_unico',null,null,null);
   ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
   ShowHTML('  Orientação:<ul>');
@@ -2155,7 +2167,7 @@ function DadosAnalise() {
   $w_exibe        = false;
   $w_item_lic     = 0;
   $w_cor = $conTrAlternateBgColor;
-  foreach($RS as $row){ 
+  foreach($RS as $row) { 
     $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
@@ -2622,7 +2634,9 @@ function Concluir() {
           null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
-  foreach($RS as $row){$RS=$row; break;}  
+  foreach($RS as $row){$RS=$row; break;}
+  $w_tramite = f($RS,'sq_siw_tramite');
+  $w_erro = ValidaCertame($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -2632,20 +2646,29 @@ function Concluir() {
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
   CheckBranco();
+  FormataData();
   FormataValor();
   SaltaCampo();
   ValidateOpen('Validacao');
-  Validate('w_homologacao','Data de homologação','DATA',1,10,10,'','0123456789/');
-  Validate('w_data_diario','Data de publicação no diário oficial','DATA',1,10,10,'','0123456789/');
-  Validate('w_pagina_diario','Página do diário oficial','1','1',1,4,'','1');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
+  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+    Validate('w_homologacao','Data de homologação','DATA',1,10,10,'','0123456789/');
+    Validate('w_data_diario','Data de publicação no diário oficial','DATA',1,10,10,'','0123456789/');
+    Validate('w_pagina_diario','Página do diário oficial','1','1',1,4,'','1');
+    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } else {
+    ShowHTML('  theForm.Botao.disabled=true;');
+  }
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpen('onLoad="this.focus()";');
+  }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -2665,14 +2688,16 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  ShowHTML('  <table width="100%" border="0">');
-  ShowHTML('    <tr valign="top">');
-  ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
-  ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
-  ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
-  ShowHTML('    <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td align="center" colspan=3><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
+  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+    ShowHTML('  <table width="100%" border="0">');
+    ShowHTML('    <tr valign="top">');
+    ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+    ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
+    ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
+    ShowHTML('    <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('    <tr><td align="center" colspan=3><hr>');
+    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
+  }
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
@@ -3168,7 +3193,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putCLDados::getInstanceOf($dbms,'DADOS',$_REQUEST['w_chave'],$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
-        $_REQUEST['w_numero_certame'],$_REQUEST['w_tipo_reajuste'],$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
+        $_REQUEST['w_numero_certame'],$_REQUEST['w_numero_ata'],$_REQUEST['w_tipo_reajuste'],$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
         nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_sq_espec_despesa'],$_REQUEST['w_sq_lcjulgamento'],
         $_REQUEST['w_sq_lcsituacao'],$_REQUEST['w_financeiro_unico'],null,null,null,null);
       
@@ -3176,7 +3201,7 @@ function Grava() {
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
           dml_putCLDados::getInstanceOf($dbms,'ORDENACAO',$_REQUEST['w_chave_aux'][$i],null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i]);
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i]);
         } 
       }
       $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,'COMPRA');
@@ -3184,7 +3209,7 @@ function Grava() {
       $w_cont = 1;
       foreach($RS as $row) {
         dml_putCLDados::getInstanceOf($dbms,'ORDENACAO',f($row,'chave'),null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null,null,$w_cont);
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_cont);
         $w_cont+=1;
       
       }
@@ -3203,7 +3228,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putCLDados::getInstanceOf($dbms,'SITUACAO',$_REQUEST['w_chave'],null,null,
-        null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null);
+        null,null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -3398,7 +3423,7 @@ function Grava() {
           exit();
         } else {
           dml_putCLDados::getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,
-              null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],$_REQUEST['w_pagina_diario'],null);
+              null,null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],$_REQUEST['w_pagina_diario'],null);
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
               null,null,null,null);
           // Envia e-mail comunicando a conclusão

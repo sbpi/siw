@@ -291,6 +291,7 @@ function Geral() {
   $w_erro           = '';
   $w_troca          = $_REQUEST['w_troca'];
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
+echo 'w_sq_pessoa->['.$w_sq_pessoa.']';
   $p_data_inicio    = strtoupper($_REQUEST['p_data_inicio']);
   $p_data_fim       = strtoupper($_REQUEST['p_data_fim']);
   $p_solicitante    = strtoupper($_REQUEST['p_solicitante']);
@@ -602,8 +603,10 @@ function Enderecos() {
     if ($_REQUEST['w_sq_pessoa']>'') {
       $w_sq_pessoa = $_REQUEST['w_sq_pessoa'];
     } elseif ($w_cgccpf>'') {
+    ECHO $w_cgccpf;
       $RS = db_getSiwCliData::getInstanceOf($dbms,$w_cgccpf);
       $w_sq_pessoa = f($RS,'sq_pessoa');
+      echo '-'.$w_sq_pessoa;
     } elseif ($_REQUEST['w_usuario']>'') {
       $w_sq_pessoa = $_REQUEST['w_usuario'];
     } else {

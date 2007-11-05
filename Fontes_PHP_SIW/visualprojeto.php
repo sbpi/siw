@@ -584,7 +584,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
               $w_total_peso      += nvl(f($row,'peso'),0);
             }
             $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
-            $w_total_anexo        += nvl(f($row,'qt_anexo'),0);
+            $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
           } 
           $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         } 
