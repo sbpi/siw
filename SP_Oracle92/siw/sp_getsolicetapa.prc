@@ -33,9 +33,19 @@ begin
                 coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) , n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                e.email, e.ativo st_resp, d.nome nm_resp
+                e.email, e.ativo st_resp, d.nome nm_resp,
+                i.executor,
+                i1.sq_pessoa tit_proj, i2.sq_pessoa sub_proj
            from pj_projeto_etapa                    a
                 inner          join siw_solicitacao i  on (a.sq_siw_solicitacao = i.sq_siw_solicitacao)
+                    left       join eo_unidade_resp i1 on (i.sq_unidade         = i1.sq_unidade and
+                                                           i1.tipo_respons      = 'T'          and
+                                                           i1.fim               is null
+                                                          )
+                    left       join eo_unidade_resp i2 on (i.sq_unidade         = i2.sq_unidade and
+                                                           i2.tipo_respons      = 'S'          and
+                                                           i2.fim               is null
+                                                          )                
                   inner        join pj_projeto      m  on (a.sq_siw_solicitacao = m.sq_siw_solicitacao)
                   inner        join siw_menu        j  on (i.sq_menu            = j.sq_menu)
                     left       join eo_unidade_resp k  on (j.sq_unid_executora  = k.sq_unidade and
