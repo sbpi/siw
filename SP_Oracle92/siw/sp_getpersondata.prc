@@ -11,13 +11,18 @@ begin
            b.username, b.ativo, b.sq_unidade, b.sq_localizacao, 
            b.gestor_seguranca, b.gestor_sistema, Nvl(b.email,i.email) email,
            c.sq_usuario_central, c.sq_central_fone, c.codigo codigo_central, c.codigo codigo_central,
-           d.sq_tipo_vinculo, d.nome nome_vinculo, d.interno, d.ativo vinculo_ativo,
+           d.sq_tipo_vinculo, d.nome nome_vinculo, d.interno, d.ativo vinculo_ativo, d.contratado,
            e.nome unidade, e.sigla, e.email email_unidade,
            f.nome localizacao, f.fax, f.telefone, f.ramal, f.telefone2,
            g.logradouro endereco, (h.nome||'-'||h.co_uf) Cidade, h.ddd,
            coalesce(j.cpf, b.username) as cpf,
            k.cnpj,
-           l.sq_tipo_pessoa, l.nome nm_tipo_pessoa
+           l.sq_tipo_pessoa, l.nome nm_tipo_pessoa,
+           case b.gestor_seguranca when 'S' then 'Sim' else 'Não' end as nm_gestor_seguranca,
+           case b.gestor_sistema   when 'S' then 'Sim' else 'Não' end as nm_gestor_sistema,
+           case b.ativo            when 'S' then 'Sim' else 'Não' end as nm_ativo,
+           case d.interno          when 'S' then 'Sim' else 'Não' end as nm_interno,
+           case d.contratado       when 'S' then 'Sim' else 'Não' end as nm_contratado
        from co_pessoa                           a
             left outer join  sg_autenticacao    b on (a.sq_pessoa = b.sq_pessoa)
             left outer join  tt_usuario         c on (a.sq_pessoa = c.usuario)

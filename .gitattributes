@@ -3040,6 +3040,7 @@ SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle92/siw/SP_GetSIWCoordenada.prc -text
 SP_Oracle92/siw/SP_GetTramiteResp.prc -text
 SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
+SP_Oracle92/siw/SP_GetUserResp.prc -text
 SP_Oracle92/siw/SP_GetUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
