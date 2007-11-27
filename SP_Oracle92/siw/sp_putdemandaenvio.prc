@@ -2,7 +2,7 @@ create or replace procedure SP_PutDemandaEnvio
    (p_menu                in number,
     p_chave               in number,
     p_pessoa              in number,
-    p_tramite             in number,
+    p_tramite             in number    default null,
     p_novo_tramite        in number,
     p_devolucao           in varchar2,
     p_observacao          in varchar2,
