@@ -186,7 +186,7 @@ begin
  If p_usuario = w_executor Then Result := 1; End If;
 
  -- Verifica se a solicitação é do módulo de planejamento estratégico
- If w_sg_modulo = 'PE' Then Result := 1; End If;
+ If w_sg_modulo = 'PE' and w_interno = 'S' Then Result := 1; End If;
  
  -- Verifica se o usuário é representante de projeto
  select count(*) into w_existe from pj_projeto_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
