@@ -36,7 +36,7 @@ begin
          and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_pessoa = p_chave_aux))
       UNION
       select a.sq_solicitacao_interessado, a.sq_siw_solicitacao, a.sq_pessoa, a.sq_tipo_interessado,
-             null as tipo_visao, null as envia_mail,
+             a.tipo_visao, a.envia_email,
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
              c.email, c.ativo,
              d.sigla lotacao,

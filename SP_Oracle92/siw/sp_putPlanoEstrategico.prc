@@ -10,6 +10,7 @@ create or replace procedure sp_putPlanoEstrategico
     p_futuro    in  varchar2 default null,
     p_inicio    in  date     default null,
     p_fim       in  date     default null,
+    p_codigo    in  varchar2 default null,
     p_ativo     in  varchar2 default null,
     p_heranca   in  number   default null
    ) is
@@ -22,18 +23,18 @@ begin
       
       -- Insere registro
       insert into pe_plano
-        (sq_plano,         cliente,        sq_plano_pai,        titulo,      missao,      valores, 
-         visao_presente,   visao_futuro,   inicio,                fim,         ativo)
+        (sq_plano,         cliente,        sq_plano_pai,          titulo,      missao,      valores, 
+         visao_presente,   visao_futuro,   inicio,                fim,         ativo,       codigo_externo)
       values (
          w_chave,          p_cliente,      p_chave_pai,           p_titulo,    p_missao,    p_valores, 
-         p_presente,       p_futuro,       p_inicio,              p_fim,       p_ativo
+         p_presente,       p_futuro,       p_inicio,              p_fim,       p_ativo,     p_codigo
         );
         
       -- Se for cópia de outro plano, herda seus dados
       if p_heranca is not null then
          -- herda os objetivos estratégicos
-         insert into pe_objetivo (sq_peobjetivo, cliente, sq_plano, nome, sigla, descricao, ativo)
-         (select sq_peobjetivo.nextval,          cliente, w_chave,  nome, sigla, descricao, ativo
+         insert into pe_objetivo (sq_peobjetivo, cliente, sq_plano, nome, sigla, descricao, ativo, codigo_externo)
+         (select sq_peobjetivo.nextval,          cliente, w_chave,  nome, sigla, descricao, ativo, codigo_externo
             from pe_objetivo
            where sq_plano = p_heranca
          );
@@ -52,7 +53,8 @@ begin
              visao_presente = p_presente,
              visao_futuro   = p_futuro,
              inicio         = p_inicio,
-             fim            = p_fim
+             fim            = p_fim,
+             codigo_externo = p_codigo
        where sq_plano = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

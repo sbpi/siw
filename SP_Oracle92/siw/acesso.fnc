@@ -212,6 +212,9 @@ begin
       -- Verifica se o usuário é interessado no projeto
       select 1 from pj_projeto_interes a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
       UNION
+      -- Verifica se o usuário é interessado na solicitação
+      select 1 from siw_solicitacao_interessado a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+      UNION
       -- Verifica se já participou em algum momento no projeto
       select 1 from pj_projeto_log a where a.sq_siw_solicitacao = p_solicitacao and a.destinatario = p_usuario
       UNION

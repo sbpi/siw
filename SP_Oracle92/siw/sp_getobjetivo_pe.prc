@@ -11,7 +11,7 @@ begin
    If p_restricao is null Then
       -- Recupera os tipos de arquivos
       open p_result for 
-         select a.sq_peobjetivo as chave, a.cliente, a.sq_plano, a.nome, a.sigla, a.descricao, a.ativo,
+         select a.sq_peobjetivo as chave, a.cliente, a.sq_plano, a.nome, a.sigla, a.descricao, a.ativo, a.codigo_externo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
            from pe_objetivo a
           where a.cliente      = p_cliente

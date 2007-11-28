@@ -23,7 +23,7 @@ begin
    Elsif upper(p_restricao) = 'SUBTODOS' or upper(p_restricao) = 'SUBHERDA' Then
      -- Recupera os planos estratégicos aos quais o atual pode ser subordinado
       open p_result for
-         select a.sq_plano chave,a.titulo nome,
+         select a.sq_plano chave,a.titulo nome, a.codigo_externo,
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
@@ -44,7 +44,7 @@ begin
    Elsif upper(p_restricao) = 'SUBPARTE' Then
      -- Se for alteração, não deixa vincular a si mesmo nem a algum filho
       open p_result for
-         select a.sq_plano chave,a.titulo nome,
+         select a.sq_plano chave,a.titulo nome, a.codigo_externo,
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
@@ -116,7 +116,7 @@ begin
    Elsif p_restricao = 'OBJETOS' Then
       -- Recupera os objetos ligados a um plano estratégico
       open p_result for 
-         select a.sq_plano, a.titulo, 
+         select a.sq_plano, a.titulo,  a.codigo_externo,
                 c.sq_siw_solicitacao, coalesce(c.codigo_interno,to_char(c.sq_siw_solicitacao)) as codigo_interno, c.titulo,
                 d.nome, 
                 e.sq_peobjetivo, e.sigla, e.nome
@@ -130,7 +130,7 @@ begin
    Elsif p_restricao = 'REGISTROS' Then
       -- Recupera os planos estratégicos existentes
       open p_result for 
-         select a.sq_plano as chave, a.cliente, a.sq_plano_pai, a.titulo,
+         select a.sq_plano as chave, a.cliente, a.sq_plano_pai, a.titulo, a.codigo_externo,
                 case when c.titulo is not null
                      then c.titulo||' - '||b.titulo||' - '|| a.titulo
                      else case when b.titulo is not null
@@ -166,7 +166,7 @@ begin
       If upper(p_restricao) = 'IS NULL' Then
          open p_result for
             select a.sq_plano as chave, a.cliente, a.sq_plano_pai, a.titulo, a.missao, a.valores, a.visao_presente, a.visao_futuro, 
-                   a.inicio, a.fim, a.ativo, coalesce(b.filho,0) as filho, coalesce(c.qtd,0) as qt_objetivo,
+                   a.inicio, a.fim, a.ativo, a.codigo_externo, coalesce(b.filho,0) as filho, coalesce(c.qtd,0) as qt_objetivo,
                    coalesce(d.qtd,0) as qt_solic
               from pe_plano a
                    left join (select sq_plano_pai, count(sq_plano) as filho 
@@ -200,7 +200,7 @@ begin
       Else
          open p_result for
             select a.sq_plano as chave, a.cliente, a.sq_plano_pai, a.titulo, a.missao, a.valores, a.visao_presente, a.visao_futuro, 
-                   a.inicio, a.fim, a.ativo, coalesce(b.filho,0) as filho, coalesce(c.qtd,0) as qt_objetivo,
+                   a.inicio, a.fim, a.ativo, a.codigo_externo, coalesce(b.filho,0) as filho, coalesce(c.qtd,0) as qt_objetivo,
                    coalesce(d.qtd,0) as qt_solic
               from pe_plano a
                    left join (select sq_plano_pai, count(sq_plano) as filho 
