@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoRestricao.php');
 // -------------------------------------------------------------------------
 function selecaoTipoRestricao($label,$accesskey,$hint,$chave,$cliente,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getTipoRestricao::getInstanceOf($dbms,$p_chave, $cliente, null,'S');
+  $RS = db_getTipoRestricao::getInstanceOf($dbms,$p_chave, $cliente, null, null, 'S', null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint))
     ShowHTML(' <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

@@ -133,6 +133,7 @@ function Plano() {
     $w_inicio           = $_REQUEST['w_inicio'];
     $w_fim              = $_REQUEST['w_fim'];
     $w_ativo            = $_REQUEST['w_ativo'];
+    $w_codigo           = $_REQUEST['w_codigo'];
     $w_servico          = explodeArray($_REQUEST['w_servico']);
   } elseif ($O != 'L' && ($O != 'I' || nvl($w_heranca,'nulo') != 'nulo')) {
     // Se for herança, atribui a chave da opção selecionada para w_chave
@@ -148,6 +149,7 @@ function Plano() {
     $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
     $w_fim              = FormataDataEdicao(f($RS,'fim'));
     $w_ativo            = f($RS,'ativo');
+    $w_codigo           = f($RS,'codigo_externo');
   }  
 
   Cabecalho();
@@ -170,6 +172,7 @@ function Plano() {
         Validate('w_inicio','Início','DATA','1','10','10','','0123456789/');
         Validate('w_fim','Fim','DATA','1','10','10','','0123456789/');
         CompData('w_inicio','Início','<=','w_fim','Fim');
+        Validate('w_codigo','Código externo','1','','1','30','1','1');
       } 
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='H') {
@@ -411,6 +414,7 @@ function Plano() {
     ShowHTML('          <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('          <td><b>F<u>i</u>m:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('          </table>');
+    ShowHTML('      <tr><td title="OPCIONAL. Código desse registro em outro sistema"><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_codigo.'"></td>'); 
     if ($O=='I') {
       ShowHTML('      <tr align="left">');
       MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
@@ -815,6 +819,7 @@ function Objetivo(){
     $w_sigla            = $_REQUEST['w_sigla'];
     $w_descricao        = $_REQUEST['w_descricao'];
     $w_ativo            = $_REQUEST['w_ativo'];
+    $w_codigo           = $_REQUEST['w_codigo'];
   } elseif ($O=='L') {
     $RS = db_getObjetivo_PE::getInstanceOf($dbms,$w_chave,null,$w_cliente,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
@@ -830,6 +835,7 @@ function Objetivo(){
     $w_sigla     = f($RS,'sigla');
     $w_descricao = f($RS,'descricao');
     $w_ativo     = f($RS,'ativo');
+    $w_codigo    = f($RS,'codigo_externo');
   } 
 
   Cabecalho();
@@ -844,6 +850,7 @@ function Objetivo(){
       Validate('w_nome','Nome','1','1','3','100','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
       Validate('w_descricao','Descrição','1','1','2','4000','1','1');
+      Validate('w_codigo','Código externo','1','','1','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -946,6 +953,7 @@ function Objetivo(){
     ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="100" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      <tr><td><b><U>D</U>escrição:<br><TEXTAREA ACCESSKEY="D" class="sti" name="w_descricao" rows=5 cols=80 title="Detalhe o objetivo estratégico." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
+    ShowHTML('      <tr><td title="OPCIONAL. Código desse registro em outro sistema"><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_codigo.'"></td>'); 
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT" colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -2320,7 +2328,7 @@ function Grava() {
         dml_putPlanoEstrategico::getInstanceOf($dbms,$O,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],$_REQUEST['w_titulo'],
             $_REQUEST['w_missao'],$_REQUEST['w_valores'],$_REQUEST['w_visao_presente'],$_REQUEST['w_visao_futuro'],
-            $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_ativo'],$_REQUEST['w_heranca']);
+            $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo'],$_REQUEST['w_heranca']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -2389,7 +2397,7 @@ function Grava() {
             dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
           } 
         } else {
-          dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
+          dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_aux'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         }
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

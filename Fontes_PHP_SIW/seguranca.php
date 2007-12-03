@@ -127,24 +127,28 @@ function Usuarios() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_troca        = $_REQUEST['w_troca'];
-  $p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
-  $p_lotacao      = strtoupper($_REQUEST['p_lotacao']);
-  $p_nome         = strtoupper($_REQUEST['p_nome']);
-  $p_gestor       = strtoupper($_REQUEST['p_gestor']);
-  $p_ordena       = strtolower($_REQUEST['p_ordena']);
-  $p_uf           = strtoupper($_REQUEST['p_uf']);
-  $p_modulo       = strtoupper($_REQUEST['p_modulo']);
-  $p_ativo        = strtoupper($_REQUEST['p_ativo']);
-  $p_interno      = strtoupper($_REQUEST['p_interno']);
-  $p_contratado   = strtoupper($_REQUEST['p_contratado']);
+  $w_troca            = $_REQUEST['w_troca'];
+  $p_localizacao      = strtoupper($_REQUEST['p_localizacao']);
+  $p_lotacao          = strtoupper($_REQUEST['p_lotacao']);
+  $p_endereco         = strtoupper($_REQUEST['p_endereco']);
+  $p_nome             = strtoupper($_REQUEST['p_nome']);
+  $p_gestor_seguranca = strtoupper($_REQUEST['p_gestor_seguranca']);
+  $p_gestor_sistema   = strtoupper($_REQUEST['p_gestor_sistema']);
+  $p_ordena           = strtolower($_REQUEST['p_ordena']);
+  $p_uf               = strtoupper($_REQUEST['p_uf']);
+  $p_modulo           = strtoupper($_REQUEST['p_modulo']);
+  $p_ativo            = strtoupper($_REQUEST['p_ativo']);
+  $p_interno          = strtoupper($_REQUEST['p_interno']);
+  $p_contratado       = strtoupper($_REQUEST['p_contratado']);
+  $p_visao_especial   = strtoupper($_REQUEST['p_visao_especial']);
+  $p_dirigente        = strtoupper($_REQUEST['p_dirigente']);
 
   
   $RS = db_getMenuData::getInstanceOf($dbms, $w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
   if ($O=='L') {
-    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_gestor,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo, $p_contratado);
+    $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
     } else {
@@ -165,7 +169,7 @@ function Usuarios() {
   elseif ($O=='I') BodyOpen('onLoad="document.Form.w_username.focus();"');
   elseif ($O=='A') BodyOpen('onLoad="document.Form.w_nome.focus();"');
   elseif ($O=='E') BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
-  elseif ($O=='P') BodyOpen('onLoad="document.Form.p_localizacao.focus()";');
+  elseif ($O=='P') BodyOpen('onLoad="document.Form.p_endereco.focus()";');
   else    BodyOpen('onLoad="this.focus();"');
 
   Estrutura_Topo_Limpo();
@@ -179,7 +183,7 @@ function Usuarios() {
       ShowHTML('                         <a accesskey="N" class="ss" href="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>N</u>ovo acesso</a>&nbsp;');
     } 
 
-    if ($p_localizacao.$p_lotacao.$p_nome.$p_gestor.$p_interno.$p_contratado.$p_ativo>'') {
+    if ($p_localizacao.$p_lotacao.$p_endereco.$p_nome.$p_gestor_seguranca.$p_gestor_sistema.$p_interno.$p_contratado.$p_ativo.$p_visao_especial.$p_dirigente>'') {
       ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
@@ -189,13 +193,19 @@ function Usuarios() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Username','username').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Lotação','lotacao').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Username','username').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ramal','ramal').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
+    ShowHTML('          <td colspan="3"><b>Gestor</td>');
+    ShowHTML('          <td rowspan="2"><b>Operações</td>');
     ShowHTML('        </tr>');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Seg.','gestor_seguranca').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sist.','gestor_sistema').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');
+    ShowHTML('        </tr>');    
     if (count($RS) <= 0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
@@ -213,23 +223,27 @@ function Usuarios() {
         ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
         ShowHTML('        <td align="center">&nbsp;'.nvl(f($row,'ramal'),'---').'</td>');
         ShowHTML('        <td align="left" title="'.f($row,'vinculo').'">'.Nvl(f($row,'vinculo'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
+        ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
+        if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
+        else                       ShowHTML('        <td align="center">---</td>');
         ShowHTML('        <td align="top" nowrap>');
         if ($w_libera_edicao=='S') {
           ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=A&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do usuário">AL</A>&nbsp');
           ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=E&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o usuário do banco de dados">EX</A>&nbsp');
           if (f($row,'ativo')=='S') {
-            ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=D&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Bloqueia o acesso do usuário ao sistema">Bloquear</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=D&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Bloqueia o acesso do usuário ao sistema">BL</A>&nbsp');
           } else {
-            ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=T&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Ativa o acesso do usuário ao sistema">Ativar</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$w_pagina.$par.'&O=T&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Ativa o acesso do usuário ao sistema">AT</A>&nbsp');
           } 
 
         } 
-        ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=ACESSOS&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Gestão de módulos">Gestão</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=ACESSOS&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Gestão de módulos">GS</A>&nbsp');
         if ($w_libera_edicao=='S') {
-          ShowHTML('          <A class="hl" HREF="#" onClick="if (confirm(\'Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?\')) window.open(\''.$w_pagina.'NovaSenha&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'NovaSenha\',\'width=630,height=500,top=30,left=30,status=no,scrollbars=yes,resizable=yes,toolbar=yes\');" title="Reinicializa a senha do usuário">Senha</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="#" onClick="if (confirm(\'Este procedimento irá reinicializar a senha de acesso e sua assinatura eletrônica do usuário.\nConfirma?\')) window.open(\''.$w_pagina.'NovaSenha&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ACESSOS'.MontaFiltro('GET').'\',\'NovaSenha\',\'width=630,height=500,top=30,left=30,status=no,scrollbars=yes,resizable=yes,toolbar=yes\');" title="Reinicializa a senha do usuário">SE</A>&nbsp');
         } 
 
-        ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=VISAO&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VISAO'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes,scrollbars=yes\');" title="Gestão de módulos">Visão</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=VISAO&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VISAO'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes,scrollbars=yes\');" title="Gestão de módulos">VS</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -249,12 +263,17 @@ function Usuarios() {
 
     ShowHTML('</tr>');
   } elseif ($O=='P') {
-    AbreForm('Form',$w_pagina.$par,'POST',"return(Validacao(this));",null,$P1,$P2,1,$P4,$TP,$SG,$R,'L');
+    if($P2==1) AbreForm('Form','mod_sg/relatorios.php?par=Rel_Permissao','POST',"return(Validacao(this));",'Relatorio Permissao',$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    else       AbreForm('Form',$w_pagina.$par,'POST',"return(Validacao(this));",null,$P1,$P2,1,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center"><div align="justify"><font size=2>Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
+ 
+    ShowHTML('      <tr>');
+    selecaoEndereco('<U>E</U>ndereço:', 'E', null, $p_endereco, null, 'p_endereco', 'FISICO');
+    ShowHTML('      </tr>');
 
     ShowHTML('      <tr>');
     selecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,null,'p_localizacao',null);
@@ -268,8 +287,8 @@ function Usuarios() {
     ShowHTML('      <tr>');
     $RS1 = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
     selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
-    $RS1->Close;
-    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
+    ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Usuários:</b><br>');
     if (Nvl($p_ativo,'S')=='S') {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S" checked> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
@@ -297,16 +316,53 @@ function Usuarios() {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="S"> Sim<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="N"> Não<br><input '.$w_Disabled.' class="str" type="radio" name="p_contratado" value="" checked> Tanto faz');
     } 
 
-    ShowHTML('          <td><b>Gestores:</b><br>');
-    if ($p_gestor=='') {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="S"> Apenas gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="N"> Apenas não gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="" checked> Tanto faz');
-    } elseif ($p_gestor=='S') {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="S" checked> Apenas gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="N"> Apenas não gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value=""> Tanto faz');
+    ShowHTML('          <td><b>Gestores de segurança:</b><br>');
+    if ($p_gestor_seguranca=='') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="S"> Apenas gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="N"> Apenas não gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="" checked> Tanto faz');
+    } elseif ($p_gestor_seguranca=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="S" checked> Apenas gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="N"> Apenas não gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value=""> Tanto faz');
     } else {
-      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="S"> Apenas gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value="N" checked> Apenas não gestores<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor" value=""> Tanto faz');
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="S"> Apenas gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value="N" checked> Apenas não gestores de segurança<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_seguranca" value=""> Tanto faz');
+    } 
+    
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td><br><b>Gestores do sistema:</b><br>');
+    if ($p_gestor_sistema=='') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="S"> Apenas gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="N"> Apenas não gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="" checked> Tanto faz');
+    } elseif ($p_gestor_sistema=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="S" checked> Apenas gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="N"> Apenas não gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value=""> Tanto faz');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="S"> Apenas gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value="N" checked> Apenas não gestores do sistema<br><input '.$w_Disabled.' class="str" type="radio" name="p_gestor_sistema" value=""> Tanto faz');
+    } 
+    
+    ShowHTML('          <td><br><b>Gestores de módulo:</b><br>');
+    if ($p_modulo=='') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="S"> Apenas gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="N"> Apenas não gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="" checked> Tanto faz');
+    } elseif ($p_modulo=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="S" checked> Apenas gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="N"> Apenas não gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value=""> Tanto faz');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="S"> Apenas gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value="N" checked> Apenas não gestores de módulo<br><input '.$w_Disabled.' class="str" type="radio" name="p_modulo" value=""> Tanto faz');
     } 
 
-    ShowHTML('          </table>');
+    ShowHTML('          <td><br><b>Visões especiais:</b><br>');
+    if ($p_visao_especial=='') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="S"> Apenas visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="N"> Apenas não visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="" checked> Tanto faz');
+    } elseif ($p_visao_especial=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="S" checked> Apenas visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="N"> Apenas não visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value=""> Tanto faz');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="S"> Apenas visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value="N" checked> Apenas não visões especiais<br><input '.$w_Disabled.' class="str" type="radio" name="p_visao_especial" value=""> Tanto faz');
+    } 
+    
+    ShowHTML('          <td><br><b>Dirigentes:</b><br>');
+    if ($p_dirigente=='') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="S"> Apenas dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="N"> Apenas não dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="" checked> Tanto faz');
+    } elseif ($p_dirigente=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="S" checked> Apenas dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="N"> Apenas não dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value=""> Tanto faz');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="S"> Apenas dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value="N" checked> Apenas não dirigentes<br><input '.$w_Disabled.' class="str" type="radio" name="p_dirigente" value=""> Tanto faz');
+    } 
+          
+    ShowHTML('          </table></td></tr>');
     ShowHTML('      <tr><td><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="sts" name="p_ordena" size="1">');
 
     if ($p_Ordena=='LOCALIZACAO') {

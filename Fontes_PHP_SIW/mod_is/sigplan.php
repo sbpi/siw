@@ -1143,25 +1143,26 @@ function Grava() {
               $w_tamanho_recebido       = $Field['size'];
               $w_tipo_recebido          = $Field['type'];
               $w_nome_recebido          = $Field['name'];
-              if ($w_arquivo_processamento>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_arquivo_processamento);
+              if ($w_arquivo_processamento>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_arquivo_processamento.'.xml');
               $w_arquivo_rejeicao       = basename($w_arquivo_processamento).'r';
             } 
-          } // Gera o arquivo registro da importação
+          } 
+          // Gera o arquivo registro da importação
           $F1 = fopen($w_caminho.$w_arquivo_rejeicao, 'w');      
           //Abre o arquivo recebido para gerar o arquivo registro
-          if (file_exists($w_caminho.$w_arquivo_processamento)) {
-            
+          if (file_exists($w_caminho.$w_arquivo_processamento.'.xml')) {
             // Carrega o conteúdo do arquivo origem em uma variável local
             $handle = fopen ($w_caminho.$w_arquivo_processamento, 'r');
             $conteudo = fread ($handle, filesize ($w_caminho.$w_arquivo_processamento));
             fclose ($handle);
-            
             // Reescreve o arquivo, removendo caracteres 26 (hexa 1A)
             $handle = fopen ($w_caminho.$w_arquivo_processamento, 'w');
             fwrite($handle, str_replace('&#x1A;','-',$conteudo));
             fclose ($handle);
-
-            $xml = simplexml_load_file($w_caminho.$w_arquivo_processamento);
+            
+            $xml = simplexml_load_file($w_caminho.$w_arquivo_processamento.'.xml');
+            echo $xml;
+            exit;
             // Recupera os dados do esquema a ser importado
             $RS = db_getEsquema::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_sq_esquema'],$w_sq_modulo,null,null,null,null,null,null,null);
             foreach($RS as $row){$RS=$row; break;}

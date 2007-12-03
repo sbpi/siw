@@ -58,7 +58,6 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $_S
 
 if ($w_erro>0) { // Se houve erro, exibe HTML
   Cabecalho();
-  BodyOpenClean('onLoad=this.focus();');
   ShowHTML('<div align=center><center><b>');
   if ($w_erro==1) {
     ShowHTML('Parâmetros de chamada incorretos');

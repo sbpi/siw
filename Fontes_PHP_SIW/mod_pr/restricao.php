@@ -615,7 +615,7 @@ function VisualRestricao() {
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('              <td>Responsável pelo risco:<b><br>'.$w_pessoa.'</td>');
-  $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_tipo_restricao, $w_cliente, null,'S');
+  $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_tipo_restricao, $w_cliente, null, null, null, null);
   foreach ($RS as $row) {$RS = $row; break;}
   ShowHTML('              <td>classificaçao:<b><br>'.f($RS,'nome').'</td>');
   ShowHTML('          <tr valign="top">');

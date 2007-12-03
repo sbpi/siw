@@ -38,6 +38,7 @@ include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once($w_dir_volta.'funcoes/selecaoNatureza.php');
 include_once($w_dir_volta.'funcoes/selecaoHorizonte.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoInteressado.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoVisao.php');
 include_once($w_dir_volta.'funcoes/montaTipoIndicador.php');
 include_once('visualprograma.php');
 // =========================================================================
@@ -910,13 +911,15 @@ function ProgramacaoQualitativa() {
 function Interessados() {
   extract($GLOBALS);
   global $w_Disabled;
-  $w_chave      = $_REQUEST['w_chave'];
-  $w_sq_pessoa        = $_REQUEST['w_sq_pessoa'];
-  $w_sq_tipo_interes  = $_REQUEST['w_sq_tipo_interes'];
+  $w_chave           = $_REQUEST['w_chave'];
+  $w_sq_pessoa       = $_REQUEST['w_sq_pessoa'];
+  $w_sq_tipo_interes = $_REQUEST['w_sq_tipo_interes'];
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_pessoa        = $_REQUEST['w_sq_pessoa'];
     $w_sq_tipo_interes  = $_REQUEST['w_sq_tipo_interes'];
+    $w_envia_email      = $_REQUEST['w_envia_email'];
+    $w_tipo_visao       = $_REQUEST['w_tipo_visao'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getSolicInter::getInstanceOf($dbms,$w_chave,null,'LISTA');
@@ -927,6 +930,8 @@ function Interessados() {
     foreach($RS as $row){$RS=$row; break;}
     $w_nome                 = f($RS,'nome');
     $w_sq_tipo_interessado  = f($RS,'sq_tipo_interessado');
+    $w_envia_email          = f($RS,'envia_email');
+    $w_tipo_visao           = f($RS,'tipo_visao');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -936,6 +941,7 @@ function Interessados() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_pessoa','Pessoa','SELECT','1','1','18','','1');
       Validate('w_sq_tipo_interessado','Tipo de envolvimento','SELECT','1','1','18','','1');
+      Validate('w_tipo_visao','Tipo de visão','SELECT','1','1','10','','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -956,11 +962,9 @@ function Interessados() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('      <tr><td colspan=3>Usuários que devem receber emails dos encaminhamentos deste programa.</td></tr>');
-    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     if ($P1!=4) {
-      ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('<tr><td><font size="2"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     } else {
       ShowHTML('<tr><td colspan=3 align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
       ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -976,6 +980,8 @@ function Interessados() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Pessoa</td>');
     ShowHTML('          <td><b>Tipo de envolvimento</td>');
+    ShowHTML('          <td><b>Envia e-mail</td>');
+    ShowHTML('          <td><b>Visao</td>');
     if ($P1!=4) ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -988,6 +994,8 @@ function Interessados() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>');
         ShowHTML('        <td>'.f($row,'nm_tipo_interessado').'</td>');
+        ShowHTML('        <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>');
+        ShowHTML('        <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>');
         if ($P1!=4) {
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
@@ -1016,8 +1024,13 @@ function Interessados() {
       ShowHTML('      <tr><td valign="top"><b>Pessoa:</b><br>'.$w_nome.'</td>');
     } 
     SelecaoTipoInteressado('<u>T</u>ipo de envolvimento:','T','Selecione o tipo de envolvimento.',$w_sq_tipo_interessado,f($RS_Menu,'sq_menu'),'w_sq_tipo_interessado',null);
+    ShowHTML('      <tr>');
+    MontaRadioNS('<b>Envia e-mail ao interessado quando houver encaminhamento?</b>',$w_envia_email,'w_envia_email');
+    SelecaoTipoVisao('<u>T</u>ipo de visão:','T','Selecione o tipo de visão que o interessado terá deste projeto.',$w_tipo_visao,null,'w_tipo_visao',null,null);
+    ShowHTML('      </tr>');    
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+
+    ShowHTML('      <tr><td align="center" colspan=2><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
     } else {
@@ -1365,7 +1378,7 @@ function Encaminhamento() {
   ShowHTML('<div align="center">');
   ShowHTML('<table width="95%" border="0" cellspacing="3">');
   // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
-  ShowHTML(VisualPrograma($w_chave,'V',$w_usuario,$P1,$P4,'S','N','N','N','N','N','N','N','N','N','N'));
+  ShowHTML(VisualPrograma($w_chave,'V',$w_usuario,$P1,$P4,'S','N','N','N','N','N','N','N','N','S','N'));
   ShowHTML('</table>');
   ShowHTML('<HR>');
   AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PEPRENVIO',$w_pagina.$par,$O);
@@ -1789,7 +1802,7 @@ function Grava() {
   } elseif (strpos($SG,'RESP')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putSolicInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_interessado']);
+      dml_putSolicInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_interessado'],$_REQUEST['w_envia_email'],$_REQUEST['w_tipo_visao']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);

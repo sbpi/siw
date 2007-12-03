@@ -104,18 +104,20 @@ function TipoRestricao() {
     // Se for recarga da página
     $w_chave    = $_REQUEST['w_chave'];
     $w_nome     = $_REQUEST['w_nome'];
+    $w_codigo   = $_REQUEST['w_codigo'];
     $w_ativo    = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getTipoRestricao::getInstanceOf($dbms,null,$w_cliente,null,null);
+    $RS = db_getTipoRestricao::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
     $RS = SortArray($RS,'nome','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
+    $RS = db_getTipoRestricao::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave    = f($RS,'chave');
     $w_cliente  = f($RS,'cliente');
     $w_nome     = f($RS,'nome');
+    $w_codigo   = f($RS,'codigo_externo');
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
@@ -125,6 +127,7 @@ function TipoRestricao() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
+      Validate('w_codigo','Código externo','1','','1','30','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -160,6 +163,7 @@ function TipoRestricao() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Código externo</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -172,6 +176,7 @@ function TipoRestricao() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -194,7 +199,8 @@ function TipoRestricao() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>'); 
+    ShowHTML('           <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>'); 
+    ShowHTML('           <td title="OPCIONAL. Código desse registro em outro sistema"><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_codigo.'"></td>'); 
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
@@ -446,7 +452,30 @@ function Grava() {
             break;
           }
         }   
-        dml_putTipoRestricao::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+        if ($O!='E') {
+          // Impede duplicação do nome
+          $RS = db_getTipoRestricao::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],null,null,'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe registro com este nome!\');');
+            ScriptClose();
+            RetornaFormulario('w_nome');
+            break;
+          }
+
+          if (nvl($_REQUEST['w_codigo'],'')!='') {
+            // Impede duplicação do código externo
+            $RS = db_getTipoRestricao::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,$_REQUEST['w_codigo'],null,'EXISTE');
+            if (count($RS)>0) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Já existe registro com este código externo!\');');
+              ScriptClose();
+              RetornaFormulario('w_codigo');
+              break;
+            }
+          }
+        }
+        dml_putTipoRestricao::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

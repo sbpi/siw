@@ -708,7 +708,6 @@ function Inicial() {
 function Geral() {
   extract($GLOBALS);
   global $w_Disabled;
-
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
@@ -770,6 +769,14 @@ function Geral() {
     $w_palavra_chave    = $_REQUEST['w_palavra_chave'];
     $w_sqcc             = $_REQUEST['w_sqcc'];
     $w_sq_menu_relac    = $_REQUEST['w_sq_menu_relac'];
+    $w_envio             = $_REQUEST['w_envio'];
+    if(nvl($w_envio,'')=='S' && $O=='I') {
+      $w_tramite          = $_REQUEST['w_tramite'];
+      $w_destinatario     = $_REQUEST['w_destinatario'];
+      $w_novo_tramite     = $_REQUEST['w_novo_tramite'];
+      $w_sg_tramite_atual = $_REQUEST['w_sg_tramite_atual'];
+      $w_despacho         = $_REQUEST['w_despacho'];    
+    }
   } else {
     if (!(strpos('AEV',$O)===false) || $w_copia>'') {
       // Recupera os dados da demanda
@@ -821,6 +828,21 @@ function Geral() {
     } 
   }
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
+  if(nvl($w_envio,'')=='S' && $O=='I') {
+    // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
+    $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
+    $w_sg_tramite = f($RS,'sigla');
+    $w_ativo      = f($RS,'ativo');
+    if ($w_ativo == 'N') {
+      $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
+      $RS = SortArray($RS,'ordem','asc');
+      foreach ($RS as $row) {
+        $w_novo_tramite = f($row,'sq_siw_tramite');
+        $w_sg_tramite   = f($row,'sigla');
+        break;
+      }   
+    } 
+  }  
   Cabecalho();
   ShowHTML('<HEAD>');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -885,6 +907,10 @@ function Geral() {
     ShowHTML('  else {');
     ShowHTML('     theForm.w_dias.value = \'\';');
     ShowHTML('  }');
+    if(nvl($w_envio,'')=='S' && $O=='I') {
+      Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
+      Validate('w_despacho','Despacho','','1','1','2000','1','1');    
+    }
   } 
   ValidateClose();
   ScriptClose();
@@ -1009,6 +1035,28 @@ function Geral() {
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
     ShowHTML('              <td valign="top"><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data de término previsto da demanda."></td>');
     ShowHTML('          </table>');
+    if($O=='I') {
+      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Envio da demanda</td></td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td>Os dados abaixo indicam se a demanda deve ser enviada para a proxima fase no momento da gravação.</td></tr>');
+      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td><table border="0" width="100%">');
+      ShowHTML('          <tr>');
+      if(nvl($w_envio,'')=='S') {
+        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
+      } else {
+        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+      }
+      if(nvl($w_envio,'')=='S') {
+        ShowHTML('          <tr>');
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+        SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+        ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>'); 
+      }
+      ShowHTML('          </table>');
+    }
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -2071,12 +2119,29 @@ function Grava() {
             $_REQUEST['w_data_hora'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_assunto'], $_REQUEST['w_prioridade'], $_REQUEST['w_aviso'], $_REQUEST['w_dias'],
             $_REQUEST['w_cidade'], $_REQUEST['w_palavra_chave'],null, null, null, null, null, null, null,
             $_REQUEST['w_chave_pai'], null, null, null, null, null, null, null, null, &$w_chave_nova, $w_copia);
-        if ($O=='I') {
+        if(nvl($_REQUEST['w_envio'],'')=='S' && $O=='I') {
+          $RS = db_getSolicData::getInstanceOf($dbms,&$w_chave_nova,'GDTGERAL');
+          $w_tramite = f($RS,'sq_siw_tramite');
+          dml_putDemandaEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],&$w_chave_nova,$w_usuario,$w_tramite,
+              $_REQUEST['w_novo_tramite'],'N',null,$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
+              null,null,null,null);
+          if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
+            $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
+            $w_sg_tramite = f($RS,'sigla');
+            if($w_sg_tramite=='CI') {
+              $w_html = VisualTriagem($_REQUEST['w_chave'],'L',$w_usuario,'WORD');
+              CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+            }
+          }  
+          // Envia e-mail comunicando a inclusão
+          SolicMail($_REQUEST['w_chave'],2);
+        }
+        if ($O=='I' && nvl($_REQUEST['w_envio'],'')!='S') {
           // Recupera os dados para montagem correta do menu
           $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
           ScriptOpen('JavaScript');
           ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&w_menu='.$w_menu.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET')).'\';');
-        } elseif ($O=='E') {
+        } elseif ($O=='E' || (nvl($_REQUEST['w_envio'],'')=='S' && $O=='I')) {
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
         } else {

@@ -906,6 +906,7 @@ Fontes_PHP_SIW/classes/sp/db_getUorgResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserModule.php -text
+Fontes_PHP_SIW/classes/sp/db_getUserResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserTypeData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserTypeList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserVision.php -text
@@ -1473,7 +1474,6 @@ Fontes_PHP_SIW/mod_ac/gr_contratos.php -text
 Fontes_PHP_SIW/mod_ac/gr_convenios.php -text
 Fontes_PHP_SIW/mod_ac/rel_bolsista.php -text
 Fontes_PHP_SIW/mod_ac/relatorios.php -text
-Fontes_PHP_SIW/mod_ac/sqlnet.log -text
 Fontes_PHP_SIW/mod_ac/tabelas.php -text
 Fontes_PHP_SIW/mod_ac/validaacordo.php -text
 Fontes_PHP_SIW/mod_ac/validaconvenio.php -text

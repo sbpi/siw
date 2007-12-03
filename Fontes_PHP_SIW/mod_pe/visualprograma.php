@@ -179,11 +179,15 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" width="10%" nowrap><div align="center"><b>Tipo de envolvimento</b></div></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Pessoa</b></div></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Envia e-mail</b></div></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Tipo de visão</b></div></td>';
       $l_html.=chr(13).'       </tr>';
       foreach($RS1 as $row) {
         $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
         if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
         else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+        $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
+        $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
         $l_html.=chr(13).'      </tr>';
       }
       $l_html.=chr(13).'         </table></div></td></tr>';
@@ -304,7 +308,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
     } 
 
   // Encaminhamentos
-  if ($l_o=='T' && $l_ocorrencia=='S') {
+  if ($l_ocorrencia=='S') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','despacho','asc');

@@ -274,6 +274,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
             $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
             $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" width="10%" nowrap><div align="center"><b>Tipo de envolvimento</b></div></td>';
             $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Pessoa</b></div></td>';
+            $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Envia e-mail</b></div></td>';
+            $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Tipo de visão</b></div></td>';
             $l_html.=chr(13).'       </tr>';
             $l_cont = 1;
             $l_novo = 'S';
@@ -281,6 +283,8 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
           $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
           if($l_tipo=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')'.'</td>';
           else       $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
+          $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
+          $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';       
           $l_html.=chr(13).'      </tr>';
         } else {
           if ($l_cont==0) {

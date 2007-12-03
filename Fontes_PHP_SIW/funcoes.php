@@ -680,6 +680,20 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 }
 
 // =========================================================================
+// Montagem da URL com os dados de uma pessoa no relatório de permissões
+// -------------------------------------------------------------------------
+function ExibePessoaRel($p_dir,$p_cliente,$p_pessoa,$p_nome,$p_nome_resumido,$p_tipo) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_nome,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="'.$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG=" title="'.$p_nome.'">'.$p_nome_resumido.'</a>';  
+  }
+  return $l_string;
+}
+
+
+// =========================================================================
 // Montagem da URL com os dados de um fornecedor
 // -------------------------------------------------------------------------
 function ExibeFornecedor($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {

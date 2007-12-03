@@ -120,7 +120,7 @@ function Rel_Unidades() {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord('PORTRAIT');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE UNIDADES',$w_pag);
       $w_embed = 'WORD';
@@ -240,7 +240,7 @@ function Rel_Unidades() {
           }
           // Usuários
           if ($p_usuarios=='S') {
-            $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,'S',null);
+            $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null);
             $RS1 = SortArray($RS1,'nome','asc');
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Pessoas ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
