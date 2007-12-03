@@ -3000,6 +3000,7 @@ SP_Oracle92/fbaj/sp_getalberlist.prc -text
 SP_Oracle92/fbaj/sp_putalbcad.prc -text
 SP_Oracle92/fbaj/sq_alberguista.seq -text
 SP_Oracle92/fbaj/subname.fnc -text
+SP_Oracle92/siw/CARREGA_PAC.prc -text
 SP_Oracle92/siw/CL_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/CalculaIDC.fnc -text
 SP_Oracle92/siw/CalculaIDE.fnc -text
