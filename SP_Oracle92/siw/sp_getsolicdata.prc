@@ -120,7 +120,7 @@ begin
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
-                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.sq_solic_pai,       b.sq_unidade sq_unidade_cad,   b.sq_cidade_origem,
                 b.codigo_interno,     b.codigo_externo,              b.titulo,
                 b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) meses_projeto,
                 case when b.sq_solic_pai is null 
@@ -136,6 +136,7 @@ begin
                 b2.missao,            b2.valores,                    b2.visao_presente,
                 b2.visao_futuro,      b2.inicio inicio_plano,        b2.fim vim_plano,
                 b2.ativo st_plano,
+                b3.nome nm_unidade,
                 bb.sq_siw_coordenada, bb.nome as nm_coordenada,
                 bb.latitude, bb.longitude, bb.icone, bb.tipo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -200,6 +201,7 @@ begin
                 inner        join siw_solicitacao            b  on (a.sq_menu             = b.sq_menu)
                   inner      join siw_tramite                b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
                   left       join pe_plano                   b2 on (b.sq_plano            = b2.sq_plano)
+                  left       join eo_unidade                 b3 on (b.sq_unidade          = b3.sq_unidade)
                   left       join siw_coordenada_solicitacao ba on (b.sq_siw_solicitacao  = ba.sq_siw_solicitacao)
                     left     join siw_coordenada             bb on (ba.sq_siw_coordenada  = bb.sq_siw_coordenada)
                   inner      join pj_projeto                 d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
