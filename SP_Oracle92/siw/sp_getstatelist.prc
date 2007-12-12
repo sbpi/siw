@@ -13,7 +13,8 @@ begin
              case a.padrao when 'S' then 'Sim' else 'Não' end as padraodesc,
              case a.ativo when 'S' then 'Sim' else 'Não' end as ativodesc,
              b.nome nome_pais,
-             c.nome as nome_regiao
+             c.nome as nome_regiao,
+             acentos(a.nome) as ordena
         from co_uf                a
              inner join co_pais   b on (a.sq_pais   = b.sq_pais)
              inner join co_regiao c on (a.sq_regiao = c.sq_regiao)

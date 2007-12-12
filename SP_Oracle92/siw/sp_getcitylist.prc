@@ -12,7 +12,8 @@ begin
    open p_result for 
       select a.sq_cidade, a.sq_cidade sq_cidade, b.co_uf, c.nome sq_pais, a.nome, nvl(a.ddd,'-') ddd,
              case a.capital when 'S' then 'Sim' else 'Não' end capital, 
-             Nvl(a.codigo_ibge,'-') codigo_ibge
+             Nvl(a.codigo_ibge,'-') codigo_ibge,
+             acentos(a.nome) as ordena
         from co_cidade            a
              inner  join co_uf    b on (a.co_uf     = b.co_uf and 
                                         a.sq_pais   = b.sq_pais
