@@ -8,10 +8,16 @@ create or replace procedure CARREGA_PAC is
   w_chave             number(18);
   w_chave_etapa       number(18);
   w_chave_risco       number(18);
+  w_chave_rubrica     number(18);
   w_codigo            varchar2(60);
   w_data_hora         siw_menu.data_hora%type;
   w_texto             varchar2(500);
   w_existe            number(10);
+  w_sq_cc             number(18);
+  w_inicio            date;
+  w_fim               date;
+  w_ini_prj           date;
+  w_fim_prj           date;
   
   cursor c_proj is
       select distinct a.id_pacito, a.nome, 
@@ -46,6 +52,29 @@ create or replace procedure CARREGA_PAC is
              inner   join siw_tipo_restricao    c on (b.tipo_restricao = c.codigo_externo and c.cliente = w_cliente)
       where b.id_pacito = chave
       order by b.id_pacito;
+
+  cursor c_valor is
+      select distinct id_pacito, orc1, orc2, orc3, orc4, orc5, emp, liq 
+        from siw_is.temp_pacito x
+       where id_pacito in (select id_pacito 
+                             from (select id_pacito, count(*) 
+                                     from (select distinct id_pacito, orc1, orc2, orc3, orc4, orc5, emp, liq from siw_is.temp_pacito t)
+                                   having count(*) = 1
+                                   group by id_pacito
+                                  )
+                          )
+      UNION
+      select distinct id_pacito, max(orc1), max(orc2), max(orc3), max(orc4), max(orc5), max(emp), max(liq)
+        from siw_is.temp_pacito x
+       where id_pacito in (select id_pacito 
+                             from (select id_pacito, count(*) 
+                                     from (select distinct id_pacito, orc1, orc2, orc3, orc4, orc5, emp, liq from siw_is.temp_pacito t)
+                                   having count(*) > 1
+                                   group by id_pacito
+                                  )
+                          )
+      group by id_pacito;
+
 begin
   -- Recupera a chave do menu de projetos
   select sq_menu, data_hora into w_menu_prj, w_data_hora
@@ -175,6 +204,141 @@ begin
                              p_chave            => w_chave_risco,
                              p_sq_projeto_etapa => w_chave_etapa);
       end loop;
+    End If;
+  end loop;
+  
+  -- Recupera a chave da classificação
+  select sq_cc into w_sq_cc from ct_cc where cliente = w_cliente and nome = 'Unica';
+
+  for crec in c_valor loop
+    -- Recupera a chave e o período do projeto
+    select sq_siw_solicitacao, inicio, fim into w_chave, w_ini_prj, w_fim_prj 
+      from siw_solicitacao 
+     where codigo_interno = 'PACITO-'||trim(to_char(crec.id_pacito));
+    
+    -- Grava a rubrica para o projeto
+    sp_putprojetorubrica(p_operacao             => 'I',
+                         p_chave                => w_chave,
+                         p_chave_aux            => null,
+                         p_sq_cc                => w_sq_cc,
+                         p_codigo               => 'ANUAL',
+                         p_nome                 => 'ORÇAMENTO ANUAL',
+                         p_descricao            => 'Orçamento anual previsto para o projeto',
+                         p_ativo                => 'S',
+                         p_aplicacao_financeira => 'N',
+                         p_copia                => null);
+
+    -- Recupera a chave do risco gravado
+    select max(sq_projeto_rubrica) into w_chave_rubrica from pj_rubrica where sq_siw_solicitacao = w_chave;
+    
+    -- Grava cronograma desembolso de 2007
+    If 2007 between to_char(w_ini_prj,'yyyy') and to_char(w_fim_prj,'yyyy') then
+       if w_ini_prj >= to_date('01/01/2007') 
+          then w_inicio := w_ini_prj;
+          else w_inicio := to_date('01/01/2007');
+       end if;
+       
+       if w_fim_prj <= to_date('31/12/2007') 
+          then w_fim := w_fim_prj;
+          else w_fim := to_date('31/12/2007');
+       end if;
+
+       -- Grava o cronograma desembolso do primeiro ano
+       sp_putcronograma(p_operacao       => 'I',
+                        p_chave          => w_chave_rubrica,
+                        p_chave_aux      => null,
+                        p_inicio         => w_inicio,
+                        p_fim            => w_fim,
+                        p_valor_previsto => crec.orc1,
+                        p_valor_real     => crec.emp);
+    End If;
+
+    -- Grava cronograma desembolso de 2008
+    If 2008 between to_char(w_ini_prj,'yyyy') and to_char(w_fim_prj,'yyyy') then
+       if w_ini_prj >= to_date('01/01/2008') 
+          then w_inicio := w_ini_prj;
+          else w_inicio := to_date('01/01/2008');
+       end if;
+        
+       if w_fim_prj <= to_date('31/12/2008')
+          then w_fim := w_fim_prj;
+          else w_fim := to_date('31/12/2008');
+       end if;
+    
+       -- Grava o cronograma desembolso do primeiro ano
+       sp_putcronograma(p_operacao       => 'I',
+                        p_chave          => w_chave_rubrica,
+                        p_chave_aux      => null,
+                        p_inicio         => w_inicio,
+                        p_fim            => w_fim,
+                        p_valor_previsto => crec.orc2,
+                        p_valor_real     => 0);
+    End If;
+
+    -- Grava cronograma desembolso de 2009
+    If 2009 between to_char(w_ini_prj,'yyyy') and to_char(w_fim_prj,'yyyy') then
+       if w_ini_prj >= to_date('01/01/2009') 
+          then w_inicio := w_ini_prj;
+          else w_inicio := to_date('01/01/2009');
+       end if;
+        
+       if w_fim_prj <= to_date('31/12/2009')
+          then w_fim := w_fim_prj;
+          else w_fim := to_date('31/12/2009');
+       end if;
+    
+       -- Grava o cronograma desembolso do primeiro ano
+       sp_putcronograma(p_operacao       => 'I',
+                        p_chave          => w_chave_rubrica,
+                        p_chave_aux      => null,
+                        p_inicio         => w_inicio,
+                        p_fim            => w_fim,
+                        p_valor_previsto => crec.orc3,
+                        p_valor_real     => 0);
+    End If;
+
+    -- Grava cronograma desembolso de 2010
+    If 2010 between to_char(w_ini_prj,'yyyy') and to_char(w_fim_prj,'yyyy') then
+       if w_ini_prj >= to_date('01/01/2010') 
+          then w_inicio := w_ini_prj;
+          else w_inicio := to_date('01/01/2010');
+       end if;
+        
+       if w_fim_prj <= to_date('31/12/2010')
+          then w_fim := w_fim_prj;
+          else w_fim := to_date('31/12/2010');
+       end if;
+    
+       -- Grava o cronograma desembolso do primeiro ano
+       sp_putcronograma(p_operacao       => 'I',
+                        p_chave          => w_chave_rubrica,
+                        p_chave_aux      => null,
+                        p_inicio         => w_inicio,
+                        p_fim            => w_fim,
+                        p_valor_previsto => crec.orc4,
+                        p_valor_real     => 0);
+    End If;
+
+    -- Grava cronograma desembolso de 2011
+    If 2011 between to_char(w_ini_prj,'yyyy') and to_char(w_fim_prj,'yyyy') then
+       if w_ini_prj >= to_date('01/01/2011') 
+          then w_inicio := w_ini_prj;
+          else w_inicio := to_date('01/01/2011');
+       end if;
+        
+       if w_fim_prj <= to_date('31/12/2011')
+          then w_fim := w_fim_prj;
+          else w_fim := to_date('31/12/2011');
+       end if;
+    
+       -- Grava o cronograma desembolso do primeiro ano
+       sp_putcronograma(p_operacao       => 'I',
+                        p_chave          => w_chave_rubrica,
+                        p_chave_aux      => null,
+                        p_inicio         => w_inicio,
+                        p_fim            => w_fim,
+                        p_valor_previsto => crec.orc5,
+                        p_valor_real     => 0);
     End If;
   end loop;
 end CARREGA_PAC;
