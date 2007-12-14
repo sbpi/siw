@@ -3,6 +3,7 @@ create or replace procedure SP_GetAlerta
     p_usuario   in number   default null,
     p_restricao in varchar2 default null,
     p_mail      in varchar2 default null,
+    p_solic     in number   default null,
     p_result    out sys_refcursor
    ) is
 begin
@@ -361,6 +362,49 @@ begin
           where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
             and f1.acesso    > 0;
+   Elsif p_restricao = 'USUARIOS' Then
+      -- Verifica os usuários que tem acesso a um documento
+      open p_result for         
+         select a.sq_pessoa, a.username, a.gestor_seguranca, a.gestor_sistema, a.ativo, a.email,
+                b.nome_resumido, b.nome, b.nome_indice, b.nome_resumido_ind, 
+                c.sigla as lotacao, c.sq_unidade, c.codigo, 
+                d.nome as localizacao, d.sq_localizacao, d.ramal, 
+                e.nome as vinculo, e.contratado,
+                f.logradouro, g.nome as nm_cidade, g.co_uf,
+                coalesce(h.qtd,0) as qtd_modulo,
+                coalesce(i.qtd,0) as qtd_visao,
+                coalesce(j.qtd,0) as qtd_dirigente,
+                coalesce(l.qtd,0) as qtd_tramite,
+                acesso(p_solic,a.sq_pessoa)
+           from sg_autenticacao                        a 
+                left outer     join eo_unidade         c on (a.sq_unidade         = c.sq_unidade)
+                  left outer   join co_pessoa_endereco f on (c.sq_pessoa_endereco = f.sq_pessoa_endereco)
+                    left outer join co_cidade          g on (f.sq_cidade          = g.sq_cidade)
+                left outer     join eo_localizacao     d on (a.sq_localizacao     = d.sq_localizacao)
+                inner          join co_pessoa          b on (a.sq_pessoa          = b.sq_pessoa)
+                  left outer   join co_tipo_vinculo    e on (b.sq_tipo_vinculo    = e.sq_tipo_vinculo)
+                left outer     join (select x.sq_pessoa, count(*) qtd 
+                                       from sg_pessoa_modulo x 
+                                      where x.cliente = p_cliente
+                                     group by x.sq_pessoa
+                                    )                  h on (a.sq_pessoa          = h.sq_pessoa)
+                left outer     join (select x.sq_pessoa, count(*) qtd 
+                                       from siw_pessoa_cc x 
+                                     group by x.sq_pessoa
+                                    )                  i on (a.sq_pessoa          = i.sq_pessoa)
+                left outer     join (select x.sq_pessoa, count(*) qtd 
+                                       from eo_unidade_resp x 
+                                      where x.fim is null
+                                     group by x.sq_pessoa
+                                    )                  j on (a.sq_pessoa          = j.sq_pessoa)
+                left outer     join (select x.sq_pessoa, count(*) qtd 
+                                       from sg_tramite_pessoa x 
+                                     group by x.sq_pessoa
+                                    )                  l on (a.sq_pessoa          = l.sq_pessoa)                                
+          where a.cliente           = p_cliente
+            and a.sq_pessoa         <> (p_cliente+1)
+            and 0                   < (select acesso(p_solic, a.sq_pessoa) from dual)
+            and 'S'                 = a.ativo;
    End If;
 end SP_GetAlerta;
 /
