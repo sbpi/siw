@@ -17,7 +17,9 @@ create or replace procedure SP_PutCLDados
     p_data_homologacao      in date     default null,
     p_data_diario_oficial   in date     default null,
     p_pagina_diario_oficial in number   default null,
-    p_ordem                 in number   default null
+    p_ordem                 in number   default null,
+    p_dias                  in number   default null,
+    p_dias_item             in number   default null
    ) is
 begin
    If p_restricao = 'DADOS' Then
@@ -35,7 +37,8 @@ begin
          sq_especificacao_despesa = p_sq_espec_despesa,
          sq_lcjulgamento          = p_sq_lcjulgamento,
          sq_lcsituacao            = p_sq_lcsituacao,
-         financeiro_unico         = p_financeiro_unico
+         financeiro_unico         = p_financeiro_unico,
+         dias_validade_proposta   = p_dias
       Where sq_siw_solicitacao = p_chave;
    ElsIf p_restricao = 'CONCLUSAO' Then
       -- Atualiza a tabela da licitação com os dados da conclusão
@@ -52,7 +55,8 @@ begin
    ElsIf p_restricao = 'ORDENACAO' Then
       -- Atualiza a ordem dos itens de uma licitação
       Update cl_solicitacao_item set
-         ordem = p_ordem
+         ordem                  = p_ordem,
+         dias_validade_proposta = nvl(p_dias_item,dias_validade_proposta)
       Where sq_solicitacao_item = p_chave;
    End If;
 end SP_PutCLDados;

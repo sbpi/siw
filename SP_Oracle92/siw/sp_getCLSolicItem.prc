@@ -19,7 +19,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
@@ -301,7 +301,9 @@ begin
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
-                i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem
+                i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
+                i.dias_validade_proposta,
+                j.dias_validade_proposta as dias_validade_certame
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -316,6 +318,7 @@ begin
                                                                (p_restricao          = 'FORNECEDORP' and 'N' = i.pesquisa)
                                                                )
                                                               )                  
+                inner     join cl_solicitacao           j  on (a.sq_siw_solicitacao  = j.sq_siw_solicitacao)
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
@@ -348,7 +351,8 @@ begin
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
-                i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem
+                i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
+                i.dias_validade_proposta
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -408,7 +412,7 @@ begin
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 e.nome as nm_cc,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
-                g.fornecedor,
+                g.fornecedor, g.dias_validade_proposta,
                 h.nome_resumido nm_fornecedor,
                 i.qtd_proposta
            from cl_solicitacao_item                     a

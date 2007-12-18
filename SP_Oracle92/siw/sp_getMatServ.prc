@@ -119,6 +119,7 @@ begin
                 e.nome as nm_cc,
                 f.ano_corrente, f.dias_validade_pesquisa, f.dias_aviso_pesquisa, f.percentual_acrescimo,
                 g.sq_item_fornecedor, g.sq_solicitacao_item, g.fornecedor, g.valor_unidade, g.valor_item, g.ordem,
+                g.dias_validade_proposta, g.inicio, g.fim, 
                 to_char(g.inicio,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inicio,
                 to_char(g.fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
                 g.fim-f.dias_aviso_pesquisa as aviso,
@@ -139,6 +140,11 @@ begin
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo))
+            and (p_valida        is null or (p_valida        is not null and ((p_valida         = 'S' and g.fim>=sysdate-1) or
+                                                                              (p_valida         = 'N' and g.fim<sysdate)
+                                                                             )
+                                            )
+                )
             and (p_item          is null or (p_item          is not null and g.sq_item_fornecedor = p_item));
    Elsif p_restricao = 'RELATORIO' or p_restricao = 'PESQUISA' Then
       -- Recupera materiais e serviços

@@ -5,7 +5,7 @@ create or replace procedure SP_PutCLItemFornecedor
     p_chave_aux                in number    default null,
     p_fornecedor               in number    default null,
     p_inicio                   in date      default null,
-    p_fim                      in date      default null,
+    p_dias                     in number    default null,
     p_valor                    in number    default null,
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
@@ -26,10 +26,13 @@ begin
       -- Insere registro na tabela CL_ITEM_FORNECEDOR
       insert into cl_item_fornecedor
         (sq_item_fornecedor,         sq_solicitacao_item, sq_material, fornecedor,   inicio,     fim,          valor_unidade,
-         valor_item,                 ordem,               vencedor,    pesquisa,     fabricante, marca_modelo, embalagem)
+         valor_item,                 ordem,               vencedor,    pesquisa,     fabricante, marca_modelo, embalagem, 
+         dias_validade_proposta)
       values
-        (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     p_fim,          p_valor, 
-         (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem);
+        (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     (p_inicio + p_dias - 1), p_valor, 
+         (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem,
+         p_dias
+        );
       
       -- Atualiza a tabela CL_MATERIAL
       If p_pesquisa = 'S' Then

@@ -5,7 +5,7 @@ create or replace procedure SP_PutCLPesqFornecedor
     p_chave_aux                in number    default null,
     p_fornecedor               in number    default null,
     p_inicio                   in date      default null,
-    p_fim                      in date      default null,
+    p_dias                     in number    default null,
     p_valor                    in number    default null,
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
@@ -18,21 +18,22 @@ begin
          -- Insere registro na tabela CL_ITEM_FORNECEDOR
          insert into cl_item_fornecedor
            (sq_item_fornecedor,         sq_solicitacao_item, sq_material,  fornecedor,     inicio,    fim,   valor_unidade,
-            valor_item,                 pesquisa,            fabricante,   marca_modelo,   embalagem, ordem)
+            valor_item,                 pesquisa,            fabricante,   marca_modelo,   embalagem, ordem, dias_validade_proposta)
          values
-           (sq_item_fornecedor.nextval, null,                p_material,   p_fornecedor,   p_inicio,    p_fim, p_valor, 
-            p_valor,                    'S',                 p_fabricante, p_marca_modelo, p_embalagem, 0);
+           (sq_item_fornecedor.nextval, null,  p_material,   p_fornecedor,   p_inicio,  (p_inicio + p_dias -1), p_valor, 
+            p_valor,                    'S',   p_fabricante, p_marca_modelo, p_embalagem, 0,    p_dias);
          -- Atualiza a tabela de materiais
          sp_ajustapesquisamaterial(p_cliente,p_material);
       Elsif p_chave is not null Then
          update cl_item_fornecedor set
-           inicio        = p_inicio,
-           fim           = p_fim,
-           valor_unidade = p_valor,
-           valor_item    = p_valor,
-           fabricante    = p_fabricante,
-           marca_modelo  = p_marca_modelo,
-           embalagem     = p_embalagem
+           inicio                 = p_inicio,
+           dias_validade_proposta = p_dias,
+           fim                    = (p_inicio + p_dias - 1),
+           valor_unidade          = p_valor,
+           valor_item             = p_valor,
+           fabricante             = p_fabricante,
+           marca_modelo           = p_marca_modelo,
+           embalagem              = p_embalagem
          where sq_item_fornecedor = p_chave;
          -- Atualiza a tabela de materiais
          sp_ajustapesquisamaterial(p_cliente,p_material);
