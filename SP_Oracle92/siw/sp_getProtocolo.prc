@@ -236,6 +236,14 @@ begin
          and a.ano_guia         = p_ano_guia
          and b.unidade_autuacao = p_unid_autua
          and a.recebimento      is not null;
+   Elsif p_restricao = 'EXISTE' Then
+      -- Verifica a existência de um protocolo
+      open p_result for
+      select a.sq_siw_solicitacao, a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
+        from pa_documento a
+       where a.prefixo          = p_prefixo 
+         and a.numero_documento = p_numero 
+         and a.ano              = p_ano;
    End If;
 end sp_getProtocolo;
 /

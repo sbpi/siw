@@ -3584,6 +3584,7 @@ SP_Oracle92/siw/sp_putRecurso.prc -text
 SP_Oracle92/siw/sp_putRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_putRecurso_Menu.prc -text
+SP_Oracle92/siw/sp_putRenumeraProtocolo.prc -text
 SP_Oracle92/siw/sp_putRestricaoEtapa.prc -text
 SP_Oracle92/siw/sp_putRestricaoEtapaInter.prc -text
 SP_Oracle92/siw/sp_putSolicIndicador.prc -text

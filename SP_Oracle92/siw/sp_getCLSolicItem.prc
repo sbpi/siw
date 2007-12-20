@@ -391,11 +391,12 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
-                b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
+                b.pesquisa_preco_menor, b.pesquisa_preco_maior, 
+                coalesce(b.pesquisa_preco_medio,0) as pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
                 case b.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
@@ -411,10 +412,12 @@ begin
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 e.nome as nm_cc,
+                f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
                 g.fornecedor, g.dias_validade_proposta,
                 h.nome_resumido nm_fornecedor,
-                i.qtd_proposta
+                i.qtd_proposta,
+                nvl(b.pesquisa_preco_medio,0)*nvl(f.percentual_acrescimo,0)/100 as variacao_valor
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)

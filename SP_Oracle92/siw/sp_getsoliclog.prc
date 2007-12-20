@@ -375,7 +375,10 @@ begin
                    case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
                    case when h.sq_documento_log is null 
-                        then case when instr(upper(a.observacao),'AUTUA')>0 then 'AUTUA플O DE PROCESSO' else 'REGISTRO' end
+                        then case when instr(upper(a.observacao),'AUTUA')>0       then 'AUTUA플O DE PROCESSO'
+                                  when instr(upper(a.observacao),'RENUMERA플O')>0 then 'RENUMERA플O'
+                                  else 'REGISTRO' 
+                             end
                         else 'TRAMITE ORIGINAL' 
                    end as origem,
                    c.sq_unidade as sq_registro, c.sigla nm_registro, l1.sq_unidade as sq_origem, l1.sigla as nm_origem,

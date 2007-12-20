@@ -7,6 +7,7 @@ create or replace procedure PA_CriaParametro
    w_reg        pa_parametro%rowtype;
    w_unid       pa_unidade%rowtype;
    w_unid_pai   number(18);
+   w_existe     number(10);
 begin
   -- Recupera os dados da unidade pai
   select coalesce(sq_unidade_pai,sq_unidade) into w_unid_pai from pa_unidade where sq_unidade = p_unidade;
@@ -23,7 +24,17 @@ begin
      w_sequencial := 1;
   Else
      w_ano        := w_reg.ano_corrente;
-     w_sequencial := w_unid.numero_documento + 1;
+     -- Se já houver documento com o sequencial gerado, incrementa 1 e testa novamente,
+     -- até achar um número vago.
+     loop
+        w_sequencial := w_unid.numero_documento + 1;
+        select count(a.sq_siw_solicitacao) into w_existe 
+          from pa_documento a 
+         where a.numero_documento = w_sequencial 
+           and a.ano              = w_ano 
+           and a.prefixo          = w_unid.prefixo;
+        if w_existe = 0 then exit; end if;
+     end loop;
   End If;
 
   -- Atualiza a tabela de parâmetros
