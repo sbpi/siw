@@ -586,7 +586,7 @@ function Inicial() {
                 if (f($row,'sg_tramite')=='EE') {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução.">CO</A>&nbsp');
                 }
-                if($w_segmento=='Público' && substr($SG,0,3)=='GCD') {
+                if(substr($SG,0,3)=='GCD') {
                  ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Aditivos&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Aditivos'.'&SG=GCDADITIVO'.MontaFiltro('GET').'" target="Aditivos" title="Registra os aditivos do contrato.">Aditivos</A>&nbsp;');
                 }
               } else {
@@ -2563,6 +2563,10 @@ function Parcelas() {
   $w_chave_aux         = $_REQUEST['w_chave_aux'];
   $w_sq_acordo_aditivo = $_REQUEST['w_sq_acordo_aditivo'];
 
+  // Carrega o segmento do cliente
+  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $w_segmento = f($RS,'segmento');  
+
   // Recupera dados do contrato
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   $w_inicio           = f($RS_Solic,'inicio');
@@ -2691,8 +2695,10 @@ function Parcelas() {
     if (strpos('IA',$O)!==false) {
       Validate('w_ordem','Número de ordem da parcela','1','1','1','4','','0123456789');
       Validate('w_data','Data de vencimento da parcela','DATA','1','10','10','','0123456789/');
-      CompData('w_data','Data de vencimento','>=','w_inicio','Data de início de vigência');
-      CompData('w_data','Data de vencimento','<=','w_fim','Data de término de vigência');
+      if($w_segmento=='Público') {
+        CompData('w_data','Data de vencimento','>=','w_inicio','Data de início de vigência');
+        CompData('w_data','Data de vencimento','<=','w_fim','Data de término de vigência');
+      }
       if(nvl($w_sq_acordo_aditivo,'')=='') {
         Validate('w_valor','Valor da parcela','VALOR','1',4,18,'','0123456789.,');
       } else {
@@ -2701,11 +2707,15 @@ function Parcelas() {
         if(f($RS_Adit,'revisao')=='S')     Validate('w_valor_reajuste','Valor reajuste','VALOR','1',4,18,'','0123456789.,');
       }
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
-      CompData('w_per_ini','Início do período de realização','>=','w_inicio','Data de início de vigência');
-      CompData('w_per_ini','Início do período de realização','<=','w_fim','Data de término de vigência');
+      if($w_segmento=='Público') {
+        CompData('w_per_ini','Início do período de realização','>=','w_inicio','Data de início de vigência');
+        CompData('w_per_ini','Início do período de realização','<=','w_fim','Data de término de vigência');
+      }
       Validate('w_per_fim','Fim do período de realização','DATA','1','10','10','','0123456789/');
-      CompData('w_per_fim','Fim do período de realização','>=','w_inicio','Data de início de vigência');
-      CompData('w_per_fim','Fim do período de realização','<=','w_fim','Data de término de vigência');
+      if($w_segmento=='Público') {
+        CompData('w_per_fim','Fim do período de realização','>=','w_inicio','Data de início de vigência');
+        CompData('w_per_fim','Fim do período de realização','<=','w_fim','Data de término de vigência');
+      }
       Validate('w_observacao','Observação','1','','3','200','1','1');
     } elseif ($O=='G') {
       Validate('w_dia_vencimento','Dia de vencimento','1','',1,2,'','0123456789');
@@ -2790,9 +2800,7 @@ function Parcelas() {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr valign="top"><td>');
     if($w_edita) {
-      if (nvl($w_sq_acordo_aditivo,'')=='' || w_prorrogacao=='N') {
-        ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      }
+      ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
       if($w_prorrogacao=='N') {
         ShowHTML('        <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_sq_acordo_aditivo='.$w_sq_acordo_aditivo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar</a>&nbsp;');
       } else {
@@ -3921,7 +3929,7 @@ function Aditivos() {
   } elseif ($O=='E') {
     BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
-    BodyOpenClean(null);
+    BodyOpenClean('onLoad=\'this.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');

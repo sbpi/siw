@@ -182,6 +182,11 @@ $p_assunto      = strtoupper($_REQUEST['p_assunto']);
 $p_pais         = strtoupper($_REQUEST['p_pais']);
 $p_regiao       = strtoupper($_REQUEST['p_regiao']);
 $p_uf           = strtoupper($_REQUEST['p_uf']);
+if (strpos($p_uf,',')!==false) {
+  $p_temp = explode(',',$p_uf);
+  $p_pais = $p_temp[0];
+  $p_uf   = $p_temp[1];
+}
 $p_cidade       = strtoupper($_REQUEST['p_cidade']);
 $p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
 $p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
@@ -555,8 +560,8 @@ function Inicial() {
                 } 
                 ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')=='EE') {
-                  $RS = db_getContasCronograma::getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
-                  if(count($RS)>0) ShowHTML('          <A class="HL" HREF="'.$w_pagina.'PrestacaoContas&R='.$w_pagina.'PrestacaoContas'.'&O=P&w_siw_solicitacao='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação contas&SG=PJPREST'.MontaFiltro('GET').'" title="Inseri a prestação de contas do projeto." target="Prestacao">PC</A>&nbsp');
+                  $RS2 = db_getContasCronograma::getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
+                  if(count($RS2)>0) ShowHTML('          <A class="HL" HREF="'.$w_pagina.'PrestacaoContas&R='.$w_pagina.'PrestacaoContas'.'&O=P&w_siw_solicitacao='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação contas&SG=PJPREST'.MontaFiltro('GET').'" title="Inseri a prestação de contas do projeto." target="Prestacao">PC</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução do projeto.">CO</A>&nbsp');
                 } 
               } else {
@@ -2058,8 +2063,8 @@ function Etapas() {
     $w_fim                  = f($RS,'fim_previsto');
     $w_inicio_real          = f($RS,'inicio_real');
     $w_fim_real             = f($RS,'fim_real');
-    $w_perc_conclusao       = f($RS,'perc_conclusao');
-    $w_orcamento            = formatNumber(f($RS,'orcamento'));
+    $w_perc_conclusao       = formatNumber(f($RS,'perc_conclusao'));
+    $w_orcamento            = f($RS,'orcamento');
     $w_sq_pessoa            = f($RS,'sq_pessoa');
     $w_sq_unidade           = f($RS,'sq_unidade');
     $w_vincula_atividade    = f($RS,'vincula_atividade');
@@ -2087,7 +2092,7 @@ function Etapas() {
     $w_sq_unidade   = f($RS_Projeto,'sq_unidade_resp');
   } 
   
-  $w_indica_ordem=0;
+  $w_indica_ordem=1;
   // Recupera o número de ordem das outras opções irmãs à selecionada
   $RS = db_getEtapaOrder::getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_chave_pai);
   $RS = SortArray($RS,'ordena','asc');

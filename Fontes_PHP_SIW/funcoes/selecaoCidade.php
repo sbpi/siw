@@ -7,7 +7,7 @@ function selecaoCidade($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$camp
   extract($GLOBALS);
   if ($restricao=='INDICADOR') $RS = db_getCityList::getInstanceOf($dbms, nvl($chaveAux,0), $chaveAux2, $w_cliente, $restricao);
   else $RS = db_getCityList::getInstanceOf($dbms, nvl($chaveAux,0), $chaveAux2, null, $restricao);
-  $RS = SortArray($RS,'capital','desc','nome','asc');
+  $RS = SortArray($RS,'capital','desc','ordena','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

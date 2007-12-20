@@ -10,8 +10,16 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'classes/sp/db_getCcData.php');
+include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
+include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
+include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
+include_once($w_dir_volta.'classes/sp/db_getStateData.php');
+include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCoordenada.php');
 include_once($w_dir_volta.'classes/googlemaps/nxgooglemapsapi.php');
 
@@ -58,7 +66,42 @@ $w_pagina     = 'exibe.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_gr/';
 $w_troca      = $_REQUEST['w_troca'];
-$p_ordena     = $_REQUEST['p_ordena'];
+
+$w_origem        = $_REQUEST['w_origem'];
+$p_tipo          = strtoupper($_REQUEST['p_tipo']);
+$p_ativo         = strtoupper($_REQUEST['p_ativo']);
+$p_solicitante   = strtoupper($_REQUEST['p_solicitante']);
+$p_unidade       = strtoupper($_REQUEST['p_unidade']);
+$p_proponente    = strtoupper($_REQUEST['p_proponente']);
+$p_ordena        = strtolower($_REQUEST['p_ordena']);
+$p_ini_i         = strtoupper($_REQUEST['p_ini_i']);
+$p_ini_f         = strtoupper($_REQUEST['p_ini_f']);
+$p_fim_i         = strtoupper($_REQUEST['p_fim_i']);
+$p_fim_f         = strtoupper($_REQUEST['p_fim_f']);
+$p_atraso        = strtoupper($_REQUEST['p_atraso']);
+$p_chave         = strtoupper($_REQUEST['p_chave']);
+$p_assunto       = strtoupper($_REQUEST['p_assunto']);
+$p_usu_resp      = strtoupper($_REQUEST['p_usu_resp']);
+$p_uorg_resp     = strtoupper($_REQUEST['p_uorg_resp']);
+$p_palavra       = strtoupper($_REQUEST['p_palavra']);
+$p_prazo         = strtoupper($_REQUEST['p_prazo']);
+$p_fase          = explodeArray($_REQUEST['p_fase']);
+$p_agrega        = strtoupper($_REQUEST['p_agrega']);
+$p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
+$p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
+$p_projeto       = strtoupper($_REQUEST['p_projeto']);
+$p_atividade     = strtoupper($_REQUEST['p_atividade']);
+$p_pais          = strtoupper($_REQUEST['p_pais']);
+$p_regiao        = strtoupper($_REQUEST['p_regiao']);
+$p_uf            = strtoupper($_REQUEST['p_uf']);
+if (strpos($p_uf,',')!==false) {
+  $p_temp = explode(',',$p_uf);
+  $p_pais = $p_temp[0];
+  $p_uf   = $p_temp[1];
+}
+$p_cidade        = strtoupper($_REQUEST['p_cidade']);
+$p_prioridade    = strtoupper($_REQUEST['p_prioridade']);
+$p_servico       = strtoupper($_REQUEST['p_servico']);
 
 if ($O=='') $O='L';
 
@@ -73,6 +116,10 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
+
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+define(GoogleMapsKey, f($RS_Cliente,'googlemaps_key')); 
 
 Main();
 FechaSessao($dbms);
@@ -103,7 +150,9 @@ function inicial(){
   $api->setZoomFactor(4);
   $api->setCenter('-15.780148','-47.929169');
   $api->addIcon('house','http://maps.google.com/mapfiles/kml/pal2/icon10.png','http://maps.google.com/mapfiles/kml/pal2/icon10s.png');
-  $api->addIcon('project','http://maps.google.com/mapfiles/kml/pal2/icon13.png','http://maps.google.com/mapfiles/kml/pal2/icon13s.png');
+  $api->addIcon('project_green',$conRootSIW.'/images/icone/flag_green.png',null);
+  $api->addIcon('project_red',$conRootSIW.'/images/icone/flag_red.png',null);
+  $api->addIcon('project_yellow',$conRootSIW.'/images/icone/flag_yellow.png',null);
   $api->divId = 'mapid';
   
   $w_cont = 1;
@@ -126,13 +175,87 @@ function inicial(){
     }
   }
 
-  if (nvl($w_projeto,'')!=='') {
-    // Recupera todos os endereços do cliente, independente do tipo
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    $RS_Projeto = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),3,
-        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null,null,null,null, null, null, null);
-    $RS_Projeto = SortArray($RS_Projeto,'codigo_interno','asc','titulo','asc');
+  if (nvl($w_projeto,'')!=='' or (nvl($w_origem,'')!='')) {
+    if (nvl($w_origem,'')=='') {
+      // Recupera todos os endereços do cliente, independente do tipo
+      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $RS_Projeto = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+          null,null,null,null, null, null, null);
+      $RS_Projeto = SortArray($RS_Projeto,'codigo_interno','asc','titulo','asc');
+    } else {
+      $w_filtro='';
+      if (nvl($p_projeto,'')!='') {
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto);
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
+      } elseif (nvl($p_servico,'')!='') {
+        if ($p_servico=='CLASSIF') {
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+        } else {
+          $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
+        }
+      } elseif (nvl($_REQUEST['p_agrega'],'')=='GRPRVINC') {
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com vinculação</b>]';
+      } elseif (nvl($p_chave,'')!='') {
+        $RS = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
+        $w_filtro.='<tr valign="top"><td align="right">Projeto <td>[<b>'.f($RS,'titulo').'</b>]';
+      } 
+      if ($p_sqcc>'') {
+        $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
+        $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_chave>'')  $w_filtro.='<tr valign="top"><td align="right">Projeto nº <td>[<b>'.$p_chave.'</b>]';
+      if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
+      if ($p_solicitante>'') {
+        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
+        $w_filtro.='<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      } 
+      if ($p_unidade>'') {
+        $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
+        $w_filtro.='<tr valign="top"><td align="right">Unidade responsável <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_usu_resp>'') {
+        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
+        $w_filtro.='<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      } 
+      if ($p_uorg_resp>'') {
+        $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+        $w_filtro.='<tr valign="top"><td align="right">Unidade atual <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_pais>'') {
+        $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
+        $w_filtro.='<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_regiao>'') {
+        $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
+        $w_filtro.='<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_uf>'') {
+        $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
+        $w_filtro.='<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_cidade>'') {
+        $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
+        $w_filtro.='<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_prioridade>'') $w_filtro.='<tr valign="top"><td align="right">Prioridade <td>[<b>'.RetornaPrioridade($p_prioridade).'</b>]';
+      if ($p_proponente>'') $w_filtro.='<tr valign="top"><td align="right">Proponente <td>[<b>'.$p_proponente.'</b>]';
+      if ($p_assunto>'') $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]';
+      if ($p_palavra>'') $w_filtro.='<tr valign="top"><td align="right">Palavras-chave <td>[<b>'.$p_palavra.'</b>]';
+      if ($p_ini_i>'') $w_filtro.='<tr valign="top"><td align="right">Data recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'') $w_filtro.='<tr valign="top"><td align="right">Limite conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_atraso=='S') $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]';
+      if ($w_filtro>'') $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
+  
+      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $RS_Projeto = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+          $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+          $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
+          $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
+          $p_atividade, null, null, null, $p_servico);
+    }
     foreach($RS_Projeto as $row) {
       $w_lat  = str_replace(',','.',f($row,'latitude'));
       $w_long = str_replace(',','.',f($row,'longitude'));
@@ -144,10 +267,10 @@ function inicial(){
       $w_html .= '<br>IDC: '.formatNumber(f($row,'idc'),2).'%';
       $w_html .= '<br>IGC: '.formatNumber(f($row,'igc'),2).'%';
       $w_html .= '<br><A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank">Ver ficha do projeto</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
-      $w_icon = f($row,'icone');
+      $w_icon = ExibeIconeSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if (nvl(f($row,'nm_coordenada'),'')!='') {
         $api->addGeoPoint($w_lat,$w_long,$w_html,false,$w_icon,$w_cont);
-        $w_projetos[$w_cont] = '            <br><a href="javascript:myClick('.$w_cont.');">'.f($row,'nm_coordenada').'</a>';
+        $w_projetos[$w_cont] = '            <br>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null) .' <a href="javascript:myClick('.$w_cont.');" title="'.f($row,'titulo').'">'.f($row,'nm_coordenada').'</a>';
         $w_cont += 1;
       }
     }
@@ -197,15 +320,26 @@ function inicial(){
     ShowHTML('    <table border="1"><tr>');
     ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColor.'">');
     ShowHTML('        <td><div id="side_bar" style="overflow:auto; height:100%;"><table border=0 width="100%">');
-    ShowHTML('          <tr><td colspan=2><b>Indique o que exibir:</b>');
-    if (nvl($w_endereco,'')!='') $w_checked = true; else $w_checked = false;
-    ShowHTML('          <tr valign="top"><td width="1%" nowrap><input type="checkbox" name="w_endereco" value="OK" '.(($w_checked) ? 'CHECKED' : '').' onClick="document.Form.submit();"><td><b>Endereços</b>');
-    if (nvl($w_endereco,'')!='' && count($w_enderecos)>0) {
+    if ($w_filtro>'') ShowHTML('          <tr><td colspan=2>'.$w_filtro);
+    if (nvl($w_origem,'')=='') {
+      ShowHTML('          <tr><td colspan=2><b>Indique o que exibir:</b>');
+    } elseif ($w_origem=='Endereços') {
+      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' geo-referenciados: ('.count($w_enderecos).')</b>');
+    } elseif ($w_origem=='Projetos') {
+      ShowHTML('          <tr><td colspan=2><b>'.$w_origem.' geo-referenciados: ('.count($w_projetos).')</b>');
+    }
+    if (nvl($w_origem,'')=='') {
+      if (nvl($w_endereco,'')!='') $w_checked = true; else $w_checked = false;
+      ShowHTML('          <tr valign="top"><td width="1%" nowrap><input type="checkbox" name="w_endereco" value="OK" '.(($w_checked) ? 'CHECKED' : '').' onClick="document.Form.submit();"><td><b>Endereços</b>');
+    }
+    if ((nvl($w_endereco,'')!='' || nvl($w_origem,'')=='Endereços') && count($w_enderecos)>0) {
       foreach ($w_enderecos as $k => $v) ShowHTML($v);
     }
-    if (nvl($w_projeto,'')!='') $w_checked = true; else $w_checked = false;
-    ShowHTML('          <tr valign="top"><td width="1%" nowrap><input type="checkbox" name="w_projeto" value="OK" '.(($w_checked) ? 'CHECKED' : '').' onClick="document.Form.submit();"><td><b>Projetos</b>');
-    if (nvl($w_projeto,'')!='' && count($w_projetos)>0) {
+    if (nvl($w_origem,'')=='') {
+      if (nvl($w_projeto,'')!='') $w_checked = true; else $w_checked = false;
+      ShowHTML('          <tr valign="top"><td width="1%" nowrap><input type="checkbox" name="w_projeto" value="OK" '.(($w_checked) ? 'CHECKED' : '').' onClick="document.Form.submit();"><td><b>Projetos</b>');
+    }
+    if ((nvl($w_projeto,'')!='' || nvl($w_origem,'')=='Projetos') && count($w_projetos)>0) {
       foreach ($w_projetos as $k => $v) ShowHTML($v);
     }
     ShowHTML('        </table>');

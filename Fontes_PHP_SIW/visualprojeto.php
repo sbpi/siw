@@ -77,6 +77,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       if (SolicAcesso($l_chave,$l_usuario)>2) $w_tipo_visao = 1;
     }  
   }
+
   // Se for listagem ou envio, exibe os dados de identificação do projeto
   if ($operacao=='L' || $operacao=='V' || $operacao=='T') {
     // Se for listagem dos dados
@@ -109,7 +110,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
     else       $l_html .= chr(13).'        <td>'.f($RS,'nm_sol').'</b></td>';
     $l_html .= chr(13).'          <tr><td><b>Unidade responsável:</b></td>';
-    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>';
+    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
+    else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
+    $l_html .= chr(13).'          <tr><td><b>Unidade de cadastramento:</b></td>';
+    if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade_cad'),$TP).'</b></td>';
     else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
 
     // Exibe o orçamento disponível para o projeto se for visão completa

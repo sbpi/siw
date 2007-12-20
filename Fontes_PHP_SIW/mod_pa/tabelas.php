@@ -16,6 +16,7 @@ include_once($w_dir_volta.'classes/sp/db_getUnidade_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getNaturezaDoc_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoGuarda_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoDespacho_PA.php');
@@ -25,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/dml_putNaturezaDoc_PA.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoGuarda_PA.php');
 include_once($w_dir_volta.'classes/sp/dml_putPAParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putAssunto_PA.php');
+include_once($w_dir_volta.'classes/sp/dml_putRenumeraProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
@@ -1005,6 +1007,84 @@ function Parametro() {
   Rodape();
 } 
 // =========================================================================
+// Rotina para renumeração de números de protocolo
+// -------------------------------------------------------------------------
+function Renumera() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  // Recupera as variáveis utilizadas na filtragem
+  $w_protocolo     = $_REQUEST['w_protocolo'];
+  $w_protocolo_ant = $_REQUEST['w_protocolo_ant'];
+  $w_prefixo       = nvl($_REQUEST['w_prefixo'],substr($w_protocolo,0,5));
+  $w_numero        = $_REQUEST['w_numero'];
+  $w_ano           = nvl($_REQUEST['w_ano'],substr($w_protocolo,13,4));
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ScriptOpen('JavaScript');
+  FormataProtocolo();
+  ShowHTML('function carregaDados(p_campo) { ');
+  ShowHTML('  if (document.Form.w_protocolo_ant.value!=p_campo.value) {');
+  ShowHTML('    document.Form.w_prefixo.value=p_campo.value.substring(0,5);');
+  ShowHTML('    document.Form.w_ano.value=p_campo.value.substring(13,17);');
+  ShowHTML('    document.Form.w_protocolo_ant.value=p_campo.value;');
+  ShowHTML('  }');
+  ShowHTML('}');
+  ValidateOpen('Validacao');
+  Validate('w_protocolo','Número de protocolo','1','1','20','20','','0123456789./-'); 
+  Validate('w_prefixo','Prefixo','1','1','5','5','','0123456789'); 
+  Validate('w_numero','Número','1','1','1','6','','0123456789'); 
+  Validate('w_ano','Ano','1','1','4','4','','0123456789'); 
+  ShowHTML('  if (parseFloat(theForm.w_ano.value)>'.date('Y',time()).') {');
+  ShowHTML('    alert("Ano do novo protocolo não pode ser maior que o ano corrente!");');
+  ShowHTML('    theForm.w_ano.focus();');
+  ShowHTML('    return false');
+  ShowHTML('  }');
+  Validate('w_assinatura','Assinatura eletrônica','1','1','6','15','1','1');
+  ShowHTML('  theForm.Botao.disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if (nvl($w_protocolo,'')=='') {
+    BodyOpen('onLoad=\'document.Form.w_protocolo.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'document.Form.w_prefixo.focus()\';');
+  }
+  ShowHTML('<B><FONT COLOR="#000000">'.str_replace(' - Listagem','',$w_TP).'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td colspan=2 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+  ShowHTML('  Orientação:<ul>');
+  ShowHTML('  <li>Informe o número de protocolo atual.');
+  ShowHTML('  <li>Em seguida, informe o novo protocolo. O sistema irá sugerir o mesmo prefixo e ano do protocolo informado, mas permitirá sua alteração.');
+  ShowHTML('  <li>Os dois últimos dígitos do novo protocolo serão gerados automaticamente pelo sistema.');
+  ShowHTML('  <li>As regras para a renumeração de protocolo são:<ul><li>O ano do novo protocolo não pode ser superior ao ano corrente;<li>O protocolo atual deve existir;<li>O novo protocolo não pode estar associado a um documento/processo existente.</ul>');
+  ShowHTML('  </ul></b></font></td>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+  ShowHTML('<INPUT type="hidden" name="w_protocolo_ant" value="'.$w_protocolo_ant.'">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('    <table width="97%" border="0">');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><u>P</u>rotocolo atual:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);" onBlur="carregaDados(this);"></td>');
+  ShowHTML('        <td><b>Novo protocolo:<br>');
+  ShowHTML('            <INPUT '.$w_Disabled.' class="sti" type="text" name="w_prefixo" size="5" maxlength="5" value="'.$w_prefixo.'">.');
+  ShowHTML('            <INPUT '.$w_Disabled.' class="sti" type="text" name="w_numero" size="6" maxlength="6" value="'.$w_numero.'">/');
+  ShowHTML('            <INPUT '.$w_Disabled.' class="sti" type="text" name="w_ano" size="4" maxlength="4" value="'.$w_ano.'"></td>');
+  ShowHTML('      <tr valign="top"><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+  ShowHTML('      <tr><td align="center" colspan="2"><hr>');
+  ShowHTML('      <tr><td align="center" colspan="2"><input class="stb" type="submit" name="Botao" value="Gravar"></td></tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+// =========================================================================
 //  Rotina da tabela de assuntos
 // -------------------------------------------------------------------------
 function Assunto() {
@@ -1230,6 +1310,56 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
+    case 'PARENUM':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        // Testa a existência do novo protocolo
+        $RS_Menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PADCAD');
+        // Verifica se o protocolo atual existe
+        $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
+              Nvl(substr($_REQUEST['w_protocolo'],0,5),''), Nvl(substr($_REQUEST['w_protocolo'],6,6),''), 
+              Nvl(substr($_REQUEST['w_protocolo'],13,4),''), null, null, null, null, null, null, null);
+        if (count($RS)==0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Protocolo atual não encontrado!\');');
+          ScriptClose(); 
+          retornaFormulario('w_protocolo');
+          break;
+        } else {
+          foreach($RS as $row) { $RS = $row; break; }
+          $w_chave = f($RS,'sq_siw_solicitacao');
+        }
+        // Verifica se o novo protocolo existe
+        $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
+              Nvl($_REQUEST['w_prefixo'],''), Nvl($_REQUEST['w_numero'],''), Nvl($_REQUEST['w_ano'],''), 
+              null, null, null, null, null, null, null);
+        if (count($RS)>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Novo protocolo já está associado a um documento/processo existente!\');');
+          ScriptClose(); 
+          retornaFormulario('w_numero');
+          break;
+        } 
+        // Executa a renumeração do protocolo
+        dml_putRenumeraProtocolo::getInstanceOf($dbms,$w_usuario,$w_chave,$_REQUEST['w_prefixo'],$_REQUEST['w_numero'],$_REQUEST['w_ano']);
+
+        // Recupera o novo protocolo, com DV
+        $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
+              Nvl($_REQUEST['w_prefixo'],''), Nvl($_REQUEST['w_numero'],''), Nvl($_REQUEST['w_ano'],''), 
+              null, null, null, null, null, null, null);
+        foreach($RS as $row) { $RS = $row; break; }
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Protocolo '.$_REQUEST['w_protocolo'].' renumerado com sucesso para '.f($RS,'protocolo').'!\');');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+        } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }     
+      break;
     case 'PATPDESPAC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1514,6 +1644,7 @@ function Main() {
   extract($GLOBALS);
   global $w_Disabled;
   switch ($par) {
+    case 'RENUMERA':           Renumera();          break;
     case 'TIPODESPACHO':       TipoDespacho();      break;
     case 'ESPECIEDOCUMENTO':   EspecieDocumento();  break;
     case 'UNIDADE':            Unidade();           break;    

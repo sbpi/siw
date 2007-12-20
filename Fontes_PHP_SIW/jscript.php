@@ -353,7 +353,7 @@ function DecodeDate() {
   print " } "."\r\n";
 }
 
-// Rotina auxiliar à de verificação de datas
+// Rotina para salto automático de campo
 function SaltaCampo() {
   ShowHTML('function SaltaCampo(form,campo,tammax,event,prox){ ');
   ShowHTML('  var tecla = event.which; ');
@@ -387,6 +387,90 @@ function SaltaCampo() {
   ShowHTML('    } ');
   ShowHTML('  } ');
   ShowHTML('} ');
+}
+
+// Rotina para soma de dias a uma data
+function SomaDias() {
+  ShowHTML('function somaDias(p_data, p_data_ant, p_dias, p_campo_vinc, p_campo_prox) {');
+  ShowHTML('  if (p_data.value != "" && p_data.value != eval(p_data_ant+".value")) {');
+  ShowHTML('    if (p_data.value.length < 10 && p_data.value != "") {');
+  ShowHTML('      alert("Favor digitar pelo menos 10 posições!");');
+  ShowHTML('      p_data.focus();');
+  ShowHTML('      return (false);');
+  ShowHTML('    }');
+  ShowHTML('    var checkOK = "0123456789/";');
+  ShowHTML('    var checkStr =   p_data.value;');
+  ShowHTML('    var allValid = true;');
+  ShowHTML('    for (i = 0;  i < checkStr.length;  i++) {');
+  ShowHTML('      ch = checkStr.charAt(i);');
+  ShowHTML('      if ((checkStr.charCodeAt(i) != 13) && (checkStr.charCodeAt(i) != 10) && (checkStr.charAt(i) != "\\\\")) {');
+  ShowHTML('        for (j = 0;  j < checkOK.length;  j++) { if (ch == checkOK.charAt(j)) break; } ');
+  ShowHTML('        if (j == checkOK.length) {');
+  ShowHTML('          allValid = false;');
+  ShowHTML('           break;');
+  ShowHTML('        }');
+  ShowHTML('      } ');
+  ShowHTML('    }');
+  ShowHTML('    if (!allValid) {');
+  ShowHTML('      alert("Favor digitar apenas números!");');
+  ShowHTML('      p_data.focus();');
+  ShowHTML('      return (false);');
+  ShowHTML('    }');
+  ShowHTML('    var checkStr = p_data.value;');
+  ShowHTML('    var err=0;');
+  ShowHTML('    var psj=0;');
+  ShowHTML('    if (checkStr.length != 0) {');
+  ShowHTML('       if (!checkbranco(checkStr)) {');
+  ShowHTML('         if (checkStr.length != 10) err=1');
+  ShowHTML('         dia = checkStr.substring(0, 2);');
+  ShowHTML('         barra1 = checkStr.substring(2, 3);');
+  ShowHTML('         mes = checkStr.substring(3, 5);');
+  ShowHTML('         barra2 = checkStr.substring(5, 6);');
+  ShowHTML('         ano = checkStr.substring(6, 10);');
+  ShowHTML('         //verificações básicas');
+  ShowHTML('         if (mes<1 || mes>12) err = 1;');
+  ShowHTML('         if (barra1 != "/") err = 1;');
+  ShowHTML('         if (dia<1 || dia>31) err = 1;');
+  ShowHTML('         if (barra2 != "/") err = 1;');
+  ShowHTML('         if (ano<1900 || ano>2900) err = 1;');
+  ShowHTML('         //verificações avançadas');
+  ShowHTML('         // mês com 30 dias');
+  ShowHTML('         if (mes==4 || mes==6 || mes==9 || mes==11) {');
+  ShowHTML('            if (dia==31) err=1;');
+  ShowHTML('         }');
+  ShowHTML('         // fevereiro e ano bissexto');
+  ShowHTML('         if (mes==2){');
+  ShowHTML('            var g=parseInt(ano/4);');
+  ShowHTML('            if (isNaN(g)) err=1;');
+  ShowHTML('            if (dia>29) err=1;');
+  ShowHTML('            if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;');
+  ShowHTML('         }');
+  ShowHTML('       } else { err=1; }');
+  ShowHTML('    }');
+  ShowHTML('    if (err==1){');
+  ShowHTML('       alert("Data inválida!");');
+  ShowHTML('       p_data.focus();');
+  ShowHTML('       return (false);');
+  ShowHTML('    }');
+  ShowHTML('    var w_data, w_data1, w_data2;');
+  ShowHTML('    w_data = p_data.value;');
+  ShowHTML('    w_data = w_data.substr(3,2) + \'/\' + w_data.substr(0,2) + \'/\' + w_data.substr(6,4);');
+  ShowHTML('    w_data1  = new Date(Date.parse(w_data));');
+  ShowHTML('    var MinMilli = 1000 * 60;');
+  ShowHTML('    var HrMilli = MinMilli * 60;');
+  ShowHTML('    var DyMilli = HrMilli * 24;');
+  ShowHTML('    var w_prazo = DyMilli * (p_dias-1);');
+  ShowHTML('    w_fim = new Date(w_data1.getTime() + w_prazo);');
+  ShowHTML('    w_day = 100 + w_fim.getDate();');
+  ShowHTML('    w_d = (w_day+"").substring(1,3);');
+  ShowHTML('    w_month = 101 + w_fim.getMonth();');
+  ShowHTML('    w_m = (w_month+"").substring(1,3);');
+  ShowHTML('    w_y = w_fim.getFullYear();');
+  ShowHTML('    eval(p_data_ant+\'.value = "\'+p_data.value+\'"\');');
+  ShowHTML('    eval(p_campo_vinc+".value = w_d + \'/\' + w_m + \'/\' + w_y");');
+  ShowHTML('    eval(p_campo_prox+".focus()");');
+  ShowHTML('  }');
+  ShowHTML('}');
 }
 
 function FormataData() {

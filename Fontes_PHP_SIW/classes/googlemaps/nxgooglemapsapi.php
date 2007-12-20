@@ -34,7 +34,8 @@
  * GOverviewMapControl - a collapsible overview map in the corner of the screen
  */
  
-  define(GoogleMapsKey, 'ABQIAAAAJCfRosTRMUFLdtKTt8MZPRQVXuih6wDKvchyZkury9IV6rkLChQiZXWwGySf1tXjMVRb7nsHEgfenA'); 
+//  A linha abaixo foi comentada para permitir a atribuição da chave do GoogleMaps a partir do banco de dados
+//  define(GoogleMapsKey, 'ABQIAAAAJCfRosTRMUFLdtKTt8MZPRQVXuih6wDKvchyZkury9IV6rkLChQiZXWwGySf1tXjMVRb7nsHEgfenA'); 
   
   define( GLargeMapControl     , 'GLargeMapControl()');
   define( GSmallMapControl     ,   'GSmallMapControl()');

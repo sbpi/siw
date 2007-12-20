@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putCLDados {
    function getInstanceOf($dbms, $restricao, $p_chave, $p_sq_lcmodalidade, $p_numero_processo, $p_numero_certame, $p_numero_ata, $p_tipo_reajuste, $p_indice_base, $p_sq_eoindicador, 
                           $p_limite_variacao, $p_sq_lcfonte_recurso, $p_sq_espec_despesa, $p_sq_lcjulgamento, $p_sq_lcsituacao, 
-                          $p_financeiro_unico, $p_homologacao, $p_data_diario, $p_pagina_diario, $p_ordem) {
+                          $p_financeiro_unico, $p_homologacao, $p_data_diario, $p_pagina_diario, $p_ordem, $p_dias,$p_dias_item) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCLDADOS';
      $params=array('p_restricao'                 =>array($restricao,                                       B_VARCHAR,        30),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -32,7 +32,9 @@ class dml_putCLDados {
                    'p_homologacao'               =>array(tvl($p_homologacao),                              B_DATE,           32),
                    'p_data_diario'               =>array(tvl($p_data_diario),                              B_DATE,           32),
                    'p_pagina_diario'             =>array(tvl($p_pagina_diario),                            B_INTEGER,        32),
-                   'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,        32)
+                   'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,        32),
+                   'p_dias'                      =>array(tvl($p_dias),                                     B_INTEGER,        32),
+                   'p_dias_item'                 =>array(tvl($p_dias_item),                                B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

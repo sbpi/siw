@@ -1939,6 +1939,7 @@ function Tramitacao() {
 
   if ($w_troca>'') {
     // Se for recarga da página
+    $w_chave            = $_REQUEST['w_chave'];
     $w_retorno_limite   = $_REQUEST['w_retorno_limite'];
     $w_interno          = $_REQUEST['w_interno'];
     $w_sq_unidade       = $_REQUEST['w_sq_unidade'];
@@ -1955,6 +1956,20 @@ function Tramitacao() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
     $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    
+    if (count($w_chave) > 0) {
+      $i = 0;
+      foreach($w_chave as $k => $v) {
+        foreach ($RS as $row) {
+          if ($w_chave[$i]==f($row,'sq_siw_solicitacao')) {
+            $w_marcado[f($row,'sq_siw_solicitacao')] = 'ok';
+            break;
+          }
+        }
+        $i += 1;
+      }
+      reset($RS);
+    }
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -2045,12 +2060,13 @@ function Tramitacao() {
     ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão <i>Gerar Guia de Tramitação</i>.');
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td colspan=3>');
+    ShowHTML('<tr><td colspan=2>');
     if (MontaFiltro('GET')>'') {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
     } 
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2077,6 +2093,7 @@ function Tramitacao() {
       ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
       ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
       ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
+      $i = 0;
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
@@ -2084,7 +2101,11 @@ function Tramitacao() {
         ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
         ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
         ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">'); 
-        ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
+        if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
+          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
+        } else {
+          ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
+        }
         ShowHTML('        </td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
@@ -2094,6 +2115,7 @@ function Tramitacao() {
         ShowHTML('        <td>'.f($row,'nm_origem_doc').'</td>');
         ShowHTML('        <td align="center">'.((nvl(f($row,'fim'),'')!='') ? date(d.'/'.m.'/'.y,f($row,'fim')) : '&nbsp;').'</td>');
         ShowHTML('      </tr>');
+        $i += 1;
       } 
     } 
     ShowHTML('      </center>');

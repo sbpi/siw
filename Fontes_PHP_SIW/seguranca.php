@@ -25,6 +25,8 @@ include_once('classes/sp/db_getCustomerSite.php');
 include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/db_getBenef.php');
+include_once('classes/sp/db_getSolicData.php');
+include_once('classes/sp/db_getAlerta.php');
 include_once('classes/sp/dml_SiwMenu.php');
 include_once('classes/sp/dml_putSgPesMod.php');
 include_once('classes/sp/dml_putSiwPesCC.php');
@@ -1979,6 +1981,89 @@ function TelaUsuario() {
   Estrutura_Texto_Fecha();
 } 
 
+// ------------------------------------------------------------------------- 
+// Tela de usuários com acesso a um documento
+// ------------------------------------------------------------------------- 
+function TelaAcessoUsuarios() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave      = $_REQUEST['w_chave'];
+  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,null);
+  // Recupera todos os registros para a listagem 
+  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'USUARIOS', null, $w_chave);
+  $RS = SortArray($RS,'nome_resumido_ind','asc');
+  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização usuários de acesso</TITLE>');
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpenClean('onLoad=\'this.focus()\'; onBlur="self.close();"');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>');
+  $l_array = explode('|@|', f($RS_Solic,'dados_solic'));
+  $l_string = ($l_array[0].' - '.$l_array[2]);
+  ShowHTML($l_string);
+  ShowHTML('  </b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td>');
+  ShowHTML('    <table width="100%" border="1">');
+  ShowHTML('        <tr align="center">');
+  ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+  ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
+  ShowHTML('          <td colspan="3"><b>Gestor</td>');
+  ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Visão','qtd_visao').'</td>');
+  ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dirigente','qtd_dirigente').'</td>');
+  ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Trâmite','qtd_tramite').'</td>');
+  ShowHTML('        </tr>');
+  ShowHTML('        <tr align="center">');
+  ShowHTML('          <td><b>'.LinkOrdena('Seg.','gestor_seguranca').'</td>');
+  ShowHTML('          <td><b>'.LinkOrdena('Sist.','gestor_sistema').'</td>');
+  ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');    
+  ShowHTML('        </tr>');
+  if (count($RS) == 0) {
+    ShowHTML('   <tr><td colspan="9" align="center"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
+  } else {
+    foreach ($RS as $row) {
+      if (f($row,'ativo')=='S') {
+        ShowHTML('      <tr valign="top">');
+      } else { 
+        ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColorLightRed2.'">');
+      }
+      ShowHTML('        <td align="left">'.ExibePessoa('mod_sg/',$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Volta').'</td>');
+      ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
+      ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
+      ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
+      if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
+      else                       ShowHTML('        <td align="center">---</td>');
+      if(f($row,'qtd_visao')>0)  ShowHTML('        <td align="center">'.nvl(f($row,'qtd_visao'),'---').'</td>');
+      else                       ShowHTML('        <td align="center">---</td>');
+      if(f($row,'qtd_dirigente')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_dirigente'),'---').'</td>');
+      else                          ShowHTML('        <td align="center">---</td>');
+      if(f($row,'qtd_tramite')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_tramite'),'---').'</td>');
+      else                        ShowHTML('        <td align="center">---</td>');
+     } 
+  } 
+  ShowHTML('  </table>');
+  ShowHTML('<tr><td colspan=8><b>Observações:</b><ul>');
+  ShowHTML('  <li><b>Gestor Seg.</b>: gestor de segurança, tem acesso a todas as funcionalidades da opção "Controle".');
+  ShowHTML('  <li><b>Gestor Sist.</b>: gestor do sistema, tem acesso a todas as funcionalidades e dados, exceto na opção "Controle".');
+  ShowHTML('  <li><b>Gestor Mód.</b>: gestor de algum módulo, tem acesso a todas as funcionalidades e dados do módulo e no endereço indicado.');
+  ShowHTML('  <li><b>Visão</b>: quantidade de classificações que o usuário tem acesso. A visão em uma classificação permite ao usuário consultar todos os documentos a ela vinculados.');
+  ShowHTML('  <li><b>Dirigente</b>: Quantidade de unidades nas quais o usuário é titular ou substituto. Todos os documentos que a unidade tenha criado ou seja responsável pode ser consultado pelos titulares e substitutos, inclusive os de unidades superiores.');
+  ShowHTML('  <li><b>Trâmite</b>: Quantidade de trâmites que o usuário pode cumprir, independentemente do módulo ou serviço.');
+  ShowHTML('  </ul>');
+  ShowHTML('</td>');
+  ShowHTML('  </td>');
+  ShowHTML('</tr>'); 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
 // =========================================================================
 // Rotina de tela de exibição da unidade
 // -------------------------------------------------------------------------
@@ -2185,14 +2270,15 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'USUARIOS':      Usuarios();     break;
-  case 'MENU':          Menu();         break;
-  case 'ACESSOS':       Acessos();      break;
-  case 'VISAO':         Visao();        break;
-  case 'TELAUSUARIO':   TelaUsuario();  break;
-  case 'TELAUNIDADE':   TelaUnidade();  break;
-  case 'NOVASENHA':     NovaSenha();    break;
-  case 'GRAVA':         Grava();        break;
+  case 'USUARIOS':           Usuarios();           break;
+  case 'MENU':               Menu();               break;
+  case 'ACESSOS':            Acessos();            break;
+  case 'VISAO':              Visao();              break;
+  case 'TELAUSUARIO':        TelaUsuario();        break;
+  case 'TELAACESSOUSUARIOS': TelaAcessoUsuarios(); break;
+  case 'TELAUNIDADE':        TelaUnidade();        break;
+  case 'NOVASENHA':          NovaSenha();          break;
+  case 'GRAVA':              Grava();              break;
   default:
     Cabecalho();
     BodyOpen('onLoad="this.focus();"');

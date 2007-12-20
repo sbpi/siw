@@ -74,6 +74,10 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+define(GoogleMapsKey, f($RS_Cliente,'googlemaps_key')); 
+
 Main();
 FechaSessao($dbms);
 exit;

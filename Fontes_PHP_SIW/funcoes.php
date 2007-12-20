@@ -356,7 +356,10 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
   if (($p_tipo!='WORD' && $w_tipo!='WORD') && ((strpos(strtoupper($w_pagina),'GR_'))===false)) {
     ShowHTML('<TR><TD ALIGN="RIGHT">');
-    ShowHTML('&nbsp;&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
+    if(nvl($l_chave,'')>'') {
+      if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
+    }
+    ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
     ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.jpg"></a>');
@@ -1353,6 +1356,291 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
   }
 
   return $l_string;
+}
+
+// =========================================================================
+// Exibe ícone da solicitação para geo-referenciamento
+// -------------------------------------------------------------------------
+function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
+  extract($GLOBALS);
+  $l_imagem = '';
+  $l_tipo = strtoupper($l_tipo);
+    if ($l_tipo=='ETAPA') {
+      // Etapas de projeto
+      if ($l_perc<100) {
+        if (nvl($l_inicio_real,'')=='') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif (((time()-$l_inicio)/($l_fim-$l_inicio+1))*100>$l_perc) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='GC') {
+      // Contratos e convênios
+      if ($l_tramite!='AT' && $l_tramite!='CR') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } elseif ($l_tramite=='ER') {
+          $l_imagem = $conIcoStAcima;
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='GD') {
+      // Tarefas, demandas eventuais e demandas de triagem
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI' || $l_restricao=='SEMEXECUCAO') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='FN') {
+      // Tarefas e demandas eventuais
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='SR') {
+      // Tarefas
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<time()) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<time()) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='PJ') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = 'project_red';
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = 'project_red';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = 'project_yellow';
+          } else {
+            $l_imagem = 'project_green';
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = 'project_red';
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = 'project_yellow';
+          } else {
+            $l_imagem = 'project_green';
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = 'project_red';
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = 'project_yellow';
+        } else {
+          $l_imagem = 'project_green';
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='CL') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+    } elseif (substr($l_tipo,0,2)=='PD') {
+      // Viagens
+      if ($l_tramite=='CA') {
+        $l_imagem = $conIcoCancel;
+      } elseif ($l_fim<addDays(time(),-1)) {
+        if ($l_tramite=='AT') {
+          $l_imagem = $conIcoOkNormal;
+        } elseif ($l_tramite!='EE') {
+          $l_imagem = $conIcoOkAtraso;
+        } else {
+          $l_imagem = $conIcoOkAcima;
+        } 
+      } elseif ($l_inicio>time()) {
+        if ($l_dias_aviso<=time()) {
+          $l_imagem = $conIcoAviso;
+        } else {
+          $l_imagem = $conIcoNormal;
+        } 
+      } else {
+        if ($l_tramite!='EE') {
+          $l_imagem = $conIcoOkAtraso;
+        } else {
+          $l_imagem = $conIcoStNormal;
+        }
+      }
+    } elseif (substr($l_tipo,0,2)=='PE') {
+      // Projetos
+      if ($l_tramite!='AT') {
+        if ($l_tramite=='CA') {
+          $l_imagem = $conIcoCancel;
+        } elseif ($l_tramite=='CI') {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoAtraso;
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conIcoAviso;
+          } else {
+            $l_imagem = $conIcoNormal;
+          } 
+        } else {
+          if ($l_fim<addDays(time(),-1)) {
+            $l_imagem = $conIcoStAtraso;
+          } elseif ($l_aviso=='S' && ($l_dias_aviso<=addDays(time(),-1))) {
+            $l_imagem = $conIcoStAviso;
+          } else {
+            $l_imagem = $conIcoStNormal;
+          } 
+        }
+      } else {
+        if ($l_fim<Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAtraso;
+        } elseif ($l_fim>Nvl($l_fim_real,$l_fim)) {
+          $l_imagem = $conIcoOkAcima;
+        } else {
+          $l_imagem = $conIcoOkNormal;
+        } 
+      } 
+  }
+
+  return $l_imagem;
 }
 // =========================================================================
 // Montagem da URL com os parâmetros de filtragem quando o for UPLOAD

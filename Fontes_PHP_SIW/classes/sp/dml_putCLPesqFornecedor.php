@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putCLPesqFornecedor {
-   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_chave_aux, $p_fornecedor, $p_inicio, $p_fim, 
+   function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_chave_aux, $p_fornecedor, $p_inicio, $p_dias, 
                           $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_material) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'SP_PUTCLPESQFORNECEDOR';
@@ -20,7 +20,7 @@ class dml_putCLPesqFornecedor {
                      'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        18),
                      'p_fornecedor'                =>array(tvl($p_fornecedor),                               B_INTEGER,        18),
                      'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
-                     'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
+                     'p_dias'                      =>array(tvl($p_dias),                                     B_INTEGER,        18),
                      'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,        32),
                      'p_fabricante'                =>array($p_fabricante,                                    B_VARCHAR,        50),
                      'p_marca_modelo'              =>array($p_marca_modelo,                                  B_VARCHAR,        50),

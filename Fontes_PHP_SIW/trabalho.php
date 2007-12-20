@@ -146,7 +146,7 @@ function Mesa() {
   }
 
   // Exibe, se necessário, sinalizador para alerta
-  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N');
+  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
   if (count($RS)>0) {
     $w_sinal = $conImgAlLow;
     $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
@@ -497,11 +497,11 @@ function Alerta() {
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
     // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N');
+    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
 
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N');
+    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
 
     ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote));

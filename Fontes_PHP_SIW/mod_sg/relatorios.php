@@ -16,12 +16,14 @@ include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
+include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
 include_once($w_dir_volta.'classes/sp/db_getUserModule.php');
 include_once($w_dir_volta.'classes/sp/db_getUserVision.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteUser.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkDataUser.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
+include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  /relatorios.php
 // ------------------------------------------------------------------------
@@ -207,7 +209,6 @@ function Rel_Permissao() {
       ShowHTML('          <td><b>Sist.</td>');
       ShowHTML('          <td><b>Mod.</td>');
     } else {
-      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Username','username').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
@@ -225,11 +226,10 @@ function Rel_Permissao() {
       ShowHTML('   <tr><td colspan="9" align="center"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
     } else {
       foreach ($RS as $row) {
-        ShowHTML('      <tr valign="top">');
         if (f($row,'ativo')=='S') {
-          ShowHTML('        <td align="center" nowrap>'.f($row,'username').'');
+          ShowHTML('      <tr valign="top">');
         } else { 
-          ShowHTML('        <td align="center" nowrap><font color="#BC3131"><b>'.f($row,'username').'</b>');
+          ShowHTML('      <tr valign="top" bgcolor="'.$conTrBgColorLightRed2.'">');
         }
         if ($w_tipo=='WORD') {
           ShowHTML('        <td align="left">'.f($row,'nome_resumido').'</td>');
@@ -250,8 +250,17 @@ function Rel_Permissao() {
 
       } 
     } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
+    ShowHTML('  </table>');
+    ShowHTML('<tr><td colspan=8><b>Observações:</b><ul>');
+    ShowHTML('  <li>Usuários inativos destacados com fundo vermelho.');
+    ShowHTML('  <li><b>Gestor Seg.</b>: gestor de segurança, tem acesso a todas as funcionalidades da opção "Controle".');
+    ShowHTML('  <li><b>Gestor Sist.</b>: gestor do sistema, tem acesso a todas as funcionalidades e dados, exceto na opção "Controle".');
+    ShowHTML('  <li><b>Gestor Mód.</b>: gestor de algum módulo, tem acesso a todas as funcionalidades e dados do módulo e no endereço indicado.');
+    ShowHTML('  <li><b>Visão</b>: quantidade de classificações que o usuário tem acesso. A visão em uma classificação permite ao usuário consultar todos os documentos a ela vinculados.');
+    ShowHTML('  <li><b>Dirigente</b>: Quantidade de unidades nas quais o usuário é titular ou substituto. Todos os documentos que a unidade tenha criado ou seja responsável pode ser consultado pelos titulares e substitutos, inclusive os de unidades superiores.');
+    ShowHTML('  <li><b>Trâmite</b>: Quantidade de trâmites que o usuário pode cumprir, independentemente do módulo ou serviço.');
+    ShowHTML('  </ul>');
+    ShowHTML('</td>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
@@ -304,7 +313,9 @@ function TelaUsuarioRel() {
   if (f($RS,'interno')=='S') {
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>DADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Nome: </b></td>');
+    ShowHTML('          <td width="30%"><b>Chave interna: </b></td>');
+    ShowHTML('          <td>'.$w_sq_pessoa.'</td></tr>');
+    ShowHTML('          <td width="30%"><b>Nome: </b></td>');
     ShowHTML('          <td>'.f($RS,'nome').'</td></tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Nome resumido: </b></td>');
@@ -457,13 +468,42 @@ function TelaUsuarioRel() {
       ShowHTML('          <td>'.nvl(f($row1,'cep'),'---').'</td></tr>');
     }
   }
+  //Gestor
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>GESTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
+  ShowHTML('          <td><b>Segurança: </b></td>');
+  ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_seguranca'),'---').'</td></tr>');
+  ShowHTML('      <tr valign="top">');  
+  ShowHTML('          <td><b>Sistema: </b></td>');
+  ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_sistema'),'---').'</td></tr>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('          <td><b>Módulos: </b></td>');
+  $RS1 = DB_GetUserModule::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
+  $RS1 = SortArray($RS1,'modulo','asc');
+  ShowHTML('      <tr><td colspan="2">');
+  ShowHTML('        <table border="1" bordercolor="#00000">');
+  ShowHTML('          <tr align="center">');
+  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Módulo</b></div></td>');
+  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Endereço</b></div></td>');
+  ShowHTML('          </tr>');
+  if (count($RS1)==0) {
+    ShowHTML('      <tr><td colspan=2 align="center"><b>Não gerencia nenhum módulo</b></td></tr>');
+  } else {
+    $w_cor=$w_TrBgColor;
+    foreach($RS1 as $row1) {
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td>'.f($row1,'modulo').'</b></td>');        
+      ShowHTML('        <td>'.f($row1,'endereco').'</td>');
+      ShowHTML('      </tr>');
+    } 
+  }
+  ShowHTML('         </table></td></tr>');  
   
   //Unidades
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>UNIDADES QUE GERÊNCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $RS1 = db_getUserResp::getInstanceOf($dbms,$w_sq_pessoa,null);
   $RS1 = SortArray($RS1,'nome','asc');
-  ShowHTML('      <tr><td colspan="2"><div align="center">');
-  ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+  ShowHTML('      <tr><td colspan="2">');
+  ShowHTML('        <table border="1" bordercolor="#00000">');
   ShowHTML('          <tr align="center">');
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Unidade</b></div></td>');
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Tipo de Responsabilidade</b></div></td>');
@@ -485,43 +525,14 @@ function TelaUsuarioRel() {
     } 
   }   
   ShowHTML('         </table></td></tr>');
-  //Gestor
-  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>GESTOR<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
-  ShowHTML('          <td><b>Segurança: </b></td>');
-  ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_seguranca'),'---').'</td></tr>');
-  ShowHTML('      <tr valign="top">');  
-  ShowHTML('          <td><b>Sistema: </b></td>');
-  ShowHTML('          <td>'.nvl(f($RS,'nm_gestor_sistema'),'---').'</td></tr>');
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td><b>Módulos: </b></td>');
-  $RS1 = DB_GetUserModule::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa);
-  $RS1 = SortArray($RS1,'modulo','asc');
-  ShowHTML('      <tr><td colspan="2"><div align="center">');
-  ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
-  ShowHTML('          <tr align="center">');
-  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Módulo</b></div></td>');
-  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Endereço</b></div></td>');
-  ShowHTML('          </tr>');
-  if (count($RS1)==0) {
-    ShowHTML('      <tr><td colspan=2 align="center"><b>Não gerência nenhum módulo</b></td></tr>');
-  } else {
-    $w_cor=$w_TrBgColor;
-    foreach($RS1 as $row1) {
-      ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td>'.f($row1,'modulo').'</b></td>');        
-      ShowHTML('        <td>'.f($row1,'endereco').'</td>');
-      ShowHTML('      </tr>');
-    } 
-  }
-  ShowHTML('         </table></td></tr>');  
   //Visao
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>VISÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $RS1 = DB_GetUserVision::getInstanceOf($dbms, null, $w_sq_pessoa);
   $RS1 = SortArray($RS1,'nm_servico','asc','nm_modulo','asc','nm_cc','asc');
-  ShowHTML('      <tr><td colspan="2"><div align="center">');
-  ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+  ShowHTML('      <tr><td colspan="2">');
+  ShowHTML('        <table border="1" bordercolor="#00000">');
   ShowHTML('          <tr align="center">');
-  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Serviço</b></div></td>');
+  ShowHTML('          <td bgColor="#f0f0f0"><div><b>Serviço (Módulo)</b></div></td>');
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Configuração atual</b></div></td>');
   ShowHTML('          </tr>');
   $w_atual = 0;
@@ -543,8 +554,8 @@ function TelaUsuarioRel() {
   ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>TRÂMITES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $RS1 = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,null,$w_sq_pessoa,'ACESSO',null,null,null);
   $RS1 = SortArray($RS1,'nm_modulo','asc','nm_servico','asc','nm_tramite','asc');
-  ShowHTML('      <tr><td colspan="2"><div align="center">');
-  ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+  ShowHTML('      <tr><td colspan="2">');
+  ShowHTML('        <table border="1" bordercolor="#00000">');
   ShowHTML('          <tr align="center">');
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Módulo</b></div></td>');
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Serviço</b></div></td>');
@@ -570,7 +581,15 @@ function TelaUsuarioRel() {
   }
   ShowHTML('         </table></td></tr>');    
   //Opcoes do menu
-  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
+
+
+
+  ShowHTML('      <tr><td colspan="2"><table border=0 width="100%"><tr valign="top">');
+
+
+
+  ShowHTML('      <td><table border=0 width="100%">');
+  ShowHTML('      <tr><td><br><font size="2"><b>OPÇÕES DO MENU<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
   $w_imagemPadrao='images/Folder/SheetLittle.gif';
   $RS = db_getLinkDataUser::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,'IS NULL');
   ShowHTML('      <tr><td align="center" colspan="2">');
@@ -631,7 +650,21 @@ function TelaUsuarioRel() {
     } 
   } 
   ShowHTML('         </table></td></tr>');
-  ShowHTML('     </tr></tr></td></table>');
+
+  ShowHTML('      </table>');
+
+  ShowHTML('      <td><table border=0 width="100%">');
+  ShowHTML('      <tr><td colspan=2><br><font size="2"><b>DOCUMENTOS NÃO CONCLUÍDOS ACESSÍVEIS AO USUÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+
+  // Recupera solicitações a serem listadas
+  $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
+  $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
+
+  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, $RS_Pacote));
+
+  ShowHTML('      </table>');
+
+  ShowHTML('</table>');
   ShowHTML('</table>');  
   ShowHTML('</table>');
   if ($w_tipo>'' && $w_tipo!='WORD') {

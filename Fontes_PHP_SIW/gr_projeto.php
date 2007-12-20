@@ -130,6 +130,9 @@ if (count($RS)>0) {
 // Recupera a configuração do serviço
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
 Main();
 
 FechaSessao($dbms);
@@ -152,6 +155,22 @@ function Gerencial() {
   if ($O=='L' || $O=='V' || $O=='W') {
 
     $w_filtro='';
+    switch ($p_agrega) {
+      case 'GRPRVINC':    $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Vinculação</b>]';        break;
+      case 'GRPRPROJ':    $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Projeto</b>]';           break;
+      case 'GRPRPROP':    $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Proponente</b>]';        break;
+      case 'GRPRRESP':    $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Responsável</b>]';       break;
+      case 'GRPRRESPATU': $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Executor</b>]';          break;
+      case 'GRPRCC':      $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Classificação</b>]';     break;
+      case 'GRPRSETOR':   $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Setor responsável</b>]'; break;
+      case 'GRPRPRIO':    $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>Prioridade</b>]';        break;
+      case 'GRPRLOCAL':   $w_filtro.='<tr valign="top"><td align="right">Agregação <td>[<b>UF</b>]';                break;
+      default:
+        $RS2 = db_getMenuData::getInstanceOf($dbms,substr($p_agrega,4));
+        $w_filtro.='<tr valign="top"><td align="right">Agregado por '.f($RS2,'nome');
+        break;
+    } 
+
     if (nvl($p_projeto,'')!='') {
       $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto);
       $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
@@ -257,7 +276,7 @@ function Gerencial() {
         break;
       case 'GRPRLOCAL':
         $w_TP .= ' - Por UF';
-        $RS1  = SortArray($RS1,'nm_prioridade','asc');
+        $RS1  = SortArray($RS1,'co_uf','asc');
         break;
       default:
         $RS2 = db_getMenuData::getInstanceOf($dbms,substr($p_agrega,4));
@@ -346,12 +365,18 @@ function Gerencial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $O=='W') {
     if ($O=='L') {
-      ShowHTML('<tr><td>');
+      ShowHTML('<tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="bottom">');
+      ShowHTML('    <td>');
       if (MontaFiltro('GET')>'') {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</a></font>');
       } else {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
       } 
+      // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
+      if (f($RS_Cliente,'georeferencia')=='S' && count($RS1)>0) {
+        ShowHTML('    <td align="right"><b><font class="SS">Exibir no mapa</b> <input class="stc" type="checkbox" name="w_origem" value="pesquisa" id="w_origem">');
+      }
+      ShowHTML('  </table>');
     } 
     ImprimeCabecalho();
     if (count($RS1)<=0) {
@@ -403,12 +428,22 @@ function Gerencial() {
         ShowHTML('    if (conc >= 0) document.Form.p_fase.value='.$w_fase_conc.';');
         ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
         ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
+        $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
+        ShowHTML('    if (document.getElementById("w_origem").checked) {');
+        ShowHTML('      document.Form.action="mod_gr/exibe.php?par=inicial";');
+        ShowHTML('      document.Form.target="gr";');
+        ShowHTML('      document.Form.w_origem.value="Projetos";');
+        ShowHTML('    } else {');
+        ShowHTML('      document.Form.action="'.f($RS2,'link').'";');
+        ShowHTML('      document.Form.target="Projeto";');
+        ShowHTML('      document.Form.w_origem.value="";');
+        ShowHTML('    }');
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
-        $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Projeto',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
+        ShowHTML('<input type="Hidden" name="w_origem" value="">');
         switch ($p_agrega) {
           case 'GRPRVINC':      if ($_REQUEST['p_servico']=='')     ShowHTML('<input type="Hidden" name="p_servico" value="">');      break;
           case 'GRPRPROJ':      if ($_REQUEST['p_chave']=='')       ShowHTML('<input type="Hidden" name="p_chave" value="">');        break;
@@ -661,7 +696,7 @@ function Gerencial() {
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));
               } 
               $w_nm_quebra=f($row,'co_uf');
-              $w_chave=f($row,'co_uf');
+              $w_chave=f($row,'sq_pais').','.f($row,'co_uf');
               $w_qt_quebra=0.00;
               $t_solic=0.00;
               $t_cad=0.00;

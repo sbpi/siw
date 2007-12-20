@@ -89,7 +89,7 @@ function Principal() {
 
   if (trim(strtoupper($w_opcao))=='GERA') {
     // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N');
+    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
     $i = 0;
     foreach ($RS_Solic as $row) {
@@ -103,7 +103,7 @@ function Principal() {
     }
   
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N');
+    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
     $i = 0;
     foreach ($RS_Pacote as $row) {

@@ -1130,6 +1130,7 @@ Fontes_PHP_SIW/classes/sp/dml_putRecurso_Indisp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRecurso_Menu.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRelacionamento[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putRelacionamento.php -text
+Fontes_PHP_SIW/classes/sp/dml_putRenumeraProtocolo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRespAcao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRespAcao_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putRespPrograma_IS.php -text

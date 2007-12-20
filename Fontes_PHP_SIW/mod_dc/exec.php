@@ -284,51 +284,60 @@ function ResultSql() {
         ShowHTML('<p>'.$numRows.' registros processados</p>');
       } elseif ($command=='EXEC') {
         $sp = substr($v,strpos($v,' ')+1);
-        if (@oci_server_version($conObj)) {
-          $cursor = oci_new_cursor($conObj);
-          $stmt   = oci_parse($conObj, "begin ".$sp."; end;");
-          oci_bind_by_name($stmt, "data", $cursor, -1, OCI_B_CURSOR);
-          oci_execute($stmt);
-          oci_execute($cursor);
-          $nrows  = oci_fetch_all($cursor, $results, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
-        } elseif (is_array(pg_version($conObj))) {
-          $par      = 'rollback; begin; select '.str_replace(':data','\'p_result\'',$sp).'; fetch all in p_result;';
-          $results  = pg_query($conObj, $par);
-          $nrows    = pg_num_rows($results); 
-          $results  = pg_fetch_all($results);
+        if (strpos($stmt,':data')===false) {
+          // Stored procedure sem cursor
+          if ($dataBank=1 or $dataBank=3) {
+            $stmt = oci_parse($conObj, "begin $sp; end;");
+            if (oci_execute($stmt)) ShowHTML('<p> comando executado</p>');
+          }
         } else {
-        }
-        if ($nrows > 0) {
-           ShowHTML($nrows.' registros selecionados<br />');
-           ShowHTML('<table border="1">');
-           ShowHTML('<tr valign="top">');
-           foreach ($results as $sup => $reg) {
-             foreach ($reg as $key => $val) {
-               ShowHTML('<td>'.strtolower($key).'</td>');
+          // Stored procedure com cursor
+          if ($dataBank=1 or $dataBank=3) {
+            $cursor = oci_new_cursor($conObj);
+            $stmt   = oci_parse($conObj, "begin ".$sp."; end;");
+            oci_bind_by_name($stmt, "data", $cursor, -1, OCI_B_CURSOR);
+            oci_execute($stmt);
+            oci_execute($cursor);
+            $nrows  = oci_fetch_all($cursor, $results, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
+          } elseif ($dataBank=4) {
+            $par      = 'rollback; begin; select '.str_replace(':data','\'p_result\'',$sp).'; fetch all in p_result;';
+            $results  = pg_query($conObj, $par);
+            $nrows    = pg_num_rows($results); 
+            $results  = pg_fetch_all($results);
+          } else {
+          }
+          if ($nrows > 0) {
+             ShowHTML($nrows.' registros selecionados<br />');
+             ShowHTML('<table border="1">');
+             ShowHTML('<tr valign="top">');
+             foreach ($results as $sup => $reg) {
+               foreach ($reg as $key => $val) {
+                 ShowHTML('<td>'.strtolower($key).'</td>');
+               }
+               break;
              }
-             break;
-           }
-           ShowHTML('</tr>');
-     
-           foreach ($results as $data) {
-              ShowHTML('<tr valign="top">');
-              foreach ($data as $key => $val) {
-                 ShowHTML('<td>'.nvl($val,$dispnull).'</td>');
-              }  
-              ShowHTML('</tr>');
-           }
-           ShowHTML('</table>');
-        } else {
-           ShowHTML('Nenhum registro encontrado<br />');
-        }      
+             ShowHTML('</tr>');
+       
+             foreach ($results as $data) {
+                ShowHTML('<tr valign="top">');
+                foreach ($data as $key => $val) {
+                  ShowHTML('<td>'.nvl($val,$dispnull).'</td>');
+                }  
+                ShowHTML('</tr>');
+             }
+             ShowHTML('</table>');
+          } else {
+             ShowHTML('Nenhum registro encontrado<br />');
+          }
+        }
       } else {
         ShowHTML('<p> comando executado</p>');
       }
-      if (@oci_server_version($conObj)) {
-        oci_close($conObj);
-      } elseif (is_array(pg_version($conObj))) {
-      } else {
-      }
+    }
+    if (@oci_server_version($conObj)) {
+      oci_close($conObj);
+    } elseif (is_array(pg_version($conObj))) {
+    } else {
     }
   }
   ShowHTML('</table>');

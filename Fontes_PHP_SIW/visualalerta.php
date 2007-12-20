@@ -10,7 +10,11 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) 
   if (count($l_rs_solic)) {
     $l_blocos = 1;
     $l_html = '<tr>'.chr(13).chr(10);
-    $l_html .= '    <td><b>MÓDULOS E SERVIÇOS EM ATRASO OU ALERTA: '.chr(13).chr(10);
+    if ($l_tipo!='TELAUSUARIO') {
+      $l_html .= '    <td><b>DOCUMENTOS EM ATRASO OU ALERTA: '.chr(13).chr(10);
+    } else {
+      $l_html .= '    <td>'.chr(13).chr(10);
+    }
     $l_html .= '    <td align="right"><b>Registros: '.count($l_rs_solic).chr(13).chr(10);
     $l_html .= '<tr><td align="center" colspan=2>'.chr(13).chr(10);
     $l_html .= '    <TABLE WIDTH="100%" bgcolor='.$conTableBgColor.' BORDER='.$conTableBorder.' CELLSPACING='.$conTableCellSpacing.' CELLPADDING='.$conTableCellPadding.' BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'>'.chr(13).chr(10);
@@ -21,8 +25,14 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) 
     $l_html .= '          <td><b>Título/Descrição</td>'.chr(13).chr(10);
     $l_html .= '          <td><b>Responsável</td>'.chr(13).chr(10);
     $l_html .= '          <td><b>Executor</td>'.chr(13).chr(10);
-    $l_html .= '          <td><b>Término</td>'.chr(13).chr(10);
-    $l_html .= '          <td><b>Fase atual</td>'.chr(13).chr(10);
+    if ($l_tipo!='TELAUSUARIO') {
+      $l_html .= '          <td><b>Término</td>'.chr(13).chr(10);
+      $l_html .= '          <td><b>Fase atual</td>'.chr(13).chr(10);
+    } else {
+      $l_html .= '          <td><b>Unid. Cadastro</td>'.chr(13).chr(10);
+      $l_html .= '          <td><b>Unid. Respons.</td>'.chr(13).chr(10);
+      $l_html .= '          <td><b>Acesso</td>'.chr(13).chr(10);
+    }
     $l_html .= '        </tr>'.chr(13).chr(10);
   
     $w_sq_modulo='-';
@@ -77,18 +87,28 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) 
       } else {
         $l_html .= '      <td nowrap>'.nvl(f($row,'nm_exec'),'---').'</td>'.chr(13).chr(10);
       }
-      $l_html .= '      <td>'.formataDataEdicao(f($row,'fim'),5).'</td>'.chr(13).chr(10);
-      $l_html .= '      <td>'.f($row,'nm_tramite').'</td>'.chr(13).chr(10);
-      $l_html .= '      </td>'.chr(13).chr(10);
+      if ($l_tipo!='TELAUSUARIO') {
+        $l_html .= '      <td>'.formataDataEdicao(f($row,'fim'),5).'</td>'.chr(13).chr(10);
+        $l_html .= '      <td>'.f($row,'nm_tramite').'</td>'.chr(13).chr(10);
+      } else {
+          $l_html .= '      <td nowrap>'.f($row,'sg_unid_cad').'</td>'.chr(13).chr(10);
+          $l_html .= '      <td nowrap>'.f($row,'sg_unid_resp').'</td>'.chr(13).chr(10);
+          $l_html .= '      <td nowrap align="center">'.f($row,'acesso').'</td>'.chr(13).chr(10);
+      }
       $l_html .= '    </tr>'.chr(13).chr(10);
     }
   
     $l_html .= '    </table>'.chr(13).chr(10);
     $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>Você é o executor ou o responsável pelo trâmite.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue2.'">&nbsp;<td>Você é o solicitante ou o responsável pela solicitação.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>Você tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>Você tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
+    if ($l_tipo=='TELAUSUARIO') {
+      $w_texto = 'O usuário';
+    } else {
+      $w_texto = 'Você';
+    }
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o executor ou o responsável pelo trâmite.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue2.'">&nbsp;<td>'.$w_texto.'  é o solicitante ou o responsável pela solicitação.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
     $l_html .= '  </table>'.chr(13).chr(10);
     $l_html .= '</tr>'.chr(13).chr(10);
   }
@@ -175,10 +195,15 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) 
     }
   
     $l_html .= '    </table>'.chr(13).chr(10);
+    if ($l_tipo=='TELAUSUARIO') {
+      $w_texto = 'O usuário';
+    } else {
+      $w_texto = 'Você';
+    }
     $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>Você é o responsável ou o titular/substituto do setor responsável pelo pacote de trabalho.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>Você tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>Você tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o responsável ou o titular/substituto do setor responsável pelo pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
     $l_html .= '  </table>'.chr(13).chr(10);
     $l_html .= '</tr>'.chr(13).chr(10);
   }

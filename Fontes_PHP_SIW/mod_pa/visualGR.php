@@ -9,7 +9,7 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
 
   // Recupera os dados da guia
   $RS_Dados = db_getProtocolo::getInstanceOf($dbms, nvl($l_menu,$w_menu), $w_usuario, $SG, null, null, 
-      null, null, null, $l_unidade, null, $l_nu_guia, $l_ano_guia, null, null, 2);
+      null, null, null, $l_unidade, null, $l_nu_guia, $l_ano_guia, null, null, 1);
 
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
   $w_linha = 99;

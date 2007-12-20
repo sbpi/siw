@@ -127,12 +127,11 @@ function Rel_ItensAta() {
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
     $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S',null,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,'RELATORIO');
-    $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'numero_ata','asc','nr_item_ata','asc');
     } else {
-      $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+      $RS = SortArray($RS,'numero_ata','asc','nr_item_ata','asc'); 
     }
   } 
   if ($w_tipo=='WORD') {
@@ -180,15 +179,23 @@ function Rel_ItensAta() {
     ShowHTML('      <table border="1" bordercolor="#00000" width="100%">');
     ShowHTML('        <tr align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Ata','numero_ata').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','nr_item_ata').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detentor','nm_detentor_ata').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','qtd').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','qtd_comprada').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Preço','valor_unidade').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Dif.','variacao_valor').'</td>');
     } else {
-      ShowHTML('          <td rowspan=2><b>Tipo</td>');
+      ShowHTML('          <td rowspan=2><b>Ata</td>');
+      ShowHTML('          <td rowspan=2><b>Item</td>');
+      ShowHTML('          <td rowspan=2><b>Detentor</td>');
       ShowHTML('          <td rowspan=2><b>Código</td>');
       ShowHTML('          <td rowspan=2><b>Nome</td>');
-      ShowHTML('          <td rowspan=2><b>Qtd</td>');    
+      ShowHTML('          <td rowspan=2><b>Qtd</td>');
+      ShowHTML('          <td rowspan=2><b>Preço</td>');
+      ShowHTML('          <td rowspan=2><b>Dif</td>');
     }
     ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
     ShowHTML('        <tr align="center">');
@@ -197,30 +204,43 @@ function Rel_ItensAta() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row){
         ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td>'.f($row,'nm_tipo_material_pai').'</td>');
-        ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
-        if ($w_tipo!='WORD') {
-          ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
+        // Se a validade da proposta for menor que o exigido, destaca em vermelho
+        $w_percentual_acrescimo = f($row,'percentual_acrescimo');
+        if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed1.'"';
         } else {
-          ShowHTML('        <td>'.f($row,'nome').'</td>');
+          $w_destaque = '';
         }
-        ShowHTML('        <td align="right">'.formatNumber(f($row,'qtd'),2).'</td>');
-        if (nvl(f($row,'pesquisa_data'),'')=='') {
-          ShowHTML('            <td colspan=3 align="center" nowrap>Sem pesquisa de preço</td>');
+        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'numero_ata').'</td>');
+        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'nr_item_ata').'</td>');
+        if($w_tipo=='WORD') ShowHTML('        <td nowrap '.$w_destaque.'>'.f($row,'nm_detentor_ata').'</td>');
+        else                ShowHTML('        <td nowrap '.$w_destaque.'>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>');
+        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'codigo_interno').'</td>');
+        if ($w_tipo!='WORD') {
+          ShowHTML('        <td '.$w_destaque.'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         } else {
-          ShowHTML('            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
-          ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
-          ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+          ShowHTML('        <td '.$w_destaque.'>'.f($row,'nome').'</td>');
+        }
+        ShowHTML('        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'qtd_comprada'),2).'</td>');
+        ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
+        ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>');
+        if (nvl(f($row,'pesquisa_data'),'')=='') {
+          ShowHTML('        <td colspan=3 align="center" nowrap>Sem pesquisa de preço</td>');
+        } else {
+          ShowHTML('        <td align="center" width="1%" nowrap '.$w_destaque.'>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
+          ShowHTML('        <td align="center" '.$w_destaque.'>'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
+          ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
         }                
         ShowHTML('        </tr>');
       }
     } 
     ShowHTML('    </table>');
+    ShowHTML('<tr><td colspan="2"><b>Observação: linhas com fundo vermelho indicam valor de compra fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%).');
     ShowHTML('      <tr><table border=0 width="100%"><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>');
     ShowHTML('  </td>');
     ShowHTML('      </center>');
