@@ -2103,15 +2103,17 @@ function Etapas() {
     foreach ($RS as $row) {
       if (f($row,'ordena')=='0') {
         $w_texto .= '<tr valign=top>';
-        $w_texto .= '  <td>';
+        $w_texto .= '  <td align=center><b>'.f($row,'ordem');
         $w_texto .= '  <td><b>'.f($row,'titulo');
         $w_texto .= '  <td align="center"><b>'.formataDataEdicao(f($row,'inicio_previsto'));
         $w_texto .= '  <td align="center"><b>'.formataDataEdicao(f($row,'fim_previsto'));
         $w_texto .= '  <td align="right"><b>'.formatNumber(f($row,'orcamento'));
         $w_texto .= '  <td align="center"><b>'.f($row,'peso');
         $w_texto_titulo = '<b>Dados da etapa superior e das etapas de mesma subordinação:</b>:<br>';
-        $w_inicio_pai = formataDataEdicao(f($row,'inicio_previsto'));
-        $w_fim_pai    = formataDataEdicao(f($row,'fim_previsto'));
+        if($w_chave_aux <> f($row,'sq_projeto_etapa')) {
+          $w_inicio_pai = formataDataEdicao(f($row,'inicio_previsto'));
+          $w_fim_pai    = formataDataEdicao(f($row,'fim_previsto'));
+        }
         if (nvl($w_troca,'nulo')=='nulo') {
           $w_valor_pai  = formatNumber(f($row,'saldo_pai') - f($row,'alocado'));
         } else {
@@ -2132,7 +2134,7 @@ function Etapas() {
     $w_texto .= '</table>';
     $w_texto = $w_texto_titulo.$w_texto;
   } else {
-    $w_texto='Não há outros números de ordem subordinados a esta etapa.';
+    $w_texto='Não há outros números de ordem subordinados a esta etapa e nem etapas de mesma subordinação.';
   }
 
   cabecalho();
