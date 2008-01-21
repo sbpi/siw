@@ -19,6 +19,11 @@ begin
          where a.sq_menu = p_chave
            and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo))
         order by a.ordem;
+   Elsif upper(p_restricao) = 'FLUXO' Then
+      open p_result for
+         select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino
+           from siw_tramite_fluxo a
+          where a.sq_siw_tramite_origem = p_chave;
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  

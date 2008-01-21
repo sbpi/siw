@@ -3539,6 +3539,7 @@ SP_Oracle92/siw/sp_getuorglist.prc -text
 SP_Oracle92/siw/sp_getuorgresp.prc -text
 SP_Oracle92/siw/sp_getuserdata.prc -text
 SP_Oracle92/siw/sp_getuserlist.prc -text
+SP_Oracle92/siw/sp_getusermail.prc -text
 SP_Oracle92/siw/sp_getusermodule.prc -text
 SP_Oracle92/siw/sp_getusertypedata.prc -text
 SP_Oracle92/siw/sp_getusertypelist.prc -text
@@ -3738,7 +3739,9 @@ SP_Oracle92/siw/sp_putsiwmenu.prc -text
 SP_Oracle92/siw/sp_putsiwmodseg.prc -text
 SP_Oracle92/siw/sp_putsiwmodulo.prc -text
 SP_Oracle92/siw/sp_putsiwpescc.prc -text
+SP_Oracle92/siw/sp_putsiwpessoamail.prc -text
 SP_Oracle92/siw/sp_putsiwtramite.prc -text
+SP_Oracle92/siw/sp_putsiwtramitefluxo.prc -text
 SP_Oracle92/siw/sp_putsiwusuario.prc -text
 SP_Oracle92/siw/sp_putsolicapoio.prc -text
 SP_Oracle92/siw/sp_putsolicarquivo.prc -text
