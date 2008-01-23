@@ -75,6 +75,7 @@ begin
    ElsIf p_restricao = 'CADASTRAMENTO' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
+         -- Participantes do trâmite de cadastramento
          select distinct d.sq_pessoa, d.nome, d.nome_resumido, d.nome_resumido_ind,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade
@@ -88,6 +89,7 @@ begin
             and c.sigla              = 'CI'
             and e.ativo              = 'S'
          UNION
+         -- Gestores do sistema
          select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
@@ -104,6 +106,7 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
+         -- Gestores do módulo da solicitação, no endereço da solicitação
          select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
@@ -120,6 +123,7 @@ begin
             and a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
+         -- Responsável pela solicitação
          select distinct b.sq_pessoa, b.nome, b.nome_resumido, b.nome_resumido_ind,
                 c.email, c.ativo ativo_usuario,
                 d.sigla sg_unidade
@@ -130,6 +134,7 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
+         -- Titular da unidade solicitante
          select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
@@ -143,6 +148,7 @@ begin
             and b.fim                is null
             and d.ativo              = 'S'
          UNION
+         -- Substituto da unidade solicitante
          select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
@@ -158,6 +164,7 @@ begin
    ElsIf p_restricao = 'USUARIOS' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
+         -- Usuários com permissão explícita no trâmite
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade, d.nome_resumido_ind
@@ -171,8 +178,9 @@ begin
                                                             g.sq_pessoa_endereco = f.sq_pessoa_endereco
                                                            )
           where c.sq_siw_tramite     = p_tramite
-            and c.chefia_imediata    in ('U','N')
+            and c.chefia_imediata    in ('S','U','N')
          UNION
+         -- Gestores do sistema, somente se o trâmite for de cadastramento inicial
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade, d.nome_resumido_ind
@@ -187,6 +195,7 @@ begin
           where c.sq_siw_tramite     = p_tramite
             and c.sigla              = 'CI'
          UNION
+         -- Gestores do módulo da solicitação, somente se o trâmite for de cadastramento inicial e o endereço for o da solicitação
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade, d.nome_resumido_ind
@@ -205,6 +214,7 @@ begin
           where c.sq_siw_tramite     = p_tramite
             and c.sigla              = 'CI'
          UNION
+         -- Titular e substituto da unidade executora do serviço ou da unidade solicitante
          select distinct 
                 case g.chefia_imediata when 'U' then c.sq_pessoa         else i.sq_pessoa         end sq_pessoa, 
                 case g.chefia_imediata when 'U' then c.nome              else i.nome              end nome, 

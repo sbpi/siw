@@ -3306,6 +3306,7 @@ SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text
+SP_Oracle92/siw/sp_getMatImp.prc -text
 SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
 SP_Oracle92/siw/sp_getPrestacaoContas.prc -text

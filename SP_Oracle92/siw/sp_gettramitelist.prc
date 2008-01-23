@@ -21,8 +21,16 @@ begin
         order by a.ordem;
    Elsif upper(p_restricao) = 'FLUXO' Then
       open p_result for
-         select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino
-           from siw_tramite_fluxo a
+         select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,
+                b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem, 
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                case b.chefia_imediata
+                   when 'S' then 'Chefia da unidade solicitante'
+                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'N' then 'Apenas usuários com permissão'
+                end nm_chefia
+           from siw_tramite_fluxo      a
+                inner join siw_tramite b on (a.sq_siw_tramite_destino = b.sq_siw_tramite)
           where a.sq_siw_tramite_origem = p_chave;
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for

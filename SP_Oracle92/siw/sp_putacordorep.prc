@@ -137,6 +137,17 @@ begin
            where a.cliente = p_cliente
              and a.username = '000.000.001-91'
          );
+
+         -- Insere registros de configuração de e-mail
+         insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
+         (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+                 case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
+            from sg_autenticacao        a 
+                 inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)
+                   inner join siw_menu  c on (b.sq_pessoa_pai = c.sq_pessoa and c.tramite = 'S')
+           where 0   = (select count(*) from sg_pessoa_mail where sq_pessoa = a.sq_pessoa and sq_menu = c.sq_menu)
+             and a.sq_pessoa = w_chave_pessoa
+         );
       Else
          update sg_autenticacao set email = Nvl(p_email,email) where sq_pessoa = w_chave_pessoa;
       End If;
@@ -361,4 +372,3 @@ begin
 
 end SP_PutAcordoRep;
 /
-

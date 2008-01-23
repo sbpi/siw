@@ -183,6 +183,16 @@ begin
                 'S',      'S'
                );
 
+        -- Insere registros de configuração de e-mail
+        insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
+        (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+                case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
+           from sg_autenticacao        a 
+                inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)
+                  inner join siw_menu  c on (b.sq_pessoa_pai = c.sq_pessoa and c.tramite = 'S')
+          where 0   = (select count(*) from sg_pessoa_mail where sq_pessoa = a.sq_pessoa and sq_menu = c.sq_menu)
+            and a.sq_pessoa = w_chave3
+        );
 
       -- Se existir, executa a alteração
       Else
@@ -221,8 +231,11 @@ begin
          where sq_pessoa      = p_chave;
        End If;
    Elsif p_Operacao = 'E' Then
+      -- Remove o registro na tabela de configuração de e-mail
+      delete sg_pessoa_mail where sq_pessoa = (select sq_pessoa from sg_autenticacao x where username='000.000.001-91' and sq_pessoa = (select sq_pessoa from co_pessoa where sq_pessoa = x.sq_pessoa and sq_pessoa_pai = p_chave));
+
       -- Remove o usuário de suporte técnico
-      delete sg_autenticacao where username='000.000.001-91' and sq_pessoa = (select sq_pessoa from co_pessoa where nome='SBPI Suporte' and sq_pessoa_pai = p_chave);
+      delete sg_autenticacao x where username='000.000.001-91' and sq_pessoa = (select sq_pessoa from co_pessoa where sq_pessoa = x.sq_pessoa and sq_pessoa_pai = p_chave);
       
       -- Remove a pessoa cadastrada para ser suporte técnico
       delete co_pessoa where nome='SBPI Suporte' and sq_pessoa_pai = p_chave;

@@ -11,7 +11,7 @@ begin
       open p_result for 
          select a.sq_pessoa_mail, a.sq_pessoa, a.sq_menu, a.alerta_diario, a.tramitacao,
                 a.conclusao, a.responsabilidade,
-                b.nome nm_servico, b.sigla sg_servico,
+                b.nome nm_servico, b.sigla sg_servico, b.envia_email,
                 c.sq_modulo, c.nome nm_modulo
            from sg_pessoa_mail          a
                 inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
@@ -24,7 +24,7 @@ begin
       open p_result for 
         select a.sq_menu,
                a.nome as nm_servico, a.sigla sg_servico,
-               a.acesso_geral, a.ultimo_nivel, a.tramite, 
+               a.acesso_geral, a.ultimo_nivel, a.tramite,  a.envia_email,
                b.sigla sg_modulo, b.nome nm_modulo, a.sq_modulo,
                c.alerta_diario, c.tramitacao, c.conclusao, c.responsabilidade
           from siw_menu                  a

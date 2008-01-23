@@ -76,6 +76,17 @@ begin
             and sq_pessoa          = p_cliente
         );
         
+      -- Insere registros de configuração de e-mail se for serviço
+      insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
+      (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+              case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
+         from sg_autenticacao        a 
+              inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)
+                inner join siw_menu  c on (b.sq_pessoa_pai = c.sq_pessoa and c.tramite = 'S') -- Somente se for serviço
+        where 0   = (select count(*) from sg_pessoa_mail where sq_pessoa = a.sq_pessoa and sq_menu = c.sq_menu)
+          and c.sq_menu = w_chave
+      );
+
       -- Se for herança de serviço, grava também os trâmites
       If p_chave is not null Then
          insert into siw_tramite
@@ -122,6 +133,9 @@ begin
           sufixo               = p_sufixo
       where sq_menu = p_chave;
    Elsif p_operacao = 'E' Then
+      -- Remove as configurações de e-mail do serviço
+      delete sg_pessoa_mail where sq_menu = p_chave;
+      
       -- Remove as permissões de acesso por trâmite que os usuários têm
       delete sg_tramite_pessoa where sq_siw_tramite in (select sq_siw_tramite from siw_tramite where sq_menu = p_chave);
       
@@ -133,9 +147,6 @@ begin
       
       -- Remove a opção dos endereços
       delete siw_menu_endereco where sq_menu = p_chave;
-      
-      -- Remove os atributos do serviço
-      delete siw_tramite_atrib where sq_siw_tramite in (select sq_siw_tramite from siw_tramite where sq_menu = p_chave);
       
       -- Remove os trâmites do serviço
       delete siw_tramite where sq_menu = p_chave;

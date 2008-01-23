@@ -8,7 +8,7 @@ create or replace procedure SP_GetAlerta
    ) is
 begin
    If p_restricao = 'SOLICGERAL' Then
-      -- Verifica se o vínculo do usuário com a organização é interno ou externo
+      -- Recupera usuários e solicitações
       open p_result for
          select a.sq_pessoa as cliente, 
                 a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
@@ -81,13 +81,26 @@ begin
                 left            join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
                 inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and a1.nome_resumido_ind <> 'SBPI SUPORTE')
                   inner         join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S')
-                  inner         join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo)
+                  inner         join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo and
+                                                               (p_mail              = 'N' or
+                                                                (p_mail             = 'S' and a3.envia_mail_alerta = p_mail)
+                                                               )
+                                                              )
                 inner           join siw_menu           d  on (a.sq_pessoa          = d.sq_pessoa and
-                                                               d.tramite            = 'S'
+                                                               d.tramite            = 'S' and
+                                                               (p_mail              = 'N' or
+                                                                (p_mail             = 'S' and d.envia_email = p_mail)
+                                                               )
                                                               )
                   inner         join eo_unidade         d1 on (d.sq_unid_executora  = d1.sq_unidade)
                   left          join siw_menu           d2 on (d.sq_menu            = d2.sq_menu_pai and
                                                                d2.sigla             like '%VISUAL'
+                                                              )
+                  inner         join sg_pessoa_mail     d3 on (a1.sq_pessoa         = d3.sq_pessoa and
+                                                               d.sq_menu            = d3.sq_menu and
+                                                               (p_mail              = 'N' or
+                                                                (p_mail             = 'S' and d3.alerta_diario = 'S')
+                                                               )
                                                               )
                   inner         join siw_modulo         c  on (d.sq_modulo          = c.sq_modulo)
                     inner       join siw_cliente_modulo c1 on (c.sq_modulo          = c1.sq_modulo and
@@ -172,13 +185,26 @@ begin
                 left                  join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
                 inner                 join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and a1.nome_resumido_ind <> 'SBPI SUPORTE')
                   inner               join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S')
-                  inner         join co_tipo_vinculo          a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo)
+                  inner               join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo and
+                                                                     (p_mail              = 'N' or
+                                                                      (p_mail             = 'S' and a3.envia_mail_alerta = p_mail)
+                                                                     )
+                                                                    )
                 inner                 join siw_menu           d  on (a.sq_pessoa          = d.sq_pessoa and
-                                                                     d.tramite            = 'S'
+                                                                     d.tramite            = 'S' and
+                                                                     (p_mail              = 'N' or
+                                                                      (p_mail             = 'S' and d.envia_email = p_mail)
+                                                                     )
                                                                     )
                   inner               join eo_unidade         d1 on (d.sq_unid_executora  = d1.sq_unidade)
                   left                join siw_menu           d2 on (d.sq_menu            = d2.sq_menu_pai and
                                                                      d2.sigla             like '%VISUAL'
+                                                                    )
+                  inner               join sg_pessoa_mail     d3 on (a1.sq_pessoa         = d3.sq_pessoa and
+                                                                     d.sq_menu            = d3.sq_menu and
+                                                                     (p_mail              = 'N' or
+                                                                      (p_mail             = 'S' and d3.alerta_diario = 'S')
+                                                                     )
                                                                     )
                   inner               join siw_modulo         c  on (d.sq_modulo          = c.sq_modulo)
                     inner             join siw_cliente_modulo c1 on (c.sq_modulo          = c1.sq_modulo and
@@ -232,7 +258,7 @@ begin
                  (0             < (select count(x.sq_unidade) from siw_etapa_interessado x inner join eo_unidade_resp y on (x.sq_unidade = y.sq_unidade) where x.sq_projeto_etapa = h.sq_projeto_etapa and y.sq_pessoa = a1.sq_pessoa and y.fim is null))
                 );
    Elsif p_restricao = 'DOCUMENTOS' Then
-      -- Verifica se o vínculo do usuário com a organização é interno ou externo
+      -- Recupera itens da EAP
       open p_result for
          select a.sq_pessoa as cliente, 
                 a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,

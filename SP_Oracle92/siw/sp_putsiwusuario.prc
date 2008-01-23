@@ -90,6 +90,18 @@ begin
               p_gestor_seguranca,   p_gestor_sistema, criptografia(p_username),
               criptografia(p_username)
             );
+         
+         -- Insere registros de configuração de e-mail
+         insert into sg_pessoa_mail(sq_pessoa_mail, sq_pessoa, sq_menu, alerta_diario, tramitacao, conclusao, responsabilidade)
+         (select sq_pessoa_mail.nextval, a.sq_pessoa, c.sq_menu, 'S', 'S', 'S', 
+                 case when substr(c.sigla, 1,2) = 'PJ' then 'S' else 'N' end
+            from sg_autenticacao        a 
+                 inner   join co_pessoa b on (a.sq_pessoa     = b.sq_pessoa)
+                   inner join siw_menu  c on (b.sq_pessoa_pai = c.sq_pessoa and c.tramite = 'S')
+           where 0   = (select count(*) from sg_pessoa_mail where sq_pessoa = a.sq_pessoa and sq_menu = c.sq_menu)
+             and a.sq_pessoa = w_chave
+         );
+         
       -- Se existir, executa a alteração
       Else
          -- Atualiza registro na tabela de segurança
@@ -103,6 +115,9 @@ begin
        End If;
           
    Elsif p_operacao = 'E' Then
+      -- Remove o registro na tabela de configuração de e-mail
+      delete sg_pessoa_mail where sq_pessoa = w_chave;
+        
       -- Remove o registro na tabela de segurança
       delete sg_autenticacao where sq_pessoa = w_chave;
         
