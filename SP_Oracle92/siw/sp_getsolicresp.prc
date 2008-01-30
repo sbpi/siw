@@ -134,21 +134,21 @@ begin
           where a.sq_siw_solicitacao = p_chave
             and c.ativo              = 'S'
          UNION
-         -- Titular da unidade solicitante
+         -- Titular e substituto da unidade executora do serviço
          select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
            from siw_solicitacao                       a
-                inner       join eo_unidade_resp      b on (a.sq_unidade         = b.sq_unidade)
-                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
-                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
-                      inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+                inner       join siw_menu             a1 on (a.sq_menu            = a1.sq_menu)
+                inner       join eo_unidade_resp      b  on (a1.sq_unid_executora = b.sq_unidade)
+                inner       join co_pessoa            c  on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d  on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e  on (d.sq_unidade         = e.sq_unidade)
           where a.sq_siw_solicitacao = p_chave
-            and b.tipo_respons       = 'T'
             and b.fim                is null
             and d.ativo              = 'S'
          UNION
-         -- Substituto da unidade solicitante
+         -- Titular e substituto da unidade solicitante
          select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
                 d.email, d.ativo ativo_usuario,
                 e.sigla sg_unidade
@@ -158,12 +158,56 @@ begin
                   inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa)
                       inner join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
           where a.sq_siw_solicitacao = p_chave
-            and b.tipo_respons       = 'S'
+            and b.fim                is null
             and d.ativo              = 'S'
-            and b.fim                is null;
+         UNION
+         -- Titular e substituto da unidade responsável pelo projeto
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join pj_projeto           a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                inner       join eo_unidade_resp      b  on (a1.sq_unidade_resp   = b.sq_unidade)
+                inner       join co_pessoa            c  on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d  on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e  on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.fim                is null
+            and d.ativo              = 'S'
+         UNION
+         -- Titular e substituto da unidade responsável pela demanda/demanda de triagem/tarefa
+         select distinct c.sq_pessoa, c.nome, c.nome_resumido, c.nome_resumido_ind,
+                d.email, d.ativo ativo_usuario,
+                e.sigla sg_unidade
+           from siw_solicitacao                       a
+                inner       join gd_demanda           a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                inner       join eo_unidade_resp      b  on (a1.sq_unidade_resp   = b.sq_unidade)
+                inner       join co_pessoa            c  on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d  on (c.sq_pessoa          = d.sq_pessoa)
+                      inner join eo_unidade           e  on (d.sq_unidade         = e.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and b.fim                is null
+            and d.ativo              = 'S';
    ElsIf p_restricao = 'USUARIOS' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera as pessoas responsáveis por um trâmite
       open p_result for 
+         -- Todos os usuários internos
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade, d.nome_resumido_ind
+           from siw_tramite                           c
+                inner       join siw_menu             c1 on (c.sq_menu            = c1.sq_menu)
+                  inner     join co_pessoa            d  on (c1.sq_pessoa         = d.sq_pessoa_pai)
+                    inner   join co_tipo_vinculo      d1 on (d.sq_tipo_vinculo    = d1.sq_tipo_vinculo and
+                                                             d1.interno           = 'S'
+                                                            )
+                    inner   join sg_autenticacao      e  on (d.sq_pessoa          = e.sq_pessoa and
+                                                             e.ativo              = 'S'
+                                                            )
+                      inner join eo_unidade           f  on (e.sq_unidade         = f.sq_unidade)
+          where c.sq_siw_tramite     = p_tramite
+            and c.chefia_imediata    = 'I'
+         UNION
          -- Usuários com permissão explícita no trâmite
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
@@ -174,8 +218,8 @@ begin
                     inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa and
                                                             e.ativo              = 'S'
                                                            )
-                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade and
-                                                            g.sq_pessoa_endereco = f.sq_pessoa_endereco
+                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade
+                                                            --and g.sq_pessoa_endereco = f.sq_pessoa_endereco
                                                            )
           where c.sq_siw_tramite     = p_tramite
             and c.chefia_imediata    in ('S','U','N')
@@ -212,40 +256,75 @@ begin
                                                               g.sq_pessoa_endereco = f.sq_pessoa_endereco
                                                              )
           where c.sq_siw_tramite     = p_tramite
-            and c.sigla              = 'CI'
          UNION
-         -- Titular e substituto da unidade executora do serviço ou da unidade solicitante
-         select distinct 
-                case g.chefia_imediata when 'U' then c.sq_pessoa         else i.sq_pessoa         end sq_pessoa, 
-                case g.chefia_imediata when 'U' then c.nome              else i.nome              end nome, 
-                case g.chefia_imediata when 'U' then c.nome_resumido     else i.nome_resumido     end nome_resumido,
-                case g.chefia_imediata when 'U' then d.email             else j.email             end email, 
-                case g.chefia_imediata when 'U' then d.ativo             else j.ativo             end ativo_usuario,
-                case g.chefia_imediata when 'U' then e.sigla             else k.sigla             end sg_unidade,
-                case g.chefia_imediata when 'U' then c.nome_resumido_ind else i.nome_resumido_ind end nome_resumido_ind
+         -- Titular e substituto da unidade executora do serviço
+         select c.sq_pessoa, c.nome, c.nome_resumido, d.email, d.ativo as ativo_usuario, e.sigla as sg_unidade,
+                c.nome_resumido_ind
            from siw_tramite                           g
                 inner       join siw_menu             f on (g.sq_menu            = f.sq_menu)
-                left outer  join eo_unidade_resp      b on (f.sq_unid_executora  = b.sq_unidade and
+                inner       join eo_unidade_resp      b on (f.sq_unid_executora  = b.sq_unidade and
                                                             b.fim                is null
                                                            )
-                left outer  join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
-                  left outer join sg_autenticacao     d on (c.sq_pessoa          = d.sq_pessoa and
+                inner       join co_pessoa            c on (b.sq_pessoa          = c.sq_pessoa)
+                  inner     join sg_autenticacao      d on (c.sq_pessoa          = d.sq_pessoa and
                                                             d.ativo              = 'S'
                                                            )
-                    left outer join eo_unidade        e on (d.sq_unidade         = e.sq_unidade),
+                    inner   join eo_unidade           e on (d.sq_unidade         = e.sq_unidade)
+          where g.chefia_imediata    = 'U'
+            and g.sq_siw_tramite     = p_tramite
+         UNION
+         -- Titular e substituto da unidade solicitante
+         select i.sq_pessoa, i.nome, i.nome_resumido, j.email, j.ativo as ativo_usuario, k.sigla as sg_unidade,
+                i.nome_resumido_ind
+           from siw_tramite                           g,
                 siw_solicitacao                       a
-                left outer  join eo_unidade_resp      h on (a.sq_unidade         = h.sq_unidade and
+                inner       join eo_unidade_resp      h on (a.sq_unidade         = h.sq_unidade and
                                                             h.fim                is null
                                                            )
-                left outer  join co_pessoa            i on (h.sq_pessoa          = i.sq_pessoa)
-                  left outer join sg_autenticacao     j on (i.sq_pessoa          = j.sq_pessoa and
+                inner       join co_pessoa            i on (h.sq_pessoa          = i.sq_pessoa)
+                  inner     join sg_autenticacao      j on (i.sq_pessoa          = j.sq_pessoa and
                                                             j.ativo              = 'S'
                                                            )
-                      left outer join eo_unidade      k on (j.sq_unidade         = k.sq_unidade)
+                      inner join eo_unidade           k on (j.sq_unidade         = k.sq_unidade)
           where a.sq_siw_solicitacao = p_chave
-            and g.chefia_imediata    in ('S','U')
+            and g.chefia_imediata    = 'S'
             and g.sq_siw_tramite     = p_tramite
-            and b.fim                is null;
+         UNION
+         -- Titular e substituto da unidade responsável pelo projeto
+         select i.sq_pessoa, i.nome, i.nome_resumido, j.email, j.ativo as ativo_usuario, k.sigla as sg_unidade,
+                i.nome_resumido_ind
+           from siw_tramite                           g,
+                siw_solicitacao                       a
+                inner       join pj_projeto           a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                inner       join eo_unidade_resp      h  on (a1.sq_unidade_resp   = h.sq_unidade and
+                                                             h.fim                is null
+                                                            )
+                inner       join co_pessoa            i  on (h.sq_pessoa          = i.sq_pessoa)
+                  inner     join sg_autenticacao      j  on (i.sq_pessoa          = j.sq_pessoa and
+                                                             j.ativo              = 'S'
+                                                            )
+                      inner join eo_unidade           k  on (j.sq_unidade         = k.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and g.chefia_imediata    = 'S'
+            and g.sq_siw_tramite     = p_tramite
+         UNION
+         -- Titular e substituto da unidade responsável pela demanda/demanda de triagem/tarefa
+         select i.sq_pessoa, i.nome, i.nome_resumido, j.email, j.ativo as ativo_usuario, k.sigla as sg_unidade,
+                i.nome_resumido_ind
+           from siw_tramite                           g,
+                siw_solicitacao                       a
+                inner       join gd_demanda           a1 on (a.sq_siw_solicitacao = a1.sq_siw_solicitacao)
+                inner       join eo_unidade_resp      h  on (a1.sq_unidade_resp   = h.sq_unidade and
+                                                             h.fim                is null
+                                                            )
+                inner       join co_pessoa            i  on (h.sq_pessoa          = i.sq_pessoa)
+                  inner     join sg_autenticacao      j  on (i.sq_pessoa          = j.sq_pessoa and
+                                                             j.ativo              = 'S'
+                                                            )
+                      inner join eo_unidade           k  on (j.sq_unidade         = k.sq_unidade)
+          where a.sq_siw_solicitacao = p_chave
+            and g.chefia_imediata    = 'S'
+            and g.sq_siw_tramite     = p_tramite;
    End If;
 end SP_GetSolicResp;
 /

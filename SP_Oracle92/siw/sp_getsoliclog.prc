@@ -102,13 +102,13 @@ begin
                    f.nome fase, f.nome tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from pj_projeto_log  b 
-                      left outer join co_pessoa       d on (b.destinatario       = d.sq_pessoa)
-                      inner      join co_pessoa       c on (b.cadastrador        = c.sq_pessoa)
-                      inner      join siw_solicitacao g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                      left outer join pj_projeto_log_arq j on (b.sq_projeto_log  = j.sq_projeto_log)
-                         left outer join siw_arquivo     k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
+              from pj_projeto_log                        b 
+                      left outer join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
+                      inner      join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
+                      inner      join siw_solicitacao    g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                        inner    join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                      left outer join pj_projeto_log_arq j on (b.sq_projeto_log     = j.sq_projeto_log)
+                         left outer join siw_arquivo     k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;

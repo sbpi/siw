@@ -6,7 +6,7 @@ create or replace procedure SP_PutProjetoEnvio
     p_novo_tramite        in number,
     p_devolucao           in varchar2,
     p_observacao          in varchar2,
-    p_destinatario        in number,
+    p_destinatario        in number    default null,
     p_despacho            in varchar2,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
@@ -45,23 +45,31 @@ begin
       Where sq_siw_solicitacao = p_chave;
    End If;
 
-   -- Verifica se o envio é na/para fase de cadastramento. Se for, atualiza o cadastrador.
-   If p_destinatario is  not null Then
+   -- Garante que o projeto não tem data de conclusão
+   Update siw_solicitacao set conclusao = null Where sq_siw_solicitacao = p_chave;
+
+   -- Garante que o projeto não tem dados de conclusão
+   Update pj_projeto set 
+      concluida      = 'N',
+      data_conclusao = null, 
+      nota_conclusao = null, 
+      custo_real     = 0
+   Where sq_siw_solicitacao = p_chave;
+
+   -- Se foi indicado destinatário, registra.
+   If p_destinatario is not null Then
 
       -- Atualiza o responsável atual pelo projeto
-      Update siw_solicitacao set conclusao = null, executor = p_destinatario Where sq_siw_solicitacao = p_chave;
+      Update siw_solicitacao set executor = p_destinatario Where sq_siw_solicitacao = p_chave;
 
-      -- Atualiza o situacao do projeto para não concluído
-      Update pj_projeto set 
-         concluida      = 'N',
-         data_conclusao = null, 
-         nota_conclusao = null, 
-         custo_real     = 0
-      Where sq_siw_solicitacao = p_chave;
-
+      -- Se o projeto voltou para cadastramento, o destinatário passa a ser seu cadastrador.
       select count(*) into w_reg from siw_tramite where sq_siw_tramite = Nvl(p_novo_tramite,p_tramite) and sigla='CI';
       If w_reg > 0 Then
-         Update siw_solicitacao set cadastrador = p_destinatario Where sq_siw_solicitacao = p_chave;
+         Update siw_solicitacao 
+            set cadastrador = p_destinatario,
+                executor    = null,
+                sq_unidade  = (select sq_unidade from sg_autenticacao where sq_pessoa = p_destinatario)
+         Where sq_siw_solicitacao = p_chave;
       End If;
    End If;
    

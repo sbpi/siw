@@ -10,6 +10,7 @@ begin
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem, 
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -24,6 +25,7 @@ begin
          select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,
                 b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem, 
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                b.destinatario,
                 case b.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -36,6 +38,7 @@ begin
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -54,6 +57,7 @@ begin
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -69,6 +73,7 @@ begin
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -84,6 +89,7 @@ begin
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
@@ -98,6 +104,7 @@ begin
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
+                a.destinatario,
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante'
                    when 'U' then 'Chefia e usuários com  permissão'
