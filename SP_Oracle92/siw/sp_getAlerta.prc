@@ -79,8 +79,8 @@ begin
                 end as nm_exec
            from siw_cliente                             a
                 left            join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
-                inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai and a1.nome_resumido_ind <> 'SBPI SUPORTE')
-                  inner         join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S')
+                inner           join co_pessoa          a1 on (a.sq_pessoa          = a1.sq_pessoa_pai)
+                  inner         join sg_autenticacao    a2 on (a1.sq_pessoa         = a2.sq_pessoa and a2.ativo = 'S' and a2.username <> '000.000.001-91')
                   inner         join co_tipo_vinculo    a3 on (a1.sq_tipo_vinculo   = a3.sq_tipo_vinculo and
                                                                (p_mail              = 'N' or
                                                                 (p_mail             = 'S' and a3.envia_mail_alerta = p_mail)
