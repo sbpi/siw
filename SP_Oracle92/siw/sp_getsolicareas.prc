@@ -17,7 +17,7 @@ begin
      UNION
      select a.sq_unidade, a.sq_siw_solicitacao, a.papel, a.interesse_positivo, a.influencia,
             case interesse_positivo when 'S' then '+' else '-' end as nm_interesse,
-            case influencia when 0 then 'Alta' when 1 then 'Média' else 'Baixa' end as nm_influencia,
+            case influencia when 0 then 'Alta' when 1 then 'Média' when 2 then 'Baixa' else '---' end as nm_influencia,
             b.nome, b.informal, b.vinculada, b.adm_central
        from pj_projeto_envolv   a,
             eo_unidade          b

@@ -390,10 +390,9 @@ begin
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and ((p_tipo          = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo          = 2     and coalesce(b1.sigla,'-') <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
-                                                                                                             (a.sigla =  'PJCAD' and b2.acesso  >= 8)
-                                                                                                            )
+                                                                                                                  (a.sigla =  'PJCAD' and b2.acesso  >= 8)
+                                                                                                                 )
                  ) or
-                 --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo          = 3     and b2.acesso > 0) or
                  (p_tipo          = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or

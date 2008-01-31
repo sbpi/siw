@@ -45,8 +45,12 @@ begin
       Where sq_siw_solicitacao = p_chave;
    End If;
 
-   -- Garante que o projeto não tem data de conclusão
-   Update siw_solicitacao set conclusao = null Where sq_siw_solicitacao = p_chave;
+   -- Garante que o projeto não tem data de conclusão e atualiza seu executor. 
+   -- Se não receber destinatário, grava nulo para remover o executor atual.
+   Update siw_solicitacao 
+      set conclusao = null,
+          executor  = p_destinatario
+    Where sq_siw_solicitacao = p_chave;
 
    -- Garante que o projeto não tem dados de conclusão
    Update pj_projeto set 
@@ -58,9 +62,6 @@ begin
 
    -- Se foi indicado destinatário, registra.
    If p_destinatario is not null Then
-
-      -- Atualiza o responsável atual pelo projeto
-      Update siw_solicitacao set executor = p_destinatario Where sq_siw_solicitacao = p_chave;
 
       -- Se o projeto voltou para cadastramento, o destinatário passa a ser seu cadastrador.
       select count(*) into w_reg from siw_tramite where sq_siw_tramite = Nvl(p_novo_tramite,p_tramite) and sigla='CI';
