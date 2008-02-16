@@ -30,6 +30,8 @@ include_once($w_dir_volta.'classes/sp/db_getEtapaAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAreas.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
+include_once($w_dir_volta.'classes/sp/db_getTramiteUser.php');
+include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
@@ -538,7 +540,7 @@ function Inicial() {
               ShowHTML('          <a class="HL" href="'.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
             } elseif ($P1==1) {
               // Se for cadastramento
-              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto" TARGET="menu">AL</a>&nbsp;');
+              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.'&w_documento='.nvl(f($row,'codigo_interno'),'Nr. '.f($row,'sq_siw_solicitacao')).MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto" TARGET="menu">AL</a>&nbsp;');
               else               ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do projeto">AL</A>&nbsp');
               ShowHTML('          <A class="HL" HREF="'.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do projeto.">EX</A>&nbsp');
             } elseif ($P1==2 || $P1==6) {
@@ -2086,6 +2088,7 @@ function Etapas() {
   $w_inicio_pai = formataDataEdicao(f($RS_Projeto,'inicio'));
   $w_fim_pai    = formataDataEdicao(f($RS_Projeto,'fim'));
   $w_valor_pai  = formatNumber(f($RS_Projeto,'valor'));
+  $w_ige        = f($RS_Projeto,'ige');
   if (Nvl($w_sq_pessoa,'')=='') {
     // Se a etapa não tiver responsável atribuído, recupera o responsável pelo projeto
     $w_sq_pessoa    = f($RS_Projeto,'solicitante');
@@ -2311,7 +2314,7 @@ function Etapas() {
         $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
         $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
       } 
-      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo));
+      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo));
       ShowHTML('</FORM>');
     } 
     ShowHTML('      </center>');
@@ -2652,6 +2655,7 @@ function AtualizaEtapa() {
   
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
+  $w_ige        = f($RS,'ige');
   // Configura uma variável para testar se as etapas podem ser atualizadas.
   // Projetos concluídos ou cancelados não podem ter permitir a atualização.
   if (Nvl(f($RS,'sg_tramite'),'--') == 'EE') $w_fase = 'S'; else $w_fase = 'N';
@@ -2888,7 +2892,7 @@ function AtualizaEtapa() {
         $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
         $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
       } 
-      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,null,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo));
+      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo));
       ShowHTML('      </FORM>');
     } 
     ShowHTML('<tr><td colspan=9><b>Observações:<ul>');
@@ -4130,10 +4134,27 @@ function Encaminhamento() {
     $w_tramite      = f($RS,'sq_siw_tramite');
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   } 
+  if ($w_tramite==$w_novo_tramite) {
+    // Recupera os dados do trâmite atual
+    $RS = db_getTramiteData::getInstanceOf($dbms,$w_tramite);
+    $w_tram_ant     = f($RS,'qtd_ant');
+    $w_tram_pos     = f($RS,'qtd_pos');
+    $w_tram_ord     = f($RS,'qtd_ord');
+    // Tratamento para trâmites inativos. 
+    // Nesse caso o sistema pega o maior trâmite ativo para definir os parâmetros de funcionamento
+    if ($w_tram_ord==0 ||f($RS,'destinatario')=='N') {
+      $RS = db_getTramiteList::getInstanceOf($dbms, $w_tramite, 'FLUXO','S');
+      $RS = SortArray($RS,'ordem','asc');
+      foreach($RS as $row) { $w_novo_tramite = f($row,'sq_siw_tramite'); break; }
+    }
+  }
+
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
-  $w_sg_tramite = f($RS,'sigla');
-  $w_ativo      = f($RS,'ativo');
+  $w_sg_tramite      = f($RS,'sigla');
+  $w_ativo           = f($RS,'ativo');
+  $w_destinatario    = f($RS,'destinatario');
+  $w_chefia_imediata = f($RS,'chefia_imediata');
   if ($w_ativo == 'N') {
     $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
     $RS = SortArray($RS,'ordem','asc');
@@ -4143,13 +4164,20 @@ function Encaminhamento() {
       break;
     }   
   }
+  $w_erro = '';
+  if ($w_destinatario=='N' && $w_chefia_imediata=='N') {
+    $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_menu,$w_novo_tramite,'USUARIO',null,null,null);
+    if (count($RS)==0) {
+      $w_erro = 'Não há usuários com permissão para cumprir este trâmite. Entre em contato com os gestores de segurança.';
+    }
+  }
   cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
+    if ($w_destinatario=='S') Validate('w_destinatario','Destinatário','HIDDEN','1','1','10','','1');
     Validate('w_despacho','Despacho','','1','1','2000','1','1');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     if ($P1 != 1) {
@@ -4164,7 +4192,7 @@ function Encaminhamento() {
   } 
   ShowHTML('</HEAD>');
   if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  else               BodyOpenClean('onLoad=\'document.Form.w_destinatario.focus()\';');
+  else BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -4183,21 +4211,43 @@ function Encaminhamento() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  if ($P1!=1) {
-    // Se não for cadastramento
-    SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-    // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
-    if ($w_sg_tramite=='CI') SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
-    else                     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+  SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_tramite,'w_novo_tramite','FLUXO','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+  if ($w_cliente==10135) {
+    if ($w_destinatario=='S') {
+      // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
+      if ($w_sg_tramite=='CI' && $w_tramite!=$w_novo_tramite) {
+        SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
+      } else {
+        SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','USUARIOS');
+      }
+    }
   } else {
-    SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
-    SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
-  } 
+    if ($P1!=1) {
+      // Se não for cadastramento
+      SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      if ($w_destinatario=='S') {
+        // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
+        if ($w_sg_tramite=='CI') SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
+        else                     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+      }
+    } else {
+      SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+      if ($w_destinatario=='S') {
+        SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
+      }
+    } 
+  }
   ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução do projeto.">'.$w_despacho.'</TEXTAREA></td>');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
+  if ($w_erro=='') {
+    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML('  alert("'.$w_erro.'");');
+    ScriptClose();
+  }
   if ($P1!=1) {
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } 
@@ -4450,7 +4500,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,5),'---').'</td>';
   if (nvl($l_valor,-1)!=-1) $l_html .= chr(13).'        <td nowrap align="right" width="1%" nowrap>'.formatNumber($l_valor).'</td>';
-  if (nvl($l_chave_aux,'')!='') {
+  if (nvl($l_perc,'')!='') {
     $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
   } else {
     $l_html .= chr(13).'        <td align="center" width="1%" nowrap>---</td>';
@@ -4724,10 +4774,12 @@ function SolicMail($p_solic,$p_tipo) {
   $RS  = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   // Recupera os dados do projeto
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
+  //Teste se o cliente envia email e verifica se o serviço envia email.
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
-    $w_resultado      = ''; 
+    $w_resultado      = '';
+    $l_menu           = f($RSM,'sq_menu');    
     $w_html  ='<HTML>'.$crlf;
     $w_html .= BodyOpenMail(null).$crlf;
     $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -4794,10 +4846,12 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
       $w_html .= $crlf.'      <tr><td><b>Despacho:</b></td>';
       $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
-
-      // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RS,'sq_pessoa_destinatario'),null,null);
-      $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if(f($RS_Mail,'tramitacao')=='S') {
+        // Configura o destinatário da tramitação como destinatário da mensagem
+        $w_destinatarios = f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     } 
     $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
     $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
@@ -4819,31 +4873,70 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= '</HTML>'.$crlf;
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
-    }
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
+    } 
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
-    if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
-    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+    if(f($RS,'st_titular')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+      }
+    }
+    if(f($RS,'st_substituto')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+      }
+    }
     // Recuperar o e-mail dos interessados
     $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
-      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+        }
+      }
     }
     // Recuperar o e-mail do titular e substituto das áreas envolvidas
     $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
       $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
-      if(f($RS1,'st_titular')=='S')    $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
-      if(f($RS1,'st_substituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
+      if(f($RS1,'st_titular')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'titular2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
+        }
+      }
+      if(f($RS1,'st_substituto')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'substituto2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';
+        }
+      }
     }
     // Recuperar os emails dos responsáveis por pacotes de trabalho do projeto
     $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_solic,null,'LISTA',null);
     foreach($RS as $row) {
-      if(f($row,'pacote_trabalho')=='S' && f($row,'st_resp')=='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
+      if(f($row,'pacote_trabalho')=='S' && f($row,'st_resp')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'sq_pessoa'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
+        }
+      }
     }
     // Prepara os dados necessários ao envio
     if ($p_tipo == 1 || $p_tipo == 3) {
@@ -4877,7 +4970,7 @@ function EtapaMail($p_solic) {
   if(f($RS,'envia_mail_tramite')=='S') {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
-    $w_resultado      = ''; 
+    $w_resultado      = '';
     $w_html  ='<HTML>'.$crlf;
     $w_html .= BodyOpenMail(null).$crlf;
     $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -4887,7 +4980,8 @@ function EtapaMail($p_solic) {
     $w_html .= '      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
     // Recupera os dados do projeto
     $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
-    $w_nome =  f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
+    $w_nome = f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
+    $l_menu = f($RSM,'sq_menu');
     $w_html .= $crlf.'<tr><td align="center">';
     $w_html .= $crlf.'    <table width="99%" border="0">';
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
@@ -4951,20 +5045,52 @@ function EtapaMail($p_solic) {
 
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if(f($RS_Mail,'responsabilidade')=='S') {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     }
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
-    if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
-    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
-    // Recuperar os emails dos responsáveis por pacotes de trabalho do projeto
+    if(f($RS,'st_titular')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (f($RS_Mail,'responsabilidade')=='S') {
+        $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+      }
+    }
+    if(f($RS,'st_substituto')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (f($RS_Mail,'responsabilidade')=='S') {
+        $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+      }
+    }    // Recuperar os emails dos responsáveis por pacotes de trabalho do projeto
     $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_solic,null,'LISTA',null);
     foreach($RS as $row) {
-      if(f($row,'st_resp')=='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
-      if(nvl(f($row,'titular'),'')!='' && f($row,'st_tit_resp')=='S') $w_destinatarios .= f($row,'em_tit_resp').'|'.f($row,'nm_tit_resp').'; ';
-      if(nvl(f($row,'substituto'),'')!='' && f($row,'st_sub_resp')=='S') $w_destinatarios .= f($row,'em_sub_resp').'|'.f($row,'nm_sub_resp').'; ';
+      if(f($row,'st_resp')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (f($RS_Mail,'responsabilidade')=='S') {
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nm_resp').'; ';
+        }
+      }
+      if(nvl(f($row,'titular'),'')!='' && f($row,'st_tit_resp')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'titular'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (f($RS_Mail,'responsabilidade')=='S') {
+          $w_destinatarios .= f($row,'em_tit_resp').'|'.f($row,'nm_tit_resp').'; ';
+        }
+      }
+      if(nvl(f($row,'substituto'),'')!='' && f($row,'st_sub_resp')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'substituto'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (f($RS_Mail,'responsabilidade')=='S') {
+          $w_destinatarios .= f($row,'em_sub_resp').'|'.f($row,'nm_sub_resp').'; ';
+        }
+      }
     }
     // Prepara os dados necessários ao envio
     $w_assunto='Atualização de etapas - '.$w_nome;
@@ -5026,7 +5152,7 @@ function Grava() {
         // Recupera os dados para montagem correta do menu
         $RS1 = db_getMenuData::getInstanceOf($dbms,$w_menu);
         ScriptOpen('JavaScript');
-        ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento=Nr. '.$w_chave_nova.'&w_menu='.$w_menu.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
+        ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_chave='.$w_chave_nova.'&w_documento='.$_REQUEST['w_codigo_interno'].'&w_menu='.$w_menu.'&R='.$R.'&SG='.f($RS1,'sigla').'&TP='.$TP.MontaFiltro('GET').'\';');
       }elseif ($O=='E') {
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');

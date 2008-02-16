@@ -16,6 +16,7 @@ include_once('classes/sp/db_getMenuLink.php');
 include_once('classes/sp/db_getPersonData.php');
 include_once('classes/sp/db_getUserModule.php');
 include_once('classes/sp/db_getUserVision.php');
+include_once('classes/sp/db_getUserMail.php');
 include_once('classes/sp/db_getUorgData.php');
 include_once('classes/sp/db_getUorgResp.php');
 include_once('classes/sp/db_getMenuList.php');
@@ -30,6 +31,7 @@ include_once('classes/sp/db_getAlerta.php');
 include_once('classes/sp/dml_SiwMenu.php');
 include_once('classes/sp/dml_putSgPesMod.php');
 include_once('classes/sp/dml_putSiwPesCC.php');
+include_once('classes/sp/dml_putSiwPessoaMail.php');
 include_once('funcoes/selecaoLocalizacao.php');
 include_once('funcoes/selecaoUnidade.php');
 include_once('funcoes/selecaoEstado.php');
@@ -90,7 +92,9 @@ $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 
 if ($O=='') { 
-  if ($par=='USUARIOS') $O='P'; else $O='L';
+  if ($par=='USUARIOS')    $O='P';
+  elseif ($par=='EMAIL')   $O='I';
+  else $O='L';
 }
 
 switch ($O) {
@@ -246,6 +250,7 @@ function Usuarios() {
         } 
 
         ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=VISAO&R='.$w_pagina.$par.'&O=L&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=VISAO'.MontaFiltro('GET').'\',\'Gestao\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,toolbar=yes,scrollbars=yes\');" title="Gestão de módulos">VS</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="#" onClick="window.open(\'seguranca.php?par=EMAIL&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_username='.f($row,'username').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=EMAIL'.MontaFiltro('GET').'\',\'Email\',\'width=630,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Configura recebimento de email pelo usuário">EM</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1718,6 +1723,273 @@ function Visao() {
 } 
 
 // =========================================================================
+// Rotina de para configuração de recebimento de e-mail pelos usuários
+// -------------------------------------------------------------------------
+function Email() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_troca              = $_REQUEST['w_troca'];
+
+  $w_sq_pessoa          = nvl($_REQUEST['w_sq_pessoa'],$_SESSION['SQ_PESSOA']);
+
+  $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
+  $w_username = f($RS,'username');
+  $w_nome     = f($RS,'nome');
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
+  ScriptOpen('JavaScript');
+  ShowHTML('  function MarcaTodos() {');
+  ShowHTML('    if (document.Form["marca"].checked) {');
+  ShowHTML('       for (i=1; i < document.Form["w_sq_menu[]"].length; i++) {');
+  ShowHTML('         document.Form["w_sq_menu[]"][i].checked=true;');
+  ShowHTML('         eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=false;\');');
+  ShowHTML('         eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=true;\');');
+  ShowHTML('         eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=false;\');');
+  ShowHTML('         eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=true;\');');
+  ShowHTML('         eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=false;\');');
+  ShowHTML('         eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=true;\');');
+  ShowHTML('         eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=false;\');');
+  ShowHTML('         eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=true;\');');
+  ShowHTML('       } ');
+  ShowHTML('    } else { ');
+  ShowHTML('       for (i=1; i < document.Form["w_sq_menu[]"].length; i++) {');
+  ShowHTML('         document.Form["w_sq_menu[]"][i].checked=false;');
+  ShowHTML('         eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=false;\');');
+  ShowHTML('         eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=true;\');');
+  ShowHTML('         eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=false;\');');
+  ShowHTML('         eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=true;\');');
+  ShowHTML('         eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=false;\');');
+  ShowHTML('         eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=true;\');');
+  ShowHTML('         eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][i].value+\'.checked=false;\');');
+  ShowHTML('         eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][i].value+\'.disabled=true;\');');
+  ShowHTML('       } ');
+  ShowHTML('    }');
+  ShowHTML('  }');
+  ShowHTML('  function MarcaLinha(w_cont) {');
+  ShowHTML('    if (document.Form["w_sq_menu[]"][w_cont].checked) {');
+  ShowHTML('       eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=false;\');');
+  ShowHTML('       eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=true;\');');
+  ShowHTML('       eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=false;\');');
+  ShowHTML('       eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=true;\');');
+  ShowHTML('       eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=false;\');');
+  ShowHTML('       eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=true;\');');
+  ShowHTML('       eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=false;\');');
+  ShowHTML('       eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=true;\');');
+  ShowHTML('    } else { ');
+  ShowHTML('       eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=false;\');');
+  ShowHTML('       eval(\'document.Form.w_alerta_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=true;\');');
+  ShowHTML('       eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=false;\');');
+  ShowHTML('       eval(\'document.Form.w_tramitacao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=true;\');');
+  ShowHTML('       eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=false;\');');
+  ShowHTML('       eval(\'document.Form.w_conclusao_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=true;\');');
+  ShowHTML('       eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.checked=false;\');');
+  ShowHTML('       eval(\'document.Form.w_responsabilidade_\'+document.Form["w_sq_menu[]"][w_cont].value+\'.disabled=true;\');');
+  ShowHTML('    }');
+  ShowHTML('  }');  
+  ValidateOpen('Validacao');
+  if (!(strpos("IAE",$O)===false)) {
+    Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } 
+
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad="this.focus();"');
+
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('    <table width="99%" border="0">');
+  ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
+  ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS,'nome_resumido').' </b></td>');
+  ShowHTML('          <td>Username:<br><font size=2><b>'.f($RS,'username').'</b></td>');
+  ShowHTML('          </b></td>');
+  if ($O=='L') {
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Configuração de envio de e-mail por serviço</td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="3"><font size=2><b>');
+    $RS = DB_GetUserMail::getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, null);
+    $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
+    ShowHTML('<tr><td colspan=2>');
+    ShowHTML('    <a accesskey="C" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$w_sq_pessoa.'"><u>C</u>onfiguração</a>&nbsp;');
+    if($P2!=1) ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Módulo</td>');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Alerta diário</td>');
+    ShowHTML('          <td><b>Tramitação</td>');
+    ShowHTML('          <td><b>Conclusão</td>');
+    ShowHTML('          <td><b>Reponsabilidade(EAP)</td>');
+    ShowHTML('        </tr>');
+    $w_cont = '';
+    if (count($RS) <= 0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        // Se for quebra de modulo, exibe uma linha do modulo
+        if ($w_cont!=f($row,'sq_modulo')) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'nm_modulo').'</td>');
+          $w_cont=f($row,'sq_modulo');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"></td>');
+        } 
+        ShowHTML('        <td>'.f($row,'nm_servico').'</td>');
+        ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'alerta_diario')).'</td>');
+        ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'tramitacao')).'</td>');
+        ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'conclusao')).'</td>');
+        if(substr(f($row,'sg_servico'),0,2)=='PJ') {
+          ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'responsabilidade')).'</td>');
+        } else {
+          ShowHTML('        <td align="center">---</td>');
+        }
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </table>');
+  } else {
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><font size="2"><b>Configuração de envio de e-mail por serviço</td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="justify" colspan="3"><b>Orientação:</b><ul>');
+    ShowHTML('        <li>Marque o serviço e os e-mails que o usuário acima deve receber.');
+    ShowHTML('        <li>Clicando na caixa do serviço, suas colunas serão marcadas/desmarcadas.');
+    ShowHTML('        <li>Serviços que não enviam e-mail são destacados na cor vermelha.');
+    ShowHTML('        <li><b>A configuração aplica-se somente aos documentos que o usuário tenha acesso.</b>');
+    ShowHTML('        </ul></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="3"><font size=2><b>');
+    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_menu[]" value="">');
+    $RS = DB_GetUserMail::getInstanceOf($dbms, null, $w_sq_pessoa, $w_cliente, 'LISTA');
+    $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>Módulo</td>');
+    ShowHTML('          <td NOWRAP><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Alerta<br>diário</td>');
+    ShowHTML('          <td><b>Trâm.</td>');
+    ShowHTML('          <td><b>Conc.</td>');
+    ShowHTML('          <td><b>Resp.<br>EAP</td>');
+    ShowHTML('        </tr>');
+    $w_cont = 1;
+    $w_atual = '';
+    if (count($RS) <= 0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      foreach($RS as $row) {
+        if (f($row,'envia_email')=='S') $w_cor = $conTrBgColor; else $w_cor = $conTrBgColorLightRed2;
+        // Se for quebra de modulo, exibe uma linha do modulo
+        if ($w_atual!=f($row,'sq_modulo')) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'nm_modulo').'</td>');
+          $w_atual=f($row,'sq_modulo');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
+          ShowHTML('        <td align="center"></td>');
+        }
+        if(nvl(f($row,'alerta_diario'),'N')=='S'  ||nvl(f($row,'tramitacao'),'N')=='S'||
+          nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'" checked></td>');
+        } else {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_sq_menu[]" onClick="javascript:MarcaLinha('.$w_cont.');"value="'.f($row,'sq_menu').'"></td>');
+        }
+        ShowHTML('        <td bgcolor="'.$w_cor.'">'.f($row,'nm_servico').'</td>');
+        if(nvl(f($row,'alerta_diario'),'')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S" checked>');
+        } elseif(nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_alerta_'.f($row,'sq_menu').'" value="S">');
+        } else {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_alerta_'.f($row,'sq_menu').'" value="S">');
+        }
+        if(nvl(f($row,'tramitacao'),'')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S" checked>');
+        } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_tramitacao_'.f($row,'sq_menu').'" value="S">');
+        } else {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_tramitacao_'.f($row,'sq_menu').'" value="S">');
+        }
+        if(nvl(f($row,'conclusao'),'')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S" checked>');
+        } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'responsabilidade'),'N')=='S') {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_conclusao_'.f($row,'sq_menu').'" value="S">');
+        } else {
+          ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_conclusao_'.f($row,'sq_menu').'" value="S">');
+        }
+        if(substr(f($row,'sg_servico'),0,2)=='PJ') {
+          if(nvl(f($row,'responsabilidade'),'')=='S') {
+            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S" checked>');
+          } elseif(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S') {
+            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S">');
+          } else {
+            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled name="w_responsabilidade_'.f($row,'sq_menu').'"  value="S">');
+          }
+        } else {
+          if(nvl(f($row,'alerta_diario'),'N')=='S'||nvl(f($row,'tramitacao'),'N')=='S'||nvl(f($row,'conclusao'),'N')=='S') {
+            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N">');
+          } else {
+            ShowHTML('        <td align="center" bgcolor="'.$w_cor.'"><input type="checkbox" disabled style="display:none;" name="w_responsabilidade_'.f($row,'sq_menu').'"  value="N">');
+          }
+        }
+        ShowHTML('      </tr>');
+        $w_cont += 1;
+      } 
+    } 
+    
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=7><b>Observações:</b><DL>');
+    ShowHTML('  <DT>Alerta diário:<DD>Indica se os e-mails de alerta ou atraso, enviados diariamente, devem contemplar o serviço. Se esta coluna não tiver nenhum serviço marcado, os e-mails diários não serão enviados.');
+    ShowHTML('  <DT>Trâm.:<DD>Marque esta coluna para os serviços que desejar ser comunicado da tramitação.');
+    ShowHTML('  <DT>Conc.:<DD>Marque esta coluna para os serviços que desejar ser comunicado da conclusão.');
+    ShowHTML('  <DT>Resp.EAP:<DD>Aplica-se somente a projetos. Se marcada, um e-mail comunicará as etapas pelas quais você responde, quando o projeto entrar em execução.');
+    ShowHTML('  </DL>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=7>');
+    ShowHTML('    <table width="100%" border="0">');
+    ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+    ShowHTML('      </table>');
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
+    ShowHTML('            <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  }
+  ShowHTML('  </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
 // Rotina de reinicialização da senha de usuários
 // -------------------------------------------------------------------------
 function NovaSenha() {
@@ -2260,6 +2532,40 @@ function Grava() {
         ScriptClose();
       } 
       break;
+    case "EMAIL":
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        // Elimina todas as configurações existentes para depois incluir
+        dml_PutSiwPessoaMail::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null, null, null, null, null);
+        $w_teste = '';
+        $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', null, null);
+        $RS = SortArray($RS,'nm_modulo','asc','nm_servico','asc ');
+        foreach($RS as $row) {
+          for ($i=0; $i<=count($_REQUEST['w_sq_menu'])-1; $i=$i+1) {
+            if ($_REQUEST['w_sq_menu'][$i]>'') {
+              if($_REQUEST['w_sq_menu'][$i]==f($row,'sq_menu')) {
+                $w_teste = 'OK';
+                dml_PutSiwPessoaMail::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
+                                                    nvl($_REQUEST['w_tramitacao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_conclusao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_responsabilidade_'.f($row,'sq_menu').''],'N'));
+              }
+            } 
+          }
+          if(nvl($w_teste,'')=='') {
+            dml_PutSiwPessoaMail::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), 'N', 'N', 'N', 'N');
+          }
+          $w_teste = '';
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  window.close();');
+        ShowHTML('  opener.focus();');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  history.back(1);');
+        ScriptClose();
+      } 
+      break;      
   } 
 } 
 
@@ -2274,6 +2580,7 @@ function Main() {
   case 'MENU':               Menu();               break;
   case 'ACESSOS':            Acessos();            break;
   case 'VISAO':              Visao();              break;
+  case 'EMAIL':              Email();              break;
   case 'TELAUSUARIO':        TelaUsuario();        break;
   case 'TELAACESSOUSUARIOS': TelaAcessoUsuarios(); break;
   case 'TELAUNIDADE':        TelaUnidade();        break;

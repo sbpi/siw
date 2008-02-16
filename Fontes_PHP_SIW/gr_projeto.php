@@ -429,15 +429,20 @@ function Gerencial() {
         ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
         ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
         $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
-        ShowHTML('    if (document.getElementById("w_origem").checked) {');
-        ShowHTML('      document.Form.action="mod_gr/exibe.php?par=inicial";');
-        ShowHTML('      document.Form.target="gr";');
-        ShowHTML('      document.Form.w_origem.value="Projetos";');
-        ShowHTML('    } else {');
-        ShowHTML('      document.Form.action="'.f($RS2,'link').'";');
-        ShowHTML('      document.Form.target="Projeto";');
-        ShowHTML('      document.Form.w_origem.value="";');
-        ShowHTML('    }');
+        if (f($RS_Cliente,'georeferencia')=='S' && count($RS1)>0) {
+          ShowHTML('    if (document.getElementById("w_origem").checked) {');
+          ShowHTML('      document.Form.action="mod_gr/exibe.php?par=inicial";');
+          ShowHTML('      document.Form.target="gr";');
+          ShowHTML('      document.Form.w_origem.value="Projetos";');
+          ShowHTML('    } else {');
+          ShowHTML('      document.Form.action="'.f($RS2,'link').'";');
+          ShowHTML('      document.Form.target="Projeto";');
+          ShowHTML('      document.Form.w_origem.value="";');
+          ShowHTML('    }');
+        } else {
+          ShowHTML('      document.Form.action="'.f($RS2,'link').'";');
+          ShowHTML('      document.Form.target="Projeto";');
+        }
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');

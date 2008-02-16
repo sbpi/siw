@@ -275,7 +275,7 @@ function Rel_Progresso() {
             } else  {
               ShowHTML('   <tr><td><b>IGC em '.date("d/m/Y").':&nbsp;&nbsp;&nbsp;</b></td>');
             }
-            ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'IDC')).'%</b></td></tr>');
+            ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'IGC')).'%</b></td></tr>');
             if ($p_tipo!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').' em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
             } else  { 

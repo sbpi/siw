@@ -905,6 +905,7 @@ Fontes_PHP_SIW/classes/sp/db_getUorgList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUorgResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserList.php -text
+Fontes_PHP_SIW/classes/sp/db_getUserMail.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserModule.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getUserTypeData.php -text
@@ -1150,6 +1151,8 @@ Fontes_PHP_SIW/classes/sp/dml_putSiwCliConf.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliMod.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCliente.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwCoordenada.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSiwPessoaMail.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSiwTramiteFluxo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSiwUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
@@ -1285,6 +1288,7 @@ Fontes_PHP_SIW/funcoes.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordOR.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordRel.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordSint.php -text
+Fontes_PHP_SIW/funcoes/envio.php -text
 Fontes_PHP_SIW/funcoes/exibeColaborador.php -text
 Fontes_PHP_SIW/funcoes/exibeTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/formataDataXML.php -text

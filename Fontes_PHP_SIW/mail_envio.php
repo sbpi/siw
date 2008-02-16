@@ -89,31 +89,27 @@ function Principal() {
 
   if (trim(strtoupper($w_opcao))=='GERA') {
     // Recupera solicitações a serem listadas
-    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'S', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
     $i = 0;
     foreach ($RS_Solic as $row) {
-      if (nvl(f($row,'email'),'')!='' && f($row,'vinc_mail_alerta')=='S') {
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['solic'][$i] = $row;
-        $i++;
-      }
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['solic'][$i] = $row;
+      $i++;
     }
   
     // Recupera pacotes de trabalho a serem listados
-    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
+    $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'S', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
     $i = 0;
     foreach ($RS_Pacote as $row) {
-      if (nvl(f($row,'email'),'')!='' && f($row,'vinc_mail_alerta')=='S') {
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
-        $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['pacote'][$i] = $row;
-        $i++;
-      }
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['pacote'][$i] = $row;
+      $i++;
     }
     
     if (count($RS_Usuario) > 0) {

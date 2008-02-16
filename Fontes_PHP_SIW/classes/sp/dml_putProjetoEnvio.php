@@ -18,7 +18,7 @@ class dml_putProjetoEnvio {
                    'p_novo_tramite'              =>array($p_novo_tramite,                                  B_INTEGER,        32),
                    'p_devolucao'                 =>array($p_devolucao,                                     B_VARCHAR,         1),
                    'p_observacao'                =>array($p_observacao,                                    B_VARCHAR,      2000),
-                   'p_destinatario'              =>array($p_destinatario,                                  B_INTEGER,        32),
+                   'p_destinatario'              =>array(tvl($p_destinatario),                             B_INTEGER,        32),
                    'p_despacho'                  =>array($p_despacho,                                      B_VARCHAR,      2000),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),

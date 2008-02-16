@@ -19,6 +19,7 @@ include_once('classes/sp/dml_SiwTramite.php');
 include_once('classes/sp/dml_SgPesMen.php');
 include_once('classes/sp/dml_SgPerMen.php');
 include_once('classes/sp/dml_SiwMenEnd.php');
+include_once('classes/sp/dml_putSiwTramiteFluxo.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('funcoes/selecaoMenu.php');
 include_once('funcoes/selecaoUnidade.php');
@@ -128,6 +129,7 @@ function AcessoTramite() {
 
   if ($O=='L') {
     $RS = db_getTramiteUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,$w_sq_siw_tramite,'USUARIO',null,null,null);
+    $RS = SortArray($RS,'logradouro','asc','nome_indice','asc');
   } 
 
   Cabecalho();
@@ -232,15 +234,18 @@ function AcessoTramite() {
         // Se for quebra de endereço, exibe uma linha com o endereço
         if ($w_contaux!=f($row,'logradouro')) {
           ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
-          ShowHTML('        <td valign="top" colspan=3><b><font size="1">'.f($row,'logradouro').'</td>');
+          ShowHTML('        <td valign="top" colspan=3><b><font size="1">'.f($row,'endereco').'</td>');
           $w_contaux=f($row,'logradouro');
         } 
         ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" valign="top">');
         ShowHTML('        <td valign="top" align="center"><font size="1">'.f($row,'username').'</td>');
         ShowHTML('        <td valign="top"><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td><font size="1">');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_sq_siw_tramite='.$w_sq_siw_tramite.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">EX</A>&nbsp');
-        ShowHTML('&nbsp');
+        if (f($row,'tipo')=='GESTOR') {
+          ShowHTML('          Gestor do módulo');
+        } else {
+          ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_sq_siw_tramite='.$w_sq_siw_tramite.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'" onClick="return(confirm(\'Confirma exclusão do acesso deste usuário para esta opção?\'));">EX</A>&nbsp');
+        }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -250,6 +255,10 @@ function AcessoTramite() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
+    ShowHTML('<tr><td colspan=2>');
+    ShowHTML('  <b>Observação:</b><ul>');
+    ShowHTML('  <li>gestores do módulo podem cumprir este trâmite quando têm permissão no endereço da unidade de cadastramento da solicitação.');
+    ShowHTML('  </ul></td></tr>');
   } elseif ($O=='I') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
@@ -349,6 +358,7 @@ function Tramite() {
     $w_descricao        = $_REQUEST['w_descricao'];
     $w_chefia_imediata  = $_REQUEST['w_chefia_imediata'];
     $w_acesso_geral     = $_REQUEST['w_acesso_geral'];
+    $w_destinatario     = $_REQUEST['w_destinatario'];
   } elseif ($O=='L') {
     $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null);
     $RS = SortArray($RS,'ordem','asc');
@@ -362,6 +372,7 @@ function Tramite() {
     $w_ativo            = f($RS,'ativo');
     $w_descricao        = f($RS,'descricao');
     $w_chefia_imediata  = f($RS,'chefia_imediata');
+    $w_destinatario     = f($RS,'destinatario');
     if (f($RS,'primeiro')==$w_sq_siw_tramite && f($RS,'acesso_geral')=='S') {
       $w_acesso_geral='S';
     } else {
@@ -381,7 +392,12 @@ function Tramite() {
       Validate('w_ordem','Ordem','1','1','1','2','','0123456789');
       Validate('w_sigla','Sigla','1','','2','2','1','1');
       Validate('w_descricao','Descrição','1','','5','500','1','1');
+      ShowHTML('if(theForm.w_chefia_imediata[3].checked && theForm.w_destinatario[1].checked) {');
+      ShowHTML('   alert(\'No envio para todos os usuários internos, o destinatário deve ser indicado obrigatoriamente!\')');
+      ShowHTML('   return (false);');
+      ShowHTML('}');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
@@ -464,6 +480,7 @@ function Tramite() {
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_sq_menu" value="'.$w_sq_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_siw_tramite" value="'.$w_sq_siw_tramite.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_siw_tramite_destino[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
@@ -471,23 +488,31 @@ function Tramite() {
     ShowHTML('      <tr><td valign="top" width="33%"><font  size="1"><b><U>O</U>rdem:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="w_ordem" size="2" maxlength="2" value="'.$w_ordem.'"></td>');
     ShowHTML('          <td valign="top" width="33%"><font  size="1"><b><U>S</U>igla:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_sigla" size="2" maxlength="2" value="'.$w_sigla.'"></td>');
     ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b><U>D</U>escrição:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="w_descricao" ROWS=5 COLS=80>'.$w_descricao.'</TEXTAREA></td></tr>');
-    ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b>Quem cumprirá este trâmite?</b><br>');
+    ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b>No envio para este trâmite, quais destinatários devem ser exibidos?</b><br>');
     if ($w_acesso_geral=='S') {
       ShowHTML('          <font color="#FF0000"><b>Este serviço é de acesso geral. Neste caso, o primeiro trâmite (cadastramento), sempre será gerenciado pela segurança do sistema.</b></font>');
       ShowHTML('          <input type="hidden" name="w_chefia_imediata" value="N">');
     } else {
       if ($w_chefia_imediata=='N' || $w_chefia_imediata=='') {
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U"> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N" checked> Apenas os usuários que tenham permissão');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N" checked> Apenas os usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="I"> Todos os usuários internos');
       } elseif ($w_chefia_imediata=='S') {
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S" checked> Titular/substituto da unidade solicitante<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S" checked> Titular/substituto da unidade solicitante e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U"> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="I"> Todos os usuários internos');
+      } elseif ($w_chefia_imediata=='S') {
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante e usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U"> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="I" checked> Todos os usuários internos');
       } else {
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U" checked> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
-        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão<br>');
+        ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="I"> Todos os usuários internos');
       } 
     } 
     ShowHTML('      <tr><td valign="top"><font  size="1"><b>Envia e-mail ao responsável?</b><br>');
@@ -502,12 +527,32 @@ function Tramite() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_solicita_cc" value="S"> Sim <input '.$w_Disabled.' type="radio" name="w_solicita_cc" value="N" checked> Não');
     } 
-    ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b>Ativo?</b><br>');
+    ShowHTML('      <tr><td valign="top"><font  size="1"><b>Indica destinatário?</b><br>');
+    if ($w_destinatario=='S') {
+      ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_destinatario" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="w_destinatario" value="N"> Não');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_destinatario" value="S"> Sim <input '.$w_Disabled.' type="radio" name="w_destinatario" value="N" checked> Não');
+    } 
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,'S');
+    $RS = SortArray($RS,'ordem','asc');
+    ShowHTML('          <td valign="top"><font  size="1"><b>Fluxo de tramitação?</b>');
+    foreach($RS as $row) {
+      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_sq_siw_tramite,'FLUXO','S');
+      $w_checked = '';
+      foreach($RS1 as $row1) {
+        if(f($row1,'sq_siw_tramite_destino')==f($row,'sq_siw_tramite')) {
+          $w_checked = 'checked';
+          break;
+        }        
+      }
+      ShowHTML('          <br><input type="checkbox" name="w_sq_siw_tramite_destino[]" value="'.f($row,'sq_siw_tramite').'"'.$w_checked.'> '.f($row,'ordem').' - '.f($row,'nome'));
+    }
+    ShowHTML('      <tr><td valign="top"><font  size="1"><b>Ativo?</b><br>');
     if ($w_ativo=='S' || $w_ativo=='') {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_ativo" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="w_ativo" value="N"> Não');
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_ativo" value="S"> Sim <input '.$w_Disabled.' type="radio" name="w_ativo" value="N" checked> Não');
-    } 
+    }
     ShowHTML('      <tr><td valign="top" colspan=3><font  size="1"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -1035,7 +1080,16 @@ function Grava() {
         }
         dml_SiwTramite::getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
-            $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail']);
+            $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail'],
+            $_REQUEST['w_destinatario']);
+        // Insere os tramites de fluxo
+        dml_putSiwTramiteFluxo::getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
+        for ($i=1; $i<=count($_POST['w_sq_siw_tramite_destino'])-1; $i=$i+1) {
+          if (Nvl($_POST['w_sq_siw_tramite_destino'][$i],'')>'') {
+             dml_putSiwTramiteFluxo::getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
+          }
+        }
+            
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$_REQUEST['w_sq_menu'].'\';');
         ScriptClose();

@@ -1947,6 +1947,7 @@ function SolicMail($p_solic,$p_tipo) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
+    $l_menu           = f($RSM,'sq_menu');
     $w_html='<HTML>'.$crlf;
     $w_html.=BodyOpenMail(null).$crlf;
     $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -2015,10 +2016,12 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html .= $crlf.'        <td>'.f($RS,'destinatario').'</td></tr>';
       $w_html .= $crlf.'      <tr><td><b>Despacho:</b></td>';
       $w_html .= $crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
-
-      // Configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
-      $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if(f($RS_Mail,'tramitacao')=='S') {
+        // Configura o destinatário da tramitação como destinatário da mensagem
+        $w_destinatarios = f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     } 
     $w_html.= $crlf.'     <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
@@ -2041,26 +2044,60 @@ function SolicMail($p_solic,$p_tipo) {
     
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
+      
     }
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
-    if(f($RS,'st_titular')=='S')    $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
-    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+    if(f($RS,'st_titular')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+      }
+    }
+    if(f($RS,'st_substituto')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+      }
+    }    
     // Recuperar o e-mail dos interessados
     $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
-      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+        }
+      }
     }
     // Recuperar o e-mail do titular e substituto das áreas envolvidas
     $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
       $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
-      if(f($RS1,'st_titular')=='S')    $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
-      if(f($RS1,'st_substituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
+      if(f($RS1,'st_titular')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'titular2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
+        }
+      }
+      if(f($RS1,'st_substituto')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'substituto2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';
+        }
+      }
     }  
     // Prepara os dados necessários ao envio
     if ($p_tipo==1 || $p_tipo==3) {

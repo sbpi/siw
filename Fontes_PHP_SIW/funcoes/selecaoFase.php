@@ -13,10 +13,12 @@ function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,
     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   foreach($RS as $row) {
-    if (f($row,'sq_siw_tramite')==$chave) {
-      ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'" SELECTED>'.f($row,'ordem').' - '.f($row,'nome'));
-    } else {
-      ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'">'.f($row,'ordem').' - '.f($row,'nome'));
+    if (!(f($row,'sq_siw_tramite')==$chaveAux && f($row,'destinatario')=='N')) {
+      if (f($row,'sq_siw_tramite')==$chave) {
+        ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'" SELECTED>'.f($row,'ordem').' - '.f($row,'nome').' ('.f($row,'nm_chefia').')');
+      } else {
+        ShowHTML('          <option value="'.f($row,'sq_siw_tramite').'">'.f($row,'ordem').' - '.f($row,'nome').' ('.f($row,'nm_chefia').')');
+      }
     }
   }
   ShowHTML('          </select>');

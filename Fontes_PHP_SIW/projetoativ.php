@@ -19,6 +19,7 @@ include_once('classes/sp/db_getCountryData.php');
 include_once('classes/sp/db_getRegionData.php');
 include_once('classes/sp/db_getStateData.php');
 include_once('classes/sp/db_getCityData.php');
+include_once('classes/sp/db_getUserMail.php');
 include_once('classes/sp/db_getSolicList.php');
 include_once('classes/sp/db_getSolicAcesso.php');
 include_once('classes/sp/db_getSolicData.php');
@@ -1964,6 +1965,7 @@ function SolicMail($p_solic,$p_tipo) {
     $l_solic          = $p_solic;
     $w_destinatarios  = '';
     $w_resultado      = '';
+    $l_menu           = f($RSM,'sq_menu');
     $w_html='<HTML>'.$crlf;
     $w_html.=BodyOpenMail(null).$crlf;
     $w_html.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
@@ -2038,10 +2040,12 @@ function SolicMail($p_solic,$p_tipo) {
       $w_html.=$crlf.'        <td>'.f($RS,'destinatario').'</b></td>';
       $w_html.=$crlf.'      <tr valign="top"><td><b>Ocorrência: </b></td>';
       $w_html.=$crlf.'        <td>'.CRLF2BR(Nvl(f($RS,'despacho'),'---')).' </td></tr>';
-  
-      // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,nvl(f($RS,'sq_pessoa_destinatario'),0),null,null);
-      $w_destinatarios = f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'sq_pessoa_destinatario'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if(f($RS_Mail,'tramitacao')=='S') {
+        // Se for tramitação, configura o destinatário da tramitação como destinatário da mensagem
+        $w_destinatarios = f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     } 
     $w_html.=$crlf.'      <tr><td colspan="2"><br><font size="2"><b>OUTRAS INFORMAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
@@ -2064,27 +2068,60 @@ function SolicMail($p_solic,$p_tipo) {
   
     // Recupera o e-mail do responsável
     if(f($RSM,'st_sol')=='S') {
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     }
   
     // Recupera o e-mail do titular e do substituto pelo setor responsável
     $RS = db_getUorgResp::getInstanceOf($dbms,f($RSM,'sq_unidade'));
     foreach($RS as $row){$RS=$row; break;}
-    if(f($RS,'st_titular')=='S')   $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
-    if(f($RS,'st_substituto')=='S') $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+    if(f($RS,'st_titular')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'titular2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_titular').'|'.f($RS,'nm_titular').'; ';
+      }
+    }
+    if(f($RS,'st_substituto')=='S') {
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS,'substituto2'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS,'email_substituto').'|'.f($RS,'nm_substituto').'; ';
+      }
+    }
     // Recuperar o e-mail dos interessados
     $RS = db_getSolicInter::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
-      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+      if(f($row,'ativo')=='S' && f($row,'envia_email') =='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+        }
+      }
     }
     // Recuperar o e-mail do titular e substituto das áreas envolvidas
     $RS = db_getSolicAreas::getInstanceOf($dbms,$p_solic,null,'LISTA');
     foreach($RS as $row) {
       $RS1 = db_getUorgResp::getInstanceOf($dbms,f($row,'sq_unidade'));
       foreach($RS1 as $row1){$RS1=$row1; break;}
-      if(f($RS1,'st_titular')=='S')  $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
-      if(f($RS1,'st_substituto')=='S') $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';    
+      if(f($RS1,'st_titular')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'titular2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_titular').'|'.f($RS1,'nm_titular').'; ';
+        }
+      }
+      if(f($RS1,'st_substituto')=='S') {
+        $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RS1,'substituto2'), $w_cliente, null);
+        foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+        if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+          $w_destinatarios .= f($RS1,'email_substituto').'|'.f($RS1,'nm_substituto').'; ';
+        }
+      }
     }  
     // Prepara os dados necessários ao envio
     if ($p_tipo==1 || $p_tipo==3) {
@@ -2140,7 +2177,7 @@ function BuscaAtividade() {
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');
-  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+  if (count($RS)>30 || ($w_nome>'' || $w_numero>'')) {
     ValidateOpen('Validacao');
     Validate('w_nome','Nome','1','','4','30','1','1');
     Validate('w_numero','Sigla','1','','2','20','','1');
@@ -2155,7 +2192,7 @@ function BuscaAtividade() {
   } 
   ScriptClose();
   ShowHTML('</HEAD>');
-  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+  if (count($RS)>30 || ($w_nome>'' || $w_numero>'')) {
     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   } else {
     BodyOpen('onLoad=this.focus();');
@@ -2164,7 +2201,7 @@ function BuscaAtividade() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
-  if (count($RS)>10 || ($w_nome>'' || $w_numero>'')) {
+  if (count($RS)>30 || ($w_nome>'' || $w_numero>'')) {
     AbreForm('Form',$w_pagina.'BuscaAtividade','POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
@@ -2250,7 +2287,7 @@ function BuscaAtividade() {
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
         ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
-        ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
+        ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.str_replace("\r\n"," ",$w_titulo).'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
         ShowHTML('      </tr>');
       } 
     } 
