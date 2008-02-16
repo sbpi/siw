@@ -84,7 +84,8 @@ begin
            and (p_inicio    is null or (p_inicio    is not null and (duracaoinicio between p_inicio and p_fim or
                                                                      duracaofim    between p_inicio and p_fim or
                                                                      p_inicio      between duracaoinicio and duracaofim or
-                                                                     p_fim         between duracaoinicio and duracaofim
+                                                                     p_fim         between duracaoinicio and duracaofim or
+                                                                     trunc(a.datainclusao) between p_inicio and p_fim
                                                                     )
                                        )
                )
@@ -109,7 +110,7 @@ begin
            and (p_cnpj        is null or (p_cnpj        is not null and b.cgccpf = p_cnpj))
            and (p_cpf         is null or (p_cpf         is not null and b.cgccpf = p_cpf))
            and (p_documento   is null or (p_documento   is not null and a.automatico_sp = p_documento))
-           and (p_inicio      is null or (p_inicio      is not null and a.dt_vcto between p_inicio and p_fim))
+           and (p_inicio      is null or (p_inicio      is not null and (a.dt_vcto between p_inicio and p_fim or trunc(a.datainclusao) between p_inicio and p_fim)))
            and (p_comprovante is null or (p_comprovante is not null and a.handle in (select a.automatico_sp
                                                                                        from corporativo.un_sol_pgto_doc_anexos@sicof a
                                                                                       where a.numerodoc  like '%'||p_comprovante||'%'
@@ -130,7 +131,7 @@ begin
                nvl(to_char(a.dt_inicio,'dd/mm/yyyy'),'-') inicio,
                nvl(to_char(a.dt_fim,'dd/mm/yyyy'),'-') fim,
                d.codigounesco projeto,
-               seguranca.fValor@sicof(a.valortotal) Valor,
+               a.valortotal Valor,
                seguranca.fcfaseatual@sicof(a.automatico_spd) fase_atual, b.nome
           from corporativo.Un_SolicitacaoPD@sicof a,
                corporativo.Gn_Pessoas@sicof       b,
@@ -141,9 +142,10 @@ begin
            and (p_ctcc        is null or (p_ctcc        is not null and a.acordo = p_ctcc))
            and (p_cnpj        is null or (p_cnpj        is not null and b.cgccpf = p_cnpj))
            and (p_cpf         is null or (p_cpf         is not null and b.cgccpf = p_cpf))
-           and (p_documento   is null or (p_documento   is not null and a.automatico_spd = p_documento))
+           and (p_documento   is null or (p_documento   is not null and a.automatico_spd = upper(trim(p_documento))))
            and (p_inicio      is null or (p_inicio      is not null and (a.dt_inicio  between p_inicio and p_fim or
-                                                                         a.dt_fim     between p_inicio and p_fim
+                                                                         a.dt_fim     between p_inicio and p_fim or
+                                                                         trunc(a.dt_inclusao) between p_inicio and p_fim
                                                                         )
                                          )
                )

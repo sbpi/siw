@@ -12,9 +12,10 @@ begin
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite a 
          where a.sq_menu = p_chave
@@ -27,9 +28,10 @@ begin
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
                 b.destinatario,
                 case b.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
            from siw_tramite_fluxo      a
                 inner join siw_tramite b on (a.sq_siw_tramite_destino = b.sq_siw_tramite)
@@ -40,9 +42,10 @@ begin
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite                 a
          where a.sq_siw_tramite in (select sq_siw_tramite
@@ -59,9 +62,10 @@ begin
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite            a
               inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
@@ -75,9 +79,10 @@ begin
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite            a
               inner join siw_tramite b on (a.sq_menu        = b.sq_menu and
@@ -91,9 +96,10 @@ begin
                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite              a
                 inner join siw_tramite b on (a.sq_menu        = b.sq_menu)
@@ -106,9 +112,10 @@ begin
                 a.sigla, a.descricao, a.chefia_imediata, a.ativo, a.solicita_cc, a.envia_mail,
                 a.destinatario,
                 case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante'
-                   when 'U' then 'Chefia e usuários com  permissão'
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
                 end nm_chefia
          from siw_tramite                 a
          where a.sq_siw_tramite in (select sq_siw_tramite

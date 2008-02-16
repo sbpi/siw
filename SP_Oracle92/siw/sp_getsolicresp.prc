@@ -239,7 +239,7 @@ begin
           where c.sq_siw_tramite     = p_tramite
             and c.sigla              = 'CI'
          UNION
-         -- Gestores do módulo da solicitação, somente se o trâmite for de cadastramento inicial e o endereço for o da solicitação
+         -- Gestores do módulo da solicitação, somente se o o endereço for o da solicitação
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
                 f.sigla sg_unidade, d.nome_resumido_ind

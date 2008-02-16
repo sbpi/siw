@@ -1,6 +1,7 @@
 create or replace function Acesso
   (p_solicitacao in number,
-   p_usuario      in number
+   p_usuario      in number,
+   p_tramite      in number default null
   ) return number is
 /**********************************************************************************
 * Nome      : Acesso
@@ -133,7 +134,7 @@ begin
         e.ordem, e.sigla, e.ativo, e.chefia_imediata,
         Nvl(f.sq_pessoa,-1), Nvl(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
-        coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,0)
+        coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
    into w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
@@ -147,7 +148,7 @@ begin
         siw_solicitacao                     d
         inner   join siw_menu               a  on (a.sq_menu                = d.sq_menu)
           inner join siw_modulo             a1 on (a.sq_modulo              = a1.sq_modulo)
-        inner   join siw_tramite            e  on (d.sq_siw_tramite         = e.sq_siw_tramite)
+        inner   join siw_tramite            e  on (e.sq_siw_tramite         = coalesce(p_tramite, d.sq_siw_tramite))
         inner   join eo_unidade             h  on (d.sq_unidade             = h.sq_unidade)
         left    join eo_unidade_resp        f  on (d.sq_unidade             = f.sq_unidade and
                                                    f.tipo_respons           = 'T'          and
@@ -432,7 +433,7 @@ begin
           -- Se o serviço for vinculado à unidade, testa a unidade que cadastrou a solicitação.
           -- Caso contrário, testa a unidade de lotação do solicitante.
           If w_vinculacao = 'U' Then
-             w_unidade_atual := w_unidade_solicitante;
+             w_unidade_atual := w_unidade_resp;
           Elsif w_vinculacao = 'P' Then
              w_unidade_atual := w_unidade_beneficiario;
           End If;
@@ -561,7 +562,8 @@ begin
        Result := Result + 16; 
     Else
        -- Outra possibilidade é a solicitação estar sendo executada pelo usuário
-       If w_executor = p_usuario Then 
+       -- Neste caso a solicitação deve estar em tramite ativo e diferente de cadastramento
+       If w_executor = p_usuario and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then 
           Result := Result + 16;
        Elsif w_sg_modulo = 'OR' Then
           -- Se for módulo de orçamento, outra possibilidade é a solicitação ter metas e o usuário ser:
