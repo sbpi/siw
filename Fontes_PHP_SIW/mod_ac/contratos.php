@@ -4292,7 +4292,7 @@ function Notas() {
         ShowHTML('      </tr>');
         $w_nota         += f($row,'valor');
         $w_cancelamento += f($row,'vl_cancelamento');
-        $w_total        += (f($row,'valor')-f($row,'valor_cancelamento'));
+        $w_total        += (f($row,'valor')-f($row,'vl_cancelamento'));
       } 
     } 
     ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');

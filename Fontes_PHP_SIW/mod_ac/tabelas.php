@@ -1240,7 +1240,7 @@ function EspecDespesa() {
           ShowHTML('       </div></span>');
         }
         ShowHTML('   <div style="position:relative; left:12;">');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'codigo').'-'.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1257,7 +1257,7 @@ function EspecDespesa() {
           if (f($row1,'Filho')>0) {
             $w_contOut=$w_contOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'chave').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome').'');
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'codigo').'-'.f($row1,'nome').'');
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1274,7 +1274,7 @@ function EspecDespesa() {
               if (f($row2,'Filho')>0) {
                 $w_contOut = $w_contOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'chave').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome').'');
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'codigo').'-'.f($row2,'nome').'');
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1289,7 +1289,7 @@ function EspecDespesa() {
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
-                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'nome'));
+                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'codigo').'-'.f($row3,'nome'));
                   if (f($row3,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1303,7 +1303,7 @@ function EspecDespesa() {
                 } 
                 ShowHTML('   </div>');
               } else {
-                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'nome'));
+                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'codigo').'-'.f($row2,'nome'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1319,7 +1319,7 @@ function EspecDespesa() {
             ShowHTML('   </div>');
           } else {
             $w_Imagem=$w_ImagemPadrao;
-            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'nome'));
+            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'codigo').'-'.f($row1,'nome'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
@@ -1340,7 +1340,7 @@ function EspecDespesa() {
         }
         ShowHTML('   <div style="position:relative; left:12;">');  
         $w_Imagem=$w_ImagemPadrao;
-        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').'');
+        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'codigo').'-'.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Altera as informações desta especificação de despesa">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CT_ESPEC" title="Exclui a especificação de despesa">EX</A>&nbsp');
