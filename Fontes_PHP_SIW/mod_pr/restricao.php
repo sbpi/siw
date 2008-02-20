@@ -11,6 +11,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getUserData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getRestricaoEtapa.php');
@@ -20,9 +21,11 @@ include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtpRec.php'); 
 include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php'); 
+include_once($w_dir_volta.'classes/sp/db_getEtapaComentario.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicRestricao.php');
 include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapa.php');
+include_once($w_dir_volta.'classes/sp/dml_putEtapaComentario.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRestricao.php');
 include_once($w_dir_volta.'funcoes/selecaoRestricao.php');
@@ -115,7 +118,7 @@ FechaSessao($dbms);
 exit;
 
 // =========================================================================
-// Rotina de cadastramento de metas
+// Rotina de cadastramento de restrições
 // -------------------------------------------------------------------------
 function Restricao() {
   extract($GLOBALS);
@@ -163,7 +166,7 @@ function Restricao() {
     } else {
       $RS = SortArray($RS,'risco','asc','descricao','asc','base_geografica','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,$w_problema,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -186,14 +189,14 @@ function Restricao() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
     SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_pessoa','Responsável','SELECT','1','1','18','','1');
       Validate('w_tipo_restricao','Classificação','SELECT','1','1','18','','1');      
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
@@ -344,8 +347,8 @@ function Restricao() {
     ShowHTML('</tr>');
     ShowHTML('<tr><td colspan=3><table border=0>');
     ShowHTML('  </table>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled   = ' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -541,6 +544,299 @@ function Pacote() {
 } 
 
 // =========================================================================
+// Rotina de cadastramento de comentários de etapa
+// -------------------------------------------------------------------------
+function ComentarioEtapa() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_solic      = $_REQUEST['w_solic'];
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  
+  // Recupera os dados do projeto
+  $RS = db_getSolicData::getInstanceOf($dbms,$w_solic,'PJGERAL');
+  $w_cabecalho   = f($RS,'titulo').' ('.$w_chave.')';  
+  
+  // Recupera os dados da etapa
+  $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_solic,$w_chave,'REGISTRO',null);
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_cab_aux     = f($RS,'cd_ordem').' '.f($RS,'titulo');
+
+  if ($w_troca>'' && $O!='E' && $O!='V') {
+    // Se for recarga da página
+    $w_comentario           = $_REQUEST['w_comentario'];
+    $w_caminho              = $_REQUEST['w_caminho'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getEtapaComentario::getInstanceOf($dbms,$w_chave,null,null,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'risco','asc','comentario','asc');
+    } else {
+      $RS = SortArray($RS,'inclusao','desc','comentario','asc');
+    }
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado
+    $RS = db_getEtapaComentario::getInstanceOf($dbms,$w_chave, $w_chave_aux,null,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_comentario            = f($RS,'comentario');
+    $w_caminho               = f($row,'caminho');
+  }  
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>Comentários</TITLE>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if (strpos('IAEP',$O)!==false) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      Validate('w_comentario','Comentário','','1','2','2000','1','1');
+      Validate('w_caminho','Arquivo','','','5','255','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } elseif ($O=='V') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma o registro deste comentário?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    }  
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (strpos('IA',$O)!==false) {
+    BodyOpen('onLoad=\'document.Form.w_comentario.focus()\';');
+  } elseif (strpos('EV',$O)!==false) {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpenClean(null);
+  } 
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($P1!=1) {
+    ShowHTML('<div align=center><center>');
+    ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+    ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+    ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>ETAPA: '.$w_cab_aux.'</b></font></div></td></tr>');
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  }  
+  if ($O=='L') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  <b>Leia com atenção</b>:<ul>');
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('    <li>Para inserir um novo comentário, clique sobre a operação "Incluir". Em seguida anexe arquivos a ele, se desejar.');
+    ShowHTML('    <li>Enquanto o comentário não for registrado, é possível alterar seu texto (operação "AL"), anexar arquivos (operação "AR") ou mesmo excluí-lo (operação "EX"). Entretanto, nesta situação, ele só é visível para quem o incluiu e é destacado em vermelho na listagem abaixo.');
+    ShowHTML('    <li>Quando um comentário é registrado (operação "EN"), o sistema pergunta se os responsáveis pela etapa devem ser comunicados.');
+    ShowHTML('    <li>Comentários registrados não podem ser alterados ou excluídos, nem mesmo por quem os incluiu.');
+    ShowHTML('    </ul></b></font></td>');
+    ShowHTML('<tr><td>');
+    ShowHTML('  <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_solic='.$w_solic.'&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td>'.linkOrdena('Registro','phpdt_registro').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Comentário','comentario').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Responsável','nm_resumido_pessoa').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach ($RS as $row) {
+        if ($w_usuario==f($row,'sq_pessoa_inclusao') || f($row,'registrado')=='S') {
+          // Exibe os comentários registrados para todos os usuários e os não registrados apenas para quem os incluiu
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td width="1%" nowrap align="center">'.FormataDataEdicao(f($row,'phpdt_registro'),6).'</td>');
+          if (Nvl(f($row,'caminho'),'')!='') ShowHTML('        <td>'.CRLF2BR(Nvl(f($row,'comentario'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo: '.f($row,'nome_original').' ('.round(f($row,'tamanho')/1024,1).' KB',null)).')</td>');
+          else                               ShowHTML('        <td>'.CRLF2BR(Nvl(f($row,'comentario'),'---')).'</td>');
+          ShowHTML('        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa_inclusao'),$TP,f($row,'nm_resumido_pessoa')).'</td>');
+          ShowHTML('        <td width="1%" nowrap align="top" nowrap>');
+          if (f($row,'sq_pessoa_inclusao')==$w_usuario && f($row,'registrado')=='N') {
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_solic='.$w_solic.'&w_chave='.f($row,'sq_projeto_etapa').'&w_chave_aux='.f($row,'sq_etapa_comentario').'&w_sq_coment='.f($row,'sq_etapa_comentario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_solic='.$w_solic.'&w_chave='.f($row,'sq_projeto_etapa').'&w_chave_aux='.f($row,'sq_etapa_comentario').'&w_sq_coment='.f($row,'sq_etapa_comentario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=V&w_solic='.$w_solic.'&w_chave='.f($row,'sq_projeto_etapa').'&w_chave_aux='.f($row,'sq_etapa_comentario').'&w_sq_coment='.f($row,'sq_etapa_comentario').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Registrar comentário">EN</A>&nbsp');
+          } else {
+            ShowHTML('          ---');
+          }
+          ShowHTML('        </td>');
+          ShowHTML('      </tr>');
+        }
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td colspan=3><table border=0>');
+    ShowHTML('  </table>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
+    ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_dir.$w_pagina.'Grava&SG='.$SG.'&O='.$O.'">');
+    ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+    ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+    ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+    ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+    ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+    ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+    ShowHTML(MontaFiltro('POST'));
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_solic" value="'.$w_solic.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_caminho.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    if ($O=='I' || $O=='A') {
+      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
+      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    }  elseif ($O=='V') {
+      ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('        ATENÇÃO:<ul>');
+      ShowHTML('        <li>Após registrar o comentário não será possível executar nenhuma operação.');
+      ShowHTML('        <li>Verifique com cuidado o texto do comentário antes de efetivar o registro.');
+      ShowHTML('        </ul></b></font></td>');
+      ShowHTML('      </tr>');
+    }
+
+    ShowHTML('      <tr><td colspan="3"><b><u>C</u>omentário:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_comentario" class="STI" ROWS=5 cols=75 title="Comentário a ser registrado.">'.$w_comentario.'</TEXTAREA></td>');
+    if ($O=='I' || $O=='A') {
+       ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+       if (nvl($w_caminho,'')!='' && strpos('IA',$O)!==false) {
+          ShowHTML('      <tr><td><input type="checkbox" name="w_remove" class="STC" VALUE="x"> Remover o arquivo atual');
+       }
+    } elseif ($O=='V') {
+       ShowHTML('      <tr><td><input type="checkbox" name="w_mail" class="STC" VALUE="S" checked> Enviar e-mail aos responsáveis comunicando o registro deste comentário.');
+    }
+    ShowHTML('      <tr valign="top">');
+    if ($O=='E' || $O=='V'){
+      ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>'); 
+    }
+    ShowHTML('      <tr><td align="center" colspan=3><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } elseif ($O=='V') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Registrar">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_solic='.$w_solic.'&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  Estrutura_Texto_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de preparação para envio de e-mail comunicando registro de comentário
+// Finalidade: preparar os dados necessários ao envio automático de e-mail
+// Parâmetros: p_solic : número de identificação da solicitação.
+//             p_etapa : número de identificação da etapa.
+//             p_coment: número de identificação do comentário
+// -------------------------------------------------------------------------
+function ComentarioMail($p_solic,$p_etapa,$p_coment) {
+  extract($GLOBALS);
+  //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
+  $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+  if (1==1) {//(f($RS,'envia_mail_tramite')=='S') {
+    $l_solic          = $p_solic;
+    $w_destinatarios  = '';
+    $w_resultado      = '';
+    $w_html  ='<HTML>'.$crlf;
+    $w_html .= BodyOpenMail(null).$crlf;
+    $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+    $w_html .= '<tr><td align="center">'.$crlf;
+    $w_html .= '    <table width="97%" border="0">'.$crlf;
+    $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>COMUNICADO DE REGISTRO DE COMENTÁRIO</b><br><br><td></tr>'.$crlf;
+    $w_html .= '      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
+    // Recupera os dados do projeto
+    $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PJGERAL');
+    $w_nome = f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
+    $l_menu = f($RSM,'sq_menu');
+    $w_html .= $crlf.'<tr><td align="center">';
+    $w_html .= $crlf.'    <table width="99%" border="0">';
+    $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+    $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
+    $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>';
+    // Recupera os dados da etapa
+    $RST = db_getSolicEtapa::getInstanceOf($dbms,$p_solic,$p_etapa,'LISTA',null);
+    foreach($RST as $row) { $RST = $row; break; }
+    $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>Foi registrado comentário um comentário para a etapa/pacote abaixo:<UL>';
+    $w_html.=chr(13).'        <LI>'.f($RST,'cd_ordem').' '.f($RST,'titulo');
+    $w_html.=chr(13).'        <LI>Responsável: '.f($RST,'nm_resp');
+    $w_html.=chr(13).'        <LI>Unidade responsável: '.f($RST,'nm_setor').' ('.f($RST,'sg_setor').')';
+    if (nvl(f($RST,'sq_pessoa_titular'),'')!='')    $w_html.=chr(13).'        <LI>Titular: '.f($RST,'nm_tit_resp');;
+    if (nvl(f($RST,'sq_pessoa_substituto'),'')!='') $w_html.=chr(13).'        <LI>Substituto: '.f($RST,'nm_sub_resp');;
+    $w_html.=chr(13).'        </UL></td></tr>';
+
+    $w_html .= $crlf.'</tr>';
+    $w_html .= $crlf.'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO COMENTÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'.$crlf;
+    $RSC = db_getEtapaComentario::getInstanceOf($dbms,$p_etapa, $p_coment,null,null,null);
+    foreach ($RSC as $row) {$RSC = $row; break;}
+    $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+    $w_html .= '      <tr valign="top"><td colspan="2">'.$crlf;
+    $w_html .= '         <table border=0>'.$crlf;
+    $w_html .= '           <tr><td>Responsável:<td><b>'.f($RSC,'nm_pessoa').'</b>'.$crlf;
+    $w_html .= '           <tr><td>Data:<td><b>'.FormataDataEdicao(f($RSC,'phpdt_registro'),6).'</b></li>'.$crlf;
+    if (nvl(f($RSC,'nome_original'),'')!='') $w_html .= '         <tr><td>Anexo:<td><b>'.f($RSC,'nome_original').'</b></li>'.$crlf;
+    $w_html .= '           <tr><td>Comentário:<td><b>'.crlf2br(f($RSC,'comentario')).'</b></li>'.$crlf;
+    $w_html .= '         </table>'.$crlf;
+    $w_html .= '      </td></tr>'.$crlf;
+    $w_html .= '      <tr valign="top"><td colspan="2">';
+    $w_html .= '         Para acessar o sistema use o endereço: <b><a class="SS" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+    $w_html .= '      </td></tr>'.$crlf;
+    $w_html .= '    </table>'.$crlf;
+    $w_html .= '</td></tr>'.$crlf;
+    $w_html .= '</table>'.$crlf;
+    $w_html .= '</BODY>'.$crlf;
+    $w_html .= '</HTML>'.$crlf;
+
+    $w_destinatarios = f($RST,'email').'|'.f($RST,'nm_resp').'; ';
+    if (nvl(f($RST,'titular'),'')!='' && strpos($w_destinatarios,f($RST,'em_tit_resp'))===false)    $w_destinatarios .= f($RST,'em_tit_resp').'|'.f($RST,'nm_tit_resp').'; ';
+    if (nvl(f($RST,'substituto'),'')!='' && strpos($w_destinatarios,f($RST,'em_sub_resp'))===false) $w_destinatarios .= f($RST,'em_sub_resp').'|'.f($RST,'nm_sub_resp').'; ';
+
+    // Prepara os dados necessários ao envio
+    $w_assunto = $conSgSistema.' - Registro de comentário';
+    
+    // Executa o envio do e-mail
+    if ($w_destinatarios > '') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,null);
+    // Se ocorreu algum erro, avisa da impossibilidade de envio
+    if ($w_resultado > '') {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'ATENÇÃO: não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+      ScriptClose();
+    }
+  }
+} 
+
+// =========================================================================
 // Rotina de tela de exibição do recurso
 // -------------------------------------------------------------------------
 function TelaRestricao() {
@@ -731,6 +1027,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
+  $l_html .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
   $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   $l_html .= chr(13).'' .MontaOrdemEtapa($l_chave_aux).'</td>';
   if (nvl($l_nivel,0)==0) {
@@ -848,6 +1145,75 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;  
+    case 'PJETACOM':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (UPLOAD_ERR_OK==0) {
+          $w_maximo = $_REQUEST['w_upload_maximo'];
+          foreach ($_FILES as $Chv => $Field) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
+            }
+            if ($Field['size'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ScriptClose();
+                retornaFormulario('w_observacao');
+                exit();
+              } 
+              // Se já há um nome para o arquivo, mantém 
+              if ($_REQUEST['w_atual']>'') {
+                if (file_exists($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual'])) unlink($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual']);
+                if (strpos($_REQUEST['w_atual'],'.')!==false) {
+                  $w_file = substr(basename($_REQUEST['w_atual']),0,(strpos(basename($_REQUEST['w_atual']),'.') ? strpos(basename($_REQUEST['w_atual']),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                } else {
+                  $w_file = basename($_REQUEST['w_atual']);
+                }
+              } else {
+                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+                if (strpos($Field['name'],'.')!==false) {
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+                }
+              } 
+              $w_tamanho = $Field['size'];
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+            } 
+          } 
+          if ($O=='E' || (nvl($_REQUEST['w_remove'],'')!='' && nvl($_REQUEST['w_atual'],'')!='')) {
+            //Remove o arquivo existente se for exclusão ou se o usuário indicar
+            if (file_exists($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual'])) unlink($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual']);
+          }
+          dml_putEtapaComentario::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), $w_usuario,
+                $_REQUEST['w_comentario'],$_REQUEST['w_mail'],
+                $w_file,$w_tamanho,$w_tipo,$w_nome, $_REQUEST['w_remove']); 
+          if ($O=='V' && nvl($_REQUEST['w_mail'],'')!='') {
+             // Envia e-mail comunicando o registro do comentário
+             ComentarioMail($_REQUEST['w_solic'],$_REQUEST['w_chave'],$_REQUEST['w_chave_aux']);
+          }
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ScriptClose();
+        } 
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_solic='.$_REQUEST['w_solic'].'&w_chave='.$_REQUEST['w_chave'].'&w_chave_aux='.$_REQUEST['w_chave_aux'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
     default:
       exibevariaveis();
       ScriptOpen('JavaScript');
@@ -868,6 +1234,7 @@ function Main() {
     case 'PACOTE':             Pacote();           break;
     case 'VISUALRESTRICAO':    VisualRestricao();  break;
     case 'TELARESTRICAO':      TelaRestricao();    break;    
+    case 'COMENTARIOETAPA':    ComentarioEtapa();  Break;
     case 'GRAVA':              Grava();            break;
     default:
     Cabecalho();

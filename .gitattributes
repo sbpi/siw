@@ -695,6 +695,7 @@ Fontes_PHP_SIW/classes/sp/db_getEsquemaInsert.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/db_getEsquemaTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaAnexo.php -text
+Fontes_PHP_SIW/classes/sp/db_getEtapaComentario.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParent.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaDataParents.php -text
 Fontes_PHP_SIW/classes/sp/db_getEtapaMensal.php -text
@@ -1041,6 +1042,7 @@ Fontes_PHP_SIW/classes/sp/dml_putEsquemaInsert.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaScript.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEsquemaTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaArquivo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putEtapaComentario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaMensal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEventoTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFNParametro.php -text
@@ -1468,6 +1470,8 @@ Fontes_PHP_SIW/funcoes_valida.php -text
 Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
+Fontes_PHP_SIW/images/Folder/SheetImg.gif -text
+Fontes_PHP_SIW/images/icone/mail_1.GIF -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text
@@ -3054,9 +3058,11 @@ SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
+SP_Oracle92/siw/SP_PutComentarioArquivo.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
 SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle92/siw/SP_PutEsquemaInsert.prc -text
+SP_Oracle92/siw/SP_PutEtapaComentario.prc -text
 SP_Oracle92/siw/SP_PutFNParametro.prc -text
 SP_Oracle92/siw/SP_PutGPColaborador.prc -text
 SP_Oracle92/siw/SP_PutGPContrato.prc -text
@@ -3307,6 +3313,7 @@ SP_Oracle92/siw/sp_getCronograma.prc -text
 SP_Oracle92/siw/sp_getDesktop_Recurso.prc -text
 SP_Oracle92/siw/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_getDocumentoInter.prc -text
+SP_Oracle92/siw/sp_getEtapaComentario.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
 SP_Oracle92/siw/sp_getIndicador.prc -text
 SP_Oracle92/siw/sp_getIndicador_Aferidor.prc -text

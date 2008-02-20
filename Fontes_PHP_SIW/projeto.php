@@ -47,6 +47,7 @@ include_once($w_dir_volta.'classes/sp/db_getCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_getContasCronograma.php'); 
 include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getContasCronograma.php');
+include_once($w_dir_volta.'classes/sp/db_getEtapaComentario.php');
 include_once($w_dir_volta.'classes/sp/db_getContasRegistro.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRecurso.php');
 include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
@@ -2922,7 +2923,7 @@ function AtualizaEtapa() {
     ShowHTML('              <td>Pacote de trabalho:<b><br>'.retornaSimNao(f($RS_Etapa,'pacote_trabalho')).'</td>');
     ShowHTML('              <td>Peso:<b><br>'.f($RS_Etapa,'peso').'</td>');
     if ($w_pacote=='S') ShowHTML('              <td>Base geográfica:<b><br>'.f($RS_Etapa,'nm_base_geografica').'</td>');
-    ShowHTML('          <tr><td colspan="3">Etapa:<b><br>'.MontaOrdemEtapa($w_chave_aux).'. '.f($RS_Etapa,'titulo').'</td>');
+    ShowHTML('          <tr><td colspan="3">Etapa:<b><br>'.ExibeImagemSolic('ETAPA',f($RS_Etapa,'inicio_previsto'),f($RS_Etapa,'fim_previsto'),f($RS_Etapa,'inicio_real'),f($RS_Etapa,'fim_real'),null,null,null,f($RS_Etapa,'perc_conclusao')).MontaOrdemEtapa($w_chave_aux).'. '.f($RS_Etapa,'titulo').'</td>');
     ShowHTML('          <tr><td colspan="3">Descrição:<b><br>'.f($RS_Etapa,'descricao').'</td>');
     ShowHTML('          <tr valign="top">');
     ShowHTML('              <td>Previsão início:<b><br>'.FormataDataEdicao(Nvl(f($RS_Etapa,'inicio_previsto'),time())).'</td>');
@@ -3005,7 +3006,7 @@ function AtualizaEtapa() {
       } 
       ShowHTML('  </table>');
       ShowHTML('</table>');
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><br></td>'); 
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>&nbsp;</td></tr>');
     }
 
     // Exibe tarefas vinculadas
@@ -3044,7 +3045,9 @@ function AtualizaEtapa() {
         ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(  f($row,'fim')),'-').'</td>');
         ShowHTML('     <td colspan=2 nowrap>'.f($row,'nm_tramite').'</td>');
       } 
-      ShowHTML('      </td></tr></table>');
+      ShowHTML('  </table>');
+      ShowHTML('</table>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>&nbsp;</td></tr>');
     }
     // Exibe arquivos vinculados
     $RS = db_getEtapaAnexo::getInstanceOf($dbms,$w_chave_aux,null,$w_cliente);
@@ -3068,7 +3071,33 @@ function AtualizaEtapa() {
         ShowHTML('        <td>'.f($row,'tipo').'</td>');
         ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
       } 
-      ShowHTML('      </td></tr></table>');      
+      ShowHTML('  </table>');
+      ShowHTML('</table>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>&nbsp;</td></tr>');
+    }           
+    // Exibe comentários da etapa
+    $RS = db_getEtapaComentario::getInstanceOf($dbms,$w_chave_aux,null,'S',null);
+    $RS = SortArray($RS,'inclusao','desc','comentario','asc');
+    if (count($RS) > 0) {
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><table width="100%" border="1">');
+      ShowHTML('  <tr><td bgcolor="#D0D0D0"><b>'.count($RS).' comentário(s) registrado(s)</b>');
+      ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');     
+      ShowHTML('    <tr align="center" bgColor="#f0f0f0">');
+      ShowHTML('      <td><b>Registro</td>');
+      ShowHTML('      <td><b>Comentário</td>');
+      ShowHTML('      <td><b>Responsável</td>');
+      ShowHTML('    </tr>');
+      $w_cor=$conTrBgColor;
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('    <tr bgColor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td width="1%" nowrap align="center">'.nvl(FormataDataEdicao(f($row,'phpdt_registro'),6),'---').'</td>');
+        if (Nvl(f($row,'caminho'),'')!='') ShowHTML('        <td>'.CRLF2BR(Nvl(f($row,'comentario'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo: '.f($row,'nome_original').' ('.round(f($row,'tamanho')/1024,1).' KB',null)).')</td>');
+        else                               ShowHTML('        <td>'.CRLF2BR(Nvl(f($row,'comentario'),'---')).'</td>');
+        ShowHTML('        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa_inclusao'),$TP,f($row,'nm_resumido_pessoa')).'</td>');
+      } 
+      ShowHTML('  </table>');
+      ShowHTML('</table>');
     }           
     ShowHTML('      </td></tr></table>');
     ShowHTML('      </tr>');
@@ -4482,7 +4511,9 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   if (nvl($l_chave_aux,'')!='') {
     $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
-    $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
+    if($P4!=1) $l_com = '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
+
+    $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
     else       $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
     if (nvl($l_nivel,0)==0) {
@@ -4596,7 +4627,8 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
-  $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
+  if($P4!=1) $l_com = '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
+  $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
   else       $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
   if (nvl($l_nivel,0)==0) {

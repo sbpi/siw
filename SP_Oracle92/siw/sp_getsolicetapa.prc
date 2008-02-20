@@ -29,11 +29,11 @@ begin
                 b.sq_pessoa titular, b1.nome nm_tit_resp, b2.ativo st_tit_resp, b2.email em_tit_resp,
                 c.sq_pessoa substituto, c1.nome nm_sub_resp, c2.ativo st_sub_resp, c2.email em_sub_resp,
                 k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
-                d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor,
+                d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor, g.nome as nm_setor,
                 coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
                 m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) , n.sq_menu p3,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
-                e.email, e.ativo st_resp, d.nome nm_resp,
+                e.email, e.ativo st_resp, 
                 i.executor,
                 i1.sq_pessoa tit_proj, i2.sq_pessoa sub_proj
            from pj_projeto_etapa                    a
@@ -89,6 +89,7 @@ begin
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where a.sq_siw_solicitacao = p_chave
+            and (p_chave_aux  is null or (p_chave_aux  is not null and a.sq_projeto_etapa = p_chave_aux))
             and (p_chave_aux2 is null or (p_chave_aux2 is not null and a.pacote_trabalho = 'S' and a.sq_projeto_etapa in (select sq_projeto_etapa from pj_projeto_etapa connect by prior sq_projeto_etapa = sq_etapa_pai start with sq_projeto_etapa = p_chave_aux2)));
    ElsIf p_restricao = 'QUESTAO' Then
       -- Recupera todas as etapas de um projeto
@@ -226,6 +227,7 @@ begin
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
                 a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
                 a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.base_geografica, a.peso,
+                montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_pessoa titular, c.sq_pessoa substituto, 
                 case a.programada when 'S' then 'Sim' else 'Não' end nm_programada,
                 case a.cumulativa when 'S' then 'Sim' else 'Não' end nm_cumulativa,                
