@@ -29,8 +29,9 @@ begin
          select a.sq_forma_pagamento as chave, a.nome, a.sigla, a.ativo,
                 case a.ativo when 'S' Then 'Sim' Else 'Não' end  as nm_ativo
            from co_forma_pagamento   a
-          where a.cliente           = p_cliente
-            and ((p_chave is null) or (p_chave is not null and a.sq_forma_pagamento = p_chave));
+          where a.cliente        = p_cliente
+            and (p_sigla is null or (p_sigla   is not null and a.sigla   = p_sigla))
+            and (p_chave is null or (p_chave is not null and a.sq_forma_pagamento = p_chave));
    End If;
 end SP_GetFormaPagamento;
 /

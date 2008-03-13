@@ -32,7 +32,7 @@ class dml_putCLDados {
                    'p_homologacao'               =>array(tvl($p_homologacao),                              B_DATE,           32),
                    'p_data_diario'               =>array(tvl($p_data_diario),                              B_DATE,           32),
                    'p_pagina_diario'             =>array(tvl($p_pagina_diario),                            B_INTEGER,        32),
-                   'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,        32),
+                   'p_ordem'                     =>array(tvl($p_ordem),                                    B_VARCHAR,        10),
                    'p_dias'                      =>array(tvl($p_dias),                                     B_INTEGER,        32),
                    'p_dias_item'                 =>array(tvl($p_dias_item),                                B_INTEGER,        32)
                   );

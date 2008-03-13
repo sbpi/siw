@@ -163,7 +163,7 @@ begin
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave;
       End If;
-   Elsif w_modulo = 'AC' Then -- Se for o módulo de acordos
+   Elsif w_modulo = 'AC' or substr(w_opcao,1,3)='GCZ' Then -- Se for o módulo de acordos
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 

@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoMatServ.php');
 function selecaoTipoMatServ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,null,$chaveAux,null,null,null,'S',null,$restricao);
-  $RS = SortArray($RS,'classe','asc');
+  $RS = SortArray($RS,'nome_completo','asc','classe','asc');
   if (Nvl($hint,'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
@@ -14,15 +14,10 @@ function selecaoTipoMatServ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   } 
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
-    if (strpos(f($row,'nome_completo'),' - ')===false) {
-      $l_nome = f($row,'nome');
-    } else {
-      $l_nome = substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' - ')).' - '. f($row,'nome');
-    }
     if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.$l_nome);
+      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' ')).f($row,'nome'));
     } else {
-      ShowHTML('          <option value="'.f($row,'chave').'">'.$l_nome);
+      ShowHTML('          <option value="'.f($row,'chave').'">'.substr(f($row,'nome_completo'),0,strpos(f($row,'nome_completo'),' ')).f($row,'nome'));
     } 
   } 
   ShowHTML('          </select>');

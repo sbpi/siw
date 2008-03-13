@@ -25,7 +25,7 @@ class dml_putCLItemFornecedor {
                      'p_fabricante'                =>array($p_fabricante,                                    B_VARCHAR,        50),
                      'p_marca_modelo'              =>array($p_marca_modelo,                                  B_VARCHAR,        50),
                      'p_embalagem'                 =>array($p_embalagem,                                     B_VARCHAR,        50),
-                     'p_ordem'                     =>array(tvl($p_ordem),                                    B_INTEGER,         4),
+                     'p_ordem'                     =>array(tvl($p_ordem),                                    B_VARCHAR,        10),
                      'p_vencedor'                  =>array($p_vencedor,                                      B_VARCHAR,         1),
                      'p_pesquisa'                  =>array($p_pesquisa,                                      B_VARCHAR,         1)
                     );

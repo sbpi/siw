@@ -63,7 +63,7 @@ create or replace procedure SP_PutAcordoGeral
       select * from ac_acordo_parcela where sq_siw_solicitacao = p_copia order by ordem, vencimento;
 
    cursor c_outra_parte is
-      select sq_acordo_outra_parte from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia;
+      select distinct outra_parte, tipo from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia;
    
 begin
    If p_operacao = 'I' Then -- Inclusão
@@ -151,26 +151,32 @@ begin
           where a.sq_siw_solicitacao = p_copia
          );
          
-         -- Copia as outras partes existente no contrato
          for crec in c_outra_parte loop
+            -- Copia as outras partes existente no contrato de origem
             select sq_acordo_outra_parte.nextval into w_outra_parte from dual;
-            insert into ac_acordo_outra_parte
-              (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
-            (select w_outra_parte, sq_siw_solicitacao, outra_parte, tipo from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia);
+            insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
+            values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);
+            
             -- Copia os prepostos de cada outra parte
             insert into ac_acordo_preposto
               (sq_siw_solicitacao, sq_acordo_outra_parte, sq_pessoa, cargo)
-            (select a.sq_siw_solicitacao, w_outra_parte, a.sq_pessoa, a.cargo 
+            (select distinct w_chave, w_outra_parte, a.sq_pessoa, a.cargo 
                from ac_acordo_preposto               a
-                    inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte)
-              where b.sq_siw_solicitacao = p_copia);
+                    inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and
+                                                           b.outra_parte           = crec.outra_parte
+                                                          )
+              where a.sq_siw_solicitacao    = p_copia
+            );
+            
             -- Copia os representantes de cada outra parte
             insert into ac_acordo_outra_rep
               (sq_acordo_outra_parte, sq_pessoa, sq_siw_solicitacao, cargo)
-            (select w_outra_parte, a.sq_pessoa, a.sq_siw_solicitacao, a.cargo 
+            (select distinct w_outra_parte, a.sq_pessoa, w_chave, a.cargo 
                from ac_acordo_outra_rep              a
-                    inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte)
-               where b.sq_siw_solicitacao = p_copia);
+                    inner join ac_acordo_outra_parte b on (a.sq_acordo_outra_parte = b.sq_acordo_outra_parte and
+                                                           b.outra_parte           = crec.outra_parte
+                                                          )
+               where a.sq_siw_solicitacao = p_copia);
          end loop;
          
 

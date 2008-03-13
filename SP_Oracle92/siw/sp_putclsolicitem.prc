@@ -78,7 +78,7 @@ begin
          -- Verifica se o item do pedido de arp está ligado a mais de um item de licitação
          select count(a.item_licitacao) into w_existe
            from cl_solicitacao_item_vinc a
-          where a.item_pedido = p_chave_aux2;
+          where a.item_pedido = nvl(p_chave_aux2,0);
          
          -- Remove vínculo entre pedido de compra e item de licitação
          delete cl_solicitacao_item_vinc where item_licitacao = p_chave_aux;

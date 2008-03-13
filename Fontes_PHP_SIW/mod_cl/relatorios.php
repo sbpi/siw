@@ -184,9 +184,9 @@ function Rel_ItensAta() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detentor','nm_detentor_ata').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','qtd_comprada').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('CMM','quantidade').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Preço','valor_unidade').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Dif.','variacao_valor').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('% Dif.','variacao_valor').'</td>');
     } else {
       ShowHTML('          <td rowspan=2><b>Ata</td>');
       ShowHTML('          <td rowspan=2><b>Item</td>');
@@ -195,7 +195,7 @@ function Rel_ItensAta() {
       ShowHTML('          <td rowspan=2><b>Nome</td>');
       ShowHTML('          <td rowspan=2><b>Qtd</td>');
       ShowHTML('          <td rowspan=2><b>Preço</td>');
-      ShowHTML('          <td rowspan=2><b>Dif</td>');
+      ShowHTML('          <td rowspan=2><b>% Dif.</td>');
     }
     ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
     ShowHTML('        <tr align="center">');
@@ -212,7 +212,7 @@ function Rel_ItensAta() {
         // Se a validade da proposta for menor que o exigido, destaca em vermelho
         $w_percentual_acrescimo = f($row,'percentual_acrescimo');
         if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
-          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed1.'"';
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed2.'"';
         } else {
           $w_destaque = '';
         }
@@ -226,7 +226,7 @@ function Rel_ItensAta() {
         } else {
           ShowHTML('        <td '.$w_destaque.'>'.f($row,'nome').'</td>');
         }
-        ShowHTML('        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'qtd_comprada'),2).'</td>');
+        ShowHTML('        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'quantidade'),2).'</td>');
         ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
         ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>');
         if (nvl(f($row,'pesquisa_data'),'')=='') {

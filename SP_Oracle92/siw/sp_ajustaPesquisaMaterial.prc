@@ -1,4 +1,4 @@
-create or replace procedure sp_ajustaPesquisaMaterial(p_cliente in number, p_material in number, p_todos in varchar2 default null) is
+create or replace procedure sp_ajustaPesquisaMaterial(p_cliente in number, p_material in number default null, p_todos in varchar2 default null) is
   w_cont      number := 0;
   cursor c_dados(tipo in varchar2) is
     select a.sq_material, min(b.valor_unidade) as valor_menor, max(b.valor_unidade) as valor_maior, round(avg(b.valor_unidade),4) as valor_medio,

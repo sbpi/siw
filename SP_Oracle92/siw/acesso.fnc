@@ -377,7 +377,10 @@ begin
    from sg_pessoa_modulo a
   where a.sq_pessoa          = p_usuario
     and a.sq_modulo          = w_modulo
-    and a.sq_pessoa_endereco in (w_unidade_solicitante, w_unidade_beneficiario, w_unidade_resp);
+    and (a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_solicitante,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_beneficiario,0)) or
+         a.sq_pessoa_endereco = (select sq_pessoa_endereco from eo_unidade where sq_unidade = coalesce(w_unidade_resp,0))
+        );
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
  Else

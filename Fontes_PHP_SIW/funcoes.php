@@ -2,6 +2,7 @@
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
 date_default_timezone_set('America/Sao_Paulo');
+
 //$locale_info = localeconv();
 //echo "<pre>\n";
 //echo "--------------------------------------------\n";
@@ -1708,6 +1709,7 @@ function CRLF2BR($expressao) {
     if (false!==strpos($result,chr(13).chr(10))) $result = str_replace(chr(13).chr(10),'<br>',$result); 
     if (false!==strpos($result,chr(13)))         $result = str_replace(chr(13),'<br>',$result); 
     if (false!==strpos($result,chr(10)))         $result = str_replace(chr(10),'<br>',$result); 
+    //return str_replace('<br><br>','<br>',htmlentities($result)); 
     return str_replace('<br><br>','<br>',$result); 
   } 
 }
@@ -2427,7 +2429,7 @@ function Estrutura_Topo() {
 function Estrutura_CSS($l_cliente) {
   extract($GLOBALS);
   if ($l_cliente==6761) {
-    ShowHTML('<LINK  media=screen href="'.$conFileVirtual.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
+  	ShowHTML('<LINK  media=screen href="'.$conFileVirtual.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
     ShowHTML('<LINK media=print href="'.$conFileVirtual.$l_cliente.'/css/print.css" type=text/css rel=stylesheet>');
     ShowHTML('<SCRIPT language=javascript src="'.$conFileVirtual.$l_cliente.'/js/scripts.js" type=text/javascript> ');
     ShowHTML('</SCRIPT>');

@@ -26,7 +26,7 @@ begin
                                                    )
       where a1.sq_siw_solicitacao = p_solic
         and a.sq_siw_tramite      = coalesce(p_tramite,a1.sq_siw_tramite)
-        and ((a.sigla             = 'CI'  and 0  < (select acesso(p_solic, d.sq_pessoa, a.sq_siw_tramite) from dual)) or
+        and ((a.sigla             = 'CI'  and a1.cadastrador = c.sq_pessoa) or
              (a.sigla             <> 'CI' and ((a.destinatario = 'S' and a1.executor = c.sq_pessoa) or 
                                                (a.destinatario = 'N' and 15 < (select acesso(p_solic, d.sq_pessoa, a.sq_siw_tramite) from dual))
                                               )

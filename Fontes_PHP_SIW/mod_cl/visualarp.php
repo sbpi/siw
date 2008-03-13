@@ -70,14 +70,14 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
       $w_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     }
+    $w_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td>';
+    $w_html.=chr(13).'         <td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
     $w_html.=chr(13).'      <tr><td><b>Número original: </b></td>';
     $w_html.=chr(13).'        <td>'.f($RS,'numero_original').' </td></tr>';
     $w_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td>';
     $w_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
-    $w_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td>';
-    $w_html.=chr(13).'         <td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
-    $w_html.=chr(13).'          <tr><td><b>Justificativa:</b></td>';
-    $w_html.=chr(13).'            <td>'.f($RS,'justificativa').' </td></tr>';
+    $w_html.=chr(13).'      <tr><td><b>Justificativa:</b></td>';
+    $w_html.=chr(13).'         <td>'.f($RS,'justificativa').' </td></tr>';
     $w_html.=chr(13).'      <tr><td><b>Observação:</b></td>';
     $w_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $w_html.=chr(13).'          </table></td></tr>';    
@@ -107,16 +107,17 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     
     //Listagem dos itens do pedido de ARP
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
-    $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+    $RS1 = SortArray($RS1,'numero_ata','asc','ordem_ata','asc','nome','asc'); 
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
     $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $w_html.=chr(13).'        <tr align="center">';
-    $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Tipo</td>';
+    $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>ARP</td>';
+    $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
-    $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
+    $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</td>';
     $w_html.=chr(13).'        </tr>';
     $w_html.=chr(13).'        <tr align="center">';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Solicitada</td>';
@@ -124,32 +125,33 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
     $w_html.=chr(13).'        </tr>';
-    if (count($RS1)<=0) {
+    if (count($RS1)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=chr(13).'      <tr><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
-        $w_html.=chr(13).'      <tr align="center">';
-        $w_html.=chr(13).'        <td>'.f($row,'nm_tipo_material_pai').'</td>';
-        $w_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
+        $w_html.=chr(13).'      <tr valign="top">';
+        $w_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'numero_ata').'</td>';
+        $w_html.=chr(13).'        <td align="center" width="1%" nowrap>'.f($row,'ordem_ata').'</td>';
+        $w_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'codigo_interno').'</td>';
         if (!($l_P1==4 || $l_P4==1)){
           $w_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
         } else {
           $w_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
         }
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>';
+        $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($row,'quantidade'),2).'</td>';
         if($w_sg_tramite=='AT') {
-          $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),2).'</td>';
+          $w_html.=chr(13).'        <td align="right"> width="1%" nowrap'.formatNumber(f($row,'quantidade_autorizada'),2).'</td>';
         } else {
-          $w_html.=chr(13).'        <td align="center">---</td>';
+          $w_html.=chr(13).'        <td align="center" width="1%" nowrap>---</td>';
         }
-        $w_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>';
+        $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($row,'valor_unidade'),4).'</td>';
         if($w_sg_tramite=='AT') {
-          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).'</td>';
+          $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).'</td>';
         } else {
-          $w_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).'</td>';
+          $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).'</td>';
         }
         if($w_sg_tramite=='AT') {
           $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade_autorizada'));
@@ -158,13 +160,12 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         }
         $w_html.=chr(13).'        </tr>';
       }
+      $w_html.=chr(13).'      <tr align="center">';
+      $w_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
+      $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
+      $w_html.=chr(13).'      </tr>';
     } 
-    $w_html.=chr(13).'      <tr align="center">';
-    $w_html.=chr(13).'        <td align="right" colspan="6"><b>Total</b></td>';
-    $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
-    $w_html.=chr(13).'      </tr>';
     $w_html.=chr(13).'         </table></td></tr>';
-    $w_html.=chr(13).'      <tr><td colspan="2">(*) Calculado a partir do preço vencedor da ATA de ARP.';
   }
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados

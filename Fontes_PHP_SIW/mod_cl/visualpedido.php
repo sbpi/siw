@@ -110,7 +110,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     
     //Listagem dos itens do pedido de compra
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null);
-    $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+    $RS1 = SortArray($RS1,'nm_tipo_material','asc','nm_tipo_material','asc','nome','asc'); 
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
     $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -135,7 +135,7 @@ function VisualPedido($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
         $w_html.=chr(13).'      <tr align="center">';
-        $w_html.=chr(13).'        <td>'.f($row,'nm_tipo_material_pai').'</td>';
+        $w_html.=chr(13).'        <td>'.f($row,'nm_tipo_material').'</td>';
         $w_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
         if (!($l_P1==4 || $l_P4==1)){
           $w_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';

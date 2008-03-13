@@ -13,8 +13,7 @@ begin
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update pe_natureza
-         set 
-             cliente     = p_cliente,
+         set cliente     = p_cliente,
              nome        = p_nome,
              ativo       = p_ativo
        where sq_penatureza = p_chave;

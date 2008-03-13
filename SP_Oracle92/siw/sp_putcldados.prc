@@ -17,7 +17,7 @@ create or replace procedure SP_PutCLDados
     p_data_homologacao      in date     default null,
     p_data_diario_oficial   in date     default null,
     p_pagina_diario_oficial in number   default null,
-    p_ordem                 in number   default null,
+    p_ordem                 in varchar2 default null,
     p_dias                  in number   default null,
     p_dias_item             in number   default null
    ) is

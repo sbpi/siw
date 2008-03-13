@@ -1186,9 +1186,6 @@ function EspecDespesa() {
       ShowHTML('     return true; ');
       ShowHTML('  } ');
       ShowHTML('  else { return false; } ');
-    } elseif ($O=='G') {
-      Validate('w_ano_origem','Ano de origem','SELECT','1','1','10','','1');
-      Validate('w_ano_geracao','Ano de geração','SELECT','1','1','10','','1');
     } elseif($O=='E' || $O=='D' || $O=='T'){
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');    
     }
@@ -1205,8 +1202,6 @@ function EspecDespesa() {
     BodyOpen('onLoad="document.Form.w_chave_pai.focus();"');
   } elseif ($O=='H') {
     BodyOpen('onLoad="document.Form.w_heranca.focus();"');
-  } elseif ($O=='G') {
-    BodyOpen('onLoad="document.Form.w_heranca.focus();"');
   } elseif ($O=='L') {
     BodyOpen('onLoad="this.focus();"');
   } else {
@@ -1221,7 +1216,6 @@ function EspecDespesa() {
     ShowHTML('      <tr valing="top"><td>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="95%">');
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('              <a accesskey="G" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=G&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>G</u>erar ano</a>&nbsp;');
     ShowHTML('          <td align="right"><b>Exercício: '.$_SESSION['ANO'].'</b>');
     ShowHTML('</table>');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
@@ -1358,7 +1352,7 @@ function EspecDespesa() {
       // Se não achou registros
       ShowHTML('Não foram encontrados registros.');
     } 
-  } elseif ($O!='H' && $O!='G') {
+  } elseif ($O!='H') {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     if ($O=='I') {
@@ -1429,27 +1423,6 @@ function EspecDespesa() {
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Herdar">');
     ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
-    ShowHTML('          </td>');
-    ShowHTML('      </tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>');
-  } elseif ($O=='G') {
-		AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_tipo_acordo" value="'.$w_sq_tipo_acordo.'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td width="100%" align="center">');
-    ShowHTML('    <table align="center" border="0" width="100%" >');
-    ShowHTML('      <tr>');
-    SelecaoAno('<U>A</U>no de origem:','A',null,$w_ano,null,'w_ano_origem','ESPEC2',null);
-    SelecaoAno('<U>A</U>no da geração:','A',null,$w_ano,null,'w_ano_geracao','ESPEC',null);
-    ShowHTML('      </tr>');
-    ShowHTML('      <tr><td align="center" colspan="2">&nbsp;');
-    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gerar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

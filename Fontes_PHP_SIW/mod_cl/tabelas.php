@@ -215,7 +215,7 @@ function TipoMatServ() {
       $w_contOut = $w_contOut+1;
       if (f($row,'Filho')>0) {
         ShowHTML('<A HREF=#"'.f($row,'chave').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'nome').'');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'sigla').' - '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_class='hl'; else $w_class='lh';
         ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
         if (f($row,'ativo')=='S') {
@@ -233,7 +233,7 @@ function TipoMatServ() {
           if (f($row1,'Filho')>0) {
             $w_contOut=$w_contOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'chave').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'nome').'');
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'sigla').' - '.f($row1,'nome').'');
             if (f($row1,'ativo')=='S') $w_class='hl'; else $w_class='lh';
             ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
             if (f($row1,'ativo')=='S') {
@@ -251,7 +251,7 @@ function TipoMatServ() {
               if (f($row2,'Filho')>0) {
                 $w_contOut = $w_contOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'chave').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'nome').'');
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'sigla').' - '.f($row2,'nome').'');
                 if (f($row2,'ativo')=='S') $w_class='hl'; else $w_class='lh';
                 ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
                 if (f($row2,'ativo')=='S') {
@@ -267,7 +267,7 @@ function TipoMatServ() {
                 foreach($RS3 as $row3) {
                   $w_nome .= ' - '.f($row3,'nome');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
-                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'nome').' ('.f($row3,'qt_materiais').')');
+                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'sigla').' - '.f($row3,'nome').' ('.f($row3,'qt_materiais').')');
                   if (f($row3,'ativo')=='S') $w_class='hl'; else $w_class='lh';
                   ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
                   if (f($row3,'ativo')=='S') {
@@ -283,7 +283,7 @@ function TipoMatServ() {
                 ShowHTML('   </div>');
               } else {
                 $w_Imagem=$w_ImagemPadrao;
-                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'nome').' ('.f($row2,'qt_materiais').')');
+                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'sigla').' - '.f($row2,'nome').' ('.f($row2,'qt_materiais').')');
                 if (f($row2,'ativo')=='S') $w_class='hl'; else $w_class='lh';
                 ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
                 if (f($row2,'ativo')=='S') {
@@ -300,7 +300,7 @@ function TipoMatServ() {
             ShowHTML('   </div>');
           } else {
             $w_Imagem=$w_ImagemPadrao;
-            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'nome').' ('.f($row1,'qt_materiais').')');
+            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'sigla').' - '.f($row1,'nome').' ('.f($row1,'qt_materiais').')');
             if (f($row1,'ativo')=='S') $w_class='hl'; else $w_class='lh';
             ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
             if (f($row1,'ativo')=='S') {
@@ -317,7 +317,7 @@ function TipoMatServ() {
         ShowHTML('   </div>');
       } else {
         $w_Imagem=$w_ImagemPadrao;
-        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').' ('.f($row,'qt_materiais').')');
+        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'sigla').' - '.f($row,'nome').' ('.f($row,'qt_materiais').')');
         if (f($row,'ativo')=='S') $w_class='hl'; else $w_class='lh';
         ShowHTML('       <A class="'.$w_class.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste tipo">AL</A>&nbsp');
         if (f($row,'ativo')=='S') {

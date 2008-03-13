@@ -38,6 +38,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtpRec.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
+include_once($w_dir_volta.'classes/sp/db_getUserMail.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaOrder.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData_IS.php');

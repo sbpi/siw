@@ -407,9 +407,7 @@ begin
                   (p_restricao = 'GRPRVINC'    and b.sq_solic_pai is not null)
                  )
                 );
-   Elsif substr(p_restricao,1,3) = 'GCR' or substr(p_restricao,1,3) = 'GCD' or 
-         substr(p_restricao,1,3) = 'GCP' or substr(p_restricao,1,3) = 'GCA' or
-         substr(p_restricao,1,3) = 'GCB' or substr(p_restricao,1,3) = 'GCC' Then
+   Elsif substr(p_restricao,1,2) = 'GC' Then
       -- Recupera os acordos que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

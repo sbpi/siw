@@ -102,7 +102,7 @@ class Ora9ConnectionManager extends ConnectionManager {
 //echo '<BR>ORACLE_BASE ==>'.getenv("ORACLE_BASE");
 //echo '<BR>ORACLE_SID ==>'.getenv("ORACLE_SID");
 //echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");
-      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName))) { 
+      if(!($this->conHandle = oci_new_connect($this->userName, $this->passWord, $this->hostName,'WE8MSWIN1252'))) { 
          error_reporting($l_error_reporting); TrataErro($sql, oci_error(), $params, __FILE__, __LINE__, __CLASS__); 
       } else {
         error_reporting($l_error_reporting); 

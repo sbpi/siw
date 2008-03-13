@@ -68,7 +68,8 @@ begin
          inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,         valor_excedente,         valor_reajuste)
       values
         (sq_acordo_parcela.nextval, p_chave,            p_ordem,            sysdate,               p_data,                  p_observacao,      w_valor,
-         p_per_ini,                 p_per_fim,          p_aditivo,          coalesce(w_inicial,0), coalesce(w_excedente,0), coalesce(w_reajuste,0));
+         p_per_ini,                 p_per_fim,          p_aditivo,          coalesce(w_inicial, case when p_aditivo is null then w_valor else 0 end), 
+         coalesce(w_excedente,0), coalesce(w_reajuste,0));
    Elsif p_operacao = 'A' Then -- Alteração
       -- O valor de uma parcela de aditivo depende da soma do valor inicial mais reajuste mais excedentes
       If p_aditivo is not null Then
@@ -124,6 +125,9 @@ begin
          w_total_i  := 0;
          w_total_e  := 0;
          w_total_r  := 0;
+
+         -- Se uma parcela, usa os valores totais do aditivo
+         If p_tipo_geracao = 11 or p_tipo_geracao = 12 Then w_inicial := w_total; End If;
       Else
          -- Recupera os dados do aditivo
          select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
@@ -199,14 +203,12 @@ begin
                w_dias_1 := to_date(w_ultimo||'/'||to_char(w_inicio,'mm/yyyy'),'dd/mm/yyyy') - w_inicio + 1 + (30-w_ultimo);
                If w_dias_1 <= 0 Then w_dias_1 := 1; End If;
                w_valor_1     := round((w_dias_1/30) * w_valor,2);
-               w_inicial_1   := round((w_dias_1/30) * w_inicial,2);
                w_excedente_1 := round((w_dias_1/30) * w_excedente,2);
                w_reajuste_1  := round((w_dias_1/30) * w_reajuste,2);
                
 
                If (w_meses - 2) < 1 Then
                   w_valor_n     := (w_total   - w_valor_1);
-                  w_inicial_n   := (w_total_i - w_inicial_1);
                   w_excedente_n := (w_total_e - w_excedente_1);
                   w_reajuste_n  := (w_total_r - w_reajuste_1);
                Else
@@ -214,7 +216,6 @@ begin
                   w_dias_n := w_fim - to_date('01/'||to_char(w_fim,'mm/yyyy'),'dd/mm/yyyy') + 1;
                   If w_dias_n > 30 Then w_dias_n := 30; End If;
                   w_valor_n     := round((w_dias_n/30) * w_valor,2);
-                  w_inicial_n   := round((w_dias_n/30) * w_inicial,2);
                   w_excedente_n := round((w_dias_n/30) * w_excedente,2);
                   w_reajuste_n  := round((w_dias_n/30) * w_reajuste,2);
 
@@ -225,13 +226,17 @@ begin
                End If;
             End If;
          Elsif p_valor_parcela = 'P' Then
-            w_valor_1 := p_valor_diferente;
-            w_valor   := trunc((w_total-w_valor_1) / (w_meses_parc-1),2);
-            w_valor_n := w_total - (w_valor_1 + (w_valor * (w_meses_parc - 2)));
+            w_valor_1    := p_valor_diferente;
+            w_valor      := trunc((w_total-w_valor_1) / (w_meses_parc-1),2);
+            w_valor_n    := w_total - (w_valor_1 + (w_valor * (w_meses_parc - 2)));
+            w_inicial_1  := w_valor_1;
+            w_inicial_n  := w_valor_n;
          Else
-            w_valor_n := p_valor_diferente;
-            w_valor   := trunc((w_total-w_valor_n) / (w_meses_parc-1),2);
-            w_valor_1 := w_total - (w_valor_n + (w_valor * (w_meses_parc - 2)));
+            w_valor_n    := p_valor_diferente;
+            w_valor      := trunc((w_total-w_valor_n) / (w_meses_parc-1),2);
+            w_valor_1    := w_total - (w_valor_n + (w_valor * (w_meses_parc - 2)));
+            w_inicial_1  := w_valor_1;
+            w_inicial_n  := w_valor_n;
          End If;
           
          for w_cont in 1 .. w_meses_parc loop
@@ -263,8 +268,12 @@ begin
                If(w_inicial_1=0) Then
                   w_valor_1 := round(coalesce(w_valor_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
                Else
-                  w_valor_1 :=  round(coalesce(w_inicial_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
+                  w_valor_1 :=  round(coalesce(w_inicial_1,p_valor_diferente),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
                End If;
+
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial_1 := w_valor_1; End If;
+
                -- insere a primeira parcela
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,              vencimento,             observacao,    valor, 
@@ -289,6 +298,9 @@ begin
                Else
                   w_valor_n :=  round(coalesce(w_inicial_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
                End If;
+
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial_n := w_valor_n; End If;
 
                -- Insere a última parcela
                insert into ac_acordo_parcela
@@ -320,6 +332,9 @@ begin
                   w_valor :=  round(coalesce(w_inicial,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
                End If;
                
+               -- Se parcela do contrato original, valor inicial igual ao valor da parcela
+               If p_aditivo is null Then w_inicial := w_valor; End If;
+
                insert into ac_acordo_parcela
                  (sq_acordo_parcela,         sq_siw_solicitacao, ordem,              emissao,            vencimento,           observacao,    valor, 
                   inicio,                    fim,                sq_acordo_aditivo,  valor_inicial,      valor_excedente,      valor_reajuste)

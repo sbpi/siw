@@ -123,15 +123,14 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   if ($O=='L') {
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null,'S',$p_pais,$p_regiao,$p_uf,$p_cidade);
+    $RS_Benef = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$p_nome,null,null,null,'S',$p_pais,$p_regiao,$p_uf,$p_cidade);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'nome_indice','desc');
+      $RS_Benef = SortArray($RS_Benef,$lista[0],$lista[1],'nome_indice','desc');
     } else {
-      $RS = SortArray($RS,'nome_indice','asc');
+      $RS_Benef = SortArray($RS_Benef,'nome_indice','asc');
     }
   }
-
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -175,7 +174,7 @@ function Inicial() {
   } else {
     ShowHTML('                         <a accesskey="F" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
   } 
-  ShowHTML('    <td align="right"><b>Registros: '.count($RS));
+  ShowHTML('    <td align="right"><b>Registros: '.count($RS_Benef));
   ShowHTML('<tr><td align="center" colspan=3>');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -185,10 +184,11 @@ function Inicial() {
   ShowHTML('          <td><b>'.LinkOrdena('CPF/CNPJ','identificador_primario').'</td>');
   ShowHTML('          <td><b>Operações</td>');
   ShowHTML('        </tr>');
-  if (count($RS)<=0) {
+  if (count($RS_Benef)<=0) {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
   } else {
-    $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+    if (count($RS_Benef)<$P4) $P3=1;
+    $RS1 = array_slice($RS_Benef, (($P3-1)*$P4), $P4);
     foreach($RS1 as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -214,9 +214,9 @@ function Inicial() {
   ShowHTML('</tr>');
   ShowHTML('<tr><td align="center" colspan=3>');
   if ($R>'') {
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
   } else {
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS_Benef)/$P4),$P3,$P4,count($RS_Benef));
   } 
   ShowHTML('</tr>');  
   } elseif ($O=='P') {
@@ -350,6 +350,7 @@ function Geral() {
     } 
   } elseif ($O=='P') {
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
+    $RS = SortArray($RS,'nome_indice','asc');
   }
   Cabecalho();
   ShowHTML('<HEAD>');

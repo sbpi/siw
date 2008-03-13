@@ -26,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAreas.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
+include_once($w_dir_volta.'classes/sp/db_getUserMail.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');

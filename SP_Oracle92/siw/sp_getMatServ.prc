@@ -38,12 +38,24 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc
+                e.nome as nm_cc,
+                g.valor_unit_est as preco_ata, g.codigo_interno as numero_ata, g.fim as validade_ata
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
                 inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
+                left      join (select x.sq_siw_solicitacao, x.codigo_interno, x.inicio, x.fim, z.valor_unit_est, z.sq_material
+                                  from siw_solicitacao                  x
+                                       inner   join siw_menu            y on (x.sq_menu            = y.sq_menu and y.sigla = 'GCZCAD')
+                                       inner   join cl_solicitacao_item z on (x.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                 where z.valor_unit_est = (select min(m.valor_unit_est)
+                                                             from siw_solicitacao                  k
+                                                                  inner   join siw_menu            l on (k.sq_menu            = l.sq_menu and l.sigla = 'GCZCAD')
+                                                                  inner   join cl_solicitacao_item m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao)
+                                                            where m.sq_material = z.sq_material
+                                                          )
+                               )                   g  on (a.sq_material         = g.sq_material)
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
@@ -87,15 +99,17 @@ begin
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo));            
-   ElsIf p_restricao = 'EXISTE' Then
+   ElsIf p_restricao = 'EXISTE' or p_restricao = 'EXISTECOD' Then
       -- Verifica se o nome ou a codigo do material ou serviço já foi inserida
       open p_result for 
          select count(a.sq_material) as existe
            from cl_material  a
           where a.cliente        = p_cliente
-            and sq_material      <> coalesce(p_chave,0)
-            and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
-            and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'));
+            and (p_restricao     <> 'EXISTE' or
+                 (p_restricao    = 'EXISTE' and sq_material  <> coalesce(p_chave,0))
+                )
+            and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno = p_codigo))
+            and (p_nome          is null or (p_nome          is not null and acentos(a.nome)  = acentos(p_nome)));
    ElsIf p_restricao = 'PESQMAT' Then
       -- Verifica se o nome ou a codigo do material ou serviço já foi inserida
       open p_result for 
@@ -119,18 +133,21 @@ begin
                 e.nome as nm_cc,
                 f.ano_corrente, f.dias_validade_pesquisa, f.dias_aviso_pesquisa, f.percentual_acrescimo,
                 g.sq_item_fornecedor, g.sq_solicitacao_item, g.fornecedor, g.valor_unidade, g.valor_item, g.ordem,
-                g.dias_validade_proposta, g.inicio, g.fim, 
+                g.dias_validade_proposta, g.inicio, g.fim, g.origem,
                 to_char(g.inicio,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inicio,
                 to_char(g.fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
                 g.fim-f.dias_aviso_pesquisa as aviso,
                 g.fabricante, g.marca_modelo, g.embalagem,
+                case g.origem when 'SA' then 'Site ARP' when 'SG' then 'Site governo' when 'SF' then 'Site fornecedor' else 'Proposta fornecedor' end as nm_origem,
                 h.nome as nm_fornecedor, h.nome_resumido as nm_fornecedor_res
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
                 inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
-                inner     join cl_item_fornecedor  g  on (a.sq_material         = g.sq_material)
+                inner     join cl_item_fornecedor  g  on (a.sq_material         = g.sq_material and
+                                                          g.pesquisa            = 'S'
+                                                         )
                   inner   join co_pessoa           h  on (g.fornecedor          = h.sq_pessoa)
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
@@ -221,26 +238,25 @@ begin
                 e.nome as nm_cc,
                 f.percentual_acrescimo,
                 x.ordem as nr_item_ata, 
-                x.quantidade_autorizada as qtd_comprada,
-                y.numero_ata,
+                x.quantidade, x.quantidade_autorizada as qtd_comprada,
+                w.codigo_interno as numero_ata,
                 x1.valor_unidade,
                 x1.valor_item,
+                x1.origem,
+                case x1.origem when 'SA' then 'Site ARP' when 'SG' then 'Site Governo' when 'SF' then 'Site fornecedor' else 'Proposta fornecedor' end as nm_origem,
                 x2.sq_pessoa as sq_detentor_ata, x2.nome_resumido as nm_detentor_ata, 
-                abs((1 - (a.pesquisa_preco_medio/x1.valor_unidade)) * 100) as variacao_valor
+                ((1 - (a.pesquisa_preco_medio/x1.valor_unidade)) * 100) as variacao_valor
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
                 inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
                 inner     join cl_solicitacao_item x  on (a.sq_material         = x.sq_material)
-                  inner   join cl_item_fornecedor  x1 on (x.sq_solicitacao_item = x1.sq_solicitacao_item and 
-                                                          x1.vencedor           = 'S'
-                                                         )
+                  inner   join cl_item_fornecedor  x1 on (x.sq_solicitacao_item = x1.sq_solicitacao_item)
                     inner join co_pessoa           x2 on (x1.fornecedor         = x2.sq_pessoa)
-                  inner   join cl_solicitacao      y  on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
                   inner   join siw_solicitacao     w  on (x.sq_siw_solicitacao  = w.sq_siw_solicitacao)
-                    inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite and
-                                                          'AT'                  = z.sigla)
+                    inner join siw_menu            w1 on (w.sq_menu             = w1.sq_menu and w1.sigla = 'GCZCAD')
+                    inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite)
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
@@ -249,7 +265,6 @@ begin
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo))
-            and (p_arp           is null or (p_arp           is not null and y.arp              = p_arp))
             and ((p_aviso        = 'S' and coalesce(a.pesquisa_validade-f.dias_aviso_pesquisa,sysdate-1)<sysdate and a.pesquisa_validade>=sysdate-1) or
                  (p_invalida     = 'S' and coalesce(a.pesquisa_validade,sysdate-1)<sysdate-1) or
                  (p_valida       = 'S' and coalesce(a.pesquisa_validade,sysdate-1)>=sysdate-1 and coalesce(a.pesquisa_validade-f.dias_aviso_pesquisa,sysdate-1)>sysdate) or

@@ -1190,7 +1190,7 @@ function Grava() {
           } 
           if ($O=='E' || (nvl($_REQUEST['w_remove'],'')!='' && nvl($_REQUEST['w_atual'],'')!='')) {
             //Remove o arquivo existente se for exclusão ou se o usuário indicar
-            if (file_exists($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual'])) unlink($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual']);
+            if (file_exists($conFilePhysical.$w_cliente.'/'.nvl($_REQUEST['w_atual'],'nulo'))) unlink($conFilePhysical.$w_cliente.'/'.$_REQUEST['w_atual']);
           }
           dml_putEtapaComentario::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''), $w_usuario,
                 $_REQUEST['w_comentario'],$_REQUEST['w_mail'],

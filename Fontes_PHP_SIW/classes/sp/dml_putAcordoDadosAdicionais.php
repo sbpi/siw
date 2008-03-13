@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putAcordoDadosAdicionais {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_numero_certame, $p_numero_ata, $p_tipo_reajuste, $p_limite_variacao, $p_indice_base, $p_sq_eoindicador, 
                           $p_sq_lcfonte_recurso, $p_espec_despesa, $p_sq_lcmodalidade, $p_numero_empenho, $p_numero_processo, $p_data_assinatura, $p_data_publicacao,
-                          $p_financeiro_unico) {
+                          $p_financeiro_unico, $p_pagina_diario) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDODADOSADICIONAIS';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -24,12 +24,13 @@ class dml_putAcordoDadosAdicionais {
                    'p_sq_eoindicador'            =>array(tvl($p_sq_eoindicador),                           B_INTEGER,        32),                   
                    'p_sq_lcfonte_recurso'        =>array(tvl($p_sq_lcfonte_recurso),                       B_INTEGER,        32),
                    'p_espec_despesa'             =>array(tvl($p_espec_despesa),                            B_INTEGER,        32),
-                   'p_sq_lcmodalidade'           =>array(tvl($p_sq_lcmodalidade),                          B_INTEGER,        32),                   
+                   'p_sq_lcmodalidade'           =>array(tvl($p_sq_lcmodalidade),                          B_INTEGER,        32),
                    'p_numero_empenho'            =>array(tvl($p_numero_empenho),                           B_VARCHAR,        30),
                    'p_numero_processo'           =>array(tvl($p_numero_processo),                          B_VARCHAR,        30),
                    'p_data_assinatura'           =>array(tvl($p_data_assinatura),                          B_DATE,           32),
                    'p_data_publicacao'           =>array(tvl($p_data_publicacao),                          B_DATE,           32),
-                   'p_financeiro_unico'          =>array($p_financeiro_unico,                              B_VARCHAR,         1)
+                   'p_financeiro_unico'          =>array($p_financeiro_unico,                              B_VARCHAR,         1),
+                   'p_pagina_diario'             =>array(tvl($p_pagina_diario),                            B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

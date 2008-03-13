@@ -756,6 +756,7 @@ Fontes_PHP_SIW/classes/sp/db_getLinkSubMenu.php -text
 Fontes_PHP_SIW/classes/sp/db_getLocalList.php -text
 Fontes_PHP_SIW/classes/sp/db_getMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getMarcado.php -text
+Fontes_PHP_SIW/classes/sp/db_getMatImp.php -text
 Fontes_PHP_SIW/classes/sp/db_getMatServ.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuCode.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuData.php -text
@@ -984,6 +985,7 @@ Fontes_PHP_SIW/classes/sp/dml_putAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaEtapa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaMeta_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putBaseLine.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCLARPItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLDados.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCLGeral.php -text
@@ -1346,6 +1348,7 @@ Fontes_PHP_SIW/funcoes/selecaoEvento.php -text
 Fontes_PHP_SIW/funcoes/selecaoFase.php -text
 Fontes_PHP_SIW/funcoes/selecaoFaseAtual.php -text
 Fontes_PHP_SIW/funcoes/selecaoFaseCheck.php -text
+Fontes_PHP_SIW/funcoes/selecaoFontePesquisa.php -text
 Fontes_PHP_SIW/funcoes/selecaoFormaPagamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoFormacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoFormato.php -text
@@ -3562,6 +3565,7 @@ SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
+SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text
 SP_Oracle92/siw/sp_putContasRegistro.prc -text
 SP_Oracle92/siw/sp_putConvDadosBancario.prc -text
@@ -3915,6 +3919,8 @@ SP_Oracle92/siw/tt_ramal_usuario.tab -text
 SP_Oracle92/siw/tt_tronco.tab -text
 SP_Oracle92/siw/tt_usuario.tab -text
 SP_Oracle92/siw/validacnpjcpf.fnc -text
+SP_Oracle92/siw/vw_ata_rp.sql -text
+SP_Oracle92/siw/vw_pesquisa_mercado.sql -text
 SP_Oracle92/siw/vw_ttresumo_usu.vw -text
 SP_Oracle92/siw_is/SP_GetIsUnidadeLimite_IS.prc -text
 SP_Oracle92/siw_is/SP_PutIsUnidadeLimite_IS.prc -text

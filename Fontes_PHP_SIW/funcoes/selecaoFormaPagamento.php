@@ -14,7 +14,7 @@ function selecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,
   }
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
-    if (nvl(f($row,'sq_forma_pagamento'),0)==nvl($chave,0)) {
+    if (nvl(f($row,'sq_forma_pagamento'),0)==nvl($chave,0) || count($RS)==1) {
        ShowHTML('          <option value="'.f($row,'sq_forma_pagamento').'" SELECTED>'.f($row,'nome'));
     } else {
        ShowHTML('          <option value="'.f($row,'sq_forma_pagamento').'">'.f($row,'nome'));

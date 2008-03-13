@@ -99,7 +99,6 @@ function Frames() {
 // -------------------------------------------------------------------------
 function ExibeDocs() {
   extract($GLOBALS);
-
   // Inclusão do arquivo da classe
   include_once("classes/menu/xPandMenu.php");
 

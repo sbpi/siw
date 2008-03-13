@@ -25,14 +25,11 @@ begin
       insert into sg_perfil_menu (sq_tipo_vinculo, sq_menu, sq_pessoa_endereco)
         (select distinct p_Perfil, a.sq_menu, p_Endereco
            from siw_menu a
+         where 0 = (select count(*) from sg_perfil_menu    x where x.sq_tipo_vinculo = p_perfil and x.sq_menu = a.sq_menu and x.sq_pessoa_endereco = p_endereco)
+           and 0 < (select count(*) from siw_menu_endereco x where x.sq_menu = a.sq_menu and x.sq_pessoa_endereco = p_endereco)
          connect by prior a.sq_menu_pai = a.sq_menu 
          start with a.sq_menu           = p_Menu
-         MINUS
-         select distinct sq_tipo_vinculo, sq_menu, sq_pessoa_endereco
-           from sg_perfil_menu
-          where sq_tipo_vinculo    = p_perfil
-            and sq_pessoa_endereco = p_endereco
-         );
+        );
    Elsif p_operacao = 'E' Then
       -- Apaga as permissões de opções de sub-menu, se existirem
       for crec in c_filhos loop

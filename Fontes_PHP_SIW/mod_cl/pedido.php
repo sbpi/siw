@@ -98,7 +98,6 @@ $w_pagina       = 'pedido.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
 $w_troca        = $_REQUEST['w_troca'];
-
 if (strpos($SG,'ENVIO')!==false) {
     $O='V';
 } elseif ($O=='') {
@@ -944,13 +943,13 @@ function Itens() {
     $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,'COMPRA');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material','asc','nome','asc');
     } else {
-      $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+      $RS = SortArray($RS,'nm_tipo_material','asc','nome','asc'); 
     }
   } elseif (strpos('L',$O)!==false) {
     $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
-    $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+    $RS = SortArray($RS,'nm_tipo_material','asc','nome','asc'); 
   } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -1096,7 +1095,7 @@ function Itens() {
     ShowHTML('<tr><td align="center" colspan=3>');  
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Qtd','quantidade').'</td>');
@@ -1110,7 +1109,7 @@ function Itens() {
       foreach($RS as $row){ 
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'nm_tipo_material_pai').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');
@@ -1140,7 +1139,7 @@ function Itens() {
     ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
     ShowHTML('            <td NOWRAP><font size="2"><U ID="INICIO" CLASS="hl" onClick="javascript:MarcaTodos();" TITLE="Marca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageActivecolor.gif" BORDER="1" width="15" height="15"></U>&nbsp;');
     ShowHTML('                                      <U CLASS="hl" onClick="javascript:DesmarcaTodos();" TITLE="Desmarca todos os itens da relação"><IMG SRC="images/NavButton/BookmarkAndPageInactive.gif" BORDER="1" width="15" height="15"></U>');
-    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
@@ -1158,7 +1157,7 @@ function Itens() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_material[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');        
-        ShowHTML('        <td>'.f($row,'nm_tipo_material_pai').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');        
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
@@ -1829,7 +1828,7 @@ function Concluir() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="100%" border="0">');
   $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
-  $RS1 = SortArray($RS1,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
+  $RS1 = SortArray($RS1,'nm_tipo_material','asc','nome','asc'); 
   ShowHTML('<tr><td colspan="4" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
   ShowHTML('  Orientação:<ul>');
   ShowHTML('  <li>O campo quantidade, quando solicitado, deve ser informado com duas casas decimais. Ex: se quantidade for "25", informe "25,00", digitando apenas os números.');
@@ -1853,7 +1852,7 @@ function Concluir() {
   foreach($RS1 as $row){ 
     $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-    ShowHTML('        <td>'.f($row,'nm_tipo_material_pai').'</td>');
+    ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
     ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
     ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
     ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');

@@ -15,9 +15,9 @@ function selecaoUnidadeMedida($label,$accesskey,$hint,$chave,$chaveAux,$campo,$r
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome'));
+      ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'sigla').' - '.f($row,'nome'));
     } else {
-      ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome'));
+      ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'sigla').' - '.f($row,'nome'));
     } 
   } 
   ShowHTML('          </select>');

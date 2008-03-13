@@ -74,7 +74,7 @@ begin
                 inner        join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner        join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
                   inner      join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
-                  left     join pe_plano                    b3 on (b.sq_plano            = b3.sq_plano)
+                  left       join pe_plano                  b3 on (b.sq_plano            = b3.sq_plano)
                   left       join eo_unidade                b5 on (b.sq_unidade          = b5.sq_unidade)
                   inner      join gd_demanda                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
                     left     join gd_demanda_tipo           d1 on (d.sq_demanda_tipo     = d1.sq_demanda_tipo)
@@ -304,7 +304,7 @@ begin
                 d.numero_certame,     d.numero_ata,                  d.tipo_reajuste,
                 d.indice_base,        d.sq_eoindicador,              d.limite_variacao,
                 d.sq_lcfonte_recurso, d.sq_especificacao_despesa,    d.financeiro_unico,
-                d.prestacao_contas,
+                d.prestacao_contas,   d.pagina_diario_oficial,
                 case d.prestacao_contas when 'S' then 'Sim' else 'Não' end as nm_prestacao_contas,
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,

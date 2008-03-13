@@ -82,7 +82,7 @@ begin
      -- Recupera apenas os registros sem filhos
       open p_result for
          select a.sq_tipo_material as chave, a.sq_tipo_pai, a.nome, a.sigla, a.codigo_externo, a.classe,
-                montanometipomaterial(a.sq_tipo_material) as nome_completo,
+                montanometipomaterial(a.sq_tipo_material, 'inverso') as nome_completo,
                 case a.classe
                      when 1 then 'Medicamento'
                      when 3 then 'Consumo'
@@ -97,33 +97,48 @@ begin
           where a.cliente     = p_cliente
             and b.sq_tipo_pai is null
             and (p_chave      is null or (p_chave     is not null and a.sq_tipo_material = p_chave))
-            and (p_classe     is null or (p_classe is not null and a.classe = p_classe))
-            and (p_nome       is null or (p_nome      is not null and a.nome = p_nome))
-            and (p_gestora    is null or (p_gestora   is not null and a.unidade_gestora = p_gestora))
-            and (p_sigla      is null or (p_sigla     is not null and a.sigla = upper(p_sigla)))
-            and (p_ativo      is null or (p_ativo     is not null and a.ativo = p_ativo))
-         connect by prior a.sq_tipo_pai = a.sq_tipo_material
-         order by 5;
+            and (p_classe     is null or (p_classe    is not null and a.classe           = p_classe))
+            and (p_nome       is null or (p_nome      is not null and a.nome             = p_nome))
+            and (p_gestora    is null or (p_gestora   is not null and a.unidade_gestora  = p_gestora))
+            and (p_sigla      is null or (p_sigla     is not null and a.sigla            = upper(p_sigla)))
+            and (p_ativo      is null or (p_ativo     is not null and ((a.ativo          = 'S' and 0 = (select sum(case ativo when 'S' then 0 else 1 end)
+                                                                                                          from cl_tipo_material
+                                                                                                        connect by prior sq_tipo_pai = sq_tipo_material
+                                                                                                        start with sq_tipo_material = a.sq_tipo_material
+                                                                                                       )
+                                                                       ) or
+                                                                       (a.ativo          = 'N' and 0 < (select sum(case ativo when 'S' then 0 else 1 end)
+                                                                                                          from cl_tipo_material
+                                                                                                        connect by prior sq_tipo_pai = sq_tipo_material
+                                                                                                        start with sq_tipo_material = a.sq_tipo_material
+                                                                                                       )
+                                                                       )
+                                                                      )
+                                         )
+                )
+         order by 7;
    Elsif p_restricao = 'EXISTE' Then
       -- Verifica se há outro registro com o mesmo nome ou sigla
       open p_result for 
-         select a.sq_tipo_material as chave, a.cliente, a.nome, 
-                a.sigla, a.descricao, a.ativo, a.codigo_externo, a.classe,
-                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
-                case a.classe
+         select b.sq_tipo_material as chave, b.cliente, b.nome, 
+                b.sigla, b.descricao, b.ativo, b.codigo_externo, b.classe,
+                case b.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                case b.classe
                      when 1 then 'Medicamento'
                      when 3 then 'Consumo'
                      when 4 then 'Permanente'
                      when 5 then 'Serviço'
                 end as nm_classe
-           from cl_tipo_material a
+           from cl_tipo_material            a
+                inner join cl_tipo_material b on (a.sq_tipo_pai = b.sq_tipo_pai)
           where a.cliente            = p_cliente
-            and a.sq_tipo_material   <> coalesce(p_chave,0)
-            and (p_nome              is null or (p_nome    is not null and acentos(a.nome) = acentos(p_nome)))
-            and (p_gestora           is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
-            and (p_classe            is null or (p_classe is not null and a.classe = p_classe))
-            and (p_sigla             is null or (p_sigla   is not null and acentos(a.sigla) = acentos(p_sigla)))
-            and (p_ativo             is null or (p_ativo   is not null and a.ativo = p_ativo))
+            and a.sq_tipo_material   = coalesce(p_chave,0)
+            and b.sq_tipo_material   <> coalesce(p_chave,0)
+            and (p_nome              is null or (p_nome    is not null and acentos(b.nome) = acentos(p_nome)))
+            and (p_gestora           is null or (p_gestora is not null and b.unidade_gestora = p_gestora))
+            and (p_classe            is null or (p_classe is not null and b.classe = p_classe))
+            and (p_sigla             is null or (p_sigla   is not null and acentos(b.sigla) = acentos(p_sigla)))
+            and (p_ativo             is null or (p_ativo   is not null and b.ativo = p_ativo))
          order by a.nome;
    Elsif p_restricao = 'VINCULADO' Then
       -- Verifica se o registro está vinculado a um material ou serviço
@@ -172,7 +187,7 @@ begin
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_classe     is null or (p_classe is not null and a.classe = p_classe))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
-            order by a.nome;
+            order by a.sigla, a.nome;
       Else
          open p_result for
             select a.sq_tipo_material as chave, a.cliente, a.sq_tipo_pai, a.nome, a.sigla, 
@@ -202,7 +217,7 @@ begin
                and (p_gestora    is null or (p_gestora is not null and a.unidade_gestora = p_gestora))
                and (p_classe     is null or (p_classe is not null and a.classe = p_classe))
                and (p_ativo      is null or (p_ativo   is not null and a.ativo = p_ativo))
-            order by a.nome;
+            order by a.sigla,a.nome;
       End If;
    End If;
 end sp_getTipoMatServ;

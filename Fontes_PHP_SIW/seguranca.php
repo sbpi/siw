@@ -1792,8 +1792,12 @@ function Email() {
   ValidateOpen('Validacao');
   if (!(strpos("IAE",$O)===false)) {
     Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
+    if($P2!=1) {
+      ShowHTML('  theForm.Botao[0].disabled=true;');
+      ShowHTML('  theForm.Botao[1].disabled=true;');
+    } else {
+      ShowHTML('  theForm.Botao.disabled=true;');
+    }
   } 
 
   ValidateClose();
@@ -1877,7 +1881,7 @@ function Email() {
     ShowHTML('        </ul></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
     ShowHTML('      <tr><td colspan="3"><font size=2><b>');
-    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_menu[]" value="">');
@@ -1971,7 +1975,7 @@ function Email() {
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7" height="1" bgcolor="#000000">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan="7">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Cancelar">');
+    if($P2!=1) ShowHTML('            <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -2532,7 +2536,7 @@ function Grava() {
         ScriptClose();
       } 
       break;
-    case "EMAIL":
+    case 'EMAIL':
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as configurações existentes para depois incluir
@@ -2544,20 +2548,19 @@ function Grava() {
           for ($i=0; $i<=count($_REQUEST['w_sq_menu'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_menu'][$i]>'') {
               if($_REQUEST['w_sq_menu'][$i]==f($row,'sq_menu')) {
-                $w_teste = 'OK';
                 dml_PutSiwPessoaMail::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), nvl($_REQUEST['w_alerta_'.f($row,'sq_menu').''],'N'),
                                                     nvl($_REQUEST['w_tramitacao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_conclusao_'.f($row,'sq_menu').''],'N'), nvl($_REQUEST['w_responsabilidade_'.f($row,'sq_menu').''],'N'));
               }
             } 
           }
-          if(nvl($w_teste,'')=='') {
-            dml_PutSiwPessoaMail::getInstanceOf($dbms, 'I', $_REQUEST['w_sq_pessoa'], f($row,'sq_menu'), 'N', 'N', 'N', 'N');
-          }
-          $w_teste = '';
         }
         ScriptOpen('JavaScript');
-        ShowHTML('  window.close();');
-        ShowHTML('  opener.focus();');
+        if ($P2!=1) {
+          ShowHTML('  window.close();');
+          ShowHTML('  opener.focus();');
+        } else {
+          ShowHTML('  location.href=\''.$dir.$R.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'\';');
+        }
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

@@ -14,7 +14,8 @@ create or replace procedure SP_PutAcordoDadosAdicionais
     p_numero_processo     in varchar2  default null,
     p_assinatura          in date      default null,
     p_publicacao          in date      default null,
-    p_financeiro_unico    in varchar2  default null
+    p_financeiro_unico    in varchar2  default null,
+    p_pagina_diario       in number    default null
    ) is
 begin
    -- Atualiza o registro da demanda com os dados da conclusão.
@@ -31,7 +32,8 @@ begin
       empenho                  = p_numero_empenho,
       assinatura               = p_assinatura,
       publicacao               = p_publicacao,
-      financeiro_unico         = p_financeiro_unico
+      financeiro_unico         = p_financeiro_unico,
+      pagina_diario_oficial    = p_pagina_diario
    Where sq_siw_solicitacao = p_chave;
 end SP_PutAcordoDadosAdicionais;
 /

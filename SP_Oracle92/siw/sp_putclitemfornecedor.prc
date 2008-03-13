@@ -10,7 +10,7 @@ create or replace procedure SP_PutCLItemFornecedor
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
     p_embalagem                in varchar2  default null,
-    p_ordem                    in number    default null,
+    p_ordem                    in varchar2 default null,
     p_vencedor                 in varchar2  default null,
     p_pesquisa                 in varchar2  default null
    ) is

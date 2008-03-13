@@ -1,0 +1,36 @@
+create or replace view vw_ata_rp as
+   select a.nome as "Produto", a.descricao, a.detalhamento, a.codigo_interno as "CODIGO", a.codigo_externo as "CODIGO ANTIGO", 
+          replace(a.pesquisa_preco_menor,',','.') as pesquisa_preco_menor, 
+          replace(a.pesquisa_preco_maior,',','.') as pesquisa_preco_maior,
+          replace(a.pesquisa_preco_medio,',','.') as pesquisa_preco_medio,
+          a.pesquisa_data, a.pesquisa_validade, 
+          d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+          e.nome as "PROG",
+          x.ordem as "Item", 
+          replace(x.quantidade,',','.') as "CMM - Ata de RP",
+          x.motivo_cancelamento as "Status",
+          w.inclusao as "DataHoje", w.codigo_interno as "Nº da Ata", w.fim as "Validade",
+          w2.publicacao as "DOM",
+          f.percentual_acrescimo,
+          replace(x1.valor_unidade,',','.') as "Valor Unitário",
+          replace(x1.valor_item,',','.') as "Valor Quant Mensal",
+          x1.marca_modelo as "Marca",
+          x1.fabricante as "Fabricante",
+          x1.embalagem as "Apresentação",
+          x2.nome as "Empresa Detentora", 
+          x2.nome_resumido as "Detentora Resum", 
+          ((1 - (a.pesquisa_preco_medio/x1.valor_unidade)) * 100) as variacao_valor,
+          x2.sq_pessoa as sq_detentor_ata, a.sq_material, a.sq_unidade_medida
+     from cl_material                        a
+          inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
+          inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
+          inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
+          inner     join cl_parametro        f  on (a.cliente             = f.cliente)
+          inner     join cl_solicitacao_item x  on (a.sq_material         = x.sq_material)
+            inner   join cl_item_fornecedor  x1 on (x.sq_solicitacao_item = x1.sq_solicitacao_item)
+              inner join co_pessoa           x2 on (x1.fornecedor         = x2.sq_pessoa)
+            inner   join siw_solicitacao     w  on (x.sq_siw_solicitacao  = w.sq_siw_solicitacao)
+              inner join siw_menu            w1 on (w.sq_menu             = w1.sq_menu and w1.sigla = 'GCZCAD')
+              inner join ac_acordo           w2 on (w.sq_siw_solicitacao  = w2.sq_siw_solicitacao)
+              inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite)
+    where a.cliente         = 9614;

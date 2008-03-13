@@ -35,6 +35,7 @@ begin
                   (substr(p_restricao,3,1) = 'B' and a.modalidade = 'E') or
                   (substr(p_restricao,3,1) = 'C' and a.modalidade = 'I') or
                   (substr(p_restricao,3,1) = 'D' and a.modalidade not in ('F','I')) or
+                  (substr(p_restricao,3,1) = 'Z' and a.modalidade not in ('F','I')) or
                   (substr(p_restricao,3,1) = 'R' and a.modalidade = 'F') or
                   (substr(p_restricao,3,1) = 'P' and a.modalidade = 'I')
                  )

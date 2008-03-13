@@ -142,7 +142,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
 
       // Verifica os dados bancários
       $l_erro_banco = 0;
-      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCR') {
+      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCR' && substr(f($l_rs_solic,'sigla'),0,3)!='GCZ') {
         if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
           if (substr(f($l_rs_solic,'sigla'),0,3)=='GCD') {
             if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
@@ -164,7 +164,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
       }
 
       // Verifica as parcelas
-      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCA') {
+      if (substr(f($l_rs_solic,'sigla'),0,3)!='GCA' && substr(f($l_rs_solic,'sigla'),0,3)!='GCZ') {
         if ($l_existe_rs3==0) {
           $l_erro.='<li>É obrigatório informar pelo menos uma parcela';
           $l_tipo=0;
