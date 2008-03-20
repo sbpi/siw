@@ -152,7 +152,7 @@ begin
          );
          
          for crec in c_outra_parte loop
-            -- Copia as outras partes existente no contrato de origem
+            -- Copia as outras partes existentes no contrato de origem
             select sq_acordo_outra_parte.nextval into w_outra_parte from dual;
             insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
             values (w_outra_parte, w_chave, crec.outra_parte, crec.tipo);

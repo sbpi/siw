@@ -110,7 +110,8 @@ begin
      Else -- Se o vencimento for no mês seguinte ao encerramento do trimestre
         w_quitacao_imposto := last_day(add_months(to_date('0101'||to_char(:new.data,'yyyy'),'ddmmyyyy'),ceil(to_char(:new.data,'mm')/3)*3));
      End if;
-     -- Ajusta o dia do vencimento
+
+     -- Ajusta o dia de vencimento
      If to_char(w_quitacao_imposto,'dd') > crec.dia_pagamento and crec.dia_pagamento > 0 Then
         w_quitacao_imposto := to_date(substr(100+crec.dia_pagamento,2,2)||to_char(w_quitacao_imposto,'mmyyyy'),'ddmmyyyy');
      End If;
@@ -126,4 +127,3 @@ begin
   
 end TG_FN_LANCAMENTO_DOC_IN_UP;
 /
-
