@@ -46,9 +46,41 @@ begin
                                    and w.sq_modulo = p_modulo
                                 );
 
+      -- Exclui os relacionamentos entre os trâmites dos serviços ligados ao módulo
+      delete siw_tramite_fluxo a
+      where a.sq_siw_tramite_origem in 
+                         (select distinct x.sq_siw_tramite
+                            from siw_menu               w
+                                 inner join siw_tramite x on (w.sq_menu = x.sq_menu)
+                           where w.sq_pessoa = p_pessoa
+                             and w.sq_modulo = p_modulo
+                         )
+         or a.sq_siw_tramite_destino in 
+                         (select distinct x.sq_siw_tramite
+                            from siw_menu               w
+                                 inner join siw_tramite x on (w.sq_menu = x.sq_menu)
+                           where w.sq_pessoa = p_pessoa
+                             and w.sq_modulo = p_modulo
+                         );
+
       -- Exclui os trâmites dos serviços ligados ao módulo
       delete siw_tramite a
       where a.sq_menu in (select sq_menu
+                            from siw_menu w
+                           where w.sq_pessoa = p_pessoa
+                             and w.sq_modulo = p_modulo
+                         );
+
+      -- Exclui as vinculações entre serviços ligados ao módulo
+      delete siw_menu_relac a
+      where a.servico_cliente in 
+                         (select sq_menu
+                            from siw_menu w
+                           where w.sq_pessoa = p_pessoa
+                             and w.sq_modulo = p_modulo
+                         )
+         or a.servico_fornecedor in 
+                         (select sq_menu
                             from siw_menu w
                            where w.sq_pessoa = p_pessoa
                              and w.sq_modulo = p_modulo
