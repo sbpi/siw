@@ -122,6 +122,8 @@
       Validate('w_justificativa','Justificativa','1',1,5,2000,'1','1');
     } 
   } 
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');

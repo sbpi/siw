@@ -377,13 +377,13 @@ function Geral() {
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } elseif ($O=='A' || $O=='I') {
-  Validate('w_nome','Nome','1',1,5,60,'1','1');
-  if ($w_tipo_pessoa==1) {
-    Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
-  } else {
-    Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
-  }
-  Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome','Nome','1',1,5,60,'1','1');
+    if ($w_tipo_pessoa==1) {
+      Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
+    } else {
+      Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
+    }
+    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
     if ($w_tipo_pessoa==1) {
       Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
@@ -406,8 +406,12 @@ function Geral() {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
+    if ($O=='I') {
+      ShowHTML('  theForm.Botao[0].disabled=true;');
+      ShowHTML('  theForm.Botao[1].disabled=true;');
+    } else {
+      ShowHTML('  theForm.Botao.disabled=true;');
+    }
   } 
   ValidateClose();
   ScriptClose();

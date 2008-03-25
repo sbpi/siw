@@ -30,7 +30,7 @@ begin
                 a.fim,                 a.quantidade,                   a.cumulativa, 
                 a.exequivel,           a.justificativa_inexequivel,    a.outras_medidas, 
                 a.situacao_atual,      a.cadastrador,                  a.inclusao, 
-                a.ultima_alteracao,    a.base_geografica, 
+                a.ultima_alteracao,    a.base_geografica,              a.valor_inicial,
                 case a.base_geografica
                      when 1 then case e.padrao when 'S' then 'Nacional'              else 'Nacional - '||e.nome end
                      when 2 then case e.padrao when 'S' then 'Regional - '||f.nome   else 'Regional - '||e.nome||' - '||f.nome  end

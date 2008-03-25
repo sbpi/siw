@@ -121,6 +121,7 @@ if (f($RS_Menu,'ultimo_nivel') == 'S') {
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
+// Recupera os parâmetros do módulo de compras e licitações
 $RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row;}
 
@@ -197,8 +198,8 @@ function Inicial() {
       }
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    if($P1==1) $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,'PESQUISA');
-    else       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,$w_restricao);
+    if($P1==1) $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
+    else       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
@@ -206,7 +207,7 @@ function Inicial() {
       $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_gestora         = f($RS,'unidade_gestora');
     $w_tipo_material   = f($RS,'sq_tipo_material');
@@ -256,7 +257,7 @@ function Inicial() {
         if ($w_classe==4) Validate('w_vida_util','Vida útil','','1',1,2,'','0123456789');
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       } elseif ($O=='P') {
-        Validate('p_nome','Nome','1','','3','30','1','1');
+        Validate('p_nome','Nome','1','','3','110','1','1');
         Validate('p_codigo','Código interno','1','','2','30','1','1');
         Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
         Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
@@ -313,7 +314,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa atual</b></td>');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa mais recente</b></td>');
       ShowHTML('          <td rowspan=2><b> Operações </td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr align="center">');
@@ -325,7 +326,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>Código</td>');
       ShowHTML('          <td rowspan=2><b>Nome</td>');
       ShowHTML('          <td rowspan=2><b>Un.</td>');
-      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa atual</b></td>');
+      ShowHTML('          <td bgColor="#f0f0f0" colspan=3><b>Pesquisa mais recente</b></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr align="center">');
       ShowHTML('          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>');
@@ -351,7 +352,11 @@ function Inicial() {
         } else {
           ShowHTML('            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
           ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
-          ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+          if (nvl(f($row,'pesquisa_preco_medio'),'')!='') {
+            ShowHTML('            <td align="right">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+          } else {
+            ShowHTML('            <td align="center">&nbsp;</td>');
+          }
         }
         if ($w_tipo!='WORD') {
           ShowHTML('        <td align="top" nowrap>');
@@ -524,10 +529,10 @@ function PesquisaPreco() {
   $p_campo          = $_REQUEST['p_campo'];
 
   // Recupera os dados do item
-  $RS_Item = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS_Item = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Item as $row){$RS_Item=$row; break;}
 
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O!='E') {
     //Dados do primero formulário (Formulário de dados cadastrais)
     $w_cpf                  = $_REQUEST['w_cpf'];
     $w_cnpj                 = $_REQUEST['w_cnpj'];
@@ -571,7 +576,7 @@ function PesquisaPreco() {
     $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
     $w_embalagem            = $_REQUEST['w_embalagem'];
     $w_origem               = $_REQUEST['w_origem'];
-  } elseif ($O=='A' || $w_sq_pessoa>'' || $O=='I') {
+  } elseif ($O=='A' || nvl($w_sq_pessoa,'')!='' || $O=='I' || nvl($w_troca,'')!='') {
     // Recupera os dados do fornecedor em co_pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
     if (count($RS)>0) {
@@ -617,7 +622,7 @@ function PesquisaPreco() {
       }
     }
   } elseif ($O=='L') {  
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_fornecedor','asc');
@@ -631,7 +636,7 @@ function PesquisaPreco() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  if (strpos('IAP',$O)!==false) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     Modulo();
     FormataCPF();
@@ -653,6 +658,8 @@ function PesquisaPreco() {
       ShowHTML('  }');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       if ($w_tipo_pessoa==1) {
@@ -688,6 +695,7 @@ function PesquisaPreco() {
       Validate('w_fabricante','Fabricante','1','',2,50,'1','1');
       Validate('w_marca_modelo','Marca/Modelo','1','',2,50,'1','1');
       Validate('w_embalagem','Embalagem','1','',2,20,'1','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       Validate('w_ddd','DDD','1','',3,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');
@@ -748,6 +756,8 @@ function PesquisaPreco() {
     BodyOpenClean('onLoad=\'document.Form.p_nome.focus()\';');
   } elseif($O=='I' || $O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  } elseif($O=='E') {
+    BodyOpenClean('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'this.focus()\';');
   }
@@ -765,9 +775,13 @@ function PesquisaPreco() {
   ShowHTML('            <td><b>'.f($RS_Item,'codigo_interno').'</td>');
   ShowHTML('            <td><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($RS_Item,'nome'),f($RS_Item,'chave'),$TP,null).'</td>');
   ShowHTML('          <tr valign="top">');
-  ShowHTML('            <td>$ médio pesquisado:<b><br>'.formatNumber(f($RS_Item,'pesquisa_preco_medio'),4).'</td>');
+  If (nvl(f($RS_Item,'pesquisa_preco_medio'),'')=='') {
+    ShowHTML('            <td>$ médio pesquisado:<b><br>Sem pesquisa válida</td>');
+  } else {
+    ShowHTML('            <td>$ médio pesquisado:<b><br>'.formatNumber(f($RS_Item,'pesquisa_preco_medio'),4).'</td>');
+  }
   if (f($RS_Item,'numero_ata')!='') {
-    ShowHTML('            <td>$ ARP:<b><br>'.formatNumber(f($RS_Item,'preco_ata'),4).'&nbsp;&nbsp;(ARP: '.f($RS_Item,'numero_ata').' valida até '.FormataDataEdicao(f($row,'validade_ata')).')</td>');
+    ShowHTML('            <td>$ ARP:<b><br>'.formatNumber(f($RS_Item,'preco_ata'),4).'&nbsp;&nbsp;(ARP: '.f($RS_Item,'numero_ata').' valida até '.FormataDataEdicao(f($RS_Item,'validade_ata')).')</td>');
   }
   ShowHTML('      </table>');
   ShowHTML('    </TABLE>');
@@ -808,7 +822,8 @@ function PesquisaPreco() {
         }
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Exclui a pesquisa do banco de dados.">EX</A>&nbsp');
+        //ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
@@ -817,10 +832,11 @@ function PesquisaPreco() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');  
-  } elseif (strpos('IA',$O)!==false) {
+  } elseif (strpos('IAE',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     //Recupera os dados do item
     if(nvl($w_chave_aux,'')=='') {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item   = f($row,'nome');
@@ -830,7 +846,7 @@ function PesquisaPreco() {
         break;
       }
     } else {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,'PESQMAT');
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item    = f($row,'nome');
@@ -867,9 +883,9 @@ function PesquisaPreco() {
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     if ($w_tipo_pessoa==1) {
-      ShowHTML('             <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+      ShowHTML('             <td><b><u>C</u>PF:<br><INPUT '.$w_Disabled.' ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     } else {
-      ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
+      ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT '.$w_Disabled.' ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
     }
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
@@ -1081,7 +1097,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do material ou serviço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
 
   // Se for listagem dos dados
@@ -1104,7 +1120,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
   if (f($l_rs,'classe')==1) $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
 
-  $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,'S',null,'S','S','S','S','S',null,'RELATORIO');
+  $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
   $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
 
   $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
@@ -1134,12 +1150,16 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
       } else {
         $w_destaque = '';
       }
-      $l_html.=chr(13).'        <td align="center" '.$w_destaque.'>'.f($row,'numero_ata').'</td>';
-      $l_html.=chr(13).'        <td align="center" '.$w_destaque.'>'.f($row,'nr_item_ata').'</td>';
-      $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>';
-      $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'quantidade'),2).'</td>';
+      $l_html.=chr(13).'        <td align="center">'.f($row,'numero_ata').'</td>';
+      $l_html.=chr(13).'        <td align="center">'.f($row,'nr_item_ata').'</td>';
+      $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>';
+      $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>';
       $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>';
-      $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>';
+      if (nvl(f($row,'variacao_valor'),'')!='') {
+        $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'variacao_valor'),2).'</td>';
+      } else {
+        $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+      }
       $l_html.=chr(13).'        </tr>';
     }
   } 
@@ -1149,7 +1169,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
   $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
   $l_html.=chr(13).'          <tr align="center">';
-  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PESQUISA ATUAL</b></td>';
+  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PESQUISA MAIS RECENTE</b></td>';
   $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=3><b>PREÇOS</b></td>';
   $l_html.=chr(13).'          </tr>';
   $l_html.=chr(13).'          <tr align="center">';
@@ -1166,16 +1186,20 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
     $l_html.=chr(13).'            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($l_rs,'pesquisa_data'),f($l_rs,'pesquisa_validade'),f($l_rs,'pesquisa_aviso')).'</td>';
     $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_data'),5),'---').'</b></td>';
     $l_html.=chr(13).'            <td align="center"><b>'.nvl(formataDataEdicao(f($l_rs,'pesquisa_validade'),5),'---').'</b></td>';
-    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_menor'),4),'---').'</b></td>';
-    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_maior'),4),'---').'</b></td>';
-    $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_medio'),4),'---').'</b></td>';
+    if (nvl(f($l_rs,'pesquisa_preco_menor'),'')!='') {
+      $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_menor'),4),'---').'</b></td>';
+      $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_maior'),4),'---').'</b></td>';
+      $l_html.=chr(13).'            <td align="center"><b>'.nvl(formatNumber(f($l_rs,'pesquisa_preco_medio'),4),'---').'</b></td>';
+    } else {
+      $l_html.=chr(13).'            <td align="center" colspan=3><b>Sem pesquisa de preço válida.</b></td>';
+    }
   }
   $l_html.=chr(13).'          </tr>';
   $l_html.=chr(13).'         </table></td></tr>';
 
 
   // Exibe pesquisas de preço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,'S',null,null,null,'PESQMAT');
+  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null,'PESQMAT');
   $l_rs = SortArray($l_rs,'phpdt_fim','desc','valor_unidade','asc','nm_fornecedor','asc'); 
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PESQUISAS DE PREÇO VÁLIDAS ('.count($l_rs).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   if (count($l_rs)==0) {
@@ -1231,7 +1255,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,'EXISTE');
+          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
@@ -1245,7 +1269,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_codigo_interno'],'nulo')!='nulo') {
             // Testa a existência do código
-            $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,'EXISTE');
+            $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) { $RS = $row; break; }
               if (f($RS,'existe')>0) {
@@ -1258,7 +1282,7 @@ function Grava() {
             }
           }
         } elseif ($O=='E') {
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este material ou serviço. Ele está ligado a algum documento!\');');

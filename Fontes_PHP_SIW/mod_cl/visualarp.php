@@ -90,9 +90,9 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
       $w_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $w_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $w_html .= chr(13).'          <tr valign="top">';
-      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
-      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sigla</b></div></td>';
-      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
+      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Nome</b></td>';
+      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Sigla</b></td>';
+      $w_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Descrição</b></td>';
       $w_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS1 as $row) {
@@ -109,7 +109,7 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
     $RS1 = SortArray($RS1,'numero_ata','asc','ordem_ata','asc','nome','asc'); 
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+    $w_html.=chr(13).'      <tr><td colspan="2">';
     $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $w_html.=chr(13).'        <tr align="center">';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>ARP</td>';
@@ -118,20 +118,35 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</td>';
+    if($w_ativo=='S') {
+      $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=3><b>Última pesquisa</b></td>';
+      $w_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>% Dif.</b></td>';
+    }
     $w_html.=chr(13).'        </tr>';
     $w_html.=chr(13).'        <tr align="center">';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Solicitada</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Autorizada</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
     $w_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
+    if($w_ativo=='S') {
+      $w_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>';
+      $w_html.=chr(13).'          <td bgColor="#f0f0f0" nowrap><b>$ Médio</b></td>';
+    }
     $w_html.=chr(13).'        </tr>';
     if (count($RS1)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      $w_html.=chr(13).'      <tr><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $w_html.=chr(13).'      <tr><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
+        // Se a validade da proposta for menor que o exigido, destaca em vermelho
+        $w_percentual_acrescimo = f($row,'percentual_acrescimo');
+        if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed2.'"';
+        } else {
+          $w_destaque = '';
+        }
         $w_html.=chr(13).'      <tr valign="top">';
         $w_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'numero_ata').'</td>';
         $w_html.=chr(13).'        <td align="center" width="1%" nowrap>'.f($row,'ordem_ata').'</td>';
@@ -147,7 +162,7 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         } else {
           $w_html.=chr(13).'        <td align="center" width="1%" nowrap>---</td>';
         }
-        $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($row,'valor_unidade'),4).'</td>';
+        $w_html.=chr(13).'        <td align="right" width="1%" '.$w_destaque.' nowrap>'.formatNumber(f($row,'valor_unidade'),4).'</td>';
         if($w_sg_tramite=='AT') {
           $w_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).'</td>';
         } else {
@@ -158,12 +173,31 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
         } else {
           $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade'));
         }
+        if($w_ativo=='S') {
+          if (nvl(f($row,'pesquisa_data'),'')=='') {
+            $w_html.=chr(13).'        <td colspan=3 align="center" nowrap>Sem pesquisa de preço</td>';
+          } else {
+            $w_html.=chr(13).'        <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>';
+            $w_html.=chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>';
+            if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
+              $w_html.=chr(13).'        <td align="right" width="1%" nowrap>&nbsp;</td>';
+            } else {
+              $w_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>';
+            }
+          }
+          if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
+            $w_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>&nbsp;</td>';
+          } else {
+            $w_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>';
+          }
+        }
         $w_html.=chr(13).'        </tr>';
       }
       $w_html.=chr(13).'      <tr align="center">';
       $w_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
       $w_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
       $w_html.=chr(13).'      </tr>';
+      $w_html.=chr(13).'    </table></td></tr>';
     } 
     $w_html.=chr(13).'         </table></td></tr>';
   }
@@ -174,13 +208,13 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      $w_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $w_html.=chr(13).'      <tr><td colspan="2">';
       $w_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
       $w_html.=chr(13).'          <tr align="center">';
-      $w_html.=chr(13).'             <td bgColor="#f0f0f0" width="40%"><div><b>Título</b></div></td>';
-      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Descrição</b></div></td>';
-      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
-      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></div></td>';
+      $w_html.=chr(13).'             <td bgColor="#f0f0f0" width="40%"><div><b>Título</b></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Descrição</b></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></td>';
+      $w_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></td>';
       $w_html.=chr(13).'          </tr>';
       foreach($RS1 as $row) {
         $w_html.=chr(13).'      <tr valign="top">';
@@ -213,7 +247,7 @@ function VisualARP($v_chave,$l_O,$w_usuario,$l_P1,$l_P4) {
     $w_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $RS1 = db_getSolicLog::getInstanceOf($dbms,$v_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
-    $w_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
+    $w_html.=chr(13).'   <tr><td colspan="2">';
     $w_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
     $w_html.=chr(13).'       <tr valign="top">';
     $w_html.=chr(13).'         <td align="center"><b>Data</b></td>';

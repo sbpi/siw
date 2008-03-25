@@ -15,7 +15,7 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
   $w_linha = 99;
   $w_pag   = 1;
   foreach ($RS_Dados as $row) {
-    if ($w_linha > 30) {
+    if (($w_linha > 30 && $l_formato=='WORD') || ($w_pag==1 && $l_formato!='WORD')) {
       if ($w_pag>1 && $l_formato=='WORD') {
         $l_html.=chr(13).'    </table>';
         $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
@@ -89,7 +89,6 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
   $l_html.=chr(13).'       <td colspan=5 align="right"><font size=1><b>Total de documentos/processos</font></b></td>';
   $l_html.=chr(13).'       <td align="center"><b><font size=1>'.count($RS_Dados).'</font></b></td>';
   $l_html.=chr(13).'     </tr>';
-  if ($l_formato=='WORD') $l_html.=chr(13).'     <tr valign="top"><td colspan=6>&nbsp;</td></tr>';
   $l_html.=chr(13).'    </table>';
   if ($l_formato=='WORD') {
     $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';

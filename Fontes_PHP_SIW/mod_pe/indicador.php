@@ -334,7 +334,7 @@ function VisualAfericao() {
   $p_uf             = $_REQUEST['p_uf'];
   $p_cidade         = $_REQUEST['p_cidade'];
 
-  if (nvl($p_tipo_indicador,'nulo')!=nulo) {
+  if (nvl($p_tipo_indicador,'nulo')!=nulo && nvl($p_indicador,'nulo')=='nulo') {
     // Se há apenas um indicador com aferição, seleciona automaticamente.
     $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$usuario,null,null,null,null,$p_tipo_indicador,'S',null,null,null,null,null,null,null,null,null,'VS'.$p_volta);
     if (count($RS)==1) { foreach($RS as $row) { $RS = $row; break; } $p_indicador = f($RS,'chave'); $w_troca = 'p_base'; }
@@ -427,10 +427,9 @@ function VisualAfericao() {
   ShowHTML('<INPUT type="hidden" name="p_volta" value="'.$p_volta.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('        <tr><td width="25%"><td width="25%"><td width="25%"><td width="25%"></tr>');
-  ShowHTML('        <tr valign="middle">');
+  ShowHTML('        <tr valign="top">');
   switch ($p_pesquisa) {
     case 'LIVRE':
-      ShowHTML('        <tr valign="middle">');
       selecaoTipoIndicador('<U>T</U>ipo do indicador:','M','Selecione o tipo do indicador',$p_tipo_indicador,null,'p_tipo_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_indicador.value=\'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_indicador\'; document.Form.submit();"');
       selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$p_indicador,null,$w_usuario,$p_tipo_indicador,'p_indicador','VS'.$p_volta,'onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.p_base.value=\'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
       selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$p_base,$w_usuario,$p_indicador,'p_base','VISUALBASE','onChange="document.Form.target=\'pesquisa\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'p_base\'; document.Form.submit();"');
@@ -458,7 +457,7 @@ function VisualAfericao() {
       break;
   } 
   if (nvl($p_tipo_indicador,'nulo')!='nulo' && nvl($p_indicador,'nulo')!='nulo' && nvl($p_base,'nulo')!='nulo') {
-    ShowHTML('          <td><input class="STB" type="submit" name="Botao" value="Atualizar listagem">');
+    ShowHTML('          <td valign="bottom"><input class="STB" type="submit" name="Botao" value="Atualizar listagem">');
   }
   if (nvl($p_base,-1)!=5 && nvl($p_base,-1)!=-1) {
     ShowHTML('      <tr valign="top">');
@@ -518,7 +517,8 @@ function VisualDados() {
     ShowHTML('  <li>Quando o indicador e a base geográfica forem selecionados, será exibido o botão "Atualizar listagem". Clique nele para ver as aferições.');
     ShowHTML('  <li>As caixas de seleção exibem apenas as opçoes que têm pelo menos uma aferição registrada.');
     ShowHTML('  <li>Dependendo da base geográfica selecionada, serão exibidas caixas de seleção opcionais para maior refinamento da pesquisa.');
-    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('  </b></font></td>');
+    ShowHTML('<tr><td colspan=3>&nbsp;');
   } else {
     // Recupera todos os registros para a listagem
     $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$p_indicador,null,null,null,$p_tipo_indicador,'S',$p_base,$p_pais,$p_regiao,$p_uf,$p_cidade,null,null,$p_inicio,$p_fim,'AFERICAO');
@@ -603,7 +603,9 @@ function VisualDados() {
       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&p_chave='.$p_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } 
     ShowHTML('<p>&nbsp;</p></tr>');
+  }
 
+  if (nvl($p_indicador,'nulo')!='nulo') {
     // Recupera os dados do indicador para exibição no cabeçalho
     $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$p_indicador,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $RS = $row; break; }
@@ -1398,6 +1400,7 @@ function Meta() {
     $w_ordem            = $_REQUEST['w_ordem'];
     $w_inicio           = $_REQUEST['w_inicio'];
     $w_fim              = $_REQUEST['w_fim'];
+    $w_valor_inicial    = $_REQUEST['w_valor_inicial'];
     $w_quantidade       = $_REQUEST['w_quantidade'];
     $w_base             = $_REQUEST['w_base'];
     $w_pais             = $_REQUEST['w_pais'];
@@ -1432,6 +1435,7 @@ function Meta() {
     $w_uf               = f($RS,'co_uf');
     $w_cidade           = f($RS,'sq_cidade');
     $w_base             = f($RS,'base_geografica');
+    $w_valor_inicial    = formatNumber(f($RS,'valor_inicial'),4);
     $w_quantidade       = formatNumber(f($RS,'quantidade'),4);
     $w_cumulativa       = f($RS,'cumulativa');
   } 
@@ -1467,7 +1471,7 @@ function Meta() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_titulo','Título','','1','2','100','1','1');
+      Validate('w_titulo','Objetivo','','1','2','100','1','1');
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
       Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
       Validate('w_inicio','Início do período','DATA','1','10','10','','0123456789/');
@@ -1481,7 +1485,8 @@ function Meta() {
         if ($w_base==3 || $w_base==4) Validate('w_uf','Estado','SELECT','1','1','18','1','1');
         if ($w_base==4) Validate('w_cidade','Cidade','SELECT','1','1','18','','1');
       }
-      Validate('w_quantidade','Valor a ser alcançado','VALOR','1',6,18,'','0123456789,.');
+      Validate('w_valor_inicial','Valor base','VALOR','1',6,18,'','0123456789,.');
+      Validate('w_quantidade','Meta','VALOR','1',6,18,'','0123456789,.');
       Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
       Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
       if ($P1==1) Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1522,12 +1527,13 @@ function Meta() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td>'.linkOrdena('Meta','titulo').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Indicador','nome').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Objetivo','titulo').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Base geográfica','base_geografica').'</td>');
     ShowHTML('          <td>'.linkOrdena('Início','inicio').'</td>');
     ShowHTML('          <td>'.linkOrdena('Fim','fim').'</td>');
-    ShowHTML('          <td>'.linkOrdena('Indicador','nome').'</td>');
-    ShowHTML('          <td>'.linkOrdena('Base','base_geografica').'</td>');
-    ShowHTML('          <td>'.linkOrdena('Valor','quantidade').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Valor base','valor_inicial').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Meta','quantidade').'</td>');
     ShowHTML('          <td width="1%" nowrap>'.linkOrdena('U.M.','sg_unidade_medida').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -1539,11 +1545,12 @@ function Meta() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'nm_indicador').'</td>');
         ShowHTML('        <td>'.f($row,'titulo').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_base_geografica').'</td>');
         ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,f($row,'inicio')),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,f($row,'fim')),'---').'</td>');
-        ShowHTML('        <td>'.f($row,'nm_indicador').'</td>');
-        ShowHTML('        <td>'.f($row,'nm_base_geografica').'</td>');
+        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'valor_inicial'),4),'---').'</td>');
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'quantidade'),4),'---').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -1576,7 +1583,7 @@ function Meta() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
 
-    ShowHTML('      <tr><td valign="top"colspan="3"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o projeto."></td>');
+    ShowHTML('      <tr><td valign="top"colspan="3"><b><u>O</u>bjetivo:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o projeto."></td>');
     ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
@@ -1603,7 +1610,9 @@ function Meta() {
         SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
       }
     }
-    ShowHTML('      <tr><td title="Informe o valor a ser alcançado."><b><u>V</u>alor a ser alcançado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>M</u>eta: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
     SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
@@ -1822,7 +1831,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,null,null,null,null,$_REQUEST['w_base'],null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica!\');');
@@ -1831,10 +1840,11 @@ function Grava() {
             exit();                                    
           }
         }
-        dml_putIndicador_Meta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),$_REQUEST['w_indicador'],$_REQUEST['w_titulo'],
-              $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_base'],
-              $_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],$_REQUEST['w_quantidade'],$_REQUEST['w_cumulativa'],
-              $_REQUEST['w_pessoa'],$_REQUEST['w_unidade']); 
+        dml_putIndicador_Meta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),
+              $_REQUEST['w_indicador'],$_REQUEST['w_titulo'], $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],
+              $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_base'], $_REQUEST['w_pais'],$_REQUEST['w_regiao'],
+              $_REQUEST['w_uf'], $_REQUEST['w_cidade'],$_REQUEST['w_valor_inicial'],$_REQUEST['w_quantidade'],
+              $_REQUEST['w_cumulativa'], $_REQUEST['w_pessoa'],$_REQUEST['w_unidade']); 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

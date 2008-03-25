@@ -129,7 +129,6 @@ function Inicial() {
     case 'PADEMPREST':  $w_nm_operacao = 'Emprestar';  $w_rotina = 'Emprestar';   break;
   } 
   
-
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 

@@ -17,7 +17,7 @@ begin
    If p_restricao is null or p_restricao = 'COMPRA' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -52,7 +52,7 @@ begin
    Elsif p_restricao = 'ITEMARP' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem, a.dias_validade_proposta as dias_validade_item,
                 case a.cancelado when 'S' then 'Sim' else 'Não' end as nm_cancelado,
@@ -89,7 +89,7 @@ begin
    ElsIf p_restricao = 'LICITACAO' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -146,7 +146,7 @@ begin
    ElsIf p_restricao = 'ARP' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -168,16 +168,18 @@ begin
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 e.nome as nm_cc,
+                f.percentual_acrescimo,
                 g.item_pedido,
                 g.item_licitacao,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_licitacao,
                 h.ordem as ordem_ata,
-                l.qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
-                i.qtd_cotacao,
+                coalesce(i.qtd_cotacao,0) as qtd_cotacao,
                 j.qtd_proposta,
                 k.codigo_interno as numero_ata,
-                m.valor_unidade
+                l.qtd_pedido,
+                m.valor_unidade,
+                ((1 - (b.pesquisa_preco_medio/m.valor_unidade)) * 100) as variacao_valor
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -203,8 +205,9 @@ begin
                   left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
                                   from siw_solicitacao                  x
                                        inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
-                                         left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
+                                         left  join cl_item_fornecedor  z on (y.sq_material         = z.sq_material and
                                                                               'S'                   = z.pesquisa)
+                                 where z.fim >= trunc(sysdate)
                                 group by y.sq_solicitacao_item
                                )                        i on (a.sq_solicitacao_item  = i.sq_solicitacao_item)
                   left    join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_proposta
@@ -221,7 +224,7 @@ begin
    ElsIf p_restricao = 'LCITEM' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -258,7 +261,7 @@ begin
    ElsIf p_restricao = 'ARPITEM' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -306,7 +309,7 @@ begin
    ElsIf p_restricao = 'FORNECEDORC' or p_restricao = 'FORNECEDORP' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -356,7 +359,7 @@ begin
    ElsIf p_restricao = 'FORNECEDORA' Then
       -- Recupera materiais e serviços
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
@@ -383,7 +386,7 @@ begin
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
                 i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
-                i.dias_validade_proposta
+                i.dias_validade_proposta, i.origem
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -420,7 +423,7 @@ begin
    ElsIf p_restricao = 'PROPOSTA' or p_restricao = 'COTACAO' Then
       -- Recuperas as propostas de um certame
       open p_result for 
-         select /*+ ordered */ a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
+         select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
                 a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 

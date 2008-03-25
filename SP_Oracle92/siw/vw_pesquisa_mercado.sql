@@ -9,7 +9,7 @@ create or replace view vw_pesquisa_mercado as
           d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
           replace(g.valor_unidade,',','.') as "PU_Forn", 
           g.inicio as "DataInserção",  g.fim as "Validade_P", 
-          g.origem, case g.origem when 'SA' then 'Site ARP' when 'SG' then 'Site governo' when 'SF' then 'Site fornecedor' else 'Proposta fornecedor' end as "TipoForn",
+          g.origem, case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as "TipoForn",
           h.nome as "Fornecedores", h.nome_resumido as nm_fornecedor_res, g.fornecedor as chave_fornecedor,
           a.sq_material as chave, a.sq_tipo_material, a.sq_unidade_medida
      from cl_material                        a

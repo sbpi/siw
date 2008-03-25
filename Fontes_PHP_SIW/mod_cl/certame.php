@@ -1182,7 +1182,7 @@ function ItensContrato() {
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,'COMPRA');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,null,null,null,null,null,'COMPRA');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material','asc','nome','asc');
@@ -3539,7 +3539,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I' || $O=='A') {
         // Testa a existência do código
-        $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,Nvl($_REQUEST['w_codigo'],''),null,null,null,null,null,null,null,null,null,'EXISTECOD');
+        $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,Nvl($_REQUEST['w_codigo'],''),null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTECOD');
         foreach($RS as $row) { $RS = $row; break; }
         if (f($RS,'existe')==0) {
           ScriptOpen('JavaScript');

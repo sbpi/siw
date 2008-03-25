@@ -58,7 +58,7 @@ begin
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
-           and a.sq_menu   <> p_chave
+           --and a.sq_menu   <> p_chave
         order by acentos(a.nome);        
    Elsif upper(p_operacao) <> 'I' and upper(p_operacao) <> 'H' Then
       -- Se for alteração, evita a exibição do próprio registro e dos seus subordinados

@@ -257,7 +257,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
         if ($l_tipo=='WORD') {
           $l_html .= chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp';
         } else {
-          $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
+          $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
         }
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td>'.f($row,'descricao').' </td>';
@@ -789,6 +789,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>';
       $l_html.=chr(13).'            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>';
       $l_html.=chr(13).'            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>';
+      /*
       if ($l_tipo=='WORD') {
         if ($_REQUEST['p_sinal']) $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDE</b></td>';
         else $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IDE</b></td>';
@@ -813,6 +814,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       } else {
         $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').'</b></td>';
       }
+      */
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Início</b></td>';
@@ -830,7 +832,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
         if ($l_tipo=='WORD') {
           $l_html .=chr(13).'        '.nvl(f($row1,'codigo_interno'),f($row1,'sq_siw_solicitacao')).'&nbsp;';
         } else {
-          $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row1,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row1,'codigo_interno'),f($row1,'sq_siw_solicitacao')).'&nbsp;</a>';
+          $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'cl_pitce/projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row1,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row1,'codigo_interno'),f($row1,'sq_siw_solicitacao')).'&nbsp;</a>';
         }
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).'        '.exibeImagemRestricao(f($row1,'restricao'),'P');
         $l_html .=chr(13).'            <td align="left">'.f($row1,'titulo').'</td>';
@@ -842,12 +844,14 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
         $l_html .=chr(13).'            <td>'.Nvl(FormataDataEdicao(f($row1,'inicio_real')),'---').'</td>';
         $l_html .=chr(13).'            <td>'.Nvl(FormataDataEdicao(f($row1,'fim_real')),'---').'</td>';
         $l_html .=chr(13).'            <td align="right">'.formatNumber(nvl(f($row1,'orc_real'),f($row1,'custo_real'))).'</td>';
+        /*
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).'        <td align="center">'.ExibeSmile('IDE',f($row1,'ide')).'</td>';
         $l_html .=chr(13).'            <td align="right">'.formatNumber(f($row1,'ide'),2).'%'.'</td>';
         $l_html .=chr(13).'            <td align="right">'.formatNumber(f($row1,'ige'),2).'%'.'</td>';
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).'        <td align="center">'.ExibeSmile('IDC',f($row1,'idc')).'</td>';
         if (f($row1,'idc')<0) $l_html .=chr(13).'            <td align="center">*</td>'; else $l_html .=chr(13).'            <td align="right">'.formatNumber(f($row1,'idc'),2).'%'.'</td>';
         if (f($row1,'igc')<0) $l_html .=chr(13).'            <td align="center">*</td>'; else $l_html .=chr(13).'            <td align="right">'.formatNumber(f($row1,'igc'),2).'%'.'</td>';
+        */
         $l_previsto[$w_proj] += nvl(f($row1,'orc_previsto'),f($row1,'valor'));
         $l_realizado[$w_proj] += nvl(f($row1,'orc_real'),f($row1,'custo_real'));
       }
@@ -856,7 +860,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .=chr(13).'     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]);
       $l_html .=chr(13).'     <td colspan=2>&nbsp;';
       $l_html .=chr(13).'     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]);
-      $l_html .=chr(13).'     <td colspan=6>&nbsp;';
+      //$l_html .=chr(13).'     <td colspan=6>&nbsp;';
       $l_html .=chr(13).'</tr>';
       $w_proj += 1;
       $l_html .=chr(13).'        </table></td></tr>';

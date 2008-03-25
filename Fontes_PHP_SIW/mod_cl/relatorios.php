@@ -106,10 +106,15 @@ function Rel_ItensAta() {
   $p_codigo             = $_REQUEST['p_codigo'];
   $p_nome               = $_REQUEST['p_nome'];
   $p_ordena             = $_REQUEST['p_ordena'];
+  $p_ata_aviso          = $_REQUEST['p_ata_aviso'];
+  $p_ata_invalida       = $_REQUEST['p_ata_invalida'];
+  $p_ata_valida         = $_REQUEST['p_ata_valida']; 
   $p_aviso              = $_REQUEST['p_aviso'];
   $p_invalida           = $_REQUEST['p_invalida'];
   $p_valida             = $_REQUEST['p_valida']; 
   $p_branco             = $_REQUEST['p_branco']; 
+  $p_numero_ata         = $_REQUEST['p_numero_ata']; 
+  $p_acrescimo          = $_REQUEST['p_acrescimo']; 
   if (strpos('L',$O)!==false) {
     if (montaFiltro('GET')!='') {
       $w_filtro='';
@@ -126,7 +131,7 @@ function Rel_ItensAta() {
       } 
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S',null,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,'RELATORIO');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S',null,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,$p_numero_ata,$p_acrescimo,'RELATORIO');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'numero_ata','asc','nr_item_ata','asc');
@@ -137,7 +142,7 @@ function Rel_ItensAta() {
   if ($w_tipo=='WORD') {
     HeaderWord(null);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,'ITENS DA ARP',$w_pag);
+    CabecalhoWord($w_cliente,'ITENS DE ARP',$w_pag);
   } else {
     if($O=='P') Cabecalho();
     ShowHTML('<HEAD>');
@@ -180,27 +185,37 @@ function Rel_ItensAta() {
     ShowHTML('        <tr align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Ata','numero_ata').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fim Vigência','fim').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Item','nr_item_ata').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detentor','nm_detentor_ata').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('CMM','quantidade').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Preço','valor_unidade').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('% Dif.','variacao_valor').'</td>');
     } else {
       ShowHTML('          <td rowspan=2><b>Ata</td>');
+      ShowHTML('          <td rowspan=2><b>Fim vigência</td>');
       ShowHTML('          <td rowspan=2><b>Item</td>');
       ShowHTML('          <td rowspan=2><b>Detentor</td>');
       ShowHTML('          <td rowspan=2><b>Código</td>');
       ShowHTML('          <td rowspan=2><b>Nome</td>');
       ShowHTML('          <td rowspan=2><b>Qtd</td>');
       ShowHTML('          <td rowspan=2><b>Preço</td>');
-      ShowHTML('          <td rowspan=2><b>% Dif.</td>');
     }
     ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
+    if ($w_tipo!='WORD') {
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('% Dif.','variacao_valor').'</td>');
+    } else {
+      ShowHTML('          <td rowspan=2><b>% Dif.</td>');
+    }
     ShowHTML('        <tr align="center">');
-    ShowHTML('          <td colspan=2><b>Validade</b></td>');
-    ShowHTML('          <td nowrap><b>$ Médio</b></td>');
+    if ($w_tipo!='WORD') {
+      ShowHTML('          <td colspan=2><b>'.LinkOrdena('Validade','pesquisa_validade').'</td>');
+      ShowHTML('          <td nowrap><b>'.LinkOrdena('$ Médio','pesquisa_preco_medio').'</td>');
+    } else {
+      ShowHTML('          <td colspan=2><b>Validade</b></td>');
+      ShowHTML('          <td nowrap><b>$ Médio</b></td>');
+    }
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -216,31 +231,43 @@ function Rel_ItensAta() {
         } else {
           $w_destaque = '';
         }
-        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'numero_ata').'</td>');
-        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'nr_item_ata').'</td>');
-        if($w_tipo=='WORD') ShowHTML('        <td nowrap '.$w_destaque.'>'.f($row,'nm_detentor_ata').'</td>');
-        else                ShowHTML('        <td nowrap '.$w_destaque.'>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>');
-        ShowHTML('        <td align="center" '.$w_destaque.'>'.f($row,'codigo_interno').'</td>');
+        ShowHTML('        <td align="center" width="1%" nowrap>');
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio'),f($row,'fim'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="mod_ac/contratos.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4=0&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="'.f($row,'objeto').'">'.f($row,'numero_ata').'&nbsp;</a>');
+        else                 ShowHTML('        '.f($row,'numero_ata').'');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'fim'),5).'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nr_item_ata').'</td>');
+        if($w_tipo=='WORD') ShowHTML('        <td nowrap>'.f($row,'nm_detentor_ata').'</td>');
+        else                ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>');
+        ShowHTML('        <td align="center">'.f($row,'codigo_interno').'</td>');
         if ($w_tipo!='WORD') {
-          ShowHTML('        <td '.$w_destaque.'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
+          ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         } else {
-          ShowHTML('        <td '.$w_destaque.'>'.f($row,'nome').'</td>');
+          ShowHTML('        <td>'.f($row,'nome').'</td>');
         }
-        ShowHTML('        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'quantidade'),2).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');
         ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
-        ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>');
         if (nvl(f($row,'pesquisa_data'),'')=='') {
           ShowHTML('        <td colspan=3 align="center" nowrap>Sem pesquisa de preço</td>');
         } else {
-          ShowHTML('        <td align="center" width="1%" nowrap '.$w_destaque.'>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
-          ShowHTML('        <td align="center" '.$w_destaque.'>'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
-          ShowHTML('        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+          ShowHTML('        <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
+          ShowHTML('        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
+          if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
+            ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;</td>');
+          } else {
+            ShowHTML('        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+          }
         }                
+        if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
+          ShowHTML('        <td align="right" width="1%" nowrap>&nbsp;</td>');
+        } else {
+          ShowHTML('        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>');
+        }
         ShowHTML('        </tr>');
       }
     } 
     ShowHTML('    </table>');
-    ShowHTML('<tr><td colspan="2"><b>Observação: linhas com fundo vermelho indicam valor de compra fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%).');
+    ShowHTML('<tr><td colspan="2"><b>Observação: linhas com fundo vermelho indicam valor de compra fora da faixa aceitável ($ médio + '.$w_percentual_acrescimo.'%).');
     ShowHTML('      <tr><table border=0 width="100%"><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>');
     ShowHTML('  </td>');
     ShowHTML('      </center>');
@@ -257,14 +284,22 @@ function Rel_ItensAta() {
     ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$p_Disabled.' accesskey="C" type="text" name="p_codigo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$p_codigo.'"></td>');
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHA',null);
+    ShowHTML('          <td><b>Número da <u>A</u>RP:</b><br><input '.$p_Disabled.' accesskey="N" type="text" name="p_numero_ata" class="sti" SIZE="20" MAXLENGTH="60" VALUE="'.$p_numero_ata.'"></td>');
     ShowHTML('      <tr valign="top">');
     SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sq_cc,null,'p_sq_cc','SIWSOLIC');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td valign="top"><b>Validade:</b>');
+    ShowHTML('          <td valign="top"><b>Validade da ARP:</b>');
+    ShowHTML('          <BR><input type="CHECKBOX" name="p_ata_aviso" value="S" CHECKED>Aviso');
+    ShowHTML('          <BR><input type="CHECKBOX" name="p_ata_valida" value="S" CHECKED>Válida');
+    ShowHTML('          <BR><input type="CHECKBOX" name="p_ata_invalida" value="S">Expirada');
+    ShowHTML('          <td valign="top"><b>Validade da pesquisa:</b>');
     ShowHTML('          <BR><input type="CHECKBOX" name="p_aviso" value="S" CHECKED>Aviso');
     ShowHTML('          <BR><input type="CHECKBOX" name="p_invalida" value="S" CHECKED>Inválida');
     ShowHTML('          <BR><input type="CHECKBOX" name="p_valida" value="S" CHECKED>Válida');
     ShowHTML('          <BR><input type="CHECKBOX" name="p_branco" value="S" CHECKED>Sem pesquisa');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td valign="top"><b>Critérios adicionais:</b>');
+    ShowHTML('          <BR><input type="CHECKBOX" name="p_acrescimo" value="S"><b>Somente itens acima do limite</b>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('      </table>');

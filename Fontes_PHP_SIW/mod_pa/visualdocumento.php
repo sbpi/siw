@@ -59,7 +59,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     }
     $l_html.=chr(13).'   <tr><td><b>Natureza:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_natureza').'</td></tr>';
-    $l_html.=chr(13).'   <tr><td><b>Data de recebimento:</b></td>';
+    $l_html.=chr(13).'   <tr><td><b>Data de criação/recebimento:</b></td>';
     $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'data_recebimento')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data limite para conclusão:</b></td>';
     $l_html.=chr(13).'       <td>'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';

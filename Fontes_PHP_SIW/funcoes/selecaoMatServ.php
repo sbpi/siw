@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 // -------------------------------------------------------------------------
 function selecaoMatServ($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$chaveAux,null,$chaveAux2,null,null,'S',null,null,null,null,null,null,null,$restricao);
+  $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$chaveAux,null,$chaveAux2,null,null,'S',null,null,null,null,null,null,null,null,null,null,null,null,$restricao);
   $RS = SortArray($RS,'nome','asc');
   $atributo = str_replace('onBlur','onChange',$atributo);
   if (!isset($hint)) {

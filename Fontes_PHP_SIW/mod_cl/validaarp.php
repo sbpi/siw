@@ -37,27 +37,31 @@ function ValidaARP($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
   
+  // Cancela a crítica se o trâmite solicitação não for ativo
+  if (f($l_rs_tramite,'ativo')=='N') {
+    return $l_erro;
+    exit;
+  }
+  
   // Recupera os itens da arp
   $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
   // Verifica se já foi inserido os itens na licitacao
   if (count($l_rs_item)==0) {
     $l_erro.='<li>Informe pelo menos um item para ARP.';
     $l_tipo=0; 
-  }
-  // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
-  if (count($l_rs_tramite)>0) {
-    if(f($l_rs_tramite,'sigla')=='PP') {
+  } elseif (count($l_rs_tramite)>0) {
+    // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
+    if(f($l_rs_tramite,'ordem')>1 && f($l_rs_tramite,'ativo')=='S') {
       // Verifica se cada item possui no minimo duas pesquisas de preço
-      $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
-      if(count($l_rs_pesquisa)>0) {
-        foreach($l_rs_pesquisa as $row) {
-          if (f($row,'pesquisa_validade')<addDays(time(),-1)) {
-            $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') '.'não tem pesquisa de preço válida.';
-            $l_tipo  = 0;
-          }
+      foreach($l_rs_item as $row) {
+        // Verifica se cada item possui no minimo duas pesquisas de preço
+        if(f($row,'qtd_cotacao')<2) {
+          $l_erro .= '<li>'.nvl(f($row,'codigo_interno'),'---').' - '.f($row,'nome').' não tem pelo menos 2 pesquisas de preço válidas.';
+          $l_tipo  = 0;
         }
       }
-    } elseif(f($l_rs_tramite,'sigla')=='EA') {
+    } 
+    if(f($l_rs_tramite,'sigla')=='EA') {
       if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
@@ -81,4 +85,3 @@ function ValidaARP($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   return $l_erro;
 }
 ?>
-

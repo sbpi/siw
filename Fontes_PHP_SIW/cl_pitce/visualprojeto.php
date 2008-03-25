@@ -85,7 +85,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_html .= chr(13).'<div align=center><center>';
     $l_html .= chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
     if($l_tipo!='WORD') {
-      if ($operacao != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações</a></td></tr>';
+      if ($operacao != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="cl_pitce/projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações.</a></td></tr>';
     }
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
@@ -104,7 +104,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
 
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2">';
-    $l_html .= chr(13).'          <tr><td width="30%"><b>Local de execução:</b></td><td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
+    //$l_html .= chr(13).'          <tr><td width="30%"><b>Local de execução:</b></td><td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').")</b></td>";
     $l_html .= chr(13).'          <tr><td><b>Proponente externo:<b></td>';
     $l_html .= chr(13).'        <td>'.nvl(f($RS,'proponente'),'---').' </b></td>';
     $l_html .= chr(13).'          <tr><td><b>Responsável:<b></td>';
@@ -113,10 +113,13 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_html .= chr(13).'          <tr><td><b>Unidade responsável:</b></td>';
     if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
     else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
+    /*
     $l_html .= chr(13).'          <tr><td><b>Unidade de cadastramento:</b></td>';
     if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade_cad'),$TP).'</b></td>';
     else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
+    */
 
+    /*
     // Exibe o orçamento disponível para o projeto se for visão completa
     if ($w_tipo_visao==0) { 
       $l_html .= chr(13).'    <tr><td><b>Orçamento disponível:</b></td>';
@@ -124,41 +127,44 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'    <tr><td><b>Palavra chave:</b></td>';
       $l_html .= chr(13).'      <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
     }
+    */
     $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
     $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
     $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
     $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+    /*
     $l_html .= chr(13).'      <tr><td><b>Prioridade:</b></td>';
     $l_html .= chr(13).'        <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
     $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
     $l_html.=chr(13).'          <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
     
     // Informações adicionais
-      if (Nvl(f($RS,'descricao'),'') > '' || Nvl(f($RS,'justificativa'),'') > '' || $w_acordo == 'S' || $w_viagem=='S') {
-        if ($w_tipo_visao!=2) {
-          if ($w_acordo=='S' || $w_viagem=='S') {
-            $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-            if ($w_acordo=='S') {
-              if (f($RS,'vincula_contrato')=='S') {
-                $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
-                $l_html .= chr(13).'  <td>Sim</td></tr>';
-              } else {
-                $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
-                $l_html .= chr(13).'  <td>Não</td></tr>';
-              }
+    if (Nvl(f($RS,'descricao'),'') > '' || Nvl(f($RS,'justificativa'),'') > '' || $w_acordo == 'S' || $w_viagem=='S') {
+      if ($w_tipo_visao!=2) {
+        if ($w_acordo=='S' || $w_viagem=='S') {
+          $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+          if ($w_acordo=='S') {
+            if (f($RS,'vincula_contrato')=='S') {
+              $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
+              $l_html .= chr(13).'  <td>Sim</td></tr>';
+            } else {
+              $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
+              $l_html .= chr(13).'  <td>Não</td></tr>';
             }
-            if ($w_viagem=='S') {
-              if (f($RS,'vincula_viagem')=='S') { 
-                $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
-                $l_html .= chr(13).'  <td>Sim</td></tr>';
-              } else {
-                $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
-                $l_html .= chr(13).'  <td>Não</td></tr>';
-              }
+          }
+          if ($w_viagem=='S') {
+            if (f($RS,'vincula_viagem')=='S') { 
+              $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
+              $l_html .= chr(13).'  <td>Sim</td></tr>';
+            } else {
+              $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
+              $l_html .= chr(13).'  <td>Não</td></tr>';
             }
           }
         }
-      } 
+      }
+    } 
+    */
    
     // Programação qualitativa
     if ($operacao=='T' && $l_nome_menu['QUALIT']!='') {
@@ -168,13 +174,15 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
       $l_html .= chr(13).'<tr valign="top"><td><b>Desafios:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
+      /*
       $l_html .= chr(13).'<tr valign="top"><td><b>Exclusões Específicas:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
       $l_html .= chr(13).'<tr valign="top"><td><b>Premissas:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
       $l_html .= chr(13).'<tr valign="top"><td><b>Restricões:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
-      $l_html .= chr(13).'<tr valign="top"><td><b>Observações:</b></td>';
+      */
+      $l_html .= chr(13).'<tr valign="top"><td><b>Situação atual:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').' </td></tr>';
     } 
 
@@ -219,6 +227,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       }
     }
   } 
+  /*
   // Se for listagem, exibe os outros dados dependendo do tipo de visão  do usuário
   if (($w_tipo_visao!=2 && $operacao=='L') || $operacao=='T') {
     if (f($RS,'aviso_prox_conc')=='S' || f($RS,'aviso_prox_conc_pacote')=='S') {
@@ -234,6 +243,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       } 
     }
   }
+  */
   // Rubricas do projeto
   if ($l_nome_menu['RUBRICA']!='' && $w_tipo_visao!=2 && ($operacao=='T')) {
     $RSQuery = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
@@ -328,7 +338,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $w_total_executado = 0;
       foreach ($RSQuery as $row) {
         $l_html .= chr(13).'      <tr valign="top">';
-        if($l_tipo!='WORD') $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
+        if($l_tipo!='WORD') $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
         else       $l_html .= chr(13).'          <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp';
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td>'.f($row,'descricao').' </td>';
@@ -372,7 +382,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         $RSQuery_Cronograma = SortArray($RSQuery_Cronograma,'inicio', 'asc', 'fim', 'asc');
         if (count($RSQuery_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RSQuery_Cronograma)+1).'"'; else $w_rowspan = '';
         $l_html .= chr(13).'      <tr valign="top">';
-        if($l_tipo!='WORD') $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
+        if($l_tipo!='WORD') $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
         else       $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'codigo').'&nbsp';
         $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
         if (count($RSQuery_Cronograma)>0) {
@@ -528,7 +538,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'      <tr><td colspan="2">';
         $l_html .= chr(13).'        [<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>]';
         $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>]';
-        $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
+        $l_html .= chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'cl_pitce/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
       }
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
@@ -537,10 +547,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
       $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>';
       $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orc.</b></div></td>';
+      //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orc.</b></div></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
+      //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
+      //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr>';
@@ -598,7 +608,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'         </table></td></tr>';
       $l_html .= chr(13).'<tr><td colspan=14><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
-      $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
+      //$l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
       if ($w_tipo=='WORD') {
         $l_html .= chr(13).'<tr><td colspan=14><table border=0>';

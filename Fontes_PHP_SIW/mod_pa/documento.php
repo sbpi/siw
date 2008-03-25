@@ -620,8 +620,8 @@ function Geral() {
     } else {
       Validate('w_sq_unidade','Unidade de origem','SELECT',1,1,18,'','0123456789');
     }
-    Validate('w_data_recebimento','Data de recebimento','DATA','1',10,10,'','0123456789/');
-    CompData('w_data_recebimento','Data de recebimento','>=','w_data_documento','Data do documento');
+    Validate('w_data_recebimento','Data de criação/recebimento','DATA','1',10,10,'','0123456789/');
+    CompData('w_data_recebimento','Data de criação/recebimento','>=','w_data_documento','Data do documento');
     if ($w_processo=='S') {
       Validate('w_volumes','Nº de volumes','1','1',1,18,'','0123456789');
       CompValor('w_volumes','Nº de volumes','>',0,'zero');
@@ -701,7 +701,7 @@ function Geral() {
     ShowHTML('      <tr><td colspan=4 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan=4><b>DADOS COMPLEMENTARES</b></td></tr>');
     ShowHTML('        <tr valign="top">');
-    ShowHTML('           <td valign="top" title="Informe a data de recebimento."><b><u>D</u>ata de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_recebimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_recebimento').'</td>');
+    ShowHTML('           <td valign="top" title="Informe a data de criação ou de recebimento."><b><u>D</u>ata de criação/recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_recebimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_recebimento').'</td>');
     if ($w_processo=='S') {
       ShowHTML('           <td title="Informe quantos volumes compõem o processo."><b>Nº de volumes:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_volumes" size="3" maxlength="3" value="'.$w_volumes.'" ></td>');
     } elseif ($w_circular=='S') {
@@ -1882,29 +1882,37 @@ function BuscaAssunto() {
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
-      ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-      ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('            <td><b>codigo</td>');
-      ShowHTML('            <td><b>Nome</td>');
-      ShowHTML('            <td><b>Endereço</td>');
-      ShowHTML('            <td><b>Cidade</td>');
-      ShowHTML('            <td><b>Operações</td>');
-      ShowHTML('          </tr>');
-      foreach($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('            <td width="1%" nowrap>'.f($row,'codigo').'</td>');
-        ShowHTML('            <td>'.f($row,'nome').'</td>');
-        ShowHTML('            <td>'.f($row,'logradouro').'</td>');
-        ShowHTML('            <td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td>');
-        ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'nome').'\', \''.f($row,'codigo').'\', '.f($row,'sq_unidade').');">Selecionar</a>');
-      } 
-      ShowHTML('        </table></tr>');
-      ShowHTML('      </center>');
-      ShowHTML('    </table>');
-      ShowHTML('  </td>');
-      ShowHTML('</tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
+        ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+        ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('            <td><b>Código</td>');
+        ShowHTML('            <td><b>Descrição</td>');
+        ShowHTML('            <td><b>Detalhamento</td>');
+        ShowHTML('            <td><b>Observação</td>');
+        ShowHTML('            <td><b>Operações</td>');
+        ShowHTML('          </tr>');
+        foreach($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('            <td width="1%" nowrap>'.f($row,'codigo').'</td>');
+          ShowHTML('            <td>');
+          ShowHTML('                '.f($row,'descricao'));
+          if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
+            echo '<br>';
+            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
+            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
+            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+          }
+          ShowHTML('            </td>');
+          ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
+          ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');
+          ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
+        } 
+        ShowHTML('        </table></tr>');
+        ShowHTML('      </center>');
+        ShowHTML('    </table>');
+        ShowHTML('  </td>');
+        ShowHTML('</tr>');
     } 
   } 
   ShowHTML('    </table>');

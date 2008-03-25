@@ -14,6 +14,7 @@ create or replace procedure sp_putIndicador_meta
     p_regiao            in  number   default null,
     p_uf                in  varchar2 default null,
     p_cidade            in  number   default null,
+    p_valor_inicial     in  varchar2 default null,
     p_quantidade        in  varchar2 default null,
     p_cumulativa        in  varchar2 default null,
     p_pessoa            in  number   default null,
@@ -35,10 +36,12 @@ begin
       -- Insere registro
       insert into siw_solic_meta
         (sq_solic_meta,     sq_siw_solicitacao,  sq_eoindicador,    sq_pessoa,    titulo,       descricao,     ordem,          inicio,       fim, 
-         base_geografica,   sq_pais,             sq_regiao,         co_uf,        sq_cidade,    quantidade,    cumulativa,     cadastrador,  sq_unidade)
+         base_geografica,   sq_pais,             sq_regiao,         co_uf,        sq_cidade,    quantidade,    cumulativa,     cadastrador,  sq_unidade,
+         valor_inicial)
       values
         (w_chave_aux,       p_chave,             p_indicador,       p_pessoa,     p_titulo,     p_descricao,   p_ordem,        p_inicio,     p_fim, 
-         p_base,            p_pais,              w_regiao,          p_uf,         p_cidade,     p_quantidade,  p_cumulativa,   p_pessoa,     p_unidade);
+         p_base,            p_pais,              w_regiao,          p_uf,         p_cidade,     p_quantidade,  p_cumulativa,   p_pessoa,     p_unidade,
+         p_valor_inicial);
    Elsif p_operacao = 'A' Then 
       -- Altera registro
       update siw_solic_meta
@@ -54,6 +57,7 @@ begin
              co_uf             = p_uf,
              sq_cidade         = p_cidade,
              base_geografica   = p_base,
+             valor_inicial     = p_valor_inicial,
              quantidade        = p_quantidade,
              cumulativa        = p_cumulativa,
              cadastrador       = p_pessoa,             

@@ -16,6 +16,8 @@ create or replace procedure SP_PutSolicEnvio
    w_tramite       number(18);
    w_sg_tramite    varchar2(2);
    w_menu          siw_menu%rowtype;
+   w_cont          number(4);
+
 begin
    -- Recupera os dados do serviço
    select * into w_menu from siw_menu where sq_menu = p_menu;
@@ -27,6 +29,32 @@ begin
             from siw_tramite a
            where a.sq_menu = p_menu
              and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = p_tramite);
+         
+         If w_sg_tramite = 'PP' Then
+            -- Se o trâmite for de pesquisa de preços e tiver o número necessário de pesquisas, pula para o próximo.
+            select count(*)
+              into w_cont
+              from (select a.sq_solicitacao_item, coalesce(i.qtd_cotacao,0) as qtd
+                      from cl_solicitacao_item a
+                           left join (select y.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
+                                        from siw_solicitacao                  x
+                                             inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
+                                               left  join cl_item_fornecedor  z on (y.sq_material         = z.sq_material and
+                                                                                    'S'                   = z.pesquisa)
+                                       where z.fim >= trunc(sysdate)
+                                      group by y.sq_solicitacao_item
+                                     )                        i on (a.sq_solicitacao_item  = i.sq_solicitacao_item)
+                     where a.sq_siw_solicitacao = p_chave
+                   )
+             where qtd < 2;
+            
+            If w_cont = 0 Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+            End If;
+         End If;
       Else
          select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
             from siw_tramite a

@@ -8,19 +8,24 @@ create or replace procedure sp_getMatServ
     p_nome          in varchar2  default null,
     p_ativo         in varchar2  default null,
     p_catalogo      in varchar2  default null,
+    p_ata_aviso     in varchar2  default null,
+    p_ata_invalida  in varchar2  default null,
+    p_ata_valida    in varchar2  default null,
     p_aviso         in varchar2  default null,
     p_invalida      in varchar2  default null,
     p_valida        in varchar2  default null,
     p_branco        in varchar2  default null,
     p_arp           in varchar2  default null,
     p_item          in number    default null,
+    p_numero_ata    in varchar2  default null,
+    p_acrescimo     in varchar2  default null,
     p_restricao     in varchar2  default null,
     p_result        out sys_refcursor) is
 begin
    If p_restricao is null or p_restricao = 'ALOCACAO' or p_restricao = 'VINCULACAO' or p_restricao = 'EDICAOT' or p_restricao = 'EDICAOP' Then
       -- Recupera materiais e serviços
       open p_result for    
-         select /*+ ordered */ a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
+         select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
                 a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
@@ -138,7 +143,7 @@ begin
                 to_char(g.fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
                 g.fim-f.dias_aviso_pesquisa as aviso,
                 g.fabricante, g.marca_modelo, g.embalagem,
-                case g.origem when 'SA' then 'Site ARP' when 'SG' then 'Site governo' when 'SF' then 'Site fornecedor' else 'Proposta fornecedor' end as nm_origem,
+                case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
                 h.nome as nm_fornecedor, h.nome_resumido as nm_fornecedor_res
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
@@ -217,7 +222,7 @@ begin
    Elsif p_restricao = 'RELATORIO' Then
       -- Recupera materiais e serviços que constam de ARP
       open p_result for 
-         select /*+ ordered */ a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
+         select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
                 a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
@@ -239,12 +244,16 @@ begin
                 f.percentual_acrescimo,
                 x.ordem as nr_item_ata, 
                 x.quantidade, x.quantidade_autorizada as qtd_comprada,
-                w.codigo_interno as numero_ata,
                 x1.valor_unidade,
                 x1.valor_item,
                 x1.origem,
-                case x1.origem when 'SA' then 'Site ARP' when 'SG' then 'Site Governo' when 'SF' then 'Site fornecedor' else 'Proposta fornecedor' end as nm_origem,
+                case x1.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
                 x2.sq_pessoa as sq_detentor_ata, x2.nome_resumido as nm_detentor_ata, 
+                w.sq_siw_solicitacao, w.codigo_interno as numero_ata, w.inicio, w.fim,
+                w1.sigla,
+                w2.objeto, w2.aviso_prox_conc, 
+                cast(w2.fim as date)-cast(w2.dias_aviso as integer) as aviso,
+                w3.sigla as sg_tramite,
                 ((1 - (a.pesquisa_preco_medio/x1.valor_unidade)) * 100) as variacao_valor
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
@@ -256,6 +265,8 @@ begin
                     inner join co_pessoa           x2 on (x1.fornecedor         = x2.sq_pessoa)
                   inner   join siw_solicitacao     w  on (x.sq_siw_solicitacao  = w.sq_siw_solicitacao)
                     inner join siw_menu            w1 on (w.sq_menu             = w1.sq_menu and w1.sigla = 'GCZCAD')
+                    inner join ac_acordo           w2 on (w.sq_siw_solicitacao  = w2.sq_siw_solicitacao)
+                    inner join siw_tramite         w3 on (w.sq_siw_tramite      = w3.sq_siw_tramite)
                     inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite)
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
@@ -265,6 +276,12 @@ begin
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
             and (p_ativo         is null or (p_ativo         is not null and a.ativo            = p_ativo))
+            and (p_numero_ata    is null or (p_numero_ata    is not null and w.codigo_interno   = p_numero_ata))
+            and (p_acrescimo     is null or (p_acrescimo     is not null and ((1 - (a.pesquisa_preco_medio/x1.valor_unidade)) * 100) > f.percentual_acrescimo))
+            and ((p_ata_aviso    = 'S' and w2.aviso_prox_conc = 'S' and trunc(sysdate) between cast(w2.fim as date)-cast(w2.dias_aviso as integer) and cast(w2.fim as date)) or
+                 (p_ata_invalida = 'S' and trunc(sysdate) > cast(w2.fim as date)) or
+                 (p_ata_valida   = 'S' and trunc(sysdate) < case when w2.aviso_prox_conc = 'N' then cast(w2.fim as date) else cast(w2.fim as date)-cast(w2.dias_aviso as integer) end)
+                )
             and ((p_aviso        = 'S' and coalesce(a.pesquisa_validade-f.dias_aviso_pesquisa,sysdate-1)<sysdate and a.pesquisa_validade>=sysdate-1) or
                  (p_invalida     = 'S' and coalesce(a.pesquisa_validade,sysdate-1)<sysdate-1) or
                  (p_valida       = 'S' and coalesce(a.pesquisa_validade,sysdate-1)>=sysdate-1 and coalesce(a.pesquisa_validade-f.dias_aviso_pesquisa,sysdate-1)>sysdate) or
