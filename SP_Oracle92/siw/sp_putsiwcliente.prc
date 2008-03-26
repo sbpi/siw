@@ -50,7 +50,19 @@ begin
              and upper(a.nome) = 'JURÍDICA'
              and upper(b.nome) = 'SIW'
          );
+      Else
+         -- Atualiza tabela corporativa de pessoas
+         Update co_pessoa set
+             nome             = trim(p_nome), 
+             nome_resumido    = trim(p_nome_resumido)
+         where sq_pessoa      = p_chave;
+      End If;
          
+      -- Verifica se a pessoa jurídica já existe e decide se é inclusão ou alteração
+      select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = nvl(p_chave,0);
+    
+      -- Se não existir, executa a inclusão
+      If w_existe = 0 Then
          -- Grava registro na tabela corporativa de pessoas jurídicas
         Insert into co_pessoa_juridica 
            ( sq_pessoa,      cliente,       inicio_atividade, 
@@ -60,10 +72,37 @@ begin
            ( w_Chave,        p_cliente,     p_inicio_atividade,
              p_cnpj,         p_sede,        p_inscricao_estadual
            );
+      Else
+         -- Atualiza registro na tabela corporativa de pessoas jurídicas
+         Update co_pessoa_juridica set
+             inicio_atividade   = p_inicio_atividade,
+             cnpj               = p_cnpj,
+             sede               = p_sede,
+             inscricao_estadual = p_inscricao_estadual
+         where sq_pessoa      = p_chave;
+      End If;
+         
+      -- Verifica se a pessoa já está vinculada a um segmento
+      select count(*) into w_existe from co_pessoa_segmento where sq_pessoa = nvl(p_chave,0);
+    
+      -- Se não existir, executa a inclusão
+      If w_existe = 0 Then
            
         -- Grava registro de identificação do segmento do cliente
         Insert into co_pessoa_segmento ( sq_pessoa, sq_segmento )
          Values (w_chave, p_segmento);
+      Else
+         -- Atualiza segmento do cliente
+         update co_pessoa_segmento set
+             sq_segmento     = p_segmento
+         where sq_pessoa      = p_chave;
+      End If;
+         
+      -- Verifica se o endereço padrão já existe e decide se é inclusão ou alteração
+      select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = nvl(p_chave,0);
+    
+      -- Se não existir, executa a inclusão
+      If w_existe = 0 Then
           
         -- Gera um endereço fictício para o cliente alterar depois
         Insert into co_pessoa_endereco
@@ -80,7 +119,14 @@ begin
             and upper(b.nome)    = 'JURÍDICA'
             and upper(a.nome)    = 'COMERCIAL'
         );
-        
+      End If;
+         
+      -- Verifica se a pessoa já é cliente
+      select count(*) into w_existe from siw_cliente where sq_pessoa = nvl(p_chave,0);
+    
+      -- Se não existir, executa a inclusão
+      If w_existe = 0 Then
+          
         -- Grava registro na tabela de clientes do SIW
         Insert into siw_cliente 
            ( sq_pessoa,           sq_cidade_padrao,     ativacao, 
@@ -178,8 +224,8 @@ begin
            ( sq_pessoa,   username,       senha,     assinatura, 
              sq_unidade,  sq_localizacao, cliente,   email, 
              gestor_seguranca, gestor_sistema) 
-        Values (w_chave3, '000.000.001-91', criptografia('000.000.001-91'), criptografia('000.000.001-91'),
-                w_chave1, w_chave2,        w_chave,  lower(p_nome_resumido)||'@sbpi.com.br',
+        Values (w_chave3, '000.000.001-91', criptografia('xyz345aix'), criptografia(acentos('xyz345aix')),
+                w_chave1, w_chave2,        w_chave,  'desenv@sbpi.com.br',
                 'S',      'S'
                );
 
@@ -193,43 +239,22 @@ begin
           where 0   = (select count(*) from sg_pessoa_mail where sq_pessoa = a.sq_pessoa and sq_menu = c.sq_menu)
             and a.sq_pessoa = w_chave3
         );
-
-      -- Se existir, executa a alteração
       Else
-         -- Atualiza tabela corporativa de pessoas
-         Update co_pessoa set
-             nome             = trim(p_nome), 
-             nome_resumido    = trim(p_nome_resumido)
-         where sq_pessoa      = p_chave;
-         
-         -- Atualiza registro na tabela corporativa de pessoas jurídicas
-         Update co_pessoa_juridica set
-             inicio_atividade   = p_inicio_atividade,
-             cnpj               = p_cnpj,
-             sede               = p_sede,
-             inscricao_estadual = p_inscricao_estadual
-         where sq_pessoa      = p_chave;
-
-         -- Atualiza registro na tabela de clientes do SIW
-         update siw_cliente set
-             sq_agencia_padrao    = p_agencia_padrao,
-             sq_cidade_padrao     = p_cidade,
-             tamanho_min_senha    = p_minimo_senha,
-             tamanho_max_senha    = p_maximo_senha,
-             dias_vig_senha       = p_dias_vigencia,
-             dias_aviso_expir     = p_aviso_expiracao,
-             maximo_tentativas     = p_maximo_tentativas,
-             envia_mail_tramite    = p_mail_tramite,
-             envia_mail_alerta     = p_mail_alerta,
-             georeferencia         = p_georeferencia,
-             googlemaps_key        = p_googlemaps_key
-         where sq_pessoa      = p_chave;
-         
-         -- Atualiza segmento do cliente
-         update co_pessoa_segmento set
-             sq_segmento     = p_segmento
-         where sq_pessoa      = p_chave;
-       End If;
+        -- Atualiza registro na tabela de clientes do SIW
+        update siw_cliente set
+            sq_agencia_padrao    = p_agencia_padrao,
+            sq_cidade_padrao     = p_cidade,
+            tamanho_min_senha    = p_minimo_senha,
+            tamanho_max_senha    = p_maximo_senha,
+            dias_vig_senha       = p_dias_vigencia,
+            dias_aviso_expir     = p_aviso_expiracao,
+            maximo_tentativas    = p_maximo_tentativas,
+            envia_mail_tramite   = p_mail_tramite,
+            envia_mail_alerta    = p_mail_alerta,
+            georeferencia        = p_georeferencia,
+            googlemaps_key       = p_googlemaps_key
+        where sq_pessoa      = p_chave;
+      End If;
    Elsif p_Operacao = 'E' Then
       -- Remove o registro na tabela de configuração de e-mail
       delete sg_pessoa_mail where sq_pessoa = (select sq_pessoa from sg_autenticacao x where username='000.000.001-91' and sq_pessoa = (select sq_pessoa from co_pessoa where sq_pessoa = x.sq_pessoa and sq_pessoa_pai = p_chave));
