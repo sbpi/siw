@@ -244,7 +244,7 @@ function Inicial() {
             case 'VENCIMENTO':
               if (Nvl($w_atual,'')!=f($row,'vencimento')) {
                 ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');
-                ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do dia </td>');
+                ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do dia: </td>');
                 ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
                 ShowHTML('      </tr>');
                 $w_valor=0.00;
@@ -255,9 +255,9 @@ function Inicial() {
               if (Nvl($w_atual,'')!=Nvl(f($row,'nm_pessoa_resumido'),'')) {
                 ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');
                 if (substr($SG,2,1)=='R') {
-                  ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do cliente </td>');
+                  ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do cliente: </td>');
                 } elseif (substr($SG,2,1)=='D') {
-                  ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do fornecedor </td>');
+                  ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do fornecedor: </td>');
                 } 
                 ShowHTML('        <td align="right"><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
                 ShowHTML('      </tr>');
@@ -324,17 +324,17 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="top">');
       switch ($p_ordena) {
         case 'VENCIMENTO':
-          ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do dia </td>');
+          ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do dia: </td>');
           break;
         case 'NM_PESSOA_RESUMIDO':
           if (substr($SG,2,1)=='R') {
-            ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do cliente </td>');
+            ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do cliente: </td>');
           } elseif (substr($SG,2,1)=='D') {
-            ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do fornecedor </td>');
+            ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total do fornecedor: </td>');
           } 
           break;
         case 'NM_TRAMITE':
-          ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total da situação <b>'.$w_atual.'</b></td>');
+          ShowHTML('        <td colspan=6 align="right" height=18><font size="1"><b>Total da situação: <b>'.$w_atual.'</b></td>');
           break;
       } 
       ShowHTML('        <td align="right" nowrap><font size="1"><b>'.number_format($w_valor,2,',','.').'</b></td>');
@@ -343,7 +343,7 @@ function Inicial() {
       $w_linha=$w_linha+1;
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" height=5><td colspan=7><font size=1>&nbsp;</td></tr>');
       ShowHTML('      <tr bgcolor="'.$conTrAlternateBgColor.'" valign="center" height=30>');
-      ShowHTML('        <td colspan=6 align="right"><font size="2"><b>Totais do relatório</td>');
+      ShowHTML('        <td colspan=6 align="right"><font size="2"><b>Totais do relatório: </td>');
       ShowHTML('        <td align="right" nowrap><font size="1"><b>'.number_format($w_valor_total,2,',','.').'</b></td>');
       $w_linha=$w_linha+1;
     } 

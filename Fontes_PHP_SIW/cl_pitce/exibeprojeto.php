@@ -144,13 +144,13 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     if ($operacao=='T' && $l_nome_menu['QUALIT']!='') {
       $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>'.$l_nome_menu['QUALIT'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if(nvl($_REQUEST['p_os'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Objetivo Superior:</b></td><td>'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
-      if(nvl($_REQUEST['p_oe'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Desafios:</b></td><td>'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
+      if(nvl($_REQUEST['p_oe'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Objetivos Específicos:</b></td><td>'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
+      if(nvl($_REQUEST['p_ee'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Desafios:</b></td><td>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
       /*
-      if(nvl($_REQUEST['p_ee'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Exclusões Específicas:</b></td><td>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
       if(nvl($_REQUEST['p_pr'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Premissas:</b></td><td>'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
       if(nvl($_REQUEST['p_re'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Restricões:</b></td><td>'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
       */
-      if(nvl($_REQUEST['p_ob'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Situação atual:</b></td><td>'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').' </td></tr>';
+      if(nvl($_REQUEST['p_ob'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Contexto inicial:</b></td><td>'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').' </td></tr>';
     } 
 
 
@@ -493,27 +493,27 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0" width="5%" nowrap><b>Tipo</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Indicador</b></td>';
-      $l_html .= chr(13).'            <td colspan=3 bgColor="#f0f0f0"><b>Valor atual</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>U.M.</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Fonte</b></td>';
+      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Base</b></td>';
+      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Última aferição</b></td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr align="center">';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Base geográfica</b></td>';
+      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Referência</b></td>';
+      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
       $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Referência</b></td>';
       $l_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
-        $l_html .= chr(13).'        <td nowrap>'.f($row,'nm_tipo_indicador').'</td>';
-        if ($l_tipo=='WORD') {
-          $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
-        } else {
-          $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td>';
-        }
+        if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
+        else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
+        $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
+        $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
         if (nvl(f($row,'valor'),'')!='') {
           $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor'),4).'</td>';
-          $l_html .= chr(13).'        <td>'.f($row,'nm_base_geografica').'</td>';
           $p_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
           $l_html .= chr(13).'        <td align="center">';
           if ($p_array['TIPO']=='DIA') {
@@ -526,11 +526,32 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
             $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
           }
         } else {
-          $l_html .= chr(13).'        <td align="center" colspan=3>---</td>';
+          $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+          $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+        }
+        if (nvl(f($row,'base_valor'),'')!='') {
+          $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'base_valor'),4).'</td>';
+          $p_array = retornaNomePeriodo(f($row,'base_referencia_inicio'), f($row,'base_referencia_fim'));
+          $l_html .= chr(13).'        <td align="center">';
+          if ($p_array['TIPO']=='DIA') {
+            $l_html .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+          } elseif ($p_array['TIPO']=='MES') {
+            $l_html .= chr(13).'        '.$p_array['VALOR'];
+          } elseif ($p_array['TIPO']=='ANO') {
+            $l_html .= chr(13).'        '.$p_array['VALOR'];
+          } else {
+            $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_fim')),'---');
+          }
+        } else {
+          $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+          $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
         }
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan=6><table border=0>';
+      $l_html .= chr(13).'        <tr><td align="right">U.M.<td>Unidade de medida do indicador';
+      $l_html .= chr(13).'        </table>';
     }
   }
 
@@ -542,31 +563,33 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
-      $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';
-      $l_html .= chr(13).'            <td><b>Indicador</b></td>';
-      $l_html .= chr(13).'            <td><b>Objetivo</b></td>';
-      $l_html .= chr(13).'            <td><b>Base geográfica</b></td>';
-      $l_html .= chr(13).'            <td><b>Início</b></td>';
-      $l_html .= chr(13).'            <td><b>Fim</b></td>';
-      $l_html .= chr(13).'            <td><b>Valor base</b></td>';
-      $l_html .= chr(13).'            <td><b>Meta</b></td>';
-      $l_html .= chr(13).'            <td width="1%" nowrap><b>U.M.</b></td>';
+      $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+      $l_html .= chr(13).'            <td rowspan=2><b>Objetivo</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+      $l_html .= chr(13).'            <td colspan=2><b>Base</b></td>';
+      $l_html .= chr(13).'            <td colspan=2><b>Meta</b></td>';
+      $l_html .= chr(13).'          </tr>';
+      $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+      $l_html .= chr(13).'            <td><b>Data</b></td>';
+      $l_html .= chr(13).'            <td><b>Valor</b></td>';
+      $l_html .= chr(13).'            <td><b>Data</b></td>';
+      $l_html .= chr(13).'            <td><b>Valor</b></td>';
       $l_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
-        $l_html .= chr(13).'      <tr>';
-        if ($l_tipo=='WORD') {
+        $l_html .= chr(13).'      <tr valign="top">';
+        $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
+        if ($l_formato=='WORD') {
           $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
         } else {
-          $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nm_indicador').'</td>';
+          $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
         }
-        $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
-        $l_html .= chr(13).'        <td>'.f($row,'nm_base_geografica').'</td>';
-        $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
-        $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
-        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
-        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
         $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        
+        $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
+        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
+        $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
+        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'      </table></td></tr>';
@@ -615,7 +638,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
     $RS = SortArray($RS,'problema','desc','criticidade','desc','nm_tipo_restricao','asc','nm_risco','asc'); 
     if (count($RS)>0 && $l_nome_menu['RESTSOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>QUESTÕES ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" valign="top" bgColor="#f0f0f0">';

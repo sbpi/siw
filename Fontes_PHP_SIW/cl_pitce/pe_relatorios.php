@@ -165,9 +165,9 @@ function Rel_Executivo() {
       if($p_legenda=='S') {
         ShowHTML('      <tr><td colspan="2"><table border=0>');
         ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de projetos:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
-        /*
         ShowHTML('        <tr valign="top"><td colspan=6><br>');
         ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores do IDE:</b>'.ExibeSmile('IDE',null,true));
+        /*
         ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores do IDC:</b>'.ExibeSmile('IDC',null,true));
         */
         ShowHTML('      </table>');
@@ -196,29 +196,31 @@ function Rel_Executivo() {
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>N°</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
-              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
-              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>');
-              /*
+              ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Previsto</b></td>');
+              ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Realizado</b></td>');
               if ($p_tipo!='WORD') {
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
+              /*
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').'</b></td>');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').'</b></td>');
+              */
               } else {
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDE</b></td>');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGE</b></td>');
+              /*
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDC</b></td>');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGC</b></td>');
-              }
               */
+              }
               ShowHTML('          </tr>');
               ShowHTML('          <tr align="center">');
               ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
               ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+              //ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
               ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
               ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+              //ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
               ShowHTML('          </tr>');
             }
             $RS2 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
@@ -246,14 +248,14 @@ function Rel_Executivo() {
                   else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_previsto'),f($row3,'valor'))).'</td>');
+                  //ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_previsto'),f($row3,'valor'))).'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio_real')),'---').'</td>');
                   ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim_real')),'---').'</td>');
-                  ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_real'),f($row3,'custo_real'))).'</td>');
-                  /*
+                  //ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_real'),f($row3,'custo_real'))).'</td>');
                   ShowHTML('            <td>'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ide'),2).'%'.'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ige'),2).'%'.'</td>');
+                  /*
                   ShowHTML('            <td>'.ExibeSmile('IDC',f($row3,'idc')).'</td>');
                   if (f($row3,'idc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'idc'),2).'%'.'</td>');
                   if (f($row3,'igc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'igc'),2).'%'.'</td>');
@@ -262,15 +264,17 @@ function Rel_Executivo() {
                 $l_previsto[$w_proj] += nvl(f($row3,'orc_previsto'),f($row3,'valor'));
                 $l_realizado[$w_proj] += nvl(f($row3,'orc_real'),f($row3,'custo_real'));
               } 
+              /*
               if ($p_projeto=='S') {
                 ShowHTML('<tr valign="top">');
                 ShowHTML('     <td colspan=5 align="right"><b>Totais:&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]));
                 ShowHTML('     <td colspan=2>&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]));
-                //ShowHTML('     <td colspan=6>&nbsp;');
+                ShowHTML('     <td colspan=3>&nbsp;');
                 ShowHTML('</tr>');
               }
+              */
             }
             $w_proj += 1;
           }
@@ -278,7 +282,8 @@ function Rel_Executivo() {
             ShowHTML('        </table></td></tr>');
             ShowHTML('      <tr><td colspan="2">Observações:</td></tr>');
             ShowHTML('      <tr><td colspan="2"><ul><li>A listagem exibe apenas os projetos nos quais você tenha alguma permissão.</li>');
-            ShowHTML('                              <li>(*) Projeto sem orçamento previsto</li></ul></td></tr>');
+            //ShowHTML('                              <li>(*) Projeto sem orçamento previsto</li></ul>');
+            ShowHTML('          </ul></td></tr>');
           }
           if($p_resumo=='S') {
             ShowHTML('      <tr><td align="center" colspan="2"><br><font size=2><b>QUADRO RESUMO ORÇAMENTÁRIO</b></font></td></tr>');
@@ -376,7 +381,7 @@ function Rel_Executivo() {
     if ($w_marca_bloco) ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');
     if ($p_legenda)     ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S" checked> Legenda dos sinalizadores </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
     if ($p_projeto)     ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S" checked> Relação de projetos </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_projeto" value="S"> Relação de projetos </td>');
-    if ($p_resumo)      ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S" checked> Quadro resumo orçamentário</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S"> Quadro resumo orçamentário</td>');
+    //if ($p_resumo)      ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S" checked> Quadro resumo orçamentário</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_resumo" value="S"> Quadro resumo orçamentário</td>');
     ShowHTML('    </table>');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -460,13 +465,13 @@ function Rel_Programas() {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('      <tr><td colspan="2"><table border=0>');
       ShowHTML('        <tr valign="top"><td colspan=6><b>Projetos:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
-      /*
       ShowHTML('        <tr valign="top"><td colspan=6><br>');
       ShowHTML('        <tr valign="top"><td colspan=6><b>IDE:</b>'.ExibeSmile('IDE',null,true));
+      /*
       ShowHTML('        <tr valign="top"><td colspan=6><b>IDC:</b>'.ExibeSmile('IDC',null,true));
       */
       ShowHTML('        <tr valign="top"><td colspan=6><br>');
-      ShowHTML('        <tr valign="top"><td colspan=6><b>Questões (riscos e problemas):</b>'.ExibeImagemRestricao(null,null,true));
+      ShowHTML('        <tr valign="top"><td colspan=6><b>Restrições (riscos e problemas):</b>'.ExibeImagemRestricao(null,null,true));
       ShowHTML('      </table>');
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -605,19 +610,6 @@ function Rel_Programas() {
       } elseif (strpos(f($row,'sigla'),'GERAL')!==false)    {
         ShowHTML('          <tr><td colspan=2><INPUT disabled type="CHECKBOX" name="p_geral1" value="S" checked> '.f($row,'nome').'</td>');
         ShowHTML('<input type="hidden" name="p_geral" value="S">');
-      } elseif (strpos(f($row,'sigla'),'QUALIT')!==false)   {
-        if ($_REQUEST['p_qualit']) {
-          $w_Disabled = '';
-          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" checked name="p_qualit" value="S" onclick="javascript:marcaQualit();"> '.f($row,'nome').'</td>');
-        } else {
-          $w_Disabled = ' DISABLED ';
-          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_qualit" value="S" onclick="javascript:marcaQualit();"> '.f($row,'nome').'</td>');
-        }
-        if ($_REQUEST['p_os']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_os" value="S"> Objetivo</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_os" value="S"> Objetivo</td>');
-        if ($_REQUEST['p_oe']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_oe" value="S"> Justificativa</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_oe" value="S"> Justificativa</td>');
-        if ($_REQUEST['p_ee']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ee" value="S"> Público alvo</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ee" value="S"> Público alvo</td>');
-        if ($_REQUEST['p_pr']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pr" value="S"> Estratégia de implementação</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pr" value="S"> Estratégia de implementação</td>');
-        if ($_REQUEST['p_ob']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ob" value="S"> Observações</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ob" value="S"> Observações</td>');
       } elseif (strpos(f($row,'sigla'),'ETAPA')!==false) {
         if ((!$_REQUEST['w_origem']) || $_REQUEST['p_etapa']) {
           $w_Disabled = '';
@@ -649,11 +641,11 @@ function Rel_Programas() {
       }
       elseif (strpos(f($row,'sigla'),'INTERES')!==false)   if ($_REQUEST['p_interes']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_interes" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_interes" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'RESP')!==false)      if ($_REQUEST['p_resp']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_resp" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_resp" value="S"> '.f($row,'nome').'</td>');
-      elseif (strpos(f($row,'sigla'),'RECURSO')!==false)   if ($_REQUEST['p_recurso']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>');
+      //elseif (strpos(f($row,'sigla'),'RECURSO')!==false)   if ($_REQUEST['p_recurso']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'RUBRICA')!==false)   if ($_REQUEST['p_rubrica']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_rubrica" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_rubrica" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'INDSOLIC')!==false)  if ($_REQUEST['p_indicador']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'METASOLIC')!==false) if ($_REQUEST['p_meta']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_meta" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_meta" value="S"> '.f($row,'nome').'</td>');
-      elseif (strpos(f($row,'sigla'),'RECSOLIC')!==false)  if ($_REQUEST['p_recurso']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>');
+      //elseif (strpos(f($row,'sigla'),'RECSOLIC')!==false)  if ($_REQUEST['p_recurso']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>');
     }
     if ($_REQUEST['p_projetos']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_projetos" value="S"> Projetos vinculados ao programa</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_projetos" value="S"> Projetos vinculados ao programa</td>');
     if ($_REQUEST['p_tramite'])  ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_tramite" value="S"> Ocorrências e anotações</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_tramite" value="S"> Ocorrências e anotações</td>');

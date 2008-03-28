@@ -892,7 +892,7 @@ function VisualRestricao() {
   cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  ShowHTML('<TITLE>'.$conSgSistema.' - Questões do projeto</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Restrições</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=\'this.focus()\';');
   if ($w_problema=='N') ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).' - Risco'.'</font></B>');

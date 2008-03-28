@@ -458,7 +458,7 @@ function Rel_Programas() {
       ShowHTML('        <tr valign="top"><td colspan=6><b>IDE:</b>'.ExibeSmile('IDE',null,true));
       ShowHTML('        <tr valign="top"><td colspan=6><b>IDC:</b>'.ExibeSmile('IDC',null,true));
       ShowHTML('        <tr valign="top"><td colspan=6><br>');
-      ShowHTML('        <tr valign="top"><td colspan=6><b>Questões (riscos e problemas):</b>'.ExibeImagemRestricao(null,null,true));
+      ShowHTML('        <tr valign="top"><td colspan=6><b>RESTRIÇÕES (riscos e problemas):</b>'.ExibeImagemRestricao(null,null,true));
       ShowHTML('      </table>');
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');

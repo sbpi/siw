@@ -2986,7 +2986,7 @@ function AtualizaEtapa() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
 
-    // Exibe questões associadas
+    // Exibe restrições associadas
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$w_chave, $w_chave_aux, null, null,null,null,'ETAPA');
     if (count($RS) > 0) {
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><table width="100%" border="1">');
@@ -3193,7 +3193,7 @@ function InteressadoPacote() {
   ShowHTML('       </TABLE>');
   ShowHTML('    </table>');
   ShowHTML('</table>');
-  // Exibe questões associadas
+  // Exibe restrições associadas
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_sq_unidade,'QUESTAO',null);
   if (count($RS)> 0) {
     $w_cont = 0;
@@ -4729,7 +4729,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
 } 
 
 // =========================================================================
-// Gera uma linha de apresentação da tabela de questões
+// Gera uma linha de apresentação da tabela de restrições
 // -------------------------------------------------------------------------
 function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco, $l_fase_atual,$l_criticidade, 
     $l_tipo_restricao,$l_descricao,$l_sq_resp, $l_resp,$l_estrategia,$l_acao_resposta,$l_fase_atual, $l_qtd, $l_tipo ){

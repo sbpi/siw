@@ -470,7 +470,7 @@ function Rel_Progresso() {
           if ($p_questoes=='S') {
             $RS1 = db_getSolicRestricao::getInstanceOf($dbms,f($row,'sq_projeto'), null, null, null,null,null,null);
             if (count($RS1)>0) {
-              ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Questões<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
+              ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Restrições<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
               ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');
               ShowHTML('  <tr><td><b>'.count($RS1).' risco(s)/problema(s) associado(s)</b>');
               ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');
@@ -578,10 +578,10 @@ function Rel_Progresso() {
     if ($p_proximo)     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_proximo" value="S"> Entregas previstas para o próximas período de reporte</td>');  else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_proximo" value="S"> Entregas previstas para o próximas período de reporte</td>');
     if ($p_questoes) {
       $w_Disabled = '';
-      ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Questões</td>');
+      ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Restrições</td>');
     } else {
       $w_Disabled = ' DISABLED ';
-      ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Questões</td>');
+      ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Restrições</td>');
     }
     if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
     if ($p_pacotes)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');                   else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');
@@ -850,10 +850,10 @@ function Rel_Projeto() {
       } elseif (strpos(f($row,'sigla'),'REST')!==false) {
         if ($_REQUEST['p_risco']) {
           $w_Disabled = '';
-          ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Questões</td>');
+          ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Restrições</td>');
         } else {
           $w_Disabled = ' DISABLED ';
-          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Questões</td>');
+          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Restrições</td>');
         }
         if ($_REQUEST['p_cf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>');
         if ($_REQUEST['p_tf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>');
@@ -1105,7 +1105,7 @@ function Rel_Atualizacao() {
 } 
 
 // =========================================================================
-// Gera uma linha de apresentação da tabela de questões
+// Gera uma linha de apresentação da tabela de restrições
 // -------------------------------------------------------------------------
 function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco, $l_fase_atual,$l_criticidade, 
     $l_tipo_restricao,$l_descricao,$l_sq_resp, $l_resp,$l_estrategia,$l_acao_resposta,$l_fase_atual, $l_qtd, 

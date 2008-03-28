@@ -538,6 +538,7 @@ Fontes_PHP_SIW/cl_ibict/sgpa_logo.jpg -text
 Fontes_PHP_SIW/cl_ibict/topbg.jpg -text
 Fontes_PHP_SIW/cl_ibict/usuario.php -text
 Fontes_PHP_SIW/cl_pitce/exibeprojeto.php -text
+Fontes_PHP_SIW/cl_pitce/gr_projeto.php -text
 Fontes_PHP_SIW/cl_pitce/pe_exibeprograma.php -text
 Fontes_PHP_SIW/cl_pitce/pe_programa.php -text
 Fontes_PHP_SIW/cl_pitce/pe_relatorios.php -text
@@ -1482,8 +1483,6 @@ Fontes_PHP_SIW/funcoes_valida.php -text
 Fontes_PHP_SIW/geragrafico.php -text
 Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
-Fontes_PHP_SIW/images/Folder/SheetImg.gif -text
-Fontes_PHP_SIW/images/icone/mail_1.GIF -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text

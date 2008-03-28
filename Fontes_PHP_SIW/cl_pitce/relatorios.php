@@ -253,7 +253,6 @@ function Rel_Progresso() {
             $w_fim = addDays($w_inicio,$w_dias);
           }
           
-          /*
           // Indicadores
           if($p_indicador=='S') {
             ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Indicadores de performance do projeto<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
@@ -271,6 +270,7 @@ function Rel_Progresso() {
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDE',f($row,'ide')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'ide')).'%</b></td>');
+          /*
             if ($p_tipo!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').' em '.date("d/m/Y").':</b>&nbsp;&nbsp;&nbsp;</td>');
             } else  {
@@ -284,10 +284,10 @@ function Rel_Progresso() {
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDC',f($row,'IDC')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'IDC')).'%</b></td>');
+          */
 
             ShowHTML('          </table>');
           }
-          */
 
           if($p_prevista=='S'||$p_realizada=='S'||$p_pendente=='S'||$p_proximo=='S') {
             ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Progresso no período<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
@@ -472,7 +472,7 @@ function Rel_Progresso() {
           if ($p_questoes=='S') {
             $RS1 = db_getSolicRestricao::getInstanceOf($dbms,f($row,'sq_projeto'), null, null, null,null,null,null);
             if (count($RS1)>0) {
-              ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Questões<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
+              ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Restrições<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
               ShowHTML('  <tr><td  colspan="2"><table width="100%" border="1">');
               ShowHTML('  <tr><td><b>'.count($RS1).' risco(s)/problema(s) associado(s)</b>');
               ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');
@@ -573,21 +573,21 @@ function Rel_Progresso() {
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');
     if ($p_legenda)     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');                             else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
-    //if ($p_indicador)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');               else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');
+    if ($p_indicador)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');               else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');
     if ($p_prevista)    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');          else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');
     if ($p_realizada)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_realizada" value="S"> Entregas realizadas no período de reporte</td>');            else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_realizada" value="S"> Entregas realizadas no período de reporte</td>');
     if ($p_pendente)    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_pendente" value="S"> Entregas pendentes</td>');                                    else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_pendente" value="S"> Entregas pendentes</td>');
     if ($p_proximo)     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_proximo" value="S"> Entregas previstas para o próximas período de reporte</td>');  else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_proximo" value="S"> Entregas previstas para o próximas período de reporte</td>');
     if ($p_questoes) {
       $w_Disabled = '';
-      ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Questões</td>');
+      ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Restrições</td>');
     } else {
       $w_Disabled = ' DISABLED ';
-      ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Questões</td>');
+      ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Restrições</td>');
     }
     if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
     if ($p_pacotes)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');                   else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');
-    if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');
+    //if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('          </td>');
@@ -835,13 +835,13 @@ function Rel_Projeto() {
           ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_qualit" value="S" onclick="javascript:marcaQualit();"> '.f($row,'nome').'</td>');
         }
         if ($_REQUEST['p_os']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_os" value="S"> Objetivo Superior</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_os" value="S"> Objetivo Superior</td>');
-        if ($_REQUEST['p_oe']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_oe" value="S"> Desafios</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_oe" value="S"> Objetivos Específicos</td>');
+        if ($_REQUEST['p_oe']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_oe" value="S"> Objetivos Específicos</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_oe" value="S"> Objetivos Específicos</td>');
+        if ($_REQUEST['p_ee']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ee" value="S"> Desafios</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ee" value="S"> Desafios</td>');
         /*
-        if ($_REQUEST['p_ee']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ee" value="S"> Exclusões Específicas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ee" value="S"> Exclusões Específicas</td>');
         if ($_REQUEST['p_pr']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pr" value="S"> Premissas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pr" value="S"> Premissas</td>');
         if ($_REQUEST['p_re']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_re" value="S"> Restricões</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_re" value="S"> Restricões</td>');
         */
-        if ($_REQUEST['p_ob']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ob" value="S"> Observações</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ob" value="S"> Situação atual</td>');
+        if ($_REQUEST['p_ob']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ob" value="S"> Contexto inicial</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ob" value="S"> Contexto inicial</td>');
       } elseif (strpos(f($row,'sigla'),'ETAPA')!==false) {
         if ((!$_REQUEST['w_origem']) || $_REQUEST['p_etapa']) {
           $w_Disabled = '';
@@ -854,10 +854,10 @@ function Rel_Projeto() {
       } elseif (strpos(f($row,'sigla'),'REST')!==false) {
         if ($_REQUEST['p_risco']) {
           $w_Disabled = '';
-          ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Questões</td>');
+          ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Restrições</td>');
         } else {
           $w_Disabled = ' DISABLED ';
-          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Questões</td>');
+          ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Restrições</td>');
         }
         if ($_REQUEST['p_cf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>');
         if ($_REQUEST['p_tf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>');
@@ -1109,7 +1109,7 @@ function Rel_Atualizacao() {
 } 
 
 // =========================================================================
-// Gera uma linha de apresentação da tabela de questões
+// Gera uma linha de apresentação da tabela de restrições
 // -------------------------------------------------------------------------
 function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco, $l_fase_atual,$l_criticidade, 
     $l_tipo_restricao,$l_descricao,$l_sq_resp, $l_resp,$l_estrategia,$l_acao_resposta,$l_fase_atual, $l_qtd, 

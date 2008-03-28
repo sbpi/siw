@@ -837,11 +837,13 @@ function ProgramacaoQualitativa() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_descricao','Objetivo','1','',5,2000,'1','1');
+    Validate('w_descricao','Descrição','1','1',5,2000,'1','1');
+    /*
     Validate('w_justificativa','Justificativa','1','',5,2000,'1','1');
     Validate('w_publico_alvo','Publico alvo','1','',5,2000,'1','1');
     Validate('w_estrategia','Estratégia de implementação','1','',5,2000,'1','1');
     Validate('w_observacao','Observações','1','',5,2000,'1','1');
+    */
   } 
   ValidateClose();
   ScriptClose();
@@ -877,11 +879,13 @@ function ProgramacaoQualitativa() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do programa.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top"><b><u>O</u>bjetivos:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva de que forma a execução do programa vai contribuir para o alcance dos objetivos do programa.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b>D<u>e</u>scrição:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva de que forma a execução do programa vai contribuir para o alcance dos objetivos do programa.">'.$w_descricao.'</TEXTAREA></td>');
+    /*
     ShowHTML('      <tr><td valign="top"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Descreva quais são os principais pontos fortes (internos) e as principais oportunidades (externas) do programa.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top"><b><u>P</u>úblico alvo:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_publico_alvo" class="STI" ROWS=5 cols=75 title="Descreva os atores que serão impactados pelo programa.">'.$w_publico_alvo.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top"><b><u>E</u>stratégia de implementação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_estrategia" class="STI" ROWS=5 cols=75 title="Descreva a sistemática e as estratégias que serão adotadas para o monitoramento do programa, informando, inclusive as ferramentas que serão utilizadas.">'.$w_estrategia.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top"><b>O<u>b</u>servações:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=75 title="Informe as observações pertinentes (campo não obrigatório).">'.$w_observacao.'</TEXTAREA></td>');
+    */
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');

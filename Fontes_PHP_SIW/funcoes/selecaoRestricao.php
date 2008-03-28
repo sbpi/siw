@@ -12,11 +12,11 @@ function SelecaoRestricao ($label,$accesskey,$hint,$chave,$campo,$restricao,$atr
   } 
   ShowHTML('          <option value="">---'); 
   // Se não existir outro lançamento financeiro, trata o atual como sendo dotação inicial
-  if (nvl($chave,0)==5) ShowHTML('          <option value="4" SELECTED>Muito alto');   else ShowHTML('          <option value="4">Muito alto');
+  //if (nvl($chave,0)==5) ShowHTML('          <option value="4" SELECTED>Muito alto');   else ShowHTML('          <option value="4">Muito alto');
   if (nvl($chave,0)==4) ShowHTML('          <option value="4" SELECTED>Alto');         else ShowHTML('          <option value="4">Alto');
   if (nvl($chave,0)==3) ShowHTML('          <option value="3" SELECTED>Médio');        else ShowHTML('          <option value="3">Médio');
   if (nvl($chave,0)==2) ShowHTML('          <option value="2" SELECTED>Baixo');        else ShowHTML('          <option value="2">Baixo');
-  if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>Muito baixo');  else ShowHTML('          <option value="1">Muito baixo');
+  //if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>Muito baixo');  else ShowHTML('          <option value="1">Muito baixo');
   ShowHTML('          </select>');
 } 
 ?>
