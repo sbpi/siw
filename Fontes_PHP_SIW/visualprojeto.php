@@ -166,7 +166,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       // Se for visão completa
       $l_html .= chr(13).'<tr valign="top"><td><b>Objetivo Superior:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
-      $l_html .= chr(13).'<tr valign="top"><td><b>Desafios:</b></td>';
+      $l_html .= chr(13).'<tr valign="top"><td><b>Objetivos específicos:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
       $l_html .= chr(13).'<tr valign="top"><td><b>Exclusões Específicas:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';

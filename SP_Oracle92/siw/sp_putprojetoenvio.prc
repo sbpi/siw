@@ -49,7 +49,7 @@ begin
    -- Se não receber destinatário, grava nulo para remover o executor atual.
    Update siw_solicitacao 
       set conclusao = null,
-          executor  = p_destinatario
+          executor  = coalesce(p_destinatario,executor)
     Where sq_siw_solicitacao = p_chave;
 
    -- Garante que o projeto não tem dados de conclusão

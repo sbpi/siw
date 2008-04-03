@@ -475,10 +475,12 @@ function Inicial() {
                   Nvl(f($row,'titular'),0)        == $w_usuario || 
                   Nvl(f($row,'substituto'),0)     == $w_usuario || 
                   Nvl(f($row,'tit_exec'),0)       == $w_usuario || 
-                  Nvl(f($row,'subst_exec'),0)     == $w_usuario)
+                  Nvl(f($row,'subst_exec'),0)     == $w_usuario ||
+                  RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
-              else
+              } else {
                 ShowHTML('          ---&nbsp');
+              }
             } 
             ShowHTML('        </td>');
           } 

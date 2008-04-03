@@ -333,7 +333,7 @@ function Inicial() {
   } else {
     cabecalho();
     ShowHTML('<HEAD>');
-    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de projetos</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
@@ -896,7 +896,8 @@ function Geral() {
     Validate('w_codigo_interno','Código','1',1,1,60,'1','1');
     Validate('w_titulo','titulo','1',1,5,100,'1','1');
     // Trata as possíveis vinculações do projeto
-    if($w_pe=='S') {
+    //if($w_pe=='S') {
+    if('N'=='S') {
       if(nvl($w_plano,'')!='') {
         Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
         ShowHTML('  if (theForm["w_objetivo[]"]!=undefined) {');
@@ -1020,7 +1021,8 @@ function Geral() {
     ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o projeto."></td>');
     // Verifica a que objetos o projeto pode ser vinculado
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
-    if ($w_pe=='S') {
+    //if ($w_pe=='S') {
+    if ('N'=='S') {
       ShowHTML('          <tr valign="top">');
       selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
       ShowHTML('          <tr valign="top">');    
@@ -4134,7 +4136,7 @@ function Excluir() {
   if ($w_troca > '' && $O!='E') $w_observacao = $_REQUEST['w_observacao'];
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='E') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -4242,7 +4244,7 @@ function Encaminhamento() {
   }
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -4327,7 +4329,7 @@ function Anotar() {
   if ($w_troca > '' && $O!='E') $w_observacao = $_REQUEST['w_observacao'];
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -4412,7 +4414,7 @@ function Concluir() {
   } 
   cabecalho();
   ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
     CheckBranco();

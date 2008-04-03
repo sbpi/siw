@@ -2029,6 +2029,7 @@ function Etapas() {
 
   if ($w_troca > '' && $O!='E') {
     // Se for recarga da página
+    $w_altera_ordem         = $_REQUEST['w_altera_ordem'];
     $w_ordem                = $_REQUEST['w_ordem'];
     $w_titulo               = $_REQUEST['w_titulo'];
     $w_descricao            = $_REQUEST['w_descricao'];
@@ -2108,7 +2109,7 @@ function Etapas() {
     foreach ($RS as $row) {
       if (f($row,'ordena')=='0') {
         $w_texto .= '<tr valign=top>';
-        $w_texto .= '  <td align=center><b>'.f($row,'ordem');
+        $w_texto .= '  <td><b>'.f($row,'ordem');
         $w_texto .= '  <td><b>'.f($row,'titulo');
         $w_texto .= '  <td align="center"><b>'.formataDataEdicao(f($row,'inicio_previsto'));
         $w_texto .= '  <td align="center"><b>'.formataDataEdicao(f($row,'fim_previsto'));
@@ -2126,7 +2127,7 @@ function Etapas() {
         }
       } else {
         $w_texto .= '<tr valign=top>';
-        $w_texto .= '  <td align=center>'.f($row,'ordem');
+        $w_texto .= '  <td>'.f($row,'ordem');
         $w_texto .= '  <td>'.f($row,'titulo');
         $w_texto .= '  <td align="center">'.formataDataEdicao(f($row,'inicio_previsto'));
         $w_texto .= '  <td align="center">'.formataDataEdicao(f($row,'fim_previsto'));
@@ -2138,6 +2139,7 @@ function Etapas() {
     } 
     $w_texto .= '</table>';
     $w_texto = $w_texto_titulo.$w_texto;
+    if (nvl($w_altera_ordem,'')!='') $w_ordem = $w_indica_ordem;
   } else {
     $w_texto='Não há outros números de ordem subordinados a esta etapa e nem etapas de mesma subordinação.';
   }
@@ -2366,7 +2368,7 @@ function Etapas() {
     ShowHTML('      <tr><td colspan=3><b>Tít<u>u</u>lo:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="90" VALUE="'.$w_titulo.'" title="Informe um título para a etapa."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-    SelecaoEtapa('Eta<u>p</u>a superior:','P','Se necessário, indique a etapa superior a esta.',$w_chave_pai,$w_chave,$w_chave_aux,'w_chave_pai','Pesquisa','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_ordem\'; document.Form.submit();"');
+    SelecaoEtapa('Eta<u>p</u>a superior:','P','Se necessário, indique a etapa superior a esta.',$w_chave_pai,$w_chave,$w_chave_aux,'w_chave_pai','Pesquisa','onChange="document.Form.action=\''.$w_pagina.$par.'&w_altera_ordem=1\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_ordem\'; document.Form.submit();"');
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top"><td colspan=3>'.$w_texto);
     ShowHTML('      <tr valign="top">');

@@ -82,17 +82,17 @@ $conRefreshSec  = 1000;
 //---------------------------Configuração do ambiente do sistema
 
 // Define se o serviço de envio automático de e-mails deve ser ativado (true) fou não (false)
-$conEnviaMail   = true;
+$conEnviaMail   = false;
 
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
-$conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
-$conDefaultPath = 'http://www.sbpi.com.br';
+//$conApacheStat  = 'http://io/server-status-sbpi';
+$conDefaultPath = 'http://io/siw';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://www2.sbpi.com.br/siw/';
-$conDiretorio   = '/var/www/html/siw/';
-$conFileVirtual = '/siw_files/';
-$conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
+$conRootSIW     = 'http://io/siw/';
+$conDiretorio   = 'C:/Inetpub/wwwroot/siw/';
+$conFileVirtual = '/siw/files/';
+$conFilePhysical= 'C:/Inetpub/wwwroot/siw/files/'; // Formato Linux
 //$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 
 // Define se deve ser gravado arquivo de log e o seu caminho

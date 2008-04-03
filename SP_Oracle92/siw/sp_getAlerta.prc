@@ -145,13 +145,13 @@ begin
           where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
             and f1.acesso    > 1
-            and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(g.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(i.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(j.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(k.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(w.dias_prestacao_contas,0) as integer))<=sysdate) or
+            and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(g.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(i.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(j.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(k.dias_aviso as integer))<=trunc(sysdate))))) or
+                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(w.dias_prestacao_contas,0) as integer))<=trunc(sysdate)) or
                  (c.sigla    = 'SR' and f.fim < trunc(sysdate))
                 );
    Elsif p_restricao = 'PACOTE' Then
@@ -235,7 +235,7 @@ begin
                                                                     )
           where ((p_cliente    is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario     is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and (h.fim_previsto < trunc(sysdate) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto)))<=sysdate)))
+            and (h.fim_previsto < trunc(sysdate) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto)))<=trunc(sysdate))))
             and (-- Gestor de segurança
                  (0             < (select count(x.sq_pessoa) from sg_autenticacao x where x.sq_pessoa = a1.sq_pessoa and x.gestor_sistema = 'S')) or
                  -- Gestor do módulo no endereço do projeto ou da etapa

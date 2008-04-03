@@ -732,7 +732,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   if ($MaximumLength>"") {
     print "  if (".$Form.$VariableName.".value.length > ".$MaximumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
     print "  {"."\r\n";
-    print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName."');"."\r\n";
+    print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName.".\\nForam digitadas ' + ".$Form.$VariableName.".value.length + ' posições.');"."\r\n";
     if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";

@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putCLEnvio {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_novo_tramite, $p_devolucao, $p_observacao, $p_destinatario, $p_despacho, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCLENVIO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCLEnvio';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_pessoa'                    =>array($p_pessoa,                                        B_INTEGER,        32),
