@@ -6,7 +6,15 @@ create or replace procedure SP_GetSolicLog
 
    w_modulo siw_modulo.sigla%type;
    w_opcao  siw_menu.sigla%type;
+   w_reg    number(4);
 begin
+   -- Verifica se a solicitação existe
+   select count(sq_siw_solicitacao) into w_reg from siw_solicitacao where sq_siw_solicitacao = coalesce(p_chave,0);
+   If w_reg = 0 Then
+      -- Se não existir, aborta a execução
+      return;
+   End If;
+   
    -- Recupera o módulo da solicitacao para decidir onde buscará os interessados
    select c.sigla, b.sigla into w_modulo, w_opcao
      from siw_solicitacao         a
