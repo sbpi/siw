@@ -478,6 +478,7 @@ function Rel_Programas() {
     $w_projeto_atual = 0;
     $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
     $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
+    $RS1 = SortArray($RS1,'or_modulo','asc', 'or_servico', 'asc', 'sq_solic_pai', 'asc', 'codigo_interno', 'asc'); 
     if (count($RS1)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');

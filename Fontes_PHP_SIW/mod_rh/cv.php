@@ -2104,7 +2104,7 @@ function Grava() {
             dml_putSiwUsuario::getInstanceOf($dbms,'I',
                 $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
                 $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-                $_REQUEST['w_cpf'],$_REQUEST['w_email'],'N','N');
+                $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null);
             dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null);
           } 
         } 

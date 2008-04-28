@@ -1,15 +1,21 @@
-create or replace function SP_GetCustomerSite
-   (p_cliente  in  numeric,
-    p_result   refcursor
-   ) returns refcursor as $$
+CREATE OR REPLACE FUNCTION siw.SP_GetCustomerSite
+   (p_cliente  numeric)
+
+  RETURNS refcursor AS
+$BODY$
+
+DECLARE
+    p_result          refcursor;
 begin
    open p_result for
       select logradouro
-        from co_pessoa_endereco a,
-             co_tipo_endereco   b
+        from siw.co_pessoa_endereco a,
+             siw.co_tipo_endereco   b
        where a.sq_tipo_endereco = b.sq_tipo_endereco
          and b.internet         = 'S'
          and a.padrao           = 'S'
          and a.sq_pessoa        = p_cliente;
-  return p_result;
-end; $$ language plpgsql volatile;
+end
+ $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;

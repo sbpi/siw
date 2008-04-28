@@ -856,7 +856,7 @@ function Geral() {
     ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de atraso</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data Término previsto do projeto.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1182,7 +1182,7 @@ function ItensContrato() {
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,null,null,null,null,null,'COMPRA');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$p_tipo_material,$p_codigo,$p_nome,'S','S',null,null,null,null,null,null,null,null,null,null,null,'COMPRA');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material','asc','nome','asc');
@@ -1193,7 +1193,7 @@ function ItensContrato() {
     $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
     $RS = SortArray($RS,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
+    $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
@@ -3539,7 +3539,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I' || $O=='A') {
         // Testa a existência do código
-        $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,null,Nvl($_REQUEST['w_codigo'],''),null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTECOD');
+        $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,Nvl($_REQUEST['w_codigo'],''),null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTECOD');
         foreach($RS as $row) { $RS = $row; break; }
         if (f($RS,'existe')==0) {
           ScriptOpen('JavaScript');

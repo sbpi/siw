@@ -6,7 +6,6 @@ create or replace procedure sp_putMatServ
     p_copia           in  number   default null,
     p_tipo_material   in  number   default null,
     p_unidade_medida  in  number   default null,
-    p_sq_cc           in  number   default null,
     p_nome            in  varchar2 default null,
     p_descricao       in  varchar2 default null,
     p_detalhamento    in  varchar2 default null,
@@ -26,11 +25,11 @@ begin
 
       -- Insere registro
       insert into cl_material
-        (sq_material,          cliente,         sq_tipo_material,           sq_unidade_medida,    sq_cc,            nome, 
+        (sq_material,          cliente,         sq_tipo_material,           sq_unidade_medida,    nome, 
          descricao,            detalhamento,    apresentacao,               codigo_interno,       codigo_externo,   exibe_catalogo,
          vida_util,            ativo)
       values
-        (w_chave,              p_cliente,       p_tipo_material,            p_unidade_medida,     p_sq_cc,          p_nome, 
+        (w_chave,              p_cliente,       p_tipo_material,            p_unidade_medida,     p_nome, 
          p_descricao,          p_detalhamento,  p_apresentacao,             p_codigo_interno,     p_codigo_externo, p_exibe_catalogo,
          p_vida_util,          p_ativo
         );
@@ -38,7 +37,6 @@ begin
       -- Altera registro
       update cl_material
          set sq_tipo_material  = p_tipo_material,
-             sq_cc             = p_sq_cc,
              sq_unidade_medida = p_unidade_medida,
              nome              = p_nome,
              descricao         = p_descricao,

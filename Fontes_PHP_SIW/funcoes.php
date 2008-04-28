@@ -713,12 +713,16 @@ function ExibeFornecedor($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
 // =========================================================================
 // Montagem da URL com os dados de um plano estratégico
 // -------------------------------------------------------------------------
-function ExibePlano($p_dir,$p_cliente,$p_plano,$p_tp,$p_nome) {
+function ExibePlano($p_dir,$p_cliente,$p_plano,$p_tp,$p_nome,$p_pitce=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pe/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+    if (nvl($p_pitce,'')=='') {
+      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pe/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+    } else {
+      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+    }
   }
   return $l_string;
 }

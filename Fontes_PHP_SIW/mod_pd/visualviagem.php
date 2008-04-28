@@ -15,7 +15,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   $w_fim        = f($RS,'fim');
   $w_sg_tramite = f($RS,'sg_tramite');
   $w_or_tramite = f($RS,'or_tramite');
-  $w_ativo      = f($RS,'ativo');
+  $w_tramite_ativo      = f($RS,'ativo');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)==$l_usuario || 
@@ -426,7 +426,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         if ($i==0) {
           $w_html .= chr(13).'        <td colspan=6>Fase atual: <b>'.f($row,'fase').'</b></td>';
           $w_cor = $w_TrBgColor;
-          if ($w_ativo=='S') {
+          if ($w_tramite_ativo=='S') {
             // Recupera os responsáveis pelo tramite
             $RS1 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
             $w_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
@@ -463,7 +463,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         } else {
           $w_html .= chr(13).'        <td nowrap>'.f($row,'responsavel').'</td>';
         } 
-        if (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
+        if (nvl(f($row,'chave_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
           if ($l_P4!=1) {
             $w_html .= chr(13).'        <td nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
           } else {

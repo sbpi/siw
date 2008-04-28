@@ -153,8 +153,8 @@ begin
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
-      select count(*) into w_log_sol from siw_solic_log  where sq_siw_solicitacao = p_chave;
-      select count(*) into w_log_esp from ac_acordo_log  where sq_siw_solicitacao = p_chave;
+      select count(*) into w_log_sol from siw_solic_log      where sq_siw_solicitacao = p_chave;
+      select count(*) into w_log_esp from fn_lancamento_log  where sq_siw_solicitacao = p_chave;
       
       -- Se não foi enviada para outra fase nem para outra pessoa, exclui fisicamente.
       -- Caso contrário, coloca a solicitação como cancelada.

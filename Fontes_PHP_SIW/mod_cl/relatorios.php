@@ -12,7 +12,6 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
-include_once($w_dir_volta.'funcoes/selecaoCC.php');
 
 // =========================================================================
 //  /relatorios.php
@@ -102,7 +101,6 @@ function Rel_ItensAta() {
   Global $w_Disabled;
 
   $p_tipo_material      = $_REQUEST['p_tipo_material'];
-  $p_sq_cc              = $_REQUEST['p_sq_cc'];
   $p_codigo             = $_REQUEST['p_codigo'];
   $p_nome               = $_REQUEST['p_nome'];
   $p_ordena             = $_REQUEST['p_ordena'];
@@ -125,13 +123,9 @@ function Rel_ItensAta() {
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro.='<tr valign="top"><td align="right">Tipo <td>[<b>'.f($RS,'nome_completo').'</b>]';
       } 
-      if ($p_sq_cc>'') {
-        $RS = db_getCCData::getInstanceOf($dbms,$p_sq_cc);
-        $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
-      } 
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,'S',null,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,$p_numero_ata,$p_acrescimo,'RELATORIO');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,'S',null,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,'S',null,$p_numero_ata,$p_acrescimo,'RELATORIO');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'numero_ata','asc','nr_item_ata','asc');
@@ -155,7 +149,6 @@ function Rel_ItensAta() {
       Validate('p_nome','Nome','1','','3','30','1','1');
       Validate('p_codigo','Código interno','1','','2','30','1','1');
       Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
-      Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
       ValidateClose();
       ScriptClose();
     }
@@ -285,8 +278,6 @@ function Rel_ItensAta() {
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHA',null);
     ShowHTML('          <td><b>Número da <u>A</u>RP:</b><br><input '.$p_Disabled.' accesskey="N" type="text" name="p_numero_ata" class="sti" SIZE="20" MAXLENGTH="60" VALUE="'.$p_numero_ata.'"></td>');
-    ShowHTML('      <tr valign="top">');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',$p_sq_cc,null,'p_sq_cc','SIWSOLIC');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td valign="top"><b>Validade da ARP:</b>');
     ShowHTML('          <BR><input type="CHECKBOX" name="p_ata_aviso" value="S" CHECKED>Aviso');

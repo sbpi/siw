@@ -7,7 +7,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
   $l_html='';
   // Recupera os dados da tarefa
   $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
-  $w_ativo      = f($RS1,'ativo');
+  $w_tramite_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
@@ -170,7 +170,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
       $l_html.=chr(13).'      <tr valign="top">';
       if ($i==0) {
         $l_html.=chr(13).'     <td colspan=4>Fase atual: <b>'.f($row1,'fase').'</b></td></tr>';
-        if ($w_ativo=='S') {
+        if ($w_tramite_ativo=='S') {
           // Recupera os responsáveis pelo tramite
           $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
           $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
@@ -197,12 +197,12 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$P4) {
       }
       $l_html.=chr(13).'        <td nowrap align="center">'.FormataDataEdicao(f($row1,'phpdt_data'),3).'</td>';
       if (Nvl(f($row1,'caminho'),'')>'') {
-        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'observacao'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row1,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row1,'tipo').' - '.round(f($row1,'tamanho')/1024,1).' KB',null)).'</td>';
+        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row1,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row1,'tipo').' - '.round(f($row1,'tamanho')/1024,1).' KB',null)).'</td>';
       } else {
-        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'observacao'),'---')).'</td>';
+        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row1,'despacho'),'---')).'</td>';
       }         
       $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'responsavel')).'</td>';
-      if ((Nvl(f($row1,'sq_demanda_log'),'')>'')  && (Nvl(f($row1,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
+      if ((Nvl(f($row1,'chave_log'),'')>'')  && (Nvl(f($row1,'destinatario'),'')==''))   $l_html.=chr(13).'        <td nowrap>Anotação</td>';
       else $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row1,'tramite'),'---').'</td>';
       $l_html.=chr(13).'      </tr>';
     } 

@@ -861,7 +861,7 @@ begin
                    inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      inner          join pe_plano             b2 on (b.sq_plano                 = b2.sq_plano)
+                      left           join pe_plano             b2 on (b.sq_plano                 = b2.sq_plano)
                       inner          join eo_unidade           b4 on (b.sq_unidade               = b4.sq_unidade)
                         left         join eo_unidade_resp      b5 on (b4.sq_unidade              = b5.sq_unidade and
                                                                       b5.tipo_respons            = 'T'           and

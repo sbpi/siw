@@ -49,6 +49,7 @@
                 'w'      => $node['attrib']['NODEWIDTH'] - $node['attrib']['MARGINLEFT'] - $node['attrib']['MARGINRIGHT'],
                 'h'      => $node['attrib']['NODEHEIGHT'] - $node['attrib']['MARGINBOTTOM'] - $node['attrib']['MARGINTOP'],
                 'name'   => (isset($node['attrib']['NAME']) ? $node['attrib']['NAME'] : ''),
+                'chave'  => (isset($node['attrib']['CHAVE']) ? $node['attrib']['CHAVE'] : ''),
                 'childs' => array()
             );
             

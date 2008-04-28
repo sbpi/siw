@@ -87,8 +87,8 @@ begin
          Values
             ( w_chave,              p_unidade,        p_localizacao,
               p_cliente,            p_username,       p_email,
-              p_gestor_seguranca,   p_gestor_sistema, criptografia(p_username),
-              criptografia(p_username)
+              coalesce(p_gestor_seguranca,'N'),       coalesce(p_gestor_sistema,'N'), 
+              criptografia(p_username),               criptografia(p_username)
             );
          
          -- Insere registros de configuração de e-mail
@@ -108,8 +108,8 @@ begin
          Update sg_autenticacao set
              sq_unidade       = p_unidade,
              sq_localizacao   = p_localizacao,
-             gestor_seguranca = p_gestor_seguranca,
-             gestor_sistema   = p_gestor_sistema,
+             gestor_seguranca = coalesce(p_gestor_seguranca,gestor_seguranca),
+             gestor_sistema   = coalesce(p_gestor_sistema,gestor_sistema),
              email            = p_email
          where sq_pessoa      = w_chave;
        End If;

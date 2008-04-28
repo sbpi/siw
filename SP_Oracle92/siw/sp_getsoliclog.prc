@@ -1,6 +1,6 @@
 create or replace procedure SP_GetSolicLog
    (p_chave     in number,
-    p_chave_aux in number   default null,
+    p_tipo      in number   default null, -- 0: encaminhamentos; 1: anotaçoes; 2: versões
     p_restricao in varchar2,
     p_result    out sys_refcursor) is
 
@@ -26,7 +26,7 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
-            select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_demanda_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_demanda_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -49,8 +49,13 @@ begin
                    left       join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left     join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
-            select b.sq_demanda_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -66,13 +71,18 @@ begin
                    left outer join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
                      left outer join siw_arquivo      k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_modulo = 'PR' or w_modulo = 'OR' or w_modulo = 'IS' Then -- Se for o módulo de projetos
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de um projeto
          open p_result for 
-            select h.sq_projeto_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_projeto_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_projeto_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -101,8 +111,13 @@ begin
                         left     join siw_arquivo        m on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
                           
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
-            select b.sq_projeto_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_projeto_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -118,13 +133,18 @@ begin
                       left outer join pj_projeto_log_arq j on (b.sq_projeto_log     = j.sq_projeto_log)
                          left outer join siw_arquivo     k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_modulo = 'PE' Then -- Se for o módulo de planejamento
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de um projeto
          open p_result for 
-            select h.sq_programa_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_programa_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_programa_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -152,8 +172,13 @@ begin
                       left       join siw_solic_log_arq     l on (a.sq_siw_solic_log   = l.sq_siw_solic_log)
                         left     join siw_arquivo           m on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
-            select b.sq_programa_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -169,13 +194,18 @@ begin
                       left       join pe_programa_log_arq j on (b.sq_programa_log    = j.sq_programa_log)
                          left    join siw_arquivo         k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_modulo = 'AC' or substr(w_opcao,1,3)='GCZ' Then -- Se for o módulo de acordos
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
-            select h.sq_acordo_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_acordo_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_acordo_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -198,8 +228,13 @@ begin
                    left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
-            select b.sq_acordo_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_acordo_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -215,13 +250,18 @@ begin
                    left outer   join ac_acordo_log_arq j on (b.sq_acordo_log      = j.sq_acordo_log)
                      left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_modulo = 'FN' Then -- Se for o módulo financeiro
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
-            select h.sq_lancamento_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_lancamento_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_lancamento_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -244,8 +284,13 @@ begin
                    left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
-            select b.sq_lancamento_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_lancamento_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -261,13 +306,18 @@ begin
                    left outer   join fn_lancamento_log_arq j on (b.sq_lancamento_log  = j.sq_lancamento_log)
                      left outer join siw_arquivo           k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_modulo = 'PD' Then -- Se for o módulo de viagens
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for
-            select h.sq_demanda_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
+            select h.sq_demanda_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
                    case when h.sq_demanda_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end despacho,
                    'TRAMITACAO' origem,
                    c.nome_resumido responsavel,
@@ -289,7 +339,7 @@ begin
                        left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
-            select b.sq_demanda_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    'ANOTACAO' origem,
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
@@ -312,7 +362,7 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
-            select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, a.observacao,
+            select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, a.observacao as despacho,
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    f.nome fase, 
@@ -326,13 +376,18 @@ begin
                      inner    join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
                    left outer join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo     k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
-             where a.sq_siw_solicitacao = p_chave;
+             where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   );
       End If;
    Elsif w_modulo = 'PE' Then -- Se for o módulo de planejamento estratégico
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de um programa
          open p_result for 
-            select h.sq_programa_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_programa_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    case when h.sq_programa_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
@@ -356,7 +411,7 @@ begin
                           left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
-            select b.sq_programa_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    c.nome_resumido responsavel,
                    c.sq_pessoa,
                    d.nome_resumido destinatario,
@@ -378,7 +433,7 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de um programa
          open p_result for 
-            select h.sq_documento_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
+            select h.sq_documento_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
                    coalesce(m.nome,a.observacao) as despacho,
                    case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
@@ -414,7 +469,7 @@ begin
                      left    join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
-            select b.sq_documento_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
+            select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
                    b1.nome as despacho,
                    b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
                    'TRAMITACAO' origem,

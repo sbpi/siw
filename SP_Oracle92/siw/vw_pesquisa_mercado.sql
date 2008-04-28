@@ -1,13 +1,13 @@
 create or replace view vw_pesquisa_mercado as
    select a.nome as "PRODUTO", a.descricao, a.detalhamento, 
           a.codigo_interno as "CODIGO", a.codigo_externo as "CODIGO ANTIGO", 
-          replace(a.pesquisa_preco_menor,',','.') as pesquisa_preco_menor, 
-          replace(a.pesquisa_preco_maior,',','.') as pesquisa_preco_maior,
-          replace(a.pesquisa_preco_medio,',','.') as pesquisa_preco_medio,
+          case when a.pesquisa_preco_menor is null then null else 'R$ '||fValor(a.pesquisa_preco_menor,'T',4) end as pesquisa_preco_menor, 
+          case when a.pesquisa_preco_maior is null then null else 'R$ '||fValor(a.pesquisa_preco_maior,'T',4) end as pesquisa_preco_maior, 
+          case when a.pesquisa_preco_medio is null then null else 'R$ '||fValor(a.pesquisa_preco_medio,'T',4) end as pesquisa_preco_medio, 
           a.pesquisa_data, a.pesquisa_validade, 
           c.nome as nm_tipo_material, 
           d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-          replace(g.valor_unidade,',','.') as "PU_Forn", 
+          case when g.valor_unidade is null then null else 'R$ '||fValor(g.valor_unidade,'T',4) end as "PU_Forn", 
           g.inicio as "DataInserção",  g.fim as "Validade_P", 
           g.origem, case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as "TipoForn",
           h.nome as "Fornecedores", h.nome_resumido as nm_fornecedor_res, g.fornecedor as chave_fornecedor,
@@ -15,7 +15,6 @@ create or replace view vw_pesquisa_mercado as
      from cl_material                        a
           inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
           inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-          inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
           inner     join cl_parametro        f  on (a.cliente             = f.cliente)
           inner     join cl_item_fornecedor  g  on (a.sq_material         = g.sq_material and
                                                     g.pesquisa            = 'S'

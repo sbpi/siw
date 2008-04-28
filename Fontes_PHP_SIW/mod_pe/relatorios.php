@@ -408,7 +408,7 @@ function Rel_Programas() {
 
   if ($O=='L') {
     if ($p_tipo=='WORD') {
-      HeaderWord('portrait');
+      HeaderWord(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';

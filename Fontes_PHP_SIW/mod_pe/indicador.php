@@ -1471,7 +1471,7 @@ function Meta() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_titulo','Objetivo','','1','2','100','1','1');
+      Validate('w_titulo','Meta','','1','2','100','1','1');
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
       Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
       Validate('w_inicio','Início do período','DATA','1','10','10','','0123456789/');
@@ -1486,7 +1486,7 @@ function Meta() {
         if ($w_base==4) Validate('w_cidade','Cidade','SELECT','1','1','18','','1');
       }
       Validate('w_valor_inicial','Valor base','VALOR','1',6,18,'','0123456789,.');
-      Validate('w_quantidade','Meta','VALOR','1',6,18,'','0123456789,.');
+      Validate('w_quantidade','Resultado','VALOR','1',6,18,'','0123456789,.');
       Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
       Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
       if ($P1==1) Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1528,12 +1528,12 @@ function Meta() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td>'.linkOrdena('Indicador','nome').'</td>');
-    ShowHTML('          <td>'.linkOrdena('Objetivo','titulo').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Meta','titulo').'</td>');
     ShowHTML('          <td>'.linkOrdena('Base geográfica','base_geografica').'</td>');
     ShowHTML('          <td>'.linkOrdena('Início','inicio').'</td>');
     ShowHTML('          <td>'.linkOrdena('Fim','fim').'</td>');
     ShowHTML('          <td>'.linkOrdena('Valor base','valor_inicial').'</td>');
-    ShowHTML('          <td>'.linkOrdena('Meta','quantidade').'</td>');
+    ShowHTML('          <td>'.linkOrdena('Resultado','quantidade').'</td>');
     ShowHTML('          <td width="1%" nowrap>'.linkOrdena('U.M.','sg_unidade_medida').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -1583,7 +1583,7 @@ function Meta() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
 
-    ShowHTML('      <tr><td valign="top"colspan="3"><b><u>O</u>bjetivo:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o projeto."></td>');
+    ShowHTML('      <tr><td valign="top"colspan="3"><b><u>M</u>eta:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe o objetivo da meta."></td>');
     ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
@@ -1612,7 +1612,7 @@ function Meta() {
     }
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
-    ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>M</u>eta: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>R</u>esultado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
     SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');

@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putMatServ {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_usuario, $p_chave, $p_copia, $p_tipo_material, 
-        $p_unidade_medida, $p_sq_cc, $p_nome, $p_descricao, $p_detalhamento, $p_apresentacao, $p_codigo_interno, 
+        $p_unidade_medida, $p_nome, $p_descricao, $p_detalhamento, $p_apresentacao, $p_codigo_interno, 
         $p_codigo_externo, $p_exibe_catalogo, $p_vida_util, $p_ativo, $p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMatServ';
      $params=array('p_operacao'         =>array($operacao,                      B_VARCHAR,         1),
@@ -21,7 +21,6 @@ class dml_putMatServ {
                    'p_copia'            =>array(tvl($p_copia),                  B_INTEGER,        32),
                    'p_tipo_material'    =>array(tvl($p_tipo_material),          B_INTEGER,        32),
                    'p_unidade_medida'   =>array(tvl($p_unidade_medida),         B_INTEGER,        32),
-                   'p_sq_cc'            =>array(tvl($p_sq_cc),                  B_INTEGER,        32),
                    'p_nome'             =>array(tvl($p_nome),                   B_VARCHAR,       110),
                    'p_descricao'        =>array(tvl($p_descricao),              B_VARCHAR,       130),
                    'p_detalhamento'     =>array(tvl($p_detalhamento),           B_VARCHAR,      2000),

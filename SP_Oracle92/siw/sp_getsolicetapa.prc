@@ -142,8 +142,9 @@ begin
               c.nome_resumido||'('||d.sigla||')' as nm_resp, 
               d.sigla as sg_setor,
               coalesce(e.qt_ativ,0) qt_ativ, e.sq_menu p2,
-              SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao
-         from pj_projeto_etapa                  a
+              SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
+              coalesce(o.qt_anexo,0) qt_anexo
+        from pj_projeto_etapa                  a
               inner    join siw_restricao_etapa b  on (a.sq_projeto_etapa = b.sq_projeto_etapa)
                 inner  join siw_restricao       b1 on (b.sq_siw_restricao = b1.sq_siw_restricao 
                                                       -- and b1.fase_atual      <> 'C'
@@ -158,6 +159,10 @@ begin
                                                                       )
                               group by x.sq_projeto_etapa, y.sq_menu
                             )                   e  on (a.sq_projeto_etapa = e.sq_projeto_etapa)
+              left     join (select x.sq_projeto_etapa, count(*) qt_anexo
+                               from pj_projeto_etapa_arq x
+                             group by x.sq_projeto_etapa
+                            )                   o  on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
         where b.sq_siw_restricao = p_chave
           and (p_restricao = 'ETAPA' or (p_restricao = 'PACOTES' and a.pacote_trabalho = 'S'));
    ElsIf p_restricao = 'LSTNIVEL' Then
@@ -366,7 +371,7 @@ begin
           where a.sq_etapa_pai       = p_chave
             and a.sq_projeto_etapa   = p_chave_aux;
    Else
-      -- Recupera as etapas subordinadas a outra do mesmo projeto
+      -- Recupera os dados da etapa pelo nome
       open p_result for 
          select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
                 a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 

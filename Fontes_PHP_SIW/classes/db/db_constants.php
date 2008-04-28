@@ -34,7 +34,7 @@ define("PGSQL_SERVER_NAME", "io");
 define("PGSQL_DB_USERID", "siw");
 define("PGSQL_DB_PASSWORD", "siw");
 define("PGSQL_DATABASE_NAME", "siw");
-define("PGSQL_VERSION_TEXT", "PostgreSQL 8.1");
+define("PGSQL_VERSION_TEXT", "PostgreSQL 8.3.1");
 
 switch ($_SESSION["DBMS"]) {
    case 5 : {

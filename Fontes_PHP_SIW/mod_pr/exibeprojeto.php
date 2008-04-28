@@ -556,11 +556,11 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
-      $l_html .= chr(13).'            <td rowspan=2><b>Objetivo</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
       $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
       $l_html .= chr(13).'            <td colspan=2><b>Base</b></td>';
-      $l_html .= chr(13).'            <td colspan=2><b>Meta</b></td>';
+      $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
       $l_html .= chr(13).'            <td><b>Data</b></td>';
@@ -626,7 +626,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   }
 
   if (nvl($_REQUEST['p_risco'],'')!='') {
-    // Riscos
+    // Restrições
     $RS = db_getSolicRestricao::getInstanceOf($dbms,$l_chave,$w_chave_aux,null,null,null,null,null);
     $RS = SortArray($RS,'problema','desc','criticidade','desc','nm_tipo_restricao','asc','nm_risco','asc'); 
     if (count($RS)>0 && $l_nome_menu['RESTSOLIC']!='') {

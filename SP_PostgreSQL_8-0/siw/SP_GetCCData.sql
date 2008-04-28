@@ -1,13 +1,18 @@
-create or replace function SP_GetCCData
-   (p_sqcc      numeric,
-    p_result    refcursor
-   ) returns refcursor as $$
+CREATE OR REPLACE FUNCTION siw.SP_GetCCData(numeric)
+  RETURNS character varying AS
+$BODY$declare
+
+ p_result     refcursor;
 begin
    -- Recupera os dados do centro de ccusto informado
-   open p_result for 
+   open p_result for
       select a.sq_cc_pai, a.nome, a.sigla, a.descricao, a.ativo, a.receita, a.regular
-        from ct_cc a
-       where sq_cc = p_sqcc;
-   return p_result;
-end; $$ language 'plpgsql' volatile;
+        from siw.ct_cc a
+       where sq_cc = $1;
 
+  return p_result;
+end 
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION siw.SP_GetCCData(numeric) OWNER TO siw;

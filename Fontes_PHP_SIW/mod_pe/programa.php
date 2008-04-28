@@ -761,7 +761,7 @@ function Geral() {
     ShowHTML('      <tr><td><b>En<u>d</u>ereço internet:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_ln_programa" size="90" maxlength="120" value="'.$w_ln_programa.'" title="Se desejar, informe o link do programa na internet."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Alerta de atraso</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término do programa.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');

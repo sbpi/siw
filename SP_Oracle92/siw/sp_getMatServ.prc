@@ -3,7 +3,6 @@ create or replace procedure sp_getMatServ
     p_usuario       in number,
     p_chave         in number    default null,
     p_tipo_material in number    default null,
-    p_sq_cc         in number    default null,
     p_codigo        in varchar2  default null,
     p_nome          in varchar2  default null,
     p_ativo         in varchar2  default null,
@@ -27,7 +26,7 @@ begin
       open p_result for    
          select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
-                a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
+                a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
                 a.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -43,12 +42,10 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.valor_unit_est as preco_ata, g.codigo_interno as numero_ata, g.fim as validade_ata
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
                 left      join (select x.sq_siw_solicitacao, x.codigo_interno, x.inicio, x.fim, z.valor_unit_est, z.sq_material
                                   from siw_solicitacao                  x
@@ -64,7 +61,6 @@ begin
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
@@ -74,7 +70,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
-                a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
+                a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
                 a.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -89,17 +85,14 @@ begin
                 end as nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
-                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
           where a.cliente         = p_cliente
             and a.sq_material    not in (select x.sq_material from cl_solicitacao_item x where x.sq_siw_solicitacao = p_chave)
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
@@ -120,7 +113,7 @@ begin
       open p_result for 
          select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
-                a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
+                a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
@@ -135,7 +128,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 f.ano_corrente, f.dias_validade_pesquisa, f.dias_aviso_pesquisa, f.percentual_acrescimo,
                 g.sq_item_fornecedor, g.sq_solicitacao_item, g.fornecedor, g.valor_unidade, g.valor_item, g.ordem,
                 g.dias_validade_proposta, g.inicio, g.fim, g.origem,
@@ -148,7 +140,6 @@ begin
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
                 inner     join cl_item_fornecedor  g  on (a.sq_material         = g.sq_material and
                                                           g.pesquisa            = 'S'
@@ -157,7 +148,6 @@ begin
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
@@ -173,7 +163,7 @@ begin
       open p_result for 
          select /*+ ordered */ a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
-                a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
+                a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
                 a.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -189,12 +179,10 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.qtd
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
                 left      join (select x.sq_material, sum(x.quantidade) qtd, y.arp
                                   from cl_solicitacao_item        x
@@ -207,7 +195,6 @@ begin
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))
@@ -224,7 +211,7 @@ begin
       open p_result for 
          select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
                 a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
-                a.exibe_catalogo, a.vida_util, a.ativo, a.sq_cc,
+                a.exibe_catalogo, a.vida_util, a.ativo, 
                 a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
                 a.pesquisa_data, a.pesquisa_validade, 
                 a.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -240,7 +227,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 f.percentual_acrescimo,
                 x.ordem as nr_item_ata, 
                 x.quantidade, x.quantidade_autorizada as qtd_comprada,
@@ -258,7 +244,6 @@ begin
            from cl_material                        a
                 inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (a.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (a.cliente             = f.cliente)
                 inner     join cl_solicitacao_item x  on (a.sq_material         = x.sq_material)
                   inner   join cl_item_fornecedor  x1 on (x.sq_solicitacao_item = x1.sq_solicitacao_item)
@@ -271,7 +256,6 @@ begin
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and a.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and a.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(a.nome)    like '%'||acentos(p_nome)||'%'))
             and (p_catalogo      is null or (p_catalogo      is not null and a.exibe_catalogo   = p_catalogo))

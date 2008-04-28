@@ -517,10 +517,10 @@ function Rel_Progresso() {
     ShowHTML('  }');
     ShowHTML('  function marcaQuestao() {');
     ShowHTML('    if (document.Form.p_questoes.checked) {');
-    ShowHTML('      document.Form.p_tarefas.disabled=false;');
+    //ShowHTML('      document.Form.p_tarefas.disabled=false;');
     ShowHTML('      document.Form.p_pacotes.disabled=false;');
     ShowHTML('    } else {');
-    ShowHTML('      document.Form.p_tarefas.disabled=true;');
+    //ShowHTML('      document.Form.p_tarefas.disabled=true;');
     ShowHTML('      document.Form.p_pacotes.disabled=true;');
     ShowHTML('    }');
     ShowHTML('  }');
@@ -585,7 +585,7 @@ function Rel_Progresso() {
       $w_Disabled = ' DISABLED ';
       ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_questoes" value="S" onclick="javascript:marcaQuestao();"> Restrições</td>');
     }
-    if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
+    //if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
     if ($p_pacotes)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');                   else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');
     //if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
@@ -700,6 +700,7 @@ function Rel_Projeto() {
     ShowHTML('      } ');
     ShowHTML('    } ');
     ShowHTML('  }');
+    /*
     ShowHTML('  function marcaEtapa() {');
     ShowHTML('    if (document.Form.p_etapa.checked) {');
     ShowHTML('      document.Form.p_tr.disabled=false;');
@@ -707,6 +708,7 @@ function Rel_Projeto() {
     ShowHTML('      document.Form.p_tr.disabled=true;');
     ShowHTML('    }');
     ShowHTML('  }');
+    */
     ShowHTML('  function marcaParte() {');
     ShowHTML('    if (document.Form.p_partes.checked) {');
     ShowHTML('      document.Form.p_ca.disabled=false;');
@@ -717,10 +719,10 @@ function Rel_Projeto() {
     ShowHTML('  function marcaRisco() {');
     ShowHTML('    if (document.Form.p_risco.checked) {');
     ShowHTML('      document.Form.p_cf.disabled=false;');
-    ShowHTML('      document.Form.p_tf.disabled=false;');
+    //ShowHTML('      document.Form.p_tf.disabled=false;');
     ShowHTML('    } else {');
     ShowHTML('      document.Form.p_cf.disabled=true;');
-    ShowHTML('      document.Form.p_tf.disabled=true;');
+    //ShowHTML('      document.Form.p_tf.disabled=true;');
     ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('  function marcaProblema() {');
@@ -834,8 +836,8 @@ function Rel_Projeto() {
           $w_Disabled = ' DISABLED ';
           ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_qualit" value="S" onclick="javascript:marcaQualit();"> '.f($row,'nome').'</td>');
         }
-        if ($_REQUEST['p_os']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_os" value="S"> Objetivo Superior</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_os" value="S"> Objetivo Superior</td>');
-        if ($_REQUEST['p_oe']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_oe" value="S"> Objetivos Específicos</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_oe" value="S"> Objetivos Específicos</td>');
+        if ($_REQUEST['p_os']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_os" value="S"> Objetivo superior</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_os" value="S"> Objetivo superior</td>');
+        if ($_REQUEST['p_oe']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_oe" value="S"> Objetivos estratégicos</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_oe" value="S"> Objetivos estratégicos</td>');
         if ($_REQUEST['p_ee']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_ee" value="S"> Desafios</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_ee" value="S"> Desafios</td>');
         /*
         if ($_REQUEST['p_pr']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pr" value="S"> Premissas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pr" value="S"> Premissas</td>');
@@ -850,7 +852,7 @@ function Rel_Projeto() {
           $w_Disabled = ' DISABLED ';
           ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_etapa" value="S" onclick="javascript:marcaEtapa();"> '.f($row,'nome').'</td>');
         }
-        if ($_REQUEST['p_tr']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tr" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tr" value="S"> Tarefas vinculadas</td>');
+        //if ($_REQUEST['p_tr']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tr" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tr" value="S"> Tarefas vinculadas</td>');
       } elseif (strpos(f($row,'sigla'),'REST')!==false) {
         if ($_REQUEST['p_risco']) {
           $w_Disabled = '';
@@ -860,7 +862,7 @@ function Rel_Projeto() {
           ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="S" onclick="javascript:marcaRisco();"> Restrições</td>');
         }
         if ($_REQUEST['p_cf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_cf" value="S"> Pacotes impactados</td>');
-        if ($_REQUEST['p_tf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>');
+        //if ($_REQUEST['p_tf']) ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>'); else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tf" value="S"> Tarefas vinculadas</td>');
       }
       elseif (strpos(f($row,'sigla'),'INTERES')!==false)   if ($_REQUEST['p_interes']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_interes" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_interes" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'RESP')!==false)      if ($_REQUEST['p_resp']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_resp" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_resp" value="S"> '.f($row,'nome').'</td>');

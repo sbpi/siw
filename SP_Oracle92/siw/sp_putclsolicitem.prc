@@ -28,9 +28,12 @@ begin
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
       insert into cl_solicitacao_item
-        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,                 motivo_cancelamento)
-      values
-        (w_chave,             p_chave,            p_material,  p_quantidade, coalesce(p_cancelado,'N'), p_motivo_cancelamento);
+        (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade,   cancelado,                 motivo_cancelamento,   sq_unidade_medida)
+      (select
+         w_chave,             p_chave,            p_material,  p_quantidade, coalesce(p_cancelado,'N'), p_motivo_cancelamento, a.sq_unidade_medida
+         from cl_material a
+        where sq_material = p_material
+      );
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update cl_solicitacao_item set 

@@ -36,35 +36,35 @@ create or replace function Acesso
 /*    16 a 31 - se o usuário deve cumprir o trâmite em que a solicitação está
 /***********************************************************************************/
 declare
-  w_interno                co_tipo_vinculo.interno%type;
-  w_sq_servico             siw_menu.sq_menu%type;
-  w_acesso_geral           siw_menu.acesso_geral%type;
-  w_modulo                 siw_menu.sq_modulo%type;
-  w_sigla                  siw_menu.sigla%type;
-  w_destinatario           siw_menu.destinatario%type;
-  w_username               sg_autenticacao.sq_pessoa%type;
-  w_sq_unidade_lotacao     sg_autenticacao.sq_unidade%type;
-  w_gestor_seguranca       sg_autenticacao.gestor_seguranca%type;  
-  w_gestor_sistema         sg_autenticacao.gestor_sistema%type;
-  w_sq_unidade_executora   siw_menu.sq_unid_executora%type;        -- Unidade executora do serviço
-  w_consulta_opiniao       siw_menu.consulta_opiniao%type;
-  w_envia_email            siw_menu.envia_email%type;
-  w_exibe_relatorio        siw_menu.exibe_relatorio%type;
-  w_vinculacao             siw_menu.vinculacao%type;
-  w_sq_siw_tramite         siw_solicitacao.sq_siw_tramite%type;
-  w_cadastrador            siw_solicitacao.cadastrador%type;
-  w_unidade_solicitante    siw_solicitacao.sq_unidade%type;
-  w_sq_pessoa_executor     siw_solicitacao.executor%type;
-  w_opiniao_solicitante    siw_solicitacao.opiniao%type;
-  w_ordem                  siw_tramite.ordem%type;
-  w_sq_cc                  siw_solicitacao.sq_cc%type;
-  w_sigla_situacao         siw_tramite.sigla%type;
-  w_ativo                  siw_tramite.ativo%type;
-  w_usuario_ativo          sg_autenticacao.ativo%type;
-  w_chefia_imediata        siw_tramite.chefia_imediata%type;
-  w_sq_pessoa_titular      eo_unidade_resp.sq_pessoa%type;         -- Titular da unidade solicitante
-  w_sq_pessoa_substituto   eo_unidade_resp.sq_pessoa%type;         -- Substituto da unidade solicitante
-  w_sq_endereco_unidade    eo_unidade.sq_pessoa_endereco%type;
+  w_interno                siw.co_tipo_vinculo.interno%type;
+  w_sq_servico             siw.siw_menu.sq_menu%type;
+  w_acesso_geral           siw.siw_menu.acesso_geral%type;
+  w_modulo                 siw.siw_menu.sq_modulo%type;
+  w_sigla                  siw.siw_menu.sigla%type;
+  w_destinatario           siw.siw_menu.destinatario%type;
+  w_username               siw.sg_autenticacao.sq_pessoa%type;
+  w_sq_unidade_lotacao     siw.sg_autenticacao.sq_unidade%type;
+  w_gestor_seguranca       siw.sg_autenticacao.gestor_seguranca%type;  
+  w_gestor_sistema         siw.sg_autenticacao.gestor_sistema%type;
+  w_sq_unidade_executora   siw.siw_menu.sq_unid_executora%type;        -- Unidade executora do serviço
+  w_consulta_opiniao       siw.siw_menu.consulta_opiniao%type;
+  w_envia_email            siw.siw_menu.envia_email%type;
+  w_exibe_relatorio        siw.siw_menu.exibe_relatorio%type;
+  w_vinculacao             siw.siw_menu.vinculacao%type;
+  w_sq_siw_tramite         siw.siw_solicitacao.sq_siw_tramite%type;
+  w_cadastrador            siw.siw_solicitacao.cadastrador%type;
+  w_unidade_solicitante    siw.siw_solicitacao.sq_unidade%type;
+  w_sq_pessoa_executor     siw.siw_solicitacao.executor%type;
+  w_opiniao_solicitante    siw.siw_solicitacao.opiniao%type;
+  w_ordem                  siw.siw_tramite.ordem%type;
+  w_sq_cc                  siw.siw_solicitacao.sq_cc%type;
+  w_sigla_situacao         siw.siw_tramite.sigla%type;
+  w_ativo                  siw.siw_tramite.ativo%type;
+  w_usuario_ativo          siw.sg_autenticacao.ativo%type;
+  w_chefia_imediata        siw.siw_tramite.chefia_imediata%type;
+  w_sq_pessoa_titular      siw.eo_unidade_resp.sq_pessoa%type;         -- Titular da unidade solicitante
+  w_sq_pessoa_substituto   siw.eo_unidade_resp.sq_pessoa%type;         -- Substituto da unidade solicitante
+  w_sq_endereco_unidade    siw.eo_unidade.sq_pessoa_endereco%type;
   w_solicitante            numeric(10);                             -- Solicitante
   w_unidade_beneficiario   numeric(10);
   w_existe                 numeric(10);

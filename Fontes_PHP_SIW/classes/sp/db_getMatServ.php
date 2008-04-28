@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getMatServ {
-   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_tipo_material, $p_sq_cc, $p_codigo, $p_nome, 
+   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_tipo_material, $p_codigo, $p_nome, 
           $p_ativo, $p_catalogo, $p_ata_aviso, $p_ata_invalida, $p_ata_valida, $p_aviso, $p_invalida, $p_valida, 
           $p_branco, $p_arp, $p_item, $p_numero_ata, $p_acrescimo, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMatServ';
@@ -18,7 +18,6 @@ class db_getMatServ {
                    'p_usuario'           =>array(tvl($p_usuario),                B_INTEGER,        32),
                    'p_chave'             =>array(tvl($p_chave),                  B_INTEGER,        32),
                    'p_tipo_material'     =>array(tvl($p_tipo_material),          B_INTEGER,        32),
-                   'p_sq_cc'             =>array(tvl($p_sq_cc),                  B_INTEGER,        32),
                    'p_codigo'            =>array(tvl($p_codigo),                 B_VARCHAR,        30),
                    'p_nome'              =>array(tvl($p_nome),                   B_VARCHAR,       110),
                    'p_ativo'             =>array(tvl($p_ativo),                  B_VARCHAR,         1),

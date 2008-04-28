@@ -22,7 +22,7 @@ begin
                 a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -37,13 +37,11 @@ begin
                 end as nm_classe,
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
-                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (b.cliente             = f.cliente)
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
@@ -58,7 +56,7 @@ begin
                 case a.cancelado when 'S' then 'Sim' else 'Não' end as nm_cancelado,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -72,18 +70,16 @@ begin
                      when 5 then 'Serviço'
                 end as nm_classe,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.fabricante, g.marca_modelo, g.embalagem, g.valor_unidade, g.valor_item
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
-                inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
-                inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
-                inner     join cl_parametro        f  on (b.cliente             = f.cliente)
+                  inner   join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
+                  inner   join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
+                  inner   join cl_parametro        f  on (b.cliente             = f.cliente)
                 inner     join cl_item_fornecedor  g  on (a.sq_solicitacao_item = g.sq_solicitacao_item)
-          where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
+          where a.sq_siw_solicitacao = p_solicitacao
+            and (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
-            and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno      = p_codigo))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
    ElsIf p_restricao = 'LICITACAO' Then
@@ -94,7 +90,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -110,7 +106,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.item_pedido,
                 g.item_licitacao,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
@@ -121,7 +116,6 @@ begin
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
                   inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
@@ -151,7 +145,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -167,7 +161,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 f.percentual_acrescimo,
                 g.item_pedido,
                 g.item_licitacao,
@@ -184,7 +177,6 @@ begin
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_pedido)
                   inner   join cl_solicitacao_item      h on (g.item_licitacao       = h.sq_solicitacao_item)
@@ -229,7 +221,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -245,13 +237,11 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 dados_solic(g.sq_siw_solicitacao) as dados_solic
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (b.cliente             = f.cliente)
                 inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                   inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
@@ -266,7 +256,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -282,28 +272,26 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 dados_solic(g.sq_siw_solicitacao) as dados_solic,
                 g.codigo_interno as numero_ata
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida   d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc               e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro        f  on (b.cliente             = f.cliente)
                 inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao and
                                                           g.fim                 >= trunc(sysdate)
                                                          )
                   inner   join siw_menu            g1 on (g.sq_menu             = g1.sq_menu and
-                                                          'GCZ'              = substr(g1.sigla,1,3)
+                                                          'GCZ'                 = substr(g1.sigla,1,3)
                                                          )
-                  inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite)
-          where a.quantidade > a.quantidade_autorizada
-            and a.cancelado  = 'N'
-            and a.sq_solicitacao_item not in (select x.item_licitacao from cl_solicitacao_item_vinc x inner join cl_solicitacao_item y on (x.item_pedido = y.sq_solicitacao_item) where y.sq_siw_solicitacao = p_solicitacao)
+                  inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
+                                                          h.ativo               = 'S'
+                                                         )
+          where a.sq_solicitacao_item not in (select x.item_licitacao from cl_solicitacao_item_vinc x inner join cl_solicitacao_item y on (x.item_pedido = y.sq_solicitacao_item) where y.sq_siw_solicitacao = p_solicitacao)
+            and a.quantidade          > a.quantidade_autorizada
+            and a.cancelado           = 'N'
             and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material = p_tipo_material))
-            and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado        = p_cancelado))
-            and (p_sq_cc         is null or (p_sq_cc         is not null and b.sq_cc            = p_sq_cc))
             and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno   like '%'||p_codigo||'%'))
             and (p_nome          is null or (p_nome          is not null and acentos(b.nome)    like '%'||acentos(p_nome)||'%'));
    ElsIf p_restricao = 'FORNECEDORC' or p_restricao = 'FORNECEDORP' Then
@@ -314,7 +302,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -330,7 +318,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.item_pedido,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
@@ -342,7 +329,6 @@ begin
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_licitacao)
                   inner   join cl_solicitacao_item      h on (g.item_pedido          = h.sq_solicitacao_item)
@@ -364,7 +350,7 @@ begin
                 a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -380,7 +366,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 g.item_pedido,
                 h.sq_siw_solicitacao sq_solic_pai, h.quantidade_autorizada as qtd_pedido,
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
@@ -391,7 +376,6 @@ begin
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 inner     join cl_solicitacao_item_vinc g on (a.sq_solicitacao_item  = g.item_pedido)
                   inner   join cl_solicitacao_item      h on (g.item_licitacao       = h.sq_solicitacao_item)
@@ -428,7 +412,7 @@ begin
                 a.ordem, a.dias_validade_proposta as dias_validade_item,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, b.sq_cc,
+                b.exibe_catalogo, b.vida_util, b.ativo, 
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, 
                 coalesce(b.pesquisa_preco_medio,0) as pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
@@ -445,7 +429,6 @@ begin
                 montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                e.nome as nm_cc,
                 f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
                 g.fornecedor, g.dias_validade_proposta,
@@ -456,7 +439,6 @@ begin
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
                 inner     join co_unidade_medida        d  on (b.sq_unidade_medida   = d.sq_unidade_medida)
-                inner     join ct_cc                    e  on (b.sq_cc               = e.sq_cc)
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 left      join cl_item_fornecedor       g  on (a.sq_solicitacao_item = g.sq_solicitacao_item and
                                                                ((p_restricao = 'COTACAO'  and 'S' = g.pesquisa) or 

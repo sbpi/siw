@@ -61,6 +61,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
       $l_sigla = f($l_RS1,'sigla');
       foreach ($l_RS as $l_row1) {
         if ($l_sigla==='GCCCAD') {
+          // Se for convênio
           if (nvl(f($l_row1,'sq_siw_solicitacao'),0)==nvl($chave,0)){
             if ($l_cont==0) {
               ShowHTML('          <option value="">---');

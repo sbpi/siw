@@ -9,10 +9,10 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getSolicLog {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICLOG';
+   function getInstanceOf($dbms, $p_chave, $p_tipo, $p_restricao) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicLog';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
-                   'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_INTEGER,        32),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

@@ -1,35 +1,37 @@
 create or replace procedure SP_PutAcordoAditivo
-   (p_operacao                 in  varchar2,
-    p_chave                    in  number   default null,
-    p_chave_aux                in  number   default null,
-    p_protocolo                in  number   default null,
-    p_codigo                   in  varchar2 default null,
-    p_objeto                   in  varchar2 default null,
-    p_inicio                   in  date     default null,
-    p_fim                      in  date     default null,
-    p_duracao                  in  number   default null,
-    p_documento_origem         in  varchar2 default null,
-    p_documento_data           in  date     default null,
-    p_variacao_valor           in  number   default null,
-    p_prorrogacao              in  varchar2 default null,
-    p_revisao                  in  varchar2 default null,
-    p_acrescimo                in  varchar2 default null,
-    p_supressao                in  varchar2 default null,
-    p_observacao               in  varchar2 default null,
-    p_valor_inicial            in  number   default null,
-    p_parcela_inicial          in  number   default null,
-    p_valor_reajuste           in  number   default null,
-    p_parcela_reajustada       in  number   default null,
-    p_valor_acrescimo          in  number   default null,
-    p_parcela_acrescida        in  number   default null,
-    p_sq_cc                    in  number   default null
+   (p_operacao            in  varchar2,
+    p_chave               in  number   default null,
+    p_chave_aux           in  number   default null,
+    p_protocolo           in  number   default null,
+    p_codigo              in  varchar2 default null,
+    p_objeto              in  varchar2 default null,
+    p_inicio              in  date     default null,
+    p_fim                 in  date     default null,
+    p_duracao             in  number   default null,
+    p_documento_origem    in  varchar2 default null,
+    p_documento_data      in  date     default null,
+    p_variacao_valor      in  number   default null,
+    p_prorrogacao         in  varchar2 default null,
+    p_revisao             in  varchar2 default null,
+    p_acrescimo           in  varchar2 default null,
+    p_supressao           in  varchar2 default null,
+    p_observacao          in  varchar2 default null,
+    p_valor_inicial       in  number   default null,
+    p_parcela_inicial     in  number   default null,
+    p_valor_reajuste      in  number   default null,
+    p_parcela_reajustada  in  number   default null,
+    p_valor_acrescimo     in  number   default null,
+    p_parcela_acrescida   in  number   default null,
+    p_sq_cc               in  number   default null,
+    p_altera_item         in  varchar2 default null,
+    p_chave_nova          out number
    ) is
-   w_inicio      ac_acordo_aditivo.inicio%type := p_inicio;
-   w_prorrogacao ac_acordo_aditivo.prorrogacao%type := p_prorrogacao;
-   w_valor       ac_acordo.valor_atual%type := (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo);
+   w_inicio         ac_acordo_aditivo.inicio%type := p_inicio;
+   w_prorrogacao    ac_acordo_aditivo.prorrogacao%type := p_prorrogacao;
+   w_valor          ac_acordo.valor_atual%type := (p_valor_inicial+p_valor_reajuste+p_valor_acrescimo);
    w_inicio_aditivo date;
    w_fim_aditivo    date;
-   w_chave          number(18);
+   w_chave          number(18) := Nvl(p_chave,0);
 begin
    -- Atualiza o valor do contrato
    If p_operacao = 'I' Then
@@ -68,12 +70,12 @@ begin
         (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 
                 duracao,                   documento_origem,     documento_data,      variacao_valor,   prorrogacao,       revisao, 
                 acrescimo,                 supressao,            observacao,          valor_inicial,    parcela_inicial,   valor_reajuste, 
-                parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc)
+                parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc,            alteracao_item)
         
         (select w_chave,                   p_chave_aux,          p_protocolo,         p_codigo,         p_objeto,          p_inicio,       p_fim, 
                 p_duracao,                 p_documento_origem,   p_documento_data,    p_variacao_valor, p_prorrogacao,     p_revisao,         
                 p_acrescimo,               p_supressao,          p_observacao,        p_valor_inicial,  p_parcela_inicial, p_valor_reajuste, 
-                p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc 
+                p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc,          p_altera_item
            from dual
          );
    Elsif p_operacao = 'A' Then
@@ -99,7 +101,8 @@ begin
              parcela_reajustada = p_parcela_reajustada,
              valor_acrescimo    = p_valor_acrescimo,
              parcela_acrescida  = p_parcela_acrescida,
-             sq_cc              = p_sq_cc
+             sq_cc              = p_sq_cc,
+             alteracao_item     = p_altera_item
        where sq_acordo_aditivo = p_chave;
    Elsif p_operacao = 'E' Then
       If w_prorrogacao = 'N' Then
@@ -129,5 +132,11 @@ begin
       End If;
    End If;
    
+   -- Devolve a chave
+   If p_chave is not null
+      Then p_chave_nova := p_chave;
+      Else p_chave_nova := w_chave;
+   End If;
+
 end SP_PutAcordoAditivo;
 /

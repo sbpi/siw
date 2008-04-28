@@ -12,6 +12,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
   
   // Recupera os dados do programa
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
+  $w_tramite_ativo = f($RS,'ativo');
 
   if ($l_o!='T' && $l_o!='V') {
     if ($l_formato!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
@@ -58,6 +59,14 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
     $l_html.=chr(13).'       <td>'.CRLF2BR(Nvl(f($RS,'palavra_chave'),'-')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Fase atual:</b></td>';
     $l_html.=chr(13).'       <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
+    if (f($RS,'aviso_prox_conc')=='S') {
+      // Configuração dos alertas de proximidade da data limite para conclusão da demanda
+      $l_html.=chr(13).'        <tr><td colspan="2"><br><font size="2"><b>ALERTA DE PROXIMIDADE DA DATA PREVISTA DE TÉRMINO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      if (f($RS,'aviso_prox_conc')=='S') {
+        $l_html .= chr(13).'      <tr><td><b>Emite alerta:</b></td>';
+        $l_html .= chr(13).'        <td>A partir de '.formataDataEdicao(f($RS,'aviso')).'.</td></tr>';
+      }
+    }
   } 
   if ($l_o=='T') {
     // Descritivo
@@ -121,7 +130,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
-        if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
+        if($l_formato!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
         else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
         $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
@@ -162,7 +171,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'      <tr><td colspan=6><table border=0>';
+      $l_html .= chr(13).'      <tr><td colspan=2><table border=0>';
       $l_html .= chr(13).'        <tr><td align="right">U.M.<td>Unidade de medida do indicador';
       $l_html .= chr(13).'        </table>';
     }
@@ -175,11 +184,11 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
-      $l_html .= chr(13).'            <td rowspan=2><b>Objetivo</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
       $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
       $l_html .= chr(13).'            <td colspan=2><b>Base</b></td>';
-      $l_html .= chr(13).'            <td colspan=2><b>Meta</b></td>';
+      $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
       $l_html .= chr(13).'            <td><b>Data</b></td>';
@@ -204,7 +213,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
+      $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
       $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de medida do indicador';
       $l_html .= chr(13).'  </table>';
     }
@@ -279,7 +288,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
+      $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
       $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de alocação do recurso';
       $l_html .= chr(13).'  </table>';
     }
@@ -371,47 +380,8 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
 
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc','despacho','asc');
-    if (count($RS)>0 && $l_ocorrencia=='S') {
-      $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0"><div align="center"><b>Data</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Ocorrência/Anotação</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Fase/Destinatário</b></div></td>';
-      $l_html.=chr(13).'       </tr>';
-      $i=0;
-      foreach($RS as $row) {
-        if ($i==0) {
-          $l_html.=chr(13).'       <tr><td colspan="4">Fase Atual: <b>'.f($row,'fase').'</b></td></tr>';
-          $i=1;
-        }
-        $l_html.=chr(13).'    <tr valign="top">';
-        $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-        if (Nvl(f($row,'caminho'),'')>'' && $l_formato!='WORD') $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
-        else                              $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
-        if ($l_formato=='WORD') $l_html.=chr(13).'      <td nowrap>'.f($row,'responsavel').'</td>';
-        else                    $l_html.=chr(13).'      <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-        if ((Nvl(f($row,'sq_programa_log'),'')>'') && (Nvl(f($row,'destinatario'),'')>'')) {
-          if ($l_formato=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'destinatario').'</td>';
-          else                    $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-        } elseif ((Nvl(f($row,'sq_programa_log'),'')>'')  && (Nvl(f($row,'destinatario'),'')=='')) {
-          $l_html.=chr(13).'        <td nowrap>Anotação</td>';
-        } else {
-          if(strpos(f($row,'despacho'),'***')!==false) {
-            $l_html.=chr(13).'        <td nowrap>---</td>';
-          } else {
-            $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
-          }
-        }
-        $l_html.=chr(13).'      </tr>';
-      } 
-      $l_html.=chr(13).'         </table></div></td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Não foi encontrado nenhum encaminhamento</div></td></tr>';
-    } 
+    include_once($w_dir_volta.'funcoes/exibeLog.php');
+    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_formato=='WORD') ? 'WORD' : 'HTML'));
   } 
   $l_html .= chr(13).'</table>';  
   return $l_html;

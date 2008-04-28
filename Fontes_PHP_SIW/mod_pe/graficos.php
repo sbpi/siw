@@ -13,6 +13,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
+include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'classes/graph_hierarq/class.diagram.php');
 include_once($w_dir_volta.'classes/graph_hierarq/class.diagram-ext.php');
@@ -112,7 +113,9 @@ function Hierarquico() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean(null);
-  ShowHTML('<img src="'.$w_dir.$w_pagina.'Gera_Hier&w_chave='.$w_chave.'" border="1">');
+  ShowHTML('<img src="'.$w_dir.$w_pagina.'Gera_Hier&w_chave='.$w_chave.'" border="1" style="position:absolute;left:0;top:0;" />');
+  $selected = (isset($_GET['name']) ? $_GET['name'] : null);
+  echo_map($w_chave, $data, $selected);
   ShowHTML('</center>');
   ShowHTML('</body>');
   ShowHTML('</html>');
@@ -120,11 +123,11 @@ function Hierarquico() {
 
 function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
-  $l_nome  = substr($node['name'],strpos($node['name'],' ')+1);
-  $l_etapa = substr($node['name'],0,strpos($node['name'],' '));
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,$l_nome,null);
-  foreach($RS as $row) { $RS = $row; break; }
-  echo "<a HREF=\"#\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">&nbsp;</div></a>\n";
+  if (nvl($node['chave'],'')!='') {
+    $RS = db_getSolicData::getInstanceOf($dbms,$node['chave'],null);
+    $l_array = explode('|@|', f($RS,'dados_solic'));
+    echo "<a style=\"TEXT-DECORATION: none\" HREF=\"#\" onClick=\"window.open('".$conRootSIW.$l_array[10]."&O=L&w_chave=".$node['chave']."&P1=".$l_array[6]."&P2=".$l_array[7]."&P3=".$l_array[8]."&P4=".$l_array[9]."&TP=".$TP."&SG=".$l_array[5]."','Detalhe','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
+  }
   for ($i = 0; $i < count($node['childs']); $i++) {
     echo_map($l_chave, $node['childs'][$i], $selected);
   }
@@ -153,42 +156,75 @@ function Gera_Hierarquico($l_gera) {
         $l_xml .= chr(13).'     <node name="'.f($row,'nome').' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
         $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
         $RS1 = SortArray($RS1,'codigo_interno','asc');
-        foreach($RS1 as $row) {
-          if (f($row,'fim')<time() && f($row,'sg_tramite')!='AT' && f($row,'sg_tramite')!='CA') {
+        foreach($RS1 as $row1) {
+          if (f($row1,'sg_tramite')=='AT') {
+            $w_cor_nome = '"#0000ff"';
+            $w_cor_text = '"#0000ff"';
+          } elseif (f($row1,'fim')<time() && f($row1,'sg_tramite')!='AT' && f($row1,'sg_tramite')!='CA') {
             $w_cor_nome = '"#ff0000"';
             $w_cor_text = '"#ff0000"';
-           } else {
+          } else {
             $w_cor_nome = '"#00ff00"';
             $w_cor_text = '"#00ff00"';
           }
-          if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'ac_titulo'),'-'),0,50).'...'; 
-          else                                      $w_titulo=Nvl(f($row,'ac_titulo'),'-');
-          $l_xml .= chr(13).'        <node name="'.$w_titulo.'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-          if (f($row,'sigla')=='PJCAD') {
-            $l_xml .= chr(13).'           Ini: '.formataDataEdicao(f($row,'inicio')).'\nFim: '.formataDataEdicao(f($row,'fim')).'\nIGE: '.round(f($row,'ige'),1).'%'.'\nIGC: '.round(f($row,'igc'),1).'%';
+          if     (Nvl(f($row1,'codigo_interno'),'')!='') $w_titulo=f($row1,'codigo_interno'); 
+          elseif (strlen(Nvl(f($row1,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row1,'ac_titulo'),'-'),0,50).'...'; 
+          else                                          $w_titulo=Nvl(f($row1,'ac_titulo'),'-');
+          $l_xml .= chr(13).'        <node name="'.$w_titulo.'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+          if (f($row1,'sigla')=='PJCAD') {
+            $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.'\nIGC: '.round(f($row1,'igc'),1).'%';
           } else {
-            $l_xml .= chr(13).'           Ini: '.formataDataEdicao(f($row,'inicio')).'\nFim: '.formataDataEdicao(f($row,'fim'));
+            $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim'));
           }
-          // Recupera os projetos vinculados
-          $RSP = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-          $RS2 = db_getSolicList::getInstanceOf($dbms, f($RSP,'sq_menu'), $w_usuario, f($RSP,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_siw_solicitacao'), null, null, null);
-          $RS2 = SortArray($RS2,'codigo_interno','asc');
-          if (count($RS2)>0) {
+          // Recupera os documentos vinculados
+          $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+          $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
             foreach($RS2 as $row2) {
-              if (f($row2,'fim')<time() && f($row2,'sg_tramite')!='AT' && f($row2,'sg_tramite')!='CA') {
+              if (f($row2,'sg_tramite')=='AT') {
+                $w_cor_nome = '"#0000ff"';
+                $w_cor_text = '"#0000ff"';
+              } elseif (f($row2,'fim')<time() && f($row2,'sg_tramite')!='AT' && f($row2,'sg_tramite')!='CA') {
                 $w_cor_nome = '"#ff0000"';
                 $w_cor_text = '"#ff0000"';
-               } else {
+              } else {
                 $w_cor_nome = '"#00ff00"';
                 $w_cor_text = '"#00ff00"';
               }
-              if (strlen(Nvl(f($row2,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,50).'...'; 
-              else                                      $w_titulo=Nvl(f($row2,'ac_titulo'),'-');
-              $l_xml .= chr(13).'        <node name="'.$w_titulo.'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-              $l_xml .= chr(13).'           Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.'\nIGC: '.round(f($row2,'igc'),1).'%';
-              $l_xml .= chr(13).'        </node>';
+              $w_titulo=f($row2,'titulo'); 
+              $l_xml .= chr(13).'           <node name="'.$w_titulo.'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+              $l_xml .= chr(13).'           Tipo: '.f($row2,'nome');
+              if (f($row2,'sigla')=='PJCAD') {
+                $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.'\nIGC: '.round(f($row2,'igc'),1).'%';
+              } else {
+                $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim'));
+
+                // Recupera os documentos vinculados
+                $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
+                foreach ($RS3 as $row3) {
+                    if (f($row3,'fim')<time() && f($row3,'sg_tramite')!='AT' && f($row3,'sg_tramite')!='CA') {
+                      $w_cor_nome = '"#ff0000"';
+                      $w_cor_text = '"#ff0000"';
+                     } else {
+                      $w_cor_nome = '"#00ff00"';
+                      $w_cor_text = '"#00ff00"';
+                    }
+                    $w_titulo=f($row3,'titulo'); 
+                    $l_xml .= chr(13).'              <node name="'.$w_titulo.'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                    $l_xml .= chr(13).'Tipo: '.f($row3,'nome');
+                    if (f($row3,'sigla')=='PJCAD') {
+                      $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.'\nIGC: '.round(f($row3,'igc'),1).'%';
+                    } else {
+                      $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim'));
+                    }
+                    $l_xml .= chr(13).'              </node>';
+                }
+
+
+              }
+              $l_xml .= chr(13).'           </node>';
             }
-          }
+
           $l_xml .= chr(13).'        </node>';
         }
         $l_xml .= chr(13).'     </node>';

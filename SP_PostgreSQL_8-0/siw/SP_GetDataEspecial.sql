@@ -1,13 +1,15 @@
-create or replace function SP_GetDataEspecial
-   (p_cliente   in numeric,
-    p_chave     in numeric,
-    p_ano       in varchar,
-    p_ativo     in varchar,
-    p_tipo      in varchar,
-    p_chave_aux in numeric,
-    p_restricao in varchar,
-    p_result    refcursor
-   ) returns refcursor as $$
+CREATE OR REPLACE FUNCTION siw.SP_GetDataEspecial
+   (p_cliente   numeric,
+    p_chave     numeric,
+    p_ano       varchar,
+    p_ativo     varchar,
+    p_tipo      varchar,
+    p_chave_aux numeric,
+    p_restricao varchar)
+
+  RETURNS refcursor AS
+$BODY$declare
+    p_result    refcursor;
 begin
    If p_restricao is null Then
       -- Recupera todas ou muma das modalidades de contratação
@@ -16,8 +18,8 @@ begin
                 a.data_especial, a.nome, a.abrangencia, a.expediente, a.ativo,
                 case a.tipo 
                      when 'E' then to_date(a.data_especial,'dd/mm/yyyy')
-                     when 'I' then to_date(a.data_especial||'/'||coalesce(p_ano,to_char(now(),'yyyy')),'dd/mm/yyyy')
-                     else          VerificaDataMovel(coalesce(p_ano,to_char(now(),'yyyy')), a.tipo)
+                     when 'I' then to_date(a.data_especial||'/'||coalesce(p_ano,to_char(sysdate,'yyyy')),'dd/mm/yyyy')
+                     else          VerificaDataMovel(coalesce(p_ano,to_char(sysdate,'yyyy')), a.tipo)
                 end as data_formatada,
                 case a.expediente
                      when 'S' then ' (Exp. normal)'
@@ -25,7 +27,7 @@ begin
                      when 'T' then ' (Exp. apenas tarde)'
                      when 'N' then ' (Sem expediente)'
                 end as nm_expediente
-           from eo_data_especial  a
+           from siw.eo_data_especial  a
           where a.cliente = p_cliente
             and ((p_chave is null) or (p_chave is not null and a.sq_data_especial = p_chave))
             and ((p_ativo is null) or (p_ativo is not null and a.ativo            = p_ativo))
@@ -35,9 +37,21 @@ begin
       -- Verifica se o tipo já foi cadastrado
       open p_result for 
          select a.tipo
-           from eo_data_especial  a
+           from siw.eo_data_especial  a
           where a.cliente = p_cliente
             and a.tipo not in ('I','E');
    End If;
    return p_result;
-end; $$ language 'plpgsql' volatile;
+end 
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION siw.SP_GetDataEspecial
+   (p_cliente   numeric,
+    p_chave     numeric,
+    p_ano       varchar,
+    p_ativo     varchar,
+    p_tipo      varchar,
+    p_chave_aux numeric,
+    p_restricao varchar)
+ OWNER TO siw;

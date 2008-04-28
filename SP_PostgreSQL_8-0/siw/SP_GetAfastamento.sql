@@ -1,20 +1,23 @@
-create or replace function SP_GetAfastamento
-   (p_cliente                  in numeric,
-    p_pessoa                   in numeric,
-    p_chave                    in numeric,
-    p_sq_tipo_afastamento      in numeric,
-    p_sq_contrato_colaborador  in numeric,
-    p_inicio_data              in date,
-    p_fim_data                 in date,
-    p_periodo_inicio           in varchar,
-    p_periodo_fim              in varchar,
-    p_chave_aux                in numeric,
-    p_restricao                in varchar,
-    p_result                   refcursor
-   ) returns refcursor as $$
-declare    
-    w_inicio numeric(9);
-    w_fim    numeric(9);
+CREATE OR REPLACE FUNCTION siw.SP_GetAfastamento
+   (p_cliente                  numeric,
+    p_pessoa                   numeric,
+    p_chave                    numeric,
+    p_sq_tipo_afastamento      numeric,
+    p_sq_contrato_colaborador  numeric,
+    p_inicio_data              date  ,
+    p_fim_data                 date  ,
+    p_periodo_inicio           varchar,
+    p_periodo_fim              varchar,
+    p_chave_aux                numeric,
+    p_restricao                varchar)
+RETURNS character varying AS
+$BODY$declare
+
+    
+    p_result    refcursor;
+    
+    w_inicio numeric;
+    w_fim    numeric;
 begin
    If p_inicio_data is not null Then
       w_inicio := to_char(p_inicio_data,'yyyymmdd')||case coalesce(p_periodo_inicio,'M') when 'M' then 0 else 1 end;
@@ -58,5 +61,18 @@ begin
            from gp_afastamento_envio a
           where a.sq_afastamento = p_chave;
    End If;
-   return p_result;
-end; $$ language 'plpgsql' volatile;
+end $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION siw.SP_GetAfastamento
+   (p_cliente                  numeric,
+    p_pessoa                   numeric,
+    p_chave                    numeric,
+    p_sq_tipo_afastamento      numeric,
+    p_sq_contrato_colaborador  numeric,
+    p_inicio_data              date  ,
+    p_fim_data                 date  ,
+    p_periodo_inicio           varchar,
+    p_periodo_fim              varchar,
+    p_chave_aux                numeric,
+    p_restricao                varchar) OWNER TO siw;

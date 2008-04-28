@@ -10,7 +10,6 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-include_once($w_dir_volta.'classes/sp/db_getCcData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidadeMedida.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidade_PE.php');
@@ -18,13 +17,11 @@ include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
-include_once($w_dir_volta.'classes/sp/dml_putMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidadeMedida.php');
 include_once($w_dir_volta.'funcoes/selecaoFontePesquisa.php');
-include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
@@ -79,7 +76,6 @@ $w_troca      = $_REQUEST['w_troca'];
 
 $p_chave         = $_REQUEST['p_chave'];
 $p_tipo_material = $_REQUEST['p_tipo_material'];
-$p_sq_cc         = $_REQUEST['p_sq_cc'];
 $p_codigo        = $_REQUEST['p_codigo'];
 $p_nome          = $_REQUEST['p_nome'];
 $p_ativo         = $_REQUEST['p_ativo'];
@@ -146,7 +142,6 @@ function Inicial() {
 
   if ($w_troca>'' && $O <> 'E') {
     $w_gestora         = $_REQUEST['w_gestora'];
-    $w_sq_cc           = $_REQUEST['w_sq_cc'];
     $w_unidade_medida  = $_REQUEST['w_unidade_medida'];
     $w_nome            = $_REQUEST['w_nome'];
     $w_descricao       = $_REQUEST['w_descricao'];
@@ -168,10 +163,6 @@ function Inicial() {
         $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
         foreach ($RS as $row) { $RS = $row; break; }
         $w_filtro.='<tr valign="top"><td align="right">Tipo <td>[<b>'.f($RS,'nome_completo').'</b>]';
-      } 
-      if ($p_sq_cc>'') {
-        $RS = db_getCCData::getInstanceOf($dbms,$p_sq_cc);
-        $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_catalogo=='S') {
         $w_filtro.='<tr valign="top"><td align="right">Catálogo <td>[<b>Apenas itens disponíveis no catálogo</b>]';
@@ -198,8 +189,8 @@ function Inicial() {
       }
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
-    if($P1==1) $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
-    else       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_sq_cc,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
+    if($P1==1) $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,'PESQUISA');
+    else       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$p_tipo_material,$p_codigo,$p_nome,$p_ativo,$p_catalogo,$p_ata_aviso,$p_ata_invalida,$p_ata_valida,$p_aviso,$p_invalida,$p_valida,$p_branco,$p_arp,null,null,null,$w_restricao);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc');
@@ -207,11 +198,10 @@ function Inicial() {
       $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc'); 
     }
   } elseif (strpos('MCAEV',$O)!==false) {
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_gestora         = f($RS,'unidade_gestora');
     $w_tipo_material   = f($RS,'sq_tipo_material');
-    $w_sq_cc           = f($RS,'sq_cc');
     $w_unidade_medida  = f($RS,'sq_unidade_medida');
     $w_nome            = f($RS,'nome');
     $w_descricao       = f($RS,'descricao');
@@ -248,7 +238,6 @@ function Inicial() {
         Validate('w_nome','Nome','1','1','3','110','1','1');
         Validate('w_codigo_interno','Código interno','1','1','2','30','1','1');
         Validate('w_tipo_material','Tipo do material ou serviço','SELECT','1','1','18','','1');
-        Validate('w_sq_cc','Classificação','SELECT','1','1','18','','1');
         Validate('w_unidade_medida','Unidade de alocação','SELECT','1','1','18','','1');
         Validate('w_descricao','Descricao','','',1,130,'1','1');
         Validate('w_detalhamento','Detalhamento','','',1,2000,'1','1');
@@ -260,7 +249,6 @@ function Inicial() {
         Validate('p_nome','Nome','1','','3','110','1','1');
         Validate('p_codigo','Código interno','1','','2','30','1','1');
         Validate('p_tipo_material','Tipo do material ou serviço','SELECT','','1','18','','1');
-        Validate('p_sq_cc','Classificação','SELECT','','1','18','','1');
       } elseif ($O=='E') {
         Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
@@ -401,9 +389,7 @@ function Inicial() {
     ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="110" VALUE="'.$w_nome.'"></td>');
     ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_interno" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');
     ShowHTML('      <tr valign="top">');
-    selecaoTipoMatServ('T<U>i</U>po:','I',null,$w_tipo_material,null,'w_tipo_material','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cc\'; document.Form.submit();"');
-    ShowHTML('      <tr valign="top">');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',nvl($w_sq_cc,f($RS_Solic,'sq_cc')),null,'w_sq_cc','SIWSOLIC');
+    selecaoTipoMatServ('T<U>i</U>po:','I',null,$w_tipo_material,null,'w_tipo_material','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_unidade_medida\'; document.Form.submit();"');
     selecaoUnidadeMedida('Unidade de f<U>o</U>rnecimento:','O','Selecione a unidade de fornecimento do material ou serviço',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><u>C</u>ódigo externo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_externo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_externo.'"></td>');
@@ -443,8 +429,6 @@ function Inicial() {
     ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$p_Disabled.' accesskey="C" type="text" name="p_codigo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$p_codigo.'"></td>');
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHA',null);
-    ShowHTML('      <tr valign="top">');
-    SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',nvl($p_sq_cc,f($RS_Solic,'sq_cc')),null,'p_sq_cc','SIWSOLIC');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Recuperar:</b><br>');
     if ($p_catalogo=='S') {
@@ -529,7 +513,7 @@ function PesquisaPreco() {
   $p_campo          = $_REQUEST['p_campo'];
 
   // Recupera os dados do item
-  $RS_Item = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS_Item = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS_Item as $row){$RS_Item=$row; break;}
 
   if ($w_troca>'' && $O!='E') {
@@ -622,7 +606,7 @@ function PesquisaPreco() {
       }
     }
   } elseif ($O=='L') {  
-    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
+    $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'PESQMAT');
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nm_fornecedor','asc');
@@ -836,7 +820,7 @@ function PesquisaPreco() {
     if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     //Recupera os dados do item
     if(nvl($w_chave_aux,'')=='') {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item   = f($row,'nome');
@@ -846,7 +830,7 @@ function PesquisaPreco() {
         break;
       }
     } else {
-      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
+      $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item    = f($row,'nome');
@@ -1097,7 +1081,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   extract($GLOBALS);
 
   // Recupera os dados do material ou serviço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($l_rs as $row) { $l_rs = $row; break; }
 
   // Se for listagem dos dados
@@ -1110,7 +1094,6 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>['.f($l_rs,'codigo_interno').'] '.f($l_rs,'nome').'</font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Tipo:<b></td><td>'.f($l_rs,'nm_tipo_material_completo').' </td></tr>';
-  $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Classificação:<b></td><td>'.f($l_rs,'nm_cc').' </td></tr>';
   $l_html .= chr(13).'    <tr valign="top"><td width="30%"><b>Exibe no catálogo:<b></td><td>'.f($l_rs,'nm_exibe_catalogo').' </td></tr>';
   $l_html .= chr(13).'    <tr><td width="30%"><b>Item ativo:<b></td><td>'.f($l_rs,'nm_ativo').' </td></tr>';
   $l_html .= chr(13).'    <tr><td width="30%"><b>Unidade de medida:<b></td><td>'.f($l_rs,'nm_unidade_medida').' ('.f($l_rs,'sg_unidade_medida').')</td></tr>';
@@ -1120,7 +1103,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
   if (f($l_rs,'classe')==1) $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
 
-  $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
+  $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
   $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
 
   $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
@@ -1199,7 +1182,7 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
 
 
   // Exibe pesquisas de preço
-  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null,'PESQMAT');
+  $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,'S',null,null,null,null,null,'PESQMAT');
   $l_rs = SortArray($l_rs,'phpdt_fim','desc','valor_unidade','asc','nm_fornecedor','asc'); 
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PESQUISAS DE PREÇO VÁLIDAS ('.count($l_rs).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
   if (count($l_rs)==0) {
@@ -1255,7 +1238,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (count($RS)>0) {
             foreach ($RS as $row) { $RS = $row; break; }
             if (f($RS,'existe')>0) {
@@ -1269,7 +1252,7 @@ function Grava() {
 
           if (nvl($_REQUEST['w_codigo_interno'],'nulo')!='nulo') {
             // Testa a existência do código
-            $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+            $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_codigo_interno'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
             if (count($RS)>0) {
               foreach ($RS as $row) { $RS = $row; break; }
               if (f($RS,'existe')>0) {
@@ -1282,7 +1265,7 @@ function Grava() {
             }
           }
         } elseif ($O=='E') {
-          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
+          $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
           if (f($RS,'existe')>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é possível excluir este material ou serviço. Ele está ligado a algum documento!\');');
@@ -1292,7 +1275,7 @@ function Grava() {
           } 
         } 
         dml_putMatServ::getInstanceOf($dbms,$O,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_copia'],
-            $_REQUEST['w_tipo_material'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_sq_cc'],$_REQUEST['w_nome'],
+            $_REQUEST['w_tipo_material'],$_REQUEST['w_unidade_medida'],$_REQUEST['w_nome'],
             $_REQUEST['w_descricao'],$_REQUEST['w_detalhamento'],$_REQUEST['w_apresentacao'],$_REQUEST['w_codigo_interno'],
             $_REQUEST['w_codigo_externo'], $_REQUEST['w_exibe_catalogo'], $_REQUEST['w_vida_util'], $_REQUEST['w_ativo'],
             &$w_chave_nova);

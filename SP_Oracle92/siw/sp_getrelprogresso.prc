@@ -129,21 +129,31 @@ begin
                                                            'CA'                  <> coalesce(l.sigla,'-'))
           where d.sq_pessoa      = p_cliente
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and c.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
-                                                                                  from siw_solicitacao_objetivo
-                                                                                 where (sq_siw_solicitacao = c.sq_siw_solicitacao and
-                                                                                        sq_plano           = c.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                                    or (sq_siw_solicitacao = c3.sq_siw_solicitacao and
-                                                                                        sq_plano           = c3.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
+                                            )
+                )
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
                                                                                )
                                             )
                 )
-            and (p_plano         is null or (p_plano       is not null and (c4.sq_plano         = p_plano    or c5.sq_plano      = p_plano)))
             and (p_chave         is not null or 
                  (p_chave        is null and
                   (c.inicio      between w_inicio      and w_fim or
@@ -172,21 +182,31 @@ begin
           where d.sq_pessoa      = p_cliente
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
-                                                                                  from siw_solicitacao_objetivo
-                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
-                                                                                        sq_plano           = a.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
-                                                                                        sq_plano           = b1.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                               )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
                                             )
                 )
-            and (p_plano         is null or (p_plano       is not null and (b1.sq_plano          = p_plano    or a.sq_plano = p_plano)));
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                            )
+                );
   ElsIf p_restricao = 'REL_ATUAL' Then
       open p_result for 
          select distinct '1.ETAPA' as bloco, a.sq_siw_solicitacao as sq_projeto,
@@ -212,21 +232,31 @@ begin
           where d.sq_pessoa      = p_cliente
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
-                                                                                  from siw_solicitacao_objetivo
-                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
-                                                                                        sq_plano           = a.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
-                                                                                        sq_plano           = b1.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
+                                            )
+                )
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
                                                                                )
                                             )
                 )
-            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)))
          UNION
          select distinct '2.RISCO' as bloco, a.sq_siw_solicitacao as sq_projeto,
                 e1.titulo as nm_projeto, e1.codigo_interno, 
@@ -252,21 +282,31 @@ begin
           where d.sq_pessoa      = p_cliente
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
-                                                                                  from siw_solicitacao_objetivo
-                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
-                                                                                        sq_plano           = a.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
-                                                                                        sq_plano           = b1.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
+                                            )
+                )
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
                                                                                )
                                             )
                 )
-            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)))
          UNION
          select distinct '3.PROBLEMA' as bloco, a.sq_siw_solicitacao as sq_projeto,
                 e1.titulo as nm_projeto, e1.codigo_interno, 
@@ -292,21 +332,31 @@ begin
           where d.sq_pessoa      = p_cliente
             and 'CA'             <> coalesce(f.sigla,'-')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_programa      is null or (p_programa    is not null and a.sq_solic_pai       = p_programa))
-            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(*)
-                                                                                  from siw_solicitacao_objetivo
-                                                                                 where (sq_siw_solicitacao = a.sq_siw_solicitacao and
-                                                                                        sq_plano           = a.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                                    or (sq_siw_solicitacao = b1.sq_siw_solicitacao and
-                                                                                        sq_plano           = b1.sq_plano and
-                                                                                        sq_peobjetivo      = p_objetivo
-                                                                                       )
-                                                                               )
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
                                             )
                 )
-            and (p_plano         is null or (p_plano       is not null and (a.sq_plano           = p_plano    or b1.sq_plano = p_plano)));
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                            )
+                );
   End If;
 end SP_GetRelProgresso;
 /

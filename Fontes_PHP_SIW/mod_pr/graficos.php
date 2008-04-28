@@ -128,11 +128,11 @@ function Hierarquico() {
 
 function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
-  $l_nome  = substr($node['name'],strpos($node['name'],' ')+1);
-  $l_etapa = substr($node['name'],0,strpos($node['name'],' '));
-  $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,$l_nome,null);
-  foreach($RS as $row) { $RS = $row; break; }
-  echo "<a HREF=\"#\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">&nbsp;</div></a>\n";
+  if (nvl($node['chave'],'')!='') {
+    $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,$node['chave'],'LISTA',null);
+    foreach($RS as $row) { $RS = $row; break; }
+    echo "<a style=\"TEXT-DECORATION: none\" HREF=\"#\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
+  }
   for ($i = 0; $i < count($node['childs']); $i++) {
     echo_map($l_chave, $node['childs'][$i], $selected);
   }
@@ -176,7 +176,7 @@ function Gera_Hierarquico($l_gera) {
       $w_cor_nome = '"#d9e3ed"';
       $w_cor_text = '"#d9e3ed"';
     }
-    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'ac_titulo').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'ac_titulo').'" chave="'.f($row,'sq_projeto_etapa').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
     $l_xml .= chr(13).str_repeat('   ',$w_level).'     Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\n'.f($row,'perc_conclusao').'%';
   }
   for ($i=1;$i<=$w_level;$i++) { $l_xml .= chr(13).str_repeat('   ',($w_level-$i+1)).'  </node>'; }

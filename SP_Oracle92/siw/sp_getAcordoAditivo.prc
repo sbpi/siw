@@ -18,9 +18,9 @@ begin
       open p_result for
          select a.sq_acordo_aditivo, a.sq_siw_solicitacao, a.protocolo, a.codigo, a.objeto, 
                 a.inicio, a.fim, a.duracao, a.documento_origem, a.documento_data, a.variacao_valor,
-                a.prorrogacao, a.revisao, a.acrescimo, a.supressao, a.observacao, a.valor_reajuste,
-                a.parcela_reajustada, a.sq_cc, a.valor_inicial, a.parcela_inicial, a.valor_acrescimo,
-                a.parcela_acrescida, a.valor_aditivo, a.parcela_aditivo,
+                a.alteracao_item, a.prorrogacao, a.revisao, a.acrescimo, a.supressao, a.observacao, 
+                a.valor_reajuste, a.parcela_reajustada, a.sq_cc, a.valor_inicial, a.parcela_inicial, 
+                a.valor_acrescimo, a.parcela_acrescida, a.valor_aditivo, a.parcela_aditivo,
                 case a.prorrogacao when 'S' then 'Sim' else 'Não' end nm_prorrogacao,
                 case a.revisao     when 'S' then 'Sim' else 'Não' end nm_revisao,
                 case a.acrescimo

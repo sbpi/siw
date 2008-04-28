@@ -1,25 +1,37 @@
-create or replace function SP_GetAddressData
-   (p_chave      numeric,
-    p_result     refcursor
-   ) returns refcursor as $$
+create or replace function siw.SP_GetAddressData
+   (p_chave       numeric)
+
+  RETURNS character varying AS
+$BODY$declare
+
+   
+    p_result     refcursor;
+   
 begin
    -- Recupera os dados do endereco informado
    open p_result for 
-      select a.sq_pessoa, 
-             initcap(c.nome) as endereco,  
-             f.sq_pais, f.co_uf, f.sq_cidade, b.logradouro, 
-             b.cep,b.padrao,b.bairro,b.complemento, 
-             b.sq_tipo_endereco, b.sq_pessoa_endereco, a.nome as pessoa 
-      from co_pessoa          a,  
-           co_pessoa_endereco b
-              left outer join co_cidade f on (b.sq_cidade = f.sq_cidade)
-              left outer join co_uf     e on (f.co_uf     = e.co_uf and 
-                                              f.sq_pais   = e.sq_pais)
-              left outer join co_pais   d on (f.sq_pais   = d.sq_pais),  
-           co_tipo_endereco   c 
-      where a.sq_pessoa          = b.sq_pessoa 
-        and b.sq_tipo_endereco   = c.sq_tipo_endereco 
-        and b.sq_pessoa_endereco = p_chave;
-   return p_result;
-end; $$ language 'plpgsql' volatile;
+      select a.sq_pessoa, a.nome as pessoa,
+             b.logradouro, b.cep,b.padrao,b.bairro,b.complemento, 
+             b.sq_tipo_endereco, b.sq_pessoa_endereco, 
+             b.logradouro||' ('||case e.co_uf when 'EX' then f.nome||'-'||d.nome else f.nome||'-'||e.co_uf end ||')' as endereco_completo,
+             f.nome||', '||e.nome||', '||d.nome as google,
+             c.email, c.internet, initcap(c.nome) as endereco, 
+             f.sq_pais, f.co_uf, f.sq_cidade,
+             h.sq_siw_coordenada, h.nome as nm_coordenada,
+             h.latitude, h.longitude, h.icone, h.tipo
+        from siw.co_pessoa                             a
+             inner    join co_pessoa_endereco      b on (a.sq_pessoa          = b.sq_pessoa)
+               inner join co_tipo_endereco         c on (b.sq_tipo_endereco   = c.sq_tipo_endereco)
+               left   join co_cidade               f on (b.sq_cidade          = f.sq_cidade)
+               left   join co_pais                 d on (f.sq_pais            = d.sq_pais)
+               left   join co_uf                   e on (f.co_uf              = e.co_uf and
+                                                   f.sq_pais                  = e.sq_pais)
+               left   join siw_coordenada_endereco g on (b.sq_pessoa_endereco = g.sq_pessoa_endereco)
+                 left join siw_coordenada          h on (g.sq_siw_coordenada  = h.sq_siw_coordenada)
+       where b.sq_pessoa_endereco = p_chave;
+end
 
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION siw.SP_GetAddressData(p_chave numeric) OWNER TO siw;

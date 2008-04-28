@@ -12,8 +12,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putAcordoAditivo {
    function getInstanceOf($dbms, $operacao, $p_chave_aux, $p_chave, $p_protocolo, $p_codigo, $p_objeto, $p_inicio, $p_fim, $p_duracao, $p_doc_origem, $p_doc_data,
                           $p_variacao_valor, $p_prorrogacao, $p_revisao, $p_acrescimo, $p_supressao, $p_observacao, $p_valor_inicial, $p_parcela_inicial, $p_valor_reajuste, $p_parcela_reajustada, 
-                          $p_valor_acrescimo, $p_parcela_acrescida, $p_sq_cc) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOADITIVO';
+                          $p_valor_acrescimo, $p_parcela_acrescida, $p_sq_cc, $p_altera_item, $p_chave_nova) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoAditivo';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -37,7 +37,9 @@ class dml_putAcordoAditivo {
                    'p_parcela_reajustada'        =>array(toNumber(tvl($p_parcela_reajustada)),             B_NUMERIC,      18,2),
                    'p_valor_acrescimo'           =>array(toNumber(tvl($p_valor_acrescimo)),                B_NUMERIC,      18,2),
                    'p_parcela_acrescida'         =>array(toNumber(tvl($p_parcela_acrescida)),              B_NUMERIC,      18,2),
-                   'p_sq_cc'                     =>array(tvl($p_sq_cc),                                    B_INTEGER,        32)
+                   'p_sq_cc'                     =>array(tvl($p_sq_cc),                                    B_INTEGER,        32),
+                   'p_altera_item'               =>array(tvl($p_altera_item),                              B_VARCHAR,         1),
+                   'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)
                    );     
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

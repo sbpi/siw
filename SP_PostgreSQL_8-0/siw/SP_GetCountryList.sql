@@ -1,25 +1,46 @@
-create or replace function SP_GetCountryList
-   (p_restricao varchar,
-    p_nome      varchar,
-    p_ativo     varchar,
-    p_sigla     varchar,
-    p_result    refcursor
-   ) returns refcursor as $$
+CREATE OR REPLACE FUNCTION siw.SP_GetCountryList
+   (p_restricao varchar ,
+    p_nome      varchar ,
+    p_ativo     varchar ,
+    p_sigla     varchar )
+
+  RETURNS refcursor AS
+$BODY$declare
+    p_result    refcursor;
 begin
    -- Recupera os paises existentes
-   open p_result for 
-      select sq_pais, nome, coalesce(sigla,'-') as sigla, ddi,
-             ativo, 
-             case ativo when 'S' then 'Sim' else 'Não' end as ativodesc, 
-             padrao, 
-             case padrao when 'S' then 'Sim' else 'Não' end as padraodesc
-        from co_pais
+   open p_result for
+      select a.sq_pais, a.nome, coalesce(a.sigla,'-') as sigla, a.ddi, a.ativo, a.padrao,
+             case a.ativo  when 'S' then 'Sim' else 'Não' end as ativodesc,
+             case a.padrao when 'S' then 'Sim' else 'Não' end as padraodesc
+        from siw.co_pais              a
+             left join (select x.sq_pais, count(x.sq_pais) as qtd
+                          from siw.eo_indicador_afericao   x
+                               inner join siw.eo_indicador y on (x.sq_eoindicador = y.sq_eoindicador and
+                                                             y.ativo          = 'S'
+                                                            )
+                         where y.cliente = coalesce(to_number(p_nome),0) -- p_nome como chave de SIW_CLIENTE
+                           and x.sq_pais is not null
+                        group by x.sq_pais
+                       )          b on (a.sq_pais = b.sq_pais)
        where (p_restricao is null or (p_restricao = 'ATIVO'      and ativo = 'S')
                                   or (p_restricao = 'NOMEBRASIL' and nome = 'Brasil')
                                   or (p_restricao = 'NOMEFRANCA' and nome = 'França')
-                                  or (p_restricao = 'BRASILFRANCA' and (nome = 'Brasil' or nome = 'França')))
-         and (p_nome  is null     or (p_nome  is not null and (acentos(nome, null) like '%'||acentos(p_nome, null)||'%')))
-         and (p_ativo is null     or (p_ativo is not null and ativo = p_ativo))
-         and (p_sigla is null     or (p_sigla is not null and sigla = p_sigla));
-   return p_result;
-end; $$ language 'plpgsql' volatile;
+                                  or (p_restricao = 'BRASILFRANCA' and (nome = 'Brasil' or nome = 'França'))
+                                  or (p_restricao = 'INDICADOR'))
+         and ((coalesce(p_restricao,'-')  = 'INDICADOR' and b.sq_pais is not null) or
+              (coalesce(p_restricao,'-') <> 'INDICADOR' and
+               (p_nome  is null or (p_nome is not null and acentos(nome) like '%'||acentos(p_nome)||'%'))
+              )
+             )
+         and (p_ativo is null or (p_ativo is not null and ativo = p_ativo))
+         and (p_sigla is null or (p_sigla is not null and sigla = p_sigla));
+end 
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+  COST 100;
+ALTER FUNCTION siw.SP_GetCountryList
+   (p_restricao varchar ,
+    p_nome      varchar ,
+    p_ativo     varchar ,
+    p_sigla     varchar ) OWNER TO siw;

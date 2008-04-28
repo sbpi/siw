@@ -25,9 +25,10 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
   $l_html = '';
   // Recupera os dados da demanda
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'GDTGERAL');
-  $w_tramite        = f($RS,'sq_siw_tramite');
-  $w_sg_tramite     = f($RS,'sg_tramite');
-  $w_sigla          = f($RS,'sigla');
+  $w_tramite       = f($RS,'sq_siw_tramite');
+  $w_tramite_ativo = f($RS,'ativo');
+  $w_sg_tramite    = f($RS,'sg_tramite');
+  $w_sigla         = f($RS,'sigla');
 
 
   // Recupera o tipo de visão do usuário
@@ -249,9 +250,9 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
   if ($operacao=='L' && $w_tipo_visao!=2) {
     if (f($RS,'aviso_prox_conc')=='S') {
       // Configuração dos alertas de proximidade da data limite para conclusão da demanda
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALERTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALERTA DE PROXIMIDADE DA DATA PREVISTA DE TÉRMINO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';
-      $l_html.=chr(13).'      <tr><td valign="top"><b>Emite aviso:</b></td>';
+      $l_html.=chr(13).'      <tr><td valign="top"><b>Emite alerta:</b></td>';
       $l_html.=chr(13).'        <td>'.str_replace('N','Não',str_replace('S','Sim',f($RS,'aviso_prox_conc'))).' </td></tr>';
       $l_html.=chr(13).'      <tr><td valign="top"><b>Dias:</b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'dias_aviso').' </td></tr>';
@@ -407,52 +408,9 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
     } 
 
     // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
-    $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Data</b></div></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Despacho/Observação</b></div></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Responsável</b></div></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Fase / Destinatário</b></div></td>';
-    $l_html.=chr(13).'          </tr>';
-    if (count($RS)<=0) {
-      $l_html.=chr(13).'      <tr><td colspan=6 align="center"><font size="1"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr valign="top">';
-      $w_cor=$conTrBgColor;
-      $i = 0;
-      foreach($RS as $row) {
-        if ($i==0) {
-          $l_html.=chr(13).'        <td colspan=6><font size="1">Fase atual: <b>'.f($row,'fase').'</b></td>';
-          $i = 1;
-        }
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td nowrap><font size="1">'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-        if (Nvl(f($row,'caminho'),'')>'' && $l_tipo!='WORD') {
-          $l_html.=chr(13).'      <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
-        } else {
-          $l_html.=chr(13).'      <td><font size="1">'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
-        } 
-        if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap><font size="1">'.f($row,'responsavel').'</td>';
-        else       $l_html.=chr(13).'        <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-        if (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
-          if($l_tipo=='WORD') $l_html.=chr(13).'      <td nowrap><font size="1">'.f($row,'destinatario').'</td>';
-          else       $l_html.=chr(13).'      <td nowrap><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-        } elseif (nvl(f($row,'sq_demanda_log'),'')>'' && nvl(f($row,'destinatario'),'')=='') {
-          $l_html.=chr(13).'      <td nowrap><font size="1">Anotação</td>';
-       } else {
-          if(strpos(f($row,'despacho'),'***')!==false) {
-            $l_html.=chr(13).'        <td nowrap>---</td>';
-          } else {
-            $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
-          }
-        } 
-        $l_html.=chr(13).'      </tr>';
-      } 
-    } 
+    include_once($w_dir_volta.'funcoes/exibeLog.php');
+    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+
     $l_html.=chr(13).'         </table></td></tr>';
     $l_html.=chr(13).'</table>';
   } 
