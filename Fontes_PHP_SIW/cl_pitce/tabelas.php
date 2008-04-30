@@ -1123,10 +1123,10 @@ function Telaplano(){
     ShowHTML('         <hr NOSHADE color=#000000 SIZE=1></td>');
     ShowHTML('         </td>');
     foreach ($RS as $row) {
-      if (f($row,'qtd')>0) {
-        ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.f($row,'qtd').')</b></font></td>');
-        $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
-        $RS1 = SortArray($RS1,'codigo_interno','asc');
+      $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+      $RS1 = SortArray($RS1,'codigo_interno','asc');
+      if (count($RS1)>0) {
+        ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.count($RS1).')</b></font></td>');
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

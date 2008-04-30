@@ -1003,7 +1003,7 @@ function RecursoProgramado() {
       ShowHTML('      <td>'.Nvl(f($RS,'ln_programa'),'---').'</td></tr>');
     } else {                                        
       ShowHTML('    <tr><td>Endereço na internet:</b></td>');
-      ShowHTML('      <td><a href="'.Nvl(f($RS,'ln_programa'),'---').'" target="blank"><b>'.Nvl(f($RS,'ln_programa'),'---').'</a></td></tr>');
+      ShowHTML('      <td><a href="'.Nvl(f($RS,'ln_programa'),'---').'" target="_blank"><b>'.Nvl(f($RS,'ln_programa'),'---').'</a></td></tr>');
     }
     ShowHTML('          </table>');
     ShowHTML('        <tr><td valign="top" colspan="2">');

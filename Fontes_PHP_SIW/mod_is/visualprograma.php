@@ -438,7 +438,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       $RS1 = SortArray($RS1,'nome_resumido','asc');
       if (count($RS1)>0) {
         $TP=RemoveTP($TP).' - Interessados';
-        $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Clique <a class="HL" HREF="'.$w_dir.'acao.php?par=interess&R='.$l_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="blank">aqui</a> para visualizar os Interessados na execução</div></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Clique <a class="HL" HREF="'.$w_dir.'acao.php?par=interess&R='.$l_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="_blank">aqui</a> para visualizar os Interessados na execução</div></td></tr>';
       } else {
         $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Nenhum interessado cadastrado</div></td></tr>';
       } 

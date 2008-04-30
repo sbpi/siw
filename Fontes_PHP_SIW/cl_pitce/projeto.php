@@ -563,6 +563,7 @@ function Inicial() {
                   ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaRubrica&R='.$w_pagina.'AtualizaRubrica&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_pai='.$w_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJCRONOGRAMA'.MontaFiltro('GET').'" title="Atualizar o cronograma desembolso." target="Cronograma desembolso">CD</A>&nbsp');
                 }
                 */
+                if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
                 // Coloca as operações dependendo do trâmite
                 if (f($row,'sg_tramite')=='EA' || f($row,'sg_tramite')=='EE') {
                   ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o projeto, sem enviá-la.">AN</A>&nbsp');
@@ -577,12 +578,14 @@ function Inicial() {
                 ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Consulta as etapas do projeto." target="Etapas">EA</A>&nbsp');
                 if (f($row,'resp_risco')>0)    ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os riscos do projeto." target="Restricao">RS</A>&nbsp');
                 if (f($row,'resp_problema')>0) ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os problemas do projeto." target="Restricao">PB</A>&nbsp');
+                if (f($row,'qtd_meta')>0)      ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
                 if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                   ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 }
               } 
             } 
           } else {
+            ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as etapas do projeto." target="Etapas">EA</A>&nbsp');
             if (Nvl(f($row,'solicitante'),0)== $w_usuario || 
                 Nvl(f($row,'titular'),0)    == $w_usuario || 
                 Nvl(f($row,'substituto'),0) == $w_usuario || 
@@ -594,14 +597,14 @@ function Inicial() {
                   Nvl(f($row,'titular'),0)      == $w_usuario || 
                   Nvl(f($row,'substituto'),0)   == $w_usuario || 
                   RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')!='AT') { 
+                  if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos do projeto." target="Restricao">RS</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas do projeto." target="Restricao">PB</A>&nbsp');
                 }
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o projeto para outro responsável.">EN</A>&nbsp');
               } 
             } 
-            ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as etapas do projeto." target="Etapas">EA</A>&nbsp');
           } 
         } 
         ShowHTML('      </td></tr>');
@@ -3072,7 +3075,7 @@ function AtualizaEtapa() {
         ShowHTML('    <tr bgColor="'.$w_cor.'">');
         ShowHTML('     <td nowrap width="1%">');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>');
+        ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>');
         ShowHTML('     <td>'.Nvl(f($row,'assunto'),'-'));
         ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>');
         ShowHTML('     <td>'.f($row,'sg_unidade_resp').'</td>');
@@ -4704,7 +4707,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
       $l_contr1 .= chr(13).'<tr valign="top">';
       $l_contr1 .= chr(13).'  <td>';
       $l_contr1 .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      if($P4!=1) $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+      if($P4!=1) $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
       else       $l_contr1 = $l_contr1.chr(13).'  '.f($row,'sq_siw_solicitacao');
       $l_contr1 = $l_contr1.chr(13).' - '.Nvl(f($row,'titulo'),'-');
       if($P4!=1) $l_contr1 .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
@@ -4728,7 +4731,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
       $l_ativ .= chr(13).'<tr valign="top">';
       $l_ativ .= chr(13).'  <td>';
       $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      if($P4!=1) $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+      if($P4!=1) $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
       else       $l_ativ .= chr(13).'  '.f($row,'sq_siw_solicitacao');
       if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
       else                                                                             $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
@@ -4806,7 +4809,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
     foreach ($RS_Ativ as $row) {
       $l_ativ .= chr(13).'      <tr bgcolor="'.$w_cor.'"><td>';
       $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sg_servico'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+      $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
       $l_ativ .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
       $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'inicio_real'),f($row,'inicio'))).'</td>';
       $l_ativ .= chr(13).'     <td align="center">'.formataDataEdicao(nvl(f($row,'fim_real'),f($row,'fim'))).'</td>';

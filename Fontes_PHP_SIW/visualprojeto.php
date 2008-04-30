@@ -137,7 +137,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       if (Nvl(f($RS,'descricao'),'') > '' || Nvl(f($RS,'justificativa'),'') > '' || $w_acordo == 'S' || $w_viagem=='S') {
         if ($w_tipo_visao!=2) {
           if ($w_acordo=='S' || $w_viagem=='S') {
-            $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+            $l_html.=chr(13).'    <tr><td colspan=2><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
             if ($w_acordo=='S') {
               if (f($RS,'vincula_contrato')=='S') {
                 $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
@@ -162,7 +162,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
    
     // Programação qualitativa
     if ($l_O=='T' && $l_nome_menu['QUALIT']!='') {
-      $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>'.$l_nome_menu['QUALIT'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'    <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['QUALIT'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       // Se for visão completa
       $l_html .= chr(13).'<tr valign="top"><td><b>Objetivo Superior:</b></td>';
       $l_html .= chr(13).'  <td>'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
@@ -438,7 +438,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       foreach ($RSQuery as $row) {
         $l_html .= chr(13).'      <tr><td>';
         $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if($l_tipo!='WORD') $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+        if($l_tipo!='WORD') $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
         else       $l_html .= chr(13).'  '.f($row,'sq_siw_solicitacao');
         $l_html .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
         if($l_tipo!='WORD') $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
@@ -446,7 +446,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'     <td>'.f($row,'sg_unidade_resp').'</td>';
         $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>';
         $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
-        $l_html .= chr(13).'     <td colspan=2 nowrap>'.f($row,'nm_tramite').'</td>';
+        $l_html .= chr(13).'     <td nowrap>'.f($row,'nm_tramite').'</td>';
       } 
       $l_html .= chr(13).'      </td></tr></table>';
     } 
@@ -470,57 +470,59 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     if (count($RSQuery)>0) {
       // Se não foram selecionados registros, exibe mensagem
       // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
-      if ($w_p2 > '') {
-        $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
-        $l_html .= chr(13).'  function lista (projeto, etapa) {';
-        $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
-        $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
+      if($l_tipo!='WORD') {
+        if ($w_p2 > '') {
+          $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
+          $l_html .= chr(13).'  function lista (projeto, etapa) {';
+          $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
+          $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
+          $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
+          $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
+          $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
+          $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
+          $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+           $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
+          $w_fases='';
+          foreach($RSQuery1 as $row1) {
+            if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+          } 
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
+          $l_html .= chr(13).'    document.Form1.submit();';
+          $l_html .= chr(13).'  }';
+          $l_html .= chr(13).'</SCRIPT>';
+        }
+        // Monta função JAVASCRIPT para fazer a chamada para a lista de contratos
+        if ($w_p3 > '') {
+          $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
+          $l_html .= chr(13).'  function listac (projeto, etapa) {';
+          $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
+          $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
+          $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
+          $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
+          $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p3.'\';';
+          $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';
+          $l_html .= chr(13).'    document.Form1.p_agrega.value=\''.substr(f($RSQuery1,'sigla'),0,3).'ETAPA\';';
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
+          $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
+          $w_fases='';
+          foreach($RSQuery1 as $row1) {
+           if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+          } 
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
+          $l_html .= chr(13).'    document.Form1.submit();';
+          $l_html .= chr(13).'  }';
+          $l_html .= chr(13).'</SCRIPT>';
+        }      
         $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
-        $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
-        $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
-        $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
-        $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
-        $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
-         $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
-        $w_fases='';
-        foreach($RSQuery1 as $row1) {
-          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
-        } 
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
-        $l_html .= chr(13).'    document.Form1.submit();';
-        $l_html .= chr(13).'  }';
-        $l_html .= chr(13).'</SCRIPT>';
+        AbreForm('Form1',f($RSQuery1,'link'),'POST',null,'Lista',3,$w_p2,1,null,RemoveTP($w_TP),f($RSQuery1,'sigla'),$w_pagina.$par,'L');
+        $l_html .= chr(13).'<input type="Hidden" name="p_projeto" value="">';
+        $l_html .= chr(13).'<input type="Hidden" name="p_atividade" value="">';
+        $l_html .= chr(13).'<input type="Hidden" name="p_agrega" value="">';
+        $l_html .= chr(13).'<input type="Hidden" name="p_fase" value="">';
       }
-      // Monta função JAVASCRIPT para fazer a chamada para a lista de contratos
-      if ($w_p3 > '') {
-        $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
-        $l_html .= chr(13).'  function listac (projeto, etapa) {';
-        $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
-        $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
-        $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p3);
-        $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
-        $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p3.'\';';
-        $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';
-        $l_html .= chr(13).'    document.Form1.p_agrega.value=\''.substr(f($RSQuery1,'sigla'),0,3).'ETAPA\';';
-        $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
-        $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
-        $w_fases='';
-        foreach($RSQuery1 as $row1) {
-          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
-        } 
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
-        $l_html .= chr(13).'    document.Form1.submit();';
-        $l_html .= chr(13).'  }';
-        $l_html .= chr(13).'</SCRIPT>';
-      }      
-      $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
-      AbreForm('Form1',f($RSQuery1,'link'),'POST',null,'Lista',3,$w_p2,1,null,RemoveTP($w_TP),f($RSQuery1,'sigla'),$w_pagina.$par,'L');
-      $l_html .= chr(13).'<input type="Hidden" name="p_projeto" value="">';
-      $l_html .= chr(13).'<input type="Hidden" name="p_atividade" value="">';
-      $l_html .= chr(13).'<input type="Hidden" name="p_agrega" value="">';
-      $l_html .= chr(13).'<input type="Hidden" name="p_fase" value="">';
  
       $RSQuery1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
       $l_html .= chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -594,17 +596,17 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         } 
       } 
-      $l_html .= chr(13).'      </form>';
+      if ($w_tipo=='WORD') $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=14><b>Observações:<ul>';
+      $l_html .= chr(13).'<tr><td colspan=2><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
       if ($w_tipo=='WORD') {
-        $l_html .= chr(13).'<tr><td colspan=14><table border=0>';
-        $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
+        $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
+        $l_html .= chr(13).'  <tr valign="top"><td colspan=2><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         if ($w_tipo_visao!=2 && ($l_O=='T')){
-          $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores das tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true);
+          $l_html .= chr(13).'  <tr valign="top"><td colspan=2><b>Legenda dos sinalizadores das tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true);
         }
         $l_html .= chr(13).'  </table>';
       }
@@ -676,9 +678,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'      </tr>';
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'      <tr><td colspan=6><table border=0>';
-        $l_html .= chr(13).'        <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-        $l_html .= chr(13).'        </table>';
+        $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de medida do indicador';
       }
     }
 
@@ -704,25 +704,94 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'            <td><b>Valor</b></td>';
         $l_html .= chr(13).'          </tr>';
         $w_cor=$conTrBgColor;
+        $l_cron = '';
         foreach ($RSQuery as $row) {
           $l_html .= chr(13).'      <tr valign="top">';
-          $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
-          if ($l_formato=='WORD') {
+          if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+          else                $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
+          if ($l_tipo=='WORD') {
             $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
           } else {
             $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
           }
-          $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        
+          $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';
           $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
           $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
           $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
           $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
           $l_html .= chr(13).'      </tr>';
+          
+          // Monta html para exibir o cronograma da meta
+          if (f($row,'qtd_cronograma')>0) {
+            $l_cron .= chr(13).'      <tr valign="top">';
+            if($l_tipo!='WORD') $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+            else                $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'titulo').'</td>';
+            if ($l_tipo=='WORD') {
+              $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'nm_indicador').'</td>';
+            } else {
+              $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+            }
+            $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
+            $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+            $RSCron = SortArray($RSCron,'inicio','asc');
+            $i = 0;
+            $w_previsto  = 0;
+            $w_realizado = 0;
+            foreach($RSCron as $row1) {
+              $i += 1;
+              if ($i>1) $l_cron .= chr(13).'      <tr valign="top">';
+              $p_array = retornaNomePeriodo(f($row1,'inicio'), f($row1,'fim'));
+              $l_cron .= chr(13).'        <td align="center">';
+              if ($p_array['TIPO']=='DIA') {
+                $l_cron .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+              } elseif ($p_array['TIPO']=='MES') {
+                $l_cron .= chr(13).'        '.$p_array['VALOR'];
+              } elseif ($p_array['TIPO']=='ANO') {
+                $l_cron .= chr(13).'        '.$p_array['VALOR'];
+              } else {
+                $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio')).' a '.formataDataEdicao(f($row1,'fim'));
+              }
+              $l_cron .= chr(13).'        </td>';
+              $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
+              $l_cron .= chr(13).'        <td align="right">'.((nvl(f($row1,'valor_real'),'')=='') ? '&nbsp;' : formatNumber(f($row1,'valor_real'),4)).'</td>';
+              if (f($row,'cumulativa')=='S') {
+                $w_previsto  += f($row1,'valor_previsto');
+                if (nvl(f($row1,'valor_real'),'')!='') $w_realizado += f($row1,'valor_real');
+              } else {
+                $w_previsto  = f($row1,'valor_previsto');
+                if (nvl(f($row1,'valor_real'),'')!='') $w_realizado = f($row1,'valor_real');
+              }
+            }
+            $l_cron .= chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+            if (f($row,'cumulativa')=='S') $l_cron .= chr(13).'        <td align="right" nowrap><b>Total acumulado&nbsp;</b></td>';
+            else                           $l_cron .= chr(13).'        <td align="right" nowrap><b>Total não acumulado&nbsp;</b></td>';
+            $l_cron .= chr(13).'        <td align="right" '.(($w_previsto!=f($row,'quantidade')) ? ' TITLE="Total previsto do cronograma difere do resultado previsto para a meta!" bgcolor="'.$conTrBgColorLightRed1.'"' : '').'><b>'.formatNumber($w_previsto,4).'</b></td>';
+            $l_cron .= chr(13).'        <td align="right"><b>'.((nvl($w_realizado,'')=='') ? '&nbsp;' : formatNumber($w_realizado,4)).'</b></td>';
+            $l_cron .= chr(13).'      </tr>';
+          }
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
-        $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-        $l_html .= chr(13).'  </table>';
+        $l_html .= chr(13).'<tr><td colspan=2>U.M. Unidade de medida do indicador';
+
+        // Exibe o cronograma de aferição das metas
+        if (nvl($l_cron,'')!='') {
+          $l_html .= chr(13).'      <tr><td colspan="2"><br><b>Cronogramas:</td></tr>';
+          $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+          $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
+          $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+          $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
+          $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+          $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+          $l_html .= chr(13).'            <td rowspan=2><b>Referência</b></td>';
+          $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
+          $l_html .= chr(13).'          </tr>';
+          $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+          $l_html .= chr(13).'            <td><b>Previsto</b></td>';
+          $l_html .= chr(13).'            <td><b>Realizado</b></td>';
+          $l_html .= chr(13).'          </tr>';
+          $l_html .= chr(13).$l_cron;
+          $l_html .= chr(13).'         </table></td></tr>';
+        }   
       }   
     }
 
@@ -751,9 +820,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'      </tr>';
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
-        $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de alocação do recurso';
-        $l_html .= chr(13).'  </table>';
+        $l_html .= chr(13).'<tr><td colspan=2>U.M. Unidade de alocação do recurso';
       }
     }
     // Recursos envolvidos na execução do projeto

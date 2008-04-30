@@ -1029,6 +1029,7 @@ Fontes_PHP_SIW/classes/sp/dml_putConvDadosBancario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvOutraParte.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvOutroRep.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvPreposto.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCronMeta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCronograma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDadosAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDataEspecial.php -text

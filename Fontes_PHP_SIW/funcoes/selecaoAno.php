@@ -5,7 +5,7 @@ include_once($w_dir_volta.'classes/sp/db_getCTEspecificacao.php');
 // -------------------------------------------------------------------------
 function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$anos=2) {
   extract($GLOBALS);
-	$l_RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'ANOS');
+  $l_RS = db_getCTEspecificacao::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'ANOS');
   $l_cont=strftime('%Y',(time()))-$anos;
   if (!isset($hint)) {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -19,7 +19,7 @@ function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$
       foreach($l_RS as $l_row) {
          if(f($l_row,'ano')==$l_cont) $l_teste = 'nao'; 
       }
-			if($l_teste=='sim') {
+      if($l_teste=='sim') {
         if (nvl($l_cont,0)==nvl($chave,0)) {
           ShowHTML('          <option value="'.$l_cont.'" SELECTED>'.$l_cont);
         } else {
@@ -27,14 +27,14 @@ function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$
         } 
       }
       $l_cont += 1;
-		} 
+    } 
   } elseif($restricao=='ESPEC2') {
     while($l_cont<(strftime('%Y',(time()))+($anos+1))) {
       $l_teste = 'sim';
       foreach($l_RS as $l_row) {
          if(f($l_row,'ano')==$l_cont) $l_teste = 'nao'; 
       }
-			if($l_teste=='nao') {
+      if($l_teste=='nao') {
         if (nvl($l_cont,0)==nvl($chave,0)) {
           ShowHTML('          <option value="'.$l_cont.'" SELECTED>'.$l_cont);
         } else {
@@ -42,7 +42,7 @@ function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$
         } 
       }
       $l_cont += 1;
-		} 
+    } 
 
   } else {
     while($l_cont<(strftime('%Y',(time()))+($anos+1))) {

@@ -357,7 +357,7 @@ function Rel_Progresso() {
                       ShowHTML('  <td>');
                       ShowHTML(ExibeImagemSolic('GD',f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null));
                       if ($p_tipo!='WORD') { 
-                        ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row1,'sq_tarefa').'&p_tipo=&P1='.$P1.'&P2='.f($row1,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row1,'sq_tarefa').'</a>');
+                        ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row1,'sq_tarefa').'&p_tipo=&P1='.$P1.'&P2='.f($row1,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row1,'sq_tarefa').'</a>');
                       } else { 
                        ShowHTML('  '.f($row1,'sq_tarefa').' ');
                       }
@@ -981,10 +981,12 @@ function Rel_Atualizacao() {
       if (nvl($_REQUEST['p_etapa'],'')!='')     $w_cont += 1;
       if (nvl($_REQUEST['p_risco'],'')!='')     $w_cont += 1;
       if (nvl($_REQUEST['p_problema'],'')!='')  $w_cont += 1;
+      if (nvl($_REQUEST['p_meta'],'')!='')      $w_cont += 1;
       foreach ($RS as $row) {
         if ((strpos(f($row,'bloco'),'ETAPA')!==false && nvl($_REQUEST['p_etapa'],'')!='') ||
             (strpos(f($row,'bloco'),'RISCO')!==false && nvl($_REQUEST['p_risco'],'')!='') ||
-            (strpos(f($row,'bloco'),'PROBLEMA')!==false && nvl($_REQUEST['p_problema'],'')!='')
+            (strpos(f($row,'bloco'),'PROBLEMA')!==false && nvl($_REQUEST['p_problema'],'')!='') ||
+            (strpos(f($row,'bloco'),'META')!==false && nvl($_REQUEST['p_meta'],'')!='')
            ) {
           if ($w_atual!=f($row,'nm_projeto')) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -996,6 +998,7 @@ function Rel_Atualizacao() {
           }
           if (substr(f($row,'bloco'),2)=='ETAPA') $w_label = $_REQUEST['p_etapa'];
           elseif (substr(f($row,'bloco'),2)=='RISCO') $w_label = $_REQUEST['p_risco'];
+          elseif (substr(f($row,'bloco'),2)=='META') $w_label = $_REQUEST['p_meta'];
           else $w_label = $_REQUEST['p_problema'];
           ShowHTML('       <td>'.$w_label.'</td>');
           ShowHTML('       <td align="center">'.nvl(formataDataEdicao(f($row,'phpdt_atualizacao'),3),'---').'</td>');
@@ -1027,7 +1030,7 @@ function Rel_Atualizacao() {
     SaltaCampo();
     ValidateOpen('Validacao');
     Validate('p_projeto','Projeto','SELECT','','1','18','1','1');
-    ShowHTML('  if (!theForm.p_etapa.checked && !theForm.p_risco.checked && !theForm.p_problema.checked) {');
+    ShowHTML('  if (!theForm.p_etapa.checked && !theForm.p_risco.checked && !theForm.p_problema.checked && !theForm.p_meta.checked) {');
     ShowHTML('     alert (\'É necessário selecionar pelo menos um dos blocos!\');');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -1085,6 +1088,7 @@ function Rel_Atualizacao() {
     }
     if ($_REQUEST['p_risco'])    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_risco" value="Riscos"> Riscos</td>');           else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_risco" value="Riscos"> Riscos</td>');
     if ($_REQUEST['p_problema']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_problema" value="Problemas"> Problemas</td>');  else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_problema" value="Problemas"> Problemas</td>');
+    if ($_REQUEST['p_meta'])     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_meta" value="Metas"> Metas</td>');              else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_meta" value="Metas"> Metas</td>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('          </td>');
@@ -1177,7 +1181,7 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
         $l_ativ .= chr(13).'      <tr><td>';
         $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sg_servico'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
         if ($l_tipo!='WORD') {
-          $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&p_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+          $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&p_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
         } else {
           $l_ativ .= chr(13).'  '.f($row,'sq_siw_solicitacao').'</a>';
         }

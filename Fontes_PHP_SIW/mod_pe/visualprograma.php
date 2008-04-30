@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados do programa
 // -------------------------------------------------------------------------
-function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificacao,$l_responsavel,$l_qualitativa,$l_orcamentaria,$l_indicador,$l_recurso,$l_interessado,$l_anexo,$l_meta,$l_ocorrencia,$l_consulta) {
+function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,$l_responsavel,$l_qualitativa,$l_orcamentaria,$l_indicador,$l_recurso,$l_interessado,$l_anexo,$l_meta,$l_ocorrencia,$l_consulta) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
@@ -15,24 +15,24 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
   $w_tramite_ativo = f($RS,'ativo');
 
   if ($l_o!='T' && $l_o!='V') {
-    if ($l_formato!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
+    if ($l_tipo!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
   }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  if ($l_formato=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></div></td></tr>';
+  if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></div></td></tr>';
   else                    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano')).'</b></font></div></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></div></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do programa
   if ($l_identificacao=='S') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    if ($l_formato=='WORD') {
+    if ($l_tipo=='WORD') {
       $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade executora:</b></td>';
       $l_html.=chr(13).'       <td>'.f($RS,'nm_unidade_adm').'</td></tr>';
     } else {
       $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade executora:</b></td>';
       $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade_adm'),f($RS,'sq_unidade_adm'),$TP).'</td></tr>';
     } 
-    if ($l_formato=='WORD') {
+    if ($l_tipo=='WORD') {
       $l_html.=chr(13).'   <tr><td><b>Responsável:</b></td>';
       $l_html.=chr(13).'       <td>'.f($RS,'nm_solic').'</td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Área monitoramento:</b></td>';
@@ -130,7 +130,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
-        if($l_formato!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
+        if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
         else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
         $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
@@ -171,9 +171,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'      <tr><td colspan=2><table border=0>';
-      $l_html .= chr(13).'        <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-      $l_html .= chr(13).'        </table>';
+      $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de medida do indicador';
     }
 
     // Metas
@@ -197,25 +195,94 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html .= chr(13).'            <td><b>Valor</b></td>';
       $l_html .= chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
+      $l_cron = '';
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr valign="top">';
-        $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
-        if ($l_formato=='WORD') {
+        if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+        else                $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
+        if ($l_tipo=='WORD') {
           $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
         } else {
           $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
         }
-        $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        
+        $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
         $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
         $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
         $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
         $l_html .= chr(13).'      </tr>';
+        
+        // Monta html para exibir o cronograma da meta
+        if (f($row,'qtd_cronograma')>0) {
+          $l_cron .= chr(13).'      <tr valign="top">';
+          if($l_tipo!='WORD') $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+          else                $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'titulo').'</td>';
+          if ($l_tipo=='WORD') {
+            $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'nm_indicador').'</td>';
+          } else {
+            $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+          }
+          $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
+          $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+          $RSCron = SortArray($RSCron,'inicio','asc');
+          $i = 0;
+          $w_previsto  = 0;
+          $w_realizado = 0;
+          foreach($RSCron as $row1) {
+            $i += 1;
+            if ($i>1) $l_cron .= chr(13).'      <tr valign="top">';
+            $p_array = retornaNomePeriodo(f($row1,'inicio'), f($row1,'fim'));
+            $l_cron .= chr(13).'        <td align="center">';
+            if ($p_array['TIPO']=='DIA') {
+              $l_cron .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+            } elseif ($p_array['TIPO']=='MES') {
+              $l_cron .= chr(13).'        '.$p_array['VALOR'];
+            } elseif ($p_array['TIPO']=='ANO') {
+              $l_cron .= chr(13).'        '.$p_array['VALOR'];
+            } else {
+              $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio')).' a '.formataDataEdicao(f($row1,'fim'));
+            }
+            $l_cron .= chr(13).'        </td>';
+            $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
+            $l_cron .= chr(13).'        <td align="right">'.((nvl(f($row1,'valor_real'),'')=='') ? '&nbsp;' : formatNumber(f($row1,'valor_real'),4)).'</td>';
+            if (f($row,'cumulativa')=='S') {
+              $w_previsto  += f($row1,'valor_previsto');
+              if (nvl(f($row1,'valor_real'),'')!='') $w_realizado += f($row1,'valor_real');
+            } else {
+              $w_previsto  = f($row1,'valor_previsto');
+              if (nvl(f($row1,'valor_real'),'')!='') $w_realizado = f($row1,'valor_real');
+            }
+          }
+          $l_cron .= chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+          if (f($row,'cumulativa')=='S') $l_cron .= chr(13).'        <td align="right" nowrap><b>Total acumulado&nbsp;</b></td>';
+          else                           $l_cron .= chr(13).'        <td align="right" nowrap><b>Total não acumulado&nbsp;</b></td>';
+          $l_cron .= chr(13).'        <td align="right" '.(($w_previsto!=f($row,'quantidade')) ? ' TITLE="Total previsto do cronograma difere do resultado previsto para a meta!" bgcolor="'.$conTrBgColorLightRed1.'"' : '').'><b>'.formatNumber($w_previsto,4).'</b></td>';
+          $l_cron .= chr(13).'        <td align="right"><b>'.((nvl($w_realizado,'')=='') ? '&nbsp;' : formatNumber($w_realizado,4)).'</b></td>';
+          $l_cron .= chr(13).'      </tr>';
+        }
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
-      $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-      $l_html .= chr(13).'  </table>';
+      $l_html .= chr(13).'<tr><td colspan=2>U.M. Unidade de medida do indicador';
+
+      // Exibe o cronograma de aferição das metas
+      if (nvl($l_cron,'')!='') {
+        $l_html .= chr(13).'      <tr><td colspan="2"><br><b>Cronogramas:</td></tr>';
+        $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+        $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
+        $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+        $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2><b>Referência</b></td>';
+        $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
+        $l_html .= chr(13).'          </tr>';
+        $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+        $l_html .= chr(13).'            <td><b>Previsto</b></td>';
+        $l_html .= chr(13).'            <td><b>Realizado</b></td>';
+        $l_html .= chr(13).'          </tr>';
+        $l_html .= chr(13).$l_cron;
+        $l_html .= chr(13).'         </table></td></tr>';
+      }   
     }
 
     // Envolvidos na execução do programa
@@ -232,7 +299,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'       </tr>';
       foreach($RS1 as $row) {
         $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
-        if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
+        if ($l_tipo=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
         else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
         $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
         $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
@@ -255,7 +322,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'       </tr>';
       foreach($RS1 as $row) {
         $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
-        if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
+        if ($l_tipo=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
         else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
         $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
         $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
@@ -282,15 +349,13 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .= chr(13).'      <tr>';
         $l_html .= chr(13).'        <td>'.f($row,'nm_tipo_completo').'</td>';
         $l_html .= chr(13).'        <td>'.nvl(f($row,'codigo'),'---').'</td>';
-        if ($l_formato=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nm_recurso').'</td>';
+        if ($l_tipo=='WORD') $l_html .= chr(13).'        <td>'.f($row,'nm_recurso').'</td>';
         else                    $l_html .= chr(13).'        <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($row,'nm_recurso'),f($row,'sq_recurso'),$TP,$l_chave).'</td>';
         $l_html .= chr(13).'        <td align="center" nowrap>'.f($row,'nm_unidade_medida').'</td>';        
         $l_html .= chr(13).'      </tr>';
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
-      $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de alocação do recurso';
-      $l_html .= chr(13).'  </table>';
+      $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de alocação do recurso';
     }
 
     // Arquivos vinculados ao programa
@@ -306,7 +371,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>KB</b></div></td>';
       $l_html.=chr(13).'       </tr>';
       foreach($RS1 as $row) {
-        if ($l_formato=='WORD') $l_html.=chr(13).'       <tr><td>'.f($row,'nome').'</td>';
+        if ($l_tipo=='WORD') $l_html.=chr(13).'       <tr><td>'.f($row,'nome').'</td>';
         else                    $l_html.=chr(13).'       <tr><td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         $l_html.=chr(13).'           <td>'.Nvl(f($row,'descricao'),'-').'</td>';
         $l_html.=chr(13).'           <td>'.f($row,'tipo').'</td>';
@@ -334,9 +399,9 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Título</b></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Execução</b></td>';
       $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Valor</b></td>';
-      if ($l_formato=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDE</b></td>';
+      if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDE</b></td>';
       else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE hoje').'</b></td>';
-      if ($l_formato=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IGE</b></td>';
+      if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IGE</b></td>';
       else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>';
       $l_html.=chr(13).'       </tr>';
       $l_html.=chr(13).'       <tr align="center">';
@@ -349,9 +414,9 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
         $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
         $l_html .=chr(13).'        <td width="1%" nowrap>';
         $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if ($l_formato=='WORD') $l_html .=chr(13).'        '.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;'.exibeImagemRestricao(f($row,'restricao'),'P');
+        if ($l_tipo=='WORD') $l_html .=chr(13).'        '.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;'.exibeImagemRestricao(f($row,'restricao'),'P');
         else                    $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
-        if ($l_formato=='WORD') $l_html .=chr(13).'        <td>'.f($row,'nm_solic').'</td>';
+        if ($l_tipo=='WORD') $l_html .=chr(13).'        <td>'.f($row,'nm_solic').'</td>';
         else                    $l_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
         $l_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';
         $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>';
@@ -381,7 +446,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificac
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
     include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_formato=='WORD') ? 'WORD' : 'HTML'));
+    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
   } 
   $l_html .= chr(13).'</table>';  
   return $l_html;

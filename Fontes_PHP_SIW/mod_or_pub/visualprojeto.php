@@ -251,7 +251,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
             } 
           } 
           if ($P4==1)   $l_html .=chr(13).f($row,'sq_siw_solicitacao').'</td>';
-          else          $l_html .=chr(13).'         <A class="HL" HREF="'.$w_dir.'projetoativ.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a></td>';
+          else          $l_html .=chr(13).'         <A class="HL" HREF="'.$w_dir.'projetoativ.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a></td>';
           //If Len(Nvl(RS('assunto'),'-')) > 80 Then w_titulo = Mid(Nvl(RS('assunto'),'-'),1,50) & '...' Else w_titulo = Nvl(RS('assunto'),'-') End If
           if (f($row,'sg_tramite')=='CA') $l_html .=chr(13).'      <td><strike>'.Nvl(f($row,'assunto'),'-').'</strike></td>';
           else                           $l_html .=chr(13).'      <td>'.Nvl(f($row,'assunto'),'-').'</td>';
@@ -516,7 +516,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
       if (count($RS)>0) {
         $TP=RemoveTP($TP).' - Interessados';
         $l_html .=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center"><b><center><B>Clique <a class="HL" HREF="'.$w_dir.'projeto.php?par=interess&R='.$w_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="blank">aqui</a> para visualizar os Interessados na execução</b></center></td>';
+        $l_html .=chr(13).'      <tr><td valign="top" colspan="2" align="center"><b><center><B>Clique <a class="HL" HREF="'.$w_dir.'projeto.php?par=interess&R='.$w_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="_blank">aqui</a> para visualizar os Interessados na execução</b></center></td>';
         //w_html = w_html & VbCrLf & '      <tr><td align=''center'' colspan=''2''>'
         //w_html = w_html & VbCrLf & '        <TABLE WIDTH=''100''' bgcolor=''' & conTableBgColor & ''' BORDER=''' & conTableBorder & ''' CELLSPACING=''' & conTableCellSpacing & ''' CELLPADDING=''' & conTableCellPadding & ''' BorderColorDark=''' & conTableBorderColorDark & ''' BorderColorLight=''' & conTableBorderColorLight & '''>'
         //w_html = w_html & VbCrLf & '          <tr bgcolor=''' & conTrBgColor & ''' align=''center''>'
@@ -680,7 +680,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
               $l_html .=chr(13).'          <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
             } 
           } 
-          $l_html .=chr(13).'         <A class="HL" HREF="'.$w_dir.'projetoativ.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
+          $l_html .=chr(13).'         <A class="HL" HREF="'.$w_dir.'projetoativ.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
           $l_html .=chr(13).'         <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
           if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo=substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'assunto'),'-');         
           if (f($RS,'sg_tramite')=='CA') {

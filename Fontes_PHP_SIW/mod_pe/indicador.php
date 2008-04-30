@@ -17,7 +17,9 @@ include_once($w_dir_volta.'classes/sp/db_getStateList.php');
 include_once($w_dir_volta.'classes/sp/db_getCityList.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador_Aferidor.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
+include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
@@ -26,6 +28,7 @@ include_once($w_dir_volta.'classes/sp/dml_putIndicador_Aferidor.php');
 include_once($w_dir_volta.'classes/sp/dml_putIndicador_Afericao.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicIndicador.php');
 include_once($w_dir_volta.'classes/sp/dml_putIndicador_Meta.php');
+include_once($w_dir_volta.'classes/sp/dml_putCronMeta.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidadeMedida.php');
 include_once($w_dir_volta.'funcoes/selecaoIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoBaseGeografica.php');
@@ -147,7 +150,7 @@ function Inicial() {
     } else {
       $RS = SortArray($RS,'nm_tipo_indicador','asc','sigla','asc','nome','asc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -165,10 +168,10 @@ function Inicial() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','1','60','1','1');
       Validate('w_sigla','Sigla','1','1','1','15','1','1');
       Validate('w_tipo_indicador','Tipo do indicador','SELECT','1','1','18','','1');
@@ -247,8 +250,8 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('EV',$O)===false)) $w_Disabled   = ' DISABLED ';
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     if ($O!='I') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -673,7 +676,7 @@ function Aferidor() {
     } else {
       $RS = SortArray($RS,'nm_pessoa','asc','inicio','desc','fim','desc'); 
     }
-  } elseif (!(strpos('CAEV',$O)===false)) {
+  } elseif (strpos('CAEV',$O)!==false) {
     $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$w_chave,$w_chave_aux,null,null,null,'REGISTROS');
     foreach ($RS as $row) {$RS = $row; break;}
     $w_inicio       = formataDataEdicao(f($RS,'inicio'));
@@ -687,13 +690,13 @@ function Aferidor() {
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
   Estrutura_CSS($w_cliente);
-  if (!(strpos('CIAE',$O)===false)) {
+  if (strpos('CIAE',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('CIA',$O)===false)) {
+    if (strpos('CIA',$O)!==false) {
       Validate('w_pessoa','Pessoa','VALOR','1',4,18,'','0123456789,.');
       Validate('w_inicio','Início da responsabilidade','DATA','1','10','10','','0123456789/');
       ShowHTML('  if (theForm.w_prazo[0].checked) {');
@@ -718,7 +721,7 @@ function Aferidor() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
-  } elseif (!(strpos('CIA',$O)===false)) {
+  } elseif (strpos('CIA',$O)!==false) {
     BodyOpen('onLoad=document.Form.w_pessoa.focus();');
   } elseif ($O=='L'){
     BodyOpen('onLoad="javascript:this.focus();"');
@@ -790,14 +793,14 @@ function Aferidor() {
     } 
     ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
-  } elseif (!(strpos('CIAEV',$O)===false)) {
+  } elseif (strpos('CIAEV',$O)!==false) {
     if (strpos('CIA',$O)!==false) {
       ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Informe os dados solicitados e execute a gravação.<li>Não é permitida a sobreposição de períodos para uma mesma pessoa.</ul></b></font></td>');
     }
     if ($O=='C') {
       ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b></font>.</td>');
     } 
-    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED '; 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     // Se for cópia, não coloca a chave do registro para procurar corretamente sobreposição de períodos
@@ -963,7 +966,7 @@ function Afericao() {
     } else {
       $RS = SortArray($RS,'nome','asc','base_geografica','asc','nm_base_geografica','asc','phpdt_afericao','desc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,'EDICAO');
     foreach ($RS as $row) {$RS = $row; break;}
@@ -1008,14 +1011,14 @@ function Afericao() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     SaltaCampo();
     CheckBranco();
     FormataData();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_indicador','Indicador','SELECT','1','1','18','','1');
       Validate('w_base','Base geográfica','SELECT','1','1','18','','1');
       Validate('w_afericao','Data de aferição','DATA','1','10','10','','0123456789/');
@@ -1123,7 +1126,7 @@ function Afericao() {
       MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&p_chave='.$p_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
     } 
     ShowHTML('<p>&nbsp;</p></tr>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
     if (strpos('IA',$O)!==false) {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
@@ -1132,7 +1135,7 @@ function Afericao() {
       ShowHTML('        <li>Clique <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'AferidorPerm&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Permissões&SG='.$SG.'\',\'AferidorPerm\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe suas permissões de aferição de indicadores.">aqui</A> para verificar suas permissões de aferição.');
       ShowHTML('        </ul></b></font></td>');
     }
-    if (!(strpos('EV',$O)===false)) $w_Disabled   = ' DISABLED ';
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     if ($O!='I') ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -1389,6 +1392,36 @@ function Meta() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
+  
+  // Verifica se a chamada foi feita da tela de cadastramento ou da tela de execução.
+  if ($P1!=1) $w_edita = 'N'; else $w_edita = 'S';
+
+  if ($w_tipo_pai=='PLANO') {
+    // Recupera os dados do plano a que a meta está ligada
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_projeto        = f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Plano';
+  } else {
+    // Recupera os dados do projeto a que a meta está ligada
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave);
+    $l_array = explode('|@|', f($RS,'dados_solic'));
+
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$l_array[5]);
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_projeto        = nvl(f($RS,'codigo_interno'),$w_chave).' - '.f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    switch (f($RS,'sigla')) {
+      case 'PJCAD':      $w_label = 'Projeto';       break;
+      case 'PEPROCAD':   $w_label = 'Programa';      break;
+      default:           $w_label = '???';
+    } 
+    $w_sg_tramite     = f($RS,'sg_tramite');
+  }
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -1408,6 +1441,10 @@ function Meta() {
     $w_uf               = $_REQUEST['w_uf'];
     $w_cidade           = $_REQUEST['w_cidade'];
     $w_cumulativa       = $_REQUEST['w_cumulativa'];
+    $w_situacao_atual   = $_REQUEST['w_situacao_atual'];
+    $w_exequivel        = $_REQUEST['w_exequivel'];
+    $w_justificativa    = $_REQUEST['w_justificativa'];
+    $w_outras_medidas   = $_REQUEST['w_outras_medidas'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -1417,7 +1454,7 @@ function Meta() {
     } else {
       $RS = SortArray($RS,'ordem','asc','nome','asc','base_geografica','asc','nm_base_geografica','asc','phpdt_afericao','desc');
     }
-  } elseif (!(strpos('AEV',$O)===false)) {
+  } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -1438,6 +1475,16 @@ function Meta() {
     $w_valor_inicial    = formatNumber(f($RS,'valor_inicial'),4);
     $w_quantidade       = formatNumber(f($RS,'quantidade'),4);
     $w_cumulativa       = f($RS,'cumulativa');
+    $w_situacao_atual   = f($RS,'situacao_atual');
+    $w_exequivel        = f($RS,'exequivel');
+    $w_justificativa    = f($RS,'justificativa_inexequivel');
+    $w_outras_medidas   = f($RS,'outras_medidas');
+
+    if ($w_edita=='N') {
+      // Verifica se há sobreposição de períodos
+      $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
+      $RS_Cronograma = SortArray($RS_Cronograma,'inicio','asc');
+    }
   } 
   
   if ($O=='I') {
@@ -1463,32 +1510,60 @@ function Meta() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Monitoramento de metas</TITLE>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (!(strpos('IAEP',$O)===false)) {
+  if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataData();
     FormataValor();
     ValidateOpen('Validacao');
-    if (!(strpos('IA',$O)===false)) {
-      Validate('w_titulo','Meta','','1','2','100','1','1');
-      Validate('w_descricao','Descricao','','1','2','2000','1','1');
-      Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
-      Validate('w_inicio','Início do período','DATA','1','10','10','','0123456789/');
-      Validate('w_fim','Término do período','DATA','1','10','10','','0123456789/');
-      CompData('w_inicio','Início do período','<=','w_fim','Término do período');
-      Validate('w_indicador','Indicador','SELECT','1','1','18','','1');
-      Validate('w_base','Base geográfica','SELECT','1','1','18','','1');
-      if (nvl($w_base,5)!=5) {
-        Validate('w_pais','País','SELECT','1','1','18','','1');
-        if ($w_base==2) Validate('w_regiao','Região','SELECT','1','1','18','','1');
-        if ($w_base==3 || $w_base==4) Validate('w_uf','Estado','SELECT','1','1','18','1','1');
-        if ($w_base==4) Validate('w_cidade','Cidade','SELECT','1','1','18','','1');
+    if (strpos('IA',$O)!==false) {
+      if ($w_edita=='S') {
+        Validate('w_titulo','Meta','','1','2','100','1','1');
+        Validate('w_descricao','Descricao','','1','2','2000','1','1');
+        Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
+        Validate('w_inicio','Início do período','DATA','1','10','10','','0123456789/');
+        Validate('w_fim','Término do período','DATA','1','10','10','','0123456789/');
+        CompData('w_inicio','Início do período','<=','w_fim','término do período');
+        CompData('w_inicio','Início previsto','>=',$w_inicio_projeto,'início previsto do '.$w_label.' ('.$w_inicio_projeto.')');
+        CompData('w_fim','Fim previsto','<=',$w_fim_projeto,'fim previsto do '.$w_label.' ('.$w_fim_projeto.')');
+        Validate('w_indicador','Indicador','SELECT','1','1','18','','1');
+        Validate('w_base','Base geográfica','SELECT','1','1','18','','1');
+        if (nvl($w_base,5)!=5) {
+          Validate('w_pais','País','SELECT','1','1','18','','1');
+          if ($w_base==2) Validate('w_regiao','Região','SELECT','1','1','18','','1');
+          if ($w_base==3 || $w_base==4) Validate('w_uf','Estado','SELECT','1','1','18','1','1');
+          if ($w_base==4) Validate('w_cidade','Cidade','SELECT','1','1','18','','1');
+        }
+        Validate('w_valor_inicial','Valor base','VALOR','1',6,18,'','0123456789,.');
+        Validate('w_quantidade','Resultado','VALOR','1',6,18,'','0123456789,.');
+        Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
+        Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
+      } else {
+        Validate('w_situacao_atual','Situação atual','','','2','4000','1','1');
+        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_justificativa.value == \'\') {');
+        ShowHTML('     alert (\'Justifique porque a meta não será cumprida!\');');
+        ShowHTML('     theForm.w_justificativa.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  } else { if (theForm.w_exequivel[0].checked) ');
+        ShowHTML('     theForm.w_justificativa.value = \'\';');
+        ShowHTML('   }');
+        ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_outras_medidas.value == \'\') {');
+        ShowHTML('     alert (\'Indique quais são as medidas necessárias para o cumprimento da meta!\');');
+        ShowHTML('     theForm.w_outras_medidas.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  } else { if (theForm.w_exequivel[0].checked) ');
+        ShowHTML('     theForm.w_outras_medidas.value = \'\';');
+        ShowHTML('   }');
+        Validate('w_justificativa','Justificativa','', '','2','1000','1','1');
+        Validate('w_outras_medidas','Medidas','','','2','1000','1','1');
+        if (count($RS_Cronograma)>0) {
+          ShowHTML('  for (ind=1; ind < document.Form["w_valor_real[]"].length; ind++) {');
+          Validate('["w_valor_real[]"][ind]','Valor real','VALOR','',6,18,'','0123456789.,-');
+          ShowHTML('  }');
+        }
       }
-      Validate('w_valor_inicial','Valor base','VALOR','1',6,18,'','0123456789,.');
-      Validate('w_quantidade','Resultado','VALOR','1',6,18,'','0123456789,.');
-      Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
-      Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
       if ($P1==1) Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && $P1==1) {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1505,7 +1580,8 @@ function Meta() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ((strpos('IA',$O)!==false)) {
-    BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
+    if ($w_edita=='S') BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
+    else               BodyOpen('onLoad=\'document.Form.w_situacao_atual.focus()\';');
   } elseif ($O=='E' && $P1==1) {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
@@ -1513,16 +1589,28 @@ function Meta() {
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($w_edita=='N') {
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+    ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b> '.$w_projeto.'</b></div></td></tr>');
+    ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+  }
   if ($O=='L') {
-    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-    ShowHTML('  Orientação:<ul>');
-    ShowHTML('    <li>Registre as metas necessárias ao acompanhamento.');
-    ShowHTML('    <li>Antes de cadastrar as metas, informe os indicadores do projeto.');
-    ShowHTML('    <li>Somente indicadores cadastrado no projeto, poderão ser associados as metas.');
-    ShowHTML('    <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
-    ShowHTML('    </ul></b></font></td>');
+    if ($w_edita=='S') {
+      ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+      ShowHTML('  Orientação:<ul>');
+      ShowHTML('    <li>Registre as metas necessárias ao acompanhamento.');
+      ShowHTML('    <li>Antes de cadastrar as metas, informe os indicadores do projeto.');
+      ShowHTML('    <li>Somente indicadores cadastrado no projeto, poderão ser associados as metas.');
+      ShowHTML('    <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
+      ShowHTML('    </ul></b></font></td>');
+    }
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td>');
+    if ($w_edita=='S') {
+       ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    } else {
+       ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    }
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1554,8 +1642,15 @@ function Meta() {
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'quantidade'),4),'---').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
+        if ($w_edita=='S') {
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'CronMeta&R='.$w_pagina.$par.'&O=L&w_chave_pai='.f($row,'chave').'&w_chave='.f($row,'chave_aux').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cronograma de aferição&SG=MTCRON'.MontaFiltro('GET').'" title="Registrar o cronograma de aferição da meta." target="CronMeta">Cr</A>&nbsp');
+        } elseif ($w_sg_tramite!='CI') {
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
+        } else {
+          ShowHTML('          ---');
+        }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1567,56 +1662,110 @@ function Meta() {
     ShowHTML('<tr><td colspan=3><table border=0>');
     ShowHTML('  <tr><td align="right">U.M.<td>Unidade de medida do indicador');
     ShowHTML('  </table>');
-  } elseif (!(strpos('IAEV',$O)===false)) {
-    if (!(strpos('IA',$O)===false)) {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if ($w_edita=='S' && strpos('IA',$O)!==false) {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
       ShowHTML('        <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
       ShowHTML('        </ul></b></font></td>');
     }
-    if (!(strpos('EV',$O)===false)) $w_Disabled   = ' DISABLED ';
+    if (strpos('EV',$O)!==false) $w_Disabled   = ' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
-    ShowHTML('<INPUT type="hidden" name="w_afericao" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_cron[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_valor_real[]" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
 
-    ShowHTML('      <tr><td valign="top"colspan="3"><b><u>M</u>eta:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe o objetivo da meta."></td>');
-    ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('              <td align="left"><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
-    ShowHTML('              <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
-    ShowHTML('              <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('      <tr valign="top">');
-    selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_chave,$w_usuario,null,'w_indicador','META','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
-    selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_quantidade\'; document.Form.submit();"');
-    ShowHTML('      <tr valign="top">');
-    if (nvl($w_base,-1)!=5) {
+    if ($w_edita=='S') {
+      ShowHTML('      <tr><td valign="top" colspan="3"><b><u>M</u>eta:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe o objetivo da meta."></td>');
+      ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
       ShowHTML('      <tr valign="top">');
-      if ($w_base==1) SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,null);
-      if ($w_base==2) {
-        SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_regiao\'; document.Form.submit();"');
-        SelecaoRegiao('<u>R</u>egião:','R',null,$w_regiao,$w_pais,'w_regiao',null,null);
+      ShowHTML('        <td><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
+      ShowHTML('        <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
+      ShowHTML('        <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
+      ShowHTML('      <tr valign="top">');
+      selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_chave,$w_usuario,null,'w_indicador','META','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
+      selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_quantidade\'; document.Form.submit();"');
+      ShowHTML('      <tr valign="top">');
+      if (nvl($w_base,-1)!=5) {
+        ShowHTML('      <tr valign="top">');
+        if ($w_base==1) SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,null);
+        if ($w_base==2) {
+          SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_regiao\'; document.Form.submit();"');
+          SelecaoRegiao('<u>R</u>egião:','R',null,$w_regiao,$w_pais,'w_regiao',null,null);
+        }
+        if ($w_base==3) {
+          SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
+          SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,null);
+        }
+        if ($w_base==4) {
+          SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
+          SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
+          SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
+        }
       }
-      if ($w_base==3) {
-        SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-        SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,null);
-      }
-      if ($w_base==4) {
-        SelecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
-        SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
-        SelecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+      ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>R</u>esultado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+      ShowHTML('      <tr valign="top">');
+      MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
+      SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
+      SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pelo acompanhamento da meta.',$w_unidade,null,'w_unidade',null,null);
+    } else {
+      ShowHTML('      <tr><td valign="top" colspan="3">Meta:<br><b>'.$w_titulo.'</b></td>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td>Ordem:<br><b>'.$w_ordem.'</b></td>');
+      ShowHTML('        <td>Previsão início:<br><b>'.FormataDataEdicao($w_inicio).'</b></td>');
+      ShowHTML('        <td>Previsão término:<br><b>'.FormataDataEdicao($w_fim).'</b></td>');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td>Valor base:<br><b>'.$w_valor_inicial.'</b></td>');
+      ShowHTML('        <td>Resultado:<br><b>'.$w_quantidade.'</b></td>');
+      ShowHTML('        <td>Cumulativa:<br><b>'.retornaSimNao($w_cumulativa).'</b></td>');
+
+      ShowHTML('     <tr><td colspan="3"><b><u>S</u>ituação atual da meta:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva, de maneria sucinta, a situação atual da meta.">'.$w_situacao_atual.'</TEXTAREA></td>');
+      ShowHTML('     <tr>');
+      MontaRadioSN('<b>A meta será cumprida?</b>',$w_exequivel,'w_exequivel');
+      ShowHTML('     </tr>');
+      ShowHTML('     <tr><td colspan="3"><b><u>J</u>ustificar os motivos em caso de não cumprimento da meta:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Informe os motivos que inviabilizam o cumprimento da meta.">'.$w_justificativa.'</TEXTAREA></td>');
+      ShowHTML('     <tr><td colspan="3"><b><u>Q</u>uais medidas necessárias para o cumprimento da meta?</b><br><textarea '.$w_Disabled.' accesskey="Q" name="w_outras_medidas" class="STI" ROWS=5 cols=75 title="Descreva quais são as medidas que devem ser adotadas para que a tendência de não cumprimento da meta programada possa ser revertida.">'.$w_outras_medidas.'</TEXTAREA></td>');
+      
+      // Se a meta tiver um cronograma registrado, permite a atualização do valor realizado.
+      if (count($RS_Cronograma)>0) {
+        // Exibe os itens do cronograma que estão disponíveis para registro
+        ShowHTML('<tr><td colspan="3"><b>Realização do cronograma da meta: (deixe em branco períodos não apurados)');
+        ShowHTML('    <table border="1" cellpadding="5">');
+        ShowHTML('      <tr align="center">');
+        ShowHTML('        <td><b>Referêcia</td>');
+        ShowHTML('        <td><b>Previsto</td>');
+        ShowHTML('        <td><b>Realizado</td>');
+        ShowHTML('      </tr>');
+        foreach ($RS_Cronograma as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('    <tr bgcolor="'.$w_cor.'">');
+          ShowHTML('<INPUT type="hidden" name="w_chave_cron[]" value="'.f($row,'sq_meta_cronograma').'">');
+          $p_array = retornaNomePeriodo(f($row,'inicio'), f($row,'fim'));
+          ShowHTML('      <td align="center" nowrap>');
+          if ($p_array['TIPO']=='DIA') {
+            ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
+          } elseif ($p_array['TIPO']=='MES') {
+            ShowHTML('        '.$p_array['VALOR']);
+          } elseif ($p_array['TIPO']=='ANO') {
+            ShowHTML('        '.$p_array['VALOR']);
+          } else {
+            ShowHTML('        '.nvl(date(d.'/'.m.'/'.y,f($row,'inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'fim')),'---'));
+          }
+          ShowHTML('      <td align="right" nowrap>'.formatNumber(f($row,'valor_previsto')).'</td>');
+          if (nvl(f($row,'valor_real'),'')=='') $w_valor_real = ''; else $w_valor_real = formatNumber(f($row,'valor_real'),4);
+          ShowHTML('      <td nowrap><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor executado."></td>');
+          ShowHTML('    </tr>');
+        }
+        ShowHTML('    </table>');
       }
     }
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
-    ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>R</u>esultado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
-    ShowHTML('      <tr valign="top">');
-    MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
-    SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
-    SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pelo acompanhamento da meta.',$w_unidade,null,'w_unidade',null,null);
+    
     if ($P1==1) ShowHTML('      <tr><td colspan=3 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O=='E') {
@@ -1643,6 +1792,241 @@ function Meta() {
   Estrutura_Texto_Fecha();
   Rodape();
 }
+
+// =========================================================================
+// Rotina de cronograma de aferição de metas
+// -------------------------------------------------------------------------
+function CronMeta() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave_pai  = $_REQUEST['w_chave_pai'];
+  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_edita      = nvl($_REQUEST['w_edita'],'S');
+
+  if ($w_tipo_pai=='PLANO') {
+    // Recupera os dados do plano a que a meta está ligada
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave_pai,null,null,null,null,null,'REGISTROS');
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_projeto        = f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Plano';
+  } else {
+    // Recupera os dados do projeto a que a meta está ligada
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai);
+    $l_array = explode('|@|', f($RS,'dados_solic'));
+
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,$l_array[5]);
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_projeto        = nvl(f($RS,'codigo_interno'),$w_chave_pai).' - '.f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Projeto';
+  }
+  // Recupera os dados da meta
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_pai,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_inicio_meta = formataDataEdicao(f($RS,'inicio'));
+  $w_fim_meta    = formataDataEdicao(f($RS,'fim'));
+  $w_cumulativa  = f($RS,'cumulativa');
+  $w_valor_base  = f($RS,'valor_inicial');
+  $w_valor_meta  = f($RS,'quantidade');
+  $w_meta        = f($RS,'titulo').' ('.(($w_cumulativa=='S') ? 'Meta cumulativa' :'Meta não cumulativa').'. Resultado previsto ('.f($RS,'sg_unidade_medida').'): '.formatNumber($w_valor_meta,4).' em '.$w_fim_meta.')';
+
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_inicio         = $_REQUEST['w_inicio'];
+    $w_fim            = $_REQUEST['w_fim'];
+    $w_valor_previsto = $_REQUEST['w_valor_previsto'];
+    $w_valor_real     = $_REQUEST['w_valor_real'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    $RS = SortArray($RS,'inicio', 'asc', 'fim', 'asc');
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    foreach ($RS as $row) {
+      $w_inicio         = FormataDataEdicao(f($row,'inicio'),1);
+      $w_fim            = FormataDataEdicao(f($row,'fim'),1);
+      $w_valor_previsto = formatNumber(f($row,'valor_previsto'),4);
+      $w_valor_real     = formatNumber(f($row,'valor_real'),4);
+    }
+  } 
+  cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Cronograma da meta</TITLE>');
+  if (strpos('IAEP',$O)!==false && $w_edita=='S') {
+    ScriptOpen('JavaScript');
+    CheckBranco();
+    FormataData();
+    SaltaCampo();
+    FormataDataHora();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      Validate('w_inicio','Início previsto','DATA',1,10,10,'','0123456789/');
+      Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');
+      CompData('w_inicio','Início previsto','<=','w_fim','término previsto');
+      CompData('w_inicio','Início previsto','>=',$w_inicio_meta,'início previsto da meta ('.$w_inicio_meta.')');
+      CompData('w_fim','Fim previsto','<=',$w_fim_meta,'fim previsto da meta ('.$w_fim_meta.')');
+      Validate('w_valor_previsto','Valor previsto','VALOR','1',6,18,'','0123456789.,');
+      if ($P1!=1) {      
+        Validate('w_valor_real','Valor real','VALOR','1',6,18,'','0123456789.,');
+      }
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  elseif ($O=='I' || $O=='A') BodyOpenClean('onLoad=\'document.Form.w_inicio.focus()\';');
+  else BodyOpenClean('onLoad=\'this.focus()\';'); 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>'); 
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<tr><td colspan="2"><table border="0" width="100%">');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+  ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b> '.$w_projeto.'</b></div></td></tr>');
+  ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify>Meta:<b> '.$w_meta.' </b></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+  if ($O=='L') {
+    if ($w_edita=='S') {
+      ShowHTML('<tr><td colspan="2" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+      ShowHTML('  Orientação:<ul>');
+      ShowHTML('  <li>Insira cada um dos períodos desejados, informando o resultado previsto para a meta no período.');
+      ShowHTML('  <li>O resultado alcançado é alimentado apenas quando o '.$w_label.' estiver em execução.');
+      ShowHTML('  </ul></b></font></td>');
+      
+      ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    } else {
+      ShowHTML('<tr><td><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('        <td align="right"><b>Registros existentes: '.count($RS));
+    }
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td colspan=2><b>Período</td>');
+    ShowHTML('          <td colspan=2><b>Resultado</td>'); 
+    if ($w_edita=='S') ShowHTML('          <td rowspan=2 valign="top" width="20%"><b>Operações</td>');
+    ShowHTML('        </tr>');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    if ($w_tipo!='WORD') {
+      ShowHTML('          <td width="20%"><b>'.LinkOrdena('Início','inicio').'</td>');
+      ShowHTML('          <td width="20%"><b>'.LinkOrdena('Fim','fim').'</td>');
+      ShowHTML('          <td width="20%"><b>'.LinkOrdena('Previsto','valor_previsto').'</td>');
+      ShowHTML('          <td width="20%"><b>'.LinkOrdena('Alcançado','valor_real').'</td>');
+    } else {
+      ShowHTML('          <td width="20%"><b>Início</td>');
+      ShowHTML('          <td width="20%"><b>Fim</td>');
+      ShowHTML('          <td width="20%"><b>Previsto</td>');
+      ShowHTML('          <td width="20%"><b>Alcançado</td>');
+      ShowHTML('        </tr>');    
+    }
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      $w_previsto  = 0;
+      $w_realizado = 0;
+      $i           = 0;
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'fim'),5).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_previsto'),4).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_real'),4).'</td>');
+        if ($w_edita=='S') {
+          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('        </td>');
+        }
+        ShowHTML('      </tr>');
+        if ($w_cumulativa=='S') {
+          $w_previsto  += f($row,'valor_previsto');
+          $w_realizado += f($row,'valor_real');
+        } else {
+          $w_previsto  = f($row,'valor_previsto');
+          if (nvl($w_realizado,'')!='') $w_realizado = f($row,'valor_real');
+        }
+      } 
+      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+      if ($w_cumulativa=='S') ShowHTML('        <td align="right" colspan="2"><b>Total acumulado&nbsp;</b></td>');
+      else                    ShowHTML('        <td align="right" colspan="2"><b>Total não acumulado&nbsp;</b></td>');
+      ShowHTML('        <td align="right"><b>'.formatNumber($w_previsto,4).'</b></td>');
+      ShowHTML('        <td align="right"><b>'.formatNumber($w_realizado,4).'</b></td>');
+      ShowHTML('        <td>&nbsp;</td>');
+      ShowHTML('      </tr>');
+      if ($w_previsto!=$w_valor_meta) {
+        ShowHTML('      <tr valign="top"><td colspan="5"><font color="#FF0000"><b>ATENÇÃO: Total do cronograma difere do resultado previsto para a meta!</b></font></td>');
+      }
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
+    if (strpos('IA',$O)!==false) {
+      ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+      ShowHTML('        ATENÇÃO:<ul>');
+      ShowHTML('        <li>Todos os campos são obrigatórios.');
+      ShowHTML('        <li>Não é permitida a sobreposição de períodos. O sistema impedirá a gravação deste registro caso o período indicado já exista para esta meta, no todo ou em parte.');
+      ShowHTML('        </ul></b></font></td>');
+    }
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'CRONMETA',$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_inicio_meta" value="'.$w_inicio_meta.'">');
+    ShowHTML('<INPUT type="hidden" name="w_fim_meta" value="'.$w_fim_meta.'">');
+    ShowHTML('<INPUT type="hidden" name="w_valor_previsto_ant" value="'.$w_valor_previsto.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr>');
+    ShowHTML('        <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início do período de referência do cronograma.">'.ExibeCalendario('Form','w_inicio').'</td>');
+    ShowHTML('        <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Término do período de referência do cronograma.">'.ExibeCalendario('Form','w_fim').'</td>');
+    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" onKeyDown="FormataValor(this,18,4,event);" title="Resultado previsto para a meta no período."></td>');
+    if ($P1!=1) ShowHTML('        <td><b><u>A</u>lcançado:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o resultado alcançado."></td>');
+    else        ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.Nvl($w_valor_real,0).'">');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td align="center" colspan=4><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+    } 
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);'
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
 // =========================================================================
 // Rotina de visualizaçao das aferições de indicadores
 // -------------------------------------------------------------------------
@@ -1674,6 +2058,172 @@ function TelaIndicador() {
   ShowHTML('</table>');
   Rodape();
 } 
+
+// =========================================================================
+// Rotina de tela de exibição da meta
+// -------------------------------------------------------------------------
+function TelaMeta() {
+  extract($GLOBALS);
+  global $w_Disabled, $w_TP;
+
+  $w_chave = $_REQUEST['w_chave'];
+  $w_solic = $_REQUEST['w_solic'];
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>Meta</TITLE>');
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=this.focus();');
+  $w_TP = 'Meta - Visualização de dados';
+  Estrutura_Texto_Abre();
+  ShowHTML(visualMeta($w_chave,false,$w_solic));
+  Estrutura_Texto_Fecha();
+} 
+
+// =========================================================================
+// Rotina de visualização da meta
+// -------------------------------------------------------------------------
+function VisualMeta() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
+
+  // Verifica se a chamada foi feita da tela de cadastramento ou da tela de execução.
+  if ($P1!=1) $w_edita = 'N'; else $w_edita = 'S';
+
+  if ($w_tipo_pai=='PLANO') {
+    // Recupera os dados do plano a que a meta está ligada
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_cabecalho      = f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Plano';
+  } else {
+    // Recupera os dados da solicitação a que a meta está ligada
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave);
+    $l_array = explode('|@|', f($RS,'dados_solic'));
+
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$l_array[5]);
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_cabecalho      = nvl(f($RS,'codigo_interno'),$w_chave).' - '.f($RS,'titulo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Projeto';
+    $w_sg_tramite     = f($RS,'sg_tramite');
+  }
+
+  cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  ShowHTML('<TITLE>'.$conSgSistema.' - Meta</TITLE>');
+  ShowHTML('</HEAD>');
+  BodyOpenClean('onLoad=\'this.focus()\';');
+  ShowHTML('<B><FONT COLOR="#000000">'.substr($w_TP,0,(strpos($w_TP,'-')-1)).'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+
+  // Recupera os dados da meta
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) {$RS = $row; break;}
+    
+  ShowHTML('<tr><td colspan="2" align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('      <tr><td colspan="3">Meta:<b><br>'.f($RS,'titulo').'</td>');
+  ShowHTML('      <tr><td colspan="3">Descrição:<b><br>'.crlf2br(f($RS,'descricao')).'</td>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td>Indicador da meta:<b><br>'.f($RS,'nm_indicador').'</td>');
+  ShowHTML('        <td>Unidade de medida:<b><br>'.f($RS,'nm_unidade_medida').'</td>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td>Responsável pela meta:<b><br>'.f($RS,'nm_resp_meta').'</td>');
+  ShowHTML('        <td>Setor responsável pela meta:<b><br>'.f($RS,'nm_unidade').'</td>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td>Valor base ('.formataDataEdicao(f($RS,'inicio')).'):<b><br>'.formatNumber(f($RS,'valor_inicial'),4).'</td>');
+  ShowHTML('        <td>Resultado ('.formataDataEdicao(f($RS,'fim')).'):<b><br>'.formatNumber(f($RS,'quantidade'),4).'</td>');
+  ShowHTML('        <td>Base geográfica:<b><br>'.f($RS,'nm_base_geografica').'</td>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td>Meta cumulativa:<b><br>'.f($RS,'nm_cumulativa').'</td>');  
+  ShowHTML('        <td>Meta exeqüível:<b><br>'.f($RS,'nm_exequivel').'</td>');  
+  if ($w_exequivel=='N') {
+    ShowHTML('      <tr><td colspan="3">Justificativa para o não cumprimento da meta:<b><br>'.nvl(crlf2br(f($RS,'justificativa_inexequivel')),'---').'</td>');  
+    ShowHTML('      <tr><td colspan="3">Medidas necessárias para realização da meta:<b><br>'.nvl(crlf2br(f($RS,'outras_medidas')),'---').'</td>');  
+  }
+  ShowHTML('      <tr><td colspan="3">Situação atual:<b><br>'.nvl(crlf2br(f($RS,'situacao_atual')),'---').'</td>');  
+  ShowHTML('      <tr><td colspan=3>Criação/última atualização:<b><br>'.formataDataEdicao(f($RS,'phpdt_alteracao'),3).'</b>, feita por <b>'.f($RS,'nm_cadastrador').'</b></td>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</table>');    
+
+  // Recupera o cronograma de realização da meta
+  $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
+  $RS_Cronograma = SortArray($RS_Cronograma,'inicio','asc');
+
+  if (count($RS_Cronograma) > 0) {
+    ShowHTML('<tr><td colspan="2"><br><b>Cronograma da meta</b>');
+    ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');     
+    ShowHTML('    <tr align="center" valign="top" bgColor="'.$conTrAlternateBgColor.'">');
+    ShowHTML('      <td><b>Referência</b></td>');
+    ShowHTML('      <td><b>Previsto</b></td>');
+    ShowHTML('      <td><b>Realizado</b></td>');
+    ShowHTML('    </tr>');
+    $w_cor=$conTrBgColor;
+    $w_previsto  = 0;
+    $w_realizado = 0;
+    foreach($RS_Cronograma as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('    <tr bgcolor="'.$w_cor.'" valign="top">');
+      $p_array = retornaNomePeriodo(f($row,'inicio'), f($row,'fim'));
+      ShowHTML('        <td align="center" width="50%">');
+      if ($p_array['TIPO']=='DIA') {
+        ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
+      } elseif ($p_array['TIPO']=='MES') {
+        ShowHTML('        '.$p_array['VALOR']);
+      } elseif ($p_array['TIPO']=='ANO') {
+        ShowHTML('        '.$p_array['VALOR']);
+      } else {
+        ShowHTML('        '.formataDataEdicao(f($row,'inicio')).' a '.formataDataEdicao(f($row,'fim')));
+      }
+      ShowHTML('        </td>');
+      ShowHTML('        <td align="right" width="25%">'.formatNumber(f($row,'valor_previsto'),4).'</td>');
+      ShowHTML('        <td align="right" width="25%">'.((nvl(f($row,'valor_real'),'')=='') ? '&nbsp;' : formatNumber(f($row,'valor_real'),4)).'</td>');
+      if (f($RS,'cumulativa')=='S') {
+        $w_previsto  += f($row,'valor_previsto');
+        if (nvl(f($row,'valor_real'),'')!='') $w_realizado += f($row,'valor_real');
+      } else {
+        $w_previsto  = f($row,'valor_previsto');
+        if (nvl(f($row,'valor_real'),'')!='') $w_realizado = f($row,'valor_real');
+      }
+    } 
+    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+    if (f($RS,'cumulativa')=='S') ShowHTML('        <td align="right"><b>Total acumulado&nbsp;</b></td>');
+    else                          ShowHTML('        <td align="right"><b>Total não acumulado&nbsp;</b></td>');
+    ShowHTML('        <td align="right"><b>'.formatNumber($w_previsto,4).'</b></td>');
+    ShowHTML('        <td align="right"><b>'.((nvl($w_realizado,'')=='') ? '&nbsp;' : formatNumber($w_realizado,4)).'</b></td>');
+    ShowHTML('      </tr>');
+    if ($w_previsto!=f($RS,'quantidade')) {
+      ShowHTML('      <tr valign="top"><td colspan="3"><font color="#FF0000"><b>ATENÇÃO: Total previsto do cronograma difere do resultado previsto para a meta!</b></font></td>');
+    }
+    ShowHTML('</table>');
+  }
+
+  ShowHTML('      <tr><td align="center" colspan=3><hr>');
+  ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -1830,7 +2380,7 @@ function Grava() {
     case 'METASOLIC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ($O=='I' || $O=='A') {
+        if (nvl($_REQUEST['w_exequivel'],'')=='' && ($O=='I' || $O=='A')) {
           $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
@@ -1844,7 +2394,15 @@ function Grava() {
               $_REQUEST['w_indicador'],$_REQUEST['w_titulo'], $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],
               $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_base'], $_REQUEST['w_pais'],$_REQUEST['w_regiao'],
               $_REQUEST['w_uf'], $_REQUEST['w_cidade'],$_REQUEST['w_valor_inicial'],$_REQUEST['w_quantidade'],
-              $_REQUEST['w_cumulativa'], $_REQUEST['w_pessoa'],$_REQUEST['w_unidade']); 
+              $_REQUEST['w_cumulativa'], $_REQUEST['w_pessoa'],$_REQUEST['w_unidade'],$_REQUEST['w_situacao_atual'],
+              $_REQUEST['w_exequivel'],$_REQUEST['w_justificativa'],$_REQUEST['w_outras_medidas']); 
+
+        // Insere os valor real  
+        for ($i=1; $i<=count($_POST['w_chave_cron'])-1; $i=$i+1) {
+           dml_putCronMeta::getInstanceOf($dbms,'V',$w_usuario,$_REQUEST['w_chave_aux'],$_POST['w_chave_cron'][$i],
+                null, null,null,$_POST['w_valor_real'][$i]);
+        }
+
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1855,6 +2413,40 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;
+    case 'CRONMETA':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          // Recupera os dados da meta
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+          foreach ($RS as $row) { $RS = $row; break; }
+          $w_total      = f($RS,'quantidade');
+          $w_cumulativa = f($RS,'cumulativa');
+           // Verifica se há sobreposição de períodos
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'CRONOGRAMA');
+          $RS = SortArray($RS,'fim','asc');
+          foreach ($RS as $row) {
+            // Despreza o registro em edição, se for alteração.
+            if(f($row,'sq_meta_cronograma') <> $_REQUEST['w_chave_aux']) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Não pode haver sobreposição de períodos para a mesma meta!\');');
+              ScriptClose();
+              retornaFormulario('w_inicio');
+              exit();
+            }
+          } 
+        }
+        dml_putCronMeta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
+            $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave_pai='.$_REQUEST['w_chave_pai'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
     default:
       exibevariaveis();
       ScriptOpen('JavaScript');
@@ -1881,6 +2473,8 @@ function Main() {
     case 'AFERICAO':           Afericao();          break;
     case 'SOLIC':              Solic();             break;
     case 'META':               Meta();              break;
+    case 'CRONMETA':           CronMeta();          break;
+    case 'VISUALMETA':         VisualMeta();        break;
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();

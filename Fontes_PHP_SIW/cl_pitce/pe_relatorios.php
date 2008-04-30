@@ -178,7 +178,7 @@ function Rel_Executivo() {
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
         $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-        $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
+        $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
         $RS1 = SortArray($RS1,'cd_programa','asc','titulo','asc');
         if (count($RS1)==0) {
           ShowHTML('   <tr><td colspan="2" align="center"><font size="1"><b>Nenhum programa cadastrado.</b></td></tr>');
@@ -224,7 +224,7 @@ function Rel_Executivo() {
               ShowHTML('          </tr>');
             }
             $RS2 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-            $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'PJCAD',4,
+            $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'PJCAD',6,
                 $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                 $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
                 $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -477,7 +477,7 @@ function Rel_Programas() {
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     $w_projeto_atual = 0;
     $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-    $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
+    $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS1,'sq_menu'), $w_usuario, f($RS1,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, $p_programa, null, null, null, null, null, null, null, null, null, null, null, null, null, $p_objetivo, $p_plano);
     $RS1 = SortArray($RS1,'or_modulo','asc', 'or_servico', 'asc', 'sq_solic_pai', 'asc', 'codigo_interno', 'asc'); 
     if (count($RS1)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');

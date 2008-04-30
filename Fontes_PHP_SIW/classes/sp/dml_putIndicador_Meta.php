@@ -12,7 +12,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putIndicador_Meta {
    function getInstanceOf($dbms, $operacao, $p_usuario, $p_chave, $p_chave_aux, $p_indicador, $p_titulo, 
         $p_descricao,$p_ordem, $p_inicio, $p_fim, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, 
-        $p_valor_inicial, $p_quantidade, $p_cumulativa, $p_pessoa, $p_unidade) {
+        $p_valor_inicial, $p_quantidade, $p_cumulativa, $p_pessoa, $p_unidade, $p_situacao_atual,
+        $p_exequivel, $p_justificativa, $p_outras_medidas) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_putIndicador_Meta';
      $params=array('p_operacao'        =>array($operacao,                            B_VARCHAR,         1),
                    'p_usuario'         =>array(tvl($p_usuario),                      B_INTEGER,        32),
@@ -31,9 +32,13 @@ class dml_putIndicador_Meta {
                    'p_cidade'          =>array(tvl($p_cidade),                       B_INTEGER,        32),
                    'p_valor_inicial'   =>array(toNumber(tvl($p_valor_inicial)),      B_NUMERIC,      18,4),
                    'p_quantidade'      =>array(toNumber(tvl($p_quantidade)),         B_NUMERIC,      18,4),
-                   'p_cumulatva'       =>array(tvl($p_cumulativa),                   B_VARCHAR,         1),
+                   'p_cumulativa'      =>array(tvl($p_cumulativa),                   B_VARCHAR,         1),
                    'p_pessoa'          =>array($p_pessoa,                            B_INTEGER,        32),
-                   'p_unidade'         =>array($p_unidade,                           B_INTEGER,        32)
+                   'p_unidade'         =>array($p_unidade,                           B_INTEGER,        32),
+                   'p_situacao_atual'  =>array(tvl($p_situacao_atual),               B_VARCHAR,      4000),
+                   'p_exequivel'       =>array(tvl($p_exequivel),                    B_VARCHAR,         1),
+                   'p_justificativa'   =>array(tvl($p_justificativa),                B_VARCHAR,      1000),
+                   'p_outras_medidas'  =>array(tvl($p_outras_medidas),               B_VARCHAR,      1000)
                  );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

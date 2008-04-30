@@ -448,7 +448,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       foreach ($RSQuery as $row) {
         $l_html .= chr(13).'      <tr><td>';
         $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if($l_tipo!='WORD') $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row,'sq_siw_solicitacao').'</a>';
+        if($l_tipo!='WORD') $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
         else       $l_html .= chr(13).'  '.f($row,'sq_siw_solicitacao');
         $l_html .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
         if($l_tipo!='WORD') $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
@@ -576,12 +576,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         } 
       } 
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=14><b>Observações:<ul>';
+      $l_html .= chr(13).'<tr><td colspan=2><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       //$l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
       if ($w_tipo=='WORD') {
-        $l_html .= chr(13).'<tr><td colspan=14><table border=0>';
+        $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
         $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         if ($w_tipo_visao!=2 && ($operacao=='T')){
           $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores das tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true);
@@ -656,9 +656,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'      </tr>';
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'      <tr><td colspan=6><table border=0>';
-        $l_html .= chr(13).'        <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-        $l_html .= chr(13).'        </table>';
+        $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de medida do indicador';
       }
     }
 
@@ -684,25 +682,94 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'            <td><b>Valor</b></td>';
         $l_html .= chr(13).'          </tr>';
         $w_cor=$conTrBgColor;
+        $l_cron = '';
         foreach ($RSQuery as $row) {
           $l_html .= chr(13).'      <tr valign="top">';
-          $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
-          if ($l_formato=='WORD') {
+          if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+          else                $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
+          if ($l_tipo=='WORD') {
             $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
           } else {
             $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
           }
-          $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';        
+          $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';
           $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
           $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
           $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
           $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
           $l_html .= chr(13).'      </tr>';
+          
+          // Monta html para exibir o cronograma da meta
+          if (f($row,'qtd_cronograma')>0) {
+            $l_cron .= chr(13).'      <tr valign="top">';
+            if($l_tipo!='WORD') $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null).'</td>';
+            else                $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'titulo').'</td>';
+            if ($l_tipo=='WORD') {
+              $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'nm_indicador').'</td>';
+            } else {
+              $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+            }
+            $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
+            $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+            $RSCron = SortArray($RSCron,'inicio','asc');
+            $i = 0;
+            $w_previsto  = 0;
+            $w_realizado = 0;
+            foreach($RSCron as $row1) {
+              $i += 1;
+              if ($i>1) $l_cron .= chr(13).'      <tr valign="top">';
+              $p_array = retornaNomePeriodo(f($row1,'inicio'), f($row1,'fim'));
+              $l_cron .= chr(13).'        <td align="center">';
+              if ($p_array['TIPO']=='DIA') {
+                $l_cron .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+              } elseif ($p_array['TIPO']=='MES') {
+                $l_cron .= chr(13).'        '.$p_array['VALOR'];
+              } elseif ($p_array['TIPO']=='ANO') {
+                $l_cron .= chr(13).'        '.$p_array['VALOR'];
+              } else {
+                $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio')).' a '.formataDataEdicao(f($row1,'fim'));
+              }
+              $l_cron .= chr(13).'        </td>';
+              $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
+              $l_cron .= chr(13).'        <td align="right">'.((nvl(f($row1,'valor_real'),'')=='') ? '&nbsp;' : formatNumber(f($row1,'valor_real'),4)).'</td>';
+              if (f($row,'cumulativa')=='S') {
+                $w_previsto  += f($row1,'valor_previsto');
+                if (nvl(f($row1,'valor_real'),'')!='') $w_realizado += f($row1,'valor_real');
+              } else {
+                $w_previsto  = f($row1,'valor_previsto');
+                if (nvl(f($row1,'valor_real'),'')!='') $w_realizado = f($row1,'valor_real');
+              }
+            }
+            $l_cron .= chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+            if (f($row,'cumulativa')=='S') $l_cron .= chr(13).'        <td align="right"><b>Total acumulado&nbsp;</b></td>';
+            else                           $l_cron .= chr(13).'        <td align="right"><b>Total não acumulado&nbsp;</b></td>';
+            $l_cron .= chr(13).'        <td align="right" '.(($w_previsto!=f($row,'quantidade')) ? ' TITLE="Total previsto do cronograma difere do resultado previsto para a meta!" bgcolor="'.$conTrBgColorLightRed1.'"' : '').'><b>'.formatNumber($w_previsto,4).'</b></td>';
+            $l_cron .= chr(13).'        <td align="right"><b>'.((nvl($w_realizado,'')=='') ? '&nbsp;' : formatNumber($w_realizado,4)).'</b></td>';
+            $l_cron .= chr(13).'      </tr>';
+          }
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
-        $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de medida do indicador';
-        $l_html .= chr(13).'  </table>';
+        $l_html .= chr(13).'<tr><td colspan=2>U.M. Unidade de medida do indicador';
+      }   
+
+      // Exibe o cronograma de aferição das metas
+      if (nvl($l_cron,'')!='') {
+        $l_html .= chr(13).'      <tr><td colspan="2"><br><b>Cronogramas:</td></tr>';
+        $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+        $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
+        $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+        $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+        $l_html .= chr(13).'            <td rowspan=2><b>Referência</b></td>';
+        $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
+        $l_html .= chr(13).'          </tr>';
+        $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+        $l_html .= chr(13).'            <td><b>Previsto</b></td>';
+        $l_html .= chr(13).'            <td><b>Realizado</b></td>';
+        $l_html .= chr(13).'          </tr>';
+        $l_html .= chr(13).$l_cron;
+        $l_html .= chr(13).'         </table></td></tr>';
       }   
     }
 
@@ -731,9 +798,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'      </tr>';
         } 
         $l_html .= chr(13).'         </table></td></tr>';
-        $l_html .= chr(13).'<tr><td colspan=3><table border=0>';
-        $l_html .= chr(13).'  <tr><td align="right">U.M.<td>Unidade de alocação do recurso';
-        $l_html .= chr(13).'  </table>';
+        $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de alocação do recurso';
       }
     }
     // Recursos envolvidos na execução do projeto
@@ -847,7 +912,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
             if ($_REQUEST['p_tipo']=='WORD') {
               $l_html .= chr(13).'  '.f($row2,'sq_siw_solicitacao');
             } else {
-              $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row2,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_siw_solicitacao').'</a>';
+              $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row2,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row2,'sq_siw_solicitacao').'</a>';
             }
             $l_html .= chr(13).'     <td>'.CRLF2BR(Nvl(f($row2,'assunto'),'---'));
             if ($_REQUEST['p_tipo']=='WORD') {

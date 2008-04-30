@@ -173,7 +173,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
             $l_html.=chr(13).'          <img src="'.$conImgOkNormal.'" border=0 width=14 height=14 align="center">';
           }
         } 
-        $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
+        $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
         $l_html.=chr(13).'    <td>'.Nvl(f($row2,'titulo'),'-').'</td>';
         $l_html.=chr(13).'    <td>'.ExibePessoa('../',$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_solic')).'</td>';
         $l_html.=chr(13).'    <td><div align="center">'.FormataDataEdicao(f($row2,'inicio')).'</div></td>';
@@ -803,7 +803,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
               $l_vr_concluido   = $l_vr_concluido + Nvl(f($row2,'valor'),0);
             }
           } 
-          $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
+          $l_html.=chr(13).'    <A class="HL" HREF="'.$w_dir.'tarefas.php?par=Visual&R='.$l_pagina.$par.'&O=L&w_chave='.f($row2,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row2,'sq_siw_solicitacao').'&nbsp;</a>';
           $l_html.=chr(13).'    <td>'.Nvl(f($row2,'titulo'),'-').'</td>';
           $l_html.=chr(13).'    <td>'.ExibePessoa('../',$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_solic')).'</td>';
           $l_html.=chr(13).'    <td><div align="center">'.FormataDataEdicao(f($row2,'inicio')).'</div></td>';
@@ -883,7 +883,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       $RS1 = SortArray($RS1,'nome_resumido','asc');
       if (count($RS1)>0) {
         $TP = RemoveTP($TP).' - Interessados';
-        $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Clique <a class="HL" HREF="'.$w_dir.'acao.php?par=interess&R='.$l_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="blank">aqui</a> para visualizar os Interessados na execução</div></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Clique <a class="HL" HREF="'.$w_dir.'acao.php?par=interess&R='.$l_Pagina.$par.'&O=L&w_chave='.$l_chave.'&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="_blank">aqui</a> para visualizar os Interessados na execução</div></td></tr>';
       } else {
         $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">Nenhum interessado cadastrado</div></td></tr>';
       } 

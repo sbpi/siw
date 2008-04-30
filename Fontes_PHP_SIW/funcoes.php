@@ -811,6 +811,19 @@ function ExibeRestricao($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp
 }
 
 // =========================================================================
+// Montagem da URL com os dados de uma meta
+// -------------------------------------------------------------------------
+function ExibeMeta($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp,$p_solic) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_tipo,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&O='.$O.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_tipo.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Montagem da URL com os dados de um recurso
 // -------------------------------------------------------------------------
 function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
@@ -2433,7 +2446,7 @@ function Estrutura_Topo() {
 function Estrutura_CSS($l_cliente) {
   extract($GLOBALS);
   if ($l_cliente==6761) {
-  	ShowHTML('<LINK  media=screen href="'.$conFileVirtual.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
+    ShowHTML('<LINK  media=screen href="'.$conFileVirtual.$l_cliente.'/css/estilo.css" type=text/css rel=stylesheet>');
     ShowHTML('<LINK media=print href="'.$conFileVirtual.$l_cliente.'/css/print.css" type=text/css rel=stylesheet>');
     ShowHTML('<SCRIPT language=javascript src="'.$conFileVirtual.$l_cliente.'/js/scripts.js" type=text/javascript> ');
     ShowHTML('</SCRIPT>');

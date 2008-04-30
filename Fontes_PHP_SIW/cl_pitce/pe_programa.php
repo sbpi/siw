@@ -424,6 +424,7 @@ function Inicial() {
               // Se for execução
               if ($w_usuario==f($row,'executor')) {
                 // Coloca as operações dependendo do trâmite
+                if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
                 if (f($row,'sg_tramite')=='EA') {
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o registro, sem enviá-lo.">AN</A>&nbsp');
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o registro para outro responsável.">EN</A>&nbsp');
@@ -439,6 +440,7 @@ function Inicial() {
                   }
                 }
               } else {
+                if (f($row,'resp_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
                 if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o registro para outro responsável.">EN</A>&nbsp');
                 } else {
@@ -457,6 +459,9 @@ function Inicial() {
               // Se o usuário for responsável pelo registro, titular/substituto do setor responsável 
               // ou titular/substituto da unidade executora,
               // pode enviar.
+              if (f($row,'sg_tramite')!='AT') { 
+                if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do projeto." target="Meta">MT</A>&nbsp');
+              }
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o registro para outro responsável.">EN</A>&nbsp');
             } 
           }
