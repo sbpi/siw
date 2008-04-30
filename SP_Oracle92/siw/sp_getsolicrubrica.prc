@@ -8,7 +8,7 @@ create or replace procedure SP_GetSolicRubrica
     p_inicio               in date      default null,
     p_fim                  in date      default null,
     p_restricao            in varchar2  default null,
-    p_result    out sys_refcursor
+    p_result               out sys_refcursor
    ) is
 begin
    If p_restricao is null Then

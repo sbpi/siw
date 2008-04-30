@@ -18,7 +18,11 @@ create or replace procedure sp_putIndicador_meta
     p_quantidade        in  varchar2 default null,
     p_cumulativa        in  varchar2 default null,
     p_pessoa            in  number   default null,
-    p_unidade           in  number   default null
+    p_unidade           in  number   default null,
+    p_situacao_atual    in  varchar2 default null,
+    p_exequivel         in  varchar2 default null,
+    p_justificativa     in  varchar2 default null,
+    p_outras_medidas    in  varchar2 default null
    ) is
    w_chave_aux  number(18);
    w_regiao number(18);
@@ -40,29 +44,41 @@ begin
          valor_inicial)
       values
         (w_chave_aux,       p_chave,             p_indicador,       p_pessoa,     p_titulo,     p_descricao,   p_ordem,        p_inicio,     p_fim, 
-         p_base,            p_pais,              w_regiao,          p_uf,         p_cidade,     p_quantidade,  p_cumulativa,   p_pessoa,     p_unidade,
+         p_base,            p_pais,              w_regiao,          p_uf,         p_cidade,     p_quantidade,  p_cumulativa,   p_usuario,    p_unidade,
          p_valor_inicial);
    Elsif p_operacao = 'A' Then 
-      -- Altera registro
-      update siw_solic_meta
-         set sq_eoindicador    = p_indicador,
-             sq_pessoa         = p_pessoa,
-             titulo            = p_titulo,     
-             descricao         = p_descricao,
-             ordem             = p_ordem,
-             inicio            = p_inicio,
-             fim               = p_fim,
-             sq_pais           = p_pais,
-             sq_regiao         = w_regiao,
-             co_uf             = p_uf,
-             sq_cidade         = p_cidade,
-             base_geografica   = p_base,
-             valor_inicial     = p_valor_inicial,
-             quantidade        = p_quantidade,
-             cumulativa        = p_cumulativa,
-             cadastrador       = p_pessoa,             
-             sq_unidade        = p_unidade
-       where sq_solic_meta = p_chave_aux;
+      If p_exequivel is null Then
+         -- Altera as informações de cadastro da meta
+         update siw_solic_meta
+            set sq_eoindicador    = p_indicador,
+                sq_pessoa         = p_pessoa,
+                titulo            = p_titulo,     
+                descricao         = p_descricao,
+                ordem             = p_ordem,
+                inicio            = p_inicio,
+                fim               = p_fim,
+                sq_pais           = p_pais,
+                sq_regiao         = w_regiao,
+                co_uf             = p_uf,
+                sq_cidade         = p_cidade,
+                base_geografica   = p_base,
+                valor_inicial     = p_valor_inicial,
+                quantidade        = p_quantidade,
+                cumulativa        = p_cumulativa,
+                cadastrador       = p_usuario,             
+                sq_unidade        = p_unidade
+          where sq_solic_meta = p_chave_aux;
+      Else
+         -- Altera as informações de monitoramento da meta
+         update siw_solic_meta
+            set situacao_atual            = p_situacao_atual,
+                exequivel                 = p_exequivel,
+                justificativa_inexequivel = p_justificativa,
+                outras_medidas            = p_outras_medidas,
+                cadastrador               = p_usuario,
+                ultima_alteracao          = sysdate
+          where sq_solic_meta = p_chave_aux;
+      End If;
    Elsif p_operacao = 'E' Then
       -- Recupera o período do registro
       delete siw_solic_meta where sq_solic_meta = p_chave_aux;

@@ -313,6 +313,9 @@ begin
                 coalesce(q.existe,0)  as resp_etapa,
                 coalesce(q1.existe,0) as resp_risco,
                 coalesce(q2.existe,0) as resp_problema,
+                coalesce(q3.existe,0) as resp_meta,
+                coalesce(q4.existe,0) as qtd_meta,
+                coalesce(q5.existe,0) as qtd_cron_rubrica,
                 r.sq_acao_ppa, r.sq_orprioridade,
                 SolicRestricao(b.sq_siw_solicitacao,null) as restricao,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao,null,null)  as ide,
@@ -384,6 +387,20 @@ begin
                                         and a.problema  = 'S'
                                      group  by a.sq_siw_solicitacao
                                     )                          q2 on (b.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
+                      left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                       from siw_solic_meta a
+                                      where a.sq_pessoa = p_pessoa
+                                     group  by a.sq_siw_solicitacao
+                                    )                          q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
+                      left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                       from siw_solic_meta a
+                                     group  by a.sq_siw_solicitacao
+                                    )                          q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
+                      left     join (select sq_siw_solicitacao, count(a.sq_projeto_rubrica) as existe
+                                       from pj_rubrica                       a
+                                            inner join pj_rubrica_cronograma b on (a.sq_projeto_rubrica = b.sq_projeto_rubrica)
+                                     group  by a.sq_siw_solicitacao
+                                    )                          q5 on (b.sq_siw_solicitacao       = q5.sq_siw_solicitacao)
                    left        join eo_unidade                 c   on (a.sq_unid_executora       = c.sq_unidade)
                    inner       join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
                                        from siw_solic_log
@@ -1082,14 +1099,16 @@ begin
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
-                p.nome_resumido as nm_exec
+                p.nome_resumido as nm_exec,
+                coalesce(q3.existe,0) as resp_meta,
+                coalesce(q4.existe,0) as qtd_meta
            from siw_menu                                       a 
-                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
-                     left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
+                   inner             join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                     left            join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                       a3.tipo_respons            = 'T'           and
                                                                       a3.fim                     is null
                                                                      )
-                     left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
+                     left            join eo_unidade_resp      a4 on (a2.sq_unidade              = a4.sq_unidade and
                                                                       a4.tipo_respons            = 'S'           and
                                                                       a4.fim                     is null
                                                                      )
@@ -1118,6 +1137,15 @@ begin
                         inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                      left           join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                             from siw_solic_meta a
+                                            where a.sq_pessoa = p_pessoa
+                                           group  by a.sq_siw_solicitacao
+                                          )                    q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
+                      left           join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
+                                             from siw_solic_meta a
+                                           group  by a.sq_siw_solicitacao
+                                          )                    q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
                                              from siw_solic_log

@@ -57,7 +57,9 @@ begin
                left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade or b.cadastrador = p_pessoa)
+         and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade or b.cadastrador = p_pessoa or
+              (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem)
+             )
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_numero     is null or (p_numero      is not null and c.prefixo            = p_prefixo and c.numero_documento = p_numero and c.ano = p_ano))
@@ -201,7 +203,7 @@ begin
              d.nu_guia||'/'||d.ano_guia||'-'||c1.sigla as guia_tramite, d.recebimento,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
              d1.nome as nm_despacho,
-             d2.nome as nm_unid_origem,    d2.sigla as sg_unid_origem,
+             case when d.unidade_destino is null then d4.nome_resumido else d2.nome end as nm_unid_origem,    d2.sigla as sg_unid_origem,
              d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
@@ -218,12 +220,13 @@ begin
                                                            )
                    inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                    inner   join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
-                   inner   join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade),
+                   left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
+                   left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
                left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (b1.acesso    >= 8 or d.unidade_destino = w.sq_unidade)
+         and (b1.acesso    >= 8 or ((d.unidade_destino is not null and d.unidade_destino = w.sq_unidade) or (d.unidade_destino is null and d.unidade_origem = w.sq_unidade)))
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua));
    Elsif p_restricao = 'RECEBIDO' Then

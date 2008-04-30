@@ -31,6 +31,9 @@ begin
                 a.exequivel,           a.justificativa_inexequivel,    a.outras_medidas, 
                 a.situacao_atual,      a.cadastrador,                  a.inclusao, 
                 a.ultima_alteracao,    a.base_geografica,              a.valor_inicial,
+                to_char(a.ultima_alteracao, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_alteracao,
+                case a.cumulativa when 'S' then 'Sim' else 'Não' end as nm_cumulativa,
+                case a.exequivel  when 'S' then 'Sim' else 'Não' end as nm_exequivel,
                 case a.base_geografica
                      when 1 then case e.padrao when 'S' then 'Nacional'              else 'Nacional - '||e.nome end
                      when 2 then case e.padrao when 'S' then 'Regional - '||f.nome   else 'Regional - '||e.nome||' - '||f.nome  end
@@ -57,7 +60,9 @@ begin
                 h.sq_cidade,           h.nome as nm_cidade,
                 i.nome_resumido as nm_cadastrador,
                 j.nome_resumido as nm_resp_meta,
-                k.nome as nm_unidade,  k1.sq_pessoa tit_exec,          k2.sq_pessoa subst_exec
+                k.nome as nm_unidade,  k.sigla as sg_unidade,
+                k1.sq_pessoa tit_exec, k2.sq_pessoa subst_exec,
+                coalesce(l.qtd,0) as qtd_cronograma
            from siw_solic_meta                   a
                 inner     join siw_solicitacao   a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
                   inner   join siw_menu          a2 on (a1.sq_menu            = a2.sq_menu)
@@ -87,6 +92,10 @@ begin
                                                         k2.tipo_respons       = 'S'           and
                                                         k2.fim                is null
                                                        )
+                left      join (select sq_solic_meta, count(sq_meta_cronograma) as qtd
+                                  from siw_meta_cronograma
+                                group by sq_solic_meta
+                               )                 l  on (a.sq_solic_meta       = l.sq_solic_meta)
           where b.cliente    = p_cliente 
             and (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
             and (p_chave_aux is null or (p_chave_aux is not null and ((p_restricao is null and a.sq_solic_meta = p_chave_aux) or 
@@ -117,6 +126,25 @@ begin
                                                                      )
                                         )
                 );
+   Elsif p_restricao = 'CRONOGRAMA' Then
+      -- Recupera o cronograma da rubrica
+      open p_result for 
+            select a.sq_meta_cronograma, a.inicio, a.fim, a.valor_previsto, a.valor_real, a.ultima_atualizacao,
+                   b.sq_pessoa, b.nome, b.nome_resumido,
+                   d.sigla as sg_unidade, d.nome as nm_unidade
+              from siw_meta_cronograma           a
+                   left     join co_pessoa       b on (a.sq_pessoa_atualizacao = b.sq_pessoa)
+                     left   join sg_autenticacao c on (b.sq_pessoa             = c.sq_pessoa)
+                       left join eo_unidade      d on (c.sq_unidade            = d.sq_unidade)
+             where a.sq_solic_meta = p_chave      
+               and ((p_chave_aux is null) or (p_chave_aux    is not null and a.sq_meta_cronograma = p_chave_aux))
+               and ((p_ref_i     is null) or (p_ref_i        is not null and ((a.inicio  between p_ref_i and p_ref_f) or
+                                                                              (a.fim     between p_ref_i and p_ref_f) or
+                                                                              (p_ref_i   between a.inicio and a.fim) or
+                                                                              (p_ref_f   between a.inicio and a.fim)
+                                                                              )
+                                              )
+                   );
    End If;
 end sp_getSolicMeta;
 /

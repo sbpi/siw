@@ -58,7 +58,7 @@ begin
                                       inner join gd_demanda       l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao)
                                       inner join co_pessoa        m on (k.solicitante        = m.sq_pessoa)
                                       inner join siw_tramite      n on (k.sq_siw_tramite     = n.sq_siw_tramite and
-                                                                        'CA'                 <> coalesce(n.sigla,'---')
+                                                                        n.ativo              = 'S'
                                                                        )
                                 where (p_restricao = 'PROREPORT' and l.fim_real between w_inicio and w_fim)
                                    or (p_restricao = 'PROPREV'   and k.fim      between w_inicio and w_fim)
@@ -73,7 +73,7 @@ begin
                                group by x.sq_projeto_etapa
                               )                o on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where d.sq_pessoa       = p_cliente
-            and j.sigla           <> 'CA'
+            and j.ativo           = 'S'
             and ((i.sq_tarefa is null and a.pacote_trabalho = 'S') or i.sq_tarefa is not null)
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and (i.sq_tarefa is not null or
@@ -113,7 +113,7 @@ begin
                     inner     join sg_autenticacao  m  on (c1.sq_pessoa          = m.sq_pessoa)
                       inner   join eo_unidade       m1 on (m.sq_unidade          = m1.sq_unidade) 
                   inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite and 
-                                                           'CA'                  <> coalesce(j.sigla,'-')
+                                                           j.ativo               = 'S'
                                                           )
                   inner       join siw_menu         d  on (c.sq_menu             = d.sq_menu)
                   left        join pe_programa      c2 on (c.sq_solic_pai        = c2.sq_siw_solicitacao)
@@ -126,7 +126,8 @@ begin
                   left        join siw_solicitacao  g  on (e.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                     left      join co_pessoa        i  on (g.solicitante         = i.sq_pessoa)
                     left      join siw_tramite      l  on (g.sq_siw_tramite      = l.sq_siw_tramite and
-                                                           'CA'                  <> coalesce(l.sigla,'-'))
+                                                           l.ativo               = 'S'
+                                                          )
           where d.sq_pessoa      = p_cliente
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
@@ -180,7 +181,7 @@ begin
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
           where d.sq_pessoa      = p_cliente
-            and 'CA'             <> coalesce(f.sigla,'-')
+            and f.ativo          = 'S'
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -230,7 +231,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and 'CA'             <> coalesce(f.sigla,'-')
+            and f.ativo          = 'S'
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -280,7 +281,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and 'CA'             <> coalesce(f.sigla,'-')
+            and f.ativo          = 'S'
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -330,7 +331,56 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and 'CA'             <> coalesce(f.sigla,'-')
+            and f.ativo          = 'S'
+            and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
+            and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
+                                                                                            from siw_solicitacao                     x
+                                                                                          connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                          start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                         )
+                                            )
+                )
+            and (p_objetivo      is null or (p_objetivo    is not null and 0 < (select count(x.sq_siw_solicitacao)
+                                                                                  from siw_solicitacao                     x
+                                                                                       left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                 where y.sq_siw_solicitacao is not null
+                                                                                   and y.sq_peobjetivo      = p_objetivo
+                                                                                connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                           )
+                )
+            and (p_plano         is null or (p_plano       is not null and 0 < (select count(*)
+                                                                                  from siw_solicitacao
+                                                                                 where sq_plano = p_plano
+                                                                                connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                               )
+                                            )
+                )
+         UNION
+         select distinct '4.META' as bloco, a.sq_siw_solicitacao as sq_projeto,
+                e1.titulo as nm_projeto, e1.codigo_interno, 
+                to_char(h.ultima_alteracao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_atualizacao, 
+                i.sq_pessoa, i.nome, i.nome_resumido,
+                acentos(e1.titulo) as ordena
+           from siw_solicitacao                   a
+                inner       join siw_menu         d  on (a.sq_menu            = d.sq_menu)
+                inner       join pj_projeto       e  on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                  inner     join siw_solicitacao  e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+                inner       join siw_tramite      f  on (a.sq_siw_tramite     = f.sq_siw_tramite)
+                left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
+                  left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
+                left        join (select sq_siw_solicitacao, max(x.ultima_alteracao) as ultima_atualizacao
+                                    from siw_solic_meta x
+                                  group by sq_siw_solicitacao
+                                 )                g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                  left      join siw_solic_meta   h  on (g.sq_siw_solicitacao = h.sq_siw_solicitacao and
+                                                         g.ultima_atualizacao = h.ultima_alteracao
+                                                        )
+                    left    join co_pessoa        i  on (h.cadastrador = i.sq_pessoa)
+          where d.sq_pessoa      = p_cliente
+            and f.ativo          = 'S'
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x

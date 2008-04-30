@@ -396,8 +396,11 @@ begin
     If w_existe > 0 Then 
        Result := Result + 8; 
     Else
-       -- Verifica se é responsável por alguma etapa do projeto ou por alguma questão
+       -- Verifica se é responsável por alguma etapa do projeto ou por alguma questão ou por alguma meta
        select count(*) into w_existe from (
+         -- Verifica se o usuário é responsável por alguma meta
+         select 1 from siw_solic_meta a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
+         UNION
          -- Verifica se o usuário é responsável por alguma questão
          select 1 from siw_restricao a where a.sq_siw_solicitacao = p_solicitacao and a.sq_pessoa = p_usuario
          UNION

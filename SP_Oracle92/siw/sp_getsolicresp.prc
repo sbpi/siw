@@ -191,6 +191,21 @@ begin
    ElsIf p_restricao = 'USUARIOS' Then
       -- Recupera as pessoas responsáveis por um trâmite
       open p_result for 
+         -- Participantes do trâmite de cadastramento, se o trâmite desejado for o de cadastramento
+         select distinct d.sq_pessoa, d.nome, d.nome_resumido,
+                e.email, e.ativo ativo_usuario,
+                f.sigla sg_unidade,  d.nome_resumido_ind
+           from siw_solicitacao                       a
+                inner       join siw_solic_log        b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                  inner     join siw_tramite          c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                  inner     join co_pessoa            d on (b.sq_pessoa          = d.sq_pessoa)
+                    inner   join sg_autenticacao      e on (d.sq_pessoa          = e.sq_pessoa)
+                      inner join eo_unidade           f on (e.sq_unidade         = f.sq_unidade)
+          where b.sq_siw_solicitacao = p_chave
+            and c.sigla              = 'CI'
+            and c.sq_siw_tramite     = p_tramite
+            and e.ativo              = 'S'
+         UNION
          -- Todos os usuários internos
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,
                 e.email, e.ativo ativo_usuario,
