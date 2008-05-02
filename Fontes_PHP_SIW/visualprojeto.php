@@ -615,7 +615,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   if ($l_O=='T') {
     // Indicadores
     if ($l_nome_menu['INDSOLIC']!='') { 
-      $RSQuery = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,'VISUAL');
+      $RSQuery = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null,'VISUAL');
       $RSQuery = SortArray($RSQuery,'nm_tipo_indicador','asc','nome','asc');
       if (count($RSQuery)>0) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['INDSOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -684,7 +684,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
 
     // Metas
     if ($l_nome_menu['METASOLIC']!='') {
-      $RSQuery = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      $RSQuery = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       $RSQuery = SortArray($RSQuery,'ordem','asc','titulo','asc');
       if (count($RSQuery)>0) {
         $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -732,7 +732,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
               $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
             }
             $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
-            $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+            $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
             $RSCron = SortArray($RSCron,'inicio','asc');
             $i = 0;
             $w_previsto  = 0;

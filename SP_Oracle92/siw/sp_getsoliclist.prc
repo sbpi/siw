@@ -389,11 +389,13 @@ begin
                                     )                          q2 on (b.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
                       left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
                                        from siw_solic_meta a
-                                      where a.sq_pessoa = p_pessoa
+                                      where a.sq_pessoa          = p_pessoa
+                                        and a.sq_siw_solicitacao is not null
                                      group  by a.sq_siw_solicitacao
                                     )                          q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
                       left     join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
                                        from siw_solic_meta a
+                                      where a.sq_siw_solicitacao is not null
                                      group  by a.sq_siw_solicitacao
                                     )                          q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
                       left     join (select sq_siw_solicitacao, count(a.sq_projeto_rubrica) as existe
@@ -1139,11 +1141,13 @@ begin
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                       left           join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
                                              from siw_solic_meta a
-                                            where a.sq_pessoa = p_pessoa
+                                            where a.sq_pessoa          = p_pessoa
+                                              and a.sq_siw_solicitacao is not null
                                            group  by a.sq_siw_solicitacao
                                           )                    q3 on (b.sq_siw_solicitacao       = q3.sq_siw_solicitacao)
                       left           join (select sq_siw_solicitacao, count(a.sq_solic_meta) as existe
                                              from siw_solic_meta a
+                                            where a.sq_siw_solicitacao is not null
                                            group  by a.sq_siw_solicitacao
                                           )                    q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)

@@ -10,13 +10,15 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getSolicMeta {
-   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_chave_aux, $p_pessoa, $p_unidade, $p_titulo, $p_indicador, $p_tipo, $p_ativo, 
-            $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_afe_i, $p_afe_f, $p_ref_i, $p_ref_f, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_chave_aux, $p_plano, $p_pessoa, $p_unidade, 
+            $p_titulo, $p_indicador, $p_tipo, $p_ativo, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_afe_i, 
+            $p_afe_f, $p_ref_i, $p_ref_f, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_getSolicMeta';
      $params=array('p_cliente'                =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_usuario'                =>array(tvl($p_usuario),                                  B_INTEGER,        32),
                    'p_chave'                  =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'              =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_plano'                  =>array(tvl($p_plano),                                    B_INTEGER,        32),
                    'p_pessoa'                 =>array(tvl($p_pessoa),                                   B_INTEGER,        32),
                    'p_unidade'                =>array(tvl($p_unidade),                                  B_INTEGER,        32),
                    'p_titulo'                 =>array(tvl($p_titulo),                                   B_VARCHAR,        100),

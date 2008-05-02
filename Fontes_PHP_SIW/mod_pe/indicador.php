@@ -1207,6 +1207,7 @@ function Solic() {
 
   $w_erro       = '';
   $w_chave      = $_REQUEST['w_chave'];
+  $w_plano      = $_REQUEST['w_plano'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_indicador  = $_REQUEST['w_indicador'];
   $w_operacao   = $_REQUEST['w_operacao'];
@@ -1214,10 +1215,21 @@ function Solic() {
   $p_tipo       = $_REQUEST['p_tipo'];
   $p_nome       = $_REQUEST['p_nome'];
   
-  if ($O=='A') $O = 'L';
+  if (nvl($w_plano,'')!='') {
+    // Recupera os dados do plano a que a meta está ligada
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    foreach ($RS as $row) { $RS = $row; break; }
+    $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
+    $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
+    $w_projeto        = f($RS,'nome_completo');
+    $w_valor_projeto  = f($RS,'valor');
+    $w_label          = 'Plano';
+  }
+
+  if (nvl($w_plano,'')=='' && $O=='A') $O = 'L';
   
   if ($O=='L') {
-    $RS = db_getSolicIndicador::getInstanceOf($dbms,$w_chave,null,null,null);
+    $RS = db_getSolicIndicador::getInstanceOf($dbms,$w_chave,null,null,$w_plano,null);
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
   } 
   Cabecalho();
@@ -1278,13 +1290,25 @@ function Solic() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
+
+  if (nvl($w_plano,'')!='') {
+    ShowHTML('<table border=1 width="100%"><tr><td bgcolor="#FAEBD7">');
+    ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('          <td><font size="1">Plano estratégico:<br><b><font size=1 class="hl">'.$w_projeto.'</font></b></td>');
+    ShowHTML('          <td><font size="1">Horizonte temporal:<br><b><font size=1 class="hl">'.$w_inicio_projeto.' a '.$w_fim_projeto.'</font></b></td>');
+    ShowHTML('    </TABLE>');
+    ShowHTML('</TABLE><BR>');
+  }
+
   if ($O=='L') {
-    ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+    ShowHTML('<table align="center" border="0" width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
     ShowHTML('  <li>Cadastre todos os indicadores relevantes para o projeto.');
     ShowHTML('  </ul></b></font></td>');    
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_indicador='.$w_indicador.'&&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&w_indicador='.$w_indicador.'&&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    if (nvl($w_plano,'')!='') ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1305,7 +1329,7 @@ function Solic() {
         if(f($row,'qtd_meta')>0) {
           ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
         } else {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_plano='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1316,6 +1340,7 @@ function Solic() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_plano" value="'.$w_plano.'">');
     ShowHTML('<INPUT type="hidden" name="w_indicador" value="'.$w_indicador.'">');
     ShowHTML('<INPUT type="hidden" name="w_operacao" value="">');
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
@@ -1331,7 +1356,7 @@ function Solic() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('</FORM>');
@@ -1339,6 +1364,7 @@ function Solic() {
       AbreForm('Form1',$w_dir.$w_pagina.'GRAVA','POST','return(Validacao1(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
       ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+      ShowHTML('<INPUT type="hidden" name="w_plano" value="'.$w_plano.'">');
       ShowHTML('<INPUT type="hidden" name="w_indicador[]" value="">');
       ShowHTML('<INPUT type="hidden" name="w_operacao" value="">');
       ShowHTML(MontaFiltro('POST'));
@@ -1390,19 +1416,21 @@ function Solic() {
 function Meta() {
   extract($GLOBALS);
   global $w_Disabled;
+  $w_plano      = $_REQUEST['w_plano'];
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
-  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
-  
+  $w_chave_pai  = $_REQUEST['w_chave_pai'];
+
   // Verifica se a chamada foi feita da tela de cadastramento ou da tela de execução.
   if ($P1!=1) $w_edita = 'N'; else $w_edita = 'S';
 
-  if ($w_tipo_pai=='PLANO') {
+  if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
     $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
-    $w_projeto        = f($RS,'titulo');
+    $w_projeto        = f($RS,'nome_completo');
     $w_valor_projeto  = f($RS,'valor');
     $w_label          = 'Plano';
   } else {
@@ -1447,7 +1475,7 @@ function Meta() {
     $w_outras_medidas   = $_REQUEST['w_outras_medidas'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nome','asc','base_geografica','asc','nm_base_geografica','asc','phpdt_afericao','desc');
@@ -1456,7 +1484,7 @@ function Meta() {
     }
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     $w_indicador        = f($RS,'sq_eoindicador');
     $w_pessoa           = f($RS,'sq_pessoa');
@@ -1480,9 +1508,9 @@ function Meta() {
     $w_justificativa    = f($RS,'justificativa_inexequivel');
     $w_outras_medidas   = f($RS,'outras_medidas');
 
-    if ($w_edita=='N') {
-      // Verifica se há sobreposição de períodos
-      $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
+    if ($w_edita=='N' || nvl($w_plano,'')!='') {
+      // Recupera o cronograma de aferição da meta
+      $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
       $RS_Cronograma = SortArray($RS_Cronograma,'inicio','asc');
     }
   } 
@@ -1519,7 +1547,7 @@ function Meta() {
     FormataValor();
     ValidateOpen('Validacao');
     if (strpos('IA',$O)!==false) {
-      if ($w_edita=='S') {
+      if ($w_edita=='S' || nvl($w_plano,'')!='') {
         Validate('w_titulo','Meta','','1','2','100','1','1');
         Validate('w_descricao','Descricao','','1','2','2000','1','1');
         Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
@@ -1540,7 +1568,8 @@ function Meta() {
         Validate('w_quantidade','Resultado','VALOR','1',6,18,'','0123456789,.');
         Validate('w_pessoa','Responsável pela meta','SELECT','1','1','10','','1');
         Validate('w_unidade','Setor responsável pela meta','SELECT','1','1','10','','1');
-      } else {
+      }
+      if ($w_edita=='N' || ($O!='I' && nvl($w_plano,'')!='')) {
         Validate('w_situacao_atual','Situação atual','','','2','4000','1','1');
         ShowHTML('  if (theForm.w_exequivel[1].checked && theForm.w_justificativa.value == \'\') {');
         ShowHTML('     alert (\'Justifique porque a meta não será cumprida!\');');
@@ -1564,8 +1593,8 @@ function Meta() {
           ShowHTML('  }');
         }
       }
-      if ($P1==1) Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    } elseif ($O=='E' && $P1==1) {
+      if ($P1!=1 || nvl($w_plano,'')!='') Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E' && ($P1!=1 || nvl($w_plano,'')!='')) {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
       ShowHTML('     { return (true); }; ');
@@ -1580,35 +1609,36 @@ function Meta() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ((strpos('IA',$O)!==false)) {
-    if ($w_edita=='S') BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
-    else               BodyOpen('onLoad=\'document.Form.w_situacao_atual.focus()\';');
-  } elseif ($O=='E' && $P1==1) {
+    if ($w_edita=='S' || nvl($w_plano,'')!='') BodyOpen('onLoad=\'document.Form.w_titulo.focus()\';');
+    else                                       BodyOpen('onLoad=\'document.Form.w_situacao_atual.focus()\';');
+  } elseif ($O=='E' && ($P1!=1 || nvl($w_plano,'')!='')) {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpenClean(null);
   } 
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if ($w_edita=='N') {
+  if ($w_edita=='N' || nvl($w_plano,'')!='') {
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
     ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b> '.$w_projeto.'</b></div></td></tr>');
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
   }
   if ($O=='L') {
-    if ($w_edita=='S') {
+    if ($w_edita=='S' || nvl($w_plano,'')!='') {
       ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
       ShowHTML('  Orientação:<ul>');
       ShowHTML('    <li>Registre as metas necessárias ao acompanhamento.');
-      ShowHTML('    <li>Antes de cadastrar as metas, informe os indicadores do projeto.');
-      ShowHTML('    <li>Somente indicadores cadastrado no projeto, poderão ser associados as metas.');
+      ShowHTML('    <li>Antes de cadastrar as metas, informe os indicadores do '.$w_label.'.');
+      ShowHTML('    <li>Somente indicadores cadastrado no '.$w_label.', poderão ser associados as metas.');
       ShowHTML('    <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
       ShowHTML('    </ul></b></font></td>');
     }
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if ($w_edita=='S') {
-       ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    } else {
+    if ($w_edita=='S' || nvl($w_plano,'')!='') {
+       ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    }
+    if ($w_edita=='N' || nvl($w_plano,'')!='') {
        ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     }
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
@@ -1642,12 +1672,12 @@ function Meta() {
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'quantidade'),4),'---').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        if ($w_edita=='S') {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'CronMeta&R='.$w_pagina.$par.'&O=L&w_chave_pai='.f($row,'chave').'&w_chave='.f($row,'chave_aux').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cronograma de aferição&SG=MTCRON'.MontaFiltro('GET').'" title="Registrar o cronograma de aferição da meta." target="CronMeta">Cr</A>&nbsp');
+        if ($w_edita=='S' || nvl($w_plano,'')!='') {
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'CronMeta&R='.$w_pagina.$par.'&O=L&w_chave_pai='.f($row,'chave').'&w_chave='.f($row,'chave_aux').'&w_plano='.$w_plano.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cronograma de aferição&SG=MTCRON'.MontaFiltro('GET').'" title="Registrar o cronograma de aferição da meta." target="CronMeta">Cr</A>&nbsp');
         } elseif ($w_sg_tramite!='CI') {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
         } else {
           ShowHTML('          ---');
         }
@@ -1663,7 +1693,7 @@ function Meta() {
     ShowHTML('  <tr><td align="right">U.M.<td>Unidade de medida do indicador');
     ShowHTML('  </table>');
   } elseif (strpos('IAEV',$O)!==false) {
-    if ($w_edita=='S' && strpos('IA',$O)!==false) {
+    if (($w_edita=='S' || nvl($w_plano,'')!='') && strpos('IA',$O)!==false) {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
       ShowHTML('        <li>Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica.');
@@ -1673,13 +1703,14 @@ function Meta() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_plano" value="'.$w_plano.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_cron[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_valor_real[]" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
 
-    if ($w_edita=='S') {
+    if ($w_edita=='S' || nvl($w_plano,'')!='') {
       ShowHTML('      <tr><td valign="top" colspan="3"><b><u>M</u>eta:</b><br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe o objetivo da meta."></td>');
       ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
       ShowHTML('      <tr valign="top">');
@@ -1714,16 +1745,20 @@ function Meta() {
       MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
       SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
       SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pelo acompanhamento da meta.',$w_unidade,null,'w_unidade',null,null);
-    } else {
-      ShowHTML('      <tr><td valign="top" colspan="3">Meta:<br><b>'.$w_titulo.'</b></td>');
-      ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td>Ordem:<br><b>'.$w_ordem.'</b></td>');
-      ShowHTML('        <td>Previsão início:<br><b>'.FormataDataEdicao($w_inicio).'</b></td>');
-      ShowHTML('        <td>Previsão término:<br><b>'.FormataDataEdicao($w_fim).'</b></td>');
-      ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td>Valor base:<br><b>'.$w_valor_inicial.'</b></td>');
-      ShowHTML('        <td>Resultado:<br><b>'.$w_quantidade.'</b></td>');
-      ShowHTML('        <td>Cumulativa:<br><b>'.retornaSimNao($w_cumulativa).'</b></td>');
+    }
+    if ($w_edita=='N' || ($O!='I' && nvl($w_plano,'')!='')) {
+      // Exibe os dados da meta somente se for ligado a solicitação (w_plano nulo)
+      if (nvl($w_plano,'')=='') {
+        ShowHTML('      <tr><td valign="top" colspan="3">Meta:<br><b>'.$w_titulo.'</b></td>');
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('        <td>Ordem:<br><b>'.$w_ordem.'</b></td>');
+        ShowHTML('        <td>Previsão início:<br><b>'.FormataDataEdicao($w_inicio).'</b></td>');
+        ShowHTML('        <td>Previsão término:<br><b>'.FormataDataEdicao($w_fim).'</b></td>');
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('        <td>Valor base:<br><b>'.$w_valor_inicial.'</b></td>');
+        ShowHTML('        <td>Resultado:<br><b>'.$w_quantidade.'</b></td>');
+        ShowHTML('        <td>Cumulativa:<br><b>'.retornaSimNao($w_cumulativa).'</b></td>');
+      }
 
       ShowHTML('     <tr><td colspan="3"><b><u>S</u>ituação atual da meta:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva, de maneria sucinta, a situação atual da meta.">'.$w_situacao_atual.'</TEXTAREA></td>');
       ShowHTML('     <tr>');
@@ -1757,7 +1792,7 @@ function Meta() {
           } else {
             ShowHTML('        '.nvl(date(d.'/'.m.'/'.y,f($row,'inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'fim')),'---'));
           }
-          ShowHTML('      <td align="right" nowrap>'.formatNumber(f($row,'valor_previsto')).'</td>');
+          ShowHTML('      <td align="right" nowrap>'.formatNumber(f($row,'valor_previsto'),4).'</td>');
           if (nvl(f($row,'valor_real'),'')=='') $w_valor_real = ''; else $w_valor_real = formatNumber(f($row,'valor_real'),4);
           ShowHTML('      <td nowrap><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor executado."></td>');
           ShowHTML('    </tr>');
@@ -1766,7 +1801,7 @@ function Meta() {
       }
     }
     
-    if ($P1==1) ShowHTML('      <tr><td colspan=3 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    if ($P1!=1 || nvl($w_plano,'')!='') ShowHTML('      <tr><td colspan=3 align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1777,7 +1812,7 @@ function Meta() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$w_chave.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
@@ -1800,17 +1835,18 @@ function CronMeta() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave_pai  = $_REQUEST['w_chave_pai'];
-  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
+  $w_plano      = $_REQUEST['w_plano'];
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_edita      = nvl($_REQUEST['w_edita'],'S');
 
-  if ($w_tipo_pai=='PLANO') {
+  if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave_pai,null,null,null,null,null,'REGISTROS');
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
+    foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
-    $w_projeto        = f($RS,'titulo');
+    $w_projeto        = f($RS,'nome_completo');
     $w_valor_projeto  = f($RS,'valor');
     $w_label          = 'Plano';
   } else {
@@ -1826,7 +1862,7 @@ function CronMeta() {
     $w_label          = 'Projeto';
   }
   // Recupera os dados da meta
-  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_pai,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_pai,$w_chave,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) { $RS = $row; break; }
   $w_inicio_meta = formataDataEdicao(f($RS,'inicio'));
   $w_fim_meta    = formataDataEdicao(f($RS,'fim'));
@@ -1843,11 +1879,11 @@ function CronMeta() {
     $w_valor_real     = $_REQUEST['w_valor_real'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
     $RS = SortArray($RS,'inicio', 'asc', 'fim', 'asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
-    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+    $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
     foreach ($RS as $row) {
       $w_inicio         = FormataDataEdicao(f($row,'inicio'),1);
       $w_fim            = FormataDataEdicao(f($row,'fim'),1);
@@ -1903,7 +1939,7 @@ function CronMeta() {
       ShowHTML('  <li>O resultado alcançado é alimentado apenas quando o '.$w_label.' estiver em execução.');
       ShowHTML('  </ul></b></font></td>');
       
-      ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
       ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
       ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     } else {
@@ -1947,8 +1983,8 @@ function CronMeta() {
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_real'),4).'</td>');
         if ($w_edita=='S') {
           ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
@@ -1986,6 +2022,7 @@ function CronMeta() {
     }
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'CRONMETA',$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_plano" value="'.$w_plano.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_pai" value="'.$w_chave_pai.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -2009,7 +2046,7 @@ function CronMeta() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -2067,6 +2104,7 @@ function TelaMeta() {
   global $w_Disabled, $w_TP;
 
   $w_chave = $_REQUEST['w_chave'];
+  $w_plano = $_REQUEST['w_plano'];
   $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
@@ -2089,14 +2127,15 @@ function VisualMeta() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
-  $w_tipo_pai   = $_REQUEST['w_chave_pai'];
+  $w_plano      = $_REQUEST['w_plano'];
 
   // Verifica se a chamada foi feita da tela de cadastramento ou da tela de execução.
   if ($P1!=1) $w_edita = 'N'; else $w_edita = 'S';
 
-  if ($w_tipo_pai=='PLANO') {
+  if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
+    foreach($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
     $w_cabecalho      = f($RS,'titulo');
@@ -2131,7 +2170,7 @@ function VisualMeta() {
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
 
   // Recupera os dados da meta
-  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,$w_chave_aux,$w_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach ($RS as $row) {$RS = $row; break;}
     
   ShowHTML('<tr><td colspan="2" align="center" bgcolor="#FAEBD7"><table border=1 width="100%"><tr><td>');
@@ -2151,9 +2190,9 @@ function VisualMeta() {
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td>Meta cumulativa:<b><br>'.f($RS,'nm_cumulativa').'</td>');  
   ShowHTML('        <td>Meta exeqüível:<b><br>'.f($RS,'nm_exequivel').'</td>');  
-  if ($w_exequivel=='N') {
-    ShowHTML('      <tr><td colspan="3">Justificativa para o não cumprimento da meta:<b><br>'.nvl(crlf2br(f($RS,'justificativa_inexequivel')),'---').'</td>');  
-    ShowHTML('      <tr><td colspan="3">Medidas necessárias para realização da meta:<b><br>'.nvl(crlf2br(f($RS,'outras_medidas')),'---').'</td>');  
+  if (f($RS,'exequivel')=='N') {
+    ShowHTML('      <tr><td><td colspan="2">Justificativa para o não cumprimento da meta:<b><br>'.nvl(crlf2br(f($RS,'justificativa_inexequivel')),'---').'</td>');  
+    ShowHTML('      <tr><td><td colspan="2">Medidas necessárias para realização da meta:<b><br>'.nvl(crlf2br(f($RS,'outras_medidas')),'---').'</td>');  
   }
   ShowHTML('      <tr><td colspan="3">Situação atual:<b><br>'.nvl(crlf2br(f($RS,'situacao_atual')),'---').'</td>');  
   ShowHTML('      <tr><td colspan=3>Criação/última atualização:<b><br>'.formataDataEdicao(f($RS,'phpdt_alteracao'),3).'</b>, feita por <b>'.f($RS,'nm_cadastrador').'</b></td>');
@@ -2161,7 +2200,7 @@ function VisualMeta() {
   ShowHTML('</table>');    
 
   // Recupera o cronograma de realização da meta
-  $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
+  $RS_Cronograma = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave_aux,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_inicio,formataDataEdicao(time()),'CRONOGRAMA');
   $RS_Cronograma = SortArray($RS_Cronograma,'inicio','asc');
 
   if (count($RS_Cronograma) > 0) {
@@ -2361,14 +2400,14 @@ function Grava() {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_indicador'])-1; $i=$i+1) {
             if (Nvl($_POST['w_indicador'][$i],'')>'') {
-              dml_putSolicIndicador::getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_POST['w_indicador'][$i]);
+              dml_putSolicIndicador::getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_plano'],$_POST['w_indicador'][$i]);
             } 
           } 
         } elseif ($O=='E') {
-          dml_putSolicIndicador::getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,null);
+          dml_putSolicIndicador::getInstanceOf($dbms,$O,$_REQUEST['w_chave_aux'],null,$_REQUEST['w_plano'],null);
         } 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave']).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano']).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2381,7 +2420,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (nvl($_REQUEST['w_exequivel'],'')=='' && ($O=='I' || $O=='A')) {
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_plano'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Não é permitida a sobreposição de períodos em metas que tenham o mesmo indicador e base geográfica!\');');
@@ -2391,7 +2430,7 @@ function Grava() {
           }
         }
         dml_putIndicador_Meta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],Nvl($_REQUEST['w_chave_aux'],''),
-              $_REQUEST['w_indicador'],$_REQUEST['w_titulo'], $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],
+              $_REQUEST['w_plano'], $_REQUEST['w_indicador'],$_REQUEST['w_titulo'], $_REQUEST['w_descricao'], $_REQUEST['w_ordem'],
               $_REQUEST['w_inicio'],$_REQUEST['w_fim'],$_REQUEST['w_base'], $_REQUEST['w_pais'],$_REQUEST['w_regiao'],
               $_REQUEST['w_uf'], $_REQUEST['w_cidade'],$_REQUEST['w_valor_inicial'],$_REQUEST['w_quantidade'],
               $_REQUEST['w_cumulativa'], $_REQUEST['w_pessoa'],$_REQUEST['w_unidade'],$_REQUEST['w_situacao_atual'],
@@ -2404,7 +2443,7 @@ function Grava() {
         }
 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -2418,12 +2457,12 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Recupera os dados da meta
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
           foreach ($RS as $row) { $RS = $row; break; }
           $w_total      = f($RS,'quantidade');
           $w_cumulativa = f($RS,'cumulativa');
            // Verifica se há sobreposição de períodos
-          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'CRONOGRAMA');
+          $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'CRONOGRAMA');
           $RS = SortArray($RS,'fim','asc');
           foreach ($RS as $row) {
             // Despreza o registro em edição, se for alteração.
@@ -2439,7 +2478,7 @@ function Grava() {
         dml_putCronMeta::getInstanceOf($dbms,$O,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
             $_REQUEST['w_inicio'], $_REQUEST['w_fim'],$_REQUEST['w_valor_previsto'],$_REQUEST['w_valor_real']);
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave_pai='.$_REQUEST['w_chave_pai'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave_pai='.$_REQUEST['w_chave_pai'].'&w_chave='.$_REQUEST['w_chave'].'&w_plano='.$_REQUEST['w_plano'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

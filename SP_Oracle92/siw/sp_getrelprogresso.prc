@@ -373,6 +373,7 @@ begin
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
                 left        join (select sq_siw_solicitacao, max(x.ultima_alteracao) as ultima_atualizacao
                                     from siw_solic_meta x
+                                   where x.sq_siw_solicitacao is not null
                                   group by sq_siw_solicitacao
                                  )                g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
                   left      join siw_solic_meta   h  on (g.sq_siw_solicitacao = h.sq_siw_solicitacao and

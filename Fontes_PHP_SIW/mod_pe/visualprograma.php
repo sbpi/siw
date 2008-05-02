@@ -108,7 +108,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
     }
 
     // Indicadores
-    $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null);
+    $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null,null);
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
     if (count($RS)>0 && $l_indicador=='S') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

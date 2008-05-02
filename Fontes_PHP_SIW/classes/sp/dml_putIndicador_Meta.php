@@ -10,15 +10,16 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putIndicador_Meta {
-   function getInstanceOf($dbms, $operacao, $p_usuario, $p_chave, $p_chave_aux, $p_indicador, $p_titulo, 
-        $p_descricao,$p_ordem, $p_inicio, $p_fim, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, 
-        $p_valor_inicial, $p_quantidade, $p_cumulativa, $p_pessoa, $p_unidade, $p_situacao_atual,
-        $p_exequivel, $p_justificativa, $p_outras_medidas) {
+   function getInstanceOf($dbms, $operacao, $p_usuario, $p_chave, $p_chave_aux, $p_plano,
+        $p_indicador, $p_titulo, $p_descricao,$p_ordem, $p_inicio, $p_fim, $p_base, $p_pais, 
+        $p_regiao, $p_uf, $p_cidade, $p_valor_inicial, $p_quantidade, $p_cumulativa, $p_pessoa, 
+        $p_unidade, $p_situacao_atual, $p_exequivel, $p_justificativa, $p_outras_medidas) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_putIndicador_Meta';
      $params=array('p_operacao'        =>array($operacao,                            B_VARCHAR,         1),
                    'p_usuario'         =>array(tvl($p_usuario),                      B_INTEGER,        32),
                    'p_chave'           =>array(tvl($p_chave),                        B_INTEGER,        32),
                    'p_chave_aux'       =>array(tvl($p_chave_aux),                    B_INTEGER,        32),
+                   'p_plano'           =>array(tvl($p_plano),                        B_INTEGER,        32),
                    'p_indicador'       =>array(tvl($p_indicador),                    B_INTEGER,        32),
                    'p_titulo'          =>array(tvl($p_titulo),                       B_VARCHAR,       100),
                    'p_descricao'       =>array(tvl($p_descricao),                    B_VARCHAR,      2000),

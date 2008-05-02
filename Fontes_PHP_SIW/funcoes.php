@@ -813,12 +813,12 @@ function ExibeRestricao($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp
 // =========================================================================
 // Montagem da URL com os dados de uma meta
 // -------------------------------------------------------------------------
-function ExibeMeta($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp,$p_solic) {
+function ExibeMeta($O,$p_dir,$p_cliente,$p_nome,$p_chave,$p_chave_aux,$p_tp,$p_solic,$p_plano=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if (Nvl($p_tipo,'')=='') {
-    $l_string='---';
+  if (Nvl($p_plano,'')!='') {
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave=&w_chave_aux='.$p_chave_aux.'&w_plano='.$p_plano.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&O='.$O.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_tipo.'</A>';
+    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&w_solic='.$p_solic.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
   }
   return $l_string;
 }

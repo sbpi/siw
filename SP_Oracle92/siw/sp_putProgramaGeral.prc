@@ -197,6 +197,9 @@ begin
          delete siw_solic_arquivo where sq_siw_solicitacao = p_chave;
          delete siw_arquivo       where sq_siw_arquivo     in (w_arq);
          
+         delete siw_solic_indicador         where sq_siw_solicitacao = p_chave;
+         delete siw_meta_cronograma         where sq_solic_meta in (select sq_solic_meta from siw_solic_meta where sq_siw_solicitacao = p_chave);
+         delete siw_solic_meta              where sq_siw_solicitacao = p_chave;
          delete siw_solicitacao_interessado where sq_siw_solicitacao = p_chave;
 
          -- Remove o registro na tabela de programas
