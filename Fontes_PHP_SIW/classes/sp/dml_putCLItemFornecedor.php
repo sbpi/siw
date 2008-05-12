@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putCLItemFornecedor {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_chave_aux, $p_fornecedor, $p_inicio, $p_dias, 
-                          $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_ordem, $p_vencedor, $p_pesquisa) {
+               $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_ordem, $p_vencedor, $p_pesquisa) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'SP_PUTCLITEMFORNECEDOR';
      $params = array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -25,6 +25,7 @@ class dml_putCLItemFornecedor {
                      'p_fabricante'                =>array($p_fabricante,                                    B_VARCHAR,        50),
                      'p_marca_modelo'              =>array($p_marca_modelo,                                  B_VARCHAR,        50),
                      'p_embalagem'                 =>array($p_embalagem,                                     B_VARCHAR,        50),
+                     'p_fator'                     =>array($p_fator,                                         B_VARCHAR,        32),
                      'p_ordem'                     =>array(tvl($p_ordem),                                    B_VARCHAR,        10),
                      'p_vencedor'                  =>array($p_vencedor,                                      B_VARCHAR,         1),
                      'p_pesquisa'                  =>array($p_pesquisa,                                      B_VARCHAR,         1)

@@ -23,7 +23,6 @@ create or replace procedure SP_PutAcordoAditivo
     p_valor_acrescimo     in  number   default null,
     p_parcela_acrescida   in  number   default null,
     p_sq_cc               in  number   default null,
-    p_altera_item         in  varchar2 default null,
     p_chave_nova          out number
    ) is
    w_inicio         ac_acordo_aditivo.inicio%type := p_inicio;
@@ -70,12 +69,12 @@ begin
         (       sq_acordo_aditivo,         sq_siw_solicitacao,   protocolo,           codigo,           objeto,            inicio,         fim, 
                 duracao,                   documento_origem,     documento_data,      variacao_valor,   prorrogacao,       revisao, 
                 acrescimo,                 supressao,            observacao,          valor_inicial,    parcela_inicial,   valor_reajuste, 
-                parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc,            alteracao_item)
+                parcela_reajustada,        valor_acrescimo,      parcela_acrescida,   sq_cc)
         
         (select w_chave,                   p_chave_aux,          p_protocolo,         p_codigo,         p_objeto,          p_inicio,       p_fim, 
                 p_duracao,                 p_documento_origem,   p_documento_data,    p_variacao_valor, p_prorrogacao,     p_revisao,         
                 p_acrescimo,               p_supressao,          p_observacao,        p_valor_inicial,  p_parcela_inicial, p_valor_reajuste, 
-                p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc,          p_altera_item
+                p_parcela_reajustada,      p_valor_acrescimo,    p_parcela_acrescida, p_sq_cc
            from dual
          );
    Elsif p_operacao = 'A' Then
@@ -101,8 +100,7 @@ begin
              parcela_reajustada = p_parcela_reajustada,
              valor_acrescimo    = p_valor_acrescimo,
              parcela_acrescida  = p_parcela_acrescida,
-             sq_cc              = p_sq_cc,
-             alteracao_item     = p_altera_item
+             sq_cc              = p_sq_cc
        where sq_acordo_aditivo = p_chave;
    Elsif p_operacao = 'E' Then
       If w_prorrogacao = 'N' Then

@@ -557,6 +557,7 @@ begin
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                h.qtd as qtd_item,
                 m1.titulo as nm_projeto,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
@@ -631,6 +632,10 @@ begin
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
+                   left              join (select x.sq_siw_solicitacao, count(x.sq_solicitacao_item) as qtd
+                                             from cl_solicitacao_item x
+                                           group by x.sq_siw_solicitacao
+                                          )                    h  on (b.sq_siw_solicitacao       = h.sq_siw_solicitacao)                               
                    left              join pj_etapa_contrato    i  on (b.sq_siw_solicitacao       = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa         = q.sq_projeto_etapa)                   
                    inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 

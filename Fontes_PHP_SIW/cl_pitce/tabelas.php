@@ -20,6 +20,8 @@ include_once($w_dir_volta.'classes/sp/db_getTipoRecurso.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidadeMedida.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidade_PE.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putHorizonte_PE.php');
 include_once($w_dir_volta.'classes/sp/dml_putNatureza_PE.php');
@@ -233,6 +235,7 @@ function Plano() {
     ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('        Orientação:<ul>');
     ShowHTML('        <li>Os números entre parênteses indicam a soma de programas, projetos e demandas vinculadas ao plano.');
+    ShowHTML('        <li><b>ATENÇÃO: use a operação "Serviços" para indicar em que programas, projetos etc. o plano deve estar disponivel para vinculação</b>.');
     ShowHTML('        </ul></b></font></td>');
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
@@ -244,7 +247,7 @@ function Plano() {
       $w_contOut = $w_contOut+1;
       if (f($row,'Filho')>0) {
         ShowHTML('<A HREF=#"'.f($row,'chave').'"></A>');
-        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row,'titulo').'');
+        ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,f($row,'titulo'),'PITCE'));
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -255,6 +258,8 @@ function Plano() {
         } 
         ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+        ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+        ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
         ShowHTML('       </div></span>');
         ShowHTML('   <div style="position:relative; left:12;">');
         $RS1 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row,'chave'));
@@ -263,7 +268,7 @@ function Plano() {
           if (f($row1,'Filho')>0) {
             $w_contOut=$w_contOut+1;
             ShowHTML('<A HREF=#"'.f($row1,'chave').'"></A>');
-            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row1,'titulo').'');
+            ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row1,'chave'),$TP,f($row1,'titulo'),'PITCE'));
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -274,6 +279,8 @@ function Plano() {
             } 
             ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
             ShowHTML('       </div></span>');
             ShowHTML('   <div style="position:relative; left:12;">');
             $RS2 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row1,'chave'));
@@ -282,7 +289,7 @@ function Plano() {
               if (f($row2,'Filho')>0) {
                 $w_contOut = $w_contOut+1;
                 ShowHTML('<A HREF=#"'.f($row2,'chave').'"></A>');
-                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.f($row2,'titulo').'');
+                ShowHTML('<span><div align="left"><img src="images/Folder/FolderClose.gif" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row2,'chave'),$TP,f($row2,'titulo'),'PITCE'));
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -293,13 +300,15 @@ function Plano() {
                 } 
                 ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+                ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+                ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
                 ShowHTML('       </div></span>');
                 ShowHTML('   <div style="position:relative; left:12;">');
                 $RS3 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,f($row2,'chave'));
                 foreach($RS3 as $row3) {
                   $w_titulo = $w_titulo.' - '.f($row3,'titulo');
                   ShowHTML('<A HREF=#"'.f($row3,'chave').'"></A>');
-                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row3,'titulo').' ('.f($row3,'qt_solic').')');
+                  ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row3,'chave'),$TP,f($row3,'titulo','PITCE')).' ('.f($row3,'qt_solic').')');
                   if (f($row3,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row3,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -310,6 +319,8 @@ function Plano() {
                   } 
                   ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
                   ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+                  ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+                  ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
                   ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=M&w_chave='.f($row3,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Configura os serviços que podem ser vinculados a este plano.">Serviços</A>&nbsp');
                   ShowHTML('    <BR>');
                   $w_titulo = str_replace(' - '.f($row3,'titulo'),'',$w_titulo);
@@ -317,7 +328,7 @@ function Plano() {
                 ShowHTML('   </div>');
               } else {
                 $w_Imagem=$w_ImagemPadrao;
-                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row2,'titulo').' ('.f($row2,'qt_solic').')');
+                ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row2,'chave'),$TP,f($row2,'titulo'),'PITCE').' ('.f($row2,'qt_solic').')');
                 if (f($row2,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row2,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -328,6 +339,8 @@ function Plano() {
                 } 
                 ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+                ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+                ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
                 ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=M&w_chave='.f($row2,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Configura os serviços que podem ser vinculados a este plano.">Serviços</A>&nbsp');
                 ShowHTML('    <BR>');
               } 
@@ -336,7 +349,7 @@ function Plano() {
             ShowHTML('   </div>');
           } else {
             $w_Imagem=$w_ImagemPadrao;
-            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row1,'titulo').' ('.f($row1,'qt_solic').')');
+            ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row1,'chave'),$TP,f($row1,'titulo'),'PITCE').' ('.f($row1,'qt_solic').')');
             if (f($row1,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row1,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -347,6 +360,8 @@ function Plano() {
             } 
             ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+            ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
             ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=M&w_chave='.f($row1,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Configura os serviços que podem ser vinculados a este plano.">Serviços</A>&nbsp');
             ShowHTML('    <BR>');
           } 
@@ -355,7 +370,7 @@ function Plano() {
         ShowHTML('   </div>');
       } else {
         $w_Imagem=$w_ImagemPadrao;
-        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'titulo').' ('.f($row,'qt_solic').')');
+        ShowHTML('    <img src="'.$w_Imagem.'" border=0 align="center"> '.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,f($row,'titulo'),'PITCE').' ('.f($row,'qt_solic').')');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Altera as informações deste plano estratégico">AL</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exclui o plano estratégico">EX</A>&nbsp');
@@ -366,6 +381,8 @@ function Plano() {
         } 
         ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Arquivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Arquivos&SG=PEARQUIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Vincula arquivos a este plano estratégico.">Arquivos</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Objetivo&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Objetivos estratégicos&SG=PEOBJETIVO').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra objetivos para este plano estratégico.">Objetivos</A>&nbsp');
+        ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Solic&R='.$w_pagina.$par.'&O=L&w_plano='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Indicadores&SG=INDSOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra indicadores para este plano estratégico.">Indicadores</A>&nbsp');
+        ShowHTML('       <A class="'.$w_classe.'" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,'mod_pe/indicador.php?par=Meta&R='.$w_pagina.$par.'&O=L&w_plano='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).' - Metas&SG=METASOLIC').'\',\'Plano\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Cadastra metas para este plano estratégico.">Metas</A>&nbsp');
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=M&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Configura os serviços que podem ser vinculados a este plano.">Serviços</A>&nbsp');
         ShowHTML('    <BR>');
       } 
@@ -1072,6 +1089,187 @@ function Telaplano(){
   ShowHTML('       </table>');
   ShowHTML('      </td>');
   ShowHTML('      </tr> ');
+
+  $l_html = '';
+  // Indicadores
+  $RS = db_getSolicIndicador::getInstanceOf($dbms,null,null,null,$w_sq_plano,null);
+  $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+    $l_html .= chr(13).'          <tr align="center">';
+    $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Indicador</b></td>';
+    $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>U.M.</b></td>';
+    $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Fonte</b></td>';
+    $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Base</b></td>';
+    $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Última aferição</b></td>';
+    $l_html .= chr(13).'          </tr>';
+    $l_html .= chr(13).'          <tr align="center">';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Referência</b></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Referência</b></td>';
+    $l_html .= chr(13).'          </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS as $row) {
+      $l_html .= chr(13).'      <tr>';
+      if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
+      else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
+      $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
+      $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
+      if (nvl(f($row,'valor'),'')!='') {
+        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor'),4).'</td>';
+        $p_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
+        $l_html .= chr(13).'        <td align="center">';
+        if ($p_array['TIPO']=='DIA') {
+          $l_html .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+        } elseif ($p_array['TIPO']=='MES') {
+          $l_html .= chr(13).'        '.$p_array['VALOR'];
+        } elseif ($p_array['TIPO']=='ANO') {
+          $l_html .= chr(13).'        '.$p_array['VALOR'];
+        } else {
+          $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
+        }
+      } else {
+        $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+        $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+      }
+      if (nvl(f($row,'base_valor'),'')!='') {
+        $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'base_valor'),4).'</td>';
+        $p_array = retornaNomePeriodo(f($row,'base_referencia_inicio'), f($row,'base_referencia_fim'));
+        $l_html .= chr(13).'        <td align="center">';
+        if ($p_array['TIPO']=='DIA') {
+          $l_html .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+        } elseif ($p_array['TIPO']=='MES') {
+          $l_html .= chr(13).'        '.$p_array['VALOR'];
+        } elseif ($p_array['TIPO']=='ANO') {
+          $l_html .= chr(13).'        '.$p_array['VALOR'];
+        } else {
+          $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_fim')),'---');
+        }
+      } else {
+        $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+        $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
+      }
+      $l_html .= chr(13).'      </tr>';
+    } 
+    $l_html .= chr(13).'         </table></td></tr>';
+    $l_html .= chr(13).'      <tr><td colspan=2>U.M. Unidade de medida do indicador';
+  }
+
+  // Metas
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null,$w_sq_plano,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS = SortArray($RS,'ordem','asc','titulo','asc');
+  if (count($RS)>0) {
+    $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS ('.count($RS).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
+    $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+    $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
+    $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+    $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+    $l_html .= chr(13).'            <td colspan=2><b>Base</b></td>';
+    $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
+    $l_html .= chr(13).'          </tr>';
+    $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+    $l_html .= chr(13).'            <td><b>Data</b></td>';
+    $l_html .= chr(13).'            <td><b>Valor</b></td>';
+    $l_html .= chr(13).'            <td><b>Data</b></td>';
+    $l_html .= chr(13).'            <td><b>Valor</b></td>';
+    $l_html .= chr(13).'          </tr>';
+    $w_cor=$conTrBgColor;
+    $l_cron = '';
+    foreach ($RS as $row) {
+      $l_html .= chr(13).'      <tr valign="top">';
+      if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null,f($row,'sq_plano')).'</td>';
+      else                $l_html .= chr(13).'        <td>'.f($row,'titulo').'</td>';
+      if ($l_tipo=='WORD') {
+        $l_html .= chr(13).'        <td>'.f($row,'nm_indicador').'</td>';
+      } else {
+        $l_html .= chr(13).'        <td>'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+      }
+      $l_html .= chr(13).'        <td align="center">'.f($row,'sg_unidade_medida').'</td>';
+      $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
+      $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial'),4).'</td>';
+      $l_html .= chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'fim')).'</td>';
+      $l_html .= chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),4).'</td>';
+      $l_html .= chr(13).'      </tr>';
+      
+      // Monta html para exibir o cronograma da meta
+      if (f($row,'qtd_cronograma')>0) {
+        $l_cron .= chr(13).'      <tr valign="top">';
+        if($l_tipo!='WORD') $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeMeta('V',$w_dir_volta,$w_cliente,f($row,'titulo'),f($row,'chave'),f($row,'chave_aux'),$TP,null,f($row,'sq_plano')).'</td>';
+        else                $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'titulo').'</td>';
+        if ($l_tipo=='WORD') {
+          $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'nm_indicador').'</td>';
+        } else {
+          $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
+        }
+        $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
+        $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+        $RSCron = SortArray($RSCron,'inicio','asc');
+        $i = 0;
+        $w_previsto  = 0;
+        $w_realizado = 0;
+        foreach($RSCron as $row1) {
+          $i += 1;
+          if ($i>1) $l_cron .= chr(13).'      <tr valign="top">';
+          $p_array = retornaNomePeriodo(f($row1,'inicio'), f($row1,'fim'));
+          $l_cron .= chr(13).'        <td align="center">';
+          if ($p_array['TIPO']=='DIA') {
+            $l_cron .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+          } elseif ($p_array['TIPO']=='MES') {
+            $l_cron .= chr(13).'        '.$p_array['VALOR'];
+          } elseif ($p_array['TIPO']=='ANO') {
+            $l_cron .= chr(13).'        '.$p_array['VALOR'];
+          } else {
+            $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio')).' a '.formataDataEdicao(f($row1,'fim'));
+          }
+          $l_cron .= chr(13).'        </td>';
+          $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
+          $l_cron .= chr(13).'        <td align="right">'.((nvl(f($row1,'valor_real'),'')=='') ? '&nbsp;' : formatNumber(f($row1,'valor_real'),4)).'</td>';
+          if (f($row,'cumulativa')=='S') {
+            $w_previsto  += f($row1,'valor_previsto');
+            if (nvl(f($row1,'valor_real'),'')!='') $w_realizado += f($row1,'valor_real');
+          } else {
+            $w_previsto  = f($row1,'valor_previsto');
+            if (nvl(f($row1,'valor_real'),'')!='') $w_realizado = f($row1,'valor_real');
+          }
+        }
+        $l_cron .= chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+        if (f($row,'cumulativa')=='S') $l_cron .= chr(13).'        <td align="right" nowrap><b>Total acumulado&nbsp;</b></td>';
+        else                           $l_cron .= chr(13).'        <td align="right" nowrap><b>Total não acumulado&nbsp;</b></td>';
+        $l_cron .= chr(13).'        <td align="right" '.(($w_previsto!=f($row,'quantidade')) ? ' TITLE="Total previsto do cronograma difere do resultado previsto para a meta!" bgcolor="'.$conTrBgColorLightRed1.'"' : '').'><b>'.formatNumber($w_previsto,4).'</b></td>';
+        $l_cron .= chr(13).'        <td align="right"><b>'.((nvl($w_realizado,'')=='') ? '&nbsp;' : formatNumber($w_realizado,4)).'</b></td>';
+        $l_cron .= chr(13).'      </tr>';
+      }
+    } 
+    $l_html .= chr(13).'         </table></td></tr>';
+    $l_html .= chr(13).'<tr><td colspan=2>U.M. Unidade de medida do indicador';
+
+    // Exibe o cronograma de aferição das metas
+    if (nvl($l_cron,'')!='') {
+      $l_html .= chr(13).'      <tr><td colspan="2"><br><b>Cronogramas:</td></tr>';
+      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
+      $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+      $l_html .= chr(13).'            <td rowspan=2><b>Meta</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2><b>Indicador</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 width="1%" nowrap><b>U.M.</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2><b>Referência</b></td>';
+      $l_html .= chr(13).'            <td colspan=2><b>Resultado</b></td>';
+      $l_html .= chr(13).'          </tr>';
+      $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
+      $l_html .= chr(13).'            <td><b>Previsto</b></td>';
+      $l_html .= chr(13).'            <td><b>Realizado</b></td>';
+      $l_html .= chr(13).'          </tr>';
+      $l_html .= chr(13).$l_cron;
+      $l_html .= chr(13).'         </table></td></tr>';
+    }   
+  }
+  // Imprime indicadores e metas
+  ShowHTML($l_html);
 
 /*
   // Serviços

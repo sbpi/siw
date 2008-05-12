@@ -70,7 +70,7 @@ begin
                      when 5 then 'Serviço'
                 end as nm_classe,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
-                g.fabricante, g.marca_modelo, g.embalagem, g.valor_unidade, g.valor_item
+                g.fabricante, g.marca_modelo, g.embalagem, g.valor_unidade, g.valor_item, g.fator_embalagem
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                   inner   join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -142,10 +142,10 @@ begin
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
+                a.ordem, 
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
-                b.exibe_catalogo, b.vida_util, b.ativo, 
+                b.exibe_catalogo, b.vida_util, b.ativo,
                 b.pesquisa_preco_menor, b.pesquisa_preco_maior, b.pesquisa_preco_medio,
                 b.pesquisa_data, b.pesquisa_validade, 
                 b.pesquisa_validade-f.dias_aviso_pesquisa as pesquisa_aviso,
@@ -169,9 +169,9 @@ begin
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 coalesce(i.qtd_cotacao,0) as qtd_cotacao,
                 j.qtd_proposta,
-                k.codigo_interno as numero_ata,
+                k.codigo_interno as numero_ata, k.fim,
                 l.qtd_pedido,
-                m.valor_unidade,
+                m.valor_unidade, m.fator_embalagem,
                 ((1 - (b.pesquisa_preco_medio/m.valor_unidade)) * 100) as variacao_valor
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
@@ -273,7 +273,8 @@ begin
                 montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 dados_solic(g.sq_siw_solicitacao) as dados_solic,
-                g.codigo_interno as numero_ata
+                g.codigo_interno as numero_ata,
+                i.fator_embalagem
            from cl_solicitacao_item                a
                 inner     join cl_material         b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material    c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -288,8 +289,9 @@ begin
                   inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
                                                           h.ativo               = 'S'
                                                          )
+                inner     join cl_item_fornecedor  i  on (a.sq_solicitacao_item = i.sq_solicitacao_item)
           where a.sq_solicitacao_item not in (select x.item_licitacao from cl_solicitacao_item_vinc x inner join cl_solicitacao_item y on (x.item_pedido = y.sq_solicitacao_item) where y.sq_siw_solicitacao = p_solicitacao)
-            and a.quantidade          > a.quantidade_autorizada
+            --and a.quantidade          > a.quantidade_autorizada
             and a.cancelado           = 'N'
             and (p_tipo_material is null or (p_tipo_material is not null and b.sq_tipo_material = p_tipo_material))
             and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno   like '%'||p_codigo||'%'))
@@ -323,7 +325,7 @@ begin
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
                 i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
-                i.dias_validade_proposta,
+                i.dias_validade_proposta, i.fator_embalagem,
                 j.dias_validade_proposta as dias_validade_certame
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
@@ -371,7 +373,7 @@ begin
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
                 i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
-                i.dias_validade_proposta, i.origem
+                i.dias_validade_proposta, i.origem, i.fator_embalagem
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
                 inner     join cl_tipo_material         c  on (b.sq_tipo_material    = c.sq_tipo_material)
@@ -431,7 +433,7 @@ begin
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
-                g.fornecedor, g.dias_validade_proposta,
+                g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
                 h.nome_resumido nm_fornecedor,
                 i.qtd_proposta,
                 nvl(b.pesquisa_preco_medio,0)*nvl(f.percentual_acrescimo,0)/100 as variacao_valor

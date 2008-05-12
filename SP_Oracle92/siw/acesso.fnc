@@ -383,6 +383,11 @@ begin
         );
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
+    If w_gestor_sistema = 'N' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
+       -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
+       -- e se não for gestor do sistema, complementa o resultado para somar 16
+       Result := Result + 10;
+    End If;
  Else
     -- Verifica se é titular ou substituto de alguma unidade responsável por etapa
     select count(*) into w_existe

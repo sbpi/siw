@@ -174,7 +174,7 @@ function Rel_Executivo() {
       }
       foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
-        ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo'))).'</b></td></tr>');
+        ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo')),'PITCE').'</b></td></tr>');
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
         $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');

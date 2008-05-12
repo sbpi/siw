@@ -226,7 +226,7 @@ function Rel_Progresso() {
             }
           }
           ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
-          if (nvl(f($row,'nm_plano'),'')!='')    ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,strtoupper(f($row,'nm_plano'))).'</font></div></td></tr>');
+          if (nvl(f($row,'nm_plano'),'')!='')    ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,strtoupper(f($row,'nm_plano')),'PITCE').'</font></div></td></tr>');
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
           if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Programa: '.f($row,'nm_programa').'</font></div></td></tr>');
           if (nvl(f($row,'nm_cc'),'')!='')       ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Classificação: '.f($row,'nm_cc').'</font></div></td></tr>');

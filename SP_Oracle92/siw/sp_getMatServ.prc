@@ -51,7 +51,9 @@ begin
                                   from siw_solicitacao                  x
                                        inner   join siw_menu            y on (x.sq_menu            = y.sq_menu and y.sigla = 'GCZCAD')
                                        inner   join cl_solicitacao_item z on (x.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                 where z.valor_unit_est = (select min(m.valor_unit_est)
+                                 where p_restricao <> 'EDICAOT'
+                                   and p_restricao <> 'EDICAOP'
+                                   and z.valor_unit_est = (select min(m.valor_unit_est)
                                                              from siw_solicitacao                  k
                                                                   inner   join siw_menu            l on (k.sq_menu            = l.sq_menu and l.sigla = 'GCZCAD')
                                                                   inner   join cl_solicitacao_item m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao)
@@ -134,7 +136,7 @@ begin
                 to_char(g.inicio,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inicio,
                 to_char(g.fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
                 g.fim-f.dias_aviso_pesquisa as aviso,
-                g.fabricante, g.marca_modelo, g.embalagem,
+                g.fabricante, g.marca_modelo, g.embalagem, g.fator_embalagem,
                 case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
                 h.nome as nm_fornecedor, h.nome_resumido as nm_fornecedor_res
            from cl_material                        a
@@ -230,9 +232,7 @@ begin
                 f.percentual_acrescimo,
                 x.ordem as nr_item_ata, 
                 x.quantidade, x.quantidade_autorizada as qtd_comprada,
-                x1.valor_unidade,
-                x1.valor_item,
-                x1.origem,
+                x1.valor_unidade, x1.valor_item, x1.origem, x1.fator_embalagem,
                 case x1.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
                 x2.sq_pessoa as sq_detentor_ata, x2.nome_resumido as nm_detentor_ata, 
                 w.sq_siw_solicitacao, w.codigo_interno as numero_ata, w.inicio, w.fim,
@@ -251,8 +251,9 @@ begin
                   inner   join siw_solicitacao     w  on (x.sq_siw_solicitacao  = w.sq_siw_solicitacao)
                     inner join siw_menu            w1 on (w.sq_menu             = w1.sq_menu and w1.sigla = 'GCZCAD')
                     inner join ac_acordo           w2 on (w.sq_siw_solicitacao  = w2.sq_siw_solicitacao)
-                    inner join siw_tramite         w3 on (w.sq_siw_tramite      = w3.sq_siw_tramite)
-                    inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite)
+                    inner join siw_tramite         w3 on (w.sq_siw_tramite      = w3.sq_siw_tramite and
+                                                          w3.sigla              <> 'CA'
+                                                         )
           where a.cliente         = p_cliente
             and (p_chave         is null or (p_chave         is not null and a.sq_material      = p_chave))
             and (p_tipo_material is null or (p_tipo_material is not null and a.sq_tipo_material = p_tipo_material))

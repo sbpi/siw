@@ -50,9 +50,28 @@ function ValidaARP($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
     $l_erro.='<li>Informe pelo menos um item para ARP.';
     $l_tipo=0; 
   } elseif (count($l_rs_tramite)>0) {
+    // Pedidos internos não podem relacionar itens de atas diferentes
+    if (f($l_rs_solic,'interno')=='S') {
+      $w_atual = '';
+      $w_erro_ata = false;
+      reset($l_rs_item);
+      foreach($l_rs_item as $row) {
+        if ($w_atual=='') {
+          $w_atual = f($row,'numero_ata');
+        } elseif ($w_atual != f($row,'numero_ata')) {
+          $w_erro_ata = true;
+        }
+      }
+      if ($w_erro_ata) {
+        $l_erro .= '<li>Pedidos internos não podem relacionar itens de atas diferentes.';
+        $l_tipo  = 0;
+      }
+    }
+
     // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
     if(f($l_rs_tramite,'ordem')>1 && f($l_rs_tramite,'ativo')=='S') {
       // Verifica se cada item possui no minimo duas pesquisas de preço
+      reset($l_rs_item);
       foreach($l_rs_item as $row) {
         // Verifica se cada item possui no minimo duas pesquisas de preço
         if(f($row,'qtd_cotacao')<2) {
@@ -61,18 +80,6 @@ function ValidaARP($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
         }
       }
     } 
-    if(f($l_rs_tramite,'sigla')=='EA') {
-      if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
-        $l_erro.='<li>Informe os dados da análise.';
-        $l_tipo=0;       
-      }
-      foreach($l_rs_item as $l_row) {
-        if(nvl(f($l_row,'qtd_pedido'),0)>nvl(f($l_row,'qtd_licitacao'),0)) {
-          $l_erro.='<li>ERRO';
-          $l_tipo=0; 
-        }
-      }
-    }
   }
   
   // Configura a variável de retorno com o tipo de erro e a mensagem

@@ -582,7 +582,7 @@ function Inicial() {
                 if($w_segmento=='Público' && substr($SG,0,3)=='GCD') {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Notas de empenho'.'&SG=GCDNOTA'.MontaFiltro('GET').'" target="Notas" title="Registra as notas de empenho do contrato.">NE</A>&nbsp;');
                 }
-                if($w_segmento=='Público' && substr($SG,0,3)=='GCZ') {
+                if(f($row,'qtd_item')>0) {
                   ShowHTML('          <A class="hl" HREF="mod_cl/certame.php?par=ItensContrato&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Itens de ARP'.'&SG=GCZITEM'.MontaFiltro('GET').'" target="ItensARP" title="Itens de arp.">IT</A>&nbsp;');
                 }
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações, sem enviá-la.">AN</A>&nbsp');
@@ -805,9 +805,8 @@ function Geral() {
   if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
     
   // Verifica se a geração do código será automática ou não
-  $RS = db_getParametro::getInstanceOf($dbms,$w_cliente,'AC',null);
-  foreach($RS as $row){$RS=$row; break;}
-  $w_numeracao_automatica = f($RS,'numeracao_automatica');
+  if (f($RS_Menu,'numeracao_automatica')==0) $w_numeracao_automatica = 'N'; else $w_numeracao_automatica = 'S'; 
+
   // Carrega os valores padrão para país, estado e cidade 
   // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
@@ -871,7 +870,7 @@ function Geral() {
     $w_aditivo              = $_REQUEST['w_aditivo'];
     $w_sq_menu_relac        = $_REQUEST['w_sq_menu_relac'];
   } else {
-    if (strpos('AEV',$O)!==false || nvl($w_copia,'')!='') {
+    if ((strpos('AEV',$O)!==false || nvl($w_copia,'')!='') && $w_troca=='') {
       // Recupera os dados do contrato
       if (nvl($w_copia,'')!='') {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
@@ -1114,7 +1113,7 @@ function Geral() {
       $w_Disabled = ' DISABLED ';
       if ($O=='V') $w_Erro = Validacao($w_sq_solicitacao,$SG);
     } 
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
@@ -2339,6 +2338,7 @@ function Representante() {
   // tratando as particularidades de cada serviço
   if ($O!='L') {
     ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - '.(($w_tipo=='PREPOSTO') ? 'Prepostos': 'Representantes').'</TITLE>');
     ScriptOpen('JavaScript');
     Modulo();
     FormataCPF();
@@ -2723,7 +2723,7 @@ function Parcelas() {
       } else {
         if(f($RS_Adit,'prorrogacao')=='S') Validate('w_valor_inicial','Valor inicial','VALOR','1',4,18,'','0123456789.,');
         if(f($RS_Adit,'acrescimo')=='S'||f($RS_Adit,'supressao')=='S') Validate('w_valor_excedente','Valor do acréscimo/supressão','VALOR','1',4,18,'','-0123456789.,');
-        if(f($RS_Adit,'revisao')=='S')     Validate('w_valor_reajuste','Valor reajuste','VALOR','1',4,18,'','0123456789.,');
+        if(f($RS_Adit,'revisao')=='S')     Validate('w_valor_reajuste','Valor reajuste','VALOR','1',4,18,'','0123456789.,-');
       }
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
       if($w_segmento=='Público') {
@@ -3746,6 +3746,7 @@ function Concluir() {
   if ($w_tipo_conc==2) {
     ShowHTML('              <td><b>Da<u>t</u>a da rescisão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data da rescisão.">'.ExibeCalendario('Form','w_fim_real').'</td>');
   } else {
+    ShowHTML('              <td><b>Da<u>t</u>a de encerramento:</b><br><input DISABLED accesskey="T" type="text" name="w_fim_real1" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim_real).'" onKeyDown="FormataData(this,event);" title="Data de término da vigência."></td>');
     ShowHTML('<INPUT type="hidden" name="w_fim_real" value="'.FormataDataEdicao($w_fim_real).'">');
   } 
   ShowHTML('          </table>');
@@ -3804,10 +3805,6 @@ function Aditivos() {
   $w_contrato_ini   = f($RS_Solic,'inicio');
   $w_contrato_fim   = f($RS_Solic,'fim');
 
-  $RS_Item = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
-  $RS_Item = SortArray($RS_Item,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
-  if (count($RS_Item)>0) $w_existe_item = 'S'; else $w_existe_item = 'N';
-
   if ($w_troca>'') {
     // Se for recarga da página 
     $w_protocolo          = $_REQUEST['w_protocolo'];
@@ -3819,7 +3816,6 @@ function Aditivos() {
     $w_doc_origem         = $_REQUEST['w_doc_origem'];
     $w_doc_data           = $_REQUEST['w_doc_data'];
     $w_variacao_valor     = $_REQUEST['w_variacao_valor'];
-    $w_altera_item        = $_REQUEST['w_altera_item'];
     $w_prorrogacao        = $_REQUEST['w_prorrogacao'];
     $w_revisao            = $_REQUEST['w_revisao'];
     $w_acrescimo          = $_REQUEST['w_acrescimo'];
@@ -3834,7 +3830,7 @@ function Aditivos() {
     $w_valor_acrescimo    = $_REQUEST['w_valor_acrescimo'];
     $w_parcela_acrescida  = $_REQUEST['w_parcela_acrescida'];
     $w_tipo               = $_REQUEST['w_tipo'];
-    $w_sq_acordo_parcela     = $_REQUEST['w_sq_acordo_parcela'];
+    $w_sq_acordo_parcela  = $_REQUEST['w_sq_acordo_parcela'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
     $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,null,null);
@@ -3852,7 +3848,6 @@ function Aditivos() {
       $w_doc_origem         = f($row,'documento_origem');
       $w_doc_data           = FormataDataEdicao(f($row,'documento_data'));
       $w_variacao_valor     = formatNumber(f($row,'variacao_valor'),6);
-      $w_altera_item        = f($row,'alteracao_item');
       $w_prorrogacao        = f($row,'prorrogacao');
       if($w_prorrogacao=='N') $w_revisao = 'N';
       else                    $w_revisao = f($row,'revisao');
@@ -3876,26 +3871,16 @@ function Aditivos() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Aditivos de contrato</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
-    if ($w_existe_item=='S') {
-      ShowHTML('function ajustaItem(p_indice) {');
-      ShowHTML('  if (document.Form["w_sq_solicitacao_item[]"][p_indice].checked) { ');
-      ShowHTML('     eval("document.Form.w_cancelado_novo_" + p_indice + "[0].disabled=false;") ');
-      ShowHTML('     eval("document.Form.w_cancelado_novo_" + p_indice + "[1].disabled=false;") ');
-      ShowHTML('     document.Form["w_motivo[]"][p_indice].disabled=false; ');
-      ShowHTML('     document.Form["w_valor_novo[]"][p_indice].disabled=false; ');
-      ShowHTML('  } else {');
-      ShowHTML('     eval("document.Form.w_cancelado_novo_" + p_indice + "[0].disabled=true;") ');
-      ShowHTML('     eval("document.Form.w_cancelado_novo_" + p_indice + "[1].disabled=true;") ');
-      ShowHTML('     document.Form["w_motivo[]"][p_indice].disabled=true; ');
-      ShowHTML('     document.Form["w_valor_novo[]"][p_indice].disabled=true; ');
-      ShowHTML('  }');
-      ShowHTML('}');
-    }
     ShowHTML('function recarrega() {');
     ShowHTML('  document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; ');
-    ShowHTML('  document.Form.w_troca.value=\'w_sq_cc\'; ');
+    if (substr($SG,0,3)!='GCZ') {
+      ShowHTML('  document.Form.w_troca.value=\'w_sq_cc\'; ');
+    } else {
+      ShowHTML('  document.Form.w_troca.value=\'w_codigo\'; ');
+    }
     ShowHTML('  document.Form.O.value=\''.$O.'\'; ');
     ShowHTML('  document.Form.submit(); ');
     ShowHTML('}');
@@ -3934,60 +3919,20 @@ function Aditivos() {
         }
         if($w_revisao=='S') {
           Validate('w_valor_reajuste','Valor do reajste','VALOR','1',4,18,'','0123456789.,-');
-          Validate('w_parcela_reajustada','Valor mensal do reajuste','VALOR','1',4,18,'','0123456789.,');
-          CompValor('w_valor_reajuste','Valor do reajuste','>',0,'0');
-          CompValor('w_parcela_reajustada','Valor mensal do reajuste','>',0,'0');
+          Validate('w_parcela_reajustada','Valor mensal do reajuste','VALOR','1',4,18,'','0123456789.,-');
+          CompValor('w_valor_reajuste','Valor do reajuste','!=',0,'0');
+          CompValor('w_parcela_reajustada','Valor mensal do reajuste','!=',0,'0');
         }
         if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0) {
           Validate('w_tipo','Acréscimo/Supressão','SELECT',1,1,18,'1','1');
           if(nvl($w_tipo,'')!='NAOAPLICA') {
-            Validate('w_valor_acrescimo','Valor do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,');
-            Validate('w_parcela_acrescida','Valor mensal do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,');
-            CompValor('w_valor_acrescimo','Valor do acréscimo/supressao','>',0,'0');
-            CompValor('w_parcela_acrescida','Valor mensal do acréscimo/supressao','>',0,'0');
+            Validate('w_valor_acrescimo','Valor do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,-');
+            Validate('w_parcela_acrescida','Valor mensal do acréscimo/supressao','VALOR','1',4,18,'','0123456789.,-');
+            CompValor('w_valor_acrescimo','Valor do acréscimo/supressao','!=',0,'0');
+            CompValor('w_parcela_acrescida','Valor mensal do acréscimo/supressao','!=',0,'0');
           }
         }
         Validate('w_observacao','Observação','1','','1','500','1','1');
-        if ($w_altera_item=='S') {
-          ShowHTML('  var i; ');
-          ShowHTML('  var w_erro=true; ');
-          ShowHTML('  var w_erro_altera=false; ');
-          ShowHTML('  for (i=0; i < theForm["w_sq_solicitacao_item[]"].length; i++) {');
-          ShowHTML('    if (theForm["w_sq_solicitacao_item[]"][i].checked) {');
-          ShowHTML('      w_erro=false;');
-          ShowHTML('      if (theForm["w_valor_novo[]"][i].value==theForm["w_valor_atual[]"][i].value && ');
-          ShowHTML('          (eval("document.Form.w_cancelado_novo_" + i + "[0].checked") && theForm["w_cancelado_atual[]"][i].value=="S" || ');
-          ShowHTML('           eval("document.Form.w_cancelado_novo_" + i + "[1].checked") && theForm["w_cancelado_atual[]"][i].value=="N" ');
-          ShowHTML('          ) ');
-          ShowHTML('         ) {');
-          ShowHTML('        w_erro_altera=true;');
-          ShowHTML('      }');
-          ShowHTML('    }');
-          ShowHTML('  }');
-          ShowHTML('  if (w_erro) {');
-          ShowHTML('    alert(\'Você deve informar pelo menos um item!\'); ');
-          ShowHTML('    return false;');
-          ShowHTML('  } else if (w_erro_altera) {');
-          ShowHTML('    alert(\'Todos os itens selecionados devem ter alteração de situação ou de valor!\'); ');
-          ShowHTML('    return false;');
-          ShowHTML('  }');
-          ShowHTML('  for (i=0; i < theForm["w_sq_solicitacao_item[]"].length; i++) {');
-          ShowHTML('    if (theForm["w_sq_solicitacao_item[]"][i].checked) {');
-          ShowHTML('      w_erro=false;');
-          ShowHTML('      if (theForm["w_motivo[]"][i].value=="" && ');
-          ShowHTML('          (eval("document.Form.w_cancelado_novo_" + i + "[0].checked") && theForm["w_cancelado_atual[]"][i].value=="N") ');
-          ShowHTML('         ) {');
-          ShowHTML('         alert(\'Informe o motivo de cancelamento de cada item cancelado neste aditivo!\'); ');
-          ShowHTML('         theForm["w_motivo[]"][i].focus();');
-          ShowHTML('         return false;');
-          ShowHTML('      } else if (theForm["w_motivo[]"][i].value!="" &&  eval("document.Form.w_cancelado_novo_" + i + "[1].checked") ) {');
-          ShowHTML('         alert(\'Somente itens cancelados devem ter motivo de cancelamento informado!\'); ');
-          ShowHTML('         theForm["w_motivo[]"][i].focus();');
-          ShowHTML('         return false;');
-          ShowHTML('      }');
-          ShowHTML('    }');
-          ShowHTML('  }');
-        }
       }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } 
@@ -4026,6 +3971,11 @@ function Aditivos() {
   ShowHTML('  <br>Vigência: '.formataDataEdicao(f($RS_Solic,'inicio')).' a '.formataDataEdicao(f($RS_Solic,'fim')));
   ShowHTML('  </b></font></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+  ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+  ShowHTML('  Orientação:<ul>');
+  ShowHTML('  <li>Alterações nos dados dos itens devem ser executadas através da operação "IT".');
+  ShowHTML('  <li>Outras alterações contratuais, não contempladas nesta tela, exigem a devolução para a fase de cadastramento.');
+  ShowHTML('  </ul></b></font></td>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
@@ -4126,11 +4076,6 @@ function Aditivos() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_aditivo_fim" value="'.FormataDataEdicao($w_aditivo_fim).'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_cancelado_atual[]" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_motivo[]" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_valor_atual[]" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_valor_novo[]" value="">');
     if($O=='E') {
       ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.$w_inicio.'">');
       ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
@@ -4138,14 +4083,6 @@ function Aditivos() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('          <tr>');
-    if($w_existe_item=='S') {
-      if($O=='A') {
-        ShowHTML('      <td><b>Altera itens do contrato (situação/valor):</b><br>'.retornaSimNao($w_altera_item).'</td>');
-        ShowHTML('<INPUT type="hidden" name="w_altera_item" value="'.$w_altera_item.'">');
-      } else {
-        MontaRadioNS('<b>Altera itens do contrato (situação/valor)?</b>',$w_altera_item,'w_altera_item','Marque a opção SIM se este aditivo alterar o valor base contratado.',null,'onClick="recarrega();"');
-      }
-    }
     if($O=='A') {
       ShowHTML('      <td><b>Prorrogação:</b><br>'.retornaSimNao($w_prorrogacao).'</td>');
       ShowHTML('<INPUT type="hidden" name="w_prorrogacao" value="'.$w_prorrogacao.'">');
@@ -4218,56 +4155,6 @@ function Aditivos() {
       ShowHTML('          <td><b>V<u>a</u>lor mensal do do acréscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_parcela_acrescida" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_acrescida.'" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao acréscimo/supressão do valor inicial das parcelas do contrato."></td>');
     }
     ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=65 title="Observações gerais sobre o aditivo.">'.$w_observacao.'</TEXTAREA></td>');
-
-    //Itens do contrato.
-    if($w_altera_item=='S') {
-      ShowHTML('      <tr><td colspan="3"><br><b>Selecione os itens a serem alterados e informe os dados solicitados:</b>');
-      ShowHTML('      <tr><td colspan="3"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-      ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('            <td rowspan="2"><b>&nbsp;</b></td>');
-      ShowHTML('            <td rowspan="2"><b>Ordem</b></td>');
-      ShowHTML('            <td rowspan="2"><b>Código</b></td>');
-      ShowHTML('            <td rowspan="2"><b>Nome</b></td>');
-      ShowHTML('            <td colspan="2"><b>Alteração de situação</b></td>');
-      ShowHTML('            <td colspan="2"><b>Alteração de valor</b></td>');
-      ShowHTML('          </tr>');
-      ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('            <td><b>Cancelado</b></td>');
-      ShowHTML('            <td><b>Motivo</b></td>');
-      ShowHTML('            <td><b>Atual</b></td>');
-      ShowHTML('            <td><b>Novo</b></td>');
-      ShowHTML('          </tr>');
-      $w_cont = 0;
-      foreach($RS_Item as $row) {
-        $w_cont += 1;
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        $RS = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,$w_chave_aux,f($row,'sq_acordo_parcela'),null,null,null,null,null,'PARCELA');
-        if(count($RS)>0 || $_REQUEST['w_sq_solicitacao_item'][$w_cont]) {
-          $l_disabled = '';
-          ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'" CHECKED onClick="ajustaItem('.$w_cont.');">');
-        } else {
-          $l_disabled = ' DISABLED ';
-          ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'" onClick="ajustaItem('.$w_cont.');">');
-        }
-        ShowHTML('        <td width="5%" nowrap align="center">'.f($row,'ordem').'</td>');
-        ShowHTML('        <td width="10%" nowrap align="center">'.f($row,'codigo_interno').'</td>');
-        ShowHTML('        <td>'.f($row,'nome').'</td>');
-        ShowHTML('        <td>');
-        if (nvl($_REQUEST['w_cancelado_novo_'.$w_cont],nvl(f($RS,'cancelado'),f($row,'cancelado')))=='S') {
-          ShowHTML('            <input '.$l_disabled.' type="radio" name="w_cancelado_novo_'.$w_cont.'" value="S" checked> Sim <input '.$l_disabled.' type="radio" name="w_cancelado_novo_'.$w_cont.'" value="N"> Não');
-        } else {
-          ShowHTML('            <input '.$l_disabled.' type="radio" name="w_cancelado_novo_'.$w_cont.'" value="S"> Sim <input '.$l_disabled.' type="radio" name="w_cancelado_novo_'.$w_cont.'" value="N" checked> Não');
-        }
-        ShowHTML('<INPUT type="hidden" name="w_cancelado_atual[]" value="'.f($row,'cancelado').'">');
-        ShowHTML('        <td><textarea '.$l_disabled.' accesskey="O" name="w_motivo[]" class="STI" ROWS=2 cols=35>'.nvl($_REQUEST['w_motivo'][$w_cont],f($RS,'motivo_cancelamento')).'</TEXTAREA></td>');
-        ShowHTML('        <td width="10%" nowrap align="right">'.formatNumber(Nvl(f($row,'valor_item'),0),2).'</td>');
-        ShowHTML('<INPUT type="hidden" name="w_valor_atual[]" value="'.formatNumber(Nvl(f($row,'valor_item'),0),2).'">');
-        ShowHTML('        <td width="10%" nowrap align="right"><input '.$l_disabled.' type="text" name="w_valor_novo[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($_REQUEST['w_valor_novo'][$w_cont],formatNumber(Nvl(f($RS,'valor_novo'),f($row,'valor_item')),2)).'" onKeyDown="FormataValor(this,18,2,event);"></td>');
-        ShowHTML('      </tr>');
-      }     
-      ShowHTML('    </table>');
-    }
 
     ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3"><hr>');
@@ -4347,6 +4234,7 @@ function Notas() {
   } 
    Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Notas de empenho</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -4636,6 +4524,7 @@ function NotaCancel() {
   } 
    Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Cancelamento de notas de empenho</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -4931,7 +4820,21 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           } 
         } 
-      } 
+      } elseif (nvl($_REQUEST['w_codigo_interno'],'')!='' && ($O=='I' || $O=='A')) {
+        $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,$SG,5,
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            null,$_REQUEST['w_codigo_interno'], null,null,null,null,null,null,null,null,null);
+        if(count($RS)>0) {
+          foreach($RS as $row) { $RS = $row; break; }
+          if ($_REQUEST['w_chave']!=f($row,'sq_siw_solicitacao')) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Código já existe!\');');
+            ScriptClose();
+            RetornaFormulario(null);
+            exit;
+          }
+        }
+      }
       dml_putAcordoGeral::getInstanceOf($dbms,$O, $w_cliente, 
           $_REQUEST['w_chave'], $_REQUEST['w_menu'], $_REQUEST['w_sq_unidade_resp'], $_REQUEST['w_solicitante'], 
           $_SESSION['SQ_PESSOA'], $_REQUEST['w_sqcc'], $_REQUEST['w_descricao'], $_REQUEST['w_justificativa'], 
@@ -5084,15 +4987,7 @@ function Grava() {
             $_REQUEST['w_prorrogacao'],$_REQUEST['w_revisao'],$w_acrescimo,$w_supressao,
             $_REQUEST['w_observacao'],nvl($_REQUEST['w_valor_inicial'],0),nvl($_REQUEST['w_parcela_inicial'],0),
             nvl($_REQUEST['w_valor_reajuste'],0),nvl($_REQUEST['w_parcela_reajustada'],0),nvl($_REQUEST['w_valor_acrescimo'],0),
-            nvl($_REQUEST['w_parcela_acrescida'],0),$_REQUEST['w_sq_cc'],$_REQUEST['w_altera_item'],&$w_chave_nova);
-      
-      for ($i=0; $i<=count($_POST['w_sq_solicitacao_item'])-1; $i=$i+1) {
-        if (Nvl($_REQUEST['w_sq_solicitacao_item'][$i],'')>'') {
-          dml_putLancamentoDoc::getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_tipo_documento'][$i],
-             $_REQUEST['w_numero'][$i],$_REQUEST['w_data'][$i],null,null,
-             'N','N','N',$_REQUEST['w_sq_acordo_nota'][$i],$_REQUEST['w_inicial'][$i],$_REQUEST['w_excedente'][$i],$_REQUEST['w_reajuste'][$i],&$w_chave_nova);
-        } 
-      }
+            nvl($_REQUEST['w_parcela_acrescida'],0),$_REQUEST['w_sq_cc'],&$w_chave_nova);
       
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');

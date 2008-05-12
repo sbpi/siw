@@ -10,7 +10,8 @@ create or replace procedure SP_PutCLItemFornecedor
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
     p_embalagem                in varchar2  default null,
-    p_ordem                    in varchar2 default null,
+    p_fator                    in number    default null,
+    p_ordem                    in varchar2  default null,
     p_vencedor                 in varchar2  default null,
     p_pesquisa                 in varchar2  default null
    ) is
@@ -27,11 +28,11 @@ begin
       insert into cl_item_fornecedor
         (sq_item_fornecedor,         sq_solicitacao_item, sq_material, fornecedor,   inicio,     fim,          valor_unidade,
          valor_item,                 ordem,               vencedor,    pesquisa,     fabricante, marca_modelo, embalagem, 
-         dias_validade_proposta)
+         dias_validade_proposta,     fator_embalagem)
       values
         (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     (p_inicio + p_dias - 1), p_valor, 
          (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem,
-         p_dias
+         p_dias,                     coalesce(p_fator,1)
         );
       
       -- Atualiza a tabela CL_MATERIAL

@@ -232,7 +232,7 @@ function Rel_ItensAta() {
         ShowHTML('        <td align="center">'.f($row,'nr_item_ata').'</td>');
         if($w_tipo=='WORD') ShowHTML('        <td nowrap>'.f($row,'nm_detentor_ata').'</td>');
         else                ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>');
-        ShowHTML('        <td align="center">'.f($row,'codigo_interno').'</td>');
+        ShowHTML('        <td align="center" width="1%" nowrap>'.f($row,'codigo_interno').'</td>');
         if ($w_tipo!='WORD') {
           ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         } else {

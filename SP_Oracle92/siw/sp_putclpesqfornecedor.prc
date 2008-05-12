@@ -10,6 +10,7 @@ create or replace procedure SP_PutCLPesqFornecedor
     p_fabricante               in varchar2  default null,
     p_marca_modelo             in varchar2  default null,
     p_embalagem                in varchar2  default null,
+    p_fator                    in number    default null,
     p_material                 in varchar2  default null,
     p_origem                   in varchar2  default null
    ) is
@@ -20,11 +21,11 @@ begin
          insert into cl_item_fornecedor
            (sq_item_fornecedor,         sq_solicitacao_item, sq_material,  fornecedor,     inicio,    fim,   valor_unidade,
             valor_item,                 pesquisa,            fabricante,   marca_modelo,   embalagem, ordem, dias_validade_proposta,
-            origem)
+            origem,                     fator_embalagem)
          values
-           (sq_item_fornecedor.nextval, null,  p_material,   p_fornecedor,   p_inicio,  (p_inicio + p_dias -1), p_valor, 
-            p_valor,                    'S',   p_fabricante, p_marca_modelo, p_embalagem, '0',    p_dias,
-            p_origem);
+           (sq_item_fornecedor.nextval, null,                p_material,   p_fornecedor,   p_inicio,  (p_inicio + p_dias -1), p_valor, 
+            p_valor,                    'S',                 p_fabricante, p_marca_modelo, p_embalagem, '0', p_dias,
+            p_origem,                   coalesce(p_fator,1));
          -- Atualiza a tabela de materiais
          sp_ajustapesquisamaterial(p_cliente,p_material);
       Elsif p_chave is not null Then
@@ -37,6 +38,7 @@ begin
            fabricante             = p_fabricante,
            marca_modelo           = p_marca_modelo,
            embalagem              = p_embalagem,
+           fator_embalagem        = coalesce(p_fator,fator_embalagem),
            origem                 = p_origem
          where sq_item_fornecedor = p_chave;
          -- Atualiza a tabela de materiais

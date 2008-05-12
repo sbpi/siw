@@ -387,7 +387,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
     $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
            null,null,null,null,null,null,null,null,null,null,
            null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
-    $RS1 = SortArray($RS1,'titulo','asc','prioridade','asc');
+    $RS1 = SortArray($RS1,'codigo_interno','asc','titulo','asc','prioridade','asc');
 
     if (count($RS1) > 0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

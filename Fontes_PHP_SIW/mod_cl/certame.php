@@ -1162,6 +1162,7 @@ function ItensContrato() {
     $w_fabricante         = $_REQUEST['w_fabricante'];
     $w_marca_modelo       = $_REQUEST['w_marca_modelo'];
     $w_embalagem          = $_REQUEST['w_embalagem'];
+    $w_fator              = $_REQUEST['w_fator'];
     $w_cancelado          = $_REQUEST['w_cancelado'];
     $w_motivo             = $_REQUEST['w_motivo'];
   } elseif ($O=='Z') {
@@ -1197,6 +1198,8 @@ function ItensContrato() {
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
+    $w_nm_material         = f($RS,'nome');
+    $w_nm_unidade_medida   = f($RS,'nm_unidade_medida');
     $w_codigo              = f($RS,'codigo_interno');
     $w_quantidade          = formatNumber(f($RS,'quantidade'));
     $w_ordem               = f($RS,'ordem');
@@ -1204,6 +1207,7 @@ function ItensContrato() {
     $w_fabricante          = f($RS,'fabricante');
     $w_marca_modelo        = f($RS,'marca_modelo');
     $w_embalagem           = f($RS,'embalagem');
+    $w_fator               = f($RS,'fator_embalagem');
     $w_cancelado           = f($RS,'cancelado');
     $w_motivo              = f($RS,'motivo_cancelamento');
   } 
@@ -1218,7 +1222,7 @@ function ItensContrato() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<TITLE>'.$conSgSistema.' - Itens da solicitação</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Itens de acordo</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('PZLIA',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1265,6 +1269,7 @@ function ItensContrato() {
       Validate('w_fabricante','Fabricante','1','1',2,50,'1','1');
       Validate('w_marca_modelo','Marca/Modelo','1','1',2,50,'1','1');
       Validate('w_embalagem','Embalagem','1','1',2,20,'1','1');
+      Validate('w_fator','Fator de embalagem','1','1',2,20,'1','1');
       Validate('w_valor','Valor unitário','1','1','1','18','','1');
       CompValor('w_valor','Valor unitário','>',0,'0,00');  
       Validate('w_quantidade','CMM','1','1','1','18','','1');
@@ -1318,6 +1323,10 @@ function ItensContrato() {
     ShowHTML('  <br>Vigência: '.formataDataEdicao(f($RS_Cont,'inicio')).' a '.formataDataEdicao(f($RS_Cont,'fim')));
     ShowHTML('  </b></font></div></td></tr>');
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+    ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Se houver outras alterações nos dados de itens, não contempladas nesta tela, exigem a devolução para a fase de cadastramento.');
+    ShowHTML('  </ul></b></font></td>');
   }
 
   if ($O=='L') {
@@ -1437,19 +1446,26 @@ function ItensContrato() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
     ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td><b><b><u>O</u>rdem:</b><br> </b><input '.$w_Disabled.$w_readonly.' accesskey="O" type="text" name="w_ordem" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_ordem.'"></td>');
+    ShowHTML('          <td><b><b><u>I</u>tem:</b><br> </b><input '.$w_Disabled.$w_readonly.' accesskey="I" type="text" name="w_ordem" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_ordem.'"></td>');
     //SelecaoMatServ('<U>C</U>ódigo:','U','Selecione o item.',$w_codigo,$w_chave,null,'w_codigo','CLARP',null);
     ShowHTML('          <td><b><b><u>C</u>ódigo:</b><br> </b><input '.$w_Disabled.$w_readonly.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo.'"></td>');
     ShowHTML('        </tr>');
+    if (nvl($w_nm_material,'')!='') {
+      ShowHTML('        <tr valign="top">');
+      ShowHTML('          <td colspan=2>Nome:<br><b>'.$w_nm_material.'</b></td>');
+      ShowHTML('          <td>Unidade de medida:<br><b>'.$w_nm_unidade_medida.'</b></td>');
+      ShowHTML('        </tr>');
+    }
     ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
     ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td><b><b><u>F</u>abricante:</b><br> </b><input '.$w_Disabled.$w_readonly.' accesskey="F" type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante.'"></td>');
-    ShowHTML('          <td><b><b><u>M</u>arca/Modelo:</b><br></b><input '.$w_Disabled.$w_readonly.' accesskey="M" type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_marca_modelo.'"></td>');
-    ShowHTML('          <td><b><b><u>E</u>mbalagem:</b><br></b><input '.$w_Disabled.$w_readonly.' accesskey="E" type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.$w_embalagem.'"></td>');
+    ShowHTML('          <td><b><b><u>F</u>abricante:</b><br> </b><input '.$w_Disabled.' accesskey="F" type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante.'"></td>');
+    ShowHTML('          <td><b><b><u>M</u>arca/Modelo:</b><br></b><input '.$w_Disabled.' accesskey="M" type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_marca_modelo.'"></td>');
+    ShowHTML('          <td><b><b><u>E</u>mbalagem:</b><br></b><input '.$w_Disabled.' accesskey="E" type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.$w_embalagem.'"></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
-    ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input type="text" '.$w_Disabled.$w_readonly.' accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
-    ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.$w_readonly.' onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+    ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td title="Informe o múltiplo de unidades a ser solicitado."><b><b>Fa<u>t</u>or de embalagem:</b><br></b><input '.$w_Disabled.' accesskey="T" type="text" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fator.'"></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
     MontaRadioNS('<b>Indisponível?</b>',$w_cancelado,'w_cancelado');
@@ -1749,6 +1765,7 @@ function PesquisaPreco() {
     $w_fabricante           = $_REQUEST['w_fabricante'];
     $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
     $w_embalagem            = $_REQUEST['w_embalagem'];
+    $w_fator                = $_REQUEST['w_fator'];
   } elseif ($O=='A' || $w_sq_pessoa>'' || $O=='I') {
     // Recupera os dados do fornecedor em co_pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
@@ -1817,7 +1834,7 @@ function PesquisaPreco() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if ($w_pesquisa=='S') ShowHTML('<TITLE>SIW - Pesquisa de preços</TITLE>'); else ShowHTML('<TITLE>SIW - Propostas</TITLE>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - '.(($w_pesquisa=='S') ? 'Pesquisas de preço' : 'Propostas').'</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('IAP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1838,6 +1855,7 @@ function PesquisaPreco() {
       ShowHTML('       document.Form["w_fabricante[]"][p_indice].disabled=false; ');
       ShowHTML('       document.Form["w_marca_modelo[]"][p_indice].disabled=false; ');
       ShowHTML('       document.Form["w_embalagem[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=false; ');
       ShowHTML('    } else {');
       ShowHTML('       document.Form["w_valor[]"][p_indice].disabled=true; ');
       ShowHTML('       document.Form["w_inicio[]"][p_indice].disabled=true; ');
@@ -1845,6 +1863,7 @@ function PesquisaPreco() {
       ShowHTML('       document.Form["w_fabricante[]"][p_indice].disabled=true; ');
       ShowHTML('       document.Form["w_marca_modelo[]"][p_indice].disabled=true; ');
       ShowHTML('       document.Form["w_embalagem[]"][p_indice].disabled=true; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=true; ');
       ShowHTML('    }');
       ShowHTML('  }');    
       ShowHTML('  function MarcaTodos() {');
@@ -1857,6 +1876,7 @@ function PesquisaPreco() {
       ShowHTML('         document.Form["w_fabricante[]"][i].disabled=false; ');
       ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=false; ');
       ShowHTML('         document.Form["w_embalagem[]"][i].disabled=false; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=false; ');
       ShowHTML('       } ');
       ShowHTML('    } else { ');
       ShowHTML('       for (i=1; i < document.Form["w_chave_aux[]"].length; i++) {');
@@ -1867,6 +1887,7 @@ function PesquisaPreco() {
       ShowHTML('         document.Form["w_fabricante[]"][i].disabled=true; ');
       ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=true; ');
       ShowHTML('         document.Form["w_embalagem[]"][i].disabled=true; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=true; ');
       ShowHTML('       } ');
       ShowHTML('    }');
       ShowHTML('  }');
@@ -2006,6 +2027,8 @@ function PesquisaPreco() {
         Validate('["w_fabricante[]"][ind]','Fabricante','1','1',2,50,'1','1');
         Validate('["w_marca_modelo[]"][ind]','Marca/Modelo','1','1',2,50,'1','1');
         Validate('["w_embalagem[]"][ind]','Embalagem','1','1',2,20,'1','1');
+        Validate('["w_fator[]"][ind]','Embalagem','1','1',1,4,'','0123456789');
+        CompValor('["w_fator[]"][ind]','Fator de embalagem','>','0','0');
       }
       ShowHTML('    }');
       ShowHTML('  }');
@@ -2176,6 +2199,7 @@ function PesquisaPreco() {
     ShowHTML('<INPUT type="hidden" name="w_fabricante[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_marca_modelo[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_embalagem[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_fator[]" value="">');
     
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
@@ -2320,6 +2344,7 @@ function PesquisaPreco() {
           ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_fabricante[$i],f($row,'fabricante')).'"></td>');
           ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_marca_modelo[$i],f($row,'marca_modelo')).'"></td>');
           ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem[]" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.nvl($w_embalagem[$i],f($row,'embalagem')).'"></td>');
+          if ($w_pesquisa=='S') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
           ShowHTML('        </table>');
           ShowHTML('        </tr>');
           $i += 1;
@@ -3561,8 +3586,8 @@ function Grava() {
         }
       }
       
-      dml_putCLARPItem::getInstanceOf($dbms,$O,$w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_ordem'],
-          $_REQUEST['w_codigo'], $_REQUEST['w_fabricante'], $_REQUEST['w_marca_modelo'], $_REQUEST['w_embalagem'],
+      dml_putCLARPItem::getInstanceOf($dbms,$O,$w_cliente, $w_usuario, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_ordem'],
+          $_REQUEST['w_codigo'], $_REQUEST['w_fabricante'], $_REQUEST['w_marca_modelo'], $_REQUEST['w_embalagem'], $_REQUEST['w_fator'],
           $_REQUEST['w_quantidade'], $_REQUEST['w_valor'], $_REQUEST['w_cancelado'], $_REQUEST['w_motivo']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -3645,14 +3670,14 @@ function Grava() {
           $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
           $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
       // Apaga todos os itens cotados dessa solicitação
-      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa']);
+      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa']);
       
       // Inseri as cotaçoes e atualiza a tabela de materiais
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
           dml_putCLItemFornecedor::getInstanceOf($dbms,$O,$w_cliente,null,$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
              $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
-             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],0,'N',$_REQUEST['w_pesquisa']);
+             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa']);
         } 
       }
       

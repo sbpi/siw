@@ -148,9 +148,11 @@ begin
 
          -- Insere registro
          insert into cl_solicitacao_item
-           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade)
-         values
-           (w_chave,             p_chave,            w_material,  w_qtd);
+           (sq_solicitacao_item, sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida)
+         (select 
+            w_chave,             p_chave,            w_material,  w_qtd,      a.sq_unidade_medida
+            from cl_solicitacao_item a where a.sq_solicitacao_item = p_chave_aux2
+         );
       Else
          -- Recupera a chave do item na licitação
          select a.sq_solicitacao_item into w_chave
@@ -174,20 +176,18 @@ begin
       end if;
    Elsif p_operacao = 'C' Then
       -- Registra a quantidade autorizada para compra e a quantidade comprada para a licitação
-      update cl_solicitacao_item set 
-          quantidade_autorizada = p_quantidade
-    where sq_solicitacao_item = p_chave_aux;        
+      update cl_solicitacao_item set quantidade_autorizada = p_quantidade where sq_solicitacao_item = p_chave_aux;        
    End If;
    
-   If p_operacao <> 'E' Then
+   If p_operacao <> 'E' and p_chave_aux2 is not null Then
       -- Recupera o preço médio do material
       if substr(w_menu.sigla,1,4) = 'CLRP' then
          -- Tratamento para item de pedido de arp
-         select coalesce(valor_unidade,0) into w_valor from cl_item_fornecedor where sq_solicitacao_item = p_chave_aux2 and sq_material = w_material and vencedor = 'S';
+         select coalesce(valor_unidade,0) into w_valor from cl_item_fornecedor where sq_solicitacao_item = coalesce(p_chave_aux2,p_chave_aux) and vencedor = 'S';
       else
          -- Tratamento para item de licitação
          select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
-      end if;
+      End If;
 
       -- Atualiza o valor da solicitação
       If p_operacao = 'A' or p_operacao = 'C' Then

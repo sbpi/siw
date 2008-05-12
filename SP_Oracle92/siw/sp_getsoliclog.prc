@@ -217,7 +217,8 @@ begin
                    f.nome fase, 
                    e.nome tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                   null as tipo_anotacao
               from siw_solic_log                       a
                    inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -241,7 +242,8 @@ begin
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome fase, f.nome tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                   case when despacho is null then 'Anotação' else b.observacao end as tipo_anotacao
               from ac_acordo_log                       b 
                    left outer   join co_pessoa         d on (b.destinatario       = d.sq_pessoa)
                    inner        join co_pessoa         c on (b.cadastrador        = c.sq_pessoa)

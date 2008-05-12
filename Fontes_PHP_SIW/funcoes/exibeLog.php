@@ -26,7 +26,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
       } 
       if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
       else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'responsavel').'</td>';
-      $l_html.=chr(13).'        <td width="1%" nowrap>Anotação</td>';
+      $l_html.=chr(13).'        <td width="1%" nowrap>'.nvl(f($row,'tipo_anotacao'),Anotação).'</td>';
       $l_html.=chr(13).'      </tr>';
     } 
     $l_html.=chr(13).'         </table></td></tr>';

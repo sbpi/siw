@@ -17,7 +17,7 @@ create or replace procedure SP_PutAcordoConc
 begin
    -- Verifica o tipo de conclusão para configurar alguns dados
    If p_tipo = 2 Then -- Rescisão de contrato
-      w_texto      := 'Rescisão do contrato.';
+      w_texto      := 'Rescisão.';
       w_sg_tramite := 'CR';
       
       -- O valor do contrato passa a ser a soma das parcelas com vencimento
@@ -28,7 +28,7 @@ begin
        where a.sq_siw_solicitacao = p_chave
          and a.vencimento < p_fim_real;
    Else
-      w_texto := 'Encerramento do contrato.';
+      w_texto := 'Encerramento na data prevista.';
       w_valor := p_custo_real;
 
       -- Verifica se há parcelas em aberto para o acordo

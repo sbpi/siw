@@ -1,18 +1,18 @@
 create or replace view vw_ata_rp as
-   select a.nome as "Produto", a.descricao, a.detalhamento, a.codigo_interno as "CODIGO", a.codigo_externo as "CODIGO ANTIGO", 
-          case when a.pesquisa_preco_menor is null then null else 'R$ '||fValor(a.pesquisa_preco_menor,'T',4) end as pesquisa_preco_menor, 
-          case when a.pesquisa_preco_maior is null then null else 'R$ '||fValor(a.pesquisa_preco_maior,'T',4) end as pesquisa_preco_maior, 
-          case when a.pesquisa_preco_medio is null then null else 'R$ '||fValor(a.pesquisa_preco_medio,'T',4) end as pesquisa_preco_medio, 
+select a.nome as "Produto", a.descricao, a.detalhamento, translate(a.codigo_interno,'1-.','1') as "CODIGO", a.codigo_externo as "CODIGO ANTIGO", 
+          replace(a.pesquisa_preco_menor,'.',',') as pesquisa_preco_menor, 
+          replace(a.pesquisa_preco_maior,'.',',') as pesquisa_preco_maior, 
+          replace(a.pesquisa_preco_medio,'.',',') as pesquisa_preco_medio, 
           a.pesquisa_data, a.pesquisa_validade, 
           d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
           x.ordem as "Item", 
-          case when x.quantidade is null then null else replace(fValor(x.quantidade,'T',0),',','') end as "CMM - Ata de RP", 
+          replace(x.quantidade,'.',',') as "CMM - Ata de RP", 
           x.motivo_cancelamento as "Status",
           w.inclusao as "DataHoje", w.codigo_interno as "Nº da Ata", w.fim as "Validade",
           w2.publicacao as "DOM",
           f.percentual_acrescimo,
-          case when x1.valor_unidade is null then null else fValor(x1.valor_unidade,'T',4) end as "Valor Unitário", 
-          case when x1.valor_item is null then null else 'R$ '||fValor(x1.valor_item,'T',4) end as "Valor Quant Mensal", 
+          replace(x1.valor_unidade,'.',',') as "Valor Unitário", 
+          replace(x1.valor_item,'.',',') as "Valor Quant Mensal", 
           x1.marca_modelo as "Marca",
           x1.fabricante as "Fabricante",
           x1.embalagem as "Apresentação",
@@ -33,4 +33,5 @@ create or replace view vw_ata_rp as
               inner join siw_tramite         z  on (w.sq_siw_tramite      = z.sq_siw_tramite and
                                                     z.sigla               <> 'CA'
                                                    )
-    where a.cliente         = 9614;
+    where a.cliente         = 9614
+

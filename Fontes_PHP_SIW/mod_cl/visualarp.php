@@ -113,6 +113,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'        <tr align="center">';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>ARP</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Fim vigência</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
@@ -135,11 +136,20 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'        </tr>';
     if (count($RS1)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
+        // Se o item estiver indisponível, destaca.
+        if (f($row,'cancelado')=='S') {
+          $w_dest_abre = '<strike>'; 
+          $w_dest_fecha = '</strike>';
+        } else {
+          $w_dest_abre = ''; 
+          $w_dest_fecha = '';
+        }
+
         // Se a validade da proposta for menor que o exigido, destaca em vermelho
         $w_percentual_acrescimo = f($row,'percentual_acrescimo');
         if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
@@ -148,30 +158,29 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_destaque = '';
         }
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'numero_ata').'</td>';
-        $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.f($row,'ordem_ata').'</td>';
-        $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'codigo_interno').'</td>';
+        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.f($row,'numero_ata').$w_dest_fecha.'</td>';
+        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.formataDataEdicao(f($row,'fim'),5).$w_dest_fecha.'</td>';
+        $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.$w_dest_abre.f($row,'ordem_ata').$w_dest_fecha.'</td>';
+        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.f($row,'codigo_interno').$w_dest_fecha.'</td>';
         if (!($l_P1==4 || $l_P4==1)){
-          $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+          $l_html.=chr(13).'        <td align="left">'.$w_dest_abre.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).$w_dest_fecha.'</td>';
         } else {
-          $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
+          $l_html.=chr(13).'        <td align="left">'.$w_dest_abre.f($row,'nome').$w_dest_fecha.'</td>';
         }
-        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber(f($row,'quantidade'),2).'</td>';
-        if($w_sg_tramite=='AT') {
-          $l_html.=chr(13).'        <td align="right"> width="1%" nowrap'.formatNumber(f($row,'quantidade_autorizada'),2).'</td>';
+        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber(f($row,'quantidade'),2).$w_dest_fecha.'</td>';
+        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber(f($row,'quantidade_autorizada'),2).$w_dest_fecha.'</td>';
+        $l_html.=chr(13).'        <td align="right" width="1%" '.$w_destaque.' nowrap>'.$w_dest_abre.formatNumber(f($row,'valor_unidade'),4).$w_dest_fecha.'</td>';
+        if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).$w_dest_fecha.'</td>';
         } else {
-          $l_html.=chr(13).'        <td align="center" width="1%" nowrap>---</td>';
+          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).$w_dest_fecha.'</td>';
         }
-        $l_html.=chr(13).'        <td align="right" width="1%" '.$w_destaque.' nowrap>'.formatNumber(f($row,'valor_unidade'),4).'</td>';
-        if($w_sg_tramite=='AT') {
-          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).'</td>';
-        } else {
-          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).'</td>';
-        }
-        if($w_sg_tramite=='AT') {
-          $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade_autorizada'));
-        } else {
-          $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade'));
+        if (f($row,'cancelado')=='N') {
+          if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+            $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade_autorizada'));
+          } else {
+            $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade'));
+          }
         }
         if($w_tramite_ativo=='S') {
           if (nvl(f($row,'pesquisa_data'),'')=='') {
@@ -194,8 +203,9 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $l_html.=chr(13).'        </tr>';
       }
       $l_html.=chr(13).'      <tr align="center">';
-      $l_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="8"><b>Total</b></td>';
       $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
+      $l_html.=chr(13).'        <td colspan=4>&nbsp;</td>';
       $l_html.=chr(13).'      </tr>';
       $l_html.=chr(13).'    </table></td></tr>';
     } 

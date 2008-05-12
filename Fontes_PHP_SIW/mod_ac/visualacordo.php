@@ -809,15 +809,16 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         }
         $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
         if ($l_P4!=1){
-          $l_html.=chr(13).'        <td colspan="2">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
+          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
         } else {
-          $l_html.=chr(13).'        <td colspan="2">Nome:<br><b>'.f($row,'nome').'</b></td>';
+          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
         }
         $l_html.=chr(13).'      </tr>';
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
         $l_html.=chr(13).'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
         $l_html.=chr(13).'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
+        $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
         $l_html.=chr(13).'      </tr>';
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),2).'</b></td>';
@@ -827,10 +828,10 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         if (f($row,'cancelado')=='S') {
           $l_html.=chr(13).'      <tr>';
           $l_html.=chr(13).'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
-          $l_html.=chr(13).'        <td colspan=2>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
+          $l_html.=chr(13).'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
           $l_html.=chr(13).'      </tr>';
         }
-        $l_html.=chr(13).'      <tr><td><td colspan="3"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
+        $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
         $w_total_preco += f($row,'valor_item');
       }
       $l_html.=chr(13).'      <tr>';
