@@ -189,9 +189,14 @@ function Rel_Executivo() {
           foreach($RS1 as $row1) {
             if ($p_projeto=='S') {
               //Programas
-              ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+              if (nvl(f($row1,'sq_solic_pai'),'')=='') {
+                ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+              } else {
+                ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+              }
               ShowHTML('          <tr align="center">');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>N°</b></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
               ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
@@ -224,32 +229,37 @@ function Rel_Executivo() {
                 $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
                 $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, f($row1,'sq_siw_solicitacao'), $p_atividade, 
                 null, null, $p_empenho, $p_processo);
-            $RS3 = SortArray($RS3,'codigo_interno','asc','titulo','asc'); 
+            $RS3 = SortArray($RS3,'dados_pai','asc','codigo_interno','asc','titulo','asc'); 
             if (count($RS3)==0) {
               if ($p_projeto=='S') ShowHTML('          <tr><td colspan="15" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
             } else {
               $l_previsto[$w_proj] = 0;
               foreach($RS3 as $row3) {
                 if ($p_projeto=='S') {
-                  ShowHTML('          <tr valign="top" align="center">');
+                  ShowHTML('          <tr valign="top">');
+                  if (f($row3,'sq_solic_pai')!=f($row1,'sq_siw_solicitacao')) {
+                    ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row3,'sq_solic_pai'),f($row3,'dados_pai')).'</td>');
+                  } else {
+                    ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+                  }
                   ShowHTML('            <td nowrap>');    
                   ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
                   if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
                   else                 ShowHTML('            '.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).''); 
                   ShowHTML('        '.exibeImagemRestricao(f($row,'restricao'),'P'));
-                  ShowHTML('            <td align="left">'.f($row3,'titulo').'</td>');
+                  ShowHTML('            <td>'.f($row3,'titulo').'</td>');
                   if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
                   else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
-                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio')),'-').'</td>');
-                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim')),'-').'</td>');
+                  ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'inicio'),5),'-').'</td>');
+                  ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'fim'),5),'-').'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_previsto'),f($row3,'valor'))).'</td>');
-                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'inicio_real')),'---').'</td>');
-                  ShowHTML('            <td>'.Nvl(FormataDataEdicao(f($row3,'fim_real')),'---').'</td>');
+                  ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'inicio_real'),5),'---').'</td>');
+                  ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'fim_real'),5),'---').'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(nvl(f($row3,'orc_real'),f($row3,'custo_real'))).'</td>');
-                  ShowHTML('            <td>'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
+                  ShowHTML('            <td align="center">'.ExibeSmile('IDE',f($row3,'ide')).'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ide'),2).'%'.'</td>');
                   ShowHTML('            <td align="right">'.formatNumber(f($row3,'ige'),2).'%'.'</td>');
-                  ShowHTML('            <td>'.ExibeSmile('IDC',f($row3,'idc')).'</td>');
+                  ShowHTML('            <td align="center">'.ExibeSmile('IDC',f($row3,'idc')).'</td>');
                   if (f($row3,'idc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'idc'),2).'%'.'</td>');
                   if (f($row3,'igc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'igc'),2).'%'.'</td>');
                 }
@@ -258,7 +268,7 @@ function Rel_Executivo() {
               } 
               if ($p_projeto=='S') {
                 ShowHTML('<tr valign="top">');
-                ShowHTML('     <td colspan=5 align="right"><b>Totais:&nbsp;');
+                ShowHTML('     <td colspan=6 align="right"><b>Totais:&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]));
                 ShowHTML('     <td colspan=2>&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]));
@@ -326,6 +336,17 @@ function Rel_Executivo() {
       }
     }
   } elseif ($O=='P') {
+    // Se somente uma opção puder ser selecionada, já seleciona.
+    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $w_cont = 0;
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        $w_cont += 1;
+        $w_registro = f($row,'chave');
+      }
+    }
+    if ($w_cont==1) $p_plano = $w_registro;
+
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório executivo de programas</TITLE>');
@@ -482,6 +503,17 @@ function Rel_Programas() {
     }
     ShowHTML('     </table>');
   } elseif ($O=='P') {
+    // Se somente uma opção puder ser selecionada, já seleciona.
+    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $w_cont = 0;
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        $w_cont += 1;
+        $w_registro = f($row,'chave');
+      }
+    }
+    if ($w_cont==1) $p_plano = $w_registro;
+
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');

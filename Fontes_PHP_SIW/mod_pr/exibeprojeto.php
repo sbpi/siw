@@ -38,6 +38,8 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
 
   // Recupera os dados do projeto
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
+  $w_tramite_ativo = f($RS,'ativo');
+
   // Recupera o tipo de visão do usuário
 
   // Se for listagem dos dados
@@ -118,7 +120,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
 
   // Informações adicionais
   if ($w_acordo == 'S' || $w_viagem=='S') {
-    $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'    <tr><td colspan=2><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if ($w_acordo=='S') {
       if (f($RS,'vincula_contrato')=='S') {
         $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
@@ -142,7 +144,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   if(nvl($_REQUEST['p_qualit'],'')!='') {
     // Programação qualitativa
     if ($operacao=='T' && $l_nome_menu['QUALIT']!='') {
-      $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>'.$l_nome_menu['QUALIT'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'    <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['QUALIT'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if(nvl($_REQUEST['p_os'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Objetivo Superior:</b></td><td>'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
       if(nvl($_REQUEST['p_oe'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Objetivos Específicos:</b></td><td>'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
       if(nvl($_REQUEST['p_ee'],'')!='') $l_html .= chr(13).'<tr valign="top"><td><b>Exclusões Específicas:</b></td><td>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
@@ -1062,59 +1064,8 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   }
 
   if(nvl($_REQUEST['p_tramite'],'')!='') {
-    // Encaminhamentos
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
-    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-    $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0"><b>Data</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Ocorrência/Anotação</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Responsável</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Fase/Destinatário</b></td>';
-    $l_html.=chr(13).'       </tr>';
-    
-    if (count($RS)==0) {
-      $l_html .= chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
-    } else {
-      $l_html .= chr(13).'      <tr>';
-      $w_cor=$conTrBgColor;
-      $i = 0;
-      foreach ($RS as $row) {
-        if ($i==0) {
-          $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row,'fase').'</b></td>';
-          $i = 1;
-        }
-        if ($operacao=='T' || Nvl(f($row,'sq_projeto_log'),'')=='' || Nvl(f($row,'destinatario'),'')>'') {
-          $l_html = $l_html.chr(13).'      <tr valign="top">';
-          $l_html .= chr(13).'        <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-          if (Nvl(f($row,'caminho'),'')>'') {
-            if ($l_tipo=='WORD') {
-              $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1)).' KB</td>';
-            } else {
-              $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
-            }
-          } else {
-            $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
-          }
-          if ($l_tipo=='WORD') {
-            $l_html .= chr(13).'        <td nowrap>'.f($row,'responsavel').'</td>';
-          } else {
-            $l_html .= chr(13).'        <td nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-          }
-          if ((Nvl(f($row,'sq_projeto_log'),'')>'') && (Nvl(f($row,'destinatario'),'')>'')) {
-            if ($l_tipo=='WORD') {
-              $l_html .= chr(13).'        <td nowrap>'.f($row,'destinatario').'</td>';
-            } else {
-              $l_html .= chr(13).'        <td nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-            }
-          } elseif ((Nvl(f($row,'sq_projeto_log'),'')>'')  && (Nvl(f($row,'destinatario'),'')==''))$l_html .= chr(13).'        <td>Anotação</td>';
-          else                                                                                     $l_html .= chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
-          $l_html .= chr(13).'      </tr>';
-        }
-      } 
-      $l_html .= chr(13).'         </table></td></tr>';
-    } 
+    include_once($w_dir_volta.'funcoes/exibeLog.php');
+    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
   }
   $l_html .= chr(13).'  </table>';
   return $l_html;

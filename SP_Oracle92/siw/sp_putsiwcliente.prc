@@ -206,8 +206,8 @@ begin
         -- Grava uma localização para o superusuário do sistema
         select sq_localizacao.nextval into w_chave2 from dual;
         
-        Insert into eo_localizacao ( sq_localizacao, sq_unidade, nome)
-         Values (w_chave2, w_chave1, 'Sala virtual');
+        Insert into eo_localizacao ( sq_localizacao, cliente, sq_unidade, nome)
+         Values (w_chave2, w_chave1, w_chave, 'Sala virtual');
          
         -- Grava um superusuário para o cliente
         select sq_pessoa.nextval into w_Chave3 from dual;

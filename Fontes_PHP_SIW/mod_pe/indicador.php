@@ -1329,7 +1329,7 @@ function Solic() {
         if(f($row,'qtd_meta')>0) {
           ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
         } else {
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_plano='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_plano='.f($row,'sq_plano').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1542,6 +1542,7 @@ function Meta() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
+    SaltaCampo();
     CheckBranco();
     FormataData();
     FormataValor();
@@ -1715,11 +1716,11 @@ function Meta() {
       ShowHTML('      <tr><td colspan="3"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descrição da meta.">'.$w_descricao.'</TEXTAREA></td>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td><b><u>O</u>rdem:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.' title="Confira abaixo os outros números de ordem desse nível."></td>');
-      ShowHTML('        <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
-      ShowHTML('        <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
+      ShowHTML('        <td><b>Previsão iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
+      ShowHTML('        <td><b>Previsão <u>t</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
       ShowHTML('      <tr valign="top">');
       selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_indicador,$w_chave,$w_usuario,null,'w_indicador','META','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_base\'; document.Form.submit();"');
-      selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_quantidade\'; document.Form.submit();"');
+      selecaoBaseGeografica('<U>B</U>ase geográfica:','B','Selecione a base geográfica da aferiçao',$w_base,null,null,'w_base',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor_inicial\'; document.Form.submit();"');
       ShowHTML('      <tr valign="top">');
       if (nvl($w_base,-1)!=5) {
         ShowHTML('      <tr valign="top">');
@@ -1984,7 +1985,7 @@ function CronMeta() {
         if ($w_edita=='S') {
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_meta_cronograma').'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CRONMETA" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
           ShowHTML('        </td>');
         }
         ShowHTML('      </tr>');
@@ -2046,7 +2047,7 @@ function CronMeta() {
       if ($O=='I') ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
       else         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&w_plano='.$w_plano.'&O=L&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');

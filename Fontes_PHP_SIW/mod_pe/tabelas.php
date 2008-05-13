@@ -1322,43 +1322,47 @@ function Telaplano(){
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Documentos vinculados</b></font>');
-    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=hier&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe diagrama hierárquico dos documentos vinculados ao plano.">DIAGRAMA HIERÁRQUICO</A>]');
-    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=gantt&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe gráfico de Gantt dos documentos vinculados ao plano.">GRÁFICO DE GANTT</A>]');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=hier&w_chave='.$w_sq_plano.'&w_pitce=1" TARGET="PLANO" TITLE="Exibe diagrama hierárquico dos documentos vinculados ao plano.">DIAGRAMA HIERÁRQUICO</A>]');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=gantt&w_chave='.$w_sq_plano.'&w_pitce=1" TARGET="PLANO" TITLE="Exibe gráfico de Gantt dos documentos vinculados ao plano.">GRÁFICO DE GANTT</A>]');
     ShowHTML('         <hr NOSHADE color=#000000 SIZE=1></td>');
     ShowHTML('         </td>');
     foreach ($RS as $row) {
-      if (f($row,'qtd')>0) {
-        ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.f($row,'qtd').')</b></font></td>');
-        $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
-        $RS1 = SortArray($RS1,'codigo_interno','asc');
+      $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+      $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc');
+      if (count($RS1)>0) {
+        ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.count($RS1).')</b></font></td>');
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('          <td rowspan=2><b>Vinculação</td>');
         ShowHTML('          <td rowspan=2><b>Código</td>');
         ShowHTML('          <td rowspan=2><b>Título</td>');
         ShowHTML('          <td rowspan=2><b>Responsável</td>');
         ShowHTML('          <td colspan=2><b>Execução</td>');
-        ShowHTML('          <td rowspan=2><b>Fase atual</td>');
         ShowHTML('        </tr>');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
         ShowHTML('          <td><b>De</td>');
         ShowHTML('          <td><b>Até</td>');
         ShowHTML('        </tr>');
         $w_cor = $conTrBgColor;
-        foreach($RS1 as $row) {
+        foreach($RS1 as $row1) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          if (f($row1,'sq_plano')!=$w_sq_plano) {
+            ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row1,'sq_solic_pai'),f($row1,'dados_pai')).'</td>');
+          } else {
+            ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+          }
           ShowHTML('        <td nowrap>');
-          ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-          ShowHTML('        '.str_replace(f($row,'nome').': ','',exibeSolic($w_dir_volta,f($row,'sq_siw_solicitacao'))));
-          if (strlen(Nvl(f($row,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row,'titulo'),'-'),0,50).'...'; 
-          else                                      $w_titulo=Nvl(f($row,'titulo'),'-');
-          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'"><strike>'.$w_titulo.'</strike></td>');
-          else                            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'">'.$w_titulo.'</td>');
-          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
-          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');
-          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim')).'</td>');
-          ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
+          ShowHTML(ExibeImagemSolic(f($row1,'sigla'),f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null));
+          ShowHTML('        '.str_replace(f($row1,'nome').': ','',exibeSolic($w_dir_volta,f($row1,'sq_siw_solicitacao'))));
+          if (strlen(Nvl(f($row1,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,50).'...'; 
+          else                                      $w_titulo=Nvl(f($row1,'titulo'),'-');
+          if (f($row1,'sg_tramite')=='CA') ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row1,'titulo')))).'"><strike>'.$w_titulo.'</strike></td>');
+          else                            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row1,'titulo')))).'">'.$w_titulo.'</td>');
+          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</A></td>');
+          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'inicio'),5).'</td>');
+          ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),5).'</td>');
         } 
         ShowHTML('      </center>');
         ShowHTML('    </table>');

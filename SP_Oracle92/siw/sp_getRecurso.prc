@@ -237,6 +237,7 @@ begin
                                                )
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
+           and a.ativo     = 'S'
         order by acentos(b.nome), acentos(a.nome);
    Elsif upper(p_restricao) = 'SERVICO' Then
       -- Recupera os recursos que podem ser vinculados a uma opção do menu

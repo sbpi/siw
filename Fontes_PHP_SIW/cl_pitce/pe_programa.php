@@ -326,16 +326,13 @@ function Inicial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','cd_programa').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','cd_programa').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','titulo').'</td>');
+      ShowHTML ('         <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($P1!=2) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Usuário atual','cd_exec').'</td>');
-      if ($P1==1 || $P1==2) {
-        // Se for cadastramento ou mesa de trabalho
-        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
-        ShowHTML('          <td colspan=2><b>Execução</td>');
-        } else {
-        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','titulo').'</td>');
-        ShowHTML('          <td colspan=2><b>Execução</td>');
+      ShowHTML('          <td colspan=2><b>Execução</td>');
+      if (!($P1==1 || $P1==2)) {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       } 
       ShowHTML('          <td rowspan=2><b>Operações</td>');
@@ -345,16 +342,12 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Até','fim').'</td>');
       ShowHTML('        </tr>');
     } else {
-      ShowHTML('          <td rowspan=2><b>Programa</td>');
+      ShowHTML('          <td rowspan=2><b>Código</td>');
+      ShowHTML ('         <td rowspan=2><b>Programa</td>');
+      ShowHTML ('         <td rowspan=2><b>Vinculação</td>');
       ShowHTML('          <td rowspan=2><b>Responsável</td>');
       if ($P1!=2) ShowHTML('          <td rowspan=2><b>Usuário atual</td>');
-      if ($P1==1 || $P1==2) {
-        // Se for cadastramento ou mesa de trabalho
-        ShowHTML('          <td rowspan=2><b>Título</td>');
-        ShowHTML('          <td colspan=2><b>Execução</td>');
-      } else {
-        ShowHTML('          <td rowspan=2><b>Título</td>');
-        ShowHTML('          <td colspan=2><b>Execução</td>');
+      if (!($P1==1 || $P1==2)) {
         ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       } 
       ShowHTML('        </tr>');
@@ -379,17 +372,8 @@ function Inicial() {
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_tipo!='WORD') {
           ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'cd_programa').'&nbsp;</a>');
-          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
         } else {
           ShowHTML('        '.f($row,'cd_programa').'');
-          ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
-        } 
-        if ($P1!=2) {
-          // Se for mesa de trabalho, não exibe o executor, pois já é o usuário logado
-          if (Nvl(f($row,'nm_exec'),'---')>'---') {
-            if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
-            else                 ShowHTML('        <td>'.f($row,'nm_exec').'</td>');
-          } else                                    ShowHTML('        <td>---</td>');
         } 
         // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
         // Este parâmetro é enviado pela tela de filtragem das páginas gerenciais
@@ -401,9 +385,28 @@ function Inicial() {
           if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'"><strike>'.$w_titulo.'</strike></td>');
           else                            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row,'titulo')))).'">'.$w_titulo.'</td>');
         } 
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio')).'</td>');
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim')).'</td>');
-        if ($P1!=1 && $P1!=2) {
+        if ($w_tipo!='WORD') {
+          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
+          else                                 ShowHTML('        <td>---</td>');
+        } else {
+          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.substr(f($row,'dados_pai'),0,strpos(f($row,'dados_pai'),'|@|')).'</td>');
+          else                                 ShowHTML('        <td>---</td>');
+        } 
+        if ($w_tipo!='WORD') {
+          ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</A></td>');
+        } else {
+          ShowHTML('        <td>'.f($row,'nm_solic').'</td>');
+        } 
+        if ($P1!=2) {
+          // Se for mesa de trabalho, não exibe o executor, pois já é o usuário logado
+          if (Nvl(f($row,'nm_exec'),'---')>'---') {
+            if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'executor'),$TP,f($row,'nm_exec')).'</td>');
+            else                 ShowHTML('        <td>'.f($row,'nm_exec').'</td>');
+          } else                                    ShowHTML('        <td>---</td>');
+        } 
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>');
+        if (!($P1==1 || $P1==2)) {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
         if ($P1!=3 && $P1!=5) {

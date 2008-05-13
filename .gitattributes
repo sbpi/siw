@@ -623,6 +623,7 @@ Fontes_PHP_SIW/classes/sp/db_getAcaoPPA.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcaoPPA_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoAditivo.php -text
+Fontes_PHP_SIW/classes/sp/db_getAcordoFornecimento.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoNota.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoNotaCancel.php -text
 Fontes_PHP_SIW/classes/sp/db_getAcordoParcela.php -text
@@ -977,6 +978,7 @@ Fontes_PHP_SIW/classes/sp/dml_putAcordoAditivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoDadosAdicionais.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoEnvio.php -text
+Fontes_PHP_SIW/classes/sp/dml_putAcordoFornecimento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNota.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoNotaCancel.php -text
@@ -1424,6 +1426,7 @@ Fontes_PHP_SIW/funcoes/selecaoSegModulo.php -text
 Fontes_PHP_SIW/funcoes/selecaoServico.php -text
 Fontes_PHP_SIW/funcoes/selecaoSexo.php -text
 Fontes_PHP_SIW/funcoes/selecaoSistema.php -text
+Fontes_PHP_SIW/funcoes/selecaoSituacaoOF.php -text
 Fontes_PHP_SIW/funcoes/selecaoSolic.php -text
 Fontes_PHP_SIW/funcoes/selecaoSolicResp.php -text
 Fontes_PHP_SIW/funcoes/selecaoSolicRestricao.php -text
@@ -3313,6 +3316,7 @@ SP_Oracle92/siw/sp_calculaPercEtapa.prc -text
 SP_Oracle92/siw/sp_get10percentdays.prc -text
 SP_Oracle92/siw/sp_getAbastecimento.prc -text
 SP_Oracle92/siw/sp_getAcordoAditivo.prc -text
+SP_Oracle92/siw/sp_getAcordoFornecimento.prc -text
 SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
@@ -3574,6 +3578,7 @@ SP_Oracle92/siw/sp_getusuariotabs.prc -text
 SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
+SP_Oracle92/siw/sp_putAcordoFornecimento.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
 SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text

@@ -14,6 +14,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
   $w_tramite_ativo = f($RS,'ativo');
 
+
   if ($l_o!='T' && $l_o!='V') {
     if ($l_tipo!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
   }
@@ -382,66 +383,123 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
     } 
   }
 
-    // Projetos vinculados ao programa
-    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
-           null,null,null,null,null,null,null,null,null,null,
-           null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
-    $RS1 = SortArray($RS1,'codigo_interno','asc','titulo','asc','prioridade','asc');
+  // Subprogramas vinculados ao programa
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+         null,null,null,null,null,null,null,null,null,null,
+         null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
+  $RS1 = SortArray($RS1,'titulo','asc','prioridade','asc');
 
-    if (count($RS1) > 0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
-      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'       <tr align="center">';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Nº</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Responsável</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Título</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Execução</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Valor</b></td>';
-      if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDE</b></td>';
-      else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE hoje').'</b></td>';
-      if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IGE</b></td>';
-      else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>';
-      $l_html.=chr(13).'       </tr>';
-      $l_html.=chr(13).'       <tr align="center">';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
-      $l_html.=chr(13).'       </tr>';
-      $w_cor=$conTrBgColor;
-      foreach ($RS1 as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $l_html .=chr(13).'        <td width="1%" nowrap>';
-        $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if ($l_tipo=='WORD') $l_html .=chr(13).'        '.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;'.exibeImagemRestricao(f($row,'restricao'),'P');
-        else                    $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
-        if ($l_tipo=='WORD') $l_html .=chr(13).'        <td>'.f($row,'nm_solic').'</td>';
-        else                    $l_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
-        $l_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';
-        $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>';
-        $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>';
-        if (f($row,'sg_tramite')=='AT') {
-          $l_html .=chr(13).'        <td align="right">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>';
-          $w_parcial += f($row,'custo_real');
-        } else {
-          $l_html .=chr(13).'        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>';
-          $w_parcial += f($row,'valor');
-        } 
-        $l_html .=chr(13).'        <td align="center">'.ExibeSmile('IDE',f($row,'ide')).'</td>';
-        $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ide')).'%</td>';
-        $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ige')).'%</td>';
-      } 
-      if ($w_parcial>0) {
-        $l_html .=chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
-        $l_html .=chr(13).'          <td colspan=5 align="right"><b>Total&nbsp;</td>';
-        $l_html .=chr(13).'          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>';
-        $l_html .=chr(13).'          <td colspan=3>&nbsp;</td>';
-        $l_html .=chr(13).'        </tr>';
+  if (count($RS1) > 0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr align="center">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Código</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Programa</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Responsável</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Execução</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    $l_html.=chr(13).'       <tr align="center">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS1 as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+      if (f($row,'sq_solic_pai')!=$l_chave) {
+        $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
+      } else {
+        $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
       }
-      $l_html.=chr(13).'         </table></td></tr>';
-      $l_html.=chr(13).'      <tr><td colspan="2"><font size="1">Observação: a listagem exibe apenas os projetos nos quais você tenha alguma permissão.</font></td></tr>';
+      $l_html .=chr(13).'        <td width="1%" nowrap>';
+      $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+      if ($l_tipo=='WORD') $l_html .=chr(13).'        '.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;'.exibeImagemRestricao(f($row,'restricao'),'P');
+      else                    $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'cl_pitce/pe_programa.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>';
+      $l_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';
+      if ($l_tipo=='WORD') $l_html .=chr(13).'        <td>'.f($row,'nm_solic').'</td>';
+      else                    $l_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+      $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>';
+      $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>';
     } 
+    $l_html.=chr(13).'         </table></td></tr>';
+  } 
+
+  // Projetos vinculados ao programa
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+         null,null,null,null,null,null,null,null,null,null,
+         null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
+  $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc','titulo','asc','prioridade','asc');
+
+  if (count($RS1) > 0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr align="center">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Código</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Projeto</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Responsável</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Execução</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Valor</b></td>';
+    if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDE</b></td>';
+    else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE hoje').'</b></td>';
+    if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IGE</b></td>';
+    else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>';
+    if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>IDC</b></td>';
+    else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2 colspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC hoje').'</b></td>';
+    if ($l_tipo=='WORD') $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>IGC</b></td>';
+    else                    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').'</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    $l_html.=chr(13).'       <tr align="center">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    $w_cor=$conTrBgColor;
+    foreach ($RS1 as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
+      if (f($row,'sq_solic_pai')!=$l_chave) {
+        $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
+      } else {
+        $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
+      }
+      $l_html .=chr(13).'        <td width="1%" nowrap>';
+      $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+      if ($l_tipo=='WORD') $l_html .=chr(13).'        '.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;'.exibeImagemRestricao(f($row,'restricao'),'P');
+      else                    $l_html .=chr(13).'        <A class="HL" HREF="'.$conRootSIW.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P');
+      $l_html .=chr(13).'        <td>'.Nvl(f($row,'titulo'),'-').'</td>';
+      if ($l_tipo=='WORD') $l_html .=chr(13).'        <td>'.f($row,'nm_solic').'</td>';
+      else                    $l_html .=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+      $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>';
+      $l_html .=chr(13).'        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>';
+      if (f($row,'sg_tramite')=='AT') {
+        $l_html .=chr(13).'        <td align="right">'.number_format(f($row,'custo_real'),2,',','.').'&nbsp;</td>';
+        $w_parcial += f($row,'custo_real');
+      } else {
+        $l_html .=chr(13).'        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>';
+        $w_parcial += f($row,'valor');
+      } 
+      $l_html .=chr(13).'        <td align="center">'.ExibeSmile('IDE',f($row,'ide')).'</td>';
+      $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ide')).'%</td>';
+      $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'ige')).'%</td>';
+      $l_html .=chr(13).'        <td align="center">'.ExibeSmile('IDC',f($row,'idc')).'</td>';
+      $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'idc')).'%</td>';
+      $l_html .=chr(13).'        <td align="right">'.formatNumber(f($row,'igc')).'%</td>';
+    } 
+    if ($w_parcial>0) {
+      $l_html .=chr(13).'        <tr bgcolor="'.$conTrBgColor.'">';
+      $l_html .=chr(13).'          <td colspan=6 align="right"><b>Total&nbsp;</td>';
+      $l_html .=chr(13).'          <td align="right"><b>'.number_format($w_parcial,2,',','.').'&nbsp;</td>';
+      $l_html .=chr(13).'          <td colspan=6>&nbsp;</td>';
+      $l_html .=chr(13).'        </tr>';
+    }
+    $l_html.=chr(13).'         </table></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2"><font size="1">Observação: a listagem exibe apenas os projetos nos quais você tenha alguma permissão.</font></td></tr>';
+  } 
 
   // Encaminhamentos
   if ($l_ocorrencia=='S') {

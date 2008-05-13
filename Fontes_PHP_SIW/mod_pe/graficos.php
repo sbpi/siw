@@ -55,6 +55,7 @@ $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
 
 $w_chave    = strtoupper($_REQUEST['w_chave']);
+$w_pitce    = strtoupper($_REQUEST['w_pitce']);
 $w_scale    = nvl($_REQUEST['w_scale'],'m');
 
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
@@ -113,7 +114,7 @@ function Hierarquico() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean(null);
-  ShowHTML('<img src="'.$w_dir.$w_pagina.'Gera_Hier&w_chave='.$w_chave.'" border="1" style="position:absolute;left:0;top:0;" />');
+  ShowHTML('<img src="'.$w_dir.$w_pagina.'Gera_Hier&w_chave='.$w_chave.'&w_pitce='.$w_pitce.'" border="1" style="position:absolute;left:0;top:0;" />');
   $selected = (isset($_GET['name']) ? $_GET['name'] : null);
   echo_map($w_chave, $data, $selected);
   ShowHTML('</center>');
@@ -152,12 +153,12 @@ function Gera_Hierarquico($l_gera) {
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
     foreach ($RS as $row) {
-      if (f($row,'qtd')>0) {
-        $l_xml .= chr(13).'     <node name="'.f($row,'nome').' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+      if (f($row,'qtd')>0 && f($row,'sigla')=='PEPROCAD') {
+        //$l_xml .= chr(13).'     <node name="'.f($row,'nome').' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
         $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
         $RS1 = SortArray($RS1,'codigo_interno','asc');
         foreach($RS1 as $row1) {
-          if (f($row1,'sq_plano')==f($row,'sq_plano')) {
+          if (f($row1,'sq_plano')==f($row,'sq_plano') && f($row1,'sigla')=='PEPROCAD') {
             if (f($row1,'sg_tramite')=='AT') {
               $w_cor_nome = '"#0000ff"';
               $w_cor_text = '"#0000ff"';
@@ -168,19 +169,19 @@ function Gera_Hierarquico($l_gera) {
               $w_cor_nome = '"#00ff00"';
               $w_cor_text = '"#00ff00"';
             }
-            if     (Nvl(f($row1,'codigo_interno'),'')!='') $w_titulo=f($row1,'codigo_interno'); 
-            elseif (strlen(Nvl(f($row1,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row1,'ac_titulo'),'-'),0,50).'...'; 
+            if (strlen(Nvl(f($row1,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row1,'ac_titulo'),'-'),0,50).'...'; 
             else                                          $w_titulo=Nvl(f($row1,'ac_titulo'),'-');
             $l_xml .= chr(13).'        <node name="'.$w_titulo.'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
             if (f($row1,'sigla')=='PJCAD') {
-              $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.'\nIGC: '.round(f($row1,'igc'),1).'%';
+              $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row1,'igc'),1).'%' : '');
             } else {
               $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim'));
             }
             // Recupera os documentos vinculados
             $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
-              foreach($RS2 as $row2) {
+            foreach($RS2 as $row2) {
+              if (f($row2,'sigla')=='PEPROCAD') {
                 if (f($row2,'sg_tramite')=='AT') {
                   $w_cor_nome = '"#0000ff"';
                   $w_cor_text = '"#0000ff"';
@@ -191,11 +192,12 @@ function Gera_Hierarquico($l_gera) {
                   $w_cor_nome = '"#00ff00"';
                   $w_cor_text = '"#00ff00"';
                 }
-                $w_titulo=f($row2,'titulo'); 
+                if (strlen(Nvl(f($row2,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,50).'...'; 
+                else                                          $w_titulo=Nvl(f($row2,'ac_titulo'),'-');
                 $l_xml .= chr(13).'           <node name="'.$w_titulo.'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
                 $l_xml .= chr(13).'           Tipo: '.f($row2,'nome');
                 if (f($row2,'sigla')=='PJCAD') {
-                  $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.'\nIGC: '.round(f($row2,'igc'),1).'%';
+                  $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row2,'igc'),1).'%' : '');
                 } else {
                   $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim'));
   
@@ -203,6 +205,7 @@ function Gera_Hierarquico($l_gera) {
                   $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
                   $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
                   foreach ($RS3 as $row3) {
+                    if (f($row3,'sigla')=='PEPROCAD') {
                       if (f($row3,'fim')<time() && f($row3,'sg_tramite')!='AT' && f($row3,'sg_tramite')!='CA') {
                         $w_cor_nome = '"#ff0000"';
                         $w_cor_text = '"#ff0000"';
@@ -210,25 +213,28 @@ function Gera_Hierarquico($l_gera) {
                         $w_cor_nome = '"#00ff00"';
                         $w_cor_text = '"#00ff00"';
                       }
-                      $w_titulo=f($row3,'titulo'); 
+                      if (strlen(Nvl(f($row3,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row3,'ac_titulo'),'-'),0,50).'...'; 
+                      else                                          $w_titulo=Nvl(f($row3,'ac_titulo'),'-');
                       $l_xml .= chr(13).'              <node name="'.$w_titulo.'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
                       $l_xml .= chr(13).'Tipo: '.f($row3,'nome');
                       if (f($row3,'sigla')=='PJCAD') {
-                        $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.'\nIGC: '.round(f($row3,'igc'),1).'%';
+                        $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row3,'igc'),1).'%' : '');
                       } else {
                         $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim'));
                       }
                       $l_xml .= chr(13).'              </node>';
+                    }
                   }
   
   
                 }
                 $l_xml .= chr(13).'           </node>';
               }
-              $l_xml .= chr(13).'        </node>';
             }
+            $l_xml .= chr(13).'        </node>';
           }
-        $l_xml .= chr(13).'     </node>';
+        }
+        //$l_xml .= chr(13).'     </node>';
       }
     }
   } 

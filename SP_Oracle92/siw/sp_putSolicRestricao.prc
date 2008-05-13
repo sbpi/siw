@@ -26,12 +26,12 @@ begin
       select sq_siw_restricao.nextval into w_chave_aux from dual;    
       -- Insere registro
       insert into siw_restricao
-        (sq_siw_restricao,  sq_siw_solicitacao,       sq_pessoa,      sq_pessoa_atualizacao,      sq_tipo_restricao,               risco,            problema,         descricao,        probabilidade, 
-                  impacto,          criticidade,      estrategia,   acao_resposta,                 fase_atual,          data_situacao,      situacao_atual,   ultima_atualizacao)
+        (sq_siw_restricao,  sq_siw_solicitacao,       sq_pessoa,      sq_pessoa_atualizacao,      sq_tipo_restricao,   risco,              problema,         descricao,        probabilidade, 
+         impacto,           criticidade,              estrategia,     acao_resposta,              fase_atual,          data_situacao,      situacao_atual,   ultima_atualizacao)
 
       values
-        (w_chave_aux,                 p_chave,          p_pessoa,      p_pessoa_atualizacao,      p_tipo_restricao,            p_risco,          p_problema,         p_descricao,   p_probabilidade, 
-        p_impacto,                p_criticidade,     p_estrategia,   p_acao_resposta,             p_fase_atual,        p_data_situacao,    p_situacao_atual,            sysdate);
+        (w_chave_aux,       p_chave,                  p_pessoa,       p_pessoa_atualizacao,       p_tipo_restricao,    p_risco,            p_problema,       p_descricao,       p_probabilidade, 
+         p_impacto,         p_criticidade,            p_estrategia,   p_acao_resposta,            p_fase_atual,        p_data_situacao,    p_situacao_atual, sysdate);
    Elsif p_operacao = 'A' Then 
       -- Altera registro
       update siw_restricao

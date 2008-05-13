@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getTipoRecurso {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_chave_pai, $p_nome, $p_sigla, $p_gestora, $p_ativo, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_GETTIPORECURSO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_getTipoRecurso';
      $params=array('p_cliente'      =>array($p_cliente,         B_INTEGER,        32),
                    'p_chave'        =>array(tvl($p_chave),      B_INTEGER,        32),
                    'p_chave_pai'    =>array($p_chave_pai,       B_NUMERIC,        32),

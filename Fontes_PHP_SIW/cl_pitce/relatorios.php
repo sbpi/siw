@@ -500,6 +500,18 @@ function Rel_Progresso() {
     }
     if ($p_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
+    // Se somente uma opção puder ser selecionada, já seleciona.
+    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $w_cont = 0;
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        $w_cont += 1;
+        $w_registro = f($row,'chave');
+      }
+    }
+    if ($w_cont==1) $p_plano = $w_registro;
+    
+  
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
@@ -685,6 +697,17 @@ function Rel_Projeto() {
       ShowHTML('     </table>');
     }
   } elseif ($O=='P') {
+    // Se somente uma opção puder ser selecionada, já seleciona.
+    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $w_cont = 0;
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        $w_cont += 1;
+        $w_registro = f($row,'chave');
+      }
+    }
+    if ($w_cont==1) $p_plano = $w_registro;
+
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
@@ -1016,6 +1039,17 @@ function Rel_Atualizacao() {
       ShowHTML('     </table>');
     }
   } elseif ($O=='P') {
+    // Se somente uma opção puder ser selecionada, já seleciona.
+    $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
+    $w_cont = 0;
+    foreach ($RST as $row) {
+      if (f($row,'filho')==0) {
+        $w_cont += 1;
+        $w_registro = f($row,'chave');
+      }
+    }
+    if ($w_cont==1) $p_plano = $w_registro;
+
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');

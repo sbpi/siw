@@ -480,7 +480,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     if (count($RSQuery)>0) {
       // Se não foram selecionados registros, exibe mensagem
       // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
-      if ($w_p2 > '') {
+      if (nvl($w_p2,'')!='') {
         $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
         $l_html .= chr(13).'  function lista (projeto, etapa) {';
         $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
@@ -1200,76 +1200,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   if ($operacao=='V' || $operacao=='T') {
     // Encaminhamentos
     if($w_tipo_visao!=2) {
-      $RSQuery = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
-      $RSQuery = SortArray($RSQuery,'phpdt_data','desc','sq_siw_solic_log','desc');
-      $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0"><div align="center"><b>Data</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Ocorrência/Anotação</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Fase/Destinatário</b></div></td>';
-      $l_html.=chr(13).'       </tr>';
-    
-      if (count($RSQuery)==0) {
-        $l_html .= chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
-      } else {
-        $l_html .= chr(13).'      <tr>';
-        $w_cor=$conTrBgColor;
-        $i = 0;
-        foreach ($RSQuery as $row) {
-          if ($i==0) {
-            $l_html .= chr(13).'        <td colspan=6>Fase atual: <b>'.f($row,'fase').'</b></td>';
-            $i = 1;
-            if (f($RS,'ativo')=='S') {
-              // Recupera os responsáveis pelo tramite
-              $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
-              $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
-              $l_html .= chr(13).'        <td colspan=4>Responsáveis pelo trâmite: <b>';
-              if (count($RS2)>0) {
-                $j = 0;
-                foreach($RS2 as $row2) {
-                  if ($j==0) {
-                    $w_tramite_resp = f($row2,'nome_resumido');
-                    $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                    $j = 1;
-                  } else {
-                    if (strpos($w_tramite_resp,f($row,'nome_resumido'))===false) {
-                      $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                    }
-                    $w_tramite_resp .= f($row2,'nome_resumido');
-                  }
-                } 
-              } 
-              $l_html .= chr(13).'</b></td>';
-            } 
-          }
-          if (($operacao=='V' && Nvl(f($row,'caminho'),'')=='') || 
-              ($operacao!='V' && ($operacao=='T' || Nvl(f($row,'sq_siw_solic_log'),'')!='' || Nvl(f($row,'destinatario'),'')!=''))
-             ) {
-            $l_html = $l_html.chr(13).'      <tr valign="top">';
-            $l_html .= chr(13).'        <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-            if (Nvl(f($row,'caminho'),'')>'' && $l_tipo!='WORD') $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
-            else                              $l_html .= chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
-            if($l_tipo!='WORD') $l_html .= chr(13).'        <td nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-            else       $l_html .= chr(13).'        <td nowrap>'.f($row,'responsavel').'</td>';
-            if ((Nvl(f($row,'sq_projeto_log'),'')!='') && (Nvl(f($row,'destinatario'),'')!='')) {
-              if($l_tipo!='WORD') $l_html .= chr(13).'        <td nowrap>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-              else       $l_html .= chr(13).'        <td nowrap>'.f($row,'destinatario').'</td>';
-            } elseif ((Nvl(f($row,'sq_projeto_log'),'')!='')  && (Nvl(f($row,'sq_siw_solic_log'),'')=='')) {
-              $l_html .= chr(13).'        <td nowrap>Anotação</td>';
-            } else {
-              if(strpos(f($row,'despacho'),'*** Nova versão')!==false) {
-                $l_html.=chr(13).'        <td nowrap>---</td>';
-              } else {
-                $l_html.=chr(13).'        <td nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
-              }
-            }
-            $l_html .= chr(13).'      </tr>';
-          }
-        } 
-        $l_html .= chr(13).'         </table></td></tr>';
-      } 
+      include_once($w_dir_volta.'funcoes/exibeLog.php');
+      $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
     }
     $l_html .= chr(13).'</table>';
   } 

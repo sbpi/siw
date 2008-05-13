@@ -596,7 +596,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         } 
       } 
-      if ($w_tipo=='WORD') $l_html .= chr(13).'      </form>';
+      if ($w_tipo!='WORD') $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'         </table></td></tr>';
       $l_html .= chr(13).'<tr><td colspan=2><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';

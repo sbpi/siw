@@ -14,7 +14,7 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
      insert into eo_localizacao (sq_localizacao, sq_pessoa_endereco,
-                  sq_unidade, nome, fax, telefone, ramal, telefone2, ativo)         
+                  sq_unidade, nome, fax, telefone, ramal, telefone2, ativo, cliente)         
           (select sq_localizacao.nextval,
                   p_sq_pessoa_endereco,
                   p_sq_unidade,                 
@@ -23,8 +23,10 @@ begin
                   trim(p_telefone),
                   trim(p_ramal),
                   trim(p_telefone2),
-                  p_ativo
-             from dual
+                  p_ativo,
+                  a.sq_pessoa
+             from co_pessoa_endereco a
+            where sq_pessoa_endereco = p_sq_pessoa_endereco
          );
    Elsif p_operacao = 'A' Then
       -- Altera registro
@@ -44,4 +46,3 @@ begin
    End If;
 end SP_PutEOLocal;
 /
-

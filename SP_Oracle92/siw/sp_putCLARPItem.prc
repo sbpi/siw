@@ -55,11 +55,15 @@ begin
       -- Insere registro em 
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, ordem,       sq_material,           quantidade,   cancelado,   motivo_cancelamento,
-         valor_unit_est,      preco_menor,        preco_maior, preco_medio,           quantidade_autorizada,     dias_validade_proposta
+         valor_unit_est,      preco_menor,        preco_maior, preco_medio,           quantidade_autorizada,     dias_validade_proposta, 
+         sq_unidade_medida
         )
-      values (
+      (select 
          w_item_solic,        p_solic,            p_ordem,     w_material,            p_quantidade, p_cancelado, p_motivo,
-         p_valor,             p_valor,            p_valor,     p_valor,               p_quantidade,              (w_acordo.fim - w_acordo.inicio)
+         p_valor,             p_valor,            p_valor,     p_valor,               p_quantidade,              (w_acordo.fim - w_acordo.inicio),
+         a.sq_unidade_medida
+       from cl_material a
+       where sq_material = w_material
       );
       
       -- Insere registro na tabela CL_ITEM_FORNECEDOR

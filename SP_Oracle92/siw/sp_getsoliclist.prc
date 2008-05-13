@@ -86,6 +86,7 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      
                 coalesce(acentos(b.codigo_interno),acentos(b.titulo),to_char(b.sq_siw_solicitacao)) as titulo,
+                acentos(b.titulo) as ac_titulo,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
@@ -122,14 +123,14 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b3.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -274,13 +275,14 @@ begin
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
+                b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b3.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -506,7 +508,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.sq_plano,
                 round(months_between(b.fim,b.inicio)) as meses_contrato,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -514,7 +516,7 @@ begin
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b3.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -730,14 +732,14 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
-                b.valor,
+                b.valor,              b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b3.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -915,13 +917,14 @@ begin
                 b.opiniao,            b.sq_solic_pai,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,              cast(b.inicio as date)-cast(3 as integer) as aviso,
+                b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b3.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -1080,7 +1083,7 @@ begin
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b2.titulo
+                               else ' Plano: '||b2.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -1244,14 +1247,14 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.sq_plano,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b4.titulo
+                               else ' Plano: '||b4.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -1423,7 +1426,7 @@ begin
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
-      -- Recupera as demandas que o usuário pode ver
+      -- Recupera os projetos que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
            from siw_solicitacao               b
@@ -1433,6 +1436,36 @@ begin
             and coalesce(b1.sigla,'-') not in ('CA','AT')
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
+                );
+   Elsif p_restricao = 'PELIST' Then
+      -- Recupera os programas para montagem da caixa de seleção
+      open p_result for 
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, b.inicio, b.fim
+           from siw_solicitacao            b
+                inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
+                inner   join pe_programa   c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+          where b.sq_menu         = p_menu
+            and coalesce(b1.sigla,'-') not in ('CA','AT')
+            and ((p_projeto      is null and b.sq_solic_pai is null) or (p_projeto is not null and b.sq_solic_pai = p_projeto))
+            and (p_sq_acao_ppa   is null  or (p_sq_acao_ppa is not null and 0                    < (select count(x.sq_siw_solicitacao)
+                                                                                                      from siw_solicitacao                     x
+                                                                                                           left  join siw_solicitacao_objetivo y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                                                                     where y.sq_siw_solicitacao is not null
+                                                                                                       and y.sq_peobjetivo      = p_sq_acao_ppa
+                                                                                                    connect by prior x.sq_solic_pai = x.sq_siw_solicitacao
+                                                                                                    start with x.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                                   )
+                                           )
+                )
+            and (p_sq_orprior     is null or (p_sq_orprior is not null and (b.sq_plano           = p_sq_orprior or 
+                                                                            0                    < (select count(*)
+                                                                                                      from siw_solicitacao
+                                                                                                     where sq_plano = p_sq_orprior
+                                                                                                    connect by prior sq_solic_pai = sq_siw_solicitacao
+                                                                                                    start with sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                                   )
+                                                                           )
+                                             )
                 );
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
