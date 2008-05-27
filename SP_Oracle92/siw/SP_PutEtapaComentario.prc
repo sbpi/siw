@@ -72,14 +72,17 @@ begin
             insert into pj_comentario_arq (sq_etapa_comentario, sq_siw_arquivo)
             values (w_chave, w_chave_arq);
          Else
-             -- Altera dados do anexo
+             -- Recupera a chave do arquivo ligado ao comentário
+             select sq_siw_arquivo into w_chave_arq from pj_comentario_arq where sq_etapa_comentario = w_chave;
+
+             -- Altera dados do arquivo
              update siw_arquivo
                 set inclusao      = sysdate,
                     tamanho       = p_tamanho,
                     tipo          = p_tipo,
                     caminho       = p_caminho,
                     nome_original = p_nome
-              where sq_siw_arquivo = (select sq_siw_arquivo from pj_etapa_comentario where sq_etapa_comentario = w_chave);
+              where sq_siw_arquivo = w_chave_arq;
          End If;
       End If;
       
@@ -93,6 +96,9 @@ begin
   
          -- Remove da tabela de vínculo
          delete pj_comentario_arq where sq_etapa_comentario = w_chave;
+
+         -- Remove da tabela de arquivos
+         delete siw_arquivo where sq_siw_arquivo in (w_arq);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Monta string com a chave dos arquivos ligados à solicitação informada

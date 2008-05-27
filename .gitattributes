@@ -3074,7 +3074,6 @@ SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
-SP_Oracle92/siw/SP_PutComentarioArquivo.prc -text
 SP_Oracle92/siw/SP_PutDataEspecial.prc -text
 SP_Oracle92/siw/SP_PutDcOcorrencia.prc -text
 SP_Oracle92/siw/SP_PutEsquemaInsert.prc -text

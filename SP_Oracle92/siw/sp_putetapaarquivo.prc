@@ -32,7 +32,8 @@ begin
       update siw_arquivo
          set nome      = p_nome,
              descricao = p_descricao
-       where sq_siw_arquivo = p_chave_aux;
+       where cliente        = p_cliente 
+         and sq_siw_arquivo = coalesce(p_chave_aux,0);
        
       -- Se foi informado um novo arquivo, atualiza os dados
       If p_caminho is not null Then
@@ -42,13 +43,14 @@ begin
                 tipo      = p_tipo,
                 caminho   = p_caminho,
                 nome_original = p_nome_original
-          where sq_siw_arquivo = p_chave_aux;
+          where cliente        = p_cliente 
+            and sq_siw_arquivo = coalesce(p_chave_aux,0);
       End If;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove da tabela de vínculo
-      delete pj_projeto_etapa_arq where sq_projeto_etapa = p_chave and sq_siw_arquivo = p_chave_aux;
+      delete pj_projeto_etapa_arq where sq_projeto_etapa = coalesce(p_chave,0) and sq_siw_arquivo = coalesce(p_chave_aux,0);
       -- Remove da tabela de arquivos
-      delete siw_arquivo where sq_siw_arquivo = p_chave_aux;
+      delete siw_arquivo where cliente = p_cliente and sq_siw_arquivo = coalesce(p_chave_aux,0);
    End If;
-   end SP_PutEtapaArquivo;
+end SP_PutEtapaArquivo;
 /

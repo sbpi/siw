@@ -138,6 +138,13 @@ begin
                                else a.titulo
                           end
                 end as nome_completo, 
+                case when c.titulo is not null
+                     then acentos(c.titulo||' - '||b.titulo||' - '|| a.titulo)
+                     else case when b.titulo is not null
+                               then acentos(b.titulo||' - '|| a.titulo)
+                               else acentos(a.titulo)
+                          end
+                end as ac_nome_completo,
                 a.missao, a.valores, a.visao_presente, a.visao_futuro, 
                 a.inicio, a.fim, a.ativo,
                 coalesce(d.filho,0) as filho

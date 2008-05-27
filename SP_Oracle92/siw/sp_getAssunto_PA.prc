@@ -17,7 +17,8 @@ begin
       open p_result for 
          select a.sq_assunto, a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.codigo, a.tipo, a.descricao, a.detalhamento,
                 a.observacao, a.fase_corrente_guarda, a.fase_corrente_anos, a.fase_intermed_guarda,
-                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo,
+                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo, a.provisorio,
+                case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 b.descricao ds_corrente_guarda, b.sigla sg_corrente_guarda,
                 c.descricao ds_intermed_guarda, c.sigla sg_intermed_guarda,
@@ -53,7 +54,8 @@ begin
    Elsif upper(p_restricao) = 'FOLHA' Then
      -- Recupera apenas os registros sem filhos
       open p_result for
-         select a.sq_assunto as chave, a.sq_assunto_pai, a.codigo, a.descricao, a.tipo
+         select a.sq_assunto as chave, a.sq_assunto_pai, a.codigo, a.descricao, a.tipo, a.provisorio,
+                case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio
            from pa_assunto a
                 left  join (select sq_assunto_pai
                               from pa_assunto 
@@ -74,7 +76,8 @@ begin
    Elsif p_restricao = 'EXISTE' Then
       -- Verifica se há outro registro com o mesmo nome ou sigla
       open p_result for 
-         select a.sq_assunto as chave, a.cliente, a.descricao, a.ativo,
+         select a.sq_assunto as chave, a.cliente, a.descricao, a.ativo,a.provisorio,
+                case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
            from pa_assunto a
           where a.cliente                = p_cliente
@@ -90,7 +93,8 @@ begin
       open p_result for 
          select a.sq_assunto, a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.codigo, a.tipo, a.descricao, a.detalhamento,
                 a.observacao, a.fase_corrente_guarda, a.fase_corrente_anos, a.fase_intermed_guarda,
-                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo,
+                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo,a.provisorio,
+                case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 b.descricao ds_corrente_guarda, b.sigla sg_corrente_guarda,
                 c.descricao ds_intermed_guarda, c.sigla sg_intermed_guarda,
@@ -108,7 +112,7 @@ begin
                   left    join pa_assunto     g on (f.sq_assunto_pai       = g.sq_assunto)
                     left  join pa_assunto     h on (g.sq_assunto_pai       = h.sq_assunto)
           where a.cliente           = p_cliente
-            and a.tipo              = '4 - Subgrupo'
+            and (a.provisorio       = 'S' or a.tipo = '4 - Subgrupo')
             and (p_descricao        is null or (p_descricao        is not null and (acentos(a.descricao)    like '%'||acentos(p_descricao)||'%' or
                                                                                     acentos(a.detalhamento) like '%'||acentos(p_descricao)||'%' or
                                                                                     acentos(a.observacao)   like '%'||acentos(p_descricao)||'%'
@@ -117,6 +121,16 @@ begin
                 )
             and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo))
             and (p_codigo           is null or (p_codigo           is not null and a.codigo like '%'||p_codigo||'%'));
+   Elsif p_restricao = 'PROVISORIO' Then
+      -- Recupera os assuntos existentes
+      open p_result for 
+         select a.sq_assunto, a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.codigo, a.tipo, a.descricao, a.detalhamento,
+                a.observacao, a.fase_corrente_guarda, a.fase_corrente_anos, a.fase_intermed_guarda,
+                a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos, a.destinacao_final, a.ativo,
+                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
+           from pa_assunto  a
+          where a.cliente           = p_cliente
+            and a.provisorio        = 'S';
    Elsif p_restricao = 'VINCULADO' Then
       -- Verifica se o registro está vinculado a um documento
       open p_result for 
@@ -131,7 +145,8 @@ begin
             select a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.codigo, a.tipo, a.descricao, 
                    a.detalhamento, a.observacao, a.fase_corrente_guarda, a.fase_corrente_anos, 
                    a.fase_intermed_guarda, a.fase_intermed_anos, a.fase_final_guarda, a.fase_final_anos,
-                   a.destinacao_final, a.ativo, 
+                   a.destinacao_final, a.ativo, a.provisorio,
+                   case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
                    case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                    coalesce(b.filho,0) as filho,
                    coalesce(c.qtd,0) as qt_assuntos,
@@ -164,7 +179,9 @@ begin
                and (p_ativo            is null or (p_ativo            is not null and a.ativo = p_ativo));
       Else
          open p_result for
-            select a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.descricao, a.ativo, coalesce(b.filho,0) as filho,
+            select a.sq_assunto as chave, a.cliente, a.sq_assunto_pai, a.descricao, a.ativo, a.provisorio,
+                case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
+                coalesce(b.filho,0) as filho,
                 coalesce(c.qtd,0) as qt_assuntos
               from pa_assunto a
                    left join (select sq_assunto_pai, count(sq_assunto) as filho 
