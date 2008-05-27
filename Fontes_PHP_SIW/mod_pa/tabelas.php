@@ -1106,11 +1106,12 @@ function Assunto() {
     $w_final_guarda         = $_REQUEST['w_final_guarda'];
     $w_final_anos           = $_REQUEST['w_final_anos'];
     $w_destinacao_final     = $_REQUEST['w_destinacao_final'];
+    $w_provisorio           = $_REQUEST['w_provisorio'];
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'ISNULL');
-    $RS = SortArray($RS,'codigo','asc','descricao','asc');
+    $RS = SortArray($RS,'provisorio','desc','codigo','asc','descricao','asc');
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados de um assunto
     $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,'REGISTROS');
@@ -1127,6 +1128,7 @@ function Assunto() {
     $w_final_guarda         = f($RS,'fase_final_guarda');
     $w_final_anos           = f($RS,'fase_final_anos');
     $w_destinacao_final     = f($RS,'destinacao_final');
+    $w_provisorio           = f($RS,'provisorio');
     $w_ativo                = f($RS,'ativo');
   }
   cabecalho();
@@ -1188,6 +1190,7 @@ function Assunto() {
     ShowHTML('          <td><b>Intermediária</td>');
     ShowHTML('          <td><b>Final</td>');
     ShowHTML('          <td><b>Destinação final</td>');
+    ShowHTML('          <td><b>Provisório</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -1197,31 +1200,31 @@ function Assunto() {
     } else {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHtml(AssuntoLinha(f($row,'chave'),f($row,'codigo'),f($row,'descricao'),f($row,'ds_corrente_guarda'),f($row,'sg_corrente_guarda'),f($row,'fase_corrente_anos'),f($row,'ds_intermed_guarda'),f($row,'sg_intermed_guarda'),f($row,'fase_intermed_anos'),f($row,'ds_final_guarda'),f($row,'sg_final_guarda'),f($row,'fase_final_anos'),f($row,'ds_destinacao_final'),f($row,'sg_destinacao_final'),f($row,'nm_ativo'),'S',$w_cor));
+        ShowHtml(AssuntoLinha(f($row,'chave'),f($row,'codigo'),f($row,'descricao'),f($row,'ds_corrente_guarda'),f($row,'sg_corrente_guarda'),f($row,'fase_corrente_anos'),f($row,'ds_intermed_guarda'),f($row,'sg_intermed_guarda'),f($row,'fase_intermed_anos'),f($row,'ds_final_guarda'),f($row,'sg_final_guarda'),f($row,'fase_final_anos'),f($row,'ds_destinacao_final'),f($row,'sg_destinacao_final'),f($row,'nm_provisorio'),f($row,'nm_ativo'),'S',$w_cor));
         // Recupera os assuntos vinculados ao nível acima
         $RS1 = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,f($row,'chave'),null,null,null,null,null,null,null,'REGISTROS');
         $RS1 = SortArray($RS1,'codigo','asc','descricao','asc');
         foreach($RS1 as $row1) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          ShowHtml(AssuntoLinha(f($row1,'chave'),f($row1,'codigo'),f($row1,'descricao'),f($row1,'ds_corrente_guarda'),f($row1,'sg_corrente_guarda'),f($row1,'fase_corrente_anos'),f($row1,'ds_intermed_guarda'),f($row1,'sg_intermed_guarda'),f($row1,'fase_intermed_anos'),f($row1,'ds_final_guarda'),f($row1,'sg_final_guarda'),f($row1,'fase_final_anos'),f($row1,'ds_destinacao_final'),f($row1,'sg_destinacao_final'),f($row1,'nm_ativo'),'S',$w_cor));
+          ShowHtml(AssuntoLinha(f($row1,'chave'),f($row1,'codigo'),f($row1,'descricao'),f($row1,'ds_corrente_guarda'),f($row1,'sg_corrente_guarda'),f($row1,'fase_corrente_anos'),f($row1,'ds_intermed_guarda'),f($row1,'sg_intermed_guarda'),f($row1,'fase_intermed_anos'),f($row1,'ds_final_guarda'),f($row1,'sg_final_guarda'),f($row1,'fase_final_anos'),f($row1,'ds_destinacao_final'),f($row1,'sg_destinacao_final'),f($row1,'nm_provisorio'),f($row1,'nm_ativo'),'S',$w_cor));
           // Recupera os assuntos vinculados ao nível acima
           $RS2 = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,f($row1,'chave'),null,null,null,null,null,null,null,'REGISTROS');
           $RS2 = SortArray($RS2,'codigo','asc','descricao','asc');
           foreach($RS2 as $row2) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            ShowHtml(AssuntoLinha(f($row2,'chave'),f($row2,'codigo'),f($row2,'descricao'),f($row2,'ds_corrente_guarda'),f($row2,'sg_corrente_guarda'),f($row2,'fase_corrente_anos'),f($row2,'ds_intermed_guarda'),f($row2,'sg_intermed_guarda'),f($row2,'fase_intermed_anos'),f($row2,'ds_final_guarda'),f($row2,'sg_final_guarda'),f($row2,'fase_final_anos'),f($row2,'ds_destinacao_final'),f($row2,'sg_destinacao_final'),f($row2,'nm_ativo'),'S',$w_cor));
+            ShowHtml(AssuntoLinha(f($row2,'chave'),f($row2,'codigo'),f($row2,'descricao'),f($row2,'ds_corrente_guarda'),f($row2,'sg_corrente_guarda'),f($row2,'fase_corrente_anos'),f($row2,'ds_intermed_guarda'),f($row2,'sg_intermed_guarda'),f($row2,'fase_intermed_anos'),f($row2,'ds_final_guarda'),f($row2,'sg_final_guarda'),f($row2,'fase_final_anos'),f($row2,'ds_destinacao_final'),f($row2,'sg_destinacao_final'),f($row2,'nm_provisorio'),f($row2,'nm_ativo'),'S',$w_cor));
             // Recupera as etapas vinculadas ao nível acima
             $RS3 = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,f($row2,'chave'),null,null,null,null,null,null,null,'REGISTROS');
             $RS3 = SortArray($RS3,'codigo','asc','descricao','asc');
             foreach($RS3 as $row3) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-              ShowHtml(AssuntoLinha(f($row3,'chave'),f($row3,'codigo'),f($row3,'descricao'),f($row3,'ds_corrente_guarda'),f($row3,'sg_corrente_guarda'),f($row3,'fase_corrente_anos'),f($row3,'ds_intermed_guarda'),f($row3,'sg_intermed_guarda'),f($row3,'fase_intermed_anos'),f($row3,'ds_final_guarda'),f($row3,'sg_final_guarda'),f($row3,'fase_final_anos'),f($row3,'ds_destinacao_final'),f($row3,'sg_destinacao_final'),f($row3,'nm_ativo'),'S',$w_cor));
+              ShowHtml(AssuntoLinha(f($row3,'chave'),f($row3,'codigo'),f($row3,'descricao'),f($row3,'ds_corrente_guarda'),f($row3,'sg_corrente_guarda'),f($row3,'fase_corrente_anos'),f($row3,'ds_intermed_guarda'),f($row3,'sg_intermed_guarda'),f($row3,'fase_intermed_anos'),f($row3,'ds_final_guarda'),f($row3,'sg_final_guarda'),f($row3,'fase_final_anos'),f($row3,'ds_destinacao_final'),f($row3,'sg_destinacao_final'),f($row3,'nm_provisorio'),f($row3,'nm_ativo'),'S',$w_cor));
               // Recupera os assuntos vinculados ao nível acima
               $RS4 = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,f($row3,'chave'),null,null,null,null,null,null,null,'REGISTROS');
               $RS4 = SortArray($RS4,'codigo','asc','descricao','asc');
               foreach($RS4 as $row4) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-                ShowHtml(AssuntoLinha(f($row4,'chave'),f($row4,'codigo'),f($row4,'descricao'),f($row4,'ds_corrente_guarda'),f($row4,'sg_corrente_guarda'),f($row4,'fase_corrente_anos'),f($row4,'ds_intermed_guarda'),f($row4,'sg_intermed_guarda'),f($row4,'fase_intermed_anos'),f($row4,'ds_final_guarda'),f($row4,'sg_final_guarda'),f($row4,'fase_final_anos'),f($row4,'ds_destinacao_final'),f($row4,'sg_destinacao_final'),f($row4,'nm_ativo'),'S',$w_cor));
+                ShowHtml(AssuntoLinha(f($row4,'chave'),f($row4,'codigo'),f($row4,'descricao'),f($row4,'ds_corrente_guarda'),f($row4,'sg_corrente_guarda'),f($row4,'fase_corrente_anos'),f($row4,'ds_intermed_guarda'),f($row4,'sg_intermed_guarda'),f($row4,'fase_intermed_anos'),f($row4,'ds_final_guarda'),f($row4,'sg_final_guarda'),f($row4,'fase_final_anos'),f($row4,'ds_destinacao_final'),f($row4,'sg_destinacao_final'),f($row4,'nm_provisorio'),f($row4,'nm_ativo'),'S',$w_cor));
               } 
             }    
           } 
@@ -1261,6 +1264,8 @@ function Assunto() {
     SelecaoTipoGuarda('De<u>s</u>tinação final do documento:','S',null,$w_destinacao_final,null,'w_destinacao_final','DESTINACAO',null);
     ShowHTML('      </tr>');
     ShowHTML('        <tr valign="top">');
+    MontaRadioNS('<b>Registro para classificação provisória?</b>',$w_provisorio,'w_provisorio');    
+    ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');    
     ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -1280,7 +1285,7 @@ function Assunto() {
 // =========================================================================
 // Gera uma linha de apresentação da tabela de assuntos
 // -------------------------------------------------------------------------
-function AssuntoLinha($l_chave,$l_codigo,$l_descricao,$l_ds_corrente,$l_sg_corrente,$l_corrente_ano,$l_ds_intermed,$l_sg_intermed,$l_intermed_ano,$l_ds_final,$l_sg_final,$l_final_ano,$l_ds_destinacao,$l_sg_destinacao,$l_ativo,$l_oper,$l_cor) {
+function AssuntoLinha($l_chave,$l_codigo,$l_descricao,$l_ds_corrente,$l_sg_corrente,$l_corrente_ano,$l_ds_intermed,$l_sg_intermed,$l_intermed_ano,$l_ds_final,$l_sg_final,$l_final_ano,$l_ds_destinacao,$l_sg_destinacao,$l_provisorio,$l_ativo,$l_oper,$l_cor) {
   extract($GLOBALS);
   $l_html=$l_html.chr(13).'       <tr bgcolor="'.$l_cor.'" valign="top">';
   $l_html=$l_html.chr(13).'        <td>'.$l_codigo.'</b>';
@@ -1289,6 +1294,7 @@ function AssuntoLinha($l_chave,$l_codigo,$l_descricao,$l_ds_corrente,$l_sg_corre
   $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_intermed.'">'.(($l_sg_intermed=='ANOS')? $l_intermed_ano.' '.$l_sg_intermed:$l_sg_intermed).'</td>';
   $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_final.'">'.(($l_sg_final=='ANOS')   ? $l_final_ano.' '.$l_sg_final:$l_sg_final).'</td>';  
   $l_html=$l_html.chr(13).'        <td nowrap align="center" title="'.$l_ds_destinacao.'">'.$l_sg_destinacao.'</b>';
+  $l_html=$l_html.chr(13).'        <td align="center">'.$l_provisorio.'</b>';
   $l_html=$l_html.chr(13).'        <td align="center">'.$l_ativo.'</b>';
   if ($l_oper == 'S') {
     $l_html=$l_html.chr(13).'        <td nowrap>';
@@ -1602,6 +1608,17 @@ function Grava() {
             retornaFormulario('w_assinatura');
             break;
           } 
+        } elseif ($_REQUEST['w_provisorio']=='S' && ($O=='I' || $O=='A')) {
+          // Só pode haver um registro para classificação provisória
+          $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'PROVISORIO');
+          foreach($RS as $row) { $RS = $row; break; }
+          if (count($RS)>0 && ($O=='I' || ($O=='A' && f($RS,'sq_assunto')!=$_REQUEST['w_chave']))) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("Só pode haver um registro para classificação provisória de assuntos!");');
+            ScriptClose();
+            retornaFormulario('w_assinatura');
+            break;
+          } 
         }
         $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_corrente_guarda'],''),$w_cliente,null,null,null,null,null,null,null,null);
         foreach($RS as $row){$RS=$row; break;}
@@ -1618,7 +1635,7 @@ function Grava() {
         dml_putAssunto_PA::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_chave_pai'],$_REQUEST['w_codigo'],
                 $_REQUEST['w_descricao'],$_REQUEST['w_detalhamento'],$_REQUEST['w_observacao'],$_REQUEST['w_corrente_guarda'],
                 $w_corrente_anos,$_REQUEST['w_intermed_guarda'],$w_intermed_anos,$_REQUEST['w_final_guarda'],
-                $w_final_anos,$_REQUEST['w_destinacao_final'],$_REQUEST['w_ativo']);
+                $w_final_anos,$_REQUEST['w_destinacao_final'],$_REQUEST['w_provisorio'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

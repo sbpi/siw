@@ -145,7 +145,7 @@ function Gera_Hierarquico($l_gera) {
   
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
-  $l_xml .= chr(13).'  <node name="    '.f($RS,'nome_completo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+  $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_nome_completo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
   $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim'));
 
   // Cria caixas para os documentos vinculados

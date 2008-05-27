@@ -213,7 +213,7 @@ function Usuarios() {
     ShowHTML('          <td><b>'.LinkOrdena('Mod.','qtd_modulo').'</td>');
     ShowHTML('        </tr>');    
     if (count($RS) <= 0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {

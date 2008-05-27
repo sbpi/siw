@@ -588,6 +588,12 @@ function Geral() {
     }
   }
   
+  if (nvl($w_assunto,'')=='') {
+    // Só pode haver um registro para classificação provisória
+    $RS_Assunto = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'PROVISORIO');
+    foreach($RS_Assunto as $row) { $RS_Assunto = $row; break; }
+    if (count($RS_Assunto)>0) $w_assunto = f($RS_Assunto,'sq_assunto');
+  }
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1776,7 +1782,7 @@ function BuscaAssunto() {
   $campo        = $_REQUEST['campo'];
 
   $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$chave,null,$w_codigo,$w_nome,null,null,null,null,'S','BUSCA');
-  $RS = SortArray($RS,'descricao','asc', 'codigo', 'asc');
+  $RS = SortArray($RS,'provisorio','desc', 'codigo','asc', 'descricao', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de assunto</TITLE>');
   ShowHTML('<HEAD>');

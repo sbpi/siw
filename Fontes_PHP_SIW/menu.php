@@ -693,6 +693,11 @@ function Sair() {
 
   ScriptOpen('JavaScript');
   ShowHTML('  top.location.href=\''.f($RS,'logradouro').'\';');
+  // Eliminar todas as variáveis de sessão.
+  $_SESSION = array();
+  // Finalmente, destruição da sessão.
+  session_destroy();
+
   ScriptClose();
 }
 

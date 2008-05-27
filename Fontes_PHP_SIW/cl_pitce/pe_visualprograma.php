@@ -278,7 +278,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
     $l_html.=chr(13).'       </tr>';
     $l_html.=chr(13).'       <tr align="center">';
     $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Até</b></td>';
     $l_html.=chr(13).'       </tr>';
     $w_cor=$conTrBgColor;
     foreach ($RS1 as $row) {
@@ -327,7 +327,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
     $l_html.=chr(13).'       </tr>';
     $l_html.=chr(13).'       <tr align="center">';
     $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>De</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Até</b></td>';
     $l_html.=chr(13).'       </tr>';
     $w_cor=$conTrBgColor;
     foreach ($RS1 as $row) {

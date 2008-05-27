@@ -10,6 +10,7 @@ function selecaoTipoGuarda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   elseif($restricao=='FINAL')      $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,'S',null,'S',null);
   elseif($restricao=='DESTINACAO') $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,'S','S',null);
   else                             $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,'S',null);
+  $RS = SortArray($RS,'descricao','asc');
   if (!isset($hint)) {
      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
