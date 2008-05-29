@@ -16,7 +16,7 @@ begin
   for crec in c_protocolo loop
      -- Se tramitação interna, garante que a unidade de posse é a unidade recebedora
      update pa_documento a 
-        set a.unidade_int_posse = case interno when 'S' then crec.unidade_destino else crec.unidade_origem end
+        set a.unidade_int_posse = case crec.interno when 'S' then crec.unidade_destino else crec.unidade_origem end
       where a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
      
      -- Atualiza o log com os dados do recebimento
