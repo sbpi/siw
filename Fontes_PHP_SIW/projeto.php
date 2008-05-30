@@ -56,6 +56,7 @@ include_once($w_dir_volta.'funcoes/selecaoObjetivoEstrategico.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
+include_once($w_dir_volta.'funcoes/selecaoBaseGeografica.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
@@ -71,31 +72,11 @@ include_once($w_dir_volta.'funcoes/selecaoAcordo.php');
 include_once($w_dir_volta.'funcoes/selecaoAcao.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
-include_once($w_dir_volta.'funcoes/selecaoBaseGeografica.php');
 include_once($w_dir_volta.'funcoes/selecaoInteresse.php');
 include_once($w_dir_volta.'funcoes/selecaoInfluencia.php');
 include_once($w_dir_volta.'funcoes/selecaoPrestacaoSub.php');
 include_once($w_dir_volta.'funcoes/selecaoContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoGeral.php');
-include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
-include_once($w_dir_volta.'classes/sp/dml_putEtapaArquivo.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoInter.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoAreas.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoEtapa.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoRec.php');
-include_once($w_dir_volta.'classes/sp/dml_putSolicEtpRec.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoEnvio.php');
-include_once($w_dir_volta.'classes/sp/dml_putAtualizaEtapa.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoRubrica.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoDescritivo.php');
-include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapa.php');
-include_once($w_dir_volta.'classes/sp/dml_putCronograma.php');
-include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapaInter.php');
-include_once($w_dir_volta.'classes/sp/dml_putContasRegistro.php');
-include_once($w_dir_volta.'classes/sp/dml_putContasCronograma.php');
-include_once($w_dir_volta.'visualprojeto.php');
 
 // =========================================================================
 //  /Projeto.php
@@ -550,7 +531,7 @@ function Inicial() {
               if ($w_usuario == f($row,'executor')) {
                 ShowHTML('          <A class="HL" HREF="'.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza as etapas do projeto." target="Etapas">EA</A>&nbsp');
                 if ($P1==2 && f($RS_Cliente,'georeferencia')=='S') {
-                  ShowHTML('          <A class="hl" HREF="#" onClick="javascript:window.open(\''.montaURL_JS(null,$conRootSIW.'mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=PROJETO&w_auth=true&w_volta=fecha&w_chave='.f($row,'sq_siw_solicitacao').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
+                  ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS(null,$conRootSIW.'mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=PROJETO&w_auth=true&w_volta=fecha&w_chave='.f($row,'sq_siw_solicitacao').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
                 }
                 // Permite a visualização ou manutenção de riscos e problemas
                 ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos do projeto." target="Restricao">RS</A>&nbsp');
@@ -1033,9 +1014,9 @@ function Geral() {
     }
     $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
     if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');
     } else {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="#" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');    
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do projeto.">Prestação de contas</a>&nbsp');    
     }
     ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
@@ -2204,8 +2185,12 @@ function Etapas() {
     $RS_Tramite = db_getLinkData::getInstanceOf($dbms,f($RS_Tarefa,'sq_menu'),null,'S');
     foreach($RS_Tramite as $row){$RS_Tramite=$row; break;}
     if(RetornaMarcado(f($RS_Tarefa,'sq_menu'),$w_usuario,null,f($RS_Tarefa,'sq_siw_tramite'))>0) {
-      ShowHTML('        <a class="SS" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">Tarefas</a>&nbsp');
+      ShowHTML('        <a accesskey="T" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projetoativ.php?par=Inicial&R=projetoativ.php?par=Inicial&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1=1&P2='.f($RS_Tarefa,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Tarefas').'&SG='.f($RS_Tarefa,'sigla').'\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"><u>T</u>arefas</a>&nbsp');
     }
+    // Recupera as etapas principais
+    $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+
+    ShowHTML('        <a accesskey="M" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'/mod_pr/project.php?par=Etapa&O=L&p_projeto='.$w_chave.'&p_volta=Lista&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Importação MS-Project').'&SG=IMPPROJ\',\'Tarefa\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');">I<u>m</u>portação MS-Project</a>&nbsp');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2223,8 +2208,6 @@ function Etapas() {
     ShowHTML('          <td><b>De</td>');
     ShowHTML('          <td><b>Até</td>');
     ShowHTML('        </tr>');
-    // Recupera as etapas principais
-    $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -4063,6 +4046,7 @@ function PrestacaoContas() {
 // Rotina de visualização
 // -------------------------------------------------------------------------
 function Visual() {
+  include_once($w_dir_volta.'visualprojeto.php');
   extract($GLOBALS);
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
@@ -4510,7 +4494,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   if (nvl($l_chave_aux,'')!='') {
     $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
-    if($P4!=1) $l_com = '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
+    if($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
 
     $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
@@ -4632,7 +4616,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
-  if($P4!=1) $l_com = '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
+  if($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
   $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
   else       $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
@@ -5147,6 +5131,24 @@ function EtapaMail($p_solic) {
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoGeral.php');
+  include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
+  include_once($w_dir_volta.'classes/sp/dml_putEtapaArquivo.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoInter.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoAreas.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoEtapa.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoRec.php');
+  include_once($w_dir_volta.'classes/sp/dml_putSolicEtpRec.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoEnvio.php');
+  include_once($w_dir_volta.'classes/sp/dml_putAtualizaEtapa.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoRubrica.php');
+  include_once($w_dir_volta.'classes/sp/dml_putProjetoDescritivo.php');
+  include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapa.php');
+  include_once($w_dir_volta.'classes/sp/dml_putCronograma.php');
+  include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapaInter.php');
+  include_once($w_dir_volta.'classes/sp/dml_putContasRegistro.php');
+  include_once($w_dir_volta.'classes/sp/dml_putContasCronograma.php');
   extract($GLOBALS);
   $w_file       ='';
   $w_tamanho    ='';

@@ -304,7 +304,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
 
   // Projetos vinculados ao programa
   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),6,
          null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
   $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc','titulo','asc','prioridade','asc');

@@ -367,6 +367,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('</TD></TR>');
   }
   ShowHTML('</FONT></B></TD></TR></TABLE>');
+  flush();
 }
 
 // =========================================================================
@@ -3157,6 +3158,7 @@ function BodyOpen($cProperties) {
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
             'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
    }
+  flush();
 }
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
@@ -3190,6 +3192,7 @@ function BodyOpenClean($cProperties) {
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
   'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
+  flush();
 }
 
 // Cria a tag Body

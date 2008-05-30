@@ -100,7 +100,7 @@ begin
         and sq_projeto_etapa   = p_chave_aux;
 
       -- Se houve alteração da subordinação, recalcula para o pai anterior
-      If w_pai <> p_chave_pai Then
+      If coalesce(w_pai,0) <> coalesce(p_chave_pai,0) Then
          -- Recalcula os percentuais de execução dos pais anteriores da etapa
          sp_calculaPercEtapa(null, w_pai);
       End If;

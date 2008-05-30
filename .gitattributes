@@ -1060,6 +1060,7 @@ Fontes_PHP_SIW/classes/sp/dml_putEsquemaTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaComentario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEtapaMensal.php -text
+Fontes_PHP_SIW/classes/sp/dml_putEtapaProject.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEventoTrigger.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFNParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFinancAcaoPPA_IS.php -text
@@ -1592,6 +1593,7 @@ Fontes_PHP_SIW/mod_pe/tabelas.php -text
 Fontes_PHP_SIW/mod_pe/visualprograma.php -text
 Fontes_PHP_SIW/mod_pr/exibeprojeto.php -text
 Fontes_PHP_SIW/mod_pr/graficos.php -text
+Fontes_PHP_SIW/mod_pr/project.php -text
 Fontes_PHP_SIW/mod_pr/relatorios.php -text
 Fontes_PHP_SIW/mod_pr/restricao.php -text
 Fontes_PHP_SIW/mod_pr/tabelas.php -text
@@ -3594,6 +3596,7 @@ SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text
 SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
+SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
 SP_Oracle92/siw/sp_putIndicador.prc -text
