@@ -2768,6 +2768,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
         case 5: return date('d/m/y',$w_dt_grade);                         break;
         case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
+        case 7: return date('Y-m-d',$w_dt_grade);                         break;
       }
     } else {
       return $w_dt_grade;

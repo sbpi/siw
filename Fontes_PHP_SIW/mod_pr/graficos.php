@@ -224,7 +224,7 @@ function Gantt() {
   if ($w_scale=='w') ShowHTML('  [<b>Semanais</b>] '); else ShowHTML('  [<a class="HL" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_scale=w">Semanais</a>] ');
   if ($w_scale=='m') ShowHTML('  [<b>Mensais</b>] '); else ShowHTML('  [<a class="HL" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_scale=m">Mensais</a>] ');
   ShowHTML('</td></tr>');
-  ShowHTML('<tr><td colspan="2"><img src="'.$w_dir.$w_pagina.'Gera_Gantt&w_chave='.$w_chave.'&w_scale='.$w_scale.'" border="1" /></td></tr>');
+  ShowHTML('<tr><td colspan="2"><img src="'.$w_dir.$w_pagina.'Gera_Gantt1&w_chave='.$w_chave.'&w_scale='.$w_scale.'" border="1" /></td></tr>');
 
   ShowHTML('</table>');
   ShowHTML('</center>');
@@ -409,6 +409,91 @@ function Gera_Gantt() {
 } 
 
 // =========================================================================
+// Gera imagem do gráfico de Gantt
+// -------------------------------------------------------------------------
+function Gera_Gantt1() {
+  extract($GLOBALS);
+
+// Gantt example
+include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
+include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
+
+$RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
+// 
+// The data for the graphs
+//
+$i = 0;
+$data = array();
+$perc = array();
+foreach ($RS as $row) {
+  $array = array($i,
+                 ((f($row,'pacote_trabalho')=='N') ? ACTYPE_GROUP : ACTYPE_NORMAL),
+                 str_repeat(' ',f($row,'level')*2).f($row,'cd_ordem').'. '.f($row,'titulo'),
+                 formataDataEdicao(f($row,'inicio_previsto'),7),
+                 formataDataEdicao(f($row,'fim_previsto'),7),
+                 ''
+                );
+  array_push($perc,array($i,f($row,'perc_conclusao')/100));
+  array_push($data, $array);
+  $array = '';
+
+  $i++;
+  
+  if (f($row,'fim_real')!=null && f($row,'pacote_trabalho')=='S') {
+    $array = array($i,
+                   ACTYPE_NORMAL,
+                   str_repeat(' ',f($row,'level')*2).'  Execução real',
+                   formataDataEdicao(f($row,'inicio_real'),7),
+                   formataDataEdicao(f($row,'fim_real'),7),
+                   ''
+                  );
+    array_push($data, $array);
+    $array = '';
+    $i++;
+  }
+
+}
+  $progress = $perc;
+// The constrains between the activities
+// $constrains = array(array(3,2,CONSTRAIN_ENDSTART),
+// 		    array(1,3,CONSTRAIN_STARTSTART));
+
+
+// Create the basic graph
+$graph = new GanttGraph();
+//$graph->title->Set("Example with grouping and constrains");
+//$graph->SetFrame(false);
+
+$graph->scale->SetDateLocale('pt_BR');
+
+// Setup scale
+switch ($w_scale) {
+  case 'd' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY); 
+    $graph->scale->day->SetStyle(DAYSTYLE_SHORTDATE4);
+    break;
+  case 'w' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY | GANTT_HWEEK); 
+    $graph->scale->week->SetStyle(WEEKSTYLE_FIRSTDAY2WNBR);
+    break;
+  case 'm' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
+    $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
+    break;
+  default  : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
+    $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
+}
+
+// Add the specified activities
+$graph->CreateSimple($data,$constrains,$progress);
+
+// .. and stroke the graph
+$graph->Stroke();
+
+} 
+
+// =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
 function Main() {
@@ -418,6 +503,7 @@ function Main() {
     case 'GERA_HIER':   Gera_Hierarquico(false); break;
     case 'GANTT':       Gantt();                 break;
     case 'GERA_GANTT':  Gera_Gantt();            break;
+    case 'GERA_GANTT1':  Gera_Gantt1();            break;
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
