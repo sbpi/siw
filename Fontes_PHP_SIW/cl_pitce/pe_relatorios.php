@@ -161,6 +161,17 @@ function Rel_Executivo() {
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     } else {
+      // Verifica se é necessário criar coluna para mostrar a vinculação
+      $RS2 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+      $w_exibe_vinculo = false; 
+      foreach ($RS as $row) {
+        $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS2,'sq_menu'), $w_usuario, f($RS2,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+        $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc');
+        foreach ($RS1 as $row1) { if (f($row1,'sq_plano')!=$w_sq_plano) { $w_exibe_vinculo = true; break; } }
+        if ($w_exibe_vinculo) break;
+      }
+      reset($RS);
+
       // Legendas
       if($p_legenda=='S') {
         ShowHTML('      <tr><td colspan="2"><table border=0>');
@@ -188,6 +199,8 @@ function Rel_Executivo() {
             ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
           }
           $w_proj = 0;
+          // Verifica se é necessário criar coluna para mostrar a vinculação
+          $w_exibe_vinculo = false; foreach ($RS1 as $row) { if (f($row,'sq_solic_pai')!=$l_chave) { $w_exibe_vinculo = true; break; } } reset($RS1);
           foreach($RS1 as $row1) {
             if ($p_projeto=='S') {
               //Programas
@@ -197,7 +210,7 @@ function Rel_Executivo() {
                 ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
               }
               ShowHTML('          <tr align="center">');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
+              if ($w_exibe_vinculo) ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
@@ -243,10 +256,12 @@ function Rel_Executivo() {
               foreach($RS3 as $row3) {
                 if ($p_projeto=='S') {
                   ShowHTML('          <tr valign="top">');
-                  if (f($row3,'sq_solic_pai')!=f($row1,'sq_siw_solicitacao')) {
-                    ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row3,'sq_solic_pai'),f($row3,'dados_pai')).'</td>');
-                  } else {
-                    ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+                  if ($w_exibe_vinculo) {
+                    if (f($row3,'sq_solic_pai')!=f($row1,'sq_siw_solicitacao')) {
+                      ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row3,'sq_solic_pai'),f($row3,'dados_pai')).'</td>');
+                    } else {
+                      ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+                    }
                   }
                   ShowHTML('            <td nowrap>');
                   ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
@@ -277,7 +292,7 @@ function Rel_Executivo() {
               /*
               if ($p_projeto=='S') {
                 ShowHTML('<tr valign="top">');
-                ShowHTML('     <td colspan=5 align="right"><b>Totais:&nbsp;');
+                ShowHTML('     <td colspan='.(($w_exibe_vinculo) ? 6 : 5).' align="right"><b>Totais:&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]));
                 ShowHTML('     <td colspan=2>&nbsp;');
                 ShowHTML('     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]));

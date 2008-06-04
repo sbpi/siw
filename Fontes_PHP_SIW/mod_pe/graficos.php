@@ -145,8 +145,8 @@ function Gera_Hierarquico($l_gera) {
   
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
-  $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_nome_completo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
-  $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim'));
+  $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_nome_completo').'    " fitname="1" align="left" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+  $l_xml .= chr(13).'     Período: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim'));
 
   // Cria caixas para os documentos vinculados
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
@@ -169,9 +169,9 @@ function Gera_Hierarquico($l_gera) {
               $w_cor_nome = '"#00ff00"';
               $w_cor_text = '"#00ff00"';
             }
-            if (strlen(Nvl(f($row1,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row1,'ac_titulo'),'-'),0,50).'...'; 
-            else                                          $w_titulo=Nvl(f($row1,'ac_titulo'),'-');
-            $l_xml .= chr(13).'        <node name="'.$w_titulo.'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+            if (strlen(Nvl(f($row1,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,50).'...'; 
+            else                                          $w_titulo=Nvl(f($row1,'titulo'),'-');
+            $l_xml .= chr(13).'        <node name="'.$w_titulo.'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
             if (f($row1,'sigla')=='PJCAD') {
               $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row1,'igc'),1).'%' : '');
             } else {
@@ -194,7 +194,7 @@ function Gera_Hierarquico($l_gera) {
                 }
                 if (strlen(Nvl(f($row2,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,50).'...'; 
                 else                                          $w_titulo=Nvl(f($row2,'ac_titulo'),'-');
-                $l_xml .= chr(13).'           <node name="'.$w_titulo.'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                $l_xml .= chr(13).'           <node name="'.$w_titulo.'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
                 $l_xml .= chr(13).'           Tipo: '.f($row2,'nome');
                 if (f($row2,'sigla')=='PJCAD') {
                   $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row2,'igc'),1).'%' : '');
@@ -215,7 +215,7 @@ function Gera_Hierarquico($l_gera) {
                       }
                       if (strlen(Nvl(f($row3,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row3,'ac_titulo'),'-'),0,50).'...'; 
                       else                                          $w_titulo=Nvl(f($row3,'ac_titulo'),'-');
-                      $l_xml .= chr(13).'              <node name="'.$w_titulo.'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                      $l_xml .= chr(13).'              <node name="'.$w_titulo.'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
                       $l_xml .= chr(13).'Tipo: '.f($row3,'nome');
                       if (f($row3,'sigla')=='PJCAD') {
                         $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row3,'igc'),1).'%' : '');
@@ -249,6 +249,7 @@ function Gera_Hierarquico($l_gera) {
     $diagram->setDefaultAlign(array('data' => 'center'));
     $diagram->setDefaultColor(array('connection' => '#f00', 'border' => '#f00'));
     $diagram->setDefaultDataColor(array('background' => '#fdd', 'color' => '#f00'));
+    //$diagram->setDefaultFont(array('connection' => 2, 'name' => 10, 'data' => 8));
     $diagram->loadXmlData($l_xml);
     $diagram->Draw();
   }

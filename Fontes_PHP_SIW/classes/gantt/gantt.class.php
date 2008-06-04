@@ -167,7 +167,7 @@ class gantt {
           foreach ($this->groups['group'][$group]['phase'] as $phase=>$cod) {
 
               // name of phase
-              $this->text($this->planned['phase'][$cod]['name'],15,$y+15,$this->definitions["phase"]['text_color']);
+              $this->text($this->planned['phase'][$cod]['name'],5,$y+15,$this->definitions["phase"]['text_color']);
 
               // planned
               $x = (($this->planned['phase'][$cod]['start'] - $this->limit['start'])/(60*60*24))*$this->cell +$start_grid;
@@ -686,10 +686,9 @@ class gantt {
         //  print_r($color);
          $font_size = $this->definitions['text']['ttfont']['size'];
          if ($this->definitions['text']['ttfont']['file']){
-        
-        imagettftext($this->img, $font_size,0, $x,$y+$font_size, $color,$this->definitions['text']['ttfont']['file'],$string);
+           imagettftext($this->img, $font_size,0, $x,$y+$font_size, $color,$this->definitions['text']['ttfont']['file'],$string);
          } else {
-             imagestring($this->img, $this->definitions['text_font'], $x,$y, $string,$color);
+           imagestring($this->img, $this->definitions['text_font'], $x,$y, $string,$color);
          }
     }
     // alocatte the color for background
@@ -707,7 +706,6 @@ class gantt {
     //generate the image
     function draw($image_type= 'png')    {
 
-        //echo  "ok, chegou até aqui";
         if ($this->definitions['image']['type']) {
             $image_type = $this->definitions['image']['type'];
         }

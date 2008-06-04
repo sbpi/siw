@@ -1323,12 +1323,14 @@ function Telaplano(){
     foreach ($RS as $row) {
       $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
       $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc');
+      // Verifica se é necessário criar coluna para mostrar a vinculação
+      $w_exibe_vinculo = false; foreach ($RS1 as $row) { if (f($row,'sq_plano')!=$w_sq_plano) { $w_exibe_vinculo = true; break; } } reset($RS1);
       if (count($RS1)>0) {
         ShowHTML('      <tr><td colspan="2"><font size="2"><b>'.f($row,'nome').' ('.count($RS1).')</b></font></td>');
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-        ShowHTML('          <td rowspan=2><b>Vinculação</td>');
+        if ($w_exibe_vinculo) ShowHTML('          <td rowspan=2><b>Vinculação</td>');
         ShowHTML('          <td rowspan=2><b>Código</td>');
         ShowHTML('          <td rowspan=2><b>Título</td>');
         ShowHTML('          <td rowspan=2><b>Responsável</td>');
@@ -1342,10 +1344,12 @@ function Telaplano(){
         foreach($RS1 as $row1) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-          if (f($row1,'sq_plano')!=$w_sq_plano) {
-            ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row1,'sq_solic_pai'),f($row1,'dados_pai')).'</td>');
-          } else {
-            ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+          if ($w_exibe_vinculo) {
+            if (f($row1,'sq_plano')!=$w_sq_plano) {
+              ShowHTML('        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row1,'sq_solic_pai'),f($row1,'dados_pai')).'</td>');
+            } else {
+              ShowHTML('        <td width="1%" nowrap>&nbsp;</td>');
+            }
           }
           ShowHTML('        <td nowrap>');
           ShowHTML(ExibeImagemSolic(f($row1,'sigla'),f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null));

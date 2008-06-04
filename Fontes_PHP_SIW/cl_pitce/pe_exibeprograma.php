@@ -599,17 +599,20 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
 
   // Subprogramas vinculados ao programa
   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),6,
          null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
   $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc','prioridade','asc');
 
   if (count($RS1) > 0) {
+    // Verifica se é necessário criar coluna para mostrar a vinculação
+    $w_exibe_vinculo = false; foreach ($RS1 as $row) { if (f($row,'sq_solic_pai')!=$l_chave) { $w_exibe_vinculo = true; break; } } reset($RS1);
+
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'       <tr align="center">';
-    $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
+    if ($w_exibe_vinculo) $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
     $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Código</b></td>';
     $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Programa</b></td>';
     $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Responsável</b></td>';
@@ -623,10 +626,12 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     foreach ($RS1 as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
-      if (f($row,'sq_solic_pai')!=$l_chave) {
-        $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
-      } else {
-        $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
+      if ($w_exibe_vinculo) {
+        if (f($row,'sq_solic_pai')!=$l_chave) {
+          $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
+        } else {
+          $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
+        }
       }
       $l_html .=chr(13).'        <td width="1%" nowrap>';
       $l_html .=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
@@ -650,11 +655,14 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS1 = SortArray($RS1,'dados_pai','asc','codigo_interno','asc','titulo','asc','prioridade','asc');
 
     if (count($RS1)>0) {
+      // Verifica se é necessário criar coluna para mostrar a vinculação
+      $w_exibe_vinculo = false; foreach ($RS1 as $row) { if (f($row,'sq_solic_pai')!=$l_chave) { $w_exibe_vinculo = true; break; } } reset($RS1);
+
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
       $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
+      if ($w_exibe_vinculo) $l_html.=chr(13).'            <td bgColor="#f0f0f0" rowspan=2><b>Vinculação</b></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>';
       $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>';
@@ -698,10 +706,12 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_previsto[$w_proj] = 0;
       foreach($RS1 as $row1) {
         $l_html .=chr(13).'          <tr valign="top" align="left">';
-        if (f($row1,'sq_solic_pai')!=$l_chave) {
-          $l_html .=chr(13).'            <td width="1%" nowrap>'.exibeSolic($w_dir,f($row1,'sq_solic_pai'),f($row1,'dados_pai')).'</td>';
-        } else {
-          $l_html .=chr(13).'            <td width="1%" nowrap>&nbsp;</td>';
+        if ($w_exibe_vinculo) {
+          if (f($row1,'sq_solic_pai')!=$l_chave) {
+            $l_html .=chr(13).'            <td width="1%" nowrap>'.exibeSolic($w_dir,f($row1,'sq_solic_pai'),f($row1,'dados_pai')).'</td>';
+          } else {
+            $l_html .=chr(13).'            <td width="1%" nowrap>&nbsp;</td>';
+          }
         }
         $l_html .=chr(13).'            <td nowrap>';    
         if ($_REQUEST['p_sinal']) $l_html .=chr(13).ExibeImagemSolic(f($row1,'sigla'),f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null);
@@ -733,7 +743,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       }
       /*
       $l_html .=chr(13).'<tr valign="top">';
-      $l_html .=chr(13).'     <td colspan=5 align="right"><b>Totais:&nbsp;';
+      $l_html .=chr(13).'     <td colspan='.(($w_exibe_vinculo) ? 6 : 5).' align="right"><b>Totais:&nbsp;';
       $l_html .=chr(13).'     <td align="right"><b>'.formatNumber($l_previsto[$w_proj]);
       $l_html .=chr(13).'     <td colspan=2>&nbsp;';
       $l_html .=chr(13).'     <td align="right"><b>'.formatNumber($l_realizado[$w_proj]);

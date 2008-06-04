@@ -13,15 +13,15 @@
         
         var $padding = array(
             'top'    => 2,
-            'left'   => 2,
-            'right'  => 2,
+            'left'   => 10,
+            'right'  => 10,
             'bottom' => 2
         );
         var $margin = array(
             'top'    => 10,
             'left'   => 10,
             'right'  => 10,
-            'bottom' => 10
+            'bottom' => 0
         );
         var $border = array(
             'top'        => 1,
@@ -46,9 +46,9 @@
             )
         );
         var $font = array(
-            'name'       => 3,
-            'data'       => 2,
-            'connection' => 2
+            'name'       => 10,
+            'data'       => 8,
+            'connection' => 8
         );
         var $align = array(
             'name' => 'left',
@@ -257,6 +257,7 @@
                 header('Content-Type: image/png');
                 imagepng($im);
             }
+            imagedestroy($im);
         }
 
         /**
@@ -389,12 +390,12 @@
             $left += $node['attrib']['BORDERLEFT'] + $node['attrib']['PADDINGLEFT'];
             $top += $node['attrib']['BORDERTOP'] + $node['attrib']['PADDINGTOP'];
             if (isset($node['attrib']['NAME'])) {
-                $top = $this->__drawText($im, $left, $top, $node['attrib']['WIDTH'], $node['attrib']['NAMEFONT'], $node['attrib']['NAMECOLOR'], $node['attrib']['NAMEALIGN'], $node['attrib']['NAME']);
+                $top = $this->__drawText($im, $left+6, $top+10, $node['attrib']['WIDTH'], $node['attrib']['NAMEFONT'], $node['attrib']['NAMECOLOR'], $node['attrib']['NAMEALIGN'], trim($node['attrib']['NAME']));
                 
                 $top += $node['attrib']['PADDINGBOTTOM'] + $node['attrib']['BORDERMIDDLE'] + $node['attrib']['PADDINGTOP'];
             }
             if (strlen($node['data']) > 0) {
-                $this->__drawText($im, $left, $top, $node['attrib']['WIDTH'], $node['attrib']['FONT'], $node['attrib']['COLOR'], $node['attrib']['ALIGN'], $node['data']);
+                $this->__drawText($im, $left, $top, $node['attrib']['WIDTH']+50, $node['attrib']['FONT'], $node['attrib']['COLOR'], $node['attrib']['ALIGN'], trim($node['data']));
             }
         }
         
@@ -411,13 +412,16 @@
             for ($i = 0; $i < count($text); $i++) {
                 switch ($align) {
                     case 'center':
-                        imagestring($im, $font, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $text[$i], $c);
+                        //imagestring($im, $font, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $text[$i], $c);
+                        imagettftext($im, $font, 0, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $c, "courbd.ttf",$text[$i]);
                         break;
                     case 'right':
-                        imagestring($im, $font, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $text[$i], $c);
+                        //imagestring($im, $font, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $text[$i], $c);
+                        imagettftext($im, $font, 0, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $c, "courbd.ttf",$text[$i]);
                         break;
                     default:
-                        imagestring($im, $font, $x, $y, $text[$i], $c);
+                        //imagestring($im, $font, $x + 7, $y + 7, $text[$i], $c);
+                        imagettftext($im, $font, 0, $x, $y, $c, "courbd.ttf",$text[$i]);
                 }
                 $y += imagefontheight($font);
             }
@@ -642,7 +646,7 @@
             $this->__calculateNodeWidth($node['attrib']);
             $this->__calculateNodeHeight($node['attrib'], $node['data']);
 
-            $node_width = 0;
+            $node_width = 20;
             $node_height = 0;
             $child_height = 0;
 

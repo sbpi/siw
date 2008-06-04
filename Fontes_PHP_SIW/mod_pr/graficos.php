@@ -176,8 +176,8 @@ function Gera_Hierarquico($l_gera) {
       $w_cor_nome = '"#d9e3ed"';
       $w_cor_text = '"#d9e3ed"';
     }
-    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'ac_titulo').'" chave="'.f($row,'sq_projeto_etapa').'" fitname="0" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-    $l_xml .= chr(13).str_repeat('   ',$w_level).'     Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\n'.f($row,'perc_conclusao').'%';
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'titulo').'" chave="'.f($row,'sq_projeto_etapa').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'     Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\nConc:'.f($row,'perc_conclusao').'%';
   }
   for ($i=1;$i<=$w_level;$i++) { $l_xml .= chr(13).str_repeat('   ',($w_level-$i+1)).'  </node>'; }
   $l_xml .= chr(13).'  </node>';
@@ -367,23 +367,26 @@ function Gera_Gantt() {
   $j = 0;
   foreach($RS as $row) {
     // you need to set groups to graphic be created
-    if (strlen(f($row,'titulo')) > 40) $l_titulo = substr(f($row,'titulo'),0,40).'..'; else $l_titulo = f($row,'titulo');
-    $definitions['groups']['group'][$i]['name'] = f($row,'cd_ordem').'. '.$l_titulo;
+    if (strlen(f($row,'cd_ordem').'. '.f($row,'titulo')) > 45) $l_titulo = substr(f($row,'cd_ordem').'. '.f($row,'titulo'),0,45).'..'; else $l_titulo = f($row,'cd_ordem').'. '.f($row,'titulo');
+    $definitions['groups']['group'][$i]['name'] = $l_titulo;
     $definitions['groups']['group'][$i]['start'] = f($row,'inicio_previsto');
     $definitions['groups']['group'][$i]['end'] = addDays(f($row,'fim_previsto'),1);
 
     // Recupera os pacotes de trabalho da etapa
-    $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'LISTA',f($row,'sq_projeto_etapa'));
+    $RS1 = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,f($row,'sq_projeto_etapa'),'ARVORE',null);
     $RS1 = SortArray($RS1,'cd_ordem','asc');
     foreach($RS1 as $row1) {
+      // Descarta se não for pacote de trabalho
+      If (f($row1,'pacote_trabalho')=='N') continue;
+
       // you need to set a group to every phase(=phase) to show it rigth
       // 'group'][0] -> 0 is the number of the group to associate phases
       // ['phase'][0] = 0; 0 and 0 > the same value -> is the number of the phase to associate to group
       $definitions['groups']['group'][$i]['phase'][$j] = $j;
 
       //you have to set planned phase name even when show only planned adjusted
-      if (strlen(f($row1,'titulo')) > 40) $l_titulo = substr(f($row1,'titulo'),0,40).'..'; else $l_titulo = f($row1,'titulo');
-      $definitions['planned']['phase'][$j]['name'] = f($row1,'cd_ordem').'. '.$l_titulo;
+      if (strlen(f($row1,'cd_ordem').'. '.f($row1,'titulo')) > 45) $l_titulo = substr(f($row1,'cd_ordem').'. '.f($row1,'titulo'),0,45).'..'; else $l_titulo = f($row1,'cd_ordem').'. '.f($row1,'titulo');
+      $definitions['planned']['phase'][$j]['name'] = $l_titulo;
 
       //define the start and end of each phase. Set only what you want/need to show. Not defined values will not draws bars
       $definitions['planned']['phase'][$j]['start'] = f($row1,'inicio_previsto');
