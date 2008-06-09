@@ -59,10 +59,10 @@ DEFINE("HOURSTYLE_CUSTOM",4);		// User defined
 
 // Style for day header
 DEFINE("DAYSTYLE_ONELETTER",0);		// "M"
-DEFINE("DAYSTYLE_LONG",1);		// "Monday"
+DEFINE("DAYSTYLE_LONG",1);		    // "Monday"
 DEFINE("DAYSTYLE_LONGDAYDATE1",2);	// "Monday 23 Jun"
 DEFINE("DAYSTYLE_LONGDAYDATE2",3);	// "Monday 23 Jun 2003"
-DEFINE("DAYSTYLE_SHORT",4);		// "Mon"
+DEFINE("DAYSTYLE_SHORT",4);		    // "Mon"
 DEFINE("DAYSTYLE_SHORTDAYDATE1",5);	// "Mon 23/6"
 DEFINE("DAYSTYLE_SHORTDAYDATE2",6);	// "Mon 23 Jun"
 DEFINE("DAYSTYLE_SHORTDAYDATE3",7);	// "Mon 23"
@@ -328,7 +328,7 @@ class GanttGraph extends Graph {
     var $scale;							// Public accessible
     var $iObj=array();				// Gantt objects
     var $iLabelHMarginFactor=0.2;	// 10% margin on each side of the labels
-    var $iLabelVMarginFactor=0.4;	// 40% margin on top and bottom of label
+    var $iLabelVMarginFactor=0.3;	// 40% margin on top and bottom of label
     var $iLayout=GANTT_FROMTOP;	// Could also be GANTT_EVEN
     var $iSimpleFont = FF_FONT1,$iSimpleFontSize=11;
     var $iSimpleStyle=GANTT_RDIAG,$iSimpleColor='yellow',$iSimpleBkgColor='red';
@@ -2756,8 +2756,7 @@ class GanttScale {
 		if( $w >= 1.2*$img->GetTextWidth("".$year) ) {
 		    $img->SetColor($this->year->iTextColor);
 		    $img->StrokeText(round($x+$w/2+1),
-				     round($yb-$this->year->iTitleVertMargin),
-				     $year);
+				     round($yb-$this->year->iTitleVertMargin), $year);
 		}
 		$x += $yearwidth;
 	    }

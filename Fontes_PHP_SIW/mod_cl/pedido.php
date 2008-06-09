@@ -858,7 +858,7 @@ function Geral() {
       ShowHTML ('         </table>');
     }
     ShowHTML('      <tr><td valign="top" colspan=2><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td valign="top" colspan=2><b><u>O</u>bservacao:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top" colspan=2><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     if(nvl($w_decisao_judicial,'N')=='N') {
       ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -955,7 +955,7 @@ function Itens() {
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
-    $w_quantidade          = formatNumber(f($RS,'quantidade'));
+    $w_quantidade          = formatNumber(f($RS,'quantidade'),0);
   } 
 
   // Recupera informações sobre o tipo do material ou serviço
@@ -1112,7 +1112,7 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
-        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
@@ -1161,7 +1161,7 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');        
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe a  quantidade."></td>');
+        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" title="Informe a  quantidade."></td>');
       }
     } 
     ShowHTML('      </center>');
@@ -1191,7 +1191,7 @@ function Itens() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('      <tr><td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('      <tr><td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,0,event);"></td>');
     ShowHTML('      <tr><td colspan=3 align="center"><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
@@ -1859,7 +1859,7 @@ function Concluir() {
     ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'">');
     ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.f($row,'quantidade').'">');
     ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
-    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($row,'quantidade'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe a  quantidade autorizada para compra."></td>');
+    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($row,'quantidade'),0),0).'" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para compra."></td>');
     ShowHTML('        </tr>');
   }
   ShowHTML('    </table>');
@@ -2024,7 +2024,7 @@ function SolicMail($p_solic,$p_tipo) {
             $w_vetor_trechos[$i][3] = f($row,'nm_destino');
             $w_vetor_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
             $w_vetor_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-            $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
+            $w_vetor_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),0,',','.');
             $w_vetor_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
             $w_vetor_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
             $w_vetor_trechos[$i][9] = Nvl(f($row,'valor'),0);

@@ -10,7 +10,6 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putDocumentoReceb {
    function getInstanceOf($dbms, $p_pessoa, $p_unid_autua, $p_nu_guia, $p_ano_guia) {
-
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoReceb';
      $params=array('p_pessoa'               =>array($p_pessoa,                                  B_INTEGER,        32),
                    'p_unid_autua'           =>array(tvl($p_unid_autua),                         B_INTEGER,        32),
@@ -22,8 +21,7 @@ class dml_putDocumentoReceb {
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
-       $Err = $l_rs->getError();
-       $p_resultado = $Err['message'];
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
      } else {
        error_reporting($l_error_reporting); 
        return true;

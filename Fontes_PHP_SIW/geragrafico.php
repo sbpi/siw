@@ -14,7 +14,8 @@
  * @version 0.1
  * @copyright SBPI Consultoria Ltda. 2003 
  **/
-
+ 
+ 
  function barra() {
 
      $p_genero = $_REQUEST['p_genero'];

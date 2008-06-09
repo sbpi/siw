@@ -16,9 +16,9 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 // Oracle9 Database Constants
 //define("ORA9_SERVER_NAME", "io.sbpi.com.br");
 define("ORA9_SERVER_NAME", "XE.localdomain");
-define("ORA9_DB_USERID", "siw");
-define("ORA9_DB_PASSWORD", "siw");
-define("ORA9_DATABASE_NAME", "siw");
+define("ORA9_DB_USERID", "desenv");
+define("ORA9_DB_PASSWORD", "desenv");
+define("ORA9_DATABASE_NAME", "desenv");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
@@ -31,9 +31,9 @@ define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants
 define("PGSQL_SERVER_NAME", "io");
-define("PGSQL_DB_USERID", "siw");
-define("PGSQL_DB_PASSWORD", "siw");
-define("PGSQL_DATABASE_NAME", "siw");
+define("PGSQL_DB_USERID", "desenv");
+define("PGSQL_DB_PASSWORD", "desenv");
+define("PGSQL_DATABASE_NAME", "desenv");
 define("PGSQL_VERSION_TEXT", "PostgreSQL 8.3.1");
 
 switch ($_SESSION["DBMS"]) {
