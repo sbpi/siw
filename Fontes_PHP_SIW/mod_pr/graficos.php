@@ -409,6 +409,49 @@ function Gera_Gantt() {
 } 
 
 // =========================================================================
+// Soma quantidade de dias
+// -------------------------------------------------------------------------
+function somar_dias_uteis($str_data,$int_qtd_dias_somar = 7) {
+
+    // Caso seja informado uma data do MySQL do tipo DATETIME - aaaa-mm-dd 00:00:00
+
+    // Transforma para DATE - aaaa-mm-dd
+
+    $str_data = substr($str_data,0,10);
+
+    // Se a data estiver no formato brasileiro: dd/mm/aaaa
+
+    // Converte-a para o padrão americano: aaaa-mm-dd
+
+    if ( preg_match("@/@",$str_data) == 1 ) {
+
+        $str_data = implode("-", array_reverse(explode("/",$str_data)));
+
+    }
+
+    $array_data = explode('-', $str_data);
+
+    $count_days = 0;
+
+    $int_qtd_dias_uteis = 0;
+
+    while ( $int_qtd_dias_uteis < $int_qtd_dias_somar ) {
+
+        $count_days++;
+
+                if ( ( $dias_da_semana = gmdate('w', strtotime('+'.$count_days.' day', mktime(0, 0, 0, $array_data[1], $array_data[2], $array_data[0]))) ) != '0' && $dias_da_semana != '6' ) {
+
+            $int_qtd_dias_uteis++;
+
+        }
+
+    }
+
+    return gmdate('d/m/Y',strtotime('+'.$count_days.' day',strtotime($str_data)));
+
+}
+
+// =========================================================================
 // Gera imagem do gráfico de Gantt
 // -------------------------------------------------------------------------
 function Gera_Gantt1() {
@@ -425,13 +468,27 @@ $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
 $i = 0;
 $data = array();
 $perc = array();
+$execReal = array();
+$menorData  = 9999999999;
+$maiorData  = 0;
+
+
+
 foreach ($RS as $row) {
+
+ if($menorData > f($row,'inicio_previsto'))		$menorData = f($row,'inicio_previsto');
+ if($menorData > f($row,'inicio_real') && nvl(f($row,'inicio_real'),'') != '' )			$menorData = f($row,'inicio_real');
+
+ if($maiorData < f($row,'fim_previsto'))		$maiorData = f($row,'fim_previsto');
+ if($maiorData < f($row,'fim_real') && nvl(f($row,'fim_real'),'')!='')			$maiorData = f($row,'fim_real');
+
+
   $array = array($i,
                  ((f($row,'pacote_trabalho')=='N') ? ACTYPE_GROUP : ACTYPE_NORMAL),
                  str_repeat(' ',f($row,'level')*2).f($row,'cd_ordem').'. '.f($row,'titulo'),
                  formataDataEdicao(f($row,'inicio_previsto'),7),
                  formataDataEdicao(f($row,'fim_previsto'),7),
-                 ''
+                 f($row,'perc_conclusao') . '%'
                 );
   array_push($perc,array($i,f($row,'perc_conclusao')/100));
   array_push($data, $array);
@@ -442,17 +499,26 @@ foreach ($RS as $row) {
   if (f($row,'fim_real')!=null && f($row,'pacote_trabalho')=='S') {
     $array = array($i,
                    ACTYPE_NORMAL,
-                   str_repeat(' ',f($row,'level')*2).'  Execução real',
-                   formataDataEdicao(f($row,'inicio_real'),7),
-                   formataDataEdicao(f($row,'fim_real'),7),
-                   ''
+                   str_repeat(' ',f($row,'level')*2) . '  Execução real',
+                   "",
+                   "",
+                   ""
                   );
     array_push($data, $array);
+
+
+	$realExecutado = array(	"id"        => $i , 
+							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real'),7) , 
+							"dt_fim"    =>  formataDataEdicao(f($row,'fim_real'),7)
+	);
+
+	array_push($execReal,$realExecutado);
     $array = '';
     $i++;
   }
 
 }
+
   $progress = $perc;
 // The constrains between the activities
 // $constrains = array(array(3,2,CONSTRAIN_ENDSTART),
@@ -461,10 +527,32 @@ foreach ($RS as $row) {
 
 // Create the basic graph
 $graph = new GanttGraph();
-//$graph->title->Set("Example with grouping and constrains");
-//$graph->SetFrame(false);
+
+$graph->SetFrame(false);
 
 $graph->scale->SetDateLocale('pt_BR');
+
+foreach($execReal as $row){
+	$activity = new GanttBar($row["id"],"",$row["dt_inicio"],$row["dt_fim"]);	
+	$activity->SetPattern(BAND_RDIAG,"green");
+	$activity->SetFillColor("green");
+    $activity->SetHeight(0.2);
+	$graph->Add($activity);
+}
+
+//Desenha barra que define as dimensões básicas
+
+if($maiorData  != 0 &&  $menorData  != 9999999999){
+
+	$menorData = formataDataEdicao(addDays($menorData,-17),7);
+	$maiorData = formataDataEdicao(addDays($maiorData,20),7);
+
+	$activity = new GanttBar($i,"", $menorData , $maiorData );	
+	$activity->SetPattern(BAND_SOLID,"white");
+	$activity->SetFillColor("white");
+	$activity->SetHeight(0.001);
+	$graph->Add($activity);
+}
 
 // Setup scale
 switch ($w_scale) {
@@ -477,13 +565,17 @@ switch ($w_scale) {
     $graph->scale->week->SetStyle(WEEKSTYLE_FIRSTDAY2WNBR);
     break;
   case 'm' : 
-    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH ); 
     $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
+//	$graph->scale->week->SetStyle(MONTHSTYLE_SHORTNAME);
     break;
   default  : 
     $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
     $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
 }
+
+
+
 
 // Add the specified activities
 $graph->CreateSimple($data,$constrains,$progress);
