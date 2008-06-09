@@ -22,13 +22,16 @@ begin
      If to_char(sysdate,'yyyy') > w_reg.ano_corrente Then
         w_ano        := to_char(sysdate,'yyyy');
         w_sequencial := 1;
+        
+        -- Atualiza a tabela de parâmetros
+        Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
+    
+        -- Atualiza a tabela de unidades
+        Update pa_unidade Set numero_tramite = 0 Where cliente = w_unid.cliente and sq_unidade_pai is null;
      Else
         w_ano        := w_reg.ano_corrente;
-        w_sequencial := w_unid.numero_tramite + 1;
+        w_sequencial := coalesce(w_unid.numero_tramite,0) + 1;
      End If;
-    
-     -- Atualiza a tabela de parâmetros
-     Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;
     
      -- Atualiza a tabela de unidades
      Update pa_unidade Set numero_tramite = w_sequencial Where sq_unidade = w_unid_pai;

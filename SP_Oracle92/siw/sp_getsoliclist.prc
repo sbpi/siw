@@ -85,17 +85,22 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      
-                coalesce(acentos(b.codigo_interno),acentos(b.titulo),to_char(b.sq_siw_solicitacao)) as titulo,
-                acentos(b.titulo) as ac_titulo,
+                coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
+                b.titulo as ac_titulo,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
-                calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc
-           from siw_menu                                    a
-                inner        join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
-                inner        join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
-                  inner      join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
-          where b1.sigla            <> 'CA'
+                calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc,
+                o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind
+           from siw_menu                                      a
+                inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
+                inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
+                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
+                    left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
+                      inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
+                        inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
+          where b1.ativo            = 'S'
             and a1.sigla            <> 'GD'
             and substr(a.sigla,1,3) <> 'GDP'
             and b.sq_solic_pai      =  p_chave;

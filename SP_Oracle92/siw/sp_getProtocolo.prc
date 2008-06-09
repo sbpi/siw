@@ -71,7 +71,7 @@ begin
               (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null)
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and b1.acesso > 0)
+              (p_tipo      = 2 and (b1.acesso > 0 or (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem)))
              );
    Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PADTRANSF,PADELIM,PADEMPREST', p_restricao) > 0 Then
       -- Recupera guias de tramitação

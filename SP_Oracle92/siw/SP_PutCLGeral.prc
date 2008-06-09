@@ -185,12 +185,14 @@ begin
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
               data_recebimento, aviso_prox_conc,      sq_unidade,
-              arp,              interno,              sq_especie_documento
+              arp,              interno,              sq_especie_documento,
+              dias_aviso
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            a.sq_unidade_pai,
-              p_arp,              p_interno,          p_especie_documento
+              p_arp,              p_interno,          p_especie_documento,
+              p_dias
            from cl_unidade a
           where a.sq_unidade = p_unidade
          )
@@ -199,12 +201,14 @@ begin
          Update cl_solicitacao set
             ( prioridade,       decisao_judicial,     numero_original,
               data_recebimento, aviso_prox_conc,      sq_unidade,
-              arp,              interno,              sq_especie_documento
+              arp,              interno,              sq_especie_documento,
+              dias_aviso
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            p_unidade,
-              p_arp,              p_interno,          p_especie_documento
+              p_arp,              p_interno,          p_especie_documento,
+              p_dias
            from dual
          )
          where sq_siw_solicitacao = p_chave;      
