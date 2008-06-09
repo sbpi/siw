@@ -260,14 +260,10 @@ function Gera_Hierarquico($l_gera) {
 // -------------------------------------------------------------------------
 function Gantt() {
   extract($GLOBALS);
-  //$RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
-  //$w_cabecalho   = $w_chave.' - '.f($RS,'titulo');  
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_cabecalho   = f($RS,'nome_completo');  
 
-  // Recupera o logo do cliente a ser usado nas listagens
-  //$RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  //if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  //if ($w_tipo=='WORD') HeaderWord();
-  //else                 Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>Gantt</TITLE>');
   ShowHTML('</HEAD>');
@@ -276,7 +272,7 @@ function Gantt() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-  //ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROJETO: '.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.$w_cabecalho.'</b></font></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
 
   ShowHTML('<tr><td colspan="2">Exibir intervalos:');
@@ -284,7 +280,7 @@ function Gantt() {
   if ($w_scale=='w') ShowHTML('  [<b>Semanais</b>] '); else ShowHTML('  [<a class="HL" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_scale=w">Semanais</a>] ');
   if ($w_scale=='m') ShowHTML('  [<b>Mensais</b>] '); else ShowHTML('  [<a class="HL" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_scale=m">Mensais</a>] ');
   ShowHTML('</td></tr>');
-  ShowHTML('<tr><td colspan="2"><img src="'.$w_dir.$w_pagina.'Gera_Gantt&w_chave='.$w_chave.'&w_scale='.$w_scale.'" border="1" /></td></tr>');
+  ShowHTML('<tr><td colspan="2"><img src="'.$w_dir.$w_pagina.'Gera_Gantt1&w_chave='.$w_chave.'&w_scale='.$w_scale.'" border="1" /></td></tr>');
 
   ShowHTML('</table>');
   ShowHTML('</center>');
@@ -469,6 +465,176 @@ function Gera_Gantt() {
 
   new gantt($definitions);
 } 
+// =========================================================================
+// Gera imagem do gráfico de Gantt
+// -------------------------------------------------------------------------
+function Gera_Gantt1() {
+  extract($GLOBALS);
+
+  // Gantt example
+  include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
+  include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
+
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_cabecalho   = f($RS,'nome_completo');  
+
+// 
+// The data for the graphs
+//
+  $i = 0;
+  $data = array();
+  $perc = array();
+  $execReal = array();
+  $menorData  = 9999999999;
+  $maiorData  = 0;
+
+  $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
+  $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
+
+  // Nível 0
+  $i = 0;
+  foreach ($RS as $row) {
+    // Nível 1
+    $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+    $RS1 = SortArray($RS1,'codigo_interno','asc');
+    if (count($RS1)>0) {
+      $w_cor = $conTrBgColor;
+      foreach($RS1 as $row1) {
+        if (f($row1,'sq_plano')==f($row,'sq_plano')) {
+          if($menorData > f($row1,'inicio')) $menorData = f($row1,'inicio');
+          if($maiorData < f($row1,'fim'))    $maiorData = f($row1,'fim');
+          // Nível 2
+          $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+          $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
+          if (count($RS2)==0) {
+            $array = array($i,
+                           ACTYPE_NORMAL,
+                           str_repeat(' ',3).f($row1,'codigo_interno').' - '.f($row1,'titulo'),
+                           formataDataEdicao(f($row1,'inicio'),7),
+                           formataDataEdicao(f($row1,'fim'),7),
+                           ((nvl(f($row1,'ige'),-1) < 0) ? '': (int)f($row1,'ige').'%')
+                          );
+            array_push($perc,array($i,f($row1,'ige')/100));
+            array_push($data, $array);
+            $array = '';
+            $i++;
+          } else {
+            $array = array($i,
+                           ACTYPE_GROUP,
+                           str_repeat(' ',3).f($row1,'codigo_interno').' - '.f($row1,'titulo'),
+                           formataDataEdicao(f($row1,'inicio'),7),
+                           formataDataEdicao(f($row1,'fim'),7),
+                           ((nvl(f($row1,'ige'),-1) < 0) ? '': (int)f($row1,'ige').'%')
+                          );
+            array_push($perc,array($i,f($row1,'ige')/100));
+            array_push($data, $array);
+            $array = '';
+            $i++;
+            foreach($RS2 as $row2) {
+              if($menorData > f($row2,'inicio')) $menorData = f($row2,'inicio');
+              if($maiorData < f($row2,'fim'))    $maiorData = f($row2,'fim');
+              // Nível 3
+              $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+              $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
+              if (count($RS3)==0) {
+                $array = array($i,
+                               ACTYPE_NORMAL,
+                               str_repeat(' ',6).f($row2,'codigo_interno').' - '.f($row2,'ac_titulo'),
+                               formataDataEdicao(f($row2,'inicio'),7),
+                               formataDataEdicao(f($row2,'fim'),7),
+                               ((nvl(f($row2,'ige'),-1) < 0) ? '': (int)f($row2,'ige').'%')
+                              );
+                array_push($perc,array($i,f($row2,'ige')/100));
+                array_push($data, $array);
+                $array = '';
+                $i++;
+              } else {
+                $array = array($i,
+                               ACTYPE_GROUP,
+                               str_repeat(' ',6).f($row2,'codigo_interno').' - '.f($row2,'ac_titulo'),
+                               formataDataEdicao(f($row2,'inicio'),7),
+                               formataDataEdicao(f($row2,'fim'),7),
+                               ((nvl(f($row2,'ige'),-1) < 0) ? '': (int)f($row2,'ige').'%')
+                              );
+                array_push($perc,array($i,f($row2,'ige')/100));
+                array_push($data, $array);
+                $array = '';
+                $i++;
+                foreach($RS3 as $row3) {
+                  if($menorData > f($row3,'inicio')) $menorData = f($row3,'inicio');
+                  if($maiorData < f($row3,'fim'))    $maiorData = f($row3,'fim');
+                  $array = array($i,
+                                 ACTYPE_NORMAL,
+                                 str_repeat(' ',9).f($row3,'codigo_interno').' - '.f($row3,'ac_titulo'),
+                                 formataDataEdicao(f($row3,'inicio'),7),
+                                 formataDataEdicao(f($row3,'fim'),7),
+                                 ((nvl(f($row3,'ige'),-1) < 0) ? '': (int)f($row3,'ige').'%')
+                                );
+                  array_push($perc,array($i,f($row3,'ige')/100));
+                  array_push($data, $array);
+                  $array = '';
+                  $i++;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  $progress = $perc;
+
+// Create the basic graph
+$graph = new GanttGraph();
+
+$graph->SetFrame(false);
+
+$graph->scale->SetDateLocale('pt_BR');
+
+//Desenha barra que define as dimensões básicas
+if($maiorData  != 0 &&  $menorData  != 9999999999){
+  $menorData = formataDataEdicao(addDays($menorData,-17),7);
+  $maiorData = formataDataEdicao(addDays($maiorData,20),7);
+
+  $activity = new GanttBar($i,"", $menorData , $maiorData );  
+  $activity->SetPattern(BAND_SOLID,"white");
+  $activity->SetFillColor("white");
+  $activity->SetHeight(0.001);
+  $graph->Add($activity);
+}
+
+// Setup scale
+switch ($w_scale) {
+  case 'd' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY); 
+    $graph->scale->day->SetStyle(DAYSTYLE_SHORTDATE4);
+    break;
+  case 'w' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY | GANTT_HWEEK); 
+    $graph->scale->week->SetStyle(WEEKSTYLE_FIRSTDAY2WNBR);
+    break;
+  case 'm' : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH ); 
+    $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
+//  $graph->scale->week->SetStyle(MONTHSTYLE_SHORTNAME);
+    break;
+  default  : 
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
+    $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
+}
+
+//$graph->title->Set("teste");
+
+// Add the specified activities
+$graph->CreateSimple($data,$constrains,$progress);
+
+// .. and stroke the graph
+$graph->Stroke();
+
+} 
 
 // =========================================================================
 // Rotina principal
@@ -480,6 +646,7 @@ function Main() {
     case 'GERA_HIER':   Gera_Hierarquico(false); break;
     case 'GANTT':       Gantt();                 break;
     case 'GERA_GANTT':  Gera_Gantt();            break;
+    case 'GERA_GANTT1':  Gera_Gantt1();          break;
     default:
       cabecalho();
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
