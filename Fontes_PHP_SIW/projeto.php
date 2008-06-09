@@ -77,6 +77,7 @@ include_once($w_dir_volta.'funcoes/selecaoInfluencia.php');
 include_once($w_dir_volta.'funcoes/selecaoPrestacaoSub.php');
 include_once($w_dir_volta.'funcoes/selecaoContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'visualprojeto.php');
 
 // =========================================================================
 //  /Projeto.php
@@ -4046,7 +4047,6 @@ function PrestacaoContas() {
 // Rotina de visualização
 // -------------------------------------------------------------------------
 function Visual() {
-  include_once($w_dir_volta.'visualprojeto.php');
   extract($GLOBALS);
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
