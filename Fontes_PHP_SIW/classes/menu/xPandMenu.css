@@ -1,5 +1,6 @@
 #container
 {
+
 }
 .Xtree
 {
@@ -14,6 +15,7 @@
     MARGIN: 0px;
     LIST-STYLE-TYPE: none;
     BACKGROUND-COLOR: transparent
+	
 }
 .Xtree
 {
@@ -25,7 +27,7 @@
 {
     MARGIN-TOP: 3px;
     FONT-WEIGHT: bold;
-    FONT-SIZE: 10px;
+    FONT-SIZE: 95%;
     BACKGROUND-IMAGE: none;
     MARGIN-BOTTOM: 3px;
     CURSOR: pointer;
@@ -39,7 +41,7 @@
 {
     MARGIN-TOP: 2px;
     FONT-WEIGHT: bold;
-    FONT-SIZE: 10px;
+    FONT-SIZE: 95%;
     BACKGROUND-IMAGE: none;
     MARGIN-BOTTOM: 2px;
     COLOR: black;
@@ -99,6 +101,7 @@ BODY
     FONT-SIZE: 12px;
     FONT-FAMILY: Verdana
 }
+
 .HL
 {
     FONT-FAMILY: Verdana;
@@ -116,7 +119,7 @@ BODY
 .SS
 {
     FONT-WEIGHT: bolder;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     TEXT-DECORATION: none
 }
 .SS A
@@ -132,7 +135,7 @@ BODY
     BORDER-RIGHT: 1px solid;
     BORDER-TOP: 1px solid;
     FONT-WEIGHT: lighter;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     BORDER-LEFT: 1px solid;
     COLOR: black;
     BORDER-BOTTOM: 1px solid;
@@ -143,7 +146,7 @@ BODY
 {
     BORDER-RIGHT: black 1px solid;
     BORDER-TOP: black 1px solid;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     BORDER-LEFT: black 1px solid;
     BORDER-BOTTOM: black 1px solid;
     BACKGROUND-COLOR: #f5f5f5
@@ -152,7 +155,7 @@ BODY
 {
     BORDER-RIGHT: thin solid;
     BORDER-TOP: thin solid;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     BORDER-LEFT: thin solid;
     BORDER-BOTTOM: thin solid;
     BACKGROUND-COLOR: #f5f5f5
@@ -161,19 +164,25 @@ BODY
 {
     BORDER-RIGHT: medium none;
     BORDER-TOP: medium none;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     BORDER-LEFT: medium none;
     BORDER-BOTTOM: medium none;
     BACKGROUND-COLOR: #f5f5f5
 }
 .STC
 {
-    FONT-SIZE: 8pt
+    FONT-SIZE: 100%
+}
+table
+{
+	font:8px verdana,helvetica,clean,sans-serif;
+	font-size:small;
+	font:x-small;
 }
 TD
 {
-    FONT-SIZE: 10px;
-    FONT-FAMILY: Verdana
+  
+	font-size: 80%;
 }
 .LH
 {
@@ -185,8 +194,11 @@ TD
 {
     BORDER-RIGHT: black 1px solid;
     BORDER-TOP: black 1px solid;
-    FONT-SIZE: 8pt;
+    FONT-SIZE: 100%;
     BORDER-LEFT: black 1px solid;
     BORDER-BOTTOM: black 1px solid;
     BACKGROUND-COLOR: #ffffbb
+}
+table ul li{
+	font-size: 100%;
 }
