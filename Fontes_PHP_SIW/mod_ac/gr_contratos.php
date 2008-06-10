@@ -42,8 +42,7 @@ include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 Adicionado César Martin em 04/06/2008
 Funções que geram gráficos em flash:
 */
-include_once($w_dir_volta.'funcoes/FusionCharts.php'); 
-include_once($w_dir_volta.'funcoes/FusionCharts_Gen.php'); 
+include_once($w_dir_volta.'funcoes/FusionCharts.php');  
 include_once($w_dir_volta.'funcoes/FC_Colors.php');
 /* -- */
 
