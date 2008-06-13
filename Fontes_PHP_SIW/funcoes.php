@@ -51,6 +51,7 @@ function array_key_case_change(&$array, $mode = 'CASE_LOWER') {
 // =========================================================================
 // Função para classificação de arrays
 // -------------------------------------------------------------------------
+
 function SortArray() {
   $arguments = func_get_args();
   $array = $arguments[0];
@@ -158,6 +159,13 @@ function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') {
   }
   $cb->setFactor($l_fator);  // Fator de aumento. Quanto maior, mais larga é cada barra do código.
   return '<font size='.intVal($l_tamanho).'">'.$cb->getBarcode().'</font>';
+}
+
+// =========================================================================
+// Função para codificar strings em base64 com final "=="
+// -------------------------------------------------------------------------
+function base64encodeIdentificada($string){
+	return base64_encode($string) . "=|=";
 }
 
 // =========================================================================

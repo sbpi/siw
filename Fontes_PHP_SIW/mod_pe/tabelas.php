@@ -1321,9 +1321,9 @@ function Telaplano(){
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'MENUVINC');
   $RS = SortArray($RS,'or_modulo','asc','nm_modulo','asc','nome','asc');
   if (count($RS)>0) {
-    ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Documentos vinculados</b></font>');
-    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=hier&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe diagrama hierárquico dos documentos vinculados ao plano.">DIAGRAMA HIERÁRQUICO</A>]');
-    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=gantt&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe gráfico de Gantt dos documentos vinculados ao plano.">GRÁFICO DE GANTT</A>]');
+    ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Estruturação</b></font>');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=hier&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe diagrama hierárquico da estrutura do plano.">DIAGRAMA HIERÁRQUICO</A>]');
+    ShowHTML('         [<A class="HL" HREF="'.$conRootSIW.'mod_pe/graficos.php?par=gantt&w_chave='.$w_sq_plano.'" TARGET="PLANO" TITLE="Exibe gráfico de Gantt da estrutura do plano.">GRÁFICO DE GANTT</A>]');
     ShowHTML('         <hr NOSHADE color=#000000 SIZE=1></td>');
     ShowHTML('         </td>');
     $i = 0;
@@ -1338,8 +1338,8 @@ function Telaplano(){
           if (f($row1,'sq_plano')==f($row,'sq_plano')) {
             if ($i==0) {
               ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-              ShowHTML('          <td rowspan=2><b>Título</td>');
               ShowHTML('          <td rowspan=2><b>Código</td>');
+              ShowHTML('          <td rowspan=2><b>Título</td>');
               ShowHTML('          <td rowspan=2><b>Responsável</td>');
               ShowHTML('          <td colspan=2><b>Execução</td>');
               ShowHTML('        </tr>');
@@ -1351,12 +1351,12 @@ function Telaplano(){
             }
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-            if (strlen(Nvl(f($row1,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,50).'...'; 
-            else                                      $w_titulo=Nvl(f($row1,'titulo'),'-');
-            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row1,'titulo')))).'">'.$w_titulo.'</td>');
             ShowHTML('        <td nowrap>');
             ShowHTML(ExibeImagemSolic(f($row1,'sigla'),f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null));
             ShowHTML('        '.str_replace(f($row1,'nome').': ','',exibeSolic($w_dir_volta,f($row1,'sq_siw_solicitacao'))));
+            if (strlen(Nvl(f($row1,'titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,50).'...'; 
+            else                                      $w_titulo=Nvl(f($row1,'titulo'),'-');
+            ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row1,'titulo')))).'">'.$w_titulo.'</td>');
             ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</A></td>');
             ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'inicio'),5).'</td>');
             ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),5).'</td>');
@@ -1366,13 +1366,13 @@ function Telaplano(){
             foreach($RS2 as $row2) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+              ShowHTML('        <td nowrap>');
+              ShowHTML(ExibeImagemSolic(f($row2,'sigla'),f($row2,'inicio'),f($row2,'fim'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'aviso_prox_conc'),f($row2,'aviso'),f($row2,'sg_tramite'), null));
+              ShowHTML('        '.str_replace(f($row2,'nome').': ','',exibeSolic($w_dir_volta,f($row2,'sq_siw_solicitacao'))));
               if (strlen(Nvl(f($row2,'ac_titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,50).'...'; 
               else                                          $w_titulo=Nvl(f($row2,'ac_titulo'),'-');
               $w_titulo = str_repeat('&nbsp;',3).$w_titulo;
               ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row2,'titulo')))).'">'.$w_titulo.'</td>');
-              ShowHTML('        <td nowrap>');
-              ShowHTML(ExibeImagemSolic(f($row2,'sigla'),f($row2,'inicio'),f($row2,'fim'),f($row2,'inicio_real'),f($row2,'fim_real'),f($row2,'aviso_prox_conc'),f($row2,'aviso'),f($row2,'sg_tramite'), null));
-              ShowHTML('        '.str_replace(f($row2,'nome').': ','',exibeSolic($w_dir_volta,f($row2,'sq_siw_solicitacao'))));
               ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_solic')).'</A></td>');
               ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'inicio'),5).'</td>');
               ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'fim'),5).'</td>');
@@ -1382,13 +1382,13 @@ function Telaplano(){
               foreach($RS3 as $row3) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+                ShowHTML('        <td nowrap>');
+                ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
+                ShowHTML('        '.str_replace(f($row3,'nome').': ','',exibeSolic($w_dir_volta,f($row3,'sq_siw_solicitacao'))));
                 if (strlen(Nvl(f($row3,'ac_titulo'),'-'))>50) $w_titulo=substr(Nvl(f($row3,'ac_titulo'),'-'),0,50).'...'; 
                 else                                          $w_titulo=Nvl(f($row3,'ac_titulo'),'-');
                 $w_titulo = str_repeat('&nbsp;',6).$w_titulo;
                 ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row3,'titulo')))).'">'.$w_titulo.'</td>');
-                ShowHTML('        <td nowrap>');
-                ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
-                ShowHTML('        '.str_replace(f($row3,'nome').': ','',exibeSolic($w_dir_volta,f($row3,'sq_siw_solicitacao'))));
                 ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</A></td>');
                 ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'inicio'),5).'</td>');
                 ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'fim'),5).'</td>');

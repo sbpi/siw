@@ -1,5 +1,13 @@
 <?
+// Garante que a sessão será reinicializada.
 session_start();
+if (isset($_SESSION['LOGON'])) {
+  echo '<SCRIPT LANGUAGE="JAVASCRIPT">';
+  echo ' alert("Já existe outra sessão ativa!\nEncerre o sistema na outra janela do navegador ou aguarde alguns instantes.\nUSE SEMPRE A OPÇÃO \"SAIR DO SISTEMA\" para encerrar o uso da aplicação.");';
+  echo ' history.back();';
+  echo '</SCRIPT>';
+  exit();
+}
 $w_dir_volta = '';
 include_once('constants.inc');
 include_once('jscript.php');

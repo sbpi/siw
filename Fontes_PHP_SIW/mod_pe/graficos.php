@@ -140,13 +140,15 @@ function echo_map($l_chave, &$node, $selected) {
 function Gera_Hierarquico($l_gera) {
   extract($GLOBALS);
 
+  include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
+
   $l_xml = '<?xml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
   
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
-  $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_nome_completo').'    " fitname="1" align="left" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
-  $l_xml .= chr(13).'     Período: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim'));
+  $l_xml .= chr(13).'  <node name="'.base64encodeIdentificada(f($RS,'ac_nome_completo')).'" fitname="1" align="left" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+  $l_xml .= chr(13).base64encodeIdentificada('     Período: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')));
 
   // Cria caixas para os documentos vinculados
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'MENUVINC');
@@ -154,7 +156,7 @@ function Gera_Hierarquico($l_gera) {
   if (count($RS)>0) {
     foreach ($RS as $row) {
       if (f($row,'qtd')>0 && f($row,'sigla')=='PEPROCAD') {
-        //$l_xml .= chr(13).'     <node name="'.f($row,'nome').' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+        //$l_xml .= chr(13).'     <node name="'.(f($row,'nome')).' ('.f($row,'qtd').')" fitname="1" connectioncolor="#526e88" align="center" namealign="center" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
         $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
         $RS1 = SortArray($RS1,'codigo_interno','asc');
         foreach($RS1 as $row1) {
@@ -169,13 +171,13 @@ function Gera_Hierarquico($l_gera) {
               $w_cor_nome = '"#00ff00"';
               $w_cor_text = '"#00ff00"';
             }
-            if (strlen(Nvl(f($row1,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,50).'...'; 
+            if (strlen(Nvl(f($row1,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row1,'titulo'),'-'),0,47).'...'; 
             else                                          $w_titulo=Nvl(f($row1,'titulo'),'-');
-            $l_xml .= chr(13).'        <node name="'.$w_titulo.'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+            $l_xml .= chr(13).'        <node name="'.base64encodeIdentificada($w_titulo).'" chave="'.f($row1,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
             if (f($row1,'sigla')=='PJCAD') {
-              $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row1,'igc'),1).'%' : '');
+              $l_xml .= base64encodeIdentificada('Ini: '.formataDataEdicao(f($row1,'inicio')).chr(10).'Fim: '.formataDataEdicao(f($row1,'fim')).'\nIGE: '.round(f($row1,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row1,'igc'),1).'%' : ''));
             } else {
-              $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row1,'inicio')).'\nFim: '.formataDataEdicao(f($row1,'fim'));
+              $l_xml .= base64encodeIdentificada('Ini: '.formataDataEdicao(f($row1,'inicio')).chr(10).'Fim: '.formataDataEdicao(f($row1,'fim')));
             }
             // Recupera os documentos vinculados
             $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -192,14 +194,16 @@ function Gera_Hierarquico($l_gera) {
                   $w_cor_nome = '"#00ff00"';
                   $w_cor_text = '"#00ff00"';
                 }
-                if (strlen(Nvl(f($row2,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,50).'...'; 
+                if (strlen(Nvl(f($row2,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row2,'ac_titulo'),'-'),0,47).'...'; 
                 else                                          $w_titulo=Nvl(f($row2,'ac_titulo'),'-');
-                $l_xml .= chr(13).'           <node name="'.$w_titulo.'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-                $l_xml .= chr(13).'           Tipo: '.f($row2,'nome');
+                $l_xml .= chr(13).'           <node name="'.base64encodeIdentificada($w_titulo).'" chave="'.f($row2,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                $v_xml = 'Tipo: '.f($row2,'nome');
                 if (f($row2,'sigla')=='PJCAD') {
-                  $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row2,'igc'),1).'%' : '');
+                  $v_xml .= chr(10).'Ini: '.formataDataEdicao(f($row2,'inicio')).chr(10).'Fim: '.formataDataEdicao(f($row2,'fim')).'\nIGE: '.round(f($row2,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row2,'igc'),1).'%' : '');
+                  $l_xml .= base64encodeIdentificada($v_xml);
                 } else {
-                  $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row2,'inicio')).'\nFim: '.formataDataEdicao(f($row2,'fim'));
+                  $v_xml .= chr(10).'Ini: '.formataDataEdicao(f($row2,'inicio')).chr(10).'Fim: '.formataDataEdicao(f($row2,'fim'));
+                  $l_xml .= base64encodeIdentificada($v_xml);
   
                   // Recupera os documentos vinculados
                   $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -213,15 +217,16 @@ function Gera_Hierarquico($l_gera) {
                         $w_cor_nome = '"#00ff00"';
                         $w_cor_text = '"#00ff00"';
                       }
-                      if (strlen(Nvl(f($row3,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row3,'ac_titulo'),'-'),0,50).'...'; 
+                      if (strlen(Nvl(f($row3,'titulo'),'-'))>50)    $w_titulo=substr(Nvl(f($row3,'ac_titulo'),'-'),0,47).'...'; 
                       else                                          $w_titulo=Nvl(f($row3,'ac_titulo'),'-');
-                      $l_xml .= chr(13).'              <node name="'.$w_titulo.'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
-                      $l_xml .= chr(13).'Tipo: '.f($row3,'nome');
+                      $l_xml .= chr(13).'              <node name="'.base64encodeIdentificada($w_titulo).'" chave="'.f($row3,'sq_siw_solicitacao').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+                      $v_xml = 'Tipo: '.f($row3,'nome');
                       if (f($row3,'sigla')=='PJCAD') {
-                        $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row3,'igc'),1).'%' : '');
+                        $v_xml .= chr(10).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim')).'\nIGE: '.round(f($row3,'ige'),1).'%'.((nvl($w_pitce,'')=='') ? '\nIGC: '.round(f($row3,'igc'),1).'%' : '');
                       } else {
-                        $l_xml .= chr(13).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim'));
+                        $v_xml .= chr(10).'Ini: '.formataDataEdicao(f($row3,'inicio')).'\nFim: '.formataDataEdicao(f($row3,'fim'));
                       }
+                      $l_xml .= base64encodeIdentificada($v_xml);
                       $l_xml .= chr(13).'              </node>';
                     }
                   }
@@ -249,7 +254,7 @@ function Gera_Hierarquico($l_gera) {
     $diagram->setDefaultAlign(array('data' => 'center'));
     $diagram->setDefaultColor(array('connection' => '#f00', 'border' => '#f00'));
     $diagram->setDefaultDataColor(array('background' => '#fdd', 'color' => '#f00'));
-    //$diagram->setDefaultFont(array('connection' => 2, 'name' => 10, 'data' => 8));
+    //$diagram->setDefaultFont(array('connection' => 2, 'name' => 3, 'data' => 2));
     $diagram->loadXmlData($l_xml);
     $diagram->Draw();
   }

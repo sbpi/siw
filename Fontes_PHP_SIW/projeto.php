@@ -5777,6 +5777,7 @@ function Grava() {
 // -------------------------------------------------------------------------
 function Main() {
   extract($GLOBALS);
+
   switch ($par) {
     case 'INICIAL':             Inicial();           break;
     case 'GERAL':               Geral();             break;

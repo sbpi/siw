@@ -43,7 +43,6 @@ include_once($w_dir_volta.'visualalerta.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
-
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
