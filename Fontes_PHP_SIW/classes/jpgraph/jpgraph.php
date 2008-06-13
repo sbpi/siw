@@ -11,6 +11,9 @@
 
 require_once('jpg-config.inc');
 
+// Arquivo de constantes
+include_once('../constants.inc');
+
 // Version info
 DEFINE('JPG_VERSION','1.19dev');
 
@@ -43,18 +46,21 @@ elseif( !defined('CACHE_DIR') ) {
 }
 
 if (!defined('TTF_DIR')) {
-    if (strstr( PHP_OS, 'WIN') ) {
-	$sroot = getenv('SystemRoot');
-        if( empty($sroot) ) {
-	    die('JpGraph Error: No path specified for TTF_DIR and path can not be determined automatically. Please specify TTF_DIR manually (in jpg-config.inc).');
-        }
-	else {
-	  DEFINE('TTF_DIR', $sroot.'/fonts/');
-        }
-    } else {
-	DEFINE('TTF_DIR','/usr/X11R6/lib/X11/fonts/truetype/');
-    }
-}
+	DEFINE('TTF_DIR',"/usr/X11R6/lib/X11/fonts/truetype/");
+//	DEFINE('TTF_DIR',$conFontPath);
+/**
+*     if (strstr( PHP_OS, 'WIN') ) {
+* 	$sroot = getenv('SystemRoot');
+*         if( empty($sroot) ) {
+* 	    die('JpGraph Error: No path specified for TTF_DIR and path can not be determined automatically. Please specify TTF_DIR manually (in jpg-config.inc).');
+*         }
+* 	else {
+* 	  DEFINE('TTF_DIR', $sroot.'/fonts/');
+*         }
+*     } else {
+* 	DEFINE('TTF_DIR','/usr/X11R6/lib/X11/fonts/truetype/');
+*     }
+*/}
 
 //------------------------------------------------------------------
 // Constants which are used as parameters for the method calls
@@ -72,7 +78,7 @@ DEFINE("FF_TREBUCHE",17);
 // Gnome Vera font
 // Available from http://www.gnome.org/fonts/
 DEFINE("FF_VERA",19);
-DEFINE("FF_VERAMONO",20);
+DEFINE("FF_VERAMONO",3); //original é 20
 DEFINE("FF_VERASERIF",21);
 
 // Chinese font
@@ -6060,6 +6066,7 @@ class Image {
 	    }
 	}
 	else {
+	
 	    if( ereg("\n",$txt) ) { 
 		$tmp = split("\n",$txt);
 		for($i=0; $i < count($tmp); ++$i) {

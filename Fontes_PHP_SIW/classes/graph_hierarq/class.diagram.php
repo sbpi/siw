@@ -1,4 +1,6 @@
 <?php
+    // Arquivo de constantes
+    include_once('../constants.inc');
     /**
      * Diagram
      * Class to draw diagrams from a xml file/data
@@ -11,17 +13,19 @@
     class Diagram {
         var $prepared = false;
         
+        var $fontfile = '';
+
         var $padding = array(
             'top'    => 2,
-            'left'   => 10,
-            'right'  => 10,
+            'left'   => 2,
+            'right'  => 2,
             'bottom' => 2
         );
         var $margin = array(
             'top'    => 10,
             'left'   => 10,
             'right'  => 10,
-            'bottom' => 0
+            'bottom' => 10
         );
         var $border = array(
             'top'        => 1,
@@ -46,9 +50,9 @@
             )
         );
         var $font = array(
-            'name'       => 10,
-            'data'       => 8,
-            'connection' => 8
+            'name'       => 3,
+            'data'       => 2,
+            'connection' => 2
         );
         var $align = array(
             'name' => 'left',
@@ -75,12 +79,10 @@
          * Class constructor
          **/
         function Diagram($xml_file = '') {
+            global $conFontPath;
+            $this->font['name'] = imageloadfont($conFontPath.'Courier.gdf');
             if (strlen($xml_file) > 0) {
-              if (is_file($xml_file)) {
                 $this->loadXmlFile($xml_file);
-              } else {
-                $this->loadXmlData($xml_file);
-              }
             }
         }
 
@@ -90,6 +92,9 @@
          * Load data from XML file
          **/
         function loadXmlFile($file) {
+          $this->loadXmlData($file);
+          // Evita abrir arquivo XML.
+          if (false) {
             if (($fp = fopen($file, 'r')) !== false) {
                 $data = '';
                 while (!feof($fp)) {
@@ -97,8 +102,8 @@
                 }
                 fclose($fp);
 
-                $this->loadXmlData($data);
             }
+          }
         }
 
         /**
@@ -113,21 +118,37 @@
             }
             $xml = new XmlParser($data);
 
-            $this->struct = $xml->struct;
+            $this->struct = $xml->struct;					
+
+      //Ajusta os caracteres com acentuação
+      $this->struct = $this->encodeRecursivo( $this->struct );
 
             $xml = null;
             
             $this->prepared = false;
         }
         
+    function  encodeRecursivo( $aData )
+    {
+        return is_array( $aData ) ? array_map( array("Diagram","encodeRecursivo"), $aData ) : $this->is_encode64($aData);
+    }
+
+    function is_encode64($string){
+      $string = trim($string);
+      if( substr( $string ,-3) == "=|=" ){
+        $string = base64_decode(substr($string,0,-3));
+      }
+      return $string;      
+    }
+
         /**
          * Diagram::loadFromArray()
          *
          * Load data from an associative array
          **/
         function loadFromArray($array) {
-            $this->struct = array(array('childs' => array()));
-            $this->__addArrayToNode($this->struct[0]['childs'], $array);
+            $this->struct = $array;//array(array('childs' => array()));
+            //$this->__addArrayToNode($this->struct[0]['childs'], $array);
         }
 
         /**
@@ -257,7 +278,6 @@
                 header('Content-Type: image/png');
                 imagepng($im);
             }
-            imagedestroy($im);
         }
 
         /**
@@ -390,12 +410,12 @@
             $left += $node['attrib']['BORDERLEFT'] + $node['attrib']['PADDINGLEFT'];
             $top += $node['attrib']['BORDERTOP'] + $node['attrib']['PADDINGTOP'];
             if (isset($node['attrib']['NAME'])) {
-                $top = $this->__drawText($im, $left+6, $top+10, $node['attrib']['WIDTH'], $node['attrib']['NAMEFONT'], $node['attrib']['NAMECOLOR'], $node['attrib']['NAMEALIGN'], trim($node['attrib']['NAME']));
+                $top = $this->__drawText($im, $left, $top, $node['attrib']['WIDTH'], $node['attrib']['NAMEFONT'], $node['attrib']['NAMECOLOR'], $node['attrib']['NAMEALIGN'], $node['attrib']['NAME']);
                 
                 $top += $node['attrib']['PADDINGBOTTOM'] + $node['attrib']['BORDERMIDDLE'] + $node['attrib']['PADDINGTOP'];
             }
             if (strlen($node['data']) > 0) {
-                $this->__drawText($im, $left, $top, $node['attrib']['WIDTH']+50, $node['attrib']['FONT'], $node['attrib']['COLOR'], $node['attrib']['ALIGN'], trim($node['data']));
+                $this->__drawText($im, $left, $top, $node['attrib']['WIDTH'], $node['attrib']['FONT'], $node['attrib']['COLOR'], $node['attrib']['ALIGN'], $node['data']);
             }
         }
         
@@ -412,16 +432,13 @@
             for ($i = 0; $i < count($text); $i++) {
                 switch ($align) {
                     case 'center':
-                        //imagestring($im, $font, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $text[$i], $c);
-                        imagettftext($im, $font, 0, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $c, "courbd.ttf",$text[$i]);
+                        imagestring($im, $font, $x + round(($max_width - (imagefontwidth($font) * strlen($text[$i]))) / 2), $y, $text[$i], $c);
                         break;
                     case 'right':
-                        //imagestring($im, $font, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $text[$i], $c);
-                        imagettftext($im, $font, 0, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $c, "courbd.ttf",$text[$i]);
+                        imagestring($im, $font, $x + $max_width - (imagefontwidth($font) * strlen($text[$i])), $y, $text[$i], $c);
                         break;
                     default:
-                        //imagestring($im, $font, $x + 7, $y + 7, $text[$i], $c);
-                        imagettftext($im, $font, 0, $x, $y, $c, "courbd.ttf",$text[$i]);
+                        imagestring($im, $font, $x, $y, $text[$i], $c);
                 }
                 $y += imagefontheight($font);
             }
@@ -646,7 +663,7 @@
             $this->__calculateNodeWidth($node['attrib']);
             $this->__calculateNodeHeight($node['attrib'], $node['data']);
 
-            $node_width = 20;
+            $node_width = 0;
             $node_height = 0;
             $child_height = 0;
 
@@ -688,7 +705,6 @@
                 $c[0] += $inc_r;
                 $c[1] += $inc_g;
                 $c[2] += $inc_b;
-                //print_r($c);
                 $cl = $this->__allocateColor($im, $c);
                 imageline($im, $x1, $y1, $x2, $y1++, $cl);
             }

@@ -103,7 +103,6 @@ function Hierarquico() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');  
 
-
   $diagram = new DiagramExtended(gera_hierarquico(true));
   $data = $diagram->getNodePositions();
 
@@ -120,6 +119,7 @@ function Hierarquico() {
   ShowHTML('<img src="'.$w_dir.$w_pagina.'Gera_Hier&w_chave='.$w_chave.'" border="1"  style="position:absolute;left:0;top:0;" />');
 
   $selected = (isset($_GET['name']) ? $_GET['name'] : null);
+
   echo_map($w_chave, $data, $selected);
   ShowHTML('</center>');
   ShowHTML('</body>');
@@ -128,6 +128,7 @@ function Hierarquico() {
 
 function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
+
   if (nvl($node['chave'],'')!='') {
     $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,$node['chave'],'LISTA',null);
     foreach($RS as $row) { $RS = $row; break; }
@@ -148,7 +149,7 @@ function Gera_Hierarquico($l_gera) {
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
   
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $l_xml .= chr(13).'  <node name="    '.f($RS,'ac_titulo').'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
+  $l_xml .= chr(13).'  <node name="    '.base64encodeIdentificada(f($RS,'ac_titulo')).'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
   $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGE: '.formatNumber(f($RS,'ige'),2).'%';
 
   // Recupera as etapas principais
@@ -176,12 +177,14 @@ function Gera_Hierarquico($l_gera) {
       $w_cor_nome = '"#d9e3ed"';
       $w_cor_text = '"#d9e3ed"';
     }
-    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'titulo').'" chave="'.f($row,'sq_projeto_etapa').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
+    $l_xml .= chr(13).str_repeat('   ',$w_level).'  <node name="'.base64encodeIdentificada(MontaOrdemEtapa(f($row,'sq_projeto_etapa')).'. '.f($row,'titulo')).'" chave="'.f($row,'sq_projeto_etapa').'" fitname="0" connectioncolor="#526e88" align="left" namealign="center" namecolor="#f" bgcolor='.$w_cor_text.' bgcolor2="#f" namebgcolor='.$w_cor_nome.' namebgcolor2="#526e88" bordercolor="#526e88">';
     $l_xml .= chr(13).str_repeat('   ',$w_level).'     Ini: '.formataDataEdicao(f($row,'inicio_previsto')).'\nFim: '.formataDataEdicao(f($row,'fim_previsto')).'\nConc:'.f($row,'perc_conclusao').'%';
   }
   for ($i=1;$i<=$w_level;$i++) { $l_xml .= chr(13).str_repeat('   ',($w_level-$i+1)).'  </node>'; }
   $l_xml .= chr(13).'  </node>';
   $l_xml .= chr(13).'</diagram>';
+  //echo $l_xml;
+  //exit;
 
   if ($l_gera) {
     return $l_xml;
@@ -508,8 +511,8 @@ foreach ($RS as $row) {
 
 
 	$realExecutado = array(	"id"        => $i , 
-							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real'),7) , 
-							"dt_fim"    =>  formataDataEdicao(f($row,'fim_real'),7)
+							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real')	,7) , 
+							"dt_fim"    =>  formataDataEdicao(f($row,'fim_real')	,7)
 	);
 
 	array_push($execReal,$realExecutado);
@@ -522,7 +525,7 @@ foreach ($RS as $row) {
   $progress = $perc;
 // The constrains between the activities
 // $constrains = array(array(3,2,CONSTRAIN_ENDSTART),
-// 		    array(1,3,CONSTRAIN_STARTSTART));
+// array(1,3,CONSTRAIN_STARTSTART));
 
 
 // Create the basic graph
@@ -575,9 +578,12 @@ switch ($w_scale) {
 }
 
 
-
+	$graph->title->SetFont(FF_VERAMONO);
 
 // Add the specified activities
+
+
+
 $graph->CreateSimple($data,$constrains,$progress);
 
 // .. and stroke the graph

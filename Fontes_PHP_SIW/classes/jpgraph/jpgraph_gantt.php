@@ -14,6 +14,9 @@ require_once('jpgraph_plotband.php');
 require_once('jpgraph_iconplot.php'); 
 require_once('jpgraph_plotmark.inc');
 
+// Arquivo de constantes
+include_once('../constants.inc');
+
 // Scale Header types
 DEFINE("GANTT_HDAY",1);
 DEFINE("GANTT_HWEEK",2);
@@ -139,7 +142,7 @@ if (!function_exists('array_fill')) {
 class GanttActivityInfo {
     var $iColor='black';
     var $iBackgroundColor='lightgray';
-    var $iFFamily=FF_FONT1,$iFStyle=FS_NORMAL,$iFSize=10,$iFontColor='black';
+    var $iFFamily=FF_VERAMONO,$iFStyle=FS_NORMAL,$iFSize=10,$iFontColor='black';
     var $iTitles=array();
     var $iWidth=array(),$iHeight=-1;
     var $iLeftColMargin=4,$iRightColMargin=1,$iTopColMargin=1,$iBottomColMargin=3;
@@ -163,7 +166,9 @@ class GanttActivityInfo {
 
     // Specify font
     function SetFont($aFFamily,$aFStyle=FS_NORMAL,$aFSize=10) {
-	$this->iFFamily = $aFFamily;
+            global $conDiretorio;
+	$this->iFFamily = imageloadfont($conDiretorio.'/fonts/Courier.gdf');
+	//$this->iFFamily = $aFFamily;
 	$this->iFStyle	 = $aFStyle;
 	$this->iFSize	 = $aFSize;
     }
@@ -330,11 +335,12 @@ class GanttGraph extends Graph {
     var $iLabelHMarginFactor=0.2;	// 10% margin on each side of the labels
     var $iLabelVMarginFactor=0.3;	// 40% margin on top and bottom of label
     var $iLayout=GANTT_FROMTOP;	// Could also be GANTT_EVEN
-    var $iSimpleFont = FF_FONT1,$iSimpleFontSize=11;
+    var $iSimpleFont = FF_VERAMONO,$iSimpleFontSize=8;
     var $iSimpleStyle=GANTT_RDIAG,$iSimpleColor='yellow',$iSimpleBkgColor='red';
     var $iSimpleProgressBkgColor='gray',$iSimpleProgressColor='darkgreen';
     var $iSimpleProgressStyle=GANTT_SOLID;
     var $hgrid=null;
+
 //---------------
 // CONSTRUCTOR	
     // Create a new gantt graph
@@ -375,9 +381,28 @@ class GanttGraph extends Graph {
 	$this->iSimpleBkgColor = $aBkgColor;
     }
 
+
+	function removeAcentuacao($string){			
+		
+		$acentos    = array("õ" , "Õ" , "ê" , "Ê" , "à" , "À" );
+		$semAcentos = array("o" , "O" , "e" , "E" , "a" , "A" );
+        
+        return str_replace($acentos, $semAcentos , $string);	
+	}
+
+	function  removeAcentuacaoRecursivo( $aData )
+    {
+        return is_array( $aData ) ? array_map( array("GanttGraph","removeAcentuacaoRecursivo"), $aData ) : $this->removeAcentuacao($aData);
+    }
+
     // A utility function to help create basic Gantt charts
     function CreateSimple($data,$constrains=array(),$progress=array()) {
+
+
+	$data = $this->removeAcentuacaoRecursivo($data);
+
 	
+
 	for( $i=0; $i < count($data); ++$i) {
 	    switch( $data[$i][1] ) {
 		case ACTYPE_GROUP:
@@ -402,6 +427,7 @@ class GanttGraph extends Graph {
 		    break;
 		
 		case ACTYPE_NORMAL:
+
 		    $a = new GanttBar($data[$i][0],$data[$i][2],$data[$i][3],$data[$i][4],'',10);
 		    $a->title->SetFont($this->iSimpleFont,FS_NORMAL,$this->iSimpleFontSize);
 		    $a->SetPattern($this->iSimpleStyle,$this->iSimpleColor);
