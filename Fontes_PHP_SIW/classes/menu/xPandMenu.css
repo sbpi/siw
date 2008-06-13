@@ -151,6 +151,17 @@ BODY
     BORDER-BOTTOM: black 1px solid;
     BACKGROUND-COLOR: #f5f5f5
 }
+
+textarea.STI
+{
+    BORDER-RIGHT: black 1px solid;
+    BORDER-TOP: black 1px solid;
+    FONT-SIZE: 8pt;
+    BORDER-LEFT: black 1px solid;
+    BORDER-BOTTOM: black 1px solid;
+    BACKGROUND-COLOR: #f5f5f5
+}
+
 .STS
 {
     BORDER-RIGHT: thin solid;
@@ -194,11 +205,22 @@ TD
 {
     BORDER-RIGHT: black 1px solid;
     BORDER-TOP: black 1px solid;
-    FONT-SIZE: 100%;
+	FONT-SIZE: 100%;
     BORDER-LEFT: black 1px solid;
     BORDER-BOTTOM: black 1px solid;
     BACKGROUND-COLOR: #ffffbb
 }
+
+textarea.STIO 
+{
+    BORDER-RIGHT: black 1px solid;
+    BORDER-TOP: black 1px solid;
+	FONT-SIZE: 8pt;
+    BORDER-LEFT: black 1px solid;
+    BORDER-BOTTOM: black 1px solid;
+    BACKGROUND-COLOR: #ffffbb
+}
+
 table ul li{
 	font-size: 100%;
 }
