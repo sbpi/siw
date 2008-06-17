@@ -29,6 +29,9 @@ begin
               left  join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                    e
                                  inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
+                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
+                                                   from siw_solicitacao
+                                                )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
                                                                       c.tramite        = 'S' and
                                                                       c.ativo          = 'S' and
@@ -37,8 +40,8 @@ begin
                                      inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
                            where b.sigla <> 'PA' -- O módulo de protocolo não tem intervenções pela mesa de trabalho
                              and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
-                             and ((c.sigla <> 'PJCAD' and (c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and acesso(d.sq_siw_solicitacao, p_usuario) > 15)) or
-                                  (C.sigla =  'PJCAD' and coalesce(e.sigla,'---') <> 'CI' and acesso(d.sq_siw_solicitacao, p_usuario) >= 8)
+                             and ((c.sigla <> 'PJCAD' and (c.destinatario = 'S' and d.executor = p_usuario) or (c.destinatario = 'N' and f.acesso > 15)) or
+                                  (C.sigla =  'PJCAD' and coalesce(e.sigla,'---') <> 'CI' and f.acesso >= 8)
                                  )
                              and 'CI'    <> coalesce(e.sigla,'nulo')
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
@@ -48,10 +51,18 @@ begin
                             FROM siw_tramite                      e
                                  inner     join siw_menu          c on (e.sq_menu        = c.sq_menu) 
                                    inner   join siw_modulo        b on (c.sq_modulo      = b.sq_modulo)
+                                   inner   join siw_solicitacao   d on (e.sq_siw_tramite = d.sq_siw_tramite and
+                                                                        (('N'            = c.consulta_opiniao and d.conclusao is null) or
+                                                                         ('S'            = c.consulta_opiniao and d.opiniao is null)
+                                                                        )
+                                                                       )
+                                     inner join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
+                                                   from siw_solicitacao
+                                                )                 f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.tramite       = 'S' 
                              and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and c.sq_pessoa     = p_cliente
-                             and acesso(d.sq_siw_solicitacao, p_usuario) > 0
+                             and f.acesso        > 0
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                            group by c.sq_menu
                          )          y on (v.sq_menu = y.sq_menu)
@@ -69,6 +80,9 @@ begin
               inner join (select /*+ ordered */ c.sq_menu, count(d.sq_siw_solicitacao) as qtd 
                             FROM siw_tramite                    e
                                  inner     join siw_solicitacao d on (e.sq_siw_tramite = d.sq_siw_tramite)
+                                   inner   join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_usuario) as acesso
+                                                   from siw_solicitacao
+                                                )               f on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    inner   join siw_menu        c on (d.sq_menu        = c.sq_menu and
                                                                       c.tramite        = 'S' and
                                                                       c.ativo          = 'S' and
@@ -76,7 +90,7 @@ begin
                                                                      ) 
                                      inner join siw_modulo      b on (c.sq_modulo      = b.sq_modulo)
                            where e.ativo  = 'S'
-                             and acesso(d.sq_siw_solicitacao, p_usuario) > 0
+                             and f.acesso > 0
                              and 'CI'     <> coalesce(e.sigla,'nulo')
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
                            group by c.sq_menu

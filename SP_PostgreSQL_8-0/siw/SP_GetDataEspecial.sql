@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION SP_GetDataEspecial
+CREATE OR REPLACE FUNCTION siw.SP_GetDataEspecial
    (p_cliente   numeric,
     p_chave     numeric,
     p_ano       varchar,

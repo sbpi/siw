@@ -1,4 +1,4 @@
-create or replace function Acesso
+create or replace function siw.Acesso
   (p_solicitacao numeric,
    p_usuario     numeric
   ) returns numeric as $$

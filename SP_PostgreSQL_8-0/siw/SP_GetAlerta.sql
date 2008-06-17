@@ -1,4 +1,4 @@
-create or replace function  SP_GetAlerta
+create or replace function  siw.SP_GetAlerta
    (p_cliente   numeric,
     p_usuario   numeric,
     p_restricao varchar,
@@ -118,12 +118,6 @@ begin
                                                                  f.opiniao          is null and 
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
-                                                              )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, acesso(x.sq_siw_solicitacao, y.sq_pessoa) as acesso
-                                        from siw_solicitacao x, sg_autenticacao y
-                                       where y.ativo = 'S'
-                                     )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
-                                                               f1.sq_pessoa         = a2.sq_pessoa
                                                               )
                       inner     join co_pessoa          f2 on (f.solicitante        = f2.sq_pessoa)
                         left    join sg_autenticacao    f7 on (f2.sq_pessoa         = f7.sq_pessoa)
@@ -273,7 +267,7 @@ begin
                 coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
                 e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
-                f1.acesso, 
+                acesso(f.sq_siw_solicitacao, a1.sq_pessoa) as acesso, 
                 f3.nome as nm_unid_cad, f3.sigla as sg_unid_cad,
                 case when (f.fim<cast(now() as date)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 coalesce(f.codigo_interno,to_char(f.sq_siw_solicitacao)) as codigo,
@@ -362,12 +356,6 @@ begin
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
                                                               )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, acesso(x.sq_siw_solicitacao, y.sq_pessoa) as acesso
-                                        from siw_solicitacao x, sg_autenticacao y
-                                       where y.ativo = 'S'
-                                     )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
-                                                               f1.sq_pessoa         = a2.sq_pessoa
-                                                              )
                       inner     join co_pessoa          f2 on (f.solicitante        = f2.sq_pessoa)
                         left    join sg_autenticacao    f7 on (f2.sq_pessoa         = f7.sq_pessoa)
                           left  join eo_unidade         f8 on (f7.sq_unidade        = f8.sq_unidade)
@@ -388,7 +376,7 @@ begin
                           left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
           where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and f1.acesso    > 0;
+            and acesso(f.sq_siw_solicitacao, a1.sq_pessoa) > 0;
    Elsif p_restricao = 'USUARIOS' Then
       -- Verifica os usuários que tem acesso a um documento
       open p_result for         

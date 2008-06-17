@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION sp_getdesktop_recurso(p_cliente numeric, p_usuario numeric, p_result refcursor)
+CREATE OR REPLACE FUNCTION siw.sp_getdesktop_recurso(p_cliente numeric, p_usuario numeric, p_result refcursor)
   RETURNS refcursor AS
 $BODY$
 begin

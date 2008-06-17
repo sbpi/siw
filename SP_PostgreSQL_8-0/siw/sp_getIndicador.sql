@@ -1,4 +1,4 @@
-create or replace function sp_getIndicador
+create or replace function siw.sp_getIndicador
    (p_cliente        in  numeric,
     p_usuario        in  numeric,
     p_chave          in  numeric,

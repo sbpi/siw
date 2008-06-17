@@ -1,4 +1,4 @@
-create or replace function VerificaDataMovel
+create or replace function siw.VerificaDataMovel
    (p_ano in varchar, 
     p_tipo in varchar
    ) returns date as $$
