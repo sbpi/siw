@@ -1,15 +1,12 @@
-create or replace function  siw.SP_GetAlerta
+create or replace function  SP_GetAlerta
    (p_cliente   numeric,
     p_usuario   numeric,
     p_restricao varchar,
     p_mail      varchar,
-    p_solic     numeric)
+    p_solic     numeric,
+    p_result	refcursor)
   RETURNS character varying AS
-$BODY$declare
-
-    
-    p_result    refcursor;
-
+$BODY$
 begin
    If p_restricao = 'SOLICGERAL' Then
       -- Recupera usuários e solicitações
@@ -26,8 +23,8 @@ begin
                 coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
                 e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
-                f1.acesso, 
-                case when (f.fim<trunc(sysdate)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
+                acesso(f.sq_siw_solicitacao, a1.sq_pessoa) as acesso, 
+                case when (f.fim<cast(now() as date)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 coalesce(f.codigo_interno,to_char(f.sq_siw_solicitacao)) as codigo,
                 coalesce(f.titulo,
                          case when to_char(j.sq_siw_solicitacao) is null then null else f.descricao end,
@@ -148,15 +145,15 @@ begin
                           left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
           where ((p_cliente  is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario   is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and f1.acesso    > 1
-            and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(g.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (i.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(i.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (j.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(j.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < trunc(sysdate) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(k.dias_aviso as integer))<=sysdate)))) or
-                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(w.dias_prestacao_contas,0) as integer))<=sysdate) or
-                 (c.sigla    = 'SR' and f.fim < trunc(sysdate))
+            and 0            < acesso(f.sq_siw_solicitacao, a1.sq_pessoa)
+            and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(g.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(h.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'AC' and i.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (i.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(i.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'FN' and j.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (j.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(j.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < cast(now() as date) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as date)-cast(k.dias_aviso as integer))<=cast(now() as date))))) or
+                 (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as date)+cast(coalesce(w.dias_prestacao_contas,0) as integer))<=cast(now() as date)) or
+                 (c.sigla    = 'SR' and f.fim < cast(now() as date))
                 );
    Elsif p_restricao = 'PACOTE' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
@@ -179,7 +176,7 @@ begin
                 h.sq_projeto_etapa, h.titulo, h.descricao, h.inicio_previsto, h.fim_previsto, h.inicio_real, h.fim_real, 
                 h.perc_conclusao, h.orcamento, h.sq_unidade, h.sq_pessoa as sq_resp_etapa, h.situacao_atual, h.peso, 
                 montaOrdem(h.sq_projeto_etapa,null) as cd_ordem,
-                case when (h.fim_previsto<trunc(sysdate)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
+                case when (h.fim_previsto<cast(now() as date)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 k.nome_resumido||' ('||k2.sigla||')' as nm_resp_etapa, 
                 l.sigla as sg_unid_resp_etapa,
                 l1.sq_pessoa as tit_unid_resp_etapa,
@@ -239,7 +236,7 @@ begin
                                                                     )
           where ((p_cliente    is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario     is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and (h.fim_previsto < trunc(sysdate) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto)))<=sysdate)))
+            and (h.fim_previsto < cast(now() as date) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto)))<=cast(now() as date))))
             and (-- Gestor de segurança
                  (0             < (select count(x.sq_pessoa) from sg_autenticacao x where x.sq_pessoa = a1.sq_pessoa and x.gestor_sistema = 'S')) or
                  -- Gestor do módulo no endereço do projeto ou da etapa
@@ -278,7 +275,7 @@ begin
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
                 f1.acesso, 
                 f3.nome as nm_unid_cad, f3.sigla as sg_unid_cad,
-                case when (f.fim<trunc(sysdate)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
+                case when (f.fim<cast(now() as date)) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 coalesce(f.codigo_interno,to_char(f.sq_siw_solicitacao)) as codigo,
                 coalesce(f.titulo,
                          case when to_char(j.sq_siw_solicitacao) is null then null else f.descricao end,
@@ -436,12 +433,7 @@ begin
             and 0                   < (select acesso(p_solic, a.sq_pessoa) from dual)
             and 'S'                 = a.ativo;
    End If;
+   return p_result;
 end $BODY$
   LANGUAGE 'plpgsql' VOLATILE
   COST 100;
-ALTER FUNCTION siw.SP_GetAlerta
-   (p_cliente   numeric,
-    p_usuario   numeric,
-    p_restricao varchar,
-    p_mail      varchar,
-    p_solic     numeric) OWNER TO siw;

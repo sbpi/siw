@@ -1,16 +1,15 @@
-create or replace function SP_VerificaSenha
-   (p_cliente  numeric,
-    p_username varchar,
-    p_senha    varchar,
-    p_result   refcursor
-   ) returns refcursor as $$
+CREATE OR REPLACE FUNCTION siw.sp_verificasenha(p_cliente numeric, p_username character varying, p_senha character varying, p_result refcursor)
+  RETURNS refcursor AS $BODY$
 begin
-   open p_result for 
-       select ativo 
-         from sg_autenticacao a, co_pessoa b 
-        where a.sq_pessoa     = b.sq_pessoa 
+   open p_result for
+       select ativo
+         from sg_autenticacao a, co_pessoa b
+        where a.sq_pessoa     = b.sq_pessoa
           and b.sq_pessoa_pai = p_cliente
-          and upper(username) = upper(p_username) 
-          and upper(Senha)    = criptografia(upper(p_senha));
+          and upper(username) = upper(p_username)
+          and upper(senha)    = criptografia(upper(p_senha));
    return p_result;
-end; $$ language 'plpgsql' volatile;
+end 
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+

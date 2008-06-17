@@ -5,7 +5,7 @@ create or replace function sp_getIndicador
     p_chave_aux      in  numeric,
     p_nome           in  varchar,
     p_sigla          in  varchar,
-    p_tipo           in  varchar,
+    p_tipo           in  numeric,
     p_ativo          in  varchar,
     p_base           in  numeric,
     p_pais           in  numeric,
@@ -162,7 +162,7 @@ begin
                 to_char(b.referencia_fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
                 to_char(b.ultima_alteracao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_alteracao,
-                case base_geografica
+                case b.base_geografica
                      when 1 then case c.padrao when 'S' then 'Nacional'              else 'Nacional - '||c.nome end
                      when 2 then case c.padrao when 'S' then 'Regional - '||d.nome   else 'Regional - '||c.nome||' - '||d.nome  end
                      when 3 then case c.padrao when 'S' then 'Estadual - '||e.co_uf  else 'Estadual - '||c.nome||' - '||e.co_uf end

@@ -72,6 +72,7 @@ declare
   w_chefe_beneficiario     numeric(10);
   w_executor               numeric(10);
   c_sq_unidade	           numeric(10);
+  c_sq_unidade_pai         numeric(10);
   c_sq_pessoa_titular      numeric(10);
   c_sq_pessoa_substituto   numeric(10);
   Result                   numeric := 0;
@@ -406,37 +407,37 @@ begin
            --      b.2) se não há uma unidade superior ela deve ser assinada pelo substituto.
            -- Se o serviço for vinculado à unidade:
            --   a) A solicitação aparece na mesa do titular e do substituto da unidade
-           If crec.sq_pessoa_titular is not null Then
+           If c_sq_pessoa_titular is not null Then
               If w_vinculacao = 'P' Then
-                 If crec.sq_pessoa_titular    <> w_solicitante and 
-                    crec.sq_pessoa_substituto <> w_solicitante and 
-                    (crec.sq_pessoa_titular   = p_usuario or crec.sq_pessoa_substituto = p_usuario) Then
+                 If c_sq_pessoa_titular    <> w_solicitante and 
+                    c_sq_pessoa_substituto <> w_solicitante and 
+                    (c_sq_pessoa_titular   = p_usuario or c_sq_pessoa_substituto = p_usuario) Then
                     Result   := Result + 16;
-                 Elsif crec.sq_pessoa_substituto = w_solicitante and
-                       crec.sq_pessoa_titular    = p_usuario Then
+                 Elsif c_sq_pessoa_substituto = w_solicitante and
+                       c_sq_pessoa_titular    = p_usuario Then
                        Result   := Result + 16;
-                 Elsif crec.sq_pessoa_titular = w_solicitante and
-                       crec.sq_pessoa_titular = p_usuario Then
-                    If crec.sq_unidade_pai is not null Then
-                       w_unidade_atual := crec.sq_unidade_pai;
+                 Elsif c_sq_pessoa_titular = w_solicitante and
+                       c_sq_pessoa_titular = p_usuario Then
+                    If c_sq_unidade_pai is not null Then
+                       w_unidade_atual := c_sq_unidade_pai;
                        w_existe        := 0;
                     Else
-                       If crec.sq_pessoa_substituto = p_usuario Then
+                       If c_sq_pessoa_substituto = p_usuario Then
                           Result   := Result + 16;
                        End If;
                     End If;
                  Else
-                    w_unidade_atual := crec.sq_unidade_pai;
+                    w_unidade_atual := c_sq_unidade_pai;
                     w_existe        := 0;
                  End If;
               Elsif w_vinculacao = 'U' Then
-                 If crec.sq_pessoa_titular = p_usuario or crec.sq_pessoa_substituto = p_usuario Then
+                 If c_sq_pessoa_titular = p_usuario or c_sq_pessoa_substituto = p_usuario Then
                     Result    := Result + 16;
                  End If;
               End If;
            Else
-              If crec.sq_unidade_pai is not null Then
-                 w_unidade_atual := crec.sq_unidade_pai;
+              If c_sq_unidade_pai is not null Then
+                 w_unidade_atual := c_sq_unidade_pai;
                  w_existe        := 0;
               Else
                  -- Entrar aqui significa que não foi encontrado nenhum responsável cadastrado no sistema,
@@ -450,6 +451,7 @@ begin
           exit;
        End If;
     end loop;
+    close c_unidade;
 
  -- Outra possibilidade é o trâmite ser cumprido pelo titular/substituto
  -- da unidade de execução
