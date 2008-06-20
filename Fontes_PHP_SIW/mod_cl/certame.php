@@ -780,6 +780,7 @@ function Geral() {
       // Carrega os valores padrão para país, estado e cidade
       $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
       $w_cidade=f($RS,'sq_cidade_padrao');
+      $w_cliente_arp = f($RS,'ata_registro_preco');
     }   
     if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
@@ -826,8 +827,12 @@ function Geral() {
     }
     ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
-    ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
-    MontaRadioNS('<b>Gera ARP?</b>',$w_arp,'w_arp');
+    ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');
+    if ($w_cliente_arp=='S') {
+      MontaRadioNS('<b>Gera ARP?</b>',$w_arp,'w_arp');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_arp" value="N">');
+    }
     ShowHTML ('         </table>');
     ShowHTML('          <tr valign="top">');
     SelecaoPessoa('<u>S</u>olicitante:','S','Selecione o solicitante do pedido na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
@@ -1758,14 +1763,14 @@ function PesquisaPreco() {
     $w_sq_pais              = $_REQUEST['w_sq_pais'];
     $w_pd_pais              = $_REQUEST['w_pd_pais'];    
     $marca                  = $_REQUEST['marca'];
-    $w_chave_aux            = $_REQUEST['w_chave_aux'];
-    $w_inicio               = $_REQUEST['w_inicio'];
-    $w_dias                 = $_REQUEST['w_dias'];
-    $w_valor                = $_REQUEST['w_valor'];
-    $w_fabricante           = $_REQUEST['w_fabricante'];
-    $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
-    $w_embalagem            = $_REQUEST['w_embalagem'];
-    $w_fator                = $_REQUEST['w_fator'];
+    $w_chave_aux            = explodeArray($_REQUEST['w_chave_aux[]']);
+    $w_inicio               = explodeArray($_REQUEST['w_inicio[]']);
+    $w_dias                 = explodeArray($_REQUEST['w_dias[]']);
+    $w_valor                = explodeArray($_REQUEST['w_valor[]']);
+    $w_fabricante           = explodeArray($_REQUEST['w_fabricante[]']);
+    $w_marca_modelo         = explodeArray($_REQUEST['w_marca_modelo[]']);
+    $w_embalagem            = explodeArray($_REQUEST['w_embalagem[]']);
+    $w_fator                = explodeArray($_REQUEST['w_fator[]']);
   } elseif ($O=='A' || $w_sq_pessoa>'' || $O=='I') {
     // Recupera os dados do fornecedor em co_pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
@@ -2315,10 +2320,10 @@ function PesquisaPreco() {
           $w_cont+= 1;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           if(nvl(f($row,'fornecedor_data'),'')!='' || nvl($w_chave_aux[$i],'')!='') {
-            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');" checked>');
+            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');" checked>');
             $w_Disabled = 'ENABLED';
           } else {
-            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
+            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
             $w_Disabled = 'DISABLED';
           }
           ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
@@ -2458,7 +2463,8 @@ function DadosAnalise() {
   
     // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  $w_segmento = f($RS,'segmento');
+  $w_segmento    = f($RS,'segmento');
+  $w_cliente_arp = f($RS,'ata_registro_preco');
   
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -2537,10 +2543,12 @@ function DadosAnalise() {
     Validate('w_sq_eoindicador','Índice de reajuste','SELECT','1',1,18,'','0123456789');
   }
   Validate('w_limite_variacao','Limite de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');  
-  Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
-  Validate('w_sq_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
   Validate('w_sq_lcjulgamento','Critério de julgamento','SELECT','1',1,18,'','0123456789');
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
+  if($w_cliente_arp=='S') {
+    Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
+    Validate('w_sq_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
+  }
   if($w_arp=='S') {
     Validate('w_numero_ata','Número da ata','1','1',1,30,'1','1');
   }
@@ -2594,11 +2602,13 @@ function DadosAnalise() {
     selecaoIndicador('<U>I</U>ndicador:','I','Define o índice de reajuste do contrato se for permitido.',$w_sq_eoindicador,null,$w_usuario,null,'w_sq_eoindicador',null,null);
   }
   ShowHTML('      <tr><td><b><u>L</u>imite de acréscimo/supressão (%):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_variacao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_variacao.'" onKeyDown="FormataValor(this,18,2,event);" title="Percentual para indicar o limite de acréscimo ou supressão no valor original."></td>');
-  selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
-  ShowHTML('<tr valign="top">');
-  selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_sq_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_sq_espec_despesa','S',null,null);
   SelecaoLCJulgamento('<u>J</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
+  if($w_cliente_arp=='S') {
+    ShowHTML('<tr valign="top">');
+    selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
+    selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_sq_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_sq_espec_despesa','S',null,null);
+  }
   ShowHTML('<tr valign="top">');
   if($w_arp=='S') {
     ShowHTML('          <td><b>Número da <u>a</u>ta:</b><br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata."></td>');
@@ -2967,7 +2977,7 @@ function Encaminhamento() {
         } 
       } 
       ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,'w_novo_tramite','DEVOLUCAO',null);
+      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,'w_novo_tramite','DEVFLUXO',null);
       ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
       if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {

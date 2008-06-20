@@ -144,23 +144,25 @@ function Mesa() {
     ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  // Exibe, se necessário, sinalizador para alerta
-  $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
-  if (count($RS)>0) {
-    $w_sinal = $conImgAlLow;
-    $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
-    foreach($RS as $row) {
-      if ($w_usuario==f($row,'solicitante')) {
-        $w_sinal = $conImgAlMed;
-        $w_msg   = 'Há alertas nos quais sua você é o responsável ou o solicitante. Clique para vê-los.';
+  if ($_SESSION['DBMS']!=4) {
+    // Exibe, se necessário, sinalizador para alerta
+    $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
+    if (count($RS)>0) {
+      $w_sinal = $conImgAlLow;
+      $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
+      foreach($RS as $row) {
+        if ($w_usuario==f($row,'solicitante')) {
+          $w_sinal = $conImgAlMed;
+          $w_msg   = 'Há alertas nos quais sua você é o responsável ou o solicitante. Clique para vê-los.';
+        }
+        if ($w_usuario==nvl(f($row,'sq_exec'),f($row,'solicitante')))  {
+          $w_sinal = $conImgAlHigh;
+          $w_msg   = 'Há alertas nos quais sua intervenção é necessária. Clique para vê-los.';
+          break;
+        }
       }
-      if ($w_usuario==nvl(f($row,'sq_exec'),f($row,'solicitante')))  {
-        $w_sinal = $conImgAlHigh;
-        $w_msg   = 'Há alertas nos quais sua intervenção é necessária. Clique para vê-los.';
-        break;
-      }
+      ShowHTML('      <a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
     }
-    ShowHTML('      <a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
   }
 
   ShowHTML('<tr><td colspan=2><hr>');

@@ -1,17 +1,18 @@
 <?
+
 // =========================================================================
 // Rotina de visualização dos dados do projeto
 // -------------------------------------------------------------------------
 function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   extract($GLOBALS);
-  include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
+ include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
   include_once($w_dir_volta.'classes/sp/db_getContasCronograma.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
-  
+
   //Recupera as informações do sub-menu
   $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJCAD');
   foreach ($RS as $row) {

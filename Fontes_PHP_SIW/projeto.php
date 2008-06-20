@@ -79,6 +79,7 @@ include_once($w_dir_volta.'funcoes/selecaoContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'visualprojeto.php');
 
+
 // =========================================================================
 //  /Projeto.php
 // ------------------------------------------------------------------------
@@ -4049,13 +4050,38 @@ function PrestacaoContas() {
 function Visual() {
   extract($GLOBALS);
   $w_chave  = $_REQUEST['w_chave'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo'])); 
+
+  global $w_dir_volta;
+if($w_tipo == 'PDF'){
+	require_once($w_dir_volta."classes/dompdf-0.5.1/dompdf_config.inc.php");
+$shtml = headerPdf().VisualProjeto($w_chave,$O,$w_usuario,'WORD').'</BODY></HTML>';
+	if (isset($shtml)) {
+
+		if ( get_magic_quotes_gpc() ){
+				$shtml = stripslashes($shtml);
+		}
+			echo $shtml;
+			exit();
+			$old_limit = ini_set("memory_limit", "16M");
+			setlocale(LC_ALL, 'en_US');
+			$dompdf = new DOMPDF();
+			$dompdf->load_html($shtml);
+     		$dompdf->set_paper("letter", "landscape");
+			$dompdf->render();
+			
+			$dompdf->stream("teste.pdf");
+			setlocale(LC_ALL, 'pt_BR');
+			exit(0);
+	}	
+}	
+    
   if ($w_tipo=='WORD') {
     HeaderWord(null);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
   } else {
     Cabecalho();
-  } 
+  }
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('</HEAD>');
@@ -4779,6 +4805,8 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   $l_html = $l_html.chr(13).'      </tr>';
   if ($l_ativ>'')      $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_ativ);
   return $l_html;
+  echo $l_html;
+  exit;
 } 
 
 // =========================================================================

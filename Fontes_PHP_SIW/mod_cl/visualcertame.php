@@ -108,10 +108,14 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       }
       $l_html.=chr(13).'      <tr><td><b>Limite de acréscimo/supressão (%): </b></td>';
       $l_html.=chr(13).'        <td>'.formatNumber(f($RS,'limite_variacao')).' </td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Fonte de recurso: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_lcfonterecurso').' ('.f($RS,'cd_lcfonterecurso').')</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Especificação de despesa: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'cd_espec_despesa').' - '.f($RS,'nm_espec_despesa').' </td></tr>';
+      if (nvl(f($RS,'cd_lcfonterecurso'),'')!='') {
+        $l_html.=chr(13).'      <tr><td><b>Fonte de recurso: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_lcfonterecurso').' ('.f($RS,'cd_lcfonterecurso').')</td></tr>';
+      }
+      if (nvl(f($RS,'cd_espec_despesa'),'')!='') {
+        $l_html.=chr(13).'      <tr><td><b>Especificação de despesa: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'cd_espec_despesa').' - '.f($RS,'nm_espec_despesa').' </td></tr>';
+      }
       $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_lcjulgamento').' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Situação: </b></td>';

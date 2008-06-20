@@ -135,16 +135,16 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_total_preco = 0;
       foreach($RS1 as $row){ 
         $l_html.=chr(13).'      <tr align="center">';
-        $l_html.=chr(13).'        <td>'.f($row,'nm_tipo_material').'</td>';
+        $l_html.=chr(13).'        <td align="left">'.f($row,'nm_tipo_material').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
         if (!($l_P1==4 || $l_P4==1)){
           $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
         } else {
           $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
         }
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
         if($w_sg_tramite=='AT') {
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),2).'</td>';
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>';
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
         }

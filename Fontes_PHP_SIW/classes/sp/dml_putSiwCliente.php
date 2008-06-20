@@ -12,7 +12,7 @@ class dml_putSiwCliente {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_nome_resumido, $p_inicio_atividade,
         $p_cnpj, $p_sede, $p_inscricao_estadual, $p_cidade, $p_minimo_senha, $p_maximo_senha,
         $p_dias_vigencia, $p_aviso_expiracao, $p_maximo_tentativas, $p_agencia_padrao, $p_segmento,
-        $p_mail_tramite, $p_mail_alerta, $p_georeferencia, $p_googlemaps) {
+        $p_mail_tramite, $p_mail_alerta, $p_georeferencia, $p_googlemaps,$p_arp) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliente';
      $params=array('operacao'               =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
@@ -34,7 +34,8 @@ class dml_putSiwCliente {
                    'p_mail_tramite'         =>array($p_mail_tramite,        B_VARCHAR,      1),
                    'p_mail_alerta'          =>array($p_mail_alerta,         B_VARCHAR,      1),
                    'p_georeferencia'        =>array($p_georeferencia,       B_VARCHAR,      1),
-                   'p_googlemaps'           =>array($p_googlemaps,          B_VARCHAR,   2000)
+                   'p_googlemaps'           =>array($p_googlemaps,          B_VARCHAR,   2000),
+                   'p_arp'                  =>array($p_arp,                 B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

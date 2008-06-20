@@ -1,4 +1,4 @@
-create or replace function SP_GetUorgData
+create or replace function siw.SP_GetUorgData
    (p_sq_unidade   in  numeric,
     p_result    refcursor
    ) returns refcursor as $$

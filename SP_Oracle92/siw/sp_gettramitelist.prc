@@ -36,6 +36,40 @@ begin
            from siw_tramite_fluxo      a
                 inner join siw_tramite b on (a.sq_siw_tramite_destino = b.sq_siw_tramite)
           where a.sq_siw_tramite_origem = p_chave;
+   Elsif upper(p_restricao) = 'DEVFLUXO' Then
+      open p_result for
+         select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,
+                b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem, 
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                b.destinatario,
+                case b.chefia_imediata
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
+                end nm_chefia
+           from siw_tramite_fluxo      a
+                inner join siw_tramite b on (a.sq_siw_tramite_destino = b.sq_siw_tramite),
+                siw_tramite            c
+          where a.sq_siw_tramite_origem = p_chave
+            and c.sq_siw_tramite        = p_chave
+            and b.ordem                 < c.ordem;
+   Elsif upper(p_restricao) = 'DEVOLUCAO' Then
+      open p_result for
+         select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
+                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                a.destinatario,
+                case a.chefia_imediata
+                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'N' then 'Apenas usuários com permissão'
+                   when 'I' then 'Todos os usuários internos'
+                end nm_chefia
+         from siw_tramite              a
+                inner join siw_tramite b on (a.sq_menu        = b.sq_menu)
+         where a.sq_siw_tramite = p_chave
+           and b.ordem          < (select ordem+1 from siw_tramite where sq_siw_tramite = p_chave)
+           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));           
    Elsif upper(p_restricao) = 'ERRO' Then
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  
@@ -90,22 +124,6 @@ begin
                                           )
          where a.sq_siw_tramite = p_chave
            and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));
-   Elsif upper(p_restricao) = 'DEVOLUCAO' Then
-      open p_result for
-         select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,
-                b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
-                a.destinatario,
-                case a.chefia_imediata
-                   when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
-                   when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
-                   when 'N' then 'Apenas usuários com permissão'
-                   when 'I' then 'Todos os usuários internos'
-                end nm_chefia
-         from siw_tramite              a
-                inner join siw_tramite b on (a.sq_menu        = b.sq_menu)
-         where a.sq_siw_tramite = p_chave
-           and b.ordem          < (select ordem+1 from siw_tramite where sq_siw_tramite = p_chave)
-           and (p_ativo is null or (p_ativo is not null and a.ativo = p_ativo));           
    Else
       open p_result for
          select a.sq_siw_tramite, a.sq_menu, a.nome, a.ordem,  

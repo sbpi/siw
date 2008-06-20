@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 
 class db_getMenuRelac {
    function getInstanceOf($dbms, $p_menu, $p_acordo, $p_acao, $p_viagem, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETMENURELAC';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMenuRelac';
      $params=array("p_menu"         =>array($p_menu,        B_INTEGER,   32),
                    "p_acordo"       =>array($p_acordo,      B_VARCHAR,    1),
                    "p_acao"         =>array($p_acao,        B_VARCHAR,    1),

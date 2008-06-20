@@ -110,6 +110,9 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
+// Recupera as informações do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
 // Recupera as informações da opçao de menu;
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 // Se for sub-menu, pega a configuração do pai
@@ -1113,54 +1116,56 @@ function visualMatServ($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
   if (f($l_rs,'classe')==1) $l_html.=chr(13).'      <tr valign="top"><td><b>Detalhamento:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'detalhamento'),'---')).' </td></tr>';
 
-  // Exibe atas de registro de preço onde o item esteja disponível
-  $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
-  $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
-
-  $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
-  $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
-  $l_html.=chr(13).'          <tr align="center">';
-  $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=7><b>ATAS DE RP</b></td>';
-  $l_html.=chr(13).'          </tr>';
-  $l_html.=chr(13).'          <tr align="center">';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Ata</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fim vigência</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Item</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Detentor</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>CMM</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Preço</td>';
-  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>% Dif.</td>';
-  $l_html.=chr(13).'          </tr>';
-  if (count($l_rs1)<=0) {
-    // Se não foram selecionados registros, exibe mensagem
-    $l_html.=chr(13).'      <tr><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
-  } else {
-    // Lista os registros selecionados para listagem
-    foreach($l_rs1 as $row){
-      $l_html.=chr(13).'      <tr valign="top">';
-      // Se a validade da proposta for menor que o exigido, destaca em vermelho
-      $w_percentual_acrescimo = f($row,'percentual_acrescimo');
-      if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
-        $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed2.'"';
-      } else {
-        $w_destaque = '';
+  if (f($RS_Cliente,'ata_registro_preco')=='S') {
+    // Exibe atas de registro de preço onde o item esteja disponível
+    $l_rs1 = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,'S',null,'S','S','S','S','S','S','S','S',null,null,null,'RELATORIO');
+    $l_rs1 = SortArray($l_rs1,'numero_ata','asc','nr_item_ata','asc'); 
+ 
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
+    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0" colspan=7><b>ATAS DE RP</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Ata</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fim vigência</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Item</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Detentor</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>CMM</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Preço</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>% Dif.</td>';
+    $l_html.=chr(13).'          </tr>';
+    if (count($l_rs1)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      $l_html.=chr(13).'      <tr><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach($l_rs1 as $row){
+        $l_html.=chr(13).'      <tr valign="top">';
+        // Se a validade da proposta for menor que o exigido, destaca em vermelho
+        $w_percentual_acrescimo = f($row,'percentual_acrescimo');
+        if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
+          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed2.'"';
+        } else {
+          $w_destaque = '';
+        }
+        $l_html.=chr(13).'        <td align="center">'.f($row,'numero_ata').'</td>';
+        $l_html.=chr(13).'        <td align="center">'.formataDataEdicao(f($row,'fim'),5).'</td>';
+        $l_html.=chr(13).'        <td align="center">'.f($row,'nr_item_ata').'</td>';
+        $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>';
+        $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>';
+        if (nvl(f($row,'variacao_valor'),'')!='') {
+          $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'variacao_valor'),2).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+        }
+        $l_html.=chr(13).'        </tr>';
       }
-      $l_html.=chr(13).'        <td align="center">'.f($row,'numero_ata').'</td>';
-      $l_html.=chr(13).'        <td align="center">'.formataDataEdicao(f($row,'fim'),5).'</td>';
-      $l_html.=chr(13).'        <td align="center">'.f($row,'nr_item_ata').'</td>';
-      $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'sq_detentor_ata'),$TP,f($row,'nm_detentor_ata')).'</td>';
-      $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>';
-      $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>';
-      if (nvl(f($row,'variacao_valor'),'')!='') {
-        $l_html.=chr(13).'        <td align="right" '.$w_destaque.'>'.formatNumber(f($row,'variacao_valor'),2).'</td>';
-      } else {
-        $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
-      }
-      $l_html.=chr(13).'        </tr>';
-    }
-  } 
-  $l_html.=chr(13).'    </table>';
-  $l_html.=chr(13).'<tr><td colspan="2"><b>Observação: linhas com fundo vermelho indicam valor de compra fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%).';
+    } 
+    $l_html.=chr(13).'    </table>';
+    $l_html.=chr(13).'<tr><td colspan="2"><b>Observação: linhas com fundo vermelho indicam valor de compra fora da faixa aceitável ($ médio +/- '.$w_percentual_acrescimo.'%).';
+  }
 
   $l_html.=chr(13).'      <tr><td colspan="2" align="center"><br>';
   $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    

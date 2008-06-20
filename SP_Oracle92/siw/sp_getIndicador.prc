@@ -5,7 +5,7 @@ create or replace procedure sp_getIndicador
     p_chave_aux      in  number   default null,
     p_nome           in  varchar2 default null,
     p_sigla          in  varchar2 default null,
-    p_tipo           in  varchar2 default null,
+    p_tipo           in  number   default null,
     p_ativo          in  varchar2 default null,
     p_base           in  number   default null,
     p_pais           in  number   default null,
@@ -30,7 +30,7 @@ begin
                 case a.exibe_mesa   when 'S' then 'Sim' else 'Não' end as nm_exibe_mesa,
                 case a.vincula_meta when 'S' then 'Sim' else 'Não' end as nm_vincula_meta,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
-                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla sg_unidade_medida,
+                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
            from eo_indicador a
                 left  join (select sq_eoindicador, max(data_afericao) as data
@@ -110,7 +110,7 @@ begin
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
-                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla sg_unidade_medida,
+                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
            from eo_indicador a
                 left  join (select sq_eoindicador, max(data_afericao) as data
@@ -130,7 +130,7 @@ begin
                 a.fonte_comprovacao, a.ciclo_afericao, a.ativo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 to_char(b.data,'dd/mm/yyyy, hh24:mi:ss') as phpdt_afericao,
-                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla sg_unidade_medida,
+                c.sq_unidade_medida, c.nome as nm_unidade_medida, c.sigla as sg_unidade_medida,
                 d.sq_tipo_indicador, d.nome as nm_tipo_indicador
            from eo_indicador a
                 inner join (select sq_eoindicador, max(data_afericao) as data

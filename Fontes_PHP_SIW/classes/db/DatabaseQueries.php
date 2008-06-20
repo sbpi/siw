@@ -546,6 +546,8 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     
     function PgSqlDatabaseQueryProc($proc, $conHandle, $params) {
         $this->query = $proc;
+        
+        $this->query = PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
         $this->conHandle = $conHandle;
         $this->params = $params;
     }
@@ -592,7 +594,6 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
             }
           }
         }
-        //echo $par;
 
         if (!($this->result = pg_query($this->conHandle, $par))) {
            $this->error['message'] = pg_last_error($this->conHandle);

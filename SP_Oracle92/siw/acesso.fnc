@@ -383,7 +383,7 @@ begin
         );
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
-    If w_gestor_sistema = 'N' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
+    If w_existe > 0 and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
        -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
        -- e se não for gestor do sistema, complementa o resultado para somar 16
        Result := Result + 10;
@@ -444,7 +444,7 @@ begin
           -- Se o serviço for vinculado à unidade, testa a unidade que cadastrou a solicitação.
           -- Caso contrário, testa a unidade de lotação do solicitante.
           If w_vinculacao = 'U' Then
-             w_unidade_atual := w_unidade_resp;
+             w_unidade_atual := w_unidade_solicitante;
           Elsif w_vinculacao = 'P' Then
              w_unidade_atual := w_unidade_beneficiario;
           End If;

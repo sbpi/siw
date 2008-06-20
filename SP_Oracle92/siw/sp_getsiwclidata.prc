@@ -10,6 +10,7 @@ begin
              c.tamanho_min_senha, c.tamanho_max_senha, c.dias_vig_senha, 
              c.maximo_tentativas, c.dias_aviso_expir,
              c.envia_mail_tramite, c.envia_mail_alerta, c.georeferencia, c.googlemaps_key,
+             c.ata_registro_preco,
              d.sq_cidade, d.co_uf, d.sq_pais, 
              e.sq_agencia, e.sq_banco, 
              f.sq_segmento

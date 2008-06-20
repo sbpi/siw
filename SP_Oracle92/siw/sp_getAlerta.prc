@@ -409,21 +409,21 @@ begin
                 left outer     join eo_localizacao     d on (a.sq_localizacao     = d.sq_localizacao)
                 inner          join co_pessoa          b on (a.sq_pessoa          = b.sq_pessoa)
                   left outer   join co_tipo_vinculo    e on (b.sq_tipo_vinculo    = e.sq_tipo_vinculo)
-                left outer     join (select x.sq_pessoa, count(*) qtd 
+                left outer     join (select x.sq_pessoa, count(*) as qtd 
                                        from sg_pessoa_modulo x 
                                       where x.cliente = p_cliente
                                      group by x.sq_pessoa
                                     )                  h on (a.sq_pessoa          = h.sq_pessoa)
-                left outer     join (select x.sq_pessoa, count(*) qtd 
+                left outer     join (select x.sq_pessoa, count(*) as qtd 
                                        from siw_pessoa_cc x 
                                      group by x.sq_pessoa
                                     )                  i on (a.sq_pessoa          = i.sq_pessoa)
-                left outer     join (select x.sq_pessoa, count(*) qtd 
+                left outer     join (select x.sq_pessoa, count(*) as qtd 
                                        from eo_unidade_resp x 
                                       where x.fim is null
                                      group by x.sq_pessoa
                                     )                  j on (a.sq_pessoa          = j.sq_pessoa)
-                left outer     join (select x.sq_pessoa, count(*) qtd 
+                left outer     join (select x.sq_pessoa, count(*) as qtd 
                                        from sg_tramite_pessoa x 
                                      group by x.sq_pessoa
                                     )                  l on (a.sq_pessoa          = l.sq_pessoa)                                

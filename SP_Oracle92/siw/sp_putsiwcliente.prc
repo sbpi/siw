@@ -19,7 +19,8 @@ create or replace procedure SP_PutSiwCliente
     p_mail_tramite        in varchar2,
     p_mail_alerta         in varchar2,
     p_georeferencia       in varchar2,
-    p_googlemaps_key      in varchar2
+    p_googlemaps_key      in varchar2,
+    p_arp                 in varchar2
    ) is
    w_existe number(18);
    w_chave  number(18) := p_chave;
@@ -133,14 +134,14 @@ begin
              tipo_autenticacao,   tamanho_min_senha,    tamanho_max_senha, 
              dias_vig_senha,      dias_aviso_expir,     maximo_tentativas, 
              sq_agencia_padrao,   envia_mail_tramite,   envia_mail_alerta,
-             georeferencia,       googlemaps_key
+             georeferencia,       googlemaps_key,       ata_registro_preco
            ) 
         values  
            ( w_chave,             p_cidade,             sysdate,
              1,                   p_minimo_senha,       p_maximo_senha,
              p_dias_vigencia,     p_aviso_expiracao,    p_maximo_tentativas,
              p_agencia_padrao,    p_mail_tramite,       p_mail_alerta,
-             p_georeferencia,     p_googlemaps_key
+             p_georeferencia,     p_googlemaps_key,     p_arp
            );
            
         -- Grava tipos de vínculo do cliente a partir do padrão definido para o segmento onde atua
@@ -207,7 +208,7 @@ begin
         select sq_localizacao.nextval into w_chave2 from dual;
         
         Insert into eo_localizacao ( sq_localizacao, cliente, sq_unidade, nome)
-         Values (w_chave2, w_chave1, w_chave, 'Sala virtual');
+         Values (w_chave2, w_chave, w_chave1, 'Sala virtual');
          
         -- Grava um superusuário para o cliente
         select sq_pessoa.nextval into w_Chave3 from dual;
@@ -224,7 +225,7 @@ begin
            ( sq_pessoa,   username,       senha,     assinatura, 
              sq_unidade,  sq_localizacao, cliente,   email, 
              gestor_seguranca, gestor_sistema) 
-        Values (w_chave3, '000.000.001-91', criptografia('xyz345aix'), criptografia(acentos('xyz345aix')),
+        Values (w_chave3, '000.000.001-91', criptografia(acentos('xyz345aix')), criptografia(acentos('xyz345aix')),
                 w_chave1, w_chave2,        w_chave,  'desenv@sbpi.com.br',
                 'S',      'S'
                );
@@ -252,7 +253,8 @@ begin
             envia_mail_tramite   = p_mail_tramite,
             envia_mail_alerta    = p_mail_alerta,
             georeferencia        = p_georeferencia,
-            googlemaps_key       = p_googlemaps_key
+            googlemaps_key       = p_googlemaps_key,
+            ata_registro_preco   = p_arp
         where sq_pessoa      = p_chave;
       End If;
    Elsif p_Operacao = 'E' Then

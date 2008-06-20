@@ -328,6 +328,7 @@ function Geral() {
     $w_mail_alerta          = $_REQUEST['w_mail_alerta'];
     $w_georeferencia        = $_REQUEST['w_georeferencia'];
     $w_googlemaps_key       = $_REQUEST['w_googlemaps_key'];
+    $w_arp                  = $_REQUEST['w_arp'];
   } else {
     if (strpos('IAEV',$O)!==false) {
       // Recupera os dados do cliente a partir do CNPJ
@@ -363,6 +364,7 @@ function Geral() {
           $w_mail_alerta            = f($RS,'envia_mail_alerta');
           $w_georeferencia          = f($RS,'georeferencia');
           $w_googlemaps_key         = f($RS,'googlemaps_key');
+          $w_arp                    = f($RS,'ata_registro_preco');
         } 
       } elseif ($O=='I' && nvl($w_cgccpf,'')!='') {
         // Recupera os dados do beneficiário em co_pessoa
@@ -548,6 +550,8 @@ function Geral() {
       MontaRadioSN('<b>Envia e-mails nas tramitações de documentos?</b>',$w_mail_tramite,'w_mail_tramite','Indique SIM se desejar o envio de e-mails na tramitação e conclusão de documentos.');
       MontaRadioSN('<b>Envia e-mails de alerta?</b>',$w_mail_alerta,'w_mail_alerta','Indique SIM se desejar o envio de e-mails de alerta de atraso ou de proximidade da data de conclusão.');
       ShowHTML('          </table>');
+      ShowHTML('          <tr valign="top">');
+      MontaRadioSN('<b>Controla ata de registro de preços?</b>',$w_arp,'w_arp','Indique SIM se o cliente tiver módulo de compras e controle de ARP.');
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração do serviço de Geo-Referenciamento</td></td></tr>');
@@ -1655,7 +1659,7 @@ function Grava() {
             $_REQUEST['w_inicio_atividade'],$_REQUEST['w_cgccpf'],$_REQUEST['w_sede'],$_REQUEST['w_inscricao_estadual'],
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento'],
-            $_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta'],$_REQUEST['w_georeferencia'],$_REQUEST['w_googlemaps_key']);
+            $_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta'],$_REQUEST['w_georeferencia'],$_REQUEST['w_googlemaps_key'],$_REQUEST['w_arp']);
         ScriptOpen('JavaScript');
         if ($O=='I') {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');

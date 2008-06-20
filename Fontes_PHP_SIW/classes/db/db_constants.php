@@ -30,10 +30,10 @@ define("ORA10_DATABASE_NAME", "smssp_dados");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants
-define("PGSQL_SERVER_NAME", "io");
-define("PGSQL_DB_USERID", "desenv");
-define("PGSQL_DB_PASSWORD", "desenv");
-define("PGSQL_DATABASE_NAME", "desenv");
+define("PGSQL_SERVER_NAME", "mercurio");
+define("PGSQL_DB_USERID", "siw");
+define("PGSQL_DB_PASSWORD", "siw");
+define("PGSQL_DATABASE_NAME", "siw");
 define("PGSQL_VERSION_TEXT", "PostgreSQL 8.3.1");
 
 switch ($_SESSION["DBMS"]) {

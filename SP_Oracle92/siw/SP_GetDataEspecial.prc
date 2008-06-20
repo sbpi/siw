@@ -17,13 +17,13 @@ begin
                      when 'E' then to_date(a.data_especial,'dd/mm/yyyy')
                      when 'I' then to_date(a.data_especial||'/'||coalesce(p_ano,to_char(sysdate,'yyyy')),'dd/mm/yyyy')
                      else          VerificaDataMovel(coalesce(p_ano,to_char(sysdate,'yyyy')), a.tipo)
-                end data_formatada,
+                end as data_formatada,
                 case a.expediente
                      when 'S' then ' (Exp. normal)'
                      when 'M' then ' (Exp. apenas manhã)'
                      when 'T' then ' (Exp. apenas tarde)'
                      when 'N' then ' (Sem expediente)'
-                end nm_expediente
+                end as nm_expediente
            from eo_data_especial  a
           where a.cliente = p_cliente
             and ((p_chave is null) or (p_chave is not null and a.sq_data_especial = p_chave))

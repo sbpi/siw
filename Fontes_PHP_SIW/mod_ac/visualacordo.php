@@ -108,7 +108,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'          <tr><td valign="top"><b>Valor:</b></td>';
       $l_html.=chr(13).'              <td>'.formatNumber(f($RS,'valor')).' </td></tr>';
     } 
-    if(substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ') {
+    if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ') {
       $l_html.=chr(13).'          <tr><td><b>Vigência:</b></td>';
       $l_html.=chr(13).'              <td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).' (contrato e aditivos)</td></tr>';
       $l_html.=chr(13).'          <tr valign="top">';
@@ -285,7 +285,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'</tr>';
     }
     // Aditivos
-    if(substr($w_sigla,0,3)=='GCD') {
+    if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD') {
       $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   

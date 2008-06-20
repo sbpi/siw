@@ -227,6 +227,26 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
 }
+
+// =========================================================================
+// Declaração inicial para páginas OLE com PDF
+// -------------------------------------------------------------------------
+function headerPdf($p_orientation='LANDSCAPE') {
+  extract($GLOBALS);
+  $l_html = '';
+  /*header('Content-type: application/msword',false);
+  header('Content-Disposition: attachment; filename=arquivo.doc');*/
+  $l_html .= '<html>';
+  $l_html .= '<head>';
+  $l_html .= '<meta http-equiv=Content-Type content="text/html; charset=windows-1252">';
+  $l_html .= '</head>';
+  $l_html .= '<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">';
+  $l_html .= '<BASE HREF="'.$conRootSIW.'">';
+  $l_html .= BodyOpenMail(null);
+
+  return $l_html;
+}
+
 // =========================================================================
 // Declaração inicial para páginas OLE com Word
 // -------------------------------------------------------------------------
@@ -371,7 +391,9 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
     ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
-    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.jpg"></a>');
+    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+//	ShowHTML('&nbsp;<a href="classes/dompdf-0.5.1/dompdf.php?base_path=&input_file='.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+	//http://www2.sbpi.com.br/desenv/classes/dompdf-0.5.1/dompdf.php?base_path=www%2Ftest%2F&input_file=www%2Ftest%2Fphp_test.php
     ShowHTML('</TD></TR>');
   }
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -2299,6 +2321,7 @@ return $function_ret;
 // -------------------------------------------------------------------------
 function TrataErro($sp, $Err, $params, $file, $line, $object) {
   extract($GLOBALS);
+
   if (!(strpos($Err['message'],'ORA-02292')===false) || !(strpos($Err['message'],'ORA-02292')===false) ) {
      // REGISTRO TEM FILHOS
      ScriptOpen('JavaScript');
@@ -2390,6 +2413,8 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
     $w_html .= '</body></html>';
 
+    ShowHTML($w_html);
+
     $w_resultado = EnviaMail('ERRO '.$conSgSistema,$w_html,'desenv@sbpi.com.br');
     if ($w_resultado>'') {
        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
@@ -2397,7 +2422,6 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
        ShowHTML('</SCRIPT>');
     }
 
-    ShowHTML($w_html);
   }
   exit;
 }
