@@ -1,11 +1,10 @@
 CREATE OR REPLACE FUNCTION siw.SP_GetCustomerSite
-   (p_cliente  numeric)
+   (p_cliente  numeric,
+    p_result   refcursor
+   )
 
   RETURNS refcursor AS
 $BODY$
-
-DECLARE
-    p_result          refcursor;
 begin
    open p_result for
       select logradouro
@@ -15,6 +14,7 @@ begin
          and b.internet         = 'S'
          and a.padrao           = 'S'
          and a.sq_pessoa        = p_cliente;
+   return p_result;
 end
  $BODY$
   LANGUAGE 'plpgsql' VOLATILE
