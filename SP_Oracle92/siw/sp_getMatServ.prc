@@ -160,6 +160,56 @@ begin
                                             )
                 )
             and (p_item          is null or (p_item          is not null and g.sq_item_fornecedor = p_item));
+   ElsIf p_restricao = 'PESQSOLIC' Then
+      -- Recupera pesquisas de preço vinculadas a uma solicitação
+      open p_result for 
+         select a.sq_material as chave, a.cliente, a.sq_tipo_material, a.sq_unidade_medida, 
+                a.nome, a.descricao, a.detalhamento, a.apresentacao, a.codigo_interno, a.codigo_externo, 
+                a.exibe_catalogo, a.vida_util, a.ativo, 
+                a.pesquisa_preco_menor, a.pesquisa_preco_maior, a.pesquisa_preco_medio,
+                a.pesquisa_data, a.pesquisa_validade, 
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case a.exibe_catalogo when 'S' then 'Sim' else 'Não' end nm_exibe_catalogo,
+                c.nome as nm_tipo_material, c.sigla as sg_tipo_material, c.classe,
+                case c.classe
+                     when 1 then 'Medicamento'
+                     when 3 then 'Consumo'
+                     when 4 then 'Permanente'
+                     when 5 then 'Serviço'
+                end as nm_classe,
+                montanometipomaterial(c.sq_tipo_material,'PRIMEIRO') as nm_tipo_material_pai,
+                montanometipomaterial(c.sq_tipo_material) as nm_tipo_material_completo,
+                d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
+                f.ano_corrente, f.dias_validade_pesquisa, f.dias_aviso_pesquisa, f.percentual_acrescimo,
+                g.sq_item_fornecedor, g.sq_solicitacao_item, g.fornecedor, g.valor_unidade, g.valor_item, g.ordem,
+                g.dias_validade_proposta, g.inicio, g.fim, g.origem,
+                to_char(g.inicio,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inicio,
+                to_char(g.fim,'dd/mm/yyyy, hh24:mi:ss') as phpdt_fim,
+                g.fim-f.dias_aviso_pesquisa as aviso,
+                g.fabricante, g.marca_modelo, g.embalagem, g.fator_embalagem,
+                case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
+                h.nome as nm_fornecedor, h.nome_resumido as nm_fornecedor_res
+           from cl_material                        a
+                inner     join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
+                inner     join co_unidade_medida   d  on (a.sq_unidade_medida   = d.sq_unidade_medida)
+                inner     join cl_parametro        f  on (a.cliente             = f.cliente)
+                inner     join cl_item_fornecedor  g  on (a.sq_material         = g.sq_material and
+                                                          g.pesquisa            = 'S'
+                                                         )
+                  inner   join co_pessoa           h  on (g.fornecedor          = h.sq_pessoa),
+                siw_solicitacao                    i
+                inner     join cl_solicitacao      j  on (i.sq_siw_solicitacao  = j.sq_siw_solicitacao)
+          where a.cliente            = p_cliente
+            and a.sq_material        = p_chave
+            and i.sq_siw_solicitacao = p_item
+            and a.sq_material        in (select sq_material from cl_solicitacao_item where sq_siw_solicitacao = i.sq_siw_solicitacao)
+            and (p_numero_ata        is null or (p_numero_ata    is not null and i.codigo_interno   = p_numero_ata))
+            and ((p_valida           is null and g.fim >= trunc(i.inclusao) and g.inicio <= coalesce(i.conclusao,trunc(sysdate))) or 
+                 (p_valida           is not null and ((p_valida = 'S' and g.fim>=trunc(sysdate)) or
+                                                      (p_valida = 'N' and g.fim<trunc(sysdate))
+                                                     )
+                 )
+                );
    Elsif p_restricao = 'PESQUISA' Then
       -- Recupera pesquisas de preço de materiais e serviços
       open p_result for 

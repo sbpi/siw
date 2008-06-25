@@ -25,8 +25,10 @@ begin
                     inner join siw_menu            c on (g.sq_menu               = c.sq_menu)
                 left      join (select x.sq_autorizacao_fornecimento, 
                                        count(x.sq_item_autorizacao) as qtd,
-                                       sum(x.valor_unitario) as valor
-                                   from cl_item_autorizacao x
+                                       sum(x.quantidade*x.valor_unitario) as valor
+                                   from cl_autorizacao_fornecimento    w
+                                        inner join cl_item_autorizacao x on (w.sq_autorizacao_fornecimento = x.sq_autorizacao_fornecimento)
+                                  where w.situacao <> 'C'
                                  group by x.sq_autorizacao_fornecimento
                                 )                  h on (a.sq_autorizacao_fornecimento     = h.sq_autorizacao_fornecimento)
           where c.sq_pessoa = p_cliente
@@ -38,7 +40,6 @@ begin
       open p_result for
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
                 a.preco_menor, a.preco_maior, a.preco_medio, a.quantidade_autorizada, a.cancelado, a.motivo_cancelamento,
-                a.ordem,
                 b.sq_material, b.sq_tipo_material, b.sq_unidade_medida, 
                 b.nome, b.descricao, b.detalhamento, b.apresentacao, b.codigo_interno, b.codigo_externo, 
                 b.exibe_catalogo, b.vida_util, b.ativo, 
@@ -49,6 +50,7 @@ begin
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 g.codigo_interno as numero_ata,
                 i1.fator_embalagem, i1.valor_unidade,
+                i2.ordem,
                 k.sq_item_autorizacao, k.quantidade as qtd_of
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
@@ -60,6 +62,7 @@ begin
                   inner   join siw_tramite              h  on (g.sq_siw_tramite      = h.sq_siw_tramite)
                 inner     join cl_solicitacao_item_vinc i  on (a.sq_solicitacao_item = i.item_pedido)
                 inner     join cl_item_fornecedor       i1 on (i.item_licitacao      = i1.sq_solicitacao_item)
+                inner     join cl_solicitacao_item      i2 on (i.item_licitacao      = i2.sq_solicitacao_item)
                 left      join (select x.sq_siw_solicitacao, x.sq_autorizacao_fornecimento,
                                        y.sq_item_autorizacao, y.sq_solicitacao_item, y.quantidade
                                   from cl_autorizacao_fornecimento x

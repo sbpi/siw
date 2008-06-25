@@ -14,7 +14,7 @@ create or replace procedure SP_PutSolicEnvio
    w_chave         number(18) := null;
    w_chave_arq     number(18) := null;
    w_tramite       number(18);
-   w_sg_tramite    varchar2(2);
+   w_sg_tramite    siw_tramite.sigla%type;
    w_menu          siw_menu%rowtype;
    w_cont          number(4);
 
@@ -102,6 +102,41 @@ begin
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;
 
+   -- Ajusta valores de pedidos de ARP
+   If w_menu.sigla = 'CLRPCAD' and p_tramite <> nvl(p_novo_tramite, 0) Then
+      select sigla into w_sg_tramite
+        from siw_solicitacao        a
+             inner join siw_tramite b on (a.sq_siw_tramite = b.sq_siw_tramite)
+       where a.sq_siw_solicitacao = p_chave;
+
+      If w_sg_tramite = 'CA' Then
+         -- Pedido cancelado não tem valor
+         update siw_solicitacao set 
+             valor = 0
+         where sq_siw_solicitacao = p_chave;
+      Elsif w_sg_tramite = 'EE' Then
+         -- Pedido autorizado leva em conta a quantidade autorizada
+         update siw_solicitacao x set 
+             valor = (select coalesce(sum(a.quantidade_autorizada*c.valor_unidade),0) as valor
+                        from cl_solicitacao_item a 
+                             inner   join cl_solicitacao_item_vinc b on (a.sq_solicitacao_item = b.item_pedido)
+                               inner join cl_item_fornecedor       c on (b.item_licitacao      = c.sq_solicitacao_item) 
+                       where sq_siw_solicitacao = x.sq_siw_solicitacao
+                     )
+         where x.sq_siw_solicitacao = p_chave;
+      Else
+         -- Caso contrário leva em conta a quantidade solicitada
+         update siw_solicitacao x set 
+             valor = (select coalesce(sum(a.quantidade*c.valor_unidade),0) as valor
+                        from cl_solicitacao_item a 
+                             inner   join cl_solicitacao_item_vinc b on (a.sq_solicitacao_item = b.item_pedido)
+                               inner join cl_item_fornecedor       c on (b.item_licitacao      = c.sq_solicitacao_item) 
+                       where sq_siw_solicitacao = x.sq_siw_solicitacao
+                     )
+         where x.sq_siw_solicitacao = p_chave;
+      End If; 
+   End If;
+   
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
       -- Recupera a próxima chave

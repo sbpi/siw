@@ -54,7 +54,6 @@ begin
                      left  join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                      left  join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
-               left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade or b.cadastrador = p_pessoa or
@@ -118,7 +117,6 @@ begin
                      left  join pa_parametro         da on (d1.sq_tipo_despacho    = da.despacho_eliminar)
                      left  join pa_parametro         db on (d1.sq_tipo_despacho    = db.despacho_autuar),
                sg_autenticacao                       w
-               left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (b1.acesso    >= 8 or d.unidade_destino = w.sq_unidade)
@@ -175,7 +173,6 @@ begin
                      left  join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                      left  join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
-               left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
@@ -223,7 +220,6 @@ begin
                    left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                    left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
-               left        join sg_pessoa_modulo     x on (w.sq_pessoa             = x.sq_pessoa)
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (b1.acesso    >= 8 or ((d.unidade_destino is not null and d.unidade_destino = w.sq_unidade) or (d.unidade_destino is null and d.unidade_origem = w.sq_unidade)))

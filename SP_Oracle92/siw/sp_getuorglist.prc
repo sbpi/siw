@@ -161,6 +161,19 @@ begin
                    ) y
             where x.sq_unidade = y.sq_unidade
             order by y.nivel;
+      Elsif p_restricao = 'PAUNID' Then
+         open p_result for 
+            select x.sq_unidade, x.cliente, x.registra_documento, x.autua_processo, x.prefixo, x.numero_documento, x.numero_tramite, 
+                   x.numero_transferencia, x.numero_eliminacao, x.arquivo_setorial, x.ativo, x.sq_unidade_pai,
+                   y.nivel
+              from pa_unidade x,
+                   (select sq_unidade, nome, level as nivel
+                      from eo_unidade a
+                    start with a.sq_unidade = p_chave
+                    connect by prior a.sq_unidade_pai = a.sq_unidade
+                   ) y
+            where x.sq_unidade = y.sq_unidade
+            order by y.nivel;
       ElsIf p_restricao = 'LICITACAOEND' Then
          open p_result for       
             select a.sq_unidade as sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 

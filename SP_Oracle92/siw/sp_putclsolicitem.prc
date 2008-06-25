@@ -10,13 +10,14 @@ create or replace procedure SP_PutCLSolicItem
     p_cancelado                in  varchar2 default null,
     p_motivo_cancelamento      in  varchar2 default null
    ) is
-   w_chave    number(18);
-   w_valor    number(18,4);
-   w_qtd      number(18,2) := p_quantidade;
-   w_material number(18)   := p_material;
-   w_existe   number(18);
-   w_reg      cl_solicitacao_item%rowtype;
-   w_menu     siw_menu%rowtype;
+   w_chave      number(18);
+   w_valor      number(18,4);
+   w_qtd        number(18,2) := p_quantidade;
+   w_material   number(18)   := p_material;
+   w_existe     number(18);
+   w_reg        cl_solicitacao_item%rowtype;
+   w_menu       siw_menu%rowtype;
+   w_sg_tramite siw_tramite.sigla%type;
 begin
    -- recupera os dados do serviço
    select b.* into w_menu
@@ -179,28 +180,59 @@ begin
       update cl_solicitacao_item set quantidade_autorizada = p_quantidade where sq_solicitacao_item = p_chave_aux;        
    End If;
    
-   If p_operacao <> 'E' and p_chave_aux2 is not null Then
+   If p_operacao <> 'E' Then
       -- Recupera o preço médio do material
       if substr(w_menu.sigla,1,4) = 'CLRP' then
-         -- Tratamento para item de pedido de arp
-         select coalesce(valor_unidade,0) into w_valor from cl_item_fornecedor where sq_solicitacao_item = coalesce(p_chave_aux2,p_chave_aux) and vencedor = 'S';
+         -- Atualiza o valor da licitação
+         select sigla into w_sg_tramite
+           from siw_solicitacao        a
+                inner join siw_tramite b on (a.sq_siw_tramite = b.sq_siw_tramite)
+          where a.sq_siw_solicitacao = p_chave;
+        
+         If w_sg_tramite = 'CA' Then
+            -- Pedido cancelado não tem valor
+            update siw_solicitacao set 
+                valor = 0
+            where sq_siw_solicitacao = p_chave;
+         Elsif w_sg_tramite = 'EE' Then
+            -- Pedido autorizado leva em conta a quantidade autorizada
+            update siw_solicitacao x set 
+                valor = (select coalesce(sum(a.quantidade_autorizada*c.valor_unidade),0) as valor
+                           from cl_solicitacao_item a 
+                                inner   join cl_solicitacao_item_vinc b on (a.sq_solicitacao_item = b.item_pedido)
+                                  inner join cl_item_fornecedor       c on (b.item_licitacao      = c.sq_solicitacao_item) 
+                          where sq_siw_solicitacao = x.sq_siw_solicitacao
+                        )
+            where x.sq_siw_solicitacao = p_chave;
+         Else
+            -- Caso contrário leva em conta a quantidade solicitada
+            update siw_solicitacao x set 
+                valor = (select coalesce(sum(a.quantidade*c.valor_unidade),0) as valor
+                           from cl_solicitacao_item a 
+                                inner   join cl_solicitacao_item_vinc b on (a.sq_solicitacao_item = b.item_pedido)
+                                  inner join cl_item_fornecedor       c on (b.item_licitacao      = c.sq_solicitacao_item) 
+                          where sq_siw_solicitacao = x.sq_siw_solicitacao
+                        )
+            where x.sq_siw_solicitacao = p_chave;
+         End If; 
       else
          -- Tratamento para item de licitação
          select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
+
+         -- Atualiza o valor da solicitação
+         If p_operacao = 'A' or p_operacao = 'C' Then
+            -- Primeiro subtrai o valor atual do item se for alteração ou cópia
+            update siw_solicitacao set
+                valor = (coalesce(valor,0)-(p_qtd_ant*w_valor))
+            where sq_siw_solicitacao = p_chave;
+         End If;
+          
+         -- Acresce o valor da solicitação com o valor do item
+         update siw_solicitacao set
+             valor = (coalesce(valor,0)+(w_qtd*w_valor))
+          where sq_siw_solicitacao = p_chave;   
       End If;
 
-      -- Atualiza o valor da solicitação
-      If p_operacao = 'A' or p_operacao = 'C' Then
-         -- Primeiro subtrai o valor atual do item se for alteração ou cópia
-         update siw_solicitacao set
-             valor = (coalesce(valor,0)-(p_qtd_ant*w_valor))
-         where sq_siw_solicitacao = p_chave;
-      End If;
-      
-      -- Acresce o valor da solicitação com o valor do item
-      update siw_solicitacao set
-          valor = (coalesce(valor,0)+(w_qtd*w_valor))
-       where sq_siw_solicitacao = p_chave;   
    End if;
 end SP_PutCLSolicItem;
 /
