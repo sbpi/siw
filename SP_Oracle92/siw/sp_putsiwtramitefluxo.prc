@@ -4,7 +4,7 @@ create or replace procedure SP_PutSiwTramiteFluxo
     p_destino                  in  number    default null
    ) is
 begin
-   If p_operacao = 'I' Then
+   If p_operacao = 'I' and p_chave is not null and p_destino is not null Then
       -- Insere registro
       insert into siw_tramite_fluxo
              (sq_siw_tramite_origem, sq_siw_tramite_destino)

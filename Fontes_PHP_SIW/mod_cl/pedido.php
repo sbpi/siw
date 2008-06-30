@@ -554,6 +554,19 @@ function Geral() {
   $w_readonly   = '';
   $w_erro       = '';
   
+  // Verifica se a lotação de usuários comuns tem permissão para cadastrar pedidos
+  if ($w_cadgeral=='N') {
+    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],'CLUNID',null,null,$w_ano);
+    foreach($RS as $row) { $RS = $row; break; }
+    if (count($RS)==0 ||(count($RS)>0 && f($RS,'solicita_compra')!='S')) {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para registrar pedidos de compra. Entre em contato com os gestores do sistema!\');');
+      ShowHTML('  history.back(1);');
+      ScriptClose();
+      exit;
+    } 
+  }
+
   // Verifica se o cliente tem o módulo de planejamento estratégico
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
   if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
@@ -808,27 +821,12 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
       }
     }
-    // Recupera todos os registros para a listagem
-    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],'CLUNID',null,null,$w_ano);
-    if (count($RS)>0) {
-      foreach($RS as $row) { $RS = $row; break; }
-      if ($w_cadgeral=='N') {
-        $w_sq_unidade = f($RS,'sq_unidade');
-        ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
-      } else {
-        ShowHTML('          <tr valign="top">');
-        SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
-      } 
+    if ($w_cadgeral=='N') {
+      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
     } else {
-      if ($w_cadgeral=='N') {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: Sua lotação não está ligada a nenhuma unidade proponente. Entre em contato com os gestores do sistema!\');');
-        ShowHTML('  history.back(1);');
-        ScriptClose();
-      } else {
-        ShowHTML('          <tr valign="top">');
-        SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
-      } 
+      // Recupera todos os registros para a listagem
+      ShowHTML('          <tr valign="top">');
+      SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
     }
     ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
     if (f($RS_Unid_CL,'registra_judicial')=='S') {
@@ -2398,7 +2396,7 @@ function Grava() {
               CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
             }
           }  
-          // Envia e-mail comunicando a inclusão
+          // Envia e-mail comunicando o envio
           SolicMail($_REQUEST['w_chave'],2);
           // Se for envio da fase de cadastramento, remonta o menu principal
           if ($P1==1) {
@@ -2443,7 +2441,7 @@ function Grava() {
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
               null,null,null,null);
           // Envia e-mail comunicando a conclusão
-          SolicMail($_REQUEST['w_chave']);
+          SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

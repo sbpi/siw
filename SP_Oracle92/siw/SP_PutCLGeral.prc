@@ -250,6 +250,11 @@ begin
          delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
          delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
 
+         -- Remove os itens da solicitacao
+         delete cl_solicitacao_item_vinc a  where a.item_pedido    in (select sq_solicitacao_item from cl_solicitacao_item where sq_siw_solicitacao = p_chave)
+                                               or a.item_licitacao in (select sq_solicitacao_item from cl_solicitacao_item where sq_siw_solicitacao = p_chave);
+         delete cl_solicitacao_item         where sq_siw_solicitacao = p_chave;
+
          -- Remove o registro na tabela de solicitacao
          delete cl_solicitacao              where sq_siw_solicitacao = p_chave;
 

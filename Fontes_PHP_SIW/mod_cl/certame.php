@@ -589,6 +589,19 @@ function Geral() {
   $w_readonly   = '';
   $w_erro       = '';
   
+  // Verifica se a lotação de usuários comuns tem permissão para cadastrar pedidos
+  if ($w_cadgeral=='N') {
+    $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],'CLUNID',null,null,$w_ano);
+    foreach($RS as $row) { $RS = $row; break; }
+    if (count($RS)==0 ||(count($RS)>0 && f($RS,'solicita_compra')!='S')) {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para registrar licitações. Entre em contato com os gestores do sistema!\');');
+      ShowHTML('  history.back(1);');
+      ScriptClose();
+      exit;
+    } 
+  }
+
   // Verifica se o cliente tem o módulo de planejamento estratégico
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
   if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
@@ -776,11 +789,10 @@ function Geral() {
   ShowHTML('<HR>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IAEV',$O)!==false) {
+    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    $w_cliente_arp = f($RS,'ata_registro_preco');
     if ($w_cidade=='') {
-      // Carrega os valores padrão para país, estado e cidade
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
       $w_cidade=f($RS,'sq_cidade_padrao');
-      $w_cliente_arp = f($RS,'ata_registro_preco');
     }   
     if (strpos('EV',$O)!==false) {
       $w_Disabled=' DISABLED ';
