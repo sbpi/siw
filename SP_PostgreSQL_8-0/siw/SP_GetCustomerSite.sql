@@ -14,7 +14,7 @@ begin
          and b.internet         = 'S'
          and a.padrao           = 'S'
          and a.sq_pessoa        = p_cliente;
-   return p_result;
+  return p_result;
 end
  $BODY$
   LANGUAGE 'plpgsql' VOLATILE
