@@ -53,11 +53,8 @@ function ScriptClose() { print "--></SCRIPT>"."\r\n"; }
 
 // Abre a função de validação de formulários
 function ValidateOpen($FunctionName) { 
-  ShowHTML('function Trim(TRIM_VALUE){ ');
-  ShowHTML('  if(TRIM_VALUE.length < 1){ return""; }');
-  ShowHTML('  TRIM_VALUE = RTrim(TRIM_VALUE);');
-  ShowHTML('  TRIM_VALUE = LTrim(TRIM_VALUE);');
-  ShowHTML('  if(TRIM_VALUE==""){ return ""; } else { return TRIM_VALUE; }');
+  ShowHTML('function Trim(s){ ');
+  ShowHTML("  return (s ? '' + s : '').replace(/^\s*|\s*$/g, '');");
   ShowHTML('}');
   ShowHTML('');
   ShowHTML('function RTrim(VALUE){');

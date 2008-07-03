@@ -612,6 +612,7 @@ Fontes_PHP_SIW/classes/jpgraph/jpgraph_radar.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_regstat.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_scatter.php -text
 Fontes_PHP_SIW/classes/jpgraph/jpgraph_stock.php -text
+Fontes_PHP_SIW/classes/ldap/ldap.php -text
 Fontes_PHP_SIW/classes/mail/email_message.php -text
 Fontes_PHP_SIW/classes/mail/inc_cPHPezMail.php -text
 Fontes_PHP_SIW/classes/mail/smtp.php -text
@@ -1954,6 +1955,8 @@ Fontes_PHP_SIW/images/up.gif -text
 Fontes_PHP_SIW/images/word.gif -text
 Fontes_PHP_SIW/images/word.jpg -text
 Fontes_PHP_SIW/inputsql.html -text
+Fontes_PHP_SIW/js/funcoes.js -text
+Fontes_PHP_SIW/js/jquery.js -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text
 Fontes_PHP_SIW/menu.php -text

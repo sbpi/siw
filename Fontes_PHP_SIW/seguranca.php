@@ -204,6 +204,7 @@ function Usuarios() {
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ramal','ramal').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
     ShowHTML('          <td colspan="3"><b>Gestor</td>');
     ShowHTML('          <td rowspan="2"><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -229,6 +230,7 @@ function Usuarios() {
         ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
         ShowHTML('        <td align="center">&nbsp;'.nvl(f($row,'ramal'),'---').'</td>');
         ShowHTML('        <td align="left" title="'.f($row,'vinculo').'">'.Nvl(f($row,'vinculo'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_autenticacao').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');

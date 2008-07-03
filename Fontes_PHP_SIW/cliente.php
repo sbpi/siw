@@ -42,6 +42,8 @@ include_once('funcoes/selecaoTipoEndereco.php');
 include_once('funcoes/selecaoTipoFone.php');
 include_once('funcoes/selecaoModulo.php');
 
+
+
 // =========================================================================
 //  /cliente.php
 // ------------------------------------------------------------------------
@@ -1434,7 +1436,18 @@ function Configuracao() {
     $w_logo             = $_REQUEST['w_logo'];
     $w_logo1            = $_REQUEST['w_logo1'];
     $w_fundo            = $_REQUEST['w_fundo'];
+    
     $w_upload_maximo    = $_REQUEST['w_upload_maximo'];
+    
+    $w_ad_account_sufix         = $_REQUEST["w_ad_account_sufix"];
+    $w_ad_base_dn               = $_REQUEST["w_ad_base_dn"];    
+    $w_ad_domain_controllers    = $_REQUEST["w_ad_domain_controllers"];
+    
+    $w_ol_account_sufix         = $_REQUEST["w_ol_account_sufix"];
+    $w_ol_base_dn               = $_REQUEST["w_ol_base_dn"];    
+    $w_ol_domain_controllers    = $_REQUEST["w_ol_domain_controllers"];   
+    
+    
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera a configuração do site do cliente
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_sq_pessoa);
@@ -1446,6 +1459,14 @@ function Configuracao() {
     $w_logo1            = f($RS,'logo1');
     $w_fundo            = f($RS,'fundo');
     $w_upload_maximo    = f($RS,'upload_maximo');
+    
+    $w_ad_account_sufix         = f($RS,'ad_account_sufix');
+    $w_ad_base_dn               = f($RS,'ad_base_dn');
+    $w_ad_domain_controllers    = f($RS,'ad_domain_controlers');
+    
+    $w_ol_account_sufix         = f($RS,'ol_account_sufix');
+    $w_ol_base_dn               = f($RS,'ol_base_dn');
+    $w_ol_domain_controllers    = f($RS,'ol_domain_controlers');
   } 
 
   Cabecalho();
@@ -1465,6 +1486,7 @@ function Configuracao() {
   Validate('w_siw_email_conta','Conta','1',1,3,60,'1','1');
   Validate('w_siw_email_senha','Senha','1','',3,60,'1','1');
   Validate('w_siw_email_senha1','Senha','1','',3,60,'1','1');
+  
   ShowHTML('  if (theForm.w_siw_email_senha.value != theForm.w_siw_email_senha1.value) { ');
   ShowHTML('     alert(\'Favor informar dois valores iguais para a senha!\');');
   ShowHTML('     theForm.w_siw_email_senha.value=\'\';');
@@ -1472,7 +1494,17 @@ function Configuracao() {
   ShowHTML('     theForm.w_siw_email_senha.focus();');
   ShowHTML('     return false;');
   ShowHTML('  }');
+  
   Validate('w_upload_maximo','Limite para upload','1','1',1,18,'','0123456789');
+  
+  Validate('w_ad_account_sufix','Account Sufix','1',null,5,40,'1','1');
+  Validate('w_ad_base_dn','Base DN','1',null,5,40,'1','1');
+  Validate('w_ad_domain_controllers','Domain Controllers','1',null,5,40,'1','1');
+  
+  Validate('w_ol_account_sufix','Account Sufix','1',null,5,40,'1','1');
+  Validate('w_ol_base_dn','Base DN','1',null,5,40,'1','1');
+  Validate('w_ol_domain_controllers','Domain Controllers','1',null,5,40,'1','1');  
+  
   Validate('w_logo','Logo telas e relatórios','1','',3,100,'1','1');
   Validate('w_logo1','Logo menu','1','',3,100,'1','1');
   Validate('w_fundo','Fundo menu','1','',3,100,'1','1');
@@ -1517,10 +1549,32 @@ function Configuracao() {
     ShowHTML('             <td colspan=2><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_siw_email_nome" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_siw_email_nome.'" title="Nome a ser exibido como remetente da mensagem automática."></td>');
     ShowHTML('          <tr valign="top">');
     ShowHTML('             <td><b><u>C</u>onta de e-mail:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_siw_email_conta" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_siw_email_conta.'" title="Conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
-        ShowHTML('             <td><b><u>S</u>enha da conta:</b><br><input '.$w_Disabled.' accesskey="S" type="password" name="w_siw_email_senha" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Senha da conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
+    ShowHTML('             <td><b><u>S</u>enha da conta:</b><br><input '.$w_Disabled.' accesskey="S" type="password" name="w_siw_email_senha" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Senha da conta de e-mail a ser usada quando o remetente for a aplicação."></td>');
     ShowHTML('             <td><b><u>R</u>edigite a senha:</b><br><input '.$w_Disabled.' accesskey="R" type="password" name="w_siw_email_senha1" class="sti" SIZE="15" MAXLENGTH="15" VALUE="" title="Redigite a senha da conta de e-mail."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b><u>L</u>imite para upload (em bytes):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_upload_maximo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_upload_maximo.'" title="Informe o tamanho máximo, em bytes, a ser aceito nas rotinas de upload de arquivos."></td>');
+    
+    if(function_exists("ldap_connect")){
+        ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração dos serviços de Autenticação</td></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td>Os dados do bloco abaixo são utilizados pelo mecanismo autenticação para validação da senha de acesso dos usuários.</td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td><table border="0" width="100%">');
+        ShowHTML('          <tr><td colspan="3"><b>Configuração para MS-Active Directory</b>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('             <td><b>A<u>c</u>count sufix:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_ad_account_sufix" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ad_account_sufix.'" title="Sufixo das contas de usuário para autenticação no microsoft active directory."></td>');
+        ShowHTML('             <td><b><u>B</u>ase DN:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_ad_base_dn" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ad_base_dn.'" title="Nome base do domínio para autenticação no microsoft active directory."></td>');
+        ShowHTML('             <td><b><u>D</u>omain controllers:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ad_domain_controllers" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ad_domain_controllers.'" title="Lista de controladores active directory, separados por vírgula, sem espaços."></td>');
+        ShowHTML('          <tr><td colspan="3"><b>Configuração para Open LDAP</b>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('             <td><b>A<u>c</u>count sufix:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_ol_account_sufix" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_account_sufix.'" title="Sufixo das contas de usuário para autenticação no Open LDAP."></td>');
+        ShowHTML('             <td><b><u>B</u>ase DN:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_ol_base_dn" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_base_dn.'" title="Nome base do domínio para autenticação no Open LDAP."></td>');
+        ShowHTML('             <td><b><u>D</u>omain controllers:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ol_domain_controllers" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_domain_controllers.'" title="Lista de controladores Open LDAP, separados por vírgula, sem espaços."></td>');
+        ShowHTML('          </table>');        
+    }
+        
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Logomarca</td></td></tr>');
@@ -1867,8 +1921,17 @@ function Grava() {
             $_REQUEST['w_sq_pessoa'],null,null,null,null,null,$_REQUEST['w_smtp_server'],
             $_REQUEST['w_siw_email_nome'],$_REQUEST['w_siw_email_conta'],
             $_REQUEST['w_siw_email_senha'],$w_logo,$w_logo1,$w_fundo,'SERVIDOR',
-            $_REQUEST['w_upload_maximo']);
-
+            $_REQUEST['w_upload_maximo'],
+            
+            $_REQUEST["w_ad_account_sufix"],
+            $_REQUEST["w_ad_base_dn"],
+            $_REQUEST["w_ad_domain_controllers"],
+            $_REQUEST["w_ol_account_sufix"],
+            $_REQUEST["w_ol_base_dn"],
+            $_REQUEST["w_ol_domain_controllers"]
+            );
+         
+         
         $_SESSION['SMTP_SERVER']     = $_REQUEST['w_smtp_server'];
         $_SESSION['SIW_EMAIL_NOME']  = $_REQUEST['w_siw_email_nome'];
         $_SESSION['SIW_EMAIL_CONTA'] = $_REQUEST['w_siw_email_conta'];

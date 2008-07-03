@@ -380,8 +380,8 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   if (f($RS_Logo,'logo')>'') {
     $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
   }
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo.'</font>');
-  ShowHTML('</FONT><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
+  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo);
+  ShowHTML('</FONT></TR><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
   if (($p_tipo!='WORD' && $w_tipo!='WORD') && ((strpos(strtoupper($w_pagina),'GR_'))===false)) {
     ShowHTML('<TR><TD ALIGN="RIGHT">');
@@ -391,8 +391,9 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
     ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
-    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-//	ShowHTML('&nbsp;<a href="classes/dompdf-0.5.1/dompdf.php?base_path=&input_file='.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+//    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+	ShowHTML('&nbsp;<a target="_blank" href="'.$w_dir.'pdf.php?'.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+	//	ShowHTML('&nbsp;<a href="classes/dompdf-0.5.1/dompdf.php?base_path=&input_file='.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
 	//http://www2.sbpi.com.br/desenv/classes/dompdf-0.5.1/dompdf.php?base_path=www%2Ftest%2F&input_file=www%2Ftest%2Fphp_test.php
     ShowHTML('</TD></TR>');
   }
@@ -3251,4 +3252,5 @@ function BodyOpenWord($cProperties=null) {
     'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);
   return $l_html;
 }
+
 ?>

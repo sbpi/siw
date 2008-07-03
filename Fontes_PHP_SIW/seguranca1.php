@@ -1082,11 +1082,14 @@ function Grava() {
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
             $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail'],
             $_REQUEST['w_destinatario']);
-        // Insere os tramites de fluxo
-        dml_putSiwTramiteFluxo::getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
-        for ($i=1; $i<=count($_POST['w_sq_siw_tramite_destino'])-1; $i=$i+1) {
-          if (Nvl($_POST['w_sq_siw_tramite_destino'][$i],'')>'') {
-             dml_putSiwTramiteFluxo::getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
+        
+        if ($O!='E') {
+          // Insere os tramites de fluxo
+          dml_putSiwTramiteFluxo::getInstanceOf($dbms,'E',$_REQUEST['w_sq_siw_tramite'],null);
+          for ($i=1; $i<=count($_POST['w_sq_siw_tramite_destino'])-1; $i=$i+1) {
+            if (Nvl($_POST['w_sq_siw_tramite_destino'][$i],'')>'') {
+               dml_putSiwTramiteFluxo::getInstanceOf($dbms,'I',$_REQUEST['w_sq_siw_tramite'],$_POST['w_sq_siw_tramite_destino'][$i]);
+            }
           }
         }
             

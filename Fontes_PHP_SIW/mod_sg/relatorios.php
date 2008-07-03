@@ -195,11 +195,11 @@ function Rel_Permissao() {
     ShowHTML('<tr><td>');
     ShowHTML('    <table width="100%" border="1">');
     ShowHTML('        <tr align="center">');
-    if ($w_tipo=='WORD') {
-      ShowHTML('          <td rowspan="2"><b>Username</td>');
+    if ($w_tipo=='WORD') {      
       ShowHTML('          <td rowspan="2"><b>Nome</td>');
       ShowHTML('          <td rowspan="2"><b>Lotação</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
+      ShowHTML('          <td rowspan="2"><b>Tipo aut</td>');
       ShowHTML('          <td rowspan="2"><b>Visão</td>');
       ShowHTML('          <td rowspan="2"><b>Dirigente</td>');
       ShowHTML('          <td rowspan="2"><b>Trâmite</td>');
@@ -212,6 +212,7 @@ function Rel_Permissao() {
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
+      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Visão','qtd_visao').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Dirigente','qtd_dirigente').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Trâmite','qtd_tramite').'</td>');
@@ -240,7 +241,8 @@ function Rel_Permissao() {
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
-        else                       ShowHTML('        <td align="center">---</td>');
+        else                       ShowHTML('        <td align="center">---</td>');        
+        ShowHTML('        <td align="center">'.f($row,'nm_tipo_autenticacao').'</td>');
         if(f($row,'qtd_visao')>0)  ShowHTML('        <td align="center">'.nvl(f($row,'qtd_visao'),'---').'</td>');
         else                       ShowHTML('        <td align="center">---</td>');
         if(f($row,'qtd_dirigente')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_dirigente'),'---').'</td>');
@@ -251,7 +253,7 @@ function Rel_Permissao() {
       } 
     } 
     ShowHTML('  </table>');
-    ShowHTML('<tr><td colspan=8><b>Observações:</b><ul>');
+    ShowHTML('<tr><td ><b>Observações:</b><ul>');
     ShowHTML('  <li>Usuários inativos destacados com fundo vermelho.');
     ShowHTML('  <li><b>Gestor Seg.</b>: gestor de segurança, tem acesso a todas as funcionalidades da opção "Controle".');
     ShowHTML('  <li><b>Gestor Sist.</b>: gestor do sistema, tem acesso a todas as funcionalidades e dados, exceto na opção "Controle".');
@@ -263,7 +265,7 @@ function Rel_Permissao() {
     ShowHTML('</td>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+    ShowHTML('   <tr><td ><hr NOSHADE color=#000000 size=2></td></tr>');
     if ($w_tipo!='WORD') Rodape();
   } else {
     ScriptOpen('JavaScript');
