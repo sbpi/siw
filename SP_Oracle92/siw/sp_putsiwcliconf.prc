@@ -13,7 +13,14 @@ create or replace procedure SP_PutSIWCliConf
     p_logo1                    in varchar2  default null,
     p_fundo                    in varchar2  default null,
     p_tipo                     in varchar2  default null,
-    p_upload_maximo            in number
+    p_upload_maximo            in number                ,
+    p_ad_account_sufix         in varchar2  default null,
+    p_ad_base_dn               in varchar2  default null,
+    p_ad_domain_controlers     in varchar2  default null,
+    p_ol_account_sufix         in varchar2  default null,
+    p_ol_base_dn               in varchar2  default null,
+    p_ol_domain_controlers     in varchar2  default null
+
    ) is
 begin
    If p_Tipo = 'AUTENTICACAO' Then
@@ -23,7 +30,7 @@ begin
          tamanho_max_senha    = p_tamanho_maximo_senha,
          maximo_tentativas    = p_maximo_tentativas,
          dias_vig_senha       = p_dias_vigencia_senha,
-         dias_aviso_expir     = p_dias_aviso_expiracao
+         dias_aviso_expir     = p_dias_aviso_expiracao         
       where sq_pessoa         = p_chave;
    Elsif p_Tipo = 'SERVIDOR' Then
       -- Altera dados relativos ao serviço de SMTP e imagens do cliente
@@ -34,10 +41,17 @@ begin
          siw_email_senha      = Nvl(p_siw_email_senha, siw_email_senha),
          logo                 = Nvl(p_logo, logo),
          logo1                = Nvl(p_logo1, logo1),
-         fundo                = Nvl(p_fundo, fundo),
-         upload_maximo        = p_upload_maximo
+         fundo                = Nvl(p_fundo, fundo),         
+         upload_maximo        = p_upload_maximo,
+         
+         ad_account_sufix     = p_ad_account_sufix,
+         ad_base_dn           = p_ad_base_dn,
+         ad_domain_controlers = p_ad_domain_controlers,
+         ol_account_sufix     = p_ol_account_sufix,
+         ol_base_dn           = p_ol_base_dn,
+         ol_domain_controlers = p_ol_domain_controlers
+         
       where sq_pessoa         = p_chave;
    End If;
 end SP_PutSIWCliConf;
 /
-

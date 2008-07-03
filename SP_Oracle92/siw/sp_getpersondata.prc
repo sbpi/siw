@@ -8,8 +8,9 @@ create or replace procedure SP_GetPersonData
 begin
    open p_result for 
      select a.*, 
-           b.username, b.ativo, b.sq_unidade, b.sq_localizacao, 
+           b.username, b.ativo, b.sq_unidade, b.sq_localizacao, b.tipo_autenticacao,
            b.gestor_seguranca, b.gestor_sistema, Nvl(b.email,i.email) email,
+           case b.tipo_autenticacao when 'B' then 'BD' when 'A' then 'MS-AD' else 'O-LDAP' end as nm_tipo_autenticacao,
            c.sq_usuario_central, c.sq_central_fone, c.codigo codigo_central, c.codigo codigo_central,
            d.sq_tipo_vinculo, d.nome nome_vinculo, d.interno, d.ativo vinculo_ativo, d.contratado,
            e.nome unidade, e.sigla, e.email email_unidade,
