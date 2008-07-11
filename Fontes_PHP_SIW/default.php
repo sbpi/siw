@@ -20,7 +20,6 @@ include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getUserData.php');
 include_once('classes/sp/db_getLinkData.php');
 include_once('classes/sp/db_getCustomerSite.php');
-include_once('classes/ldap/ldap.php');
 // =========================================================================
 //  /default.php
 // ------------------------------------------------------------------------
@@ -82,34 +81,51 @@ function Valida() {
     $w_erro=0;
 
     if (db_verificaUsuario::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario)==0) {
-        $w_erro=1;
+      $w_erro=1;
     } else {
-        $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);        
-        $w_tipo = f($RS,'tipo_autenticacao');                       
-        if($w_tipo == 'B'){
-            if ($wDsSenha>'') { $w_erro=db_verificaSenha::getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha); }
-        }else{
-            $RS1 = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);            
-            $adldap = new adLDAP();
-            $adldap->setParameterLdap(f($RS1,'ad_account_sufix'),f($RS1,'ad_base_dn'),f($RS1,'ad_domain_controlers'));
-            if($adldap->authenticate($wNoUsuario,$wDsSenha)){                           
-                //FAZ ALGUMA COISA!
-                //$result=$adldap->user_info($username);
-            }else{
-                //Usuario não existe!
-            }
+      $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);        
+      $w_tipo = f($RS,'tipo_autenticacao');                       
+      if ($w_tipo == 'B') {
+        if ($wDsSenha>'') { $w_erro=db_verificaSenha::getInstanceOf($dbms, $_SESSION['P_CLIENTE'],$wNoUsuario,$wDsSenha); }
+      } else {
+        include_once('classes/ldap/ldap.php');
+        $RS1 = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);      
+
+        if ($w_tipo=='A') {
+          $array = array(            
+              'domain_controllers'    => f($RS1,'ad_domain_controlers'),
+              'base_dn'               => f($RS1,'ad_base_dn')          ,
+              'account_suffix'        => f($RS1,'ad_account_sufix')    ,               
+          );
+        } else {
+          $array = array(            
+              'domain_controllers'    => f($RS1,'ol_domain_controlers'),
+              'base_dn'               => f($RS1,'ol_base_dn')          ,
+              'account_suffix'        => f($RS1,'ol_account_sufix')    ,               
+          );
         }
-
-
+                
+        $adldap = new adLDAP($array);
+                                                                                                                                                         
+        if(!$adldap->authenticate($wNoUsuario,$wDsSenha)){
+          $w_erro=2;
+        } else {
+          // Testa se o usuário de rede existe e se não está bloqueado.
+          $user = $adldap->user_info($wNoUsuario,array("userAccountControl"));
+          $user_attrib = $adldap->account_attrib($user[0]['useraccountcontrol'][0]);
+          if (in_array('ACCOUNTDISABLE',$user_attrib)) {
+            $w_erro=4;
+          }
+        }
+      }
     }
 
     if ($w_erro>0) {
         ScriptOpen('JavaScript');
         if ($w_erro==1) { ShowHTML('  alert(\'Usuário inexistente!\');'); }
-        else
-        if ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
-        else
-        if ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
+        elseif ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
+        elseif ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
+        elseif ($w_erro==4) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor da rede local!\');'); }
         // Se for SBPI e senha inválida, devolve a username, dispensando sua redigitação.
         if ($_SESSION['P_CLIENTE']==1 && $w_erro=2) {
             $w_retorno = $_SERVER['HTTP_REFERER'];

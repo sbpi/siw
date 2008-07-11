@@ -147,3 +147,14 @@ function trim(s) {
 	return (s ? '' + s : '').replace(/^\s*|\s*$/g, '');
 }
 
+function repeteCaracter(car,qtd){
+	var saida = ""
+	var i =0;
+	for(i=0;i<qtd;i++)
+	{ 
+		saida += car;
+	}
+	return saida;
+}
+
+

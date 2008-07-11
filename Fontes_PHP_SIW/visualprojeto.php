@@ -5,7 +5,7 @@
 // -------------------------------------------------------------------------
 function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   extract($GLOBALS);
- include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
+  include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php');
@@ -47,9 +47,12 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   // Recupera os dados do projeto
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
   $w_tramite_ativo = f($RS,'ativo');
+  $w_ide           = f($RS,'ide');
   $w_ige           = f($RS,'ige');
+  $w_idc           = f($RS,'idc');
+  $w_igc           = f($RS,'igc');
+  
   // Recupera o tipo de visão do usuário
-
   if ($_SESSION['INTERNO']=='N') {
     // Se for usuário externo, tem visão resumida
     $w_tipo_visao=2;
@@ -91,10 +94,25 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     if (nvl(f($RS,'sq_plano'),'')!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,strtoupper(f($RS,'nm_plano'))).'</b></font></td></tr>';
+      if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.strtoupper(f($RS,'nm_plano')).'</b></font></td></tr>';
+      else                 $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,strtoupper(f($RS,'nm_plano'))).'</b></font></td></tr>';
     }
     $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROJETO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.f($RS,'sq_siw_solicitacao').')</b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+    $l_html .= chr(13).'    <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top" align="center">';
+    if ($l_tipo!='WORD') {
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').': '.ExibeSmile('IDE',$w_ide).' '.formatNumber($w_ide,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').': '.ExibeSmile('IGE',$w_ige).' '.formatNumber($w_ige,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').': '.ExibeSmile('IDC',$w_ide).' '.formatNumber($w_idc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').': '.ExibeSmile('IGC',$w_ige).' '.formatNumber($w_igc,2).'%</b></td>';
+    } else {
+      $l_html .= chr(13).'        <td width="25%">IDE: '.ExibeSmile('IDE',$w_ide).' '.formatNumber($w_ide,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IGE: '.ExibeSmile('IGE',$w_ige).' '.formatNumber($w_ige,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IDC: '.ExibeSmile('IDC',$w_ide).' '.formatNumber($w_idc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IGC: '.ExibeSmile('IGC',$w_ige).' '.formatNumber($w_igc,2).'%</b></td>';
+    }
+    $l_html .= chr(13).'      </table>';
+    $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>';
      
     // Identificação do projeto
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['GERAL'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -597,8 +615,9 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
         } 
       } 
-      if ($w_tipo!='WORD') $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'         </table></td></tr>';
+      
+      if ($w_tipo!='WORD') $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'<tr><td colspan=2><b>Observações:<ul>';
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
@@ -639,7 +658,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         foreach ($RSQuery as $row) {
           $l_html .= chr(13).'      <tr>';
           if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
-          else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
+          else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
           $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
           $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
           if (nvl(f($row,'valor'),'')!='') {
@@ -647,14 +666,15 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
             $p_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
             $l_html .= chr(13).'        <td align="center">';
             if ($p_array['TIPO']=='DIA') {
-              $l_html .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+              $l_html .= date(d.'/'.m.'/'.y,$p_array['VALOR']);
             } elseif ($p_array['TIPO']=='MES') {
-              $l_html .= chr(13).'        '.$p_array['VALOR'];
+              $l_html .= $p_array['VALOR'];
             } elseif ($p_array['TIPO']=='ANO') {
-              $l_html .= chr(13).'        '.$p_array['VALOR'];
+              $l_html .= $p_array['VALOR'];
             } else {
-              $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
+              $l_html .= nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
             }
+            $l_html .= '</td>';
           } else {
             $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
             $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
@@ -664,14 +684,15 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
             $p_array = retornaNomePeriodo(f($row,'base_referencia_inicio'), f($row,'base_referencia_fim'));
             $l_html .= chr(13).'        <td align="center">';
             if ($p_array['TIPO']=='DIA') {
-              $l_html .= chr(13).'        '.date(d.'/'.m.'/'.y,$p_array['VALOR']);
+              $l_html .= date(d.'/'.m.'/'.y,$p_array['VALOR']);
             } elseif ($p_array['TIPO']=='MES') {
-              $l_html .= chr(13).'        '.$p_array['VALOR'];
+              $l_html .= $p_array['VALOR'];
             } elseif ($p_array['TIPO']=='ANO') {
-              $l_html .= chr(13).'        '.$p_array['VALOR'];
+              $l_html .= $p_array['VALOR'];
             } else {
-              $l_html .= chr(13).'        '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_fim')),'---');
+              $l_html .= nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'base_referencia_fim')),'---');
             }
+            $l_html .= '</td>';
           } else {
             $l_html .= chr(13).'        <td align="center">&nbsp;</td>';
             $l_html .= chr(13).'        <td align="center">&nbsp;</td>';

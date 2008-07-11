@@ -1,6 +1,7 @@
 create or replace procedure SP_GetBenef
    (p_cliente            in number,
     p_sq_pessoa          in number   default null,
+    p_username           in varchar2 default null,
     p_cpf                in varchar2 default null,
     p_cnpj               in varchar2 default null,
     p_nome               in varchar2 default null,
@@ -43,8 +44,8 @@ begin
             j.sq_pais_passaporte, j.sexo,
             k.cnpj, k.inscricao_estadual, k.inicio_atividade, k.sede,
             o.nome as nm_pais_passaporte,
-            case sexo when 'F' then 'Feminino' else 'Masculino' end as nm_sexo,
-            n.sq_unidade as sq_unidade_benef,
+            case sexo when 'F' then 'Feminino' when 'M' then 'Masculino' else null end as nm_sexo,
+            n.sq_unidade as sq_unidade_benef, n.username,
             p.sigla||'/'||q.sigla as nm_unidade_benef,
             case when k.cnpj is not null 
                  then k.cnpj
@@ -141,7 +142,8 @@ begin
                                                                                        )
                                                  )
             )
-        and (p_cpf                is null     or (p_cpf                is not null and (j.cpf               = p_cpf or n.username = p_cpf)))
+        and (p_username           is null     or (p_username           is not null and n.username           = p_username))
+        and (p_cpf                is null     or (p_cpf                is not null and j.cpf                = p_cpf))
         and (p_cnpj               is null     or (p_cnpj               is not null and k.cnpj               = p_cnpj))
         and (p_passaporte_numero  is null     or (p_passaporte_numero  is not null and j.passaporte_numero  = p_passaporte_numero))
         and (p_sq_pais_passaporte is null     or (p_sq_pais_passaporte is not null and j.sq_pais_passaporte = p_sq_pais_passaporte))

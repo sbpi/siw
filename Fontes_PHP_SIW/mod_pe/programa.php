@@ -1243,32 +1243,47 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_o                = $O;
   }
   if ($w_o!='V') {
-    if ($w_tipo=='WORD') {
+    if ($w_tipo=='PDF') {
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      if ($P1==1 || $P1==2) CabecalhoWord($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),0);
+      else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
+      $w_embed = 'WORD';
+    } elseif ($w_tipo=='WORD') {
       HeaderWord(null);
-      CabecalhoWord($w_cliente,'Visualizaçao de '.f($RS_Menu,'nome'),0);
+      if ($P1==1 || $P1==2) CabecalhoWord($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),0);
+      else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
+      $w_embed = 'WORD';
     } else {
       Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      BodyOpenClean(null);
+      $w_embed = 'HTML';
     } 
-    //if ($w_formato=='WORD') HeaderWord(null); else Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    if ($w_tipo!='WORD') BodyOpenClean(null);
     ShowHTML('<div align="center">');
   }
   ShowHTML('<table width="95%" border="0" cellspacing="3">');
   if ($w_o!='V') {
     ShowHTML('<tr><td colspan="2">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       if ($P1==1 || $P1==2) CabecalhoRelatorio($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),4,$w_chave);
       else                  CabecalhoRelatorio($w_cliente,'Ficha de '.f($RS_Menu,'nome'),4,$w_chave);
     }
   }
-  if (nvl($w_tipo,'')!='' && $w_tipo!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
+  if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
   // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
-  ShowHTML(VisualPrograma($w_chave,$w_o,$w_usuario,$w_p1,$w_tipo,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_recurso,$w_interessado,$w_anexo,$w_meta,$w_ocorrencia,$w_consulta));
-  if (nvl($w_tipo,'')!='' && $w_tipo!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
+  ShowHTML(VisualPrograma($w_chave,$w_o,$w_usuario,$w_p1,$w_embed,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_recurso,$w_interessado,$w_anexo,$w_meta,$w_ocorrencia,$w_consulta));
+  if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
+  if ($w_tipo=='PDF') RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================
 // Rotina de exclusão

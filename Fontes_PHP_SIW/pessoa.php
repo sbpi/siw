@@ -129,14 +129,17 @@ function Benef() {
     $p_nome           = strtoupper($_REQUEST['p_nome']);
     $p_gestor         = strtoupper($_REQUEST['p_gestor']);
     $w_sq_solicitacao = $_REQUEST['w_sq_solicitacao'];
-    $w_username       = $_REQUEST['w_username'];
+    $w_cpf            = $_REQUEST['w_cpf'];
     // Verifica se há necessidade de recarregar os dados da tela a partir
     // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
     if ($w_troca>'' && $O!='E') {
         // Se for recarga da página
+        $w_username_adm         = $_REQUEST['w_username_adm'];
+        $w_senha_adm            = $_REQUEST['w_senha_adm'];
         $w_username             = $_REQUEST['w_username'];
         $w_nome                 = $_REQUEST['w_nome'];
         $w_nome_resumido        = $_REQUEST['w_nome_resumido'];
+        $w_sexo                 = $_REQUEST['w_sexo'];
         $w_rg                   = $_REQUEST['w_rg'];
         $w_passaporte           = $_REQUEST['w_passaporte'];
         $w_nascimento           = $_REQUEST['w_nascimento'];
@@ -159,12 +162,13 @@ function Benef() {
         $w_gestor_seguranca     = $_REQUEST['w_gestor_seguranca'];
         $w_gestor_sistema       = $_REQUEST['w_gestor_sistema'];
         $w_tipo_autenticacao    = $_REQUEST['w_tipo_autenticacao'];
+        $w_username_ant         = $_REQUEST['w_username_ant'];
     } else {
-        if ($O=='I' && $w_sq_pessoa=='' && $w_username>'' && $SG=='SGUSU') {
-            $RS = db_getUserData::getInstanceOf($dbms,$w_cliente,$w_username);
+        if ($O=='I' && $w_sq_pessoa=='' && $w_cpf>'' && $SG=='SGUSU') {
+            $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
             if (count($RS)) {
                 ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Usuário já existente!\');');
+                ShowHTML('  alert(\'CPF já associado a outro usuário!\');');
                 ShowHTML('  history.back(1);');
                 ScriptClose();
                 exit;
@@ -175,8 +179,11 @@ function Benef() {
                 // Recupera os dados do beneficiário em co_pessoa
                 $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
                 if (count($RS)) {
+                    $w_cpf                  = f($RS,'cpf');
+                    $w_username             = f($RS,'username');
                     $w_nome                 = f($RS,'Nome');
                     $w_nome_resumido        = f($RS,'Nome_Resumido');
+                    $w_sexo                 = f($RS,'sexo');
                     $w_email                = f($RS,'Email');
                     $w_sq_unidade_lotacao   = f($RS,'sq_unidade');
                     $w_sq_localizacao       = f($RS,'sq_localizacao');
@@ -184,6 +191,7 @@ function Benef() {
                     $w_gestor_seguranca     = f($RS,'gestor_seguranca');
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
+                    $w_username_ant         = f($RS,'username');
                 }
             } elseif (nvl($w_username,'')>'') {
                 // Recupera os dados do beneficiário em co_pessoa
@@ -192,6 +200,8 @@ function Benef() {
                     $w_sq_pessoa            = f($RS,'sq_pessoa');
                     $w_nome                 = f($RS,'Nome');
                     $w_nome_resumido        = f($RS,'Nome_Resumido');
+                    $w_cpf                  = f($RS,'cpf');
+                    $w_sexo                 = f($RS,'sexo');
                     $w_email                = f($RS,'Email');
                     $w_sq_unidade_lotacao   = f($RS,'sq_unidade');
                     $w_sq_localizacao       = f($RS,'sq_localizacao');
@@ -199,6 +209,7 @@ function Benef() {
                     $w_gestor_seguranca     = f($RS,'gestor_seguranca');
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
+                    $w_username_ant         = f($RS,'username');
                 }
             }
         }
@@ -225,14 +236,14 @@ function Benef() {
     SaltaCampo();
     FormataDataHora();
     ValidateOpen('Validacao');
-    if ($w_username=="" || (!(strpos($_REQUEST['botao'],"Procurar")===false)) || (!(strpos($_REQUEST['botao'],"Troca")===false))) {
+    if ($w_cpf=="" || (!(strpos($_REQUEST['botao'],"Procurar")===false)) || (!(strpos($_REQUEST['botao'],"Troca")===false))) {
         // Se o beneficiário ainda não foi selecionado
         ShowHTML('  if (theForm.Botao.value == \'Procurar\') {');
         Validate('w_nome','Nome','','1','4','20','1','');
         ShowHTML('  theForm.Botao.value = \'Procurar\';');
         ShowHTML('}');
         ShowHTML('else {');
-        Validate('w_username','CPF','CPF','1','14','14','','0123456789-.');
+        Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
         if ($P2==2) {
             Validate('w_frm_pag','Forma de pagamento','SELECT','1','1','10','','1');
         }
@@ -241,8 +252,9 @@ function Benef() {
         ShowHTML('  if (theForm.Botao.value == \'Troca\') { return true; }');
         Validate('w_nome','Nome','1',1,5,60,'1','1');
         Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+        Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
         if ($SG=='RHUSU') {
-            if (strlen($w_username)!=10) {
+            if (strlen($w_cpf)!=10) {
                 Validate('w_rg','RG','1',1,5,80,'1','1');
                 Validate('w_passaporte','Passaporte','1','',1,15,'1','1');
             } else {
@@ -260,12 +272,17 @@ function Benef() {
             }
             Validate('w_telefone','Telefone','1',1,7,40,'1','1');
             Validate('w_fax','Fax','1','',4,20,'1','1');
-        } else if ($SG=='SGUSU' || $SG=='CLUSUARIO') {
+        } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') {
+            Validate('w_username','Username','1',1,2,60,'1','1');
             Validate('w_email','E-Mail','1','1',4,50,'1','1');
         }
         Validate('w_sq_unidade_lotacao','Unidade de lotação','HIDDEN',1,1,10,'','1');
         Validate('w_sq_localizacao','Localização','SELECT',1,1,10,'','1');
         Validate('w_sq_tipo_vinculo','Vínculo com a organização','SELECT',1,1,10,'','1');
+        if (($O=='I' || $w_username_ant!= $w_username) && strpos('AO',$w_tipo_autenticacao)!==false) {
+          Validate('w_username_adm','Usuário da rede','1',1,2,60,'1','1');
+          Validate('w_senha_adm','Senha do usuário da rede','1','1','2','30','1','1');
+        }
         if ($SG=='SGUSU' || $SG=='CLUSUARIO') {
             Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
         }
@@ -275,13 +292,13 @@ function Benef() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
-    if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
+    if ($P1!=0 && ($w_cpf=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
         // Se o beneficiário ainda não foi selecionado
         if (isset($_REQUEST['Botao']) && (!(strpos($_REQUEST['botao'],'Procurar'))===false)) {
             // Se está sendo feita busca por nome
             if ($w_troca!='w_sq_localizacao') { BodyOpen('onLoad=\'this.focus()\';'); }
         } else {
-            BodyOpen('onLoad=\'document.Form.w_username.focus()\';');
+            BodyOpen('onLoad=\'document.Form.w_cpf.focus()\';');
         }
     } elseif ($w_troca>'') {
         BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
@@ -300,7 +317,7 @@ function Benef() {
             $w_Disabled=' DISABLED ';
             if ($O=='V') $w_Erro = Validacao($w_sq_solicitacao, $SG);
         }
-        if ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false))))) {
+        if ($w_cpf=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false))))) {
             // Se o beneficiário ainda não foi selecionado
             AbreForm('Form',$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
         } else {
@@ -309,15 +326,19 @@ function Benef() {
         ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
         ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao" value="'.$w_sq_solicitacao.'">');
         ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+        ShowHTML('<INPUT type="hidden" name="w_username_ant" value="'.$w_username_ant.'">');
         ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+        if (!(strpos('ETDV',$O)===false)) {
+          ShowHTML('<INPUT type="hidden" name="w_tipo_autenticacao" value="'.$w_tipo_autenticacao.'">');
+        }
         ShowHTML(MontaFiltro('POST'));
-        if ($P1!=0 && ($w_username=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
+        if ($P1!=0 && ($w_cpf=='' || (isset($_REQUEST['Botao']) && ((!(strpos($_REQUEST['Botao'],'Troca')===false)) || (!(strpos($_REQUEST['Botao'],'Procurar')===false)))))) {
             $w_frm_pag = $_REQUEST['w_frm_pag'];
             $w_nome    = $_REQUEST['w_nome'];
             ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
             ShowHTML('    <table border="0">');
             ShowHTML('        <tr><td colspan=3><font size=2>Informe os dados abaixo e clique no botão "Selecionar" para continuar.</TD>');
-            ShowHTML('        <tr><td><font size=1><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" NAME="w_username" VALUE="'.$w_username.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+            ShowHTML('        <tr><td><font size=1><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
             ShowHTML('            <td valign="bottom"><INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Selecionar" onClick="Botao.value=this.value; document.Form.action=\''.$w_pagina.$par.'\'">');
             if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') { // Tela de usuários do SG ou RH
                 ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&w_cliente='.$_REQUEST['w_cliente'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
@@ -347,7 +368,7 @@ function Benef() {
                         ShowHTML('        <td><font  size="1">'.f($row,'nome_resumido').'</td>');
                         ShowHTML('        <td align="center"><font  size="1">'.nvl(f($row,'cpf'),"---").'</td>');
                         ShowHTML('        <td nowrap>');
-                        ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$R.'&O=I&w_username='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Selecionar</A>&nbsp');
+                        ShowHTML('          <A class="hl" HREF="pessoa.php?par=BENEF&R='.$R.'&O=I&w_cpf='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">Selecionar</A>&nbsp');
                         ShowHTML('        </td>');
                         ShowHTML('      </tr>');
                     }
@@ -362,53 +383,55 @@ function Benef() {
             ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
             ShowHTML('    <table width="97%" border="0">');
             ShowHTML('      <tr><td><table border="0" width="100%">');
-            ShowHTML('       <tr><td valign="top"><font size=1>CPF:</font><br><b><font size=2>'.$w_username);
-            ShowHTML('                   <INPUT type="hidden" name="w_username" value="'.$w_username.'">');
-            ShowHTML('       <tr><td valign="top"><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-            ShowHTML('                <td valign="top"><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+            ShowHTML('       <tr><td><font size=1>CPF:</font><br><b><font size=2>'.$w_cpf);
+            ShowHTML('                   <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
+            ShowHTML('       <tr><td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+            ShowHTML('                <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+            SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
             ShowHTML('          </table>');
             if ($SG=="RHUSU") {
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-                ShowHTML('          <tr><td valign="top"><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg" class="sti" SIZE="14" MAXLENGTH="80" VALUE="'.$w_rg.'"></td>');
-                ShowHTML('              <td valign="top"><b>Passapo<u>r</u>te:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_passaporte" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_passaporte.'"></td>');
-                ShowHTML('              <td valign="top"><b>Da<u>t</u>a de nascimento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+                ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+                ShowHTML('          <tr><td><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg" class="sti" SIZE="14" MAXLENGTH="80" VALUE="'.$w_rg.'"></td>');
+                ShowHTML('              <td><b>Passapo<u>r</u>te:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_passaporte" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_passaporte.'"></td>');
+                ShowHTML('              <td><b>Da<u>t</u>a de nascimento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
                 ShowHTML('          </table>');
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-                ShowHTML('          <tr><td valign="top"><b>En<u>d</u>ereço:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_end" class="sti" SIZE="35" MAXLENGTH="50" VALUE="'.$w_end.'"></td>');
-                ShowHTML('              <td valign="top"><b>C<u>o</u>mplemento:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_comple" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_comple.'"></td>');
+                ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+                ShowHTML('          <tr><td><b>En<u>d</u>ereço:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_end" class="sti" SIZE="35" MAXLENGTH="50" VALUE="'.$w_end.'"></td>');
+                ShowHTML('              <td><b>C<u>o</u>mplemento:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_comple" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_comple.'"></td>');
                 ShowHTML('          </table>');
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
+                ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
                 ShowHTML('      <tr>');
                 selecaoPais('<u>P</u>aís:','P',null,$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
                 selecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_pais,null,'w_uf',null,'onChange=\'document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');
                 selecaoCidade('<u>C</u>idade:','C',null,$w_cidade,$w_pais,$w_uf,'w_cidade',null,null);
                 ShowHTML('          </table>');
-                ShowHTML('          <tr><td valign="top"><b>C<u>E</u>P:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_cep" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event);"></td>');
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-                ShowHTML('          <tr><td valign="top"><b>Te<u>l</u>efone:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_telefone" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_telefone.'"> '.consultaTelefone($w_cliente).'</td>');
-                ShowHTML('              <td valign="top"><b>Fa<u>x</u>:</b><br><input '.$w_Disabled.' accesskey="X" type="text" name="w_fax" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_fax.'"></td>');
+                ShowHTML('          <tr><td><b>C<u>E</u>P:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_cep" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event);"></td>');
+                ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+                ShowHTML('          <tr><td><b>Te<u>l</u>efone:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_telefone" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_telefone.'"> '.consultaTelefone($w_cliente).'</td>');
+                ShowHTML('              <td><b>Fa<u>x</u>:</b><br><input '.$w_Disabled.' accesskey="X" type="text" name="w_fax" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_fax.'"></td>');
                 if ($w_Disabled==' DISABLED ') {
-                    ShowHTML('              <td valign="top"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('              <td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
                     ShowHTML('                   <INPUT type="hidden" name="w_email" value="'.$w_email.'">');
                 } else {
-                    ShowHTML('              <td valign="top"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('              <td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
                 }
                 ShowHTML('          </table>');
             } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') {
+                ShowHTML('        <tr><td><font size=1><b><u>U</u>sername:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" NAME="w_username" VALUE="'.nvl($w_username,$w_cpf).'" SIZE="30" MaxLength="60" onBlur="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_email\'; document.Form.submit();">');
                 if ($w_Disabled==' DISABLED ') {
-                    ShowHTML('          <tr><td valign="top"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
                     ShowHTML('                   <INPUT type="hidden" name="w_email" value="'.$w_email.'">');
                 } else {
-                    ShowHTML('          <tr><td valign="top"><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
                 }
             }
-            ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
+            ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
             ShowHTML('          <tr>');
             selecaoUnidade('<U>U</U>nidade de lotação:','U','Selecione a unidade de lotação e aguarde a recarga da página para selecionar sua localização.',$w_sq_unidade_lotacao,null,'w_sq_unidade_lotacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_localizacao\'; document.Form.submit();"');
             ShowHTML('          <tr>');
             selecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_sq_localizacao,nvl($w_sq_unidade_lotacao,0),'w_sq_localizacao',null);
             ShowHTML('          </table>');
-            ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
+            ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
             ShowHTML('      <tr>');
             if ($SG=='RHUSU') {
                 selecaoVinculo('<u>M</u>odalidade de contratação:','M',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física','S');
@@ -420,46 +443,51 @@ function Benef() {
             ShowHTML('          </table>');
             if ($SG=='RHUSU') { // Tela de usuários do RH
                 if ($O=='A') $w_readonly='READONLY'; // Se for alteração, bloqueia a edição dos campos
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-                ShowHTML('          <tr><td valign="top"><b>Da<u>t</u>a de entrada:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="T" type="text" name="w_entrada" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_entrada.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-                ShowHTML('              <td valign="top"><b><u>L</u>imite para empréstimo:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="L" type="text" name="w_limite_emprestimo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_emprestimo.'" onKeyDown="FormataValor(this,11,2,event)"></td>');
-                ShowHTML('              <td valign="top"><b>Saldo de <u>f</u>érias:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="F" type="text" name="w_saldo_ferias" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saldo_ferias.'" onKeyDown="FormataValor(this,6,1,event)"></td>');
+                ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+                ShowHTML('          <tr><td><b>Da<u>t</u>a de entrada:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="T" type="text" name="w_entrada" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_entrada.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+                ShowHTML('              <td><b><u>L</u>imite para empréstimo:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="L" type="text" name="w_limite_emprestimo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_emprestimo.'" onKeyDown="FormataValor(this,11,2,event)"></td>');
+                ShowHTML('              <td><b>Saldo de <u>f</u>érias:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="F" type="text" name="w_saldo_ferias" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saldo_ferias.'" onKeyDown="FormataValor(this,6,1,event)"></td>');
                 if ($O=='I') { // Se for inclusão de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Enviar mensagem comunicando admissão de novo funcionário.</td>');
+                    ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Enviar mensagem comunicando admissão de novo funcionário.</td>');
                 } elseif ($O=='E') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Enviar mensagem comunicando rescisão do contrato de funcionário.</td>');
+                    ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Enviar mensagem comunicando rescisão do contrato de funcionário.</td>');
                 }
                 ShowHTML('          </table>');
             } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Tela de cadastramento de usuários
-                ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
-                ShowHTML('          <tr><td valign="top"><b>Gestor segurança?</b><br>');
-                if ($w_gestor_seguranca=='S') {
-                    ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="S" CHECKED> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="N"> Não</td>');
-                } else {
-                    ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="S"> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="N" CHECKED> Não</td>');
-                }
-                ShowHTML('              <td valign="top"><b>Gestor sistema?</b><br>');
-                if ($w_gestor_sistema=='S') {
-                    ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="S" CHECKED> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="N"> Não</td>');
-                } else {
-                    ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="S"> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="N" CHECKED> Não</td>');
-                }
+              ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+              ShowHTML('          <tr><td><b>Gestor segurança?</b><br>');
+              if ($w_gestor_seguranca=='S') {
+                ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="S" CHECKED> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="N"> Não</td>');
+              } else {
+                ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="S"> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_seguranca" class="str" VALUE="N" CHECKED> Não</td>');
+              }
+              ShowHTML('              <td><b>Gestor sistema?</b><br>');
+              if ($w_gestor_sistema=='S') {
+                ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="S" CHECKED> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="N"> Não</td>');
+              } else {
+                ShowHTML('              <input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="S"> Sim<input '.$w_Disabled.' type="RADIO" name="w_gestor_sistema" class="str" VALUE="N" CHECKED> Não</td>');
+              }
 
-                selecaoTipoAutenticacao('<u>T</u>ipo de autenticação:','t','Indique o tipo de autenticação para este usuário',$w_tipo_autenticacao,$w_cliente,'w_tipo_autenticacao',null,null);
+              ShowHTML('      <tr valign="top">');
+              selecaoTipoAutenticacao('<u>T</u>ipo de autenticação:','t','Indique o tipo de autenticação para este usuário',$w_tipo_autenticacao,$w_cliente,'w_tipo_autenticacao',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_autenticacao\'; document.Form.submit();"');
+              if (($O=='I' || $w_username_ant!= $w_username) && strpos('AO',$w_tipo_autenticacao)!==false) {
+                ShowHTML('        <td><font size=1><b><u>U</u>suário de rede:<br><INPUT ACCESSKEY="U" TYPE="text" Class="sti" NAME="w_username_adm" VALUE="'.$w_username_adm.'" SIZE="30" MaxLength="60">');
+                ShowHTML('        <td><b><U>S</U>enha:<br><INPUT ACCESSKEY="S" class="sti" type="PASSWORD" name="w_senha_adm" size="30" maxlength="60" value=""></td>');
+              }
 
-                if ($O=='I') { // Se for inclusão de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário a criação do acesso</td>');
-                } elseif ($O=='E') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário sua exclusão</td>');
-                } elseif ($O=='T') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário a ativação do seu acesso</td>');
-                } elseif ($O=='D') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
-                    ShowHTML('          <tr><td valign="top"><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário o bloqueio do seu acesso</td>');
-                }
-                ShowHTML('          </table>');
+              if ($O=='I') { // Se for inclusão de funcionário, pergunta se deseja enviar e-mail
+                ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário a criação do acesso</td>');
+              } elseif ($O=='E') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
+                ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário sua exclusão</td>');
+              } elseif ($O=='T') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
+                ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário a ativação do seu acesso</td>');
+              } elseif ($O=='D') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
+                ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Comunica ao usuário o bloqueio do seu acesso</td>');
+              }
+              ShowHTML('          </table>');
             }
             if ($SG=='RHUSU' || $SG=='SGUSU' || $SG=='CLUSUARIO') { // Tela de usuários do RH e do SG
-                ShowHTML('      <tr><td valign="top"><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
+              ShowHTML('      <tr><td><b><U>A</U>ssinatura Eletrônica:<br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td>');
             }
             ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
             // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -550,7 +578,6 @@ function CadastraPessoa() {
         $w_co_uf                = $_REQUEST['w_co_uf'];
         $w_sq_pais              = $_REQUEST['w_sq_pais'];
         $w_pd_pais              = $_REQUEST['w_pd_pais'];
-        $w_cpf                  = $_REQUEST['w_cpf'];
         $w_nascimento           = $_REQUEST['w_nascimento'];
         $w_rg_numero            = $_REQUEST['w_rg_numero'];
         $w_rg_emissor           = $_REQUEST['w_rg_emissor'];
@@ -558,14 +585,14 @@ function CadastraPessoa() {
         $w_passaporte_numero    = $_REQUEST['w_passaporte_numero'];
         $w_sq_pais_passaporte   = $_REQUEST['w_sq_pais_passaporte'];
         $w_sexo                 = $_REQUEST['w_sexo'];
-        $w_cnpj                 = $_REQUEST['w_cnpj'];
         $w_inscricao_estadual   = $_REQUEST['w_inscricao_estadual'];
     } elseif ($O=='A' || $w_sq_pessoa>'') {
         // Recupera os dados do beneficiário em co_pessoa
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
             foreach($RS as $row) {
                 $w_sq_pessoa            = f($row,'sq_pessoa');
+                $w_username             = f($row,'username');
                 $w_nome                 = f($row,'nm_pessoa');
                 $w_nome_resumido        = f($row,'nome_resumido');
                 $w_sq_pessoa_pai        = f($row,'sq_pessoa_pai');
@@ -854,8 +881,8 @@ function BuscaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify"><font size=2><b><ul>Instruções</b>:<li>Informe parte do nome da ação ou o código da ação.<li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.<li>Após informar o nome da ação ou o código da ação, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.</ul></div>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td valign="top"><b>Parte do <U>n</U>ome da pessoa:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="100" value="'.$w_nome.'">');
-    ShowHTML('      <tr><td valign="top"><b><U>S</U>igla da unidade de lotação:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_sg_unidade" size="6" maxlength="20" value="'.$w_sg_unidade.'">');
+    ShowHTML('      <tr><td><b>Parte do <U>n</U>ome da pessoa:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="50" maxlength="100" value="'.$w_nome.'">');
+    ShowHTML('      <tr><td><b><U>S</U>igla da unidade de lotação:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_sg_unidade" size="6" maxlength="20" value="'.$w_sg_unidade.'">');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -917,7 +944,7 @@ function BuscaPessoa() {
     $w_pessoa     = $_REQUEST['w_pessoa'];
     $p_restricao  = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
     $p_campo      = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
     ShowHTML('<HEAD>');
@@ -1036,109 +1063,204 @@ function Grava() {
         // Verifica se a Assinatura Eletrônica é válida
         if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
             if (strlen($_REQUEST['w_username'])<=14) $w_tipo='Física'; else $w_tipo='Jurídica';
-            dml_putSiwUsuario::getInstanceOf($dbms, $O,
-            $_REQUEST['w_sq_pessoa'],$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
-            $_REQUEST['w_sq_tipo_vinculo'],$w_tipo,$_REQUEST['w_sq_unidade_lotacao'],$_REQUEST['w_sq_localizacao'],
-            $_REQUEST['w_username'],$_REQUEST['w_email'],$_REQUEST['w_gestor_seguranca'],$_REQUEST['w_gestor_sistema'],
-            $_REQUEST['w_tipo_autenticacao']);
+            if (strpos('ED',$O)===false) {
+              // Se não for exclusão nem desativação de usuários, verifica se o nome de usuário já existe
+              $RS = db_getUserData::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_username']);
+              $w_sq_pessoa = f($RS,'sq_pessoa');
+              if (count($RS) > 0 && ($O=='I' || ($O!='I' && $w_sq_pessoa!=$_REQUEST['w_sq_pessoa']))) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Nome de usuário já associado a outra pessoa!\');');
+                ScriptClose();
+                retornaFormulario('w_username');
+                exit;
+              }
+              // Se a autenticação não for na aplicação, o nome de usuário deve existir no repositório indicado
+              if (($O=='I' || $_REQUEST['w_username_ant']!= $_REQUEST['w_username']) && strpos('AO',$_REQUEST['w_tipo_autenticacao'])!==false) {
+                include_once('classes/ldap/ldap.php');
+                $RS1 = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);   
+                        
+                if ($_REQUEST['w_tipo_autenticacao']=='A') {
+                  // Recupera dados para conexão ao MS-AD
+                  $w_label = 'Active Directory';
+                  $array = array(            
+                      'domain_controllers'    => f($RS1,'ad_domain_controlers'),
+                      'base_dn'               => f($RS1,'ad_base_dn')          ,
+                      'account_suffix'        => f($RS1,'ad_account_sufix')    ,               
+                  );
+                } else {
+                  // Recupera dados para conexão ao Open LDAP
+                  $w_label = 'Open LDAP';
+                  $array = array(            
+                      'domain_controllers'    => f($RS1,'ol_domain_controlers'),
+                      'base_dn'               => f($RS1,'ol_base_dn')          ,
+                      'account_suffix'        => f($RS1,'ol_account_sufix')    ,               
+                  );
+                }
+                $adldap = new adLDAP($array);
+                                                                                                                                                           
+                if(!$adldap->authenticate($_REQUEST['w_username_adm'],$_REQUEST['w_senha_adm'])) {
+                  // Autenticação fora da aplicação exige usuário válido e autenticado na rede.
+                  ScriptOpen('JavaScript');
+                  ShowHTML('  alert(\'Usuário de rede inexistente ou senha inválida!\');');
+                  ScriptClose();
+                  retornaFormulario('w_username_adm');
+                  exit;
+                } else {
+                  // Testa se o usuário de rede existe e se não está bloqueado.
+                  $user = $adldap->user_info($_REQUEST['w_username_adm'],array("userAccountControl"));
+                  $user_attrib = $adldap->account_attrib($user[0]['useraccountcontrol'][0]);
+                  if (in_array('ACCOUNTDISABLE',$user_attrib)) {
+                    // Usuário de rede não pode estar bloqueado.
+                    ScriptOpen('JavaScript');
+                    ShowHTML('  alert(\'Usuário de rede bloqueado no '.$w_label.'!\');');
+                    ScriptClose();
+                    retornaFormulario('w_username_adm');
+                    exit;
+                  }
 
-            // Se o usuário deseja comunicar a ocorrência ao usuário, configura e envia mensagem automática.
+                  // Testa se o usuário em inclusão/edição existe e se não está bloqueado.
+                  $user = $adldap->user_info($_REQUEST['w_username'],array('cn'));
+                  if ($user[0]['dn']==NULL){
+                    // Autenticação fora da aplicação exige que o nome do usuário seja criado previamente.
+                    ScriptOpen('JavaScript');
+                    ShowHTML('  alert(\'Nome de usuário não existe no '.$w_label.'!\nEntre em contato com o administrador da rede para criá-lo.\');');
+                    ScriptClose();
+                    retornaFormulario('w_username');
+                    exit;
+                  } else {
+                    $user = $adldap->user_info($_REQUEST['w_username'],array("userAccountControl"));
+                    $user_attrib = $adldap->account_attrib($user[0]['useraccountcontrol'][0]);
+                    if (in_array('ACCOUNTDISABLE',$user_attrib)) {
+                      // Autenticação fora da aplicação não permite criar usuários com contas bloqueadas.
+                      ScriptOpen('JavaScript');
+                      ShowHTML('  alert(\'Usuário bloqueado no '.$w_label.'!\');');
+                      ScriptClose();
+                      retornaFormulario('w_username');
+                      exit;
+                    }
+                  }
+                }
+              }
+            }
+
+            // Executa a operação no banco de dados
+            dml_putSiwUsuario::getInstanceOf($dbms, $O,
+                 $_REQUEST['w_sq_pessoa'],$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
+                 $_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
+                 $_REQUEST['w_sq_tipo_vinculo'],$w_tipo,$_REQUEST['w_sq_unidade_lotacao'],$_REQUEST['w_sq_localizacao'],
+                 $_REQUEST['w_username'],$_REQUEST['w_email'],$_REQUEST['w_gestor_seguranca'],$_REQUEST['w_gestor_sistema'],
+                 $_REQUEST['w_tipo_autenticacao']);
+
+            // Se o usuário logado deseja comunicar a ocorrência ao usuário em edição, configura e envia mensagem automática.
             if ($_REQUEST['w_envia_mail']>'') { // Configuração do texto da mensagem
-                $w_html = '<HTML>'.$crlf;
-                $w_html = $w_html.BodyOpenMail().$crlf;
-                $w_html = $w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-                $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
-                $w_html = $w_html.'    <table width="97%" border="0">'.$crlf;
-                $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
-                if (strpos('IT',$O)!==false) {
-                    if ($O=='I') {
-                        $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
-                    } elseif ($O=='T') {
-                        $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>DESBLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
-                    }
-                    $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
-                    if ($O=='I') {
-                        $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram criadas. Utilize os dados informados abaixo:<br>'.$crlf;
-                    } elseif ($O=='T') {
-                        $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema foram desbloqueadas. Utilize os dados informados abaixo:<br>'.$crlf;
-                    }
-                    $w_html = $w_html.'         <ul>'.$crlf;
-                    $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
-                    $w_html = $w_html.'         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
-                    $w_html = $w_html.'         <li>CPF: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
-                    $w_html = $w_html.'         <li>Senha de acesso: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
-                    $w_html = $w_html.'         <li>Assinatura eletrônica: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
-                    $w_html = $w_html.'         </ul>'.$crlf;
-                    $w_html = $w_html.'      </font></td></tr>'.$crlf;
-                    $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
-                    $w_html = $w_html.'         Orientações e observações:<br>'.$crlf;
-                    $w_html = $w_html.'         <ol>'.$crlf;
-                    $w_html = $w_html.'         <li>Troque sua senha de acesso e assinatura no primeiro acesso que fizer ao sistema.</li>'.$crlf;
-                    $w_html = $w_html.'         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-                    $w_html = $w_html.'         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-                    $w_html = $w_html.'         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-                    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-                    $w_html = $w_html.'         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-                    $w_html = $w_html.'         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
-                    $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.$crlf;
-                    $w_html = $w_html.'         </ol>'.$crlf;
-                    $w_html = $w_html.'      </font></td></tr>'.$crlf;
-                } elseif (strpos("ED",$O)!==false) {
-                    if ($O=='E') {
-                        $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
-                    } elseif ($O=='D') {
-                        $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>BLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
-                    }
-                    $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
-                    $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
-                    if ($O=='E') {
-                        $w_html = $w_html.'         Seus dados foram excluídos do sistema existente no endereço '.f($RS,'logradouro').'. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
-                    } elseif ($O=='D') {
-                        $w_html = $w_html.'         Sua senha e assinatura eletrônica para acesso ao sistema existente no endereço '.f($RS,'logradouro').' foram bloqueadas pelo gestor de segurança. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
-                    }
-                    $w_html = $w_html.'         Em caso de dúvidas, entre em contato com o gestor:'.$crlf;
-                    $w_html = $w_html.'         <ul>'.$crlf;
-                    $w_html = $w_html.'         <li>Nome: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
-                    $w_html = $w_html.'         <li>e-Mail: <b><a class="ss" href="mailto:'.$_SESSION['EMAIL'].'">'.$_SESSION['EMAIL'].'</a></b></li>'.$crlf;
-                    $w_html = $w_html.'         </ul>'.$crlf;
-                    $w_html = $w_html.'      </font></td></tr>'.$crlf;
-                }
-                $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.$crlf;
-                $w_html = $w_html.'         Dados da ocorrência:<br>'.$crlf;
-                $w_html = $w_html.'         <ul>'.$crlf;
-                $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.$crlf;
-                $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
-                $w_html = $w_html.'         </ul>'.$crlf;
-                $w_html = $w_html.'      </font></td></tr>'.$crlf;
-                $w_html = $w_html.'    </table>'.$crlf;
-                $w_html = $w_html.'</td></tr>'.$crlf;
-                $w_html = $w_html.'</table>'.$crlf;
-                $w_html = $w_html.'</BODY>'.$crlf;
-                $w_html = $w_html.'</HTML>'.$crlf;
-                // Executa a função de envio de e-mail
-                $w_resultado = '';
+              $w_html = '<HTML>'.$crlf;
+              $w_html .= BodyOpenMail().$crlf;
+              $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+              $w_html .= '<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.$crlf;
+              $w_html .= '    <table width="97%" border="0">'.$crlf;
+              $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
+              if (strpos('IT',$O)!==false) {
                 if ($O=='I') {
-                    $w_resultado=EnviaMail('Aviso de criação de usuário',$w_html,$_REQUEST['w_email']);
-                } elseif ($O=='E') {
-                    $w_resultado=EnviaMail('Aviso de exclusão de usuário',$w_html,$_REQUEST['w_email']);
-                } elseif ($O=='D') {
-                    $w_resultado=EnviaMail('Aviso de bloqueio de acesso',$w_html,$_REQUEST['w_email']);
+                  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>CRIAÇÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
                 } elseif ($O=='T') {
-                    $w_resultado=EnviaMail('Aviso de desbloqueio de acesso',$w_html,$_REQUEST['w_email']);
+                  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>DESBLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
                 }
+                $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+                if ($O=='I') {
+                  $w_html .= '         Seu acesso ao sistema foi criado. Utilize os dados informados abaixo:<br>'.$crlf;
+                } elseif ($O=='T') {
+                  $w_html .= '         Seu acesso ao sistema foi desbloqueado. Utilize os dados informados abaixo:<br>'.$crlf;
+                }
+                $w_html .= '         <ul>'.$crlf;
+                $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
+                $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.$crlf;
+                $w_html .= '         <li>Nome de usuário: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+                if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
+                  $w_html .= '         <li>Senha de acesso: <b>'.$_REQUEST['w_username'].'</b></li>'.$crlf;
+                } else {
+                  $w_html .= '         <li>Senha de acesso: <b>igual à senha de rede</b></li>'.$crlf;
+                }
+                $w_html .= '         <li>Assinatura eletrônica: <b>'.$_REQUEST['w_cpf'].'</b></li>'.$crlf;
+                $w_html .= '         </ul>'.$crlf;
+                $w_html .= '      </font></td></tr>'.$crlf;
+                $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+                $w_html .= '         Orientações e observações:<br>'.$crlf;
+                $w_html .= '         <ol>'.$crlf;
+                $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+                if (strpos('AO',$_REQUEST['w_tipo_autenticacao'])===false){
+                  $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+                  $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+                  $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+                  $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+                  $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+                  $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+                  $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+                } else {
+                  $w_html .= '         <li>Sua senha de acesso na aplicação será sempre igual à senha da rede. Se ela expirar ou for bloqueada, você não terá mais acesso ao sistema. Neste caso, entre em contato com os administradores de sua rede local.</li>'.$crlf;
+                  $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
+                  $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+                  $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+                  $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+                  $w_html .= '         <li>Se sua assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+                }
+                $w_html .= '         </ol>'.$crlf;
+                $w_html .= '      </font></td></tr>'.$crlf;
+              } elseif (strpos("ED",$O)!==false) {
+                if ($O=='E') {
+                  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>EXCLUSÃO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
+                } elseif ($O=='D') {
+                  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>BLOQUEIO DE USUÁRIO</b></font><br><br><td></tr>'.$crlf;
+                }
+                $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+                $RS = db_getCustomerSite::getInstanceOf($dbms,$w_cliente);
+                if ($O=='E') {
+                  $w_html .= '         Seus dados foram excluídos do sistema existente no endereço '.f($RS,'logradouro').'. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
+                } elseif ($O=='D') {
+                  $w_html .= '         Seu acesso ao sistema existente no endereço '.f($RS,'logradouro').' foi bloqueado pelo gestor de segurança. A partir de agora você não poderá mais acessá-lo.<br>'.$crlf;
+                }
+                $w_html .= '         Em caso de dúvidas, entre em contato com o gestor:'.$crlf;
+                $w_html .= '         <ul>'.$crlf;
+                $w_html .= '         <li>Nome: <b>'.$_SESSION['NOME'].'</b></li>'.$crlf;
+                $w_html .= '         <li>e-Mail: <b><a class="ss" href="mailto:'.$_SESSION['EMAIL'].'">'.$_SESSION['EMAIL'].'</a></b></li>'.$crlf;
+                $w_html .= '         </ul>'.$crlf;
+                $w_html .= '      </font></td></tr>'.$crlf;
+              }
+              $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+              $w_html .= '         Dados da ocorrência:<br>'.$crlf;
+              $w_html .= '         <ul>'.$crlf;
+              $w_html .= '         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.$crlf;
+              $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+              $w_html .= '         </ul>'.$crlf;
+              $w_html .= '      </font></td></tr>'.$crlf;
+              $w_html .= '    </table>'.$crlf;
+              $w_html .= '</td></tr>'.$crlf;
+              $w_html .= '</table>'.$crlf;
+              $w_html .= '</BODY>'.$crlf;
+              $w_html .= '</HTML>'.$crlf;
+
+              // Executa a função de envio de e-mail
+              $w_resultado = '';
+              if ($O=='I') {
+                $w_resultado=EnviaMail('Aviso de criação de usuário',$w_html,$_REQUEST['w_email']);
+              } elseif ($O=='E') {
+                $w_resultado=EnviaMail('Aviso de exclusão de usuário',$w_html,$_REQUEST['w_email']);
+              } elseif ($O=='D') {
+                $w_resultado=EnviaMail('Aviso de bloqueio de acesso',$w_html,$_REQUEST['w_email']);
+              } elseif ($O=='T') {
+                $w_resultado=EnviaMail('Aviso de desbloqueio de acesso',$w_html,$_REQUEST['w_email']);
+              }
             }
             // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
             $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+                echo $w_html;
             ScriptOpen('JavaScript');
             if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
-                if ($w_resultado>'') {
-                    ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
-                } else {
-                    ShowHTML('  alert(\'Operação executada!\');');
-                }
-                ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+              if ($w_resultado>'') {
+                ShowHTML('  alert(\'ATENÇÃO: operação executada mas não foi possível proceder o envio do e-mail.\n'.$w_resultado.'\');');
+              }
+              ShowHTML('  location.href=\''.f($RS,'link').'&O=L&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
             } else {
-                ShowHTML('  location.href=\''.f($RS,'link').'&O='.$O.'&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+              ShowHTML('  location.href=\''.f($RS,'link').'&O='.$O.'&w_cliente='.$_REQUEST['w_cliente'].'&w_sq_solicitacao='.$_REQUEST['w_sq_solicitacao'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
             }
             ScriptClose();
             DesconectaBD();
@@ -1154,7 +1276,7 @@ function Grava() {
             if ($O=='I' || $O=='A') {
                 if ($_REQUEST['w_tipo_pessoa']==1) {
                     // Verifica se já existe pessoa física com o CPF informado
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
+                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa cadastrada com o CPF informado!\\nVerifique os dados.\');');
@@ -1163,7 +1285,7 @@ function Grava() {
                         exit;
                     }
                     // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
                             if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cpf'],'')=='')) {
@@ -1181,7 +1303,7 @@ function Grava() {
                     }
                 } else {
                     // Verifica se já existe pessoa jurídica com o CNPJ informado
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_cnpj'],'0'),null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         ScriptOpen('JavaScript');
                         ShowHTML('  alert(\'Já existe pessoa jurídica cadastrada com o CNPJ informado!\\nVerifique os dados.\');');
@@ -1191,7 +1313,7 @@ function Grava() {
                     }
 
                     // Verifica se já existe pessoa jurídica com o mesmo nome. Se existir, é obrigatório informar o CNPJ.
-                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
+                    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
                             if (strlen(f($row,'nm_pessoa'))==strlen($_REQUEST['w_nome']) && (nvl(f($row,'identificador_primario'),'')=='' || nvl($_REQUEST['w_cnpj'],'')=='')) {

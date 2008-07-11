@@ -50,6 +50,7 @@ include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaComentario.php');
 include_once($w_dir_volta.'classes/sp/db_getContasRegistro.php');
+include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRecurso.php');
 include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
 include_once($w_dir_volta.'funcoes/selecaoObjetivoEstrategico.php');
@@ -990,7 +991,7 @@ function Geral() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do projeto, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1040,7 +1041,7 @@ function Geral() {
     ShowHTML('      <tr><td><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo do projeto. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde o projeto será executado, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1059,7 +1060,7 @@ function Geral() {
     if ($w_acordo=='S' || $w_viagem=='S') {
       ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Informações adicionais</td></td></tr>');
+      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Informações adicionais</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do projeto.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1070,7 +1071,7 @@ function Geral() {
     } 
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término prevista para o projeto.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1081,7 +1082,7 @@ function Geral() {
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta para Pacotes de Trabalho</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta para Pacotes de Trabalho</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data prevista para término dos pacotes de trabalho deste projeto.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1204,7 +1205,7 @@ function Descritivo() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Descritivos</td></td></tr>');
+    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Descritivos</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do projeto.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -4053,45 +4054,35 @@ function Visual() {
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo'])); 
 
   global $w_dir_volta;
-if($w_tipo == 'PDF'){
-	require_once($w_dir_volta."classes/dompdf-0.5.1/dompdf_config.inc.php");
-$shtml = headerPdf().VisualProjeto($w_chave,$O,$w_usuario,'WORD').'</BODY></HTML>';
-	if (isset($shtml)) {
-
-		if ( get_magic_quotes_gpc() ){
-				$shtml = stripslashes($shtml);
-		}
-			echo $shtml;
-			exit();
-			$old_limit = ini_set("memory_limit", "16M");
-			setlocale(LC_ALL, 'en_US');
-			$dompdf = new DOMPDF();
-			$dompdf->load_html($shtml);
-     		$dompdf->set_paper("letter", "landscape");
-			$dompdf->render();
-			
-			$dompdf->stream("teste.pdf");
-			setlocale(LC_ALL, 'pt_BR');
-			exit(0);
-	}	
-}	
-    
-  if ($w_tipo=='WORD') {
+  if ($w_tipo=='PDF') {
+    ob_start();  
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo=='WORD') {
     HeaderWord(null);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    $w_embed = 'WORD';
   } else {
     Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+    ShowHTML('</HEAD>');
+    BodyOpenClean('onLoad=\'this.focus()\';');
+    if ($w_embed!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
+    $w_embed = 'HTML';
   }
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-  ShowHTML('</HEAD>');
-  BodyOpenClean('onLoad=\'this.focus()\';');
-  if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
-  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
-  ShowHTML(VisualProjeto($w_chave,$O,$w_usuario,$w_tipo));
-  if ($w_tipo>'' && $w_tipo!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  if ($w_tipo!='WORD') Rodape();
+  ShowHTML(VisualProjeto($w_chave,$O,$w_usuario,$w_embed));
+  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_tipo=='PDF') RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 }  
 
 // =========================================================================
@@ -4520,7 +4511,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
   if (nvl($l_chave_aux,'')!='') {
     $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
-    if($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
+    if ($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
 
     $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
@@ -4559,10 +4550,10 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     }
   }
   if (nvl($l_chave_aux,'')!='') {
-    if($l_arquivo>0) $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
-    else             $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_arquivo.'</td>';
+    if ($P4!=1 && $l_arquivo>0) $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
+    else                        $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_arquivo.'</td>';
   } else {
-    $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">0</td>';
+    $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_arquivo.'</td>';
   }
   if ($l_oper == 'S') {
     $l_html .= chr(13).'        <td align="top" nowrap '.$l_row.' width="1%" nowrap>';
@@ -4704,7 +4695,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
          $l_contr1 .= chr(13).'     <td colspan=5 nowrap>'.f($row,'nm_tramite').'</td>';
       }
     }
-    $l_contr1    = $l_contr1.chr(13).'            </td></tr>';
+    $l_contr1 .= chr(13).'            </tr>';
   }   
   //Listagem das tarefas da etapa  
   if (count($RS_Ativ)>0) {
@@ -4730,10 +4721,10 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     }
   } 
   if ($l_ativ1 > '') {
-    $l_recurso = $l_recurso.chr(13).'      </tr></td>';
-    $l_ativ    = $l_ativ.chr(13).'            </td></tr>';
+    $l_recurso = $l_recurso.chr(13).'      </tr>';
+    $l_ativ    = $l_ativ.chr(13).'            </tr>';
   } elseif ($l_recurso > '') {
-    $l_recurso = $l_recurso.chr(13).'      </tr></td></table></td></tr>';
+    $l_recurso = $l_recurso.chr(13).'      </table>';
   } 
   $l_html = $l_html.chr(13).'      </tr>';
   if ($l_recurso > '') $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_recurso);

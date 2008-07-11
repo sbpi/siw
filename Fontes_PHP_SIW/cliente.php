@@ -370,7 +370,7 @@ function Geral() {
         } 
       } elseif ($O=='I' && nvl($w_cgccpf,'')!='') {
         // Recupera os dados do beneficiário em co_pessoa
-        $RS = db_getBenef::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],null,null,null,$w_cgccpf,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
           foreach($RS as $row) { $RS = $row; break; }
           $w_sq_pessoa              = f($RS,'sq_pessoa');
@@ -746,7 +746,7 @@ function Enderecos() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       if (count($RS_Cliente)>0) {
@@ -950,7 +950,7 @@ function Telefones() {
     ShowHTML('</tr>');
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera o tipo de pessoa
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $w_tipo_pessoa = f($row,'nm_tipo_pessoa'); }
     if ($w_pais=='') {
       // Carrega os valores padrão para país, estado e cidade
@@ -1554,7 +1554,7 @@ function Configuracao() {
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b><u>L</u>imite para upload (em bytes):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_upload_maximo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_upload_maximo.'" title="Informe o tamanho máximo, em bytes, a ser aceito nas rotinas de upload de arquivos."></td>');
     
-    if(function_exists("ldap_connect")){
+    if(function_exists('ldap_connect')){
         ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração dos serviços de Autenticação</td></td></tr>');

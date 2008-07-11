@@ -547,7 +547,12 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     function PgSqlDatabaseQueryProc($proc, $conHandle, $params) {
         $this->query = $proc;
         
-        $this->query = PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
+        if (strpos($this->query,'FUNCTION')!==false) {
+          // Chamadas diretas a funções têm tratamento diferenciado.
+          $this->query = 'FUNCTION'.PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
+        } else {
+          $this->query = PGSQL_DATABASE_NAME.((strpos($proc,'.')) ? '' : '.').substr($proc,strpos($proc,'.'));
+        }
         $this->conHandle = $conHandle;
         $this->params = $params;
     }
@@ -579,9 +584,9 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
         }
         if ($cursor) {
           if ($par=="") {
-                $par = "rollback; begin; select $this->query ('p_result'); fetch all in p_result;";
+             $par = "rollback; begin; select $this->query ('p_result'); fetch all in p_result;";
           } else {
-                $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
+             $par = "rollback; begin; select $this->query (".substr($par, 1).", 'p_result'); fetch all in p_result;";
           }
         } else {
           if (substr($this->query,0,8)=='FUNCTION') {
@@ -594,6 +599,7 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
             }
           }
         }
+        //if (strpos($par,'GESTOR')!==false) { echo $par; exit; }
 
         if (!($this->result = pg_query($this->conHandle, $par))) {
            $this->error['message'] = pg_last_error($this->conHandle);
@@ -609,26 +615,29 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
     function getResultData() {
 
         if(is_resource($this->result)) { 
-                 for ($i = 0; $i < pg_num_fields($this->result); $i++) {
-                   if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
-                   elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp'; }
-                 }
-                 $this->resultData  = pg_fetch_all($this->result);
-                 $this->num_rows    = pg_num_rows($this->result);
-                 if (isset($this->column_datatype)) {
-                   for ($i = 0; $i < $this->num_rows; $i++) {
-                     foreach ($this->column_datatype as $key => $val) {
-                       if (nvl($this->resultData[$i][$key],'')>'') { 
-                         if ($val=='timestamp') {
-                           $tmp = $this->resultData[$i][$key];
-                           $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
-                         } else {
-                           $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
-                         }
-                       }
-                     }
-                   }
-                 }
+          for ($i = 0; $i < pg_num_fields($this->result); $i++) {
+            if (pg_field_type($this->result, $i)=='timestamp' || pg_field_type($this->result, $i)=='date' || pg_field_type($this->result, $i)=='numeric') { $this->column_datatype[pg_field_name($this->result, $i)] = pg_field_type($this->result, $i); }
+            elseif (substr(strtolower(pg_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(pg_field_name($this->result, $i))] = 'timestamp'; }
+          }
+          $this->resultData  = pg_fetch_all($this->result);
+          $this->num_rows    = pg_num_rows($this->result);
+          if (isset($this->column_datatype)) {
+            for ($i = 0; $i < $this->num_rows; $i++) {
+              foreach ($this->column_datatype as $key => $val) {
+                if (nvl($this->resultData[$i][$key],'')>'') { 
+                  if ($val=='date') {
+                    $tmp = $this->resultData[$i][$key];
+                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
+                  } elseif ($val=='timestamp') {
+                    $tmp = $this->resultData[$i][$key];
+                    $this->resultData[$i][$key] = mktime(substr($tmp,11,2),substr($tmp,14,2),substr($tmp,17,2),substr($tmp,5,2),substr($tmp,7,2),substr($tmp,0,4)); 
+                  } else {
+                    $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                  }
+                }
+              }
+            }
+          }
           return $this->resultData; 
         } else { 
           return null; 

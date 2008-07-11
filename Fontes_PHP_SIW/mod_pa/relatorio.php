@@ -344,7 +344,7 @@ function Etiqueta() {
     ShowHTML('          <td rowspan=2><b>Unidade de Origem</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>Limite</td>');
-    //ShowHTML('          <td rowspan=2><b>Operações</td>');
+    ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Espécie</td>');
@@ -370,15 +370,16 @@ function Etiqueta() {
         ShowHTML('        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>');
         ShowHTML('        <td>'.f($row,'nm_origem_doc').'</td>');
         ShowHTML('        <td align="center">'.((nvl(f($row,'fim'),'')!='') ? date(d.'/'.m.'/'.y,f($row,'fim')) : '&nbsp;').'</td>');
-        //ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('        <td align="top" nowrap>');
 
         // Configura o texto que informa ao usuário a posição de impressão da etiqueta
 //         if ($p_posicao=='S') $w_texto = 'Emitir na parte superior da folha';
 //         elseif ($p_posicao=='M') $w_texto = 'Emitir no meio da folha';
 //         else $w_texto = 'Emitir na parte inferior da folha';
 
+        ShowHTML('          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'EmitirEtiqueta&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_posicao='.$p_posicao.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Etiqueta\',\'width=500,height=240,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=yes\');" title="Prepara etiqueta para impressão.">Emitir</A>&nbsp');
         //ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'EmitirEtiqueta&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_posicao='.$p_posicao.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Emitir</A>&nbsp');
-        //ShowHTML('        </td>');
+        ShowHTML('        </td>');
         ShowHTML('      </tr>');
         $w_chave = f($row,'sq_siw_solicitacao');
         $w_atual = f($row,'guia_tramite');
@@ -487,31 +488,31 @@ function EmitirEtiqueta () {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PADGERAL');
   //HeaderEtiqueta();
   Cabecalho();
-  //ShowHTML('<table width="'.$w_largura.'" cellpadding=0 cellspacing=0 border=0>');
-  ShowHTML('<table cellpadding=0 cellspacing=0 border=0>');
-  if ($w_posicao=='M') {
-    //ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
-    //ShowHTML('<tr><td>&nbsp;</td>');
-  } elseif ($w_posicao=='I') {
-    //ShowHTML('<tr><td height="'.$w_altura.'">&nbsp;</td>');
-    //ShowHTML('<tr><td>&nbsp;</td>');
-  }
-  //ShowHTML('<tr><td height="'.$w_altura.'">');
-  ShowHTML('<tr><td width="480"  height="200">');
-  ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
-  ShowHTML('    <tr><td colspan=2><font size=2><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
-  ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>'.f($RS,'protocolo').'</font>');
-  if(nvl(f($RS,'processo'),'')=='S')  
-    ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
-  else
-    ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'fim')).'</font>');
-  ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
-  ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
-  ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
-  ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(f($RS,'protocolo')));
-  ShowHTML('  </table>');
-  ShowHTML('</td></tr>');
-  ShowHTML('</table>');
+      ShowHTML('<table cellpadding=0 cellspacing=0 border=0>');
+      ShowHTML('<tr><td width="480"  height="200">');
+      ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
+      ShowHTML('    <tr><td colspan=2><font size=2><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
+      if(nvl(f($RS,'processo'),'')=='S') 
+        ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>'.f($RS,'protocolo').'</font>');
+      else
+        ShowHTML('    <tr><td><font size=2><b>DOCUMENTO: </b>'.f($RS,'protocolo').'</font>');
+      if(nvl(f($RS,'processo'),'')=='S')  
+        ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
+      else
+        ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
+      if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
+      else
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_origem')).'</font>');
+      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
+      if (strlen(Nvl(f($RS,'descricao'),'-'))>100) 
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');
+      else
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
+      ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(str_replace('/','',str_replace('-','',str_replace('.','',f($RS,'protocolo'))))));
+      ShowHTML('  </table>');
+      ShowHTML('<br></td></tr>');
+      ShowHTML('</table>');    
   ShowHTML('</body>');
   ShowHTML('</html>');
 } 

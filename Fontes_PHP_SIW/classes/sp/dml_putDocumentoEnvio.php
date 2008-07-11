@@ -27,7 +27,7 @@ class dml_putDocumentoEnvio {
                    'p_aviso'                    =>array($p_aviso,                                   B_VARCHAR,         1),
                    'p_dias_aviso'               =>array($p_dias_aviso,                              B_INTEGER,         3),
                    'p_retorno_limite'           =>array($p_retorno_limite,                          B_DATE,           32),
-                   'p_pessoa_externa'           =>array(tvl($p_pessoa_externa),                     B_VARCHAR,        40),
+                   'p_pessoa_externa'           =>array(tvl($p_pessoa_externa),                     B_VARCHAR,        63),
                    'p_unidade_externa'          =>array(tvl($p_unidade_externa),                    B_VARCHAR,        60),
                    'p_nu_guia'                  =>array(&$p_nu_guia,                                B_INTEGER,        32),
                    'p_ano_guia'                 =>array(&$p_ano_guia,                               B_INTEGER,        32),

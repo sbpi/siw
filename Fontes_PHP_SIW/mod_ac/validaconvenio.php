@@ -44,7 +44,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
 // Recupera os dados da outra parte
-  $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (($l_rs1==0)) {
     $l_existe_rs1=0; 
   } else {
@@ -56,7 +56,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
   }
 
   // Recupera os dados do preposto
-  $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (count($l_rs2)==0) {
     $l_existe_rs2=0; 
   } else {
@@ -92,7 +92,7 @@ function ValidaConvenio($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_trami
       } else {
         $l_existe_rs_conv2=count($l_rs_conv2);
       }
-      $l_benef = db_getBenef::getInstanceOf($dbms,1,$_SESSION['P_CLIENTE'],null,null,null,null,null,null,null,null,null,null,null); 
+      $l_benef = db_getBenef::getInstanceOf($dbms,1,$_SESSION['P_CLIENTE'],null,null,null,null,null,null,null,null,null,null,null,null); 
       foreach($l_benef as $l_row) {$l_benef=$l_row; break;}
       if(f($l_benef,'cnpj')!=f($row,'cnpj')) $l_cont += 1;
     }

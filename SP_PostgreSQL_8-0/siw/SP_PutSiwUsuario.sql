@@ -11,7 +11,8 @@ create or replace function SP_PutSiwUsuario
     p_username            varchar,
     p_email               varchar,
     p_gestor_seguranca    varchar,
-    p_gestor_sistema      varchar
+    p_gestor_sistema      varchar,
+    p_tipo_autenticacao   varchar
    ) returns void as $$
 declare
    w_existe numeric(18);
@@ -56,23 +57,25 @@ begin
             ( sq_pessoa,            sq_unidade,       sq_localizacao,
               cliente,              username,         email,
               gestor_seguranca,     gestor_sistema,   senha,          
-              assinatura
+              assinatura,           tipo_autenticacao
             )
          Values
             ( coalesce(w_Chave,p_chave), p_unidade,        p_localizacao,
               p_cliente,            p_username,       p_email,
               p_gestor_seguranca,   p_gestor_sistema, criptografia(p_username),
-              criptografia(p_username)
+              criptografia(p_username), 
+              p_tipo_autenticacao
             );
       -- Se existir, executa a alteração
       Else
          -- Atualiza registro na tabela de segurança
          Update sg_autenticacao set
-             sq_unidade       = p_unidade,
-             sq_localizacao   = p_localizacao,
-             gestor_seguranca = p_gestor_seguranca,
-             gestor_sistema   = p_gestor_sistema,
-             email            = p_email
+             sq_unidade            = p_unidade,
+             sq_localizacao        = p_localizacao,
+             gestor_seguranca      = coalesce(p_gestor_seguranca,gestor_seguranca),
+             gestor_sistema        = coalesce(p_gestor_sistema,gestor_sistema),
+             email                 = p_email,
+             tipo_autenticacao     = p_tipo_autenticacao                             
          where sq_pessoa      = p_chave;
        End If;
           

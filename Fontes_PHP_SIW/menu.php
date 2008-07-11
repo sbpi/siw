@@ -341,65 +341,78 @@ function ExibeDocs() {
 function TrocaSenha() {
   extract($GLOBALS);
 
+  // Recupera os dados do cliente
   $RS           = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
   $w_minimo     = f($RS,'tamanho_min_senha');
   $w_maximo     = f($RS,'tamanho_max_senha');
   $w_vigencia   = f($RS,'dias_vig_senha');
   $w_aviso      = f($RS,'dias_aviso_expir');
 
-  if ($P1==1) { $w_texto='Senha de Acesso'; } else { $w_texto='Assinatura Eletrônica'; }
+  // Recupera os dados do usuário
+  $RS = db_getUserData::getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
+  $w_tipo_autenticacao = f($RS,'tipo_autenticacao');
+
+  if ($P1==1) { 
+    $w_texto='Senha de Acesso';
+    $w_dt_troca = f($RS,'dt_ultima_troca_senha');
+  } else { 
+    $w_texto='Assinatura Eletrônica'; 
+    $w_dt_troca = f($RS,'dt_ultima_troca_assin');
+  }
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
-  ScriptOpen('JavaScript');
-  ValidateOpen('Validacao');
+  if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
 
-  Validate('w_atual',$w_texto.' atual','1','1',$w_minimo,$w_maximo,'1','1');
-  Validate('w_nova','Nova '.$w_texto,'1','1',$w_minimo,$w_maximo,'1','1');
-  Validate('w_conf','Confirmação da '.$w_texto.' atual','1','1',$w_minimo,$w_maximo,'1','1');
-  ShowHTML('  if (theForm.w_atual.value == theForm.w_nova.value) { ');
-  ShowHTML('     alert(\'A nova '.$w_texto.' deve ser diferente da atual!\');');
-  ShowHTML('     theForm.w_nova.value=\'\';');
-  ShowHTML('     theForm.w_conf.value=\'\';');
-  ShowHTML('     theForm.w_nova.focus();');
-  ShowHTML('     return false;');
-  ShowHTML('  }');
-  ShowHTML('  if (theForm.w_nova.value != theForm.w_conf.value) { ');
-  ShowHTML('     alert(\'Favor informar dois valores iguais para a nova '.$w_texto.'!\');');
-  ShowHTML('     theForm.w_nova.value=\'\';');
-  ShowHTML('     theForm.w_conf.value=\'\';');
-  ShowHTML('     theForm.w_nova.focus();');
-  ShowHTML('     return false;');
-  ShowHTML('  }');
-  ShowHTML('  var checkStr = theForm.w_nova.value;');
-  ShowHTML('  var temLetra = false;');
-  ShowHTML('  var temNumero = false;');
-  ShowHTML('  var checkOK = \'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\';');
-  ShowHTML('  for (i = 0;  i < checkStr.length;  i++)');
-  ShowHTML('  {');
-  ShowHTML('    ch = checkStr.charAt(i);');
-  ShowHTML('    for (j = 0;  j < checkOK.length;  j++)');
-  ShowHTML('      if (ch == checkOK.charAt(j)) temLetra = true;');
-  ShowHTML('  }');
-  ShowHTML('  var checkOK = \'0123456789\';');
-  ShowHTML('  for (i = 0;  i < checkStr.length;  i++)');
-  ShowHTML('  {');
-  ShowHTML('    ch = checkStr.charAt(i);');
-  ShowHTML('    for (j = 0;  j < checkOK.length;  j++)');
-  ShowHTML('      if (ch == checkOK.charAt(j)) temNumero = true;');
-  ShowHTML('  }');
-  ShowHTML('  if (!(temLetra && temNumero))');
-  ShowHTML('  {');
-  ShowHTML('    alert(\'A nova '.$w_texto.' deve conter letras e números.\');');
-  ShowHTML('    theForm.w_nova.value=\'\';');
-  ShowHTML('    theForm.w_conf.value=\'\';');
-  ShowHTML('    theForm.w_nova.focus();');
-  ShowHTML('    return (false);');
-  ShowHTML('  }');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
-  ValidateClose();
-  ScriptClose();
+    Validate('w_atual',$w_texto.' atual','1','1',$w_minimo,$w_maximo,'1','1');
+    Validate('w_nova','Nova '.$w_texto,'1','1',$w_minimo,$w_maximo,'1','1');
+    Validate('w_conf','Confirmação da '.$w_texto.' atual','1','1',$w_minimo,$w_maximo,'1','1');
+    ShowHTML('  if (theForm.w_atual.value == theForm.w_nova.value) { ');
+    ShowHTML('     alert(\'A nova '.$w_texto.' deve ser diferente da atual!\');');
+    ShowHTML('     theForm.w_nova.value=\'\';');
+    ShowHTML('     theForm.w_conf.value=\'\';');
+    ShowHTML('     theForm.w_nova.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if (theForm.w_nova.value != theForm.w_conf.value) { ');
+    ShowHTML('     alert(\'Favor informar dois valores iguais para a nova '.$w_texto.'!\');');
+    ShowHTML('     theForm.w_nova.value=\'\';');
+    ShowHTML('     theForm.w_conf.value=\'\';');
+    ShowHTML('     theForm.w_nova.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  var checkStr = theForm.w_nova.value;');
+    ShowHTML('  var temLetra = false;');
+    ShowHTML('  var temNumero = false;');
+    ShowHTML('  var checkOK = \'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz\';');
+    ShowHTML('  for (i = 0;  i < checkStr.length;  i++)');
+    ShowHTML('  {');
+    ShowHTML('    ch = checkStr.charAt(i);');
+    ShowHTML('    for (j = 0;  j < checkOK.length;  j++)');
+    ShowHTML('      if (ch == checkOK.charAt(j)) temLetra = true;');
+    ShowHTML('  }');
+    ShowHTML('  var checkOK = \'0123456789\';');
+    ShowHTML('  for (i = 0;  i < checkStr.length;  i++)');
+    ShowHTML('  {');
+    ShowHTML('    ch = checkStr.charAt(i);');
+    ShowHTML('    for (j = 0;  j < checkOK.length;  j++)');
+    ShowHTML('      if (ch == checkOK.charAt(j)) temNumero = true;');
+    ShowHTML('  }');
+    ShowHTML('  if (!(temLetra && temNumero))');
+    ShowHTML('  {');
+    ShowHTML('    alert(\'A nova '.$w_texto.' deve conter letras e números.\');');
+    ShowHTML('    theForm.w_nova.value=\'\';');
+    ShowHTML('    theForm.w_conf.value=\'\';');
+    ShowHTML('    theForm.w_nova.focus();');
+    ShowHTML('    return (false);');
+    ShowHTML('  }');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  }
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=\'document.Form.w_atual.focus();\'');
   Estrutura_Topo_Limpo();
@@ -412,30 +425,27 @@ function TrocaSenha() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
   ShowHTML('      <tr><td valign="top">Usuário:<br><b>'.$_SESSION["NOME"].' ('.$_SESSION["USERNAME"].')</b></td>');
-  $RS = db_getUserData::getInstanceOf($dbms, $p_cliente, $_SESSION["USERNAME"]);
 
-  if ($P1==1) {
-    // Se for troca de senha de acesso
-    ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_senha'))).'</b></td>');
-    ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia)).'</b></td>');
-    ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_senha')),$w_vigencia-$w_aviso)).'</b></td>');
-  } else if ($P1==2) {
-    // Se for troca de assinatura eletrônica
-    ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate(f($RS,'dt_ultima_troca_assin'))).'</b></td>');
-    ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia)).'</b></td>');
-    ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate(f($RS,'dt_ultima_troca_assin')),$w_vigencia-$w_aviso)).'</b></td>');
+  if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
+    // Entra se for troca da assinatura ou se for troca da senha e autenticação no banco
+    ShowHTML('      <tr><td valign="top">Ultima troca de '.$w_texto.':<br><b>'.date('d/m/Y, H:i:s',toDate($w_dt_troca)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Expiração da '.$w_texto.' atual ocorrerá em:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate($w_dt_troca),$w_vigencia)).'</b></td>');
+    ShowHTML('      <tr><td valign="top">Você será convidado a trocar sua '.$w_texto.' a partir de:<br><b>'.date('d/m/Y, H:i:s',addDays(toDate($w_dt_troca),$w_vigencia-$w_aviso)).'</b></td>');
+
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+    ShowHTML('      <tr><td valign="top"><b>'.$w_texto.' <U>a</U>tual:<br><INPUT ACCESSKEY="A" class="sti" type="password" name="w_atual" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+    ShowHTML('      <tr><td valign="top"><b><U>N</U>ova '.$w_texto.':<br><INPUT ACCESSKEY="N" class="sti" type="password" name="w_nova" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+    ShowHTML('      <tr><td valign="top"><b><U>R</U>edigite nova '.$w_texto.':<br><INPUT ACCESSKEY="R" class="sti" type="password" name="w_conf" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+
+    ShowHTML('      <tr><td align="center" colspan="3">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Grava nova '.$w_texto.'">');
+    ShowHTML('            <input class="stb" type="reset" name="Botao" value="Limpar campos" onClick=\'document.Form.w_atual.focus();\'>');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+  } else {
+    ShowHTML('      <tr><td valign="top"><br><b>ATENÇÃO: sua senha de acesso é igual à sua senha na rede. Por questões de segurança, não é permitido alterá-la nesta tela.</b></b></td>');
   }
-  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('      <tr><td valign="top"><b>'.$w_texto.' <U>a</U>tual:<br><INPUT ACCESSKEY="A" class="sti" type="password" name="w_atual" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
-  ShowHTML('      <tr><td valign="top"><b><U>N</U>ova '.$w_texto.':<br><INPUT ACCESSKEY="N" class="sti" type="password" name="w_nova" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
-  ShowHTML('      <tr><td valign="top"><b><U>R</U>edigite nova '.$w_texto.':<br><INPUT ACCESSKEY="R" class="sti" type="password" name="w_conf" size="'.$w_maximo.'" maxlength="'.$w_maximo.'"></td>');
-  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
-
-  ShowHTML('      <tr><td align="center" colspan="3">');
-  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Grava nova '.$w_texto.'">');
-  ShowHTML('            <input class="stb" type="reset" name="Botao" value="Limpar campos" onClick=\'document.Form.w_atual.focus();\'>');
-  ShowHTML('          </td>');
-  ShowHTML('      </tr>');
   ShowHTML('    </table>');
   ShowHTML('    </TD>');
   ShowHTML('</tr>');

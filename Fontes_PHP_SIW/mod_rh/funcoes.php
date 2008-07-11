@@ -280,7 +280,7 @@ include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
 // -------------------------------------------------------------------------
 function SelecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
-  $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'nome_resumido','asc');
   if (Nvl($hint),'')>'') {
     ShowHTML('          <td valign="top"><font size="1"><b>'.$Label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

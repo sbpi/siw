@@ -51,9 +51,9 @@ $conImgStNormal	= 'images/icone/arrow_green.gif';
 $conImgStAviso	= 'images/icone/arrow_yellow.gif';
 $conImgStAtraso	= 'images/icone/arrow_red.gif';
 
-$conImgNormal	= 'images/BallGreen.png';
-$conImgAviso	= 'images/BallYellow.png';
-$conImgAtraso	= 'images/BallRed.png';
+$conImgNormal	= 'images/BallGreen.gif';
+$conImgAviso	= 'images/BallYellow.gif';
+$conImgAtraso	= 'images/BallRed.gif';
 $conImgCancel 	='images/icone/REQUIRED.GIF';
 $conImgProblem  ='images/icone/problem.gif';
 $conImgRiskLow  ='images/icone/risk_low.gif';
@@ -65,9 +65,9 @@ $conImgDownload ='images/icone/application_put.png';
 //$conImgSmAviso  = 'images/icone/smile_sleepy.gif';
 //$conImgSmAtraso = 'images/icone/smile_dissapprove.gif';
 
-$conImgSmNormal = 'images/BallGreen.png';
-$conImgSmAviso  = 'images/BallYellow.png';
-$conImgSmAtraso = 'images/BallRed.png';
+$conImgSmNormal = 'images/BallGreen.gif';
+$conImgSmAviso  = 'images/BallYellow.gif';
+$conImgSmAtraso = 'images/BallRed.gif';
 
 $conImgGeo      = 'images/icone/earth_16.png';
 $conImgSheet     = 'images/Folder/SheetImg.gif';

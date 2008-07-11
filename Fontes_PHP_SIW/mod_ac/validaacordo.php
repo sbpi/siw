@@ -62,7 +62,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
   // Recupera os dados da outra parte
-  $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs1 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'outra_parte'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (($l_rs1==0)) {
     $l_existe_rs1=0; 
   } else {
@@ -74,7 +74,7 @@ function ValidaAcordo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   }
 
   // Recupera os dados do preposto
-  $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs2 = db_getBenef::getInstanceOf($dbms,$l_cliente,Nvl(f($l_rs_solic,'preposto'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   if (count($l_rs2)==0) {
     $l_existe_rs2=0; 
   } else {

@@ -1,5 +1,6 @@
 <?
 session_start();
+
 $w_dir_volta = '../';
 include_once($w_dir_volta.'constants.inc');
 include_once($w_dir_volta.'jscript.php');
@@ -422,6 +423,7 @@ function Inicial() {
       //ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
      // ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     //} 
+     
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -981,7 +983,7 @@ function Geral() {
     if($O=='I') SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
     else        SelecaoPessoa('So<u>l</u>icitante:','S','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
     if($O=='I' && nvl($w_solicitante,'')>'') {
-      $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null, null, null, null, null, null, null, null, null, null, null);
+      $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null);
       foreach($RS1 as $row1){$RS1=$row1; break;}
       $w_sq_unidade = f($RS1,'sq_unidade_benef');
     }
@@ -1747,26 +1749,50 @@ function Visual() {
   if ($w_tipo=='WORD') {
     HeaderWord(null);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-  } else {
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
+    $w_embed = 'WORD';
+  } elseif($w_tipo == 'PDF'){
+       ob_start();  
+       Cabecalho();
+       ShowHTML('<HEAD>');
+       ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+       ShowHTML('</HEAD>');
+       ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+       CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+       $w_embed = 'WORD';
+    } else {
+    $w_embed = 'HTML';
     Cabecalho();
-  } 
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'this.focus()\'; ');
-  if ($w_tipo!='WORD') {
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
-  } 
-  if ($w_tipo>'' && $w_tipo!='WORD') {
+  }
+
+    
+  
+
+  if ($w_embed != 'WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
   } 
   // Chama a rotina de visualização dos dados da demanda, na opção 'Listagem'
-  ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_tipo));
-  if ($w_tipo>'' && $w_tipo!='WORD') {
+  //ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_tipo));
+  ShowHTML(VisualTriagem($w_chave,'L',$w_usuario,$w_embed));
+  if ($w_embed != 'WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
-  } 
+  }
+  if($w_tipo == 'PDF'){
+    RodapePdf();
+  }else{
   Rodape();
+  }
 } 
 
 // =========================================================================

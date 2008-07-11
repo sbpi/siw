@@ -144,7 +144,7 @@ function Mesa() {
     ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  if ($_SESSION['DBMS']!=4) {
+  if ($_SESSION['DBMS']!=3) {
     // Exibe, se necessário, sinalizador para alerta
     $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {
@@ -330,42 +330,50 @@ function Mesa() {
     ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente,'nome_resumido').' ('.f($RS_Unidade,'nm_cidade').')</td>');
     ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
     ShowHTML('              </table>');
+    // Variáveis para controle de exibição do cabeçalho das datas especiais
+    $w_detalhe1 = false;
+    $w_detalhe2 = false;
+    $w_detalhe3 = false;
     ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores).' </td>');
-    
-    ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
-    if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
-      ShowHTML('              <b>Observações:<ul>');
-      ShowHTML('              <li>Clique sobre o dia em destaque para ver detalhes.');
-      ShowHTML('              <li>A cor vermelha indica ausências de '.$_SESSION['NOME_RESUMIDO'].'.');
-      ShowHTML('              </ul>');
-    } else {
-      ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
+
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+      ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
+      if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
+        ShowHTML('              <b>Observações:<ul>');
+        ShowHTML('              <li>Clique sobre o dia em destaque para ver detalhes.');
+        ShowHTML('              <li>A cor vermelha indica ausências de '.$_SESSION['NOME_RESUMIDO'].'.');
+        ShowHTML('              </ul>');
+      } else {
+        ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
+      }
     }
 
     // Exibe informações complementares sobre o calendário
     ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
     ShowHTML('              <td colspan=3 align="center">');
-    ShowHTML('                <table width="100%" border="0" cellspacing=1>');
-    if (count($RS_Ano)==0) {
-      ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
-    } else {
-      ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
-      reset($RS_Ano);
-      for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-        $RS_Ano_Atual = $RS_Ano[$i];
-        foreach($RS_Ano_Atual as $row_ano) {
-          // Exibe apenas as ocorrências do trimestre selecionado
-          if (f($row_ano,'data_formatada') >= $w_inicio && f($row_ano,'data_formatada') <= $w_fim) {
-            ShowHTML('                  <tr valign="top">');
-            ShowHTML('                    <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
-            ShowHTML('                    <td>'.f($row_ano,'nome'));
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+      ShowHTML('                <table width="100%" border="0" cellspacing=1>');
+      if (count($RS_Ano)==0) {
+        ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
+      } else {
+        ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
+        reset($RS_Ano);
+        for ($i=$w_ano1;$i<=$w_ano3;$i++) {
+          $RS_Ano_Atual = $RS_Ano[$i];
+          foreach($RS_Ano_Atual as $row_ano) {
+            // Exibe apenas as ocorrências do trimestre selecionado
+            if (f($row_ano,'data_formatada') >= $w_inicio && f($row_ano,'data_formatada') <= $w_fim) {
+              ShowHTML('                  <tr valign="top">');
+              ShowHTML('                    <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
+              ShowHTML('                    <td>'.f($row_ano,'nome'));
+            }
           }
         }
+        ShowHTML('              </table>');
       }
-      ShowHTML('              </table>');
     }
     ShowHTML('          </table>');
     // Final da exibição do calendário e suas ocorrências ==============

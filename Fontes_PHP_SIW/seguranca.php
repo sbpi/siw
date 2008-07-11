@@ -199,12 +199,13 @@ function Usuarios() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Username','username').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Sexo','sexo').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ramal','ramal').'</td>');
     ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Vínculo','vinculo').'</td>');
-    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
     ShowHTML('          <td colspan="3"><b>Gestor</td>');
     ShowHTML('          <td rowspan="2"><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -220,6 +221,7 @@ function Usuarios() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'nm_tipo_autenticacao').'</td>');
         if (f($row,'ativo')=='S') {
           ShowHTML('        <td align="center" nowrap>'.f($row,'username').'');
         } else { 
@@ -227,10 +229,10 @@ function Usuarios() {
         } 
 
         ShowHTML('        <td align="left" title="'.f($row,'nome').'">'.f($row,'nome_resumido').'</td>');
+        ShowHTML('        <td align="center" title="'.f($row,'nm_sexo').'">'.nvl(f($row,'sexo'),'-').'</td>');
         ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
         ShowHTML('        <td align="center">&nbsp;'.nvl(f($row,'ramal'),'---').'</td>');
         ShowHTML('        <td align="left" title="'.f($row,'vinculo').'">'.Nvl(f($row,'vinculo'),'---').'</td>');
-        ShowHTML('        <td>'.f($row,'nm_tipo_autenticacao').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
         if(f($row,'qtd_modulo')>0) ShowHTML('        <td align="center">'.nvl(f($row,'qtd_modulo'),'---').'</td>');
@@ -2124,7 +2126,7 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
     if (count($RS1)<=0) {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
@@ -2186,7 +2188,7 @@ function TelaUsuario() {
     ShowHTML('</table>');
   } else {
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null, null);
     ShowHTML('<TITLE>Pessoa sem vínculo</TITLE>');
     ShowHTML('</HEAD>');
     BodyOpen('onLoad="this.focus();"');

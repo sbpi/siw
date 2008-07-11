@@ -38,7 +38,7 @@ class dml_putAcordoFornecimento {
                    'p_situacao'             =>array(tvl($p_situacao),                         B_VARCHAR,         1),
                    'p_sq_item'              =>array(tvl($p_sq_item),                          B_INTEGER,        32),
                    'p_quantidade'           =>array(toNumber(tvl($p_quantidade)),             B_INTEGER,        32),
-                   'p_valor_item'           =>array(toNumber(tvl($p_valor_item)),             B_NUMERIC,      18,2),
+                   'p_valor_item'           =>array(toNumber(tvl($p_valor_item)),             B_NUMERIC,        32),
                    'p_chave_nova'           =>array(&$p_chave_nova,                           B_INTEGER,        32)
                    );     
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

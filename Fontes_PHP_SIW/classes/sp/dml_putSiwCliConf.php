@@ -11,7 +11,11 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class dml_putSiwCliConf {
    function getInstanceOf($dbms, $chave, $tamanho_minimo_senha, $tamanho_maximo_senha, $maximo_tentativas,
         $dias_vigencia_senha, $dias_aviso_expiracao, $smtp_server, $siw_email_nome, $siw_email_conta,
-        $siw_email_senha, $logo, $logo1, $fundo, $tipo, $upload_maximo) {
+        $siw_email_senha, $logo, $logo1, $fundo, $tipo, $upload_maximo ,
+         $ad_account_sufix,$ad_base_dn,$ad_domain_controllers,
+          $ol_account_sufix,$ol_base_dn,$ol_domain_controllers) {
+              
+          
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwCliConf';
      $params=array('chave'                  =>array($chave,                 B_NUMERIC,     32),
                    'tamanho_minimo_senha'   =>array($tamanho_minimo_senha,  B_NUMERIC,     32),
@@ -27,10 +31,20 @@ class dml_putSiwCliConf {
                    'logo1'                  =>array($logo1,                 B_VARCHAR,     60),
                    'fundo'                  =>array($fundo,                 B_VARCHAR,     60),
                    'tipo'                   =>array($tipo,                  B_VARCHAR,     15),
-                   'upload_maximo'          =>array($upload_maximo,         B_NUMERIC,     32)
+                   'upload_maximo'          =>array($upload_maximo,         B_NUMERIC,     32),
+                   
+                   'ad_account_sufix'       =>array($ad_account_sufix,      B_VARCHAR,     40),
+                   'ad_base_dn'             =>array($ad_base_dn,            B_VARCHAR,     40),
+                   'ad_domain_controlers'   =>array($ad_domain_controllers, B_VARCHAR,     40),
+                   
+                   'ol_account_sufix'       =>array($ol_account_sufix,      B_VARCHAR,     40),
+                   'ol_base_dn'             =>array($ol_base_dn,            B_VARCHAR,     40),
+                   'ol_domain_controlers'   =>array($ol_domain_controllers, B_VARCHAR,     40)
+                                     
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
+     
      error_reporting(0); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 

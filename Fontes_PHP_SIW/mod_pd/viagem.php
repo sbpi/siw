@@ -611,7 +611,7 @@ function Geral() {
     // Se for recarga da página
     if (Nvl($_REQUEST['w_cpf'],'')>'') {
       // Recupera os dados do proponente
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_cpf'],null,null,1,null,null,null,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],null,null,1,null,null,null,null,null,null,null);
       if (count($RS)>0) {
         foreach($RS as $row) { $RS = $row; break; }
         $w_cpf          = f($RS,'cpf');
@@ -715,7 +715,7 @@ function Geral() {
 
   // Se não puder cadastrar para outros, carrega os dados do usuário logado
   if ($w_cadgeral=='N') {
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,$_SESSION['USERNAME'],null,null,1,null,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,$_SESSION['USERNAME'],null,null,null,1,null,null,null,null,null,null,null);
     if (count($RS)>0) {
       foreach($RS as $row) { $RS = $row; break; }
       $w_cpf            = f($RS,'cpf');
@@ -1044,7 +1044,7 @@ function OutraParte() {
   } else {
     if (strpos($_REQUEST['Botao'],'Alterar')===false && strpos($_REQUEST['Botao'],'Procurar')===false && ($O=='A' || $w_sq_pessoa>'' || $w_cpf>'' || $w_cnpj>'')) {
       // Recupera os dados do beneficiário em co_pessoa
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
+      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
       if (!count($RS)<=0) {
         foreach($RS as $row) { $RS = $row; break; }
         $w_sq_pessoa            = f($RS,'sq_pessoa');
@@ -1230,7 +1230,7 @@ function OutraParte() {
       ShowHTML('              <INPUT class="stb" TYPE="submit" NAME="Botao" VALUE="Procurar" onClick="Botao.value=this.value; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'">');
       ShowHTML('      </table>');
       if ($w_nome>'') {
-        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
+        $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$w_nome,1,null,null,null,null,null,null,null);
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2036,7 +2036,7 @@ function DadosFinanceiros() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,1,null,null,null,null,null,null,null);
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('                <td colspan="2">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('            <tr><td>Tipo:<b><br>'.f($RS,'nm_tipo_missao').'</td>');
@@ -2626,7 +2626,7 @@ function Emissao() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
 
   //Recupera os dados do proposto
-  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,1,null,null,null,null,null,null,null);
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
 
   header('Content-Disposition'.': '.'attachment; filename=Emissao'.$w_chave.'.doc');
@@ -3654,7 +3654,7 @@ function InformarPassagens() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,1,null,null,null,null,null,null,null);
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('                <td colspan="2">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('            <tr><td>Tipo:<b><br>'.f($RS,'nm_tipo_missao').'</td>');
@@ -3778,7 +3778,7 @@ function RelatorioViagem($w_chave) {
   } 
 
   //Recupera os dados do proposto
-  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,1,null,null,null,null,null,null,null);
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   $l_html='';
   $l_html .= "{\\rtf1\\ansi\\ansicpg1252\\uc1\\deff0\\stshfdbch0\\stshfloch0\\stshfhich0\\stshfbi0\\deflang1033\\deflangfe1033{\\fonttbl{\\f0\\froman\\fcharset0\\fprq2{\\*\\panose 02020603050405020304}Times New Roman;}{\\f1\\fswiss\\fcharset0\\fprq2{\\*\\panose 020b0604020202020204}Arial;}";

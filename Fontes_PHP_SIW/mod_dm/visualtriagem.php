@@ -100,8 +100,11 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
       $l_html.=chr(13).'        <tr><td><b>Prioridade:</b></td>';
       $l_html.=chr(13).'          <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Responsável:</b></td>';
-      if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_resp').'</td></tr>';
-      else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
+      if($l_tipo=='WORD'){ 
+        $l_html.=chr(13).'          <td>'.f($RS,'nm_resp').'</td></tr>';      
+      } else {       
+      $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($RS,'responsavel'),$TP,f($RS,'nm_resp')).'</td></tr>';
+      }
       $l_html.=chr(13).'      <tr><td><b>Setor responsável:</b></td>';
       if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       else       $l_html.=chr(13).'          <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>';

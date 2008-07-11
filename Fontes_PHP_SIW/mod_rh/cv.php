@@ -2102,10 +2102,10 @@ function Grava() {
           foreach($RS as $row){$RS=$row; break;}
           if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
             dml_putSiwUsuario::getInstanceOf($dbms,'I',
-                $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
+                $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                 $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-                $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null);
-            dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null);
+                $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B');
+            dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
           } 
         } 
         ScriptOpen('JavaScript');

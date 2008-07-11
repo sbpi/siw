@@ -51,7 +51,6 @@ function array_key_case_change(&$array, $mode = 'CASE_LOWER') {
 // =========================================================================
 // Função para classificação de arrays
 // -------------------------------------------------------------------------
-
 function SortArray() {
   $arguments = func_get_args();
   $array = $arguments[0];
@@ -78,6 +77,13 @@ function SortArray() {
 function exibeCalendario ($form, $campo) {
   extract($GLOBALS);
   return '   <a class="ss" href="#" onClick="window.open(\''.$conRootSIW.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+}
+
+// =========================================================================
+// Retorna buffer de saída
+// -------------------------------------------------------------------------
+function callback($buffer) {
+  return strip_tags($buffer, '<html><head><link><title><style><base><table><tr><td><div><b><p><hr><font>');;
 }
 
 // =========================================================================
@@ -165,7 +171,7 @@ function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') {
 // Função para codificar strings em base64 com final "=="
 // -------------------------------------------------------------------------
 function base64encodeIdentificada($string){
-	return base64_encode($string) . "=|=";
+  return base64_encode($string) . "=|=";
 }
 
 // =========================================================================
@@ -391,10 +397,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
     ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
-//    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-	ShowHTML('&nbsp;<a target="_blank" href="'.$w_dir.'pdf.php?'.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-	//	ShowHTML('&nbsp;<a href="classes/dompdf-0.5.1/dompdf.php?base_path=&input_file='.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=PDF&w_tipo_rel=PDF&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-	//http://www2.sbpi.com.br/desenv/classes/dompdf-0.5.1/dompdf.php?base_path=www%2Ftest%2F&input_file=www%2Ftest%2Fphp_test.php
+    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
     ShowHTML('</TD></TR>');
   }
   ShowHTML('</FONT></B></TD></TR></TABLE>');
@@ -677,11 +680,18 @@ function consultaTelefone($p_cliente) {
 // -------------------------------------------------------------------------
 function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if ($_REQUEST['p_tipo'] == 'PDF'){
+    $w_embed = 'WORD';
+  }  
   if (strpos($l_texto,'|@|')!==false) {
     $l_array = explode('|@|', $l_texto);
     if (nvl($l_word,'')=='') {
       $l_hint = $l_array[4];
-      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+      if($w_embed != 'WORD'){
+        $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+      }else{
+        $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
+      }
     } else {
       $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
     }
@@ -873,10 +883,18 @@ function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
 // -------------------------------------------------------------------------
 function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if($p_tipo == 'PDF'){
+    $w_embed = 'WORD';  
+  }
+
   if (Nvl($p_etapa,'')=='') {
     $l_string="---";
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    if($w_embed == 'WORD'){
+        $l_string .= $p_etapa;
+    }else{
+        $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+    }
   }
   return $l_string;
 }
@@ -994,7 +1012,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     if ($l_tipo=='ETAPA') {
       // Etapas de projeto
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgAtraso.'" border=0 width=10 align="center"><td>Execução não iniciada. Fim previsto superado.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Percentual de conclusão incompatível com os dias transcorridos.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
@@ -1014,11 +1032,11 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgAviso.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Fim previsto próximo.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução não iniciada. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Fim previsto superado.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAtraso.'" border=0 width=12 align="center"><td>Em execução. Fim previsto superado.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgStAviso.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Fim previsto próximo.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgStNormal.'" border=0 width=10 heigth=10 align="center"><td>Em execução. Prazo final dentro do previsto.';
       $l_string .= '<tr valign="top">';
-      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída após a data prevista.';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAtraso.'" border=0 width=12 align="center"><td>Execução concluída após a data prevista.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída antes da data prevista.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída na data prevista.';
     } elseif (substr($l_tipo,0,2)=='PD') {
@@ -2464,6 +2482,64 @@ function Rodape() {
 }
 
 // =========================================================================
+// Rotina de rodapé para PDF
+// -------------------------------------------------------------------------
+function RodapePDF() {
+  extract($GLOBALS);
+  if ($_SESSION['P_CLIENTE']==6761) {
+    ShowHTML('</center>');
+    ShowHTML('<center>');
+    ShowHTML('<DIV id=rodape>');
+    ShowHTML('  <DIV id=endereco>');
+    ShowHTML('    <P>Setor Comercial Sul, Ed. Denasa - Salas 901/902 - Brasília-DF <BR>Tel : (61) 225 6302 (61) 321 8938 | Fax (61) 225 7599| email: <A href="mailto:pbf@cespe.unb.br">bresil2005@minc.gov.br</A>');
+    ShowHTML('    </P>');
+    ShowHTML('  </DIV>');
+    ShowHTML('</DIV>');
+    ShowHTML('</center>');
+  } else { 
+    ShowHTML('<HR>'); 
+  }
+  ShowHTML('</BODY>');
+  ShowHTML('</HTML>');
+
+  $shtml = ob_get_contents();
+  ob_end_clean();
+
+  $shtml = str_replace("'",'"', $shtml);
+  $shtml = str_replace('"',"'", $shtml);   
+  
+  //echo $shtml;
+  //exit();
+  
+  
+  list($usec, $sec) = explode(" ", microtime()); 
+  $w_microtime = ((float)$usec + (float)$sec);
+
+  // Define o nome do arquivo
+  $filename = md5($w_microtime . substr($shtml,200)).'.htm';
+  // Verifica a necessidade de criação do diretório de arquivos temporários
+  $l_dir = DiretorioCliente($w_cliente).'/'.tmp;
+    if (!(file_exists($l_dir))) mkdir($l_dir);
+  
+  $handle = fopen($l_dir.'/'.$filename, 'a+');  
+  if (is_writable($l_dir.'/'.$filename)) {
+    fwrite($handle, $shtml);    
+  } 
+ 
+
+?>
+<html>
+	<body>
+		<form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
+		<input type="hidden" value="<?php echo $conRootSIW . 'files/' . $w_cliente . '/tmp/' . $filename; ?>" name="url">
+		</form>
+		<?php echo('<script>document.formpdf.submit();</script>'); ?>
+	</body>
+</html>
+<?php 
+}
+
+// =========================================================================
 // Montagem da estrutura do documento
 // -------------------------------------------------------------------------
 function Estrutura_Topo() {
@@ -2961,8 +3037,9 @@ function mesAno($l_data, $l_formato=null) {
 // =========================================================================
 // Monta string html para montagem de calendário do mês informado
 // -------------------------------------------------------------------------
-function montaCalendario($p_base, $p_mes, $p_datas, $p_cores) {
+function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'ex_');
+  $p_detalhe = false;
   // Atribui nomes dos meses
   $l_meses[1] = 'Janeiro';  $l_meses[2] = 'Fevereiro'; $l_meses[3] = 'Março';      $l_meses[4] = 'Abril';
   $l_meses[5] = 'Maio';     $l_meses[6] = 'Junho';     $l_meses[7] = 'Julho';      $l_meses[8] = 'Agosto';
@@ -3020,6 +3097,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores) {
     $l_borda      = '';
     $l_ocorrencia = '';
     if (isset($x_datas[$l_data])) {
+      $p_detalhe = true;
       $l_borda      = ' style="border: 1px solid rgb(0,0,0);"';
       $l_ocorrencia .= $x_datas[$l_data].'\r\n';
     }
@@ -3184,6 +3262,8 @@ function BodyOpen($cProperties) {
        $wProperties = 'required(); '.$wProperties;
      }
    }
+   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
+   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
    else {
@@ -3197,6 +3277,8 @@ function BodyOpen($cProperties) {
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
    extract($GLOBALS);
+   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
+   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$cProperties.'> '); }
    else {
@@ -3221,6 +3303,8 @@ function BodyOpenClean($cProperties) {
   } else {
     $wProperties = ' onLoad=\'required();\' ';
   }
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
@@ -3252,5 +3336,18 @@ function BodyOpenWord($cProperties=null) {
     'Leftmargin="'.$conBodyLeftmargin.'" '.$cProperties.'> '.chr(13);
   return $l_html;
 }
+
+//Função que captura o conteúdo HTML, viabilizando a transformação HTML-PDF.
+function curPageURL() {
+  $pageURL = 'http';
+  if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+  $pageURL .= "://";
+  if ($_SERVER["SERVER_PORT"] != "80") {
+    $pageURL .= "localhost:".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+  } else {
+    $pageURL .= "localhost".$_SERVER["REQUEST_URI"];
+  }
+  return $pageURL;
+} 
 
 ?>

@@ -28,7 +28,8 @@ begin
             coalesce(h.qtd,0) as qtd_modulo,
             coalesce(i.qtd,0) as qtd_visao,
             coalesce(j.qtd,0) as qtd_dirigente,
-            coalesce(l.qtd,0) as qtd_tramite
+            coalesce(l.qtd,0) as qtd_tramite,
+            m.sexo, case m.sexo when 'F' then 'Feminino' when 'M' then 'Masculino' else null end as nm_sexo
        from sg_autenticacao                        a 
             left outer     join eo_unidade         c on (a.sq_unidade         = c.sq_unidade)
               left outer   join co_pessoa_endereco f on (c.sq_pessoa_endereco = f.sq_pessoa_endereco)
@@ -36,21 +37,22 @@ begin
             left outer     join eo_localizacao     d on (a.sq_localizacao     = d.sq_localizacao)
             inner          join co_pessoa          b on (a.sq_pessoa          = b.sq_pessoa)
               left outer   join co_tipo_vinculo    e on (b.sq_tipo_vinculo    = e.sq_tipo_vinculo)
-            left outer     join (select x.sq_pessoa, count(*) qtd 
+              left outer   join co_pessoa_fisica   m on (b.sq_pessoa          = m.sq_pessoa)
+            left outer     join (select x.sq_pessoa, count(*) as qtd 
                                    from sg_pessoa_modulo x 
                                   where x.cliente = p_cliente
                                  group by x.sq_pessoa
                                 )                  h on (a.sq_pessoa          = h.sq_pessoa)
-            left outer     join (select x.sq_pessoa, count(*) qtd 
+            left outer     join (select x.sq_pessoa, count(*) as qtd 
                                    from siw_pessoa_cc x 
                                  group by x.sq_pessoa
                                 )                  i on (a.sq_pessoa          = i.sq_pessoa)
-            left outer     join (select x.sq_pessoa, count(*) qtd 
+            left outer     join (select x.sq_pessoa, count(*) as qtd  
                                    from eo_unidade_resp x 
                                   where x.fim is null
                                  group by x.sq_pessoa
                                 )                  j on (a.sq_pessoa          = j.sq_pessoa)
-            left outer     join (select x.sq_pessoa, count(*) qtd 
+            left outer     join (select x.sq_pessoa, count(*) as qtd  
                                    from sg_tramite_pessoa x 
                                  group by x.sq_pessoa
                                 )                  l on (a.sq_pessoa          = l.sq_pessoa)                                

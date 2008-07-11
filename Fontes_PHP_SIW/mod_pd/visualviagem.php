@@ -138,7 +138,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     } 
 
     // Outra parte
-    $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,1,null,null,null,null,null,null,null);
+    $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
     $w_html .= chr(13).'      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Proposto</td>';
     if (count($RSQuery)==0) {
       $w_html .= chr(13).'      <tr><td colspan=2><b>Proposto não informado.';

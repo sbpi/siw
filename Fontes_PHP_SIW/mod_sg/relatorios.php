@@ -197,6 +197,7 @@ function Rel_Permissao() {
     ShowHTML('        <tr align="center">');
     if ($w_tipo=='WORD') {      
       ShowHTML('          <td rowspan="2"><b>Nome</td>');
+      ShowHTML('          <td rowspan="2"><b>Sexo</td>');
       ShowHTML('          <td rowspan="2"><b>Lotação</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
       ShowHTML('          <td rowspan="2"><b>Tipo aut</td>');
@@ -210,6 +211,7 @@ function Rel_Permissao() {
       ShowHTML('          <td><b>Mod.</td>');
     } else {
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+      ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Sexo','nm_sexo').'</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Lotação','lotacao').'</td>');
       ShowHTML('          <td colspan="3"><b>Gestor</td>');
       ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Tipo aut','nm_tipo_autenticacao').'</td>');
@@ -224,7 +226,7 @@ function Rel_Permissao() {
     }
     ShowHTML('        </tr>');
     if (count($RS) == 0) {
-      ShowHTML('   <tr><td colspan="9" align="center"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
+      ShowHTML('   <tr><td colspan="10" align="center"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');
     } else {
       foreach ($RS as $row) {
         if (f($row,'ativo')=='S') {
@@ -237,6 +239,7 @@ function Rel_Permissao() {
         } else {
           ShowHTML('        <td align="left">'.ExibePessoaRel($w_dir,$w_cliente,f($row,'sq_pessoa'),f($row,'nome'),f($row,'nome_resumido'),'Volta').'</td>');
         }
+        ShowHTML('        <td align="center">'.nvl(f($row,'nm_sexo'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_seguranca'),'---').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'gestor_sistema'),'---').'</td>');
@@ -322,6 +325,9 @@ function TelaUsuarioRel() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Nome resumido: </b></td>');
     ShowHTML('          <td>'.f($RS,'nome_resumido').'</td></tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Sexo: </b></td>');
+    ShowHTML('          <td>'.nvl(f($RS,'nm_sexo'),'---').'</td></tr>');
     if (nvl(f($RS,'email'),'')>'') {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>e-Mail: </b></td>');
@@ -391,7 +397,7 @@ function TelaUsuarioRel() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>DADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
     // Outra parte
-    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null, null, null, null, null, null, null, null, null, null);
+    $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null,null, null, null, null, null, null, null, null, null, null, null);
     foreach ($RS1 as $row1) {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Vínculo: </b></td>');

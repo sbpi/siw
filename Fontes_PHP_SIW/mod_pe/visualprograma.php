@@ -131,8 +131,8 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
       $w_cor=$conTrBgColor;
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
-        if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
-        else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
+        if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td>';
+        else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
         $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
         if (nvl(f($row,'valor'),'')!='') {
@@ -224,7 +224,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
             $l_cron .= chr(13).'        <td rowspan="'.(f($row,'qtd_cronograma')+1).'">'.ExibeIndicador($w_dir_volta,$w_cliente,f($row,'nm_indicador'),'&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'sq_eoindicador').'&p_pesquisa=BASE&p_volta=',$TP).'</td>';
           }
           $l_cron .= chr(13).'        <td align="center" rowspan="'.(f($row,'qtd_cronograma')+1).'">'.f($row,'sg_unidade_medida').'</td>';
-          $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
+          $RSCron = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,f($row,'chave_aux'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,'CRONOGRAMA');
           $RSCron = SortArray($RSCron,'inicio','asc');
           $i = 0;
           $w_previsto  = 0;
@@ -285,29 +285,6 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
         $l_html .= chr(13).'         </table></td></tr>';
       }   
     }
-
-    // Envolvidos na execução do programa
-    $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
-    $RS1 = SortArray($RS1,'or_tipo_interessado','asc','nome','asc');
-    if (count($RS1)>0 && $l_interessado=='S') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ENVOLVIDOS NA EXECUÇÃO ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
-      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'       <tr><td bgColor="#f0f0f0" width="10%" nowrap><div align="center"><b>Tipo de envolvimento</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Pessoa</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Envia e-mail</b></div></td>';
-      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><div align="center"><b>Tipo de visão</b></div></td>';
-      $l_html.=chr(13).'       </tr>';
-      foreach($RS1 as $row) {
-        $l_html.=chr(13).'       <tr><td nowrap>'.f($row,'nm_tipo_interessado').'</td>';
-        if ($l_tipo=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nome').' ('.f($row,'lotacao').')</td>';
-        else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome').' ('.f($row,'lotacao').')').'</td>';
-        $l_html.=chr(13).'           <td align="center">'.str_replace('N','Não',str_replace('S','Sim',f($row,'envia_email'))).'</td>';
-        $l_html.=chr(13).'           <td>'.RetornaTipoVisao(f($row,'tipo_visao')).'</td>';
-        $l_html.=chr(13).'      </tr>';
-      }
-      $l_html.=chr(13).'         </table></div></td></tr>';
-    } 
 
     // Envolvidos na execução do programa
     $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
@@ -414,7 +391,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
       $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
       if ($w_exibe_vinculo) {
         if (f($row,'sq_solic_pai')!=$l_chave) {
-          $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
+          $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),null,(($l_tipo=='WORD') ? $l_tipo : null)).'</td>';
         } else {
           $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
         }
@@ -472,7 +449,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
       $l_html .=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
       if ($w_exibe_vinculo) {
         if (f($row,'sq_solic_pai')!=$l_chave) {
-          $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>';
+          $l_html .=chr(13).'        <td width="1%" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),null,(($l_tipo=='WORD') ? $l_tipo : null)).'</td>';
         } else {
           $l_html .=chr(13).'        <td width="1%" nowrap>&nbsp;</td>';
         }

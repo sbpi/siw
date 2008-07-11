@@ -101,7 +101,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
       foreach ($RS as $row) {
         $l_html .= chr(13).'      <tr>';
         if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
-        else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td></td>';
+        else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
         $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
         $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
         if (nvl(f($row,'valor'),'')!='') {

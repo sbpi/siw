@@ -430,7 +430,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) $l_html.=chr(13).'          - '.f($row,'cpf').'</b>';
         else                                   $l_html.=chr(13).'          - '.f($row,'cnpj').'</b>';
         if ($l_P1==4) {
-          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
+          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'outra_parte'),0),null,null,null,null,Nvl(f($row,'sq_tipo_pessoa'),0),null,null,null,null,null,null,null);
           foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
           if (f($RSQuery1,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -821,7 +821,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
         $l_html.=chr(13).'      </tr>';
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),2).'</b></td>';
+        $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
         $l_html.=chr(13).'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
         $l_html.=chr(13).'        <td>$ Mensal<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
         $l_html.=chr(13).'      </tr>';

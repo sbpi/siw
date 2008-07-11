@@ -4,6 +4,8 @@ create or replace procedure SP_PutSiwUsuario
     p_cliente             in  number   default null,
     p_nome                in  varchar2 default null,
     p_nome_resumido       in  varchar2 default null,
+    p_cpf                 in  varchar2 default null,
+    p_sexo                in  varchar2 default null,
     p_vinculo             in  number   default null,
     p_tipo_pessoa         in  varchar2 default null,
     p_unidade             in  number   default null,
@@ -20,26 +22,26 @@ begin
    w_chave := p_chave;
    
    -- Verifica se o usuário já existe em CO_PESSOA_FISICA
-   if p_username is not null then
+   if p_cpf is not null then
      select count(a.sq_pessoa) into w_existe 
        from co_pessoa_fisica a
             join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-      where cpf = p_username;
+      where cpf = p_cpf;
      if w_existe > 0 then
         select a.sq_pessoa into w_chave
           from co_pessoa_fisica a
                join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-         where cpf = p_username;
+         where cpf = p_cpf;
      else
         select count(a.sq_pessoa) into w_existe 
           from sg_autenticacao  a
                join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-         where username = p_username;
+         where username = p_cpf;
         if w_existe > 0 then
            select a.sq_pessoa into w_chave
              from sg_autenticacao  a
                   join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-            where username = p_username;
+            where username = p_cpf;
         end if;
      end if;
    end if;
@@ -64,6 +66,9 @@ begin
              and nome          = p_tipo_pessoa
          );
          
+         -- Insere registro em CO_PESSOA_FISICA
+         insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, p_cpf, p_sexo, p_cliente);
+         
       -- Se existir, executa a alteração
       Else
          -- Atualiza tabela corporativa de pessoas
@@ -72,6 +77,18 @@ begin
              nome             = trim(p_nome), 
              nome_resumido    = trim(p_nome_resumido)
          where sq_pessoa      = w_chave;
+
+         -- Verifica se o registro existe em CO_PESSOA_FISICA, para garantir que o registro existe
+         -- Necessário devido à alteração na lógica de gravação de username
+         select count(a.sq_pessoa) into w_existe 
+           from co_pessoa_fisica a
+                join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
+          where cpf = p_cpf;
+         if w_existe = 0 then
+            insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, p_cpf, p_sexo, p_cliente);
+         else
+            Update co_pessoa_fisica set sexo  = p_sexo where sq_pessoa = w_chave;
+         end if;
        End If;
 
       -- Verifica se o usuário já existe e decide se é inclusão ou alteração
@@ -89,7 +106,8 @@ begin
             ( w_chave,              p_unidade,        p_localizacao,
               p_cliente,            p_username,       p_email,
               coalesce(p_gestor_seguranca,'N'),       coalesce(p_gestor_sistema,'N'), 
-              criptografia(p_username),               criptografia(p_username) , 
+              case p_tipo_autenticacao  when 'B' then criptografia(p_username) else 'Externa' end,
+              criptografia(p_username) , 
               p_tipo_autenticacao
             );
          
@@ -108,6 +126,8 @@ begin
       Else
          -- Atualiza registro na tabela de segurança
          Update sg_autenticacao set
+             username              = p_username,
+             senha                 = case p_tipo_autenticacao  when 'B' then senha else 'Externa' end,
              sq_unidade            = p_unidade,
              sq_localizacao        = p_localizacao,
              gestor_seguranca      = coalesce(p_gestor_seguranca,gestor_seguranca),
@@ -138,6 +158,6 @@ begin
          update sg_autenticacao set ativo = 'N' where sq_pessoa = w_chave;
       End If;
    End If;
-   commit;
+
 end SP_PutSiwUsuario;
 /

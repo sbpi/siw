@@ -442,7 +442,7 @@ function BuscaColaborador() {
   $chaveAux     = $_REQUEST['ChaveAux'];
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
-  $RS  = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,$w_nome,null,null,null,null,null,null,null,null,null,null,null); 
+  $RS  = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,$w_nome,null,null,null,null,null,null,null,null,null,null,null,null,null); 
   $RS = SortArray($RS,'nome_resumido','asc');
   //foreach ($RS as $row) {$RS = $row; break;}
   Cabecalho();

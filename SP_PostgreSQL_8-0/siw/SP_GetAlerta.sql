@@ -230,7 +230,7 @@ begin
                                                                     )
           where ((p_cliente    is null and a.envia_mail_alerta = coalesce(p_mail,'S')) or (p_cliente is not null and a.sq_pessoa = p_cliente))
             and (p_usuario     is null or (p_usuario is not null and a1.sq_pessoa = p_usuario))
-            and (h.fim_previsto < cast(now() as date) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto)))<=cast(now() as date))))
+            and (h.fim_previsto < cast(now() as date) or (g.aviso_prox_conc_pacote = 'S' and ((f.fim-cast(g.perc_dias_aviso_pacote/100*(h.fim_previsto-h.inicio_previsto) as integer))<=cast(now() as date))))
             and (-- Gestor de segurança
                  (0             < (select count(x.sq_pessoa) from sg_autenticacao x where x.sq_pessoa = a1.sq_pessoa and x.gestor_sistema = 'S')) or
                  -- Gestor do módulo no endereço do projeto ou da etapa

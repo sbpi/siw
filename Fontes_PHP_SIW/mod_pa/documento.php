@@ -2508,7 +2508,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se o destino for pessoa jurídica, pede unidade da pessoa
       if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
-        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null);
+        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
         if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
           ScriptOpen('JavaScript');
@@ -2553,7 +2553,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se o destino for pessoa jurídica, pede unidade da pessoa
       if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
-        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null);
+        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
         if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
           ScriptOpen('JavaScript');

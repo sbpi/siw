@@ -8,7 +8,7 @@ function selecaoPessoaOrigem($label,$accesskey,$hint,$chave,$chaveAux,$campo,$ti
   include_once($w_dir_volta.'classes/sp/db_getBenef.php');
   ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
   if ($chave>'') {
-    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,null,null,null);
+    $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $RS = $row; break; }
     $l_pessoa = f($row,'nm_pessoa');
   }

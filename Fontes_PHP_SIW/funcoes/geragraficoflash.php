@@ -1,26 +1,7 @@
 <?php
 ShowHTML('<SCRIPT LANGUAGE="Javascript" SRC="funcoes/FusionCharts.js"></SCRIPT>');
 function barra_flash($datay, $tipo) {
- 
 
-	/*$arrData[0][1] = 'Total';
-	$arrData[1][1] = 'Concluídos';
-	$arrData[2][1] = 'Em Execução';
-	$arrData[3][1] = 'Cadastramento';
-	$arrData[4][1] = 'Atrasados';
-	$arrData[5][1] = 'Em aviso de atraso';
-	$arrData[6][1] = 'Acima do valor previsto';
-   
- 
-	
-	//var_dump((int)$datay["total"]);
-  $arrData[0][2] = (int)$datay["total"];
-  $arrData[1][2] = (int)$datay["concluidos"];
-  $arrData[2][2] = (int)$datay["execucao"];
-  $arrData[3][2] = (int)$datay["cadastramento"];
-  $arrData[4][2] = (int)$datay["atrasados"];
-  $arrData[5][2] = (int)$datay["aviso"];
-  $arrData[6][2] = (int)$datay["acima"];*/
 		$arrData[0][1] = 'Total';
 		$arrData[0][2] = (int)$datay["total"];
 
@@ -44,18 +25,6 @@ function barra_flash($datay, $tipo) {
 		$arrData[6][2] = (int)$datay["acima"];
 	}
 		
-	/*if($barsize <= 100){
-		$barsize += 50;	
-	}
-	
-	if($barsize == 250){
-		$barsize -= 50;	
-	}
-	
-	if($barsize >= 300){
-		$barsize -= 100;	
-	}
-*/
      $titulo = $datay["nome"].' - Resumo';
 	 $strXML = "<graph  baseFontSize='11' caption='" .$titulo. "' xAxisName='' yAxisName='Quantidade' decimalPrecision='0' formatNumberScale='0'>";
 	 

@@ -6,6 +6,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   extract($GLOBALS);
   if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
+  $w_erro='';
   // Recupera os dados da solicitacao
   $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,5,
           null,null,null,null,null,null,null,null,null,null,
@@ -38,7 +39,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><font size="2"><b>'.strtoupper(f($RS,'nome')).' '.f($RS,'codigo_interno').' ('.$v_chave.')</b></td>';
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><font size="2"><b>'.f($RS,'codigo_interno').' ('.$v_chave.')</b></td>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
     // Identificação do lançamento
@@ -47,8 +48,6 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
     if (!($l_P1==4 || $l_P4==1)) $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     else                         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Decisão judicial: </b></td>';
-    $l_html.=chr(13).'        <td>'.RetornaSimNao(f($RS,'decisao_judicial')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td>';
     $l_html.=chr(13).'        <td>'.f($RS,'nm_prioridade').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td>';
@@ -105,111 +104,151 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html .= chr(13).'         </table></td></tr>';
     }
     
-    //Listagem dos itens do pedido de ARP
+    //Listagem dos itens do pedido de compra
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'ARP');
     $RS1 = SortArray($RS1,'numero_ata','asc','ordem_ata','asc','nome','asc'); 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $l_html.=chr(13).'      <tr><td colspan="2">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-    $l_html.=chr(13).'        <tr align="center">';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>ARP</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Fim vigência</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</td>';
-    if($w_tramite_ativo=='S') {
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=3><b>Última pesquisa</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>% Dif.</b></td>';
-    }
-    $l_html.=chr(13).'        </tr>';
-    $l_html.=chr(13).'        <tr align="center">';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Solicitada</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Autorizada</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
-    if($w_tramite_ativo=='S') {
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Validade</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0" nowrap><b>$ Médio</b></td>';
-    }
-    $l_html.=chr(13).'        </tr>';
     if (count($RS1)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=2 align="center"><b>Nenhum item encontrado.</b></td></tr>';
     } else {
+      // Configura texto para as quantidades e valores dos itens
+      if (strpos('EE,AT',$w_sg_tramite)!==false) {
+        $w_txt_qtd   = 'Quantidade autorizada';
+        $w_txt_valor = '$ Autorizado';
+      } else {
+        $w_txt_qtd   = 'Quantidade solicitada';
+        $w_txt_valor = '$ Solicitado';
+      }
+      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="0" bordercolor="#00000">';
       // Lista os registros selecionados para listagem
       $w_total_preco = 0;
+      $i             = 0;
+      $w_arp_atual   = '';
       foreach($RS1 as $row){ 
-        // Se o item estiver indisponível, destaca.
+        if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
+        if ($w_arp_atual!=f($row,'numero_ata')) {
+          $l_html.=chr(13).'      <tr valign="top">';
+          $l_html.=chr(13).'        <td width="1%" nowrap><font size="2"><b>ARP '.f($row,'numero_ata').'</b></font></td>';
+          $l_html.=chr(13).'        <td>Validade:<br><b>'.formataDataEdicao(f($row,'fim'),5).'</b></td>';
+          if (!($l_P1==4 || $l_P4==1)){
+            $l_html.=chr(13).'        <td colspan=3>Detentor:<br><b>'.ExibePessoa(null,$w_cliente,f($row,'sq_detentor'),$TP,f($row,'nm_detentor')).'</b></td>';
+          } else {
+            $l_html.=chr(13).'        <td colspan=3>Detentor:<br><b>'.f($row,'nm_detentor').'</b></td>';
+          }
+          $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
+          $w_arp_atual = f($row,'numero_ata');
+        }
+        $l_html.=chr(13).'      <tr valign="top" '.$w_cor.'>';
         if (f($row,'cancelado')=='S') {
-          $w_dest_abre = '<strike>'; 
-          $w_dest_fecha = '</strike>';
+          $l_html.=chr(13).'        <td rowspan="6"><font size="2"><b>ITEM '.f($row,'ordem_ata').'</b></font></td>';
         } else {
-          $w_dest_abre = ''; 
-          $w_dest_fecha = '';
+          $l_html.=chr(13).'        <td rowspan="5"><font size="2"><b>ITEM '.f($row,'ordem_ata').'</b></font></td>';
+        }
+        $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
+        if ($l_P4!=1){
+          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
+        } else {
+          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
+        }
+        $l_html.=chr(13).'      </tr>';
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td>Fabricante:<br><b>'.nvl(f($row,'fabricante'),'---').'</b></td>';
+        $l_html.=chr(13).'        <td>Marca/Modelo:<br><b>'.nvl(f($row,'marca_modelo'),'---').'</b></td>';
+        $l_html.=chr(13).'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
+        $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
+        $l_html.=chr(13).'      </tr>';
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'cmm'),0).'</b></td>';
+        $l_html.=chr(13).'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
+        $l_html.=chr(13).'      </tr>';
+        if (strpos('EE,AT',$w_sg_tramite)!==false) {
+          $l_html.=chr(13).'      <tr valign="top">';
+          $l_html.=chr(13).'        <td>'.$w_txt_qtd.':<br><b>'.formatNumber(f($row,'quantidade_autorizada'),0).'</b></td>';
+          $l_html.=chr(13).'        <td>'.$w_txt_valor.':<br><b>'.formatNumber(f($row,'quantidade_autorizada')*f($row,'valor_unidade'),4).'</b></td>';
+          $w_total_preco += f($row,'quantidade_autorizada')*f($row,'valor_unidade');
+        } else {
+          $l_html.=chr(13).'      <tr valign="top">';
+          $l_html.=chr(13).'        <td>'.$w_txt_qtd.':<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+          $l_html.=chr(13).'        <td>'.$w_txt_valor.':<br><b>'.formatNumber(f($row,'quantidade')*f($row,'valor_unidade'),4).'</b></td>';
+          $w_total_preco += f($row,'quantidade')*f($row,'valor_unidade');
+        }
+        $l_html.=chr(13).'      </tr>';
+        if (f($row,'cancelado')=='S') {
+          $l_html.=chr(13).'      <tr>';
+          $l_html.=chr(13).'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
+          $l_html.=chr(13).'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
+          $l_html.=chr(13).'      </tr>';
+        }
+        $l_html.=chr(13).'      <tr><td colspan=4><table border=0 width="100%">';
+
+
+        // Exibe pesquisas de preço
+        $l_rs = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,f($row,'sq_material'),null,null,null,null,null,null,null,null,null,null,(($w_tramite_ativo=='S' && $w_sg_tramite!='EE') ? 'S' : null),null,null,$v_chave,null,null,'PESQSOLIC');
+        $l_rs = SortArray($l_rs,'phpdt_fim','desc','valor_unidade','asc','nm_fornecedor','asc'); 
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DEMONSTRATIVO DE PESQUISAS DE PREÇO ('.count($l_rs).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+        if (count($l_rs)==0) {
+          $l_html.=chr(13).'      <tr><td colspan="2">Nenhuma pesquisa encontrada</td></tr>';
+        } else {
+          $v_html = '';
+          $v_html.=chr(13).'      <tr><td colspan="2" align="center">';
+          $v_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+          $v_html.=chr(13).'          <tr align="center">';
+          if (!($l_P1==4 || $l_P4==1)) $v_html.=chr(13).'            <td></td>';
+          $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="40%"><b>Fornecedor</b></td>';
+          $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="20%"><b>Fonte</b></td>';
+          $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="13%"><b>Cotação</b></td>';
+          $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="13%"><b>Validade</b></td>';
+          $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="13%"><b>Preço</b></td>';
+          $v_html.=chr(13).'          </tr>';
+          $w_cor=$conTrBgColor;
+          $w_menor = 999999999;
+          $w_maior = 0;
+          $w_cont  = 0;
+          $w_total = 0;
+          foreach($l_rs as $row1) {
+            $v_html.=chr(13).'      <tr valign="top">';
+            if (!($l_P1==4 || $l_P4==1)) {
+              $v_html.=chr(13).'        <td width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row1,'phpdt_inicio'),f($row1,'phpdt_fim'),f($row1,'aviso')).'</td>';
+              $v_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row1,'fornecedor'),$TP,f($row1,'nm_fornecedor')).'</td>';
+            } else {
+              $v_html.=chr(13).'        <td>'.f($row1,'nm_fornecedor').'</td>';
+            }
+            $v_html.=chr(13).'        <td>'.f($row1,'nm_origem').'</td>';
+            $v_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row1,'inicio'),5).'</td>';
+            $v_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row1,'fim'),5).'</td>';
+            $v_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row1,'valor_unidade'),4).'</td>';
+            $v_html.=chr(13).'      </tr>';
+            if (f($row1,'valor_unidade')<$w_menor) $w_menor = f($row1,'valor_unidade');
+            if (f($row1,'valor_unidade')>$w_maior) $w_maior = f($row1,'valor_unidade');
+            $w_total += f($row1,'valor_unidade');
+            $w_cont++;
+          } 
+          
+          $v_html.=chr(13).'         </table></td></tr>';
+          $l_html.=chr(13).'      <tr><td colspan=2><table border=0 width="100%" cellpadding="0" cellspacing="0"><tr valign="top">';
+          $l_html.=chr(13).'        <td align="center">$ Médio: <b>'.formatNumber(($w_total/$w_cont),4).'</b></td>';
+          $l_html.=chr(13).'        <td align="center">$ Menor: <b>'.formatNumber($w_menor,4).'</b></td>';
+          $l_html.=chr(13).'        <td align="center">$ Maior: <b>'.formatNumber($w_maior,4).'</b></td>';
+          $l_html.=chr(13).'        </tr></table>';
+          $l_html .=$v_html;
+          if (!($l_P1==4 || $l_P4==1)) $l_html.=chr(13).'      <tr><td colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>';
         }
 
-        // Se a validade da proposta for menor que o exigido, destaca em vermelho
-        $w_percentual_acrescimo = f($row,'percentual_acrescimo');
-        if (f($row,'variacao_valor')>f($row,'percentual_acrescimo')) {
-          $w_destaque = ' BGCOLOR="'.$conTrBgColorLightRed2.'"';
-        } else {
-          $w_destaque = '';
-        }
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.f($row,'numero_ata').$w_dest_fecha.'</td>';
-        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.formataDataEdicao(f($row,'fim'),5).$w_dest_fecha.'</td>';
-        $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.$w_dest_abre.f($row,'ordem_ata').$w_dest_fecha.'</td>';
-        $l_html.=chr(13).'        <td width="1%" nowrap>'.$w_dest_abre.f($row,'codigo_interno').$w_dest_fecha.'</td>';
-        if (!($l_P1==4 || $l_P4==1)){
-          $l_html.=chr(13).'        <td align="left">'.$w_dest_abre.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).$w_dest_fecha.'</td>';
-        } else {
-          $l_html.=chr(13).'        <td align="left">'.$w_dest_abre.f($row,'nome').$w_dest_fecha.'</td>';
-        }
-        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber(f($row,'quantidade'),2).$w_dest_fecha.'</td>';
-        $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber(f($row,'quantidade_autorizada'),2).$w_dest_fecha.'</td>';
-        $l_html.=chr(13).'        <td align="right" width="1%" '.$w_destaque.' nowrap>'.$w_dest_abre.formatNumber(f($row,'valor_unidade'),4).$w_dest_fecha.'</td>';
-        if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
-          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber((f($row,'valor_unidade')*f($row,'quantidade_autorizada')),4).$w_dest_fecha.'</td>';
-        } else {
-          $l_html.=chr(13).'        <td align="right" width="1%" nowrap>'.$w_dest_abre.formatNumber((f($row,'valor_unidade')*f($row,'quantidade')),4).$w_dest_fecha.'</td>';
-        }
-        if (f($row,'cancelado')=='N') {
-          if($w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
-            $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade_autorizada'));
-          } else {
-            $w_total_preco += (f($row,'valor_unidade')*f($row,'quantidade'));
-          }
-        }
-        if($w_tramite_ativo=='S') {
-          if (nvl(f($row,'pesquisa_data'),'')=='') {
-            $l_html.=chr(13).'        <td colspan=3 align="center" nowrap>Sem pesquisa de preço</td>';
-          } else {
-            $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>';
-            $l_html.=chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>';
-            if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
-              $l_html.=chr(13).'        <td align="right" width="1%" nowrap>&nbsp;</td>';
-            } else {
-              $l_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>';
-            }
-          }
-          if (nvl(f($row,'pesquisa_preco_medio'),'')=='') {
-            $l_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>&nbsp;</td>';
-          } else {
-            $l_html.=chr(13).'        <td align="right" '.$w_destaque.' width="1%" nowrap>'.nvl(formatNumber(f($row,'variacao_valor'),2),'---').'</td>';
-          }
-        }
-        $l_html.=chr(13).'        </tr>';
+        $l_html.=chr(13).'        </table>';
+
+
+
+        $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
       }
-      $l_html.=chr(13).'      <tr align="center">';
-      $l_html.=chr(13).'        <td align="right" colspan="8"><b>Total</b></td>';
-      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
-      $l_html.=chr(13).'        <td colspan=4>&nbsp;</td>';
+      $l_html.=chr(13).'      <tr>';
+      $l_html.=chr(13).'        <td align="right" colspan="2"><b>Total do pedido:&nbsp;&nbsp;</b></td>';
+      $l_html.=chr(13).'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
       $l_html.=chr(13).'      </tr>';
       $l_html.=chr(13).'    </table></td></tr>';
     } 
-    $l_html.=chr(13).'         </table></td></tr>';
+
   }
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados
@@ -237,8 +276,13 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       } 
       $l_html.=chr(13).'         </table></td></tr>';
     }
+
+    // Encaminhamentos
+    include_once($w_dir_volta.'funcoes/exibeLog.php');
+    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_P4==1) ? 'WORD' : 'HTML'));
+    
     // Se for envio, executa verificações nos dados da solicitação
-    $w_erro = ValidaARP($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
+    if ($w_tramite_ativo=='S') $w_erro = ValidaARP($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
     if ($w_erro>'') {
       $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
       $l_html.=chr(13).'<HR>';
@@ -253,10 +297,6 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'  </font></td></tr>';
     }
 
-    // Encaminhamentos
-    include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_P4==1) ? 'WORD' : 'HTML'));
-    
     $l_html.=chr(13).'</table>';
   }
   $l_html .= chr(13).'</table>';

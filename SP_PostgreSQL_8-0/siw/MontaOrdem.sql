@@ -11,7 +11,7 @@ declare
   c_ordens cursor (l_chave numeric) for
      select sq_projeto_etapa, sq_etapa_pai, ordem
        from pj_projeto_etapa
-      where sq_projeto_etapa in (select sq_projeto_etapa from sp_fGetCcList(l_chave,0,'UP')); 
+      where sq_projeto_etapa in (select sq_projeto_etapa from sp_fGetEtapaList(l_chave,0,'UP')); 
 
   Result varchar(2000) := '';
 begin

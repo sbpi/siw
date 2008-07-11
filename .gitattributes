@@ -622,6 +622,10 @@ Fontes_PHP_SIW/classes/menu/xPandMenu.css -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
 Fontes_PHP_SIW/classes/menu/xPandPrint.css -text
+Fontes_PHP_SIW/classes/pd4ml/Pd4Php.class -text
+Fontes_PHP_SIW/classes/pd4ml/pd4ml.php -text
+Fontes_PHP_SIW/classes/pd4ml/pd4ml_demo.jar -text
+Fontes_PHP_SIW/classes/pd4ml/ss_css2.jar -text
 Fontes_PHP_SIW/classes/serverstatus/blank.gif -text
 Fontes_PHP_SIW/classes/serverstatus/class.parse_server_status.php -text
 Fontes_PHP_SIW/classes/serverstatus/inc.config.php -text
@@ -1481,6 +1485,7 @@ Fontes_PHP_SIW/funcoes/selecaoTelefoneTT.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAcordo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAfastamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoAutenticacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoConclusao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDado.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoData.php -text
@@ -1533,9 +1538,12 @@ Fontes_PHP_SIW/gr_projeto.php -text
 Fontes_PHP_SIW/help.php -text
 Fontes_PHP_SIW/images/ATUALIZADO.GIF -text
 Fontes_PHP_SIW/images/BallBlue.gif -text
+Fontes_PHP_SIW/images/BallGreen.gif -text
 Fontes_PHP_SIW/images/BallGreen.png -text
+Fontes_PHP_SIW/images/BallRed.gif -text
 Fontes_PHP_SIW/images/BallRed.png -text
 Fontes_PHP_SIW/images/BallRedoriginal.png -text
+Fontes_PHP_SIW/images/BallYellow.gif -text
 Fontes_PHP_SIW/images/BallYellow.png -text
 Fontes_PHP_SIW/images/Code/vsource.gif -text
 Fontes_PHP_SIW/images/EditForm/Ball.GIF -text
@@ -4801,6 +4809,7 @@ SP_PostgreSQL_8-0/siw/sp_getDocumentoAssunto.sql -text
 SP_PostgreSQL_8-0/siw/sp_getDocumentoInter.sql -text
 SP_PostgreSQL_8-0/siw/sp_getIndicador.sql -text
 SP_PostgreSQL_8-0/siw/sp_getMenuLink.sql -text
+SP_PostgreSQL_8-0/siw/sp_getsolicdata.sql -text
 SP_PostgreSQL_8-0/siw/sp_putUnidadeMedida.sql -text
 SP_PostgreSQL_8-0/siw/sp_putUnidade_CL.sql -text
 SP_PostgreSQL_8-0/siw/sp_putUnidade_PA.sql -text

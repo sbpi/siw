@@ -17,7 +17,7 @@ create or replace function Gestor
 declare
   w_gestor_sistema         sg_autenticacao.gestor_sistema%type;
   w_usuario_ativo          sg_autenticacao.ativo%type;
-  w_sq_modulo              siw_modulo.sigla%type;
+  w_sq_modulo              siw_modulo.sq_modulo%type;
   w_endereco_solic         co_pessoa_endereco.sq_pessoa_endereco%type;
   Result                   varchar(1) := 'N';
   w_existe                 numeric(18);

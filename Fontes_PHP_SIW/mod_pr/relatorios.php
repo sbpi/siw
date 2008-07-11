@@ -144,34 +144,47 @@ function Rel_Progresso() {
   $p_tarefas    = $_REQUEST['p_tarefas'];
   $p_pacotes    = $_REQUEST['p_pacotes'];
   $p_orcamento  = $_REQUEST['p_orcamento'];
-
+  
+ 
   if ($O=='L') {
+
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
+    
     if ($p_tipo=='WORD') {
       HeaderWord(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'WORD';
-      //CabecalhoWord($w_cliente,$w_TP,0);
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'EXCEL';
+    } elseif($p_tipo=='PDF'){
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
+      $w_embed = 'WORD';
     } else {
       Cabecalho();
-      $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de progresso do projeto</TITLE>');
+      ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
       CabecalhoRelatorio($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',4);
+      $w_embed = 'HTML';
     }
+    
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
@@ -219,19 +232,22 @@ function Rel_Progresso() {
       foreach ($RS as $row) {
         if($w_projeto_atual==0 || $w_projeto_atual<>f($row,'sq_projeto')) {
           if ($w_projeto_atual>0) {
-            if ($p_tipo=='WORD') {
+            if ($w_embed=='WORD') {
               ShowHTML('<br style="page-break-after:always">');
             } else {
               ShowHTML('    <tr><td colspan="2"><br style="page-break-after:always"></td></tr>');
             }
           }
           ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
-          if (nvl(f($row,'nm_plano'),'')!='')    ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,strtoupper(f($row,'nm_plano'))).'</font></div></td></tr>');
+          if (nvl(f($row,'nm_plano'),'')!='') {
+            if ($w_embed=='WORD') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.strtoupper(f($row,'nm_plano')).'</font></div></td></tr>');
+            else                  ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,strtoupper(f($row,'nm_plano'))).'</font></div></td></tr>');
+          }
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
           if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Programa: '.f($row,'nm_programa').'</font></div></td></tr>');
           if (nvl(f($row,'nm_cc'),'')!='')       ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Classificação: '.f($row,'nm_cc').'</font></div></td></tr>');
           ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Projeto: '.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</b></div></td></tr>');
-          if ($p_tipo!='WORD') {
+          if ($w_embed!='WORD') {
             ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
             ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Unidade responsável: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade'),f($row,'sq_unidade'),$TP).'</b></div></td></tr>');
           } else {
@@ -257,26 +273,26 @@ function Rel_Progresso() {
           if($p_indicador=='S') {
             ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Indicadores de performance do projeto<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
             ShowHTML('      <tr><td colspan="2"><table cellpadding=0 cellspacing=0>');
-            if ($p_tipo!='WORD') {
+            if ($w_embed!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').' em '.date("d/m/Y").':</b>&nbsp;&nbsp;&nbsp;</td>');
             } else  {
               ShowHTML('   <tr><td><b>IGE em '.date("d/m/Y").':&nbsp;&nbsp;&nbsp;</b></td>');
             }
             ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'ige')).'%</b></td></tr>');
-            if ($p_tipo!='WORD') {
+            if ($w_embed!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').' em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
             } else  { 
               ShowHTML('   <tr><td><b>IDE em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDE',f($row,'ide')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'ide')).'%</b></td>');
-            if ($p_tipo!='WORD') {
+            if ($w_embed!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').' em '.date("d/m/Y").':</b>&nbsp;&nbsp;&nbsp;</td>');
             } else  {
               ShowHTML('   <tr><td><b>IGC em '.date("d/m/Y").':&nbsp;&nbsp;&nbsp;</b></td>');
             }
             ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'IGC')).'%</b></td></tr>');
-            if ($p_tipo!='WORD') {
+            if ($w_embed!='WORD') {
               ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').' em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
             } else  { 
               ShowHTML('   <tr><td><b>IDC em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
@@ -326,9 +342,9 @@ function Rel_Progresso() {
                   foreach($RS1 as $row1) {
                     if($w_sq_projeto_etapa==0 || $w_sq_projeto_etapa!=f($row1,'sq_projeto_etapa')) {
                       ShowHTML('        <tr valign="top"><td nowrap>');
-                      if ($p_tipo!='WORD') ShowHTML('<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.f($row1,'sq_projeto').'&w_chave='.f($row1,'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>');
+                      if ($w_embed!='WORD') ShowHTML('<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.f($row1,'sq_projeto').'&w_chave='.f($row1,'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>');
                       ShowHTML(ExibeImagemSolic('ETAPA',f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real_etapa'),f($row1,'fim_real_etapa'),null,null,null, f($row1,'perc_conclusao')));
-                      if ($p_tipo!='WORD') {
+                      if ($w_embed!='WORD') {
                         ShowHTML(' '.ExibeEtapa('V',f($row1,'sq_projeto'),f($row1,'sq_projeto_etapa'),'Volta',10,f($row1,'cd_ordem'),$TP,$SG).'');
                       } else {
                         ShowHTML(' '.f($row1,'cd_ordem'));
@@ -337,7 +353,7 @@ function Rel_Progresso() {
                         ShowHTML(' '.exibeImagemRestricao(f($row1,'restricao')));
                       }
                       ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td>'.f($row1,'nm_etapa').'</b></tr></table>');
-                      if ($p_tipo!='WORD') {
+                      if ($w_embed!='WORD') {
                         ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row1,'sq_pessoa'),$TP,f($row1,'nm_resp_etapa')).'</b>');
                       } else {
                         ShowHTML('        <td>'.f($row1,'nm_resp_etapa').'</b>');
@@ -356,7 +372,7 @@ function Rel_Progresso() {
                       ShowHTML('  <td>');
                       ShowHTML('  <td>');
                       ShowHTML(ExibeImagemSolic('GD',f($row1,'inicio'),f($row1,'fim'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'aviso_prox_conc'),f($row1,'aviso'),f($row1,'sg_tramite'), null));
-                      if ($p_tipo!='WORD') { 
+                      if ($w_embed!='WORD') { 
                         ShowHTML('  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row1,'sq_tarefa').'&p_tipo=&P1='.$P1.'&P2='.f($row1,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row1,'sq_tarefa').'</a>');
                       } else { 
                        ShowHTML('  '.f($row1,'sq_tarefa').' ');
@@ -364,7 +380,7 @@ function Rel_Progresso() {
                       $l_assunto = 'COMPLETO';
                       if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
                       else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row1,'nm_tarefa')),'-'));
-                      if ($p_tipo!='WORD') {
+                      if ($w_embed!='WORD') {
                         ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_resp_tarefa')).'</td>');
                       } else {
                         ShowHTML('     <td>'.f($row1,'nm_resp_tarefa').'</td>');
@@ -394,9 +410,10 @@ function Rel_Progresso() {
             } else {
               $w_fim = $p_fim;
             }
+            // 08/07/08 - A configuração acima não está sendo aplicada na recuperação do plano orçamentário, a pedido da ABDI
 
             // Recupera o plano orçamentário do período
-            $RS1 = db_getSolicRubrica::getInstanceOf($dbms,f($row,'sq_projeto'),null,'S',null,null,null,$w_inicio,$w_fim,null);
+            $RS1 = db_getSolicRubrica::getInstanceOf($dbms,f($row,'sq_projeto'),null,'S',null,null,null,null,null,null);
             $RS1 = SortArray($RS1,'codigo','asc');
             if (count($RS1)==0) {
               ShowHTML('      <tr><td align="center" colspan="2"><b>Não há cronograma desembolso cadastrado para o período informado.');
@@ -423,7 +440,8 @@ function Rel_Progresso() {
                 $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
                 if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RS_Cronograma)+1).'"'; else $w_rowspan = '';
                 ShowHTML('      <tr valign="top">');
-                ShowHTML('        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row1,'sq_projeto_rubrica').'&w_chave_pai='.f($row,'sq_projeto').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row1,'codigo').'</A>&nbsp');
+                if ($w_embed!='WORD') ShowHTML('        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row1,'sq_projeto_rubrica').'&w_chave_pai='.f($row,'sq_projeto').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row1,'codigo').'</A>&nbsp;');
+                else                  ShowHTML('        <td '.$w_rowspan.'>'.f($row1,'codigo').'&nbsp;');
                 ShowHTML('        <td '.$w_rowspan.'>'.f($row1,'nome').' </td>');
                 if (count($RS_Cronograma)>0) {
                   $w_rubrica_previsto = 0;
@@ -485,7 +503,7 @@ function Rel_Progresso() {
               ShowHTML('    </tr>');
               $w_cor=$conTrBgColor;
               foreach($RS1 as $row1) {
-                ShowHtml(QuestoesLinhaAtiv(f($row,'sq_projeto'), f($row1,'chave'),f($row1,'chave_aux'),f($row1,'risco'),f($row1,'fase_atual'),f($row1,'criticidade'),f($row1,'nm_tipo_restricao'),f($row1,'descricao'),f($row1,'sq_pessoa'),f($row1,'nm_resp'),f($row1,'nm_estrategia'),f($row1,'acao_resposta'),f($row1,'nm_fase_atual'),f($row1,'qt_ativ'),f($row1,'nm_tipo'), $p_tipo, $p_tarefas, $p_pacotes));
+                ShowHtml(QuestoesLinhaAtiv(f($row,'sq_projeto'), f($row1,'chave'),f($row1,'chave_aux'),f($row1,'risco'),f($row1,'fase_atual'),f($row1,'criticidade'),f($row1,'nm_tipo_restricao'),f($row1,'descricao'),f($row1,'sq_pessoa'),f($row1,'nm_resp'),f($row1,'nm_estrategia'),f($row1,'acao_resposta'),f($row1,'nm_fase_atual'),f($row1,'qt_ativ'),f($row1,'nm_tipo'), $w_embed, $p_tarefas, $p_pacotes));
               }
               ShowHTML('  </table>');
               ShowHTML('</table>');
@@ -496,7 +514,6 @@ function Rel_Progresso() {
       }
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
     }
-    if ($p_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
     // Se somente uma opção puder ser selecionada, já seleciona.
     $RST = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S','REGISTROS');
@@ -508,7 +525,6 @@ function Rel_Progresso() {
       }
     }
     if ($w_cont==1) $p_plano = $w_registro;
-
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
@@ -596,7 +612,7 @@ function Rel_Progresso() {
     }
     if ($p_tarefas)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');                      else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_tarefas" value="S"> Tarefas vinculadas à questão</td>');
     if ($p_pacotes)     ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' checked type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');                   else ShowHTML('          <tr><td width="3%"><td><INPUT '.$w_Disabled.' type="CHECKBOX" name="p_pacotes" value="S"> Pacotes impactados pela questão</td>');
-    if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário do ano corrente</td>');
+    if ($p_orcamento)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário</td>');                                   else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_orcamento" value="S"> Plano orçamentário</td>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('          </td>');
@@ -613,9 +629,9 @@ function Rel_Progresso() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo!='WORD') Rodape();
+  if ($p_tipo=='PDF') RodapePDF();
+  elseif ($p_tipo!='WORD') Rodape();
 } 
-
 
 // =========================================================================
 // Relatório detalhado de projetos
@@ -642,25 +658,36 @@ function Rel_Projeto() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
+    } elseif($p_tipo=='PDF'){
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>Relatório detalhado do projeto</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      $w_embed = 'WORD';
     } else {
       Cabecalho();
-      $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio detalhado do projeto</TITLE>');
+      ShowHTML('<TITLE>Relatório detalhado do projeto</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
       CabecalhoRelatorio($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',4);
+      $w_embed = 'HTML';
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
-    if($p_plano || $p_objetivo || $p_programa || $p_projeto) {
+    if($p_plano || $p_objetivo || $p_programa || $p_projeto) {    
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>CRITÉRIOS DE EXIBIÇÃO</b></td></tr>');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('   <tr><td colspan="2"><table border=0>');
-      if ($p_plano) {
+      if ($p_plano) {    
         $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
         foreach ($RS_Plano as $row) { $RS_Plano = $row; break; }
         ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICO:<td>'.f($RS_Plano,'titulo').'</td></tr>');
@@ -690,7 +717,7 @@ function Rel_Projeto() {
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
     } else {
       ShowHTML('   <tr><td colspan="2"><table width="100%"><tr><td align="center">');
-      foreach ($RS as $row) ShowHTML(ExibeProjeto(f($row,'sq_projeto'),'T',$w_usuario,$p_tipo));
+      foreach ($RS as $row) ShowHTML(ExibeProjeto(f($row,'sq_projeto'),'T',$w_usuario,$w_embed));
       ShowHTML('     </table>');
     }
   } elseif ($O=='P') {
@@ -704,10 +731,10 @@ function Rel_Projeto() {
       }
     }
     if ($w_cont==1) $p_plano = $w_registro;
-
+  
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de projetos!</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -914,7 +941,8 @@ function Rel_Projeto() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo!='WORD') Rodape();
+  if ($p_tipo=='PDF') RodapePDF();
+  elseif ($p_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================
@@ -932,7 +960,7 @@ function Rel_Atualizacao() {
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
-    if ($p_tipo=='WORD') {
+   if ($p_tipo=='WORD') {
       HeaderWord(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
@@ -942,15 +970,26 @@ function Rel_Atualizacao() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';
+    } elseif($p_tipo=='PDF'){
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>Relatório de atualização dos dados dos projetos</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      $w_embed = 'WORD';
     } else {
       Cabecalho();
-      $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de atualização dos dados dos projetos</TITLE>');
+      ShowHTML('<TITLE>Relatório de atualização dos dados dos projetos</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
       CabecalhoRelatorio($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',4);
+      $w_embed = 'HTML';
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -1024,8 +1063,8 @@ function Rel_Atualizacao() {
           else $w_label = $_REQUEST['p_problema'];
           ShowHTML('       <td>'.$w_label.'</td>');
           ShowHTML('       <td align="center">'.nvl(formataDataEdicao(f($row,'phpdt_atualizacao'),3),'---').'</td>');
-          if ($p_tipo=='WORD') ShowHTML('       <td>'.f($row,'nome').'</td>');
-          else                 ShowHTML('       <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome')).'</td>');
+          if ($w_embed=='WORD') ShowHTML('       <td>'.f($row,'nome').'</td>');
+          else                  ShowHTML('       <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome')).'</td>');
         }
       }
       ShowHTML('   <tr><td colspan="4"><hr NOSHADE color=#000000 size=1></td></tr>');
@@ -1138,7 +1177,8 @@ function Rel_Atualizacao() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo!='WORD') Rodape();
+  if ($p_tipo=='PDF') RodapePDF();
+  elseif ($p_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================
@@ -1162,7 +1202,11 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   // Recupera as etapas que são pacotes de trabalho
   if($l_pacotes=='S') {
     $RS_Pacote = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,$l_chave_aux,'QUESTAO',null);
-    if (count($RS_Pacote)>0) {
+    $l_rs_pacote = false;
+    foreach ($RS_Pacote as $row) {
+      if (f($row,'vinculado')>0) $l_rs_pacote = true;
+    } 
+    if ($l_rs_pacote) {
       $l_row += 2; 
       foreach ($RS_Pacote as $row1) {
         if (f($row1,'vinculado')>0) {
@@ -1176,15 +1220,15 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
   $l_html .= chr(13).'        <td width="10%" nowrap rowspan='.$l_row.'>';
   if ($l_risco=='S') {
     if ($l_fase_atual<>'C') {
-      if ($l_criticidade==1)       $l_html .= chr(13).'          <img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="middle">&nbsp';
-        elseif ($l_criticidade==2) $l_html .= chr(13).'          <img title="Risco de média criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="middle">&nbsp';
-        else                       $l_html .= chr(13).'          <img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="middle">&nbsp';
+      if ($l_criticidade==1)       $l_html .= chr(13).'          <img title="Risco de baixa criticidade" src="'.$conRootSIW.$conImgRiskLow.'" border=0 align="middle">&nbsp;';
+        elseif ($l_criticidade==2) $l_html .= chr(13).'          <img title="Risco de média criticidade" src="'.$conRootSIW.$conImgRiskMed.'" border=0 align="middle">&nbsp;';
+        else                       $l_html .= chr(13).'          <img title="Risco de alta criticidade" src="'.$conRootSIW.$conImgRiskHig.'" border=0 align="middle">&nbsp;';
       }
     } else {
       if ($l_fase_atual<>'C') {
-      if ($l_criticidade==1)     $l_html .= chr(13).'          <img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp';
-      elseif ($l_criticidade==2) $l_html .= chr(13).'          <img title="Problema de média criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp';
-      else                       $l_html .= chr(13).'          <img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp';
+      if ($l_criticidade==1)     $l_html .= chr(13).'          <img title="Problema de baixa criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp;';
+      elseif ($l_criticidade==2) $l_html .= chr(13).'          <img title="Problema de média criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp;';
+      else                       $l_html .= chr(13).'          <img title="Problema de alta criticidade" src="'.$conRootSIW.$conImgProblem.'" border=0 align="middle">&nbsp;';
     }
   }
   $l_html .= chr(13).'    '.$l_tipo_restricao.'</td>';
@@ -1228,16 +1272,13 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
         }
         $l_ativ .= chr(13).'     <td>'.f($row,'nm_tramite').'</td>';
       } 
-      $l_ativ .= chr(13).'      </td></tr>';
-    } 
-    if ($l_qt_ativ > '') {
-      $l_ativ    = $l_ativ.chr(13).'            </td></tr>';
+      $l_ativ .= chr(13).'      </tr>';
     } 
   } 
   
   if($l_pacotes=='S') {  
     //Listagem dos pacotes impactados pela questão
-    if (count($RS_Pacote)>0) {
+    if ($l_rs_pacote) {
       $l_pacote .= chr(13).'    <tr bgColor="#f0f0f0" align="center">';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Pacotes<br>impactados</b></td>';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Título</b></td>';
@@ -1273,14 +1314,10 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
           $l_pacote .= chr(13).'        <td>'.nvl(CRLF2BR(f($row,'situacao_atual')),'---').'</td>';
         }  
       } 
-      $l_pacote .= chr(13).'      </td></tr>';
-    } 
-    if ($l_qt_pacote > '') {
-      $l_pacote    = $l_pacote.chr(13).'            </td></tr>';
+      $l_pacote .= chr(13).'      </tr>';
     } 
   }
 
-  $l_html = $l_html.chr(13).'      </tr>';
   if ($l_ativ>'')      $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_ativ);
   if ($l_pacote>'')    $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_pacote);
   return $l_html;

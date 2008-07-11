@@ -974,11 +974,11 @@ function Grava() {
             $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
               $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
-              dml_putSiwUsuario::getInstanceOf($dbms,'I',$w_usuario,$w_cliente,f($RS,'nome'),f($RS,'nome_resumido'),
+              dml_putSiwUsuario::getInstanceOf($dbms,'I',$w_usuario,$w_cliente,f($RS,'nome'),f($RS,'nome_resumido'),$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                 f($RS,'sq_tipo_vinculo'),'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-                f($RS,'cpf'),f($RS,'email'),null,null);
+                f($RS,'cpf'),f($RS,'email'),null,null,null);
               dml_putSiwUsuario::getInstanceOf($dbms,'T',$w_usuario,null,null,null,
-              null,null,null,null,null,null,null,null);
+                null,null,null,null,null,null,null,null,null,null,null);
             } 
           } 
         } 

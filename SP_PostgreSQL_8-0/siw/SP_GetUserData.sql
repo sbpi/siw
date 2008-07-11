@@ -8,6 +8,8 @@ begin
      select a.sq_pessoa, a.username, a.senha, a.assinatura, a.ativo, a.sq_unidade, a.sq_localizacao,
             a.gestor_seguranca, a.gestor_sistema, a.cliente, a.email,
             a.ultima_troca_senha, a.ultima_troca_assin, a.tentativas_senha, a.tentativas_assin,
+            a.tipo_autenticacao, 
+            case a.tipo_autenticacao when 'B' then 'BD' when 'A' then 'MS-AD' else 'O-LDAP' end as nm_tipo_autenticacao,
             b.nome, b.nome_resumido, c.interno, d.sq_pessoa_endereco, e.codigo, 
             to_char(a.ultima_troca_senha, 'DD/MM/YYYY, HH24:MI:SS') as dt_ultima_troca_senha, 
             to_char(a.ultima_troca_assin, 'DD/MM/YYYY, HH24:MI:SS') as dt_ultima_troca_assin 

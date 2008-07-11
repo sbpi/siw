@@ -279,7 +279,7 @@ function Inicial() {
     ShowHTML('<HEAD>');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
     ShowHTML('</HEAD>');    
-  } else {
+  }else {
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
@@ -976,7 +976,7 @@ function Geral() {
     if($O=='I') SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
     else        SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o solicitante da demanda na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
     if($O=='I' && nvl($w_solicitante,'')>'') {
-     $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null, null, null, null, null, null, null, null, null, null, null);
+     $RS1 = db_getBenef::getInstanceOf($dbms, $w_cliente, $w_solicitante, null,null, null, null, null, null, null, null, null, null, null, null);
      foreach($RS1 as $row1){$RS1=$row1; break;}
      $w_sq_unidade_resp = f($RS1,'sq_unidade_benef');
     }
@@ -1519,26 +1519,44 @@ function Visual() {
   if ($w_tipo=='WORD') {
     HeaderWord(null);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-  } else {
-    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
+  }  elseif($w_tipo == 'PDF') {
+        ob_start();  
+        Cabecalho();
+        ShowHTML('<HEAD>');
+        ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+        ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+        ShowHTML('</HEAD>');
+        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+        CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+        $w_embed = 'WORD';
+    } else {
+        Cabecalho();
+        ShowHTML('<HEAD>');
+        ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+        ShowHTML('</HEAD>');
+        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+        BodyOpenClean('onLoad=\'this.focus()\'; ');
+        CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
   } 
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=\'this.focus()\'; ');
-  if ($w_tipo!='WORD') {
-    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
-  } 
-  if ($w_tipo>'' && $w_tipo!='WORD') {
+  
+  if ($w_embed != 'WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
   } 
   // Chama a rotina de visualização dos dados da demanda, na opção 'Listagem'
-  ShowHTML(VisualDemanda($w_chave,'L',$w_usuario,$w_tipo));
-  if ($w_tipo>'' && $w_tipo!='WORD') {
+  ShowHTML(VisualDemanda($w_chave,'L',$w_usuario,$w_embed));
+  if ($w_embed != 'WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
-  } 
-  Rodape();
+  }
+    if($w_embed == 'WORD'){
+        RodapePdf();
+    }else{
+    Rodape();
+    }
 } 
 
 // =========================================================================

@@ -8,8 +8,9 @@ create or replace function SP_GetPersonData
 begin
    open p_result for 
      select a.*, 
-           b.username, b.ativo, b.sq_unidade, b.sq_localizacao, 
-           b.gestor_seguranca, b.gestor_sistema, coalesce(b.email,i.email) as email,
+           b.username, b.ativo, b.sq_unidade, b.sq_localizacao, b.tipo_autenticacao,
+           b.gestor_seguranca, b.gestor_sistema, Nvl(b.email,i.email) as email,
+           case b.tipo_autenticacao when 'B' then 'BD' when 'A' then 'MS-AD' else 'O-LDAP' end as nm_tipo_autenticacao,
            c.sq_usuario_central, c.sq_central_fone, c.codigo as codigo_central, c.codigo as codigo_central,
            d.sq_tipo_vinculo, d.nome as nome_vinculo, d.interno, d.ativo as vinculo_ativo,
            e.nome as unidade, e.sigla, e.email as email_unidade,

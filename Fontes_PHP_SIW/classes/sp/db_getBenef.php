@@ -9,11 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getBenef {
-   function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_cpf, $p_cnpj, $p_nome, $p_tipo_pessoa,
+   function getInstanceOf($dbms, $p_cliente, $p_sq_pessoa, $p_username, $p_cpf, $p_cnpj, $p_nome, $p_tipo_pessoa,
         $p_passaporte_numero, $p_sq_pais_passaporte, $p_fornecedor, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_restricao=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getBenef';
      $params=array("p_cliente"              =>array($p_cliente,             B_NUMERIC,     32),
                    "p_sq_pessoa"            =>array($p_sq_pessoa,           B_NUMERIC,     32),
+                   "p_username"             =>array($p_username,            B_VARCHAR,     60),
                    "p_cpf"                  =>array($p_cpf,                 B_VARCHAR,     14),
                    "p_cnpj"                 =>array($p_cnpj,                B_VARCHAR,     18),
                    "p_nome"                 =>array($p_nome,                B_VARCHAR,     80),

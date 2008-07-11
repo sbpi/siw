@@ -538,88 +538,47 @@ function DaysLeft() {
   print " } "."\r\n";
 }
 
-function FormataValor() {
-  ShowHTML("function FormataValor(campo, maximo, tammax, teclapres) {");
-  ShowHTML("    var tecla = teclapres.keyCode;");
-  ShowHTML("    ant_vr = campo.value;");
-  ShowHTML("    vr = campo.value;");
-  ShowHTML("    vr = vr.replace(/\\$|\\./g,'');");
-  ShowHTML("    vr = vr.replace(/\\$|\\,/g,'');");
-  ShowHTML("    negative = '0';");
-  ShowHTML("    prefix = '';");
-  ShowHTML("    if (vr.substr(0,1)=='-') {");
-  ShowHTML("      negative = '1';");
-  ShowHTML("      vr = vr.replace(/\\$|\\-/g,'');");
-  ShowHTML("      prefix = '-';");
-  ShowHTML("    } ");
-  ShowHTML("    tam = vr.length + 1;");
-  ShowHTML("    if (tam < tammax && tecla != 8){ tam = vr.length + 1 ; }");
-  ShowHTML("    if (tecla == 8 ) { tam = tam - 1 ; }");
-  ShowHTML("    if (tecla == 8 && tam < 1) { vr.value = ''; return true; }");
-  ShowHTML("    if ( tecla == 8 || (tecla >= 48 && tecla <= 57) || (tecla >= 96 && tecla <= 105) || tecla == 189 ){");
-  ShowHTML("        if ( tam <= tammax ){ campo.value = vr ; } ");
-  ShowHTML("         if ( (tam > tammax) && (tam <= (tammax + 3)) ){");
-  ShowHTML("             campo.value = prefix + vr.substr( 0, tam - tammax ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("         if ( (tam >= (tammax+4)) && (tam <= (tammax + 6)) ){");
-  ShowHTML("             campo.value = prefix + vr.substr( 0, tam - (tammax + 3) ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("         if ( (tam >= (tammax + 7)) && (tam <= (tammax + 9)) ){");
-  ShowHTML("             campo.value = prefix + vr.substr( 0, tam - (tammax + 6) ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("         if ( (tam >= (tammax + 10)) && (tam <= (tammax + 12)) ){");
-  ShowHTML("             campo.value = prefix + vr.substr( 0, tam - (tammax + 9) ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ; }");
-  ShowHTML("         if ( (tam >= (tammax + 13)) && (tam <= (tammax + 15)) ){");
-  ShowHTML("             campo.value = prefix + vr.substr( 0, tam - (tammax + 12) ) + '.' + vr.substr( tam - (tammax + 12), 3 ) + '.' + vr.substr( tam - (tammax + 9), 3 ) + '.' + vr.substr( tam - (tammax + 6), 3 ) + '.' + vr.substr( tam - (tammax + 3), 3 ) + ',' + vr.substr( tam - tammax, tam ) ;}");
-  ShowHTML("      if ( campo.value.length + 1 > maximo ) { campo.value = ant_vr.substr(0, maximo -1); } ");
-  ShowHTML("    }");
-  ShowHTML("}");
+function FormataValor() {  
+?>
+
+    function FormataValor(campo, maximo, tammax, teclapres) {     
+		var mascara = "";
+		var decimal = "";
+	    campo.setAttribute("id", campo.name);              		
+		mascara = repeteCaracter("#",tammax);
+
+		if(mascara != ""){
+			decimal = "," + mascara;
+		}
+
+	   $("#"+campo.id).bind("keyup", function(e){
+			$("#"+campo.id).val( mascaraGlobal('[###.]###' + decimal ,$("#"+campo.id).val()) );
+		});        
+    }
+<?php
+
 }
 
 function FormataCPF() {
-  print "function FormataCPF (campo,teclapres) { "."\r\n";
-  print "    var tecla = teclapres.keyCode; "."\r\n";
-  print "    vr = campo.value; "."\r\n";
-  print "    vr = vr.replace( '-', '' ); "."\r\n";
-  print "    vr = vr.replace( '.', '' ); "."\r\n";
-  print "    vr = vr.replace( '.', '' ); "."\r\n";
-  print "    tam = vr.length; "."\r\n";
-  print "    if (tam < 11 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
-  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "        if ( tam <= 2 ){ "."\r\n";
-  print "             campo.value = vr ; } "."\r\n";
-  print "         if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, tam - 2 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "         if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, tam - 5 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "         if ( (tam >= 9) && (tam <= 11) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, tam - 8 ) + '.' + vr.substr( tam - 8, 3 ) + '.' + vr.substr( tam - 5, 3 ) + '-' + vr.substr( tam - 2, tam ) ; } "."\r\n";
-  print "    } "."\r\n";
-  print "} "."\r\n";
+?>
+  function FormataCPF (campo,teclapres) {		
+	   campo.setAttribute("id", campo.name);              				
+	   $("#"+campo.id).bind("keyup", function(e){
+			$("#"+campo.id).val( mascaraGlobal('###.###.###-##' ,$("#"+campo.id).val()) );
+		});   
+  }
+<?php
 }
 
 function FormataCNPJ() {
-  print "function FormataCNPJ (campo,teclapres) { "."\r\n";
-  print "    var tecla = teclapres.keyCode; "."\r\n";
-  print "    vr = campo.value; "."\r\n";
-  print "    vr = vr.replace( '-', '' ); "."\r\n";
-  print "    vr = vr.replace( '/', '' ); "."\r\n";
-  print "    vr = vr.replace( '.', '' ); "."\r\n";
-  print "    vr = vr.replace( '.', '' ); "."\r\n";
-  print "    tam = vr.length; "."\r\n";
-  print "    if (tam < 14 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
-  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "        if ( tam <= 2 ){ "."\r\n";
-  print "             campo.value = vr ; } "."\r\n";
-  print "         if ( (tam > 2) && (tam <= 5) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, tam ) ; } "."\r\n";
-  print "         if ( (tam >= 6) && (tam <= 8) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, tam ) ; } "."\r\n";
-  print "         if ( (tam >= 9) && (tam <= 12) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, tam ) ; } "."\r\n";
-  print "         if ( (tam >= 13) && (tam <= 14) ){ "."\r\n";
-  print "             campo.value = vr.substr( 0, 2 ) + '.' + vr.substr( 2, 3 ) + '.' + vr.substr( 5, 3 ) + '/' + vr.substr( 8, 4 ) + '-' + vr.substr( 12, tam ) ; } "."\r\n";
-  print "    } "."\r\n";
-  print "} "."\r\n";
+?>
+	function FormataCNPJ (campo,teclapres) { 
+		campo.setAttribute("id", campo.name);              				
+		   $("#"+campo.id).bind("keyup", function(e){
+				$("#"+campo.id).val( mascaraGlobal('##.###.###/####-##' ,$("#"+campo.id).val()) );
+			});   	
+	}
+<?php
 }
 
 function FormataProtocolo() {
@@ -642,19 +601,14 @@ function FormataProtocolo() {
 }
 
 function FormataCEP() {
-  print "function FormataCEP (campo,teclapres) { "."\r\n";
-  print "    var tecla = teclapres.keyCode; "."\r\n";
-  print "    vr = campo.value; "."\r\n";
-  print "    vr = vr.replace( '.', '' ); "."\r\n";
-  print "    vr = vr.replace( '-', '' ); "."\r\n";
-  print "    tam = vr.length; "."\r\n";
-  print "    if (tam < 2 && tecla != 8){ tam = vr.length + 1 ; } "."\r\n";
-  print "    if (tecla == 8 ){    tam = tam - 1 ; } "."\r\n";
-  print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ "."\r\n";
-  print "         if ( (tam <= 5) ){ campo.value = vr ; } "."\r\n";
-  print "         else { campo.value = vr.substr( 0, 5 )  + '-' + vr.substr( 5, tam ); } "."\r\n";
-  print "    } "."\r\n";
-  print "} "."\r\n";
+?>
+		function FormataCEP (campo,teclapres) { 
+		 campo.setAttribute("id", campo.name);              				
+		   $("#"+campo.id).bind("keyup", function(e){
+				$("#"+campo.id).val( mascaraGlobal('#####-###' ,$("#"+campo.id).val()) );
+			});  
+		}
+<?php
 }
 
 function FormataDataHora() {

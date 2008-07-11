@@ -134,7 +134,19 @@ function Rel_Executivo() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
       $w_embed = 'WORD';
-      //CabecalhoWord($w_cliente,$w_TP,0);
+      //CabecalhoWord($w_cliente,$w_TP,0);      
+    }
+	  elseif($p_tipo=='PDF'){
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>Relatório executivo de programas e projetos</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+	  CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
+      $w_embed = 'WORD';
+    
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
@@ -183,7 +195,13 @@ function Rel_Executivo() {
       }
       foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
-        ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo'))).'</b></td></tr>');
+        if ($w_embed == 'WORD'){
+            ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.strtoupper(f($row,'titulo')).'</b></font></div></td></tr>');
+        }    
+        else{
+            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo'))).'</b></td></tr>');
+        }
+        
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
         $RS2= db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
@@ -194,7 +212,7 @@ function Rel_Executivo() {
         } else {
           if ($p_projeto=='S') {
             ShowHTML('      <tr><td align="center" colspan="2">');
-            ShowHTML('        <table width=100%  border="1" bordercolor="#00000">');
+            ShowHTML('        <table border="1" bordercolor="#00000">');
           }
           $w_proj = 0;
           foreach($RS1 as $row1) {
@@ -206,13 +224,14 @@ function Rel_Executivo() {
                 ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
               }
               ShowHTML('          <tr align="center">');
-              if ($w_exibe_vinculo) ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
+              if ($w_exibe_vinculo) ShowHTML('<td  rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
               ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
               ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>');
-              if ($p_tipo!='WORD') {
+              //if ($p_tipo!='WORD') {
+              if ($w_embed !='WORD') {
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
                 ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').'</b></td>');
@@ -242,7 +261,7 @@ function Rel_Executivo() {
                 null, null, $p_empenho, $p_processo);
             $RS3 = SortArray($RS3,'dados_pai','asc','codigo_interno','asc','titulo','asc'); 
             if (count($RS3)==0) {
-              if ($p_projeto=='S') ShowHTML('          <tr><td colspan="15" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
+              if ($p_projeto=='S') ShowHTML('          <tr><td colspan="16" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
             } else {
               $l_previsto[$w_proj] = 0;
               foreach($RS3 as $row3) {
@@ -257,11 +276,13 @@ function Rel_Executivo() {
                   }
                   ShowHTML('            <td nowrap>');    
                   ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
-                  if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
+                  //if ($p_tipo!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
+                  if ($w_embed!='WORD') ShowHTML('            <A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');                  
                   else                 ShowHTML('            '.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).''); 
                   ShowHTML('        '.exibeImagemRestricao(f($row,'restricao'),'P'));
                   ShowHTML('            <td>'.f($row3,'titulo').'</td>');
-                  if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
+                  //if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
+                  if ($w_embed!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
                   else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
                   ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'inicio'),5),'-').'</td>');
                   ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'fim'),5),'-').'</td>');
@@ -423,6 +444,7 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
+  if ($p_tipo=='PDF') RodapePDF();
   Rodape();
 } 
 // =========================================================================
@@ -446,6 +468,18 @@ function Rel_Programas() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
+	  }
+	  elseif($p_tipo=='PDF'){
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+	  CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+      $w_embed = 'WORD';
+    
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
@@ -455,12 +489,13 @@ function Rel_Programas() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
       CabecalhoRelatorio($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',4);
+      $w_embed = 'HTML';
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     ShowHTML('<tr><td colspan="2">');
     if ($p_plano || $p_objetivo || $p_programa) {
-      ShowHTML('<table width="100%" border="0" cellspacing="3">');
+      ShowHTML('<table border="0" cellspacing="3">');
       ShowHTML('<tr><td colspan="2">');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>CRITÉRIOS DE EXIBIÇÃO</b></td></tr>');
@@ -508,8 +543,8 @@ function Rel_Programas() {
       $w_prog_atual = 0;
       $w_proj       = 0;
       foreach ($RS1 as $row) {
-        if ($w_prog_atual) ShowHTML('<br style="page-break-after:always">');
-        ShowHTML(ExibePrograma(f($row,'sq_siw_solicitacao'),'T',$w_usuario,$p_tipo));
+        //if ($w_prog_atual) ShowHTML('<br style="page-break-after:always">');
+        ShowHTML(ExibePrograma(f($row,'sq_siw_solicitacao'),'T',$w_usuario,$w_embed));
         $w_prog_atual = 1;
       }
       ShowHTML('     </table>');
@@ -718,6 +753,7 @@ function Rel_Programas() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
+  if ($p_tipo=='PDF') RodapePDF();
   if ($p_tipo!='WORD') Rodape();
 } 
 // =========================================================================

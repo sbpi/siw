@@ -55,7 +55,7 @@ class adLDAP {
 	
 	// An array of domain controllers. Specify multiple controllers if you 
 	// would like the class to balance the LDAP queries amongst multiple servers
-	var $_domain_controllers = array ();
+	var $_domain_controllers = array();
 	
 	// optional account with higher privileges for searching
 	// not really that optional because you can't query much as a user
@@ -85,11 +85,14 @@ class adLDAP {
 
 	function setParameterLdap($_account_suffix,$_base_dn,$_domain_controllers){
 	    
-	    $this->_account_suffix     =   $_account_suffix;
-	    $this->_base_dn            =   $_base_dn;	    
-	    $this->_domain_controllers =   $_domain_controllers;
-	    
+	   // $this->_account_suffix     =   $_account_suffix;
+	    //$this->_base_dn            =   $_base_dn;	    
+	    //$this->_domain_controllers = array($_domain_controllers);
+	    //die(var_dump($this->_domain_controllers));
+
 	}
+	
+	
 	
 	// default constructor
 	function adLDAP($options=array()){
@@ -97,21 +100,24 @@ class adLDAP {
 		if (count($options)>0){
 			if (array_key_exists("account_suffix",$options)){ $this->_account_suffix=$options["account_suffix"]; }
 			if (array_key_exists("base_dn",$options)){ $this->_base_dn=$options["base_dn"]; }
-			if (array_key_exists("domain_controllers",$options)){ $this->_domain_controllers=$options["domain_controllers"]; }
+			if (array_key_exists("domain_controllers",$options)){ $this->_domain_controllers[]=$options["domain_controllers"]; }
 			if (array_key_exists("ad_username",$options)){ $this->_ad_username=$options["ad_username"]; }
 			if (array_key_exists("ad_password",$options)){ $this->_ad_password=$options["ad_password"]; }
 			if (array_key_exists("real_primarygroup",$options)){ $this->_real_primarygroup=$options["real_primarygroup"]; }
 			if (array_key_exists("use_ssl",$options)){ $this->_use_ssl=$options["use_ssl"]; }
 			if (array_key_exists("recursive_groups",$options)){ $this->_recursive_groups=$options["recursive_groups"]; }
 		}
-	
+			
 		//connect to the LDAP server as the username/password
 		$dc=$this->random_controller();
+		
 		if ($this->_use_ssl){
 			$this->_conn = ldap_connect("ldaps://".$dc);
 		} else {
 			$this->_conn = ldap_connect($dc);
 		}
+		
+		
 		
 		//set some ldap options for talking to AD
 		ldap_set_option($this->_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -140,9 +146,14 @@ class adLDAP {
 	function authenticate($username,$password,$prevent_rebind=false){
 		if ($username==NULL || $password==NULL){ return (false); } //prevent null binding
 		
+		
+		
 		//bind as the user		
+						
 		$this->_bind = @ldap_bind($this->_conn,$username.$this->_account_suffix,$password);
+		
 		if (!$this->_bind){ return (false); }
+		
 		
 		//once we've checked their details, kick back into admin mode if we have it
 		if ($this->_ad_username!=NULL && !$prevent_rebind){
@@ -328,7 +339,8 @@ class adLDAP {
 		if (!$this->_bind){ return (false); }
 
 		$filter="samaccountname=".$username;
-		if ($fields==NULL){ $fields=array("samaccountname","mail","memberof","department","displayname","telephonenumber","primarygroupid"); }
+
+		if ($fields==NULL){ $fields=array("userAccountControl","accountExpires","samaccountname","mail","memberof","department","displayname","telephonenumber","primarygroupid"); }
 		$sr=ldap_search($this->_conn,$this->_base_dn,$filter,$fields);
 		$entries = ldap_get_entries($this->_conn, $sr);
 		
@@ -580,6 +592,33 @@ class adLDAP {
 		return ($val);
 	}
 	
+	function account_attrib($val){
+	  // Retorna array com os atributos associados a um valor
+	  // O valor deve ser recuperado de user_info com o parâmetro "userAccountControl" informado
+		if ($val>=16777216) { $attrib[]="TRUSTED_TO_AUTH_FOR_DELEGATION"; $val-=16777216; }
+		if ($val>= 8388608) { $attrib[]="PASSWORD_EXPIRED";               $val-=8388608; }
+		if ($val>= 4194304) { $attrib[]="DONT_REQ_PREAUTH";               $val-=4194304; }
+		if ($val>= 2097152) { $attrib[]="USE_DES_KEY_ONLY";               $val-=2097152; }
+		if ($val>= 1048576) { $attrib[]="NOT_DELEGATED";                  $val-=1048576; }
+		if ($val>=  524288) { $attrib[]="TRUSTED_FOR_DELEGATION";         $val-=524288; }
+		if ($val>=  262144) { $attrib[]="SMARTCARD_REQUIRED";             $val-=262144; }
+		if ($val>=  131072) { $attrib[]="MNS_LOGON_ACCOUNT";              $val-=131072; }
+		if ($val>=   65536) { $attrib[]="DONT_EXPIRE_PASSWORD";           $val-=65536; }
+		if ($val>=    8192) { $attrib[]="SERVER_TRUST_ACCOUNT";           $val-=8192; }
+		if ($val>=    4096) { $attrib[]="WORKSTATION_TRUST_ACCOUNT";      $val-=4096; }
+		if ($val>=    2048) { $attrib[]="INTERDOMAIN_TRUST_ACCOUNT";      $val-=2048; }
+		if ($val>=     512) { $attrib[]="NORMAL_ACCOUNT";                 $val-=512; }
+		if ($val>=     256) { $attrib[]="TEMP_DUPLICATE_ACCOUNT";         $val-=256; }
+		if ($val>=     128) { $attrib[]="ENCRYPTED_TEXT_PWD_ALLOWED";     $val-=128; }
+		if ($val>=      32) { $attrib[]="PASSWD_NOTREQD";                 $val-=32; }
+		if ($val>=      16) { $attrib[]="LOCKOUT";                        $val-=16; }
+		if ($val>=       8) { $attrib[]="HOMEDIR_REQUIRED";               $val-=8; }
+		if ($val>=       2) { $attrib[]="ACCOUNTDISABLE";                 $val-=2; }
+		if ($val>=       1) { $attrib[]="SCRIPT";                         $val-=1; }
+
+		return ($attrib);
+	}
+
 	// Take an ldap query and return the nice names, without all the LDAP prefixes (eg. CN, DN)
 	function nice_names($groups){
 

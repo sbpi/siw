@@ -13,7 +13,13 @@ create or replace function SP_PutSIWCliConf
     p_logo1                    varchar,
     p_fundo                    varchar,
     p_tipo                     varchar,
-    p_upload_maximo            numeric
+    p_upload_maximo            numeric,
+    p_ad_account_sufix         varchar,
+    p_ad_base_dn               varchar,
+    p_ad_domain_controlers     varchar,
+    p_ol_account_sufix         varchar,
+    p_ol_base_dn               varchar,
+    p_ol_domain_controlers     varchar
    ) returns void as $$
 begin
    If p_Tipo = 'AUTENTICACAO' Then
@@ -35,7 +41,14 @@ begin
          logo                 = coalesce(p_logo, logo),
          logo1                = coalesce(p_logo1, logo1),
          fundo                = coalesce(p_fundo, fundo),
-         upload_maximo        = p_upload_maximo
+         upload_maximo        = p_upload_maximo,
+         
+         ad_account_sufix     = p_ad_account_sufix,
+         ad_base_dn           = p_ad_base_dn,
+         ad_domain_controlers = p_ad_domain_controlers,
+         ol_account_sufix     = p_ol_account_sufix,
+         ol_base_dn           = p_ol_base_dn,
+         ol_domain_controlers = p_ol_domain_controlers
       where sq_pessoa         = p_chave;
    End If;
 end; $$ language 'plpgsql' volatile;
