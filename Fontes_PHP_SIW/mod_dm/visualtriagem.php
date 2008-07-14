@@ -159,7 +159,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
           $l_html.=chr(13).'          <td nowrap>';
           $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
           if($l_tipo=='WORD') $l_html.=chr(13).'          '.f($row,'sq_siw_solicitacao').'&nbsp;';
-          else       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
+          else                $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'&nbsp;</a>';
           if (nvl(f($row,'sq_projeto_etapa'),'nulo')!='nulo') {
             if($l_tipo=='WORD') $l_html.=chr(13).'            <td>'.MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa').'</td>';
             else       $l_html.=chr(13).'            <td>'.ExibeEtapa('V',f($row,'sq_solic_pai'),f($row,'sq_projeto_etapa'),'Volta',10,MontaOrdemEtapa(f($row,'sq_projeto_etapa')).' - '.f($row,'nm_etapa'),$TP,$SG).'</td>';
@@ -167,7 +167,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
             $l_html.=chr(13).'            <td>---</td>';
           } 
           if($l_tipo=='WORD') $l_html.=chr(13).'          <td>'.f($row,'nm_solic').'</td>';
-          else       $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+          else                $l_html.=chr(13).'          <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
           if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           $l_html.=chr(13).'          <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>';
           $l_html.=chr(13).'          <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
@@ -386,7 +386,7 @@ function VisualTriagem($l_chave,$operacao,$w_usuario,$l_tipo=null) {
       foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
-        else       $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        else                $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
         $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
