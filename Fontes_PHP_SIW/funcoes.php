@@ -2532,7 +2532,7 @@ function RodapePDF() {
 	<body>
 		<form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
 		<input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
-        <input type="hidden" value="<?php echo $conDiretorio . 'files/' . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
+        <input type="hidden" value="<?php echo $conFilePhysical . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
 		</form>
 		<?php echo('<script>document.formpdf.submit();</script>'); ?>
 	</body>
