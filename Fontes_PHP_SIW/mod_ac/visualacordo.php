@@ -2,9 +2,9 @@
 // =========================================================================
 // Rotina de visualização dos dados do acordo
 // -------------------------------------------------------------------------
-function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
+function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   extract($GLOBALS);
-  if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
+  if ($l_tipo!='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   
   // Carrega o segmento do cliente
@@ -44,9 +44,6 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
-    if (!($l_P1==4 || $l_P4==1)) {
-      $l_html.=chr(13).'       <tr><td align="right" colspan="2"><b><A class="hl" HREF="'.$w_dir.$w_pagina.'visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=4&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe todas as informações.">Exibir todas as informações</a></td>';
-    } 
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     if ($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) { 
       if (substr($w_sigla,0,3)=='GCA') $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
@@ -61,7 +58,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
-    $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
 
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       if (substr($w_sigla,0,3)=='GCB') {   
@@ -92,7 +90,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'          <td>'.f($RS,'nm_tipo_acordo').'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Cidade de origem:</b></td>';
     $l_html.=chr(13).'          <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
-    if (!$l_P4==1) {
+    if ($l_tipo!='WORD') {
       $l_html.=chr(13).'          <tr><td><b>Responsável monitoramento:</b></td>';
       $l_html.=chr(13).'              <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
       $l_html.=chr(13).'          <tr><td><b>Unidade responsável monitoramento:</b></td>';
@@ -310,7 +308,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'        </tr>';
       if (count($RS1)==0) {
         // Se não foram selecionados registros, exibe mensagem 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
       } else {
         // Lista os registros selecionados para listagem 
         $w_tot_in = 0;
@@ -487,7 +485,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $l_html.=chr(13).'          <tr><td><b>CEP:</b></td>'; 
           $l_html.=chr(13).'            <td>'.f($RSQuery1,'cep').'</td></tr>';
           if (Nvl(f($RSQuery1,'email'),'nulo')!='nulo') {
-            if (!$l_P4==1) {
+            if ($l_tipo!='WORD') {
               $l_html.=chr(13).'              <tr><td><b>e-Mail:</b></td>';
               $l_html.=chr(13).'                <td><a class="hl" href="mailto:'.f($RSQuery1,'email').'">'.f($RSQuery1,'email').'</td></tr>';
             } else {
@@ -580,7 +578,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
                 $l_html.=chr(13).'        <td>'.Nvl(f($row1,'rg_numero'),'---').'</td>';
                 $l_html.=chr(13).'        <td>'.Nvl(f($row1,'rg_emissor'),'---').'</td>';
                 if (Nvl(f($row1,'email'),'nulo')!='nulo') {
-                  if (!$l_P4==1) {
+                  if ($l_tipo!='WORD') {
                     $l_html.=chr(13).'        <td><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>';
                   } else {
                     $l_html.=chr(13).'        <td>'.f($row1,'email').'</td>';
@@ -619,7 +617,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
               $l_html.=chr(13).'        <td>'.Nvl(f($row2,'nr_telefone'),'---').'</td>';
               $l_html.=chr(13).'        <td>'.Nvl(f($row2,'nr_celular'),'---').'</td>';
               if (Nvl(f($row2,'email'),'nulo')!='nulo') {
-                if (!$l_P4==1) {
+                if ($l_tipo!='WORD') {
                   $l_html.=chr(13).'        <td><a class="hl" href="mailto:'.f($row2,'email').'">'.f($row2,'email').'</a></td>';
                 } else {
                   $l_html.=chr(13).'        <td>'.f($row2,'email').'</td>';
@@ -746,7 +744,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
         $w_cont += 1;
       }
       if (Nvl(f($row,'cd_lancamento'),'')>'') {
-        $l_html.=chr(13).'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_P4.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
+        if ($l_tipo!='WORD') $l_html.=chr(13).'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
+        else                 $l_html.=chr(13).'        <td align="center" nowrap>'.f($row,'cd_lancamento').'</td>';
         if(nvl(f($row,'inicio'),'')!='') $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>';
         else                             $l_html.=chr(13).'        <td align="center">---</td>';
         $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
@@ -808,7 +807,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $l_html.=chr(13).'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
         }
         $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
-        if ($l_P4!=1){
+        if ($l_tipo!='WORD'){
           $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
         } else {
           $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
@@ -859,7 +858,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $w_cor=$w_TrBgColor;
       foreach($RS as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
-        if ($l_P4!=1) {
+        if ($l_tipo!='WORD') {
           $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         } else {
           $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
@@ -890,7 +889,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
   } 
   if ($w_tipo_visao!=2 && $l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
     include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_P4==1) ? 'WORD' : 'HTML'));
+    $l_html .= exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,$l_tipo);
   } 
   $l_html.=chr(13).'    </table>';
   $l_html.=chr(13).'</table>';
