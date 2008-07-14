@@ -1251,7 +1251,6 @@ function Grava() {
             }
             // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
             $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-                echo $w_html;
             ScriptOpen('JavaScript');
             if ($SG=='SGUSU' || $SG=='RHUSU' || $SG=='CLUSUARIO') {
               if ($w_resultado>'') {
