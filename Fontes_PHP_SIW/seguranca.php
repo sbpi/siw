@@ -2004,60 +2004,81 @@ function NovaSenha() {
   extract($GLOBALS);
   global $w_Disabled;
 
+  // Recupera o tipo de autenticação e a username do usuário
+  $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null);
+  $w_tipo     = f($RS,'tipo_autenticacao');
+  $w_username = f($RS,'username');
+  // Configura texto
+  if ($w_tipo=='B') $w_texto_mail = 'senha'; else $w_texto_mail = 'assinatura eletrônica';
+
   // Cria a nova senha, pegando a hora e o minuto correntes
-  $w_senha = 'nova'.substr(str_replace(':','',strftime("%H:%M:%S %p")),2,4);
+  $w_senha='nova'.date('is');
 
   // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
-  db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
+  if ($w_tipo=='B') db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'PASSWORD');
   db_updatePassword::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_pessoa'], $w_senha, 'SIGNATURE');
 
   // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
-  $w_html = '<HTML><HEAD><TITLE>Reinicialização de senha</TITLE></HEAD>'.chr(13);
+  $w_html = '<HTML><HEAD><TITLE>Reinicialização de '.$w_texto_mail.'</TITLE></HEAD>'.chr(13);
   $w_html = $w_html.BodyOpenMail().chr(13);
-  $w_html = $w_html.'<table border="0" cellpadding="0" cellspacing="0" width="100%">'.chr(13);
-  $w_html = $w_html.'<tr bgcolor="'.$conTrBgColor.'"><td align="center">'.chr(13);
-  $w_html = $w_html.'    <table width="97%" border="0">'.chr(13);
-  $w_html = $w_html.'      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE SENHA</b></font><br><br><td></tr>'.chr(13);
-  $w_html = $w_html.'      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.chr(13);
-  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-  $w_html = $w_html.'         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.chr(13);
-  $w_html = $w_html.'         <ul>'.chr(13);
-  $RS = DB_GetCustomerSite::getInstanceOf($dbms, $w_cliente);
-  $w_html = $w_html.'         <li>Endereço de acesso ao sistema: <b><a class="ss" href="'.f($RS,'logradouro').'" target="_blank">'.f($RS,'Logradouro').'</a></b></li>'.chr(13);
-  $RS = DB_GetUserData::getInstanceOf($dbms,  $w_cliente, $_REQUEST['w_username']);
-  $w_html = $w_html.'         <li>CPF: <b>'.f($RS,'username').'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>Nome: <b>'.f($RS,'nome').'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>e-Mail: <b>'.f($RS,'email').'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.chr(13);
-  $w_html = $w_html.'         </ul>'.chr(13);
-  $w_html = $w_html.'      </font></td></tr>'.chr(13);
-  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-  $w_html = $w_html.'         Orientações e observações:<br>'.chr(13);
-  $w_html = $w_html.'         <ol>'.chr(13);
-  $w_html = $w_html.'         <li>Troque sua senha de acesso e assinatura no primeiro acesso que fizer ao sistema.</li>'.chr(13);
-  $w_html = $w_html.'         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
-  $w_html = $w_html.'         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.chr(13);
-  $w_html = $w_html.'         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.chr(13);
-  $RS = DB_GetCustomerData::getInstanceOf($dbms, $w_cliente);
-  $w_html = $w_html.'         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.chr(13);
-  $w_html = $w_html.'         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua senha de acesso <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura de acesso, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.chr(13);
-  $w_html = $w_html.'         <li>Acessos bloqueados por expiração do tempo de vida da senha de acesso ou assinaturas eletrônicas, ou por exceder o máximo de erros consecutivos, só podem ser desbloqueados pelo gestor de segurança do sistema.</li>'.chr(13);
-  $w_html = $w_html.'         </ol>'.chr(13);
-  $w_html = $w_html.'      </font></td></tr>'.chr(13);
-  $w_html = $w_html.'      <tr valign="top"><td><font size=2>'.chr(13);
-  $w_html = $w_html.'         Dados da ocorrência:<br>'.chr(13);
-  $w_html = $w_html.'         <ul>'.chr(13);
-  $w_html = $w_html.'         <li>Data do servidor: <b>'.date('d/m/Y, H:i:s').'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.chr(13);
-  $w_html = $w_html.'         <li>Usuário responsável: <b>'.$_SESSION['NOME'].' ('.$_SESSION['EMAIL'].')</b></li>'.chr(13);
-  $w_html = $w_html.'         </ul>'.chr(13);
-  $w_html = $w_html.'      </font></td></tr>'.chr(13);
-  $w_html = $w_html.'    </table>'.chr(13);
-  $w_html = $w_html.'</td></tr>'.chr(13);
-  $w_html = $w_html.'</table>'.chr(13);
-  $w_html = $w_html.'</BODY>'.chr(13);
-  $w_html = $w_html.'</HTML>'.chr(13);
+  $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+  $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
+  $w_html .= '    <table width="97%" border="0">'.$crlf;
+  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.strtoupper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+  if ($w_tipo=='B') {
+    $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+  } else {
+    $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+  }
+  $w_html .= '         <ul>'.$crlf;
+  $RS = db_getCustomerSite::getInstanceOf($dbms, $w_cliente);
+  $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
+  DesconectaBD();
+  $w_html .= '         <li>Nome de usuário: <b>'.$w_username.'</b></li>'.$crlf;
+  if ($w_tipo=='B') {
+    $w_html .= '         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.$crlf;
+  } else {
+    $w_html .= '         <li>Senha de acesso: <b>igual à senha da rede local</b></li>'.$crlf;
+  }
+  $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+  $w_html .= '         </ul>'.$crlf;
+  $w_html .= '      </font></td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+  $w_html .= '         Orientações e observações:<br>'.$crlf;
+  $w_html .= '         <ol>'.$crlf;
+  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  if ($w_tipo=='B'){
+    $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+    $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+    $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+    $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+    $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+    $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+    $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+  } else {
+    $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+    $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
+    $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+    $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+    $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
+  }
+  DesconectaBD();
+  $w_html .= '         </ol>'.$crlf;
+  $w_html .= '      </font></td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+  $w_html .= '         Dados da ocorrência:<br>'.$crlf;
+  $w_html .= '         <ul>'.$crlf;
+  $w_html .= '         <li>Data do servidor: <b>'.DataHora().'</b></li>'.$crlf;
+  $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+  $w_html .= '         </ul>'.$crlf;
+  $w_html .= '      </font></td></tr>'.$crlf;
+  $w_html .= '    </table>'.$crlf;
+  $w_html .= '</td></tr>'.$crlf;
+  $w_html .= '</table>'.$crlf;
+  $w_html .= '</BODY>'.$crlf;
+  $w_html .= '</HTML>'.$crlf;
   print $w_html;
 } 
 
