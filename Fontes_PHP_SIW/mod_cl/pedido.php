@@ -1419,31 +1419,38 @@ function Visual() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
 
-  if ($w_tipo=='WORD') {
+  if ($w_tipo=='PDF') {
+    ob_start();  
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de compra</TITLE>');
+    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+    //HeaderWord('PORTRAIT');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    ShowHTML('<BODY>');
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo=='WORD') {
     HeaderWord(null);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    $w_embed = 'WORD';
   } else {
     Cabecalho();
-  }
-  ShowHTML('<HEAD>');
-  ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de compra</TITLE>');
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_tipo=='WORD') {
-    BodyOpenWord('onLoad=\'this.focus()\'; ');
-  } else {
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de compra</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
+    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
+    $w_embed = 'HTML';
   }
-  if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  }
+  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
-  ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$P4));
-  if ($w_tipo>'' && $w_tipo!='WORD') {
-    ShowHTML('<center><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  }
-  if ($w_tipo!='WORD') Rodape();
+  ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$w_embed));
+  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_tipo=='PDF') RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================

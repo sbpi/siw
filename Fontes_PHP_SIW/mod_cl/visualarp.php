@@ -2,9 +2,9 @@
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
-function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
+function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   extract($GLOBALS);
-  if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
+  if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   $w_erro='';
   // Recupera os dados da solicitacao
@@ -46,7 +46,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
-    if (!($l_P1==4 || $l_P4==1)) $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     else                         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td>';
     $l_html.=chr(13).'        <td>'.f($RS,'nm_prioridade').' </td></tr>';
@@ -57,12 +57,12 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td>';
     $l_html.=chr(13).'      <td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
     $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
-    if (!($l_P1==4 || $l_P4==1)){
+    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
     } else {
       $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
     }
-    if (!($l_P1==4 || $l_P4==1)){
+    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
       $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
     } else {
@@ -132,7 +132,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $l_html.=chr(13).'      <tr valign="top">';
           $l_html.=chr(13).'        <td width="1%" nowrap><font size="2"><b>ARP '.f($row,'numero_ata').'</b></font></td>';
           $l_html.=chr(13).'        <td>Validade:<br><b>'.formataDataEdicao(f($row,'fim'),5).'</b></td>';
-          if (!($l_P1==4 || $l_P4==1)){
+          if (!($l_P1==4 || $l_tipo=='WORD')){
             $l_html.=chr(13).'        <td colspan=3>Detentor:<br><b>'.ExibePessoa(null,$w_cliente,f($row,'sq_detentor'),$TP,f($row,'nm_detentor')).'</b></td>';
           } else {
             $l_html.=chr(13).'        <td colspan=3>Detentor:<br><b>'.f($row,'nm_detentor').'</b></td>';
@@ -147,7 +147,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $l_html.=chr(13).'        <td rowspan="5"><font size="2"><b>ITEM '.f($row,'ordem_ata').'</b></font></td>';
         }
         $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
-        if ($l_P4!=1){
+        if ($l_tipo!='WORD'){
           $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
         } else {
           $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
@@ -195,7 +195,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $v_html.=chr(13).'      <tr><td colspan="2" align="center">';
           $v_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
           $v_html.=chr(13).'          <tr align="center">';
-          if (!($l_P1==4 || $l_P4==1)) $v_html.=chr(13).'            <td></td>';
+          if (!($l_P1==4 || $l_tipo=='WORD')) $v_html.=chr(13).'            <td></td>';
           $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="40%"><b>Fornecedor</b></td>';
           $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="20%"><b>Fonte</b></td>';
           $v_html.=chr(13).'            <td bgColor="#f0f0f0" width="13%"><b>Cotação</b></td>';
@@ -209,7 +209,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $w_total = 0;
           foreach($l_rs as $row1) {
             $v_html.=chr(13).'      <tr valign="top">';
-            if (!($l_P1==4 || $l_P4==1)) {
+            if (!($l_P1==4 || $l_tipo=='WORD')) {
               $v_html.=chr(13).'        <td width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row1,'phpdt_inicio'),f($row1,'phpdt_fim'),f($row1,'aviso')).'</td>';
               $v_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row1,'fornecedor'),$TP,f($row1,'nm_fornecedor')).'</td>';
             } else {
@@ -233,7 +233,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
           $l_html.=chr(13).'        <td align="center">$ Maior: <b>'.formatNumber($w_maior,4).'</b></td>';
           $l_html.=chr(13).'        </tr></table>';
           $l_html .=$v_html;
-          if (!($l_P1==4 || $l_P4==1)) $l_html.=chr(13).'      <tr><td colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>';
+          if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'      <tr><td colspan=2><table border=0><tr><td colspan=3><b>Legenda:</b><tr><td>'.ExibeSinalPesquisa(true,null,null,null).'</td></tr></table>';
         }
 
         $l_html.=chr(13).'        </table>';
@@ -267,7 +267,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
       $l_html.=chr(13).'          </tr>';
       foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
-        if (!($l_P1==4 || $l_P4==1)) $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         else                         $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
         $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
@@ -279,7 +279,7 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
 
     // Encaminhamentos
     include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_P4==1) ? 'WORD' : 'HTML'));
+    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
     
     // Se for envio, executa verificações nos dados da solicitação
     if ($w_tramite_ativo=='S') $w_erro = ValidaARP($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
