@@ -2,9 +2,9 @@
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
-function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
+function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   extract($GLOBALS);
-  if ($l_P4==1) $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
+  if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados da solicitacao
   $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,3,
@@ -58,12 +58,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     $l_html.=chr(13).'      <tr><td><b>Gera ARP?</b></td>';
     $l_html.=chr(13).'         <td>'.RetornaSimNao(f($RS,'arp')).' </td></tr>';
     $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
-    if (!($l_P1==4 || $l_P4==1)){
+    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
     } else {
       $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
     }
-    if (!($l_P1==4 || $l_P4==1)){
+    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
       $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
     } else {
@@ -417,7 +417,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
     }     
     // Encaminhamentos
     include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_P4==1) ? 'WORD' : 'HTML'));
+    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
   }
   $l_html .= chr(13).'</table>';
   return $l_html;
