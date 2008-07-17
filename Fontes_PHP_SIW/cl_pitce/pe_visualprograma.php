@@ -238,7 +238,7 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   // Arquivos vinculados ao programa
   $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
   $RS1 = SortArray($RS1,'nome','asc');
-  if (count($RS1)>0 && $l_anexo=='S') {
+  if (count($RS1)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
