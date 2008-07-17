@@ -45,7 +45,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
-    if($w_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td>';
     $l_html.=chr(13).'        <td>'.f($RS,'nm_prioridade').' </td></tr>';
@@ -194,7 +194,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'      <tr align="center">';
           $l_html.=chr(13).'        <td>'.nvl(f($row,'ordem'),'---').'</td>';
           $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
-          if($w_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
+          if($l_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
           else                $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
@@ -206,7 +206,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td colspan=3></td>';
           $w_exibe = true;
         }
-        if($w_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N').'</td>';
+        if($l_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N').'</td>';
         else                $l_html.=chr(13).'        <td align="left" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N','S').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'qtd_pedido'),2).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),2).'</td>';
@@ -274,14 +274,14 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     foreach($RS1 as $row){ 
       if ($w_atual!=f($row,'sq_material')) {
          $l_html.=chr(13).'      <tr valign="top">';
-         if($w_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
+         if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
          else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),2),'---').'</td>';
          $w_atual      = f($row,'sq_material');
       } else {
         $l_html.=chr(13).'      <tr valign="top">';
       }
-      if($w_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
+      if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
       else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
       $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
       $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>';
@@ -336,7 +336,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       if ($w_atual!=f($row,'sq_material')) {
          $l_html.=chr(13).'      <tr valign="top">';
          $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>';
-         if($w_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
+         if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
          else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),2),'---').'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),2),'---').'</td>';
@@ -353,7 +353,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } else {
         $w_destaque = '';
       }
-      if($w_tipo=='WORD') $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.f($row,'nm_fornecedor').'</td>';
+      if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.f($row,'nm_fornecedor').'</td>';
       else                $l_html.=chr(13).'        <td nowrap '.$w_destaque.'>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
       $l_html.=chr(13).'        <td align="center" '.$w_destaque.'>'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
       $l_html.=chr(13).'        <td align="center" '.$w_destaque.'>'.nvl(f($row,'dias_validade_item'),'---').'</td>';
@@ -391,7 +391,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          </tr>';
       foreach($RS1 as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
-        if($w_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+        if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
         else       $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
         $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';

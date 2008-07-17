@@ -581,7 +581,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       //$l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
-      if ($w_tipo=='WORD') {
+      if ($l_tipo=='WORD') {
         $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
         $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         if ($w_tipo_visao!=2 && ($operacao=='T')){

@@ -5,6 +5,7 @@
 // -------------------------------------------------------------------------
 function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   extract($GLOBALS);
+
   include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
@@ -128,7 +129,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     $l_html .= chr(13).'        <td>'.nvl(f($RS,'proponente'),'---').' </b></td>';
     $l_html .= chr(13).'          <tr><td><b>Responsável:<b></td>';
     if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_sol')).'</b></td>';
-    else       $l_html .= chr(13).'        <td>'.f($RS,'nm_sol').'</b></td>';
+    else                $l_html .= chr(13).'        <td>'.f($RS,'nm_sol').'</b></td>';
     $l_html .= chr(13).'          <tr><td><b>Unidade responsável:</b></td>';
     if($l_tipo!='WORD') $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
     else       $l_html .= chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</b></td>';
@@ -622,7 +623,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       $l_html .= chr(13).'  <li>Pacotes de trabalho destacados em negrito.';
       $l_html .= chr(13).'  <li>NA última linha, o total orçado e a soma dos pesos considera apenas os pacotes de trabalho.';
       $l_html .= chr(13).'  </ul>';
-      if ($w_tipo=='WORD') {
+      if ($l_tipo=='WORD') {
         $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
         $l_html .= chr(13).'  <tr valign="top"><td colspan=2><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         if ($w_tipo_visao!=2 && ($l_O=='T')){
@@ -658,7 +659,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         foreach ($RSQuery as $row) {
           $l_html .= chr(13).'      <tr>';
           if($l_tipo!='WORD') $l_html .= chr(13).'        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L&w_troca=p_base&p_tipo_indicador='.f($row,'sq_tipo_indicador').'&p_indicador='.f($row,'chave').'&p_pesquisa=BASE&p_volta=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Afericao\',\'width=730,height=500,top=30,left=30,status=no,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe informaçoes sobre o indicador.">'.f($row,'nome').'</a></td></td>';
-          else       $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
+          else                $l_html .= chr(13).'        <td>'.f($row,'nome').'</td>';
           $l_html .= chr(13).'        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>';
           $l_html .= chr(13).'        <td>'.f($row,'fonte_comprovacao').'</td>';
           if (nvl(f($row,'valor'),'')!='') {
