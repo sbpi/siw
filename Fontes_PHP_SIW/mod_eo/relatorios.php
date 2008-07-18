@@ -120,7 +120,7 @@ function Rel_Unidades() {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
     if ($p_tipo=='WORD') {
-      HeaderWord('PORTRAIT');
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE UNIDADES',$w_pag);
       $w_embed = 'WORD';

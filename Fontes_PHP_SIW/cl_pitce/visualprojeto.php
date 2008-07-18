@@ -481,27 +481,29 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     if (count($RSQuery)>0) {
       // Se não foram selecionados registros, exibe mensagem
       // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
-      if (nvl($w_p2,'')!='') {
-        $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
-        $l_html .= chr(13).'  function lista (projeto, etapa) {';
-        $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
-        $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
-        $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
-        $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
-        $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
-        $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
-        $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
-        $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
-         $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
-        $w_fases='';
-        foreach($RSQuery1 as $row1) {
-          if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
-        } 
-        $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
-        $l_html .= chr(13).'    document.Form1.submit();';
-        $l_html .= chr(13).'  }';
-        $l_html .= chr(13).'</SCRIPT>';
+      if($l_tipo!='WORD') {
+        if (nvl($w_p2,'')!='') {
+          $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
+          $l_html .= chr(13).'  function lista (projeto, etapa) {';
+          $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
+          $l_html .= chr(13).'    document.Form1.p_atividade.value=etapa;';
+          $RSQuery1 = db_getMenuData::getInstanceOf($dbms,$w_p2);
+          $l_html .= chr(13).'    document.Form1.action=\''.f($RSQuery1,'link').'\';';
+          $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
+          $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
+          $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+           $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
+          $w_fases='';
+          foreach($RSQuery1 as $row1) {
+            if (f($row1,'sigla')!='CA') $w_fases=$w_fases.','.f($row1,'sq_siw_tramite');
+          } 
+          $l_html .= chr(13).'    document.Form1.p_fase.value=\''.substr($w_fases,1,100).'\';';
+          $l_html .= chr(13).'    document.Form1.submit();';
+          $l_html .= chr(13).'  }';
+          $l_html .= chr(13).'</SCRIPT>';
+        }
       }
 
       $RSQuery1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');

@@ -106,7 +106,7 @@ function Demonstrativo() {
   $w_tipo    = $_REQUEST['w_tipo'];
   if ($O=='L') {
     if ($w_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'DEMONSTRATIVO JURÍDICO/FINANCEIRO',$w_pag);
       $w_embed = 'WORD';

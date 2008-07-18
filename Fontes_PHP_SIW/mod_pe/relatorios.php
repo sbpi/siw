@@ -130,23 +130,22 @@ function Rel_Executivo() {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
       $w_embed = 'WORD';
       //CabecalhoWord($w_cliente,$w_TP,0);      
     }
-	  elseif($p_tipo=='PDF'){
+    elseif($p_tipo=='PDF'){
       ob_start();  
       Cabecalho();
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório executivo de programas e projetos</TITLE>');
+      ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-	  CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
       $w_embed = 'WORD';
-    
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
@@ -444,7 +443,7 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo=='PDF') RodapePDF();
+  if ($p_tipo=='PDF') RodapePDF('LANDSCAPE');
   Rodape();
 } 
 // =========================================================================
@@ -464,12 +463,12 @@ function Rel_Programas() {
 
   if ($O=='L') {
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
-	  }
-	  elseif($p_tipo=='PDF'){
+    }
+    elseif($p_tipo=='PDF'){
       ob_start();  
       Cabecalho();
       ShowHTML('<HEAD>');
@@ -477,7 +476,7 @@ function Rel_Programas() {
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-	  CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
     
     } else {

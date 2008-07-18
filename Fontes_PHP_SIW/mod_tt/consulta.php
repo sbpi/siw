@@ -324,7 +324,7 @@ function listaTelefonica(){
   global $w_Disabled;
 
   if ($P2==1){
-    HeaderWord(); 
+    HeaderWord($_REQUEST['orientacao']); 
     CabecalhoWord($w_cliente,'Lista Telefônica',0);
   } else {
     cabecalho();
@@ -350,7 +350,7 @@ function listaTelefonica(){
   ShowHTML('</FONT></B></td></tr></TABLE>');
   if ($P2==0){
     ShowHTML('<HR>');
-  } 
+  }
   // Chama a função de visualização dos dados do usuário, na opção 'Listagem'
   VisualListaTel($w_cliente);
   if ($P2==0) {
@@ -358,7 +358,7 @@ function listaTelefonica(){
   } 
   $w_erro=null;
   $w_logo=null;
-} 
+}
 // =========================================================================
 // Rotina de visualização
 // -------------------------------------------------------------------------
@@ -367,7 +367,7 @@ function ResumoLigacaoParticular(){
   global $w_Disabled;
 
   if ($P2==1){
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Resumo de Ligações Particulares',0);
   } else {
     cabecalho();

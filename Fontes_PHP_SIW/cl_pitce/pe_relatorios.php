@@ -130,7 +130,7 @@ function Rel_Executivo() {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
       $w_embed = 'WORD';
@@ -219,9 +219,9 @@ function Rel_Executivo() {
             if ($p_projeto=='S') {
               //Programas
               if (nvl(f($row1,'sq_solic_pai'),'')=='') {
-                ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
               } else {
-                ShowHTML('        <tr><td colspan="16" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
               }
               ShowHTML('          <tr align="center">');
               if ($w_exibe_vinculo) ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Vinculação</b></td>');
@@ -264,7 +264,7 @@ function Rel_Executivo() {
                 null, null, $p_empenho, $p_processo);
             $RS3 = SortArray($RS3,'dados_pai','asc','codigo_interno','asc','titulo','asc'); 
             if (count($RS3)==0) {
-              if ($p_projeto=='S') ShowHTML('          <tr><td colspan="15" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
+              if ($p_projeto=='S') ShowHTML('          <tr><td colspan="10" align="center"><b>Nenhum projeto cadastrado neste programa</b></td></tr>');
             } else {
               $l_previsto[$w_proj] = 0;
               foreach($RS3 as $row3) {
@@ -478,7 +478,7 @@ function Rel_Programas() {
 
   if ($O=='L') {
     if ($p_tipo=='WORD') {
-      HeaderWord('portrait');
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';      

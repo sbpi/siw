@@ -271,7 +271,7 @@ function Inicial() {
     }
   }
   if ($w_tipo=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Pedido de ARP</TITLE>');
@@ -2108,14 +2108,14 @@ function Visual() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    //HeaderWord('PORTRAIT');
+    //HeaderWord($_REQUEST['orientacao']);
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<BODY>');
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   } else {    

@@ -108,7 +108,7 @@ function Valida() {
         $adldap = new adLDAP($array);
                                                                                                                                                          
         if(!$adldap->authenticate($wNoUsuario,$wDsSenha)){
-          $w_erro=2;
+          $w_erro=5;
         } else {
           // Testa se o usuário de rede existe e se não está bloqueado.
           $user = $adldap->user_info($wNoUsuario,array("userAccountControl"));
@@ -122,10 +122,11 @@ function Valida() {
 
     if ($w_erro>0) {
         ScriptOpen('JavaScript');
-        if ($w_erro==1) { ShowHTML('  alert(\'Usuário inexistente!\');'); }
+        if ($w_erro==1)     { ShowHTML('  alert(\'Usuário inexistente!\');'); }
         elseif ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
         elseif ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
         elseif ($w_erro==4) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor da rede local!\');'); }
+        elseif ($w_erro==5) { ShowHTML('  alert(\'Senha de rede inválida ou expirada!\');'); }
         // Se for SBPI e senha inválida, devolve a username, dispensando sua redigitação.
         if ($_SESSION['P_CLIENTE']==1 && $w_erro=2) {
             $w_retorno = $_SERVER['HTTP_REFERER'];

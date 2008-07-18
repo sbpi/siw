@@ -289,7 +289,7 @@ function Gerencial() {
   } 
 
   if ($O=='W') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=0.00;
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);

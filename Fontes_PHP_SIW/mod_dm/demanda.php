@@ -274,7 +274,7 @@ function Inicial() {
   }
 
   if ($w_tipo=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
@@ -1517,31 +1517,32 @@ function Visual() {
   $w_tipo  = strtoupper(trim($_REQUEST['w_tipo']));
 
   if ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
+    $w_embed = 'WORD';
   }  elseif($w_tipo == 'PDF') {
-        ob_start();  
-        Cabecalho();
-        ShowHTML('<HEAD>');
-        ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-        ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-        ShowHTML('</HEAD>');
-        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-        $w_embed = 'WORD';
-    } else {
-        Cabecalho();
-        ShowHTML('<HEAD>');
-        ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-        ShowHTML('</HEAD>');
-        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-        BodyOpenClean('onLoad=\'this.focus()\'; ');
-        CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
+    ob_start();  
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    $w_embed = 'WORD';
+  } else {
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
+    CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
   } 
   
   if ($w_embed != 'WORD') {

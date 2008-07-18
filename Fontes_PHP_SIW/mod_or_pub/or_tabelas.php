@@ -491,7 +491,7 @@ function Rel_PPA() {
     $RS = SortArray($RS,'ordena','asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag   = 1;
     $w_linha = 5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1017,7 +1017,7 @@ function Rel_Iniciativa() {
     $RS = SortArray($RS,'ordem','asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag   =1;
     $w_linha =5;
     CabecalhoWordOR('Iniciativa Prioritária',$w_pag,LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED'));
@@ -1505,7 +1505,7 @@ function Rel_Sintetico_IP() {
     $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,$p_sq_orprioridade,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante);
     $RS = SortArray($RS,'ordem','asc');
   } if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag  = 1;
     $w_linha= 8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1898,7 +1898,7 @@ function Rel_Sintetico_PPA() {
     $RS = db_getAcaoPPA::getInstanceOf($dbms,null,$w_cliente,$p_sq_acao_ppa_pai,$p_sq_acao_ppa,$p_responsavel,$p_selecionada_mpog,$p_selecionada_relevante,null,null,null,null);
     $RS = SortArray($RS,'ordena','asc');
   } if ($w_tipo_rel=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       $w_pag   = 1;
       $w_linha = 8;
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');

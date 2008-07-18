@@ -1870,7 +1870,7 @@ function AtualizaEtapa() {
     $w_sq_unidade   = f($RS,'sq_unidade_resp');
   } 
   if ($w_tipo=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
   } else {
     Cabecalho();
   } 

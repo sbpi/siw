@@ -225,7 +225,7 @@ function Inicial() {
   } 
 
   if ($w_tipo=='WORD') {
-    HeaderWord(); 
+    HeaderWord($_REQUEST['orientacao']); 
   } else {
     Cabecalho();
     ShowHTML('<HEAD>');

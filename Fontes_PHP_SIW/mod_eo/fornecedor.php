@@ -573,7 +573,7 @@ function Visual() {
 
   // Recupera o logo do cliente a ser usado nas listagens
   if ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de fornecedor',0);
   } else {
     Cabecalho();

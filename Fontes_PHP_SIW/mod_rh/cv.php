@@ -1991,7 +1991,7 @@ function Visualizar() {
   extract($GLOBALS);
   global $w_Disable;
   if ($P2==1) {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
   } else {
     cabecalho();
   } 

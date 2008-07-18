@@ -325,7 +325,7 @@ function Inicial() {
     }
   }
   if ($w_tipo=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de projetos</TITLE>');
@@ -4115,7 +4115,7 @@ function Visual() {
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   } else {

@@ -157,4 +157,29 @@ function repeteCaracter(car,qtd){
 	return saida;
 }
 
+messageObj = new DHTML_modalMessage();	// We only create one object of this class
+messageObj.setShadowOffset(5);	// Large shadow
 
+function displayMessage(x,y,url)
+{
+	messageObj.setSource(url);
+	messageObj.setCssClassMessageBox(false);
+	messageObj.setSize(x,y);
+	messageObj.setShadowDivVisible(true);	// Enable shadow for these boxes
+	messageObj.display();
+}
+
+function displayStaticMessage(messageContent,cssClass)
+{
+	messageObj.setHtmlContent(x,ymessageContent);
+	messageObj.setSize(x,y);
+	messageObj.setCssClassMessageBox(cssClass);
+	messageObj.setSource(false);	// no html source since we want to use a static message here.
+	messageObj.setShadowDivVisible(false);	// Disable shadow for these boxes	
+	messageObj.display();		
+}
+
+function closeMessage()
+{
+	messageObj.close();	
+}

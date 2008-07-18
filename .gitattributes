@@ -623,6 +623,8 @@ Fontes_PHP_SIW/classes/menu/xPandMenu.js -text
 Fontes_PHP_SIW/classes/menu/xPandMenu.php -text
 Fontes_PHP_SIW/classes/menu/xPandPrint.css -text
 Fontes_PHP_SIW/classes/pd4ml/Pd4Php.class -text
+Fontes_PHP_SIW/classes/pd4ml/Pd4Php.java -text
+Fontes_PHP_SIW/classes/pd4ml/pd4ml.jar -text
 Fontes_PHP_SIW/classes/pd4ml/pd4ml.php -text
 Fontes_PHP_SIW/classes/pd4ml/pd4ml_demo.jar -text
 Fontes_PHP_SIW/classes/pd4ml/ss_css2.jar -text
@@ -1361,6 +1363,7 @@ Fontes_PHP_SIW/funcoes/montaRadioMes.php -text
 Fontes_PHP_SIW/funcoes/montaStringOpcao.php -text
 Fontes_PHP_SIW/funcoes/montaTipoIndicador.php -text
 Fontes_PHP_SIW/funcoes/opcaoMenu.php -text
+Fontes_PHP_SIW/funcoes/orientacao.php -text
 Fontes_PHP_SIW/funcoes/retornaCadastrador_CL.php -text
 Fontes_PHP_SIW/funcoes/retornaCadastrador_PD.php -text
 Fontes_PHP_SIW/funcoes/retornaSimNao.php -text
@@ -1872,12 +1875,14 @@ Fontes_PHP_SIW/images/breve.gif -text
 Fontes_PHP_SIW/images/bright1.gif -text
 Fontes_PHP_SIW/images/bright3.gif -text
 Fontes_PHP_SIW/images/bright5.gif -text
+Fontes_PHP_SIW/images/close.gif -text
 Fontes_PHP_SIW/images/down.gif -text
 Fontes_PHP_SIW/images/excel.jpg -text
 Fontes_PHP_SIW/images/f2.gif -text
 Fontes_PHP_SIW/images/fan4.gif -text
 Fontes_PHP_SIW/images/fire1.gif -text
 Fontes_PHP_SIW/images/glschrm3.gif -text
+Fontes_PHP_SIW/images/horizontal.gif -text
 Fontes_PHP_SIW/images/icon-excel.gif -text
 Fontes_PHP_SIW/images/icone/ASF1.gif -text
 Fontes_PHP_SIW/images/icone/ASFSmall.gif -text
@@ -1934,6 +1939,7 @@ Fontes_PHP_SIW/images/ie_animated.gif -text
 Fontes_PHP_SIW/images/impressora.gif -text
 Fontes_PHP_SIW/images/impressora.jpg -text
 Fontes_PHP_SIW/images/line.gif -text
+Fontes_PHP_SIW/images/load.gif -text
 Fontes_PHP_SIW/images/logo_intra_gd.gif -text
 Fontes_PHP_SIW/images/mailto.gif -text
 Fontes_PHP_SIW/images/man.gif -text
@@ -1961,11 +1967,16 @@ Fontes_PHP_SIW/images/tickvermelho.gif -text
 Fontes_PHP_SIW/images/undercon.gif -text
 Fontes_PHP_SIW/images/unecatf1a.jpg -text
 Fontes_PHP_SIW/images/up.gif -text
+Fontes_PHP_SIW/images/vertical.gif -text
 Fontes_PHP_SIW/images/word.gif -text
 Fontes_PHP_SIW/images/word.jpg -text
 Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/js/funcoes.js -text
 Fontes_PHP_SIW/js/jquery.js -text
+Fontes_PHP_SIW/js/modal/css/modal-message.css -text
+Fontes_PHP_SIW/js/modal/js/ajax-dynamic-content.js -text
+Fontes_PHP_SIW/js/modal/js/ajax.js -text
+Fontes_PHP_SIW/js/modal/js/modal-message.js -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text
 Fontes_PHP_SIW/menu.php -text

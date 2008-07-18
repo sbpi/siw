@@ -292,7 +292,7 @@ function Inicial() {
   }
 
   if ($w_tipo=='WORD') {
-    HeaderWord(); 
+    HeaderWord($_REQUEST['orientacao']); 
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
@@ -1747,7 +1747,7 @@ function Visual() {
   $w_tipo  = strtoupper(trim($_REQUEST['w_tipo']));
 
   if ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');

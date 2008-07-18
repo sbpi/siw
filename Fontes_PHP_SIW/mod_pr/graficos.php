@@ -109,7 +109,7 @@ function Hierarquico() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  if ($w_tipo=='WORD') HeaderWord();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>EAP Hierárquica</TITLE>');
@@ -209,7 +209,7 @@ function Gantt() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  if ($w_tipo=='WORD') HeaderWord();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>Gantt</TITLE>');

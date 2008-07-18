@@ -151,7 +151,7 @@ class adLDAP {
 		//bind as the user		
 						
 		$this->_bind = @ldap_bind($this->_conn,$username.$this->_account_suffix,$password);
-		
+
 		if (!$this->_bind){ return (false); }
 		
 		
@@ -160,6 +160,17 @@ class adLDAP {
 			$this->_bind = @ldap_bind($this->_conn,$this->_ad_username.$this->_account_suffix,$this->_ad_password);
 			if (!$this->_bind){ echo ("FATAL: AD rebind failed."); exit(); } //this should never happen in theory
 		}
+		
+		return (true);
+	}
+
+	//Connects to LDAP anonymously
+	function auth_anonymous(){
+
+		//bind an anonymous user		
+		$this->_bind = @ldap_bind($this->_conn);
+
+		if (!$this->_bind){ return (false); }
 		
 		return (true);
 	}

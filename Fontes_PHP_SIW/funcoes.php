@@ -237,20 +237,19 @@ function headerWord($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Declaração inicial para páginas OLE com PDF
 // -------------------------------------------------------------------------
-function headerPdf($p_orientation='LANDSCAPE') {
-  extract($GLOBALS);
-  $l_html = '';
-  /*header('Content-type: application/msword',false);
-  header('Content-Disposition: attachment; filename=arquivo.doc');*/
-  $l_html .= '<html>';
-  $l_html .= '<head>';
-  $l_html .= '<meta http-equiv=Content-Type content="text/html; charset=windows-1252">';
-  $l_html .= '</head>';
-  $l_html .= '<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">';
-  $l_html .= '<BASE HREF="'.$conRootSIW.'">';
-  $l_html .= BodyOpenMail(null);
-
-  return $l_html;
+function headerPdf($titulo) {
+    extract($GLOBALS);    
+    ob_start();      
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<TITLE>'.$titulo.'</TITLE>');
+    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    CabecalhoWord($w_cliente, $titulo, $w_pag);
+    $w_embed = 'WORD';
+    BodyOpenMail(null);    
+    
 }
 
 // =========================================================================
@@ -381,6 +380,7 @@ function LinkOrdena($p_label,$p_campo) {
 // -------------------------------------------------------------------------
 function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   extract($GLOBALS);
+    
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS_Logo,'logo')>'') {
@@ -389,18 +389,24 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo);
   ShowHTML('</FONT></TR><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
   ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
-  if (($p_tipo!='WORD' && $w_tipo!='WORD') && ((strpos(strtoupper($w_pagina),'GR_'))===false)) {
+  if (($p_tipo!='WORD' && $w_tipo!='WORD')) {
     ShowHTML('<TR><TD ALIGN="RIGHT">');
     if(nvl($l_chave,'')>'') {
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
-    ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
-    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
+    $word_par = $w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.urlencode($TP).'&SG='.$SG.MontaFiltro('GET');    
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    ShowHtml('<img  style="cursor:pointer" onclick=\'displayMessage(350,160,"funcoes/orientacao.php?parametro='.base64_encode($word_par).'&p_tipo=WORD");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
+
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
-    ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+   // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
+    $pdf_par = $w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.urlencode($TP).'&SG='.$SG.MontaFiltro('GET');    
+   // echo $parametros;
+    ShowHtml('<img  style="cursor:pointer" onclick=\'displayMessage(350,160,"funcoes/orientacao.php?parametro='.base64_encode($pdf_par).'&p_tipo=PDF");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
   }
-  ShowHTML('</FONT></B></TD></TR></TABLE>');
+  ShowHTML('</TABLE>');
   flush();
 }
 
@@ -2486,6 +2492,7 @@ function Rodape() {
 // -------------------------------------------------------------------------
 function RodapePDF() {
   extract($GLOBALS);
+  $p_orientation = $_GET["orientacao"];
   if ($_SESSION['P_CLIENTE']==6761) {
     ShowHTML('</center>');
     ShowHTML('<center>');
@@ -2532,7 +2539,8 @@ function RodapePDF() {
 	<body>
 		<form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
 		<input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
-        <input type="hidden" value="<?php echo $conFilePhysical . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
+    <input type="hidden" value="<?php echo $conFilePhysical . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
+		<input type="hidden" value="<?php echo $p_orientation; ?>" name="orientation">
 		</form>
 		<?php echo('<script>document.formpdf.submit();</script>'); ?>
 	</body>
@@ -3263,9 +3271,16 @@ function BodyOpen($cProperties) {
        $wProperties = 'required(); '.$wProperties;
      }
    }
+   
+   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
+   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
+   ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
+   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
    ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
    ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
+   
+   
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
    else {
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
@@ -3278,6 +3293,12 @@ function BodyOpen($cProperties) {
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
    extract($GLOBALS);
+   
+   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
+   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
+   ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
+   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
+   
    ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
    ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
@@ -3304,6 +3325,11 @@ function BodyOpenClean($cProperties) {
   } else {
     $wProperties = ' onLoad=\'required();\' ';
   }
+  
+  ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
+  ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
+  ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
+  ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');

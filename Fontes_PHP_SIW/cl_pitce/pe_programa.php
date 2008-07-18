@@ -217,7 +217,7 @@ function Inicial() {
     }
   }
   if ($w_tipo=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de programas</TITLE>');
@@ -1313,7 +1313,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
       else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
       $w_embed = 'WORD';
     } elseif ($w_tipo=='WORD') {
-      HeaderWord(null);     
+      HeaderWord($_REQUEST['orientacao']);     
       if ($P1==1 || $P1==2) CabecalhoWord($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),0);
       else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
       $w_embed = 'WORD';

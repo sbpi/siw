@@ -97,6 +97,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 
 $p_tipo          = strtoupper($_REQUEST['p_tipo']);
+$p_graf          = strtoupper($_REQUEST['p_graf']);
 $p_ativo         = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante   = strtoupper($_REQUEST['p_solicitante']);
 $p_unidade       = strtoupper($_REQUEST['p_unidade']);
@@ -159,7 +160,7 @@ function Gerencial() {
   if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
-  if ($O=='L' || $O=='V' || $O=='W') {
+  if ($O=='L' || $O=='V' || $w_embed == 'WORD') {
 
     $w_filtro='';
     switch ($p_agrega) {
@@ -295,13 +296,18 @@ function Gerencial() {
     } 
   } 
 
-  if ($O=='W') {
-    HeaderWord(null);
+  if ($p_tipo == 'WORD') {
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=0.00;
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
+  }elseif($p_tipo == 'PDF'){
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome'));
+    $w_embed = 'WORD';
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     if ($O=='P') {
@@ -359,8 +365,8 @@ function Gerencial() {
     } else {
       BodyOpenClean('onLoad=this.focus();');
     } 
-    if ($O=='L') {
-      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),3);
+    if ($O=='L' && $w_embed != 'WORD') {
+      CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
       ShowHTML('<HR>');
       if ($w_filtro>'') ShowHTML($w_filtro);
     } else {
@@ -370,8 +376,8 @@ function Gerencial() {
   } 
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if ($O=='L' || $O=='W') {
-    if ($O=='L') {
+  if ($O=='L' || $w_embed =='WORD') {
+    if ($O=='L' && $w_embed != 'WORD') {
       ShowHTML('<tr><td><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="bottom">');
       ShowHTML('    <td>');
       if (MontaFiltro('GET')>'') {
@@ -384,12 +390,12 @@ function Gerencial() {
         ShowHTML('    <td align="right"><b><font class="SS">Exibir no mapa</b> <input class="stc" type="checkbox" name="w_origem" value="pesquisa" id="w_origem">');
       }
       ShowHTML('  </table>');
-    } 
+    }
     ImprimeCabecalho();
     if (count($RS1)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      if ($O=='L') {
+      if ($O=='L' && $w_embed != 'WORD') {
         ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
         ShowHTML('  function lista (filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
@@ -503,7 +509,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha += 2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed !='WORD' || ($w_embed =='WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[4]);
               } 
@@ -528,7 +534,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha += 2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed !='WORD' || ($w_embed =='WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'titulo'));
               } 
@@ -553,7 +559,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'proponente'));
               } 
@@ -578,7 +584,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));
               } 
@@ -603,7 +609,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));
               } 
@@ -628,7 +634,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));
               } 
@@ -653,7 +659,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));
               } 
@@ -678,7 +684,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prioridade'));
               } 
@@ -703,7 +709,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha=$w_linha+2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));
               } 
@@ -731,7 +737,7 @@ function Gerencial() {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha += 2;
               } 
-              if ($O!='W' || ($O=='W' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.$w_array[1].' - '.$w_array[2]);
               } 
@@ -751,7 +757,7 @@ function Gerencial() {
             } 
             break;
         } 
-        if ($O=='W' && $w_linha>25) {
+        if ($w_embed == 'WORD' && $w_linha>25) {
           // Se for geração de MS-Word, quebra a página
           ShowHTML('    </table>');
           ShowHTML('  </td>');
@@ -830,18 +836,23 @@ function Gerencial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
 	
-    if (count($RS1)>0 && $p_tipo=='N') {
-	  include_once('funcoes/geragraficoflash.php');
-      // Coloca o gráfico somente se o usuário desejar	  
-      ShowHTML('<tr><td align="center" height=20>');
-      //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=M&p_objeto='.f($RS_Menu,'nome').'&p_tipo='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-	  ShowHTML('<tr><td align="center" height=20>');	  
-	  barra_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "barra");
-	  if (($t_totcad+$t_tottram)>0) {
-      //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=M&p_objeto='.f($RS_Menu,'nome').'&p_tipo='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-	  pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
+    if (count($RS1)>0 && $p_graf=='N') {
+    if($p_tipo == 'PDF'){
+        $w_embed = 'WORD';    
+    }
+    if($w_embed != 'WORD'){
+        include_once('funcoes/geragraficoflash.php');
+        // Coloca o gráfico somente se o usuário desejar	  
+        ShowHTML('<tr><td align="center" height=20>');
+        //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=M&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
+    	ShowHTML('<tr><td align="center" height=20>');	  
+    	barra_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "barra");
+    	if (($t_totcad+$t_tottram)>0) {
+        //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=M&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
+    	pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
       } 
-    } 
+    }
+    }    
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -871,7 +882,7 @@ function Gerencial() {
     if ($p_agrega=='GRPRRESP')     ShowHTML('          <option value="GRPRRESP" selected>Responsável');        else ShowHTML('          <option value="GRPRRESP">Responsável');
     if ($p_agrega=='GRPRVINC')     ShowHTML('          <option value="GRPRVINC" selected>Vinculação');         else ShowHTML('          <option value="GRPRVINC">Vinculação');
     ShowHTML('          </select></td>');
-    MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_tipo,'p_tipo');
+    MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
     MontaRadioSN('<b>Limita tamanho do assunto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
@@ -923,7 +934,6 @@ function Gerencial() {
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\';">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\'">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -939,6 +949,9 @@ function Gerencial() {
   } 
   ShowHTML('</table>');
   ShowHTML('</center>');
+  if($p_tipo == 'PDF'){
+    RodapePdf();
+  }
   Rodape();
 }
 
@@ -984,12 +997,15 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave) {
   extract($GLOBALS);
-  if ($O=='L')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_solic,0).'</a>&nbsp;</td>');                             else ShowHTML('          <td align="right">'.formatNumber($l_solic,0).'&nbsp;</td>');
-  if ($l_cad>0 && $O=='L')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_cad,0).'</a>&nbsp;</td>');                                else ShowHTML('          <td align="right">'.formatNumber($l_cad,0).'&nbsp;</td>');
-  if ($l_tram>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_tram,0).'</a>&nbsp;</td>');                               else ShowHTML('          <td align="right">'.formatNumber($l_tram,0).'&nbsp;</td>');
-  if ($l_conc>0 && $O=='L')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_conc,0).'</a>&nbsp;</td>');                               else ShowHTML('          <td align="right">'.formatNumber($l_conc,0).'&nbsp;</td>');
-  if ($l_atraso>0 && $O=='L')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</font></a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.formatNumber($l_atraso,0).'&nbsp;</td>');
-  if ($l_aviso>0 && $O=='L')    ShowHTML('          <td align="right"><font color="red"><b>'.formatNumber($l_aviso,0).'</font>&nbsp;</td>');                                                                                                                                                                                           else ShowHTML('          <td align="right"><b>'.formatNumber($l_aviso,0).'&nbsp;</td>');
+  if($p_tipo == 'PDF'){
+      $w_embed = 'WORD';  
+  }
+  if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_solic,0).'</a>&nbsp;</td>');                             else ShowHTML('          <td align="right">'.formatNumber($l_solic,0).'&nbsp;</td>');
+  if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_cad,0).'</a>&nbsp;</td>');                                else ShowHTML('          <td align="right">'.formatNumber($l_cad,0).'&nbsp;</td>');
+  if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_tram,0).'</a>&nbsp;</td>');                               else ShowHTML('          <td align="right">'.formatNumber($l_tram,0).'&nbsp;</td>');
+  if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_conc,0).'</a>&nbsp;</td>');                               else ShowHTML('          <td align="right">'.formatNumber($l_conc,0).'&nbsp;</td>');
+  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</font></a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.formatNumber($l_atraso,0).'&nbsp;</td>');
+  if ($l_aviso>0 && $w_embed != 'WORD')    ShowHTML('          <td align="right"><font color="red"><b>'.formatNumber($l_aviso,0).'</font>&nbsp;</td>');                                                                                                                                                                                           else ShowHTML('          <td align="right"><b>'.formatNumber($l_aviso,0).'&nbsp;</td>');
   if ($_SESSION['INTERNO']=='S') {
     ShowHTML('          <td align="right">'.formatNumber($l_valor,2).'&nbsp;</td>');
     ShowHTML('          <td align="right">'.formatNumber($l_custo,2).'&nbsp;</td>');

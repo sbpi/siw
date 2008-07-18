@@ -152,7 +152,7 @@ function Rel_Limite() {
   }
   
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag   = 1;
     $w_linha = 8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

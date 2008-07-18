@@ -100,7 +100,7 @@ function Inicial() {
     $RS = SortArray($RS,strtolower($p_ordena),'asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord();
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

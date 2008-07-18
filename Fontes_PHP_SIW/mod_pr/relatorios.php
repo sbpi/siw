@@ -155,7 +155,7 @@ function Rel_Progresso() {
     }
     
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'WORD';
@@ -649,7 +649,7 @@ function Rel_Projeto() {
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
@@ -961,7 +961,7 @@ function Rel_Atualizacao() {
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
    if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';
@@ -971,14 +971,14 @@ function Rel_Atualizacao() {
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } elseif($p_tipo=='PDF'){
-      ob_start();  
+      ob_start();      
       Cabecalho();
       ShowHTML('<HEAD>');
       ShowHTML('<TITLE>Relatório de atualização dos dados dos projetos</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);            
       $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -1177,7 +1177,7 @@ function Rel_Atualizacao() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo=='PDF') RodapePDF();
+  if ($p_tipo=='PDF') RodapePDF('D');
   elseif ($p_tipo!='WORD') Rodape();
 } 
 

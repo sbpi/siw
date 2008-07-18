@@ -278,7 +278,7 @@ function EmitirGR () {
   $w_nu_guia   = nvl($w_nu_guia,$_REQUEST['w_nu_guia']);
   $w_ano_guia  = nvl($w_ano_guia,$_REQUEST['w_ano_guia']);
 
-  HeaderWord('PORTRAIT');
+  HeaderWord($_REQUEST['orientacao']);
   ShowHTML(VisualGR($w_unidade, $w_nu_guia, $w_ano_guia));
   Rodape();
 } 

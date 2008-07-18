@@ -134,7 +134,7 @@ function Rel_ItensAta() {
     }
   } 
   if ($w_tipo=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,'ITENS DE ARP',$w_pag);
   } else {

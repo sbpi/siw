@@ -173,7 +173,7 @@ function Gerencial() {
     } 
   } 
   if ($O=='W') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag      = 1;
     $w_linha    = 0;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

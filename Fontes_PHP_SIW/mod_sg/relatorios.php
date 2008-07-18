@@ -126,7 +126,7 @@ function Rel_Permissao() {
 
   if ($O=='L') {
     if ($w_tipo=='WORD') {
-      HeaderWord('PORTRAIT');
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE PERMISSÕES',$w_pag);
       $w_embed = 'WORD';
@@ -291,7 +291,7 @@ function TelaUsuarioRel() {
   $w_tipo      = $_REQUEST['w_tipo'];
   $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, null, null);
   if ($w_tipo=='WORD') {
-    HeaderWord('PORTRAIT');
+    HeaderWord($_REQUEST['orientacao']);
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente,'Visualização',$w_pag);
     $w_embed = 'WORD';

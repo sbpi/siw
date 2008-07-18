@@ -1987,7 +1987,7 @@ function AtualizaMeta() {
     $w_sq_pessoa    = f($RS,'solicitante');
     $w_sq_unidade   = f($RS,'sq_unidade_resp');
   } 
-  if ($w_tipo=='WORD') HeaderWord();  else Cabecalho();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);  else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Meta da ação</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
@@ -2655,7 +2655,7 @@ function Restricoes() {
     $w_observacao_monitor   = f($RS,'observacao_monitor');
     $w_nm_tipo_restricao    = f($RS,'nm_tp_restricao');
   } 
-  if ($w_tipo=='WORD') HeaderWord(); else Cabecalho();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']); else Cabecalho();
   ShowHTML('<HEAD>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -3122,7 +3122,7 @@ function VisualNovo() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  if ($w_tipo=='WORD') HeaderWord(); else Cabecalho();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
   ShowHTML('</HEAD>');
@@ -3160,7 +3160,7 @@ function Visual() {
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-  if ($w_tipo=='WORD') HeaderWord(); else Cabecalho();
+  if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']); else Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Ações - Exercício '.$w_ano.'</TITLE>');
   ShowHTML('</HEAD>');

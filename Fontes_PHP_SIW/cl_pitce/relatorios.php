@@ -152,7 +152,7 @@ function Rel_Progresso() {
       $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     }
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'WORD';
@@ -660,7 +660,7 @@ function Rel_Projeto() {
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
@@ -975,7 +975,7 @@ function Rel_Atualizacao() {
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     if ($p_tipo=='WORD') {
-      HeaderWord(null);
+      HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';

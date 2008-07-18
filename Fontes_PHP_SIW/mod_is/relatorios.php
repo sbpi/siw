@@ -608,7 +608,7 @@ function Rel_PPA() {
     } 
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1107,7 +1107,7 @@ function Rel_Projeto(){
     }
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1511,7 +1511,7 @@ function Rel_Programa() {
     } 
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=5;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1817,7 +1817,7 @@ function Rel_Sintetico_PR() {
     $RS = SortArray($RS,'ordem','asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2135,7 +2135,7 @@ function Rel_Sintetico_PPA() {
     $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2494,7 +2494,7 @@ function Rel_Sintetico_Prog() {
     $RS = SortArray($RS,'ds_programa','asc');
   } 
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2749,7 +2749,7 @@ function Rel_Gerencial_Acao() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    if ($w_tipo=='WORD') HeaderWord();
+    if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Plano Gerencial - Ações PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
@@ -2833,7 +2833,7 @@ function Rel_Gerencial_Prog() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    if ($w_tipo=='WORD') HeaderWord();
+    if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>Plano Gerencial - Programas PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
@@ -2918,7 +2918,7 @@ function Rel_Gerencial_Tarefa() {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
-    if ($w_tipo=='WORD') HeaderWord();
+    if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Tarefa</TITLE>');
@@ -3019,7 +3019,7 @@ function Rel_Metas() {
   $RS = SortArray($RS,'cd_programa','asc','cd_acao','asc','cd_unidade','asc','cd_subacao','asc');
   foreach($RS as $row){$RS=$row; break;}
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3527,7 +3527,7 @@ function Rel_Det_Tarefa() {
           null,null,null,null,null,null,$p_cd_programa,substr($p_cd_acao,4,4),null,null,$w_ano);
   $RS = SortArray($RS,'ordem','asc','phpdt_fim','asc','prioridade','asc');
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3749,7 +3749,7 @@ function Rel_Det_Acao() {
           null,null,null,null,null,null,$p_cd_programa,substr($p_cd_acao,4,4),null,null,$w_ano);
   $RS = SortArray($RS,'phpdt_fim','asc','prioridade','asc');
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3988,7 +3988,7 @@ function Rel_Det_Prog() {
             null,null,null,null,null,null,null,$p_cd_programa,null,null,$w_ano);
   $RS4 = SortArray($RS4,'phpdt_fim','asc','prioridade','asc');
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -4226,7 +4226,7 @@ function Rel_Limite() {
           null,null,null,null,null,null,$p_cd_programa,substr($p_cd_acao,4,4),null,null,$w_ano);
   $RS = SortArray($RS,'sq_unidade_resp','asc');
   if ($w_tipo_rel=='WORD') {
-    HeaderWord(null);
+    HeaderWord($_REQUEST['orientacao']);
     $w_pag=1;
     $w_linha=8;
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
