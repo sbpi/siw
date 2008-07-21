@@ -4652,7 +4652,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $l_html .= chr(13).'        <td width="1%" nowrap align="right" >'.formatNumber($l_perc).' %</td>';
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
   $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_ativ1.'</td>';
-  if($l_arquivo>0) $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
+  if($P4!=1 && $l_arquivo>0) $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
   else             $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_arquivo.'</td>';
   if ($l_oper == 'S') {
     $l_html .= chr(13).'        <td width="1%" nowrap align="top" nowrap rowspan='.$l_row.'>';

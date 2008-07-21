@@ -1154,7 +1154,7 @@ function visualRecurso($l_chave,$l_navega=true,$l_solic) {
     $l_html .= chr(13).'            <li>As datas destacadas em vermelho indicam a indisponibilidade do recurso.';
   }
   if (count($l_rs_Aloc)>0) {
-    $l_html .= chr(13).'            <li>As datas destacadas em amarelo indicam a alocaçao do recurso.';
+    $l_html .= chr(13).'            <li>As datas destacadas em amarelo indicam a alocação do recurso.';
   }
   $l_html .= chr(13).'            </ul>';
 
@@ -1363,7 +1363,7 @@ function Solic() {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul>');
     ShowHTML('  <li>Insira cada um dos recursos necessários e indique os períodos de alocação.');
     ShowHTML('  <li>Cada recurso pode ser alocado em mais de um período.');
-    ShowHTML('  <li>Os períodos de alocaçao devem estar contidos em períodos de disponibilidade do recurso.');
+    ShowHTML('  <li>Os períodos de alocação devem estar contidos em períodos de disponibilidade do recurso.');
     ShowHTML('  <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     if($P1!=1)ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
@@ -1436,7 +1436,7 @@ function Solic() {
     ShowHTML('      <tr valign="top">');
     selecaoTipoRecurso_PE('T<U>i</U>po do recurso:','I',null,$w_tipo_recurso,f($RS_Menu,'sq_menu'),'w_tipo_recurso','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
     selecaoRecurso('<U>R</U>ecurso:','R',null,$w_recurso,nvl($w_tipo_recurso,0),f($RS_Menu,'sq_menu'),'w_recurso','ALOCACAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_recurso\'; document.Form.submit();"');
-    ShowHTML('      <tr><td colspan=3><b><U>J</U>ustificativa para alocaçao do recurso:<br><TEXTAREA ACCESSKEY="D" class="sti" name="w_justificativa" rows=5 cols=80." '.$w_Disabled.'>'.$w_justificativa.'</textarea></td>');
+    ShowHTML('      <tr><td colspan=3><b><U>J</U>ustificativa para alocação do recurso:<br><TEXTAREA ACCESSKEY="D" class="sti" name="w_justificativa" rows=5 cols=80." '.$w_Disabled.'>'.$w_justificativa.'</textarea></td>');
     if ($O=='I') {
       ShowHTML('      <tr valign="top">');
       ShowHTML('          <td><b>Período desejado para alocação do recurso:</b><br>');
@@ -1575,7 +1575,7 @@ function SolicPeriodo() {
   if ($O=='L') {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul>');
     ShowHTML('  <li>Insira cada um dos períodos desejados para alocação do recurso.');
-    ShowHTML('  <li>Os períodos de alocaçao devem estar contidos em períodos de disponibilidade do recurso.');
+    ShowHTML('  <li>Os períodos de alocação devem estar contidos em períodos de disponibilidade do recurso.');
     ShowHTML('  <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr><td>');

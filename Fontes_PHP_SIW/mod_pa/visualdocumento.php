@@ -20,7 +20,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
 
   $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
-  if ($O!='T' && $O!='V') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do documento.">Exibir todas as informações</a></td></tr>';
+  if ($O!='T' && $O!='V') {
+    if ($l_formato!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do documento.">Exibir todas as informações</a></td></tr>';
+  }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   if (f($RS,'processo')=='S') $w_tipo = 'PROCESSO'; else $w_tipo='DOCUMENTO';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td></tr>';

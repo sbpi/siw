@@ -179,6 +179,7 @@ function base64encodeIdentificada($string){
 // -------------------------------------------------------------------------
 function headerWord($p_orientation='LANDSCAPE') {
   extract($GLOBALS);
+  header("Cache-Control: no-cache, must-revalidate",false);
   header('Content-type: application/msword',false);
   header('Content-Disposition: attachment; filename=arquivo.doc');
   ShowHTML('<html xmlns:o="urn:schemas-microsoft-com:office:office" ');
@@ -237,10 +238,14 @@ function headerWord($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Declaração inicial para páginas OLE com PDF
 // -------------------------------------------------------------------------
+
 function headerPdf($titulo) {
-    extract($GLOBALS);    
+    extract($GLOBALS);  
+	header("Cache-Control: no-cache, must-revalidate",false);
+	header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");	
+	ob_end_clean(); 	
     ob_start();      
-    Cabecalho();
+    Cabecalho();  
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$titulo.'</TITLE>');
     ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
@@ -248,8 +253,7 @@ function headerPdf($titulo) {
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     CabecalhoWord($w_cliente, $titulo, $w_pag);
     $w_embed = 'WORD';
-    BodyOpenMail(null);    
-    
+    BodyOpenMail(null);       
 }
 
 // =========================================================================
@@ -395,18 +399,23 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
-    $word_par = $w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.urlencode($TP).'&SG='.$SG.MontaFiltro('GET');    
+    $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
-    ShowHtml('<img  style="cursor:pointer" onclick=\'displayMessage(350,160,"funcoes/orientacao.php?parametro='.base64_encode($word_par).'&p_tipo=WORD");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(350,160,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
 
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
    // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-    $pdf_par = $w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.urlencode($TP).'&SG='.$SG.MontaFiltro('GET');    
+    $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
    // echo $parametros;
-    ShowHtml('<img  style="cursor:pointer" onclick=\'displayMessage(350,160,"funcoes/orientacao.php?parametro='.base64_encode($pdf_par).'&p_tipo=PDF");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(350,160,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
   }
   ShowHTML('</TABLE>');
+  ShowHTML('<form name="temp">');
+  ShowHTML('<input type="hidden" name="word" id="word" value="'.$word_par.'">');
+  ShowHTML('<input type="hidden" name="pdf" id="pdf" value="'.$pdf_par.'">');
+  ShowHTML('<input type="hidden" name="opcao" id="opcao" value="">');
+  ShowHTML('</form>');
   flush();
 }
 
@@ -962,13 +971,13 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
     }
   } else {
     if ($l_tipo=='IDE') {
-      if ($l_andamento < 70)                           $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
-      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
-      else                                             $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDE fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDE próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDE na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDC') {
-      if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10" align="center">';
-      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10" align="center">';
-      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10" align="center">';  
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';  
     }
   }
   return $l_string;
@@ -2512,6 +2521,7 @@ function RodapePDF() {
   $shtml = ob_get_contents();
   ob_end_clean();
 
+//  $shtml = str_replace("msword",'', $shtml);	
   $shtml = str_replace("'",'"', $shtml);
   $shtml = str_replace('"',"'", $shtml);   
   
