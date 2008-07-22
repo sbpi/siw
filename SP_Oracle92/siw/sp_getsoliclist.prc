@@ -67,7 +67,74 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
-   If p_restricao = 'FILHOS' Then
+   If p_restricao = 'ESTRUTURA' Then
+      open p_result for
+         select a.sq_menu,            a.sq_modulo,                   a.nome,
+                a.tramite,            a.ultimo_nivel,                a.p1,
+                a.p2,                 a.p3,                          a.p4,
+                a.sigla,              a.descentralizado,             a.externo,
+                a.acesso_geral,       a.ordem as or_servico,         a.sq_unid_executora,  
+                a.emite_os,           a.consulta_opiniao,            a.envia_email,
+                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
+                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a1.nome as nm_modulo,    a1.sigla as sg_modulo,      a1.ordem as or_modulo,
+                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
+                b.cadastrador,        b.executor,                    b.descricao,
+                b.justificativa,      b.inicio,                      b.fim,
+                b.inclusao,           b.ultima_alteracao,            b.conclusao,
+                b.valor,              b.opiniao,
+                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
+                b.palavra_chave,      b.sq_plano,                    dados_solic(b.sq_siw_solicitacao) as dados_solic,
+                SolicRestricao(b.sq_siw_solicitacao,null) as restricao,
+                coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                b.titulo,
+                b.titulo as ac_titulo,
+                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
+                calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc,
+                coalesce(c.aviso_prox_conc, d.aviso_prox_conc) as aviso_prox_conc,
+                coalesce(c.inicio_real,     d.inicio_real)     as inicio_real,
+                coalesce(c.fim_real,        d.fim_real)        as fim_real,
+                coalesce(c.custo_real,      d.custo_real)      as custo_real,
+                cast(b.fim as date)-cast(coalesce(c.dias_aviso,d.dias_aviso) as integer) as aviso,
+                o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind, 
+                (select count(x.sq_siw_solicitacao) 
+                   from siw_solicitacao x
+                        inner   join siw_menu   y on (x.sq_menu   = y.sq_menu)
+                          inner join siw_modulo z on (y.sq_modulo = z.sq_modulo)
+                  where x.sq_solic_pai = b.sq_siw_solicitacao
+                    and 'GD'           <> z.sigla
+                    and 'GDP'          <> substr(y.sigla,1,3)
+                    and (p_tipo        <> 7 or (p_tipo = 7 and z.sigla in ('PE','PR')))
+                ) as qt_filho,
+                level
+           from siw_menu                                      a
+                inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
+                inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
+                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
+                    left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
+                      inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
+                        inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
+                  left         join pe_programa               c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                  left         join pj_projeto                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+          where 'S'            = b1.ativo
+            and 'GD'           <> a1.sigla
+            and 'GDP'          <> substr(a.sigla,1,3)
+            and (p_tipo        <> 7    or (p_tipo = 7 and a1.sigla in ('PE','PR')))
+            and (p_sq_orprior  is null or (p_sq_orprior is not null and (b.sq_plano = p_sq_orprior)))
+            and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and (0         < (select count(y.sq_siw_solicitacao)
+                                                                                         from siw_solicitacao_objetivo y
+                                                                                        where y.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                                                           and y.sq_peobjetivo      = p_sq_acao_ppa
+                                                                                      )
+                                                                         )
+                                          )
+                )
+            and 0 < acesso(b.sq_siw_solicitacao, p_pessoa)
+         connect by prior b.sq_siw_solicitacao = b.sq_solic_pai
+         start with b.sq_solic_pai =  p_chave;
+   Elsif p_restricao = 'FILHOS' Then
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
