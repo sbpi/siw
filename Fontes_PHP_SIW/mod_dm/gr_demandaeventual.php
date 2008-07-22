@@ -295,9 +295,10 @@ function Gerencial() {
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
   }elseif($p_tipo == 'PDF'){
-    HeaderPdf($w_TP);
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome'));
     $w_embed = 'WORD';
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     if ($O=='P') {
@@ -712,7 +713,7 @@ function Gerencial() {
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
+                //ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
               } 
               $w_nm_quebra  = f($row,'nm_demanda_tipo');
               $w_chave      = f($row,'sq_demanda_tipo');
@@ -736,7 +737,9 @@ function Gerencial() {
           ShowHTML('</tr>');
           ShowHTML('</table>');
           ShowHTML('</center></div>');
-          ShowHTML('    <br style="page-break-after:always">');
+          if($w_embed != 'WORD'){
+            //ShowHTML('    <br style="page-break-after:always">');
+          }          
           $w_linha=0;
           $w_pag=$w_pag + 1;
           CabecalhoWord($w_cliente,$w_TP,$w_pag);
@@ -916,7 +919,6 @@ function Gerencial() {
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir resumo" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; document.Form.target=\'\';">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gerar Word" onClick="javascript:document.Form.O.value=\'W\'; document.Form.target=\'Word\';">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -978,7 +980,7 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave) {
   extract($GLOBALS);
-  if($p_tipo == 'PDF'){
+  if($p_tipo == 'PDF' || $p_tipo == 'WORD'){
     $w_embed = 'WORD';  
   }
 

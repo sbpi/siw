@@ -195,6 +195,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('  <w:SpellingState>Clean</w:SpellingState> ');
   ShowHTML('  <w:GrammarState>Clean</w:GrammarState> ');
   ShowHTML('  <w:HyphenationZone>21</w:HyphenationZone> ');
+  ShowHTML('  <w:IgnoreMixedContent>true</w:IgnoreMixedContent>');
   ShowHTML('  <w:Compatibility> ');
   ShowHTML('   <w:BreakWrappedTables/> ');
   ShowHTML('   <w:SnapToGridInCell/> ');
@@ -401,13 +402,13 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
     $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
-    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(350,160,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
 
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
    // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
     $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
    // echo $parametros;
-    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(350,160,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
   }
   ShowHTML('</TABLE>');

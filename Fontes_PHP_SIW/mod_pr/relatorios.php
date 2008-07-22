@@ -167,6 +167,7 @@ function Rel_Progresso() {
     } elseif($p_tipo=='PDF'){
       ob_start();  
       Cabecalho();
+	  header('Content-type: application/pdf');
       ShowHTML('<HEAD>');
       ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
@@ -661,6 +662,7 @@ function Rel_Projeto() {
     } elseif($p_tipo=='PDF'){
       ob_start();  
       Cabecalho();
+	  headerPdf();
       ShowHTML('<HEAD>');
       ShowHTML('<TITLE>Relatório detalhado do projeto</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
@@ -973,6 +975,7 @@ function Rel_Atualizacao() {
     } elseif($p_tipo=='PDF'){
       ob_start();      
       Cabecalho();
+  	  headerPdf();
       ShowHTML('<HEAD>');
       ShowHTML('<TITLE>Relatório de atualização dos dados dos projetos</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');

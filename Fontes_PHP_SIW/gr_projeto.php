@@ -997,7 +997,7 @@ function ImprimeCabecalho() {
 // -------------------------------------------------------------------------
 function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valor,$l_custo,$l_acima,$l_chave) {
   extract($GLOBALS);
-  if($p_tipo == 'PDF'){
+  if($p_tipo == 'PDF' || $p_tipo == 'WORD'){
       $w_embed = 'WORD';  
   }
   if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_solic,0).'</a>&nbsp;</td>');                             else ShowHTML('          <td align="right">'.formatNumber($l_solic,0).'&nbsp;</td>');

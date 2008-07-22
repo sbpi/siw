@@ -162,6 +162,7 @@ messageObj.setShadowOffset(5);	// Large shadow
 
 function displayMessage(x,y,url)
 {
+	retiraGrafico();
 	messageObj.setSource(url);
 	messageObj.setCssClassMessageBox(false);
 	messageObj.setSize(x,y);
@@ -171,6 +172,7 @@ function displayMessage(x,y,url)
 
 function displayStaticMessage(messageContent,cssClass)
 {
+	retiraGrafico();	
 	messageObj.setHtmlContent(x,ymessageContent);
 	messageObj.setSize(x,y);
 	messageObj.setCssClassMessageBox(cssClass);
@@ -182,4 +184,15 @@ function displayStaticMessage(messageContent,cssClass)
 function closeMessage()
 {
 	messageObj.close();	
+	colocaGrafico();
+}
+
+function retiraGrafico(){
+	$("#ProjetosDiv").hide();
+	$("#AnaliseDiv").hide();
+}
+
+function colocaGrafico(){
+	$("#ProjetosDiv").show();
+	$("#AnaliseDiv").show();	
 }

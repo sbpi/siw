@@ -259,7 +259,9 @@ function Inicial() {
 
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']); 
+    $w_embed = 'WORD';
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
