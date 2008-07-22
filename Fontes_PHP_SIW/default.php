@@ -301,8 +301,12 @@ function LogOn() {
     ShowHTML('<HTML>');
     ShowHTML('<HEAD>');
     ShowHTML('<link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
-    ShowHTML('<script language="javascript" type="text/javascript" src="/desenv/js/jquery.js"></script>');
-    ShowHTML('<script language="javascript" type="text/javascript" src="/desenv/js/funcoes.js"></script>');
+    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
+    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
+    ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
+    ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
+    ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
+    ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Autenticação</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('$(document).ready(function(){');

@@ -240,21 +240,20 @@ function headerWord($p_orientation='LANDSCAPE') {
 // Declaração inicial para páginas OLE com PDF
 // -------------------------------------------------------------------------
 
-function headerPdf($titulo) {
-    extract($GLOBALS);  
+function headerPdf($titulo,$pag=null) {
+  extract($GLOBALS);  
 	header("Cache-Control: no-cache, must-revalidate",false);
 	header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");	
 	ob_end_clean(); 	
-    ob_start();      
-    Cabecalho();  
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$titulo.'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente, $titulo, $w_pag);
-    $w_embed = 'WORD';
-    BodyOpenMail(null);       
+  ob_start();      
+  Cabecalho();  
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$titulo.'</TITLE>');
+  ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  CabecalhoWord($w_cliente, $titulo, $pag);
+  BodyOpenMail(null);       
 }
 
 // =========================================================================
