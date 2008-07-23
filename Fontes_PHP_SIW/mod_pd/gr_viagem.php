@@ -145,64 +145,78 @@ exit;
 // -------------------------------------------------------------------------
 function Gerencial() {
   extract($GLOBALS);
-
-  if ($O=='L' || $O=='V' || $w_embed == 'WORD') {
+  
+  $w_pag   = 1;
+  $w_linha = 0;
+  
+  if ($O=='L' || $O=='V' || $p_tipo == 'WORD' || $p_tipo=='PDF') {
     $w_filtro='';
     if ($p_projeto>'') {
+      $w_linha++;
       $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
       $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">'.f($RS,'titulo').'</a></b>]';
     } 
     if ($p_atividade>'') {
+      $w_linha++;
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
-    if ($p_codigo>'') $w_filtro .= '<tr valign="top"><td align="right">PCD nº <td>[<b>'.$p_codigo.'</b>]';
-    if ($p_assunto>'') $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]';
+    if ($p_codigo>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">PCD nº <td>[<b>'.$p_codigo.'</b>]'; }
+    if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_solicitante>'') {
+      $w_linha++;
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
+      $w_linha++;
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade proponente <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_proponente>'') $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.$p_proponente.'</b>]';
-    if ($p_palavra>'') $w_filtro .= '<tr valign="top"><td align="right">CPF proposto <td>[<b>'.$p_palavra.'</b>]';
+    if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.$p_proponente.'</b>]'; }
+    if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">CPF proposto <td>[<b>'.$p_palavra.'</b>]'; }
     if ($p_sq_prop>'') {
+      $w_linha++;
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_sq_prop,null,null);
       $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_pais>'') {
+      $w_linha++;
       $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
       $w_filtro .= '<tr valign="top"><td align="right">País <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
+      $w_linha++;
       $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
       $w_filtro .= '<tr valign="top"><td align="right">Região <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
+      $w_linha++;
       $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
       $w_filtro .= '<tr valign="top"><td align="right">Estado <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'')  {
+      $w_linha++;
       $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
       $w_filtro .= '<tr valign="top"><td align="right">Cidade <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
+      $w_linha++;
       $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_ativo>'') {
+      $w_linha++;
       $w_filtro .= '<tr valign="top"><td align="right">Tipo<td>[<b>';
       if ($p_ativo=='I')        $w_filtro .= 'Inicial';
       elseif ($p_ativo=='P')    $w_filtro .= 'Prorrogação';
       elseif ($p_ativo=='C')    $w_filtro .= 'Complementação';
       $w_filtro .= '</b>]';
     } 
-    if ($p_fim_i>'') $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_fim_i.'</b>]';
-    if ($w_filtro>'') $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
+    if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_fim_i.'</b>]'; }
+    if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     switch ($p_agrega) {
       case 'GRPDCIAVIAGEM':
@@ -267,18 +281,20 @@ function Gerencial() {
     } 
   } 
 
+  $w_linha_filtro = $w_linha;
   if ($p_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
-    $w_pag=1;
-    $w_linha=0;
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
   }elseif($p_tipo == 'PDF'){
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'));
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
     $w_embed = 'WORD';
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     if ($O=='P') {
@@ -433,9 +449,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_cia_viagem')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_cia_viagem'));
               } 
@@ -458,9 +473,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_mes')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_mes'));
               } 
@@ -483,9 +497,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_destino')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_destino'));
               } 
@@ -508,9 +521,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));
               } 
@@ -533,9 +545,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_projeto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_projeto'));
               } 
@@ -558,9 +569,8 @@ function Gerencial() {
             if (Nvl($w_nm_quebra,'')!=f($row,'nm_prop')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_prop'));
               } 
@@ -583,9 +593,8 @@ function Gerencial() {
             if ($w_nm_quebra!=f($row,'nm_tp_missao')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$p_agrega);
-                $w_linha += 2;
               } 
-              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=25)) {
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tp_missao'));
               } 
@@ -605,15 +614,16 @@ function Gerencial() {
             } 
             break;
         } 
-        if ($w_embed == 'WORD' && $w_linha>25) {
+        if ($w_embed == 'WORD' && $w_linha>$w_linha_pag) {
           // Se for geração de MS-Word, quebra a página
           ShowHTML('    </table>');
           ShowHTML('  </td>');
           ShowHTML('</tr>');
           ShowHTML('</table>');
           ShowHTML('</center></div>');
-          ShowHTML('    <br style="page-break-after:always">');
-          $w_linha   = 0;
+          if ($p_tipo=='PDF') ShowHTML('    <pd4ml:page.break>');
+          else                ShowHTML('    <br style="page-break-after:always">');
+          $w_linha=$w_linha_filtro;
           $w_pag    += 1;
           CabecalhoWord($w_cliente,$w_TP,$w_pag);
           if ($w_filtro>'') ShowHTML($w_filtro);
