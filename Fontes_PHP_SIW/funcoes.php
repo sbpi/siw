@@ -237,8 +237,20 @@ function headerWord($p_orientation='LANDSCAPE') {
 }
 
 // =========================================================================
+// Monta (+) e (-) na arvore de projeto
+// -------------------------------------------------------------------------
+function montaArvore($string){  
+    $string = str_replace(".","-",$string); 
+    $img = "<img src='images/mais.jpg' alt='Expandir' onclick='abreFecha(\"$string\")' id='img-$string' style='cursor:pointer'/>";
+    return $img;
+}
+
+
+
+// =========================================================================
 // Declaração inicial para páginas OLE com PDF
 // -------------------------------------------------------------------------
+
 
 function headerPdf($titulo,$pag=null) {
   extract($GLOBALS);  

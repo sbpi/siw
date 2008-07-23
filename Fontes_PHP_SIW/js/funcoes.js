@@ -196,3 +196,105 @@ function colocaGrafico(){
 	$("#ProjetosDiv").show();
 	$("#AnaliseDiv").show();	
 }
+
+
+function abreFecha(string){
+    
+	var	img = $("#img-" + string);
+
+	img.hide();	
+
+	var tipo = "";
+	
+	if(img.attr("src").indexOf("mais") > -1 ){
+		img.removeAttr("src");
+		img.removeAttr("alt");
+		img.attr("src","images/menos.jpg");
+		img.attr("alt","Minimizar");
+		tipo = "abrir";
+	}else{
+		img.removeAttr("src");
+		img.attr("src","images/mais.jpg");	
+		img.removeAttr("alt");
+		img.attr("alt","Expandir");
+		tipo = "fechar";
+	}
+
+	
+	var par = string.split("_");
+	prefixo = par[0];
+	sufixo  = par[1];
+	var nivelString = sufixo.split("-");
+	nivelString = nivelString.length + 1;
+	
+	
+	var tamanhoString = sufixo.length;	
+	var identificadorTr = "";
+	var niveis = "";	
+	
+	$(".arvore").each(function()
+	{
+		identificadorTr = this.id;	
+		identificadorTr = identificadorTr.substring(identificadorTr.indexOf("_")+1);
+			       
+			       
+			       
+		if(sufixo == identificadorTr.substring(0,tamanhoString)){		    
+		     niveis = identificadorTr.split("-").length;
+		     if((nivelString == niveis) && (tipo == "abrir")){
+		          $("#tr-"+prefixo +'_' +  identificadorTr).show();
+		         // alert(prefixo +'_' +identificadorTr);
+		     }
+		     if((tipo == "fechar") && identificadorTr != sufixo){  
+		          $("#tr-"+prefixo +'_' +  identificadorTr).hide();
+		          var imagem = $("#" + this.id.replace("tr-","img-"));
+		          imagem.removeAttr("src");
+		          imagem.attr("src","images/mais.jpg");	
+		          imagem.removeAttr("alt");
+		          imagem.attr("alt","Expandir");
+		     }		      		         
+		}		
+	});
+		
+	img.fadeIn("slow");
+}
+
+function fecharTodos(){
+    
+    var identificadorTr = "";
+    var imagem = "";
+    $(".arvore").each(function()
+	{
+		identificadorTr = this.id;	
+		identificadorTr = identificadorTr.substring(3);	
+		
+		
+		imagem = $("#" + identificadorTr);
+  		imagem.removeAttr("src");
+        imagem.attr("src","images/mais.jpg");	
+        imagem.removeAttr("alt");
+        imagem.attr("alt","Expandir");
+
+		if(identificadorTr.indexOf("-") > -1){	
+		  $("#tr-" + identificadorTr).hide();		
+		}
+	});
+}
+
+function abrirTodos(){
+    var identificadorTr = "";
+    $(".arvore").each(function()
+	{
+		identificadorTr = this.id;	
+		identificadorTr = identificadorTr.substring(3);
+		
+		if(identificadorTr.indexOf("-") > -1){
+		    $("#tr-" + identificadorTr).show();
+		    var imagem = $("#" + identificadorTr);
+		    imagem.removeAttr("src");
+		    imagem.removeAttr("alt");
+		    imagem.attr("src","images/menos.jpg");
+		    imagem.attr("alt","Minimizar");
+		}	 
+	});
+}

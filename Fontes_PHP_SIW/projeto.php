@@ -2291,6 +2291,7 @@ function Etapas() {
       $w_total_anexo     = 0;
       foreach($RS as $row) {
         ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),1));
+        
         if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
         if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
         if (nvl(f($row,'inicio_real'),'')!='' && ($w_real_menor=='' || $w_real_menor > f($row,'inicio_real'))) $w_real_menor = f($row,'inicio_real');
@@ -4073,7 +4074,7 @@ function Visual() {
     ShowHTML('<HEAD>');
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
-    BodyOpenClean('onLoad=\'this.focus()\';');
+    BodyOpenClean('onLoad=\'this.focus();  \'');
     if ($w_embed!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed = 'HTML';
   }
@@ -4485,9 +4486,10 @@ function Concluir() {
 // =========================================================================
 // Gera uma linha de apresentação da tabela de etapas
 // -------------------------------------------------------------------------
-function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_arquivo=0,$l_p1=null) {
+function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_arquivo=0,$l_p1=null){
   extract($GLOBALS);
   global $w_cor;
+  
   $l_recurso = '';
   $l_img = '';
   if (nvl($l_destaque,'')!='' || substr(nvl($l_restricao,'-'),0,1)=='S') {
@@ -4508,18 +4510,38 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   }
   if ($l_recurso > '') $l_row = 'rowspan=2'; else $l_row = '';
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+  
+  
+  $grupo = MontaOrdemEtapa($l_chave_aux);
+  
+  if ($P4!=1) {
+    if ($l_destaque!='<b>' && $P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+  
+    $fechado = 'style="display:none"';
+
+    if(strpos($grupo,'.')===false) $fechado = '';
+
+    $l_html .= chr(13).'      <tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'" class="arvore" valign="top"  '.$fechado.' bgcolor="'.$w_cor.'">';
+  } else {
+    $imagem='';
+    $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+  }
   if (nvl($l_chave_aux,'')!='') {
+      
+    
     $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
+    
+    
+    
     if ($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
 
     $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
-    if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
-    else       $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
+    if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
+    else       $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
     if (nvl($l_nivel,0)==0) {
-      $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
     } else {
-      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).'<td>'.$l_destaque.$l_titulo.' '.'</b></tr></table>';
+      $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
     }
     if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
     else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
@@ -4631,16 +4653,29 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   if ($l_ativ1 > '') $l_row += count($RS_Ativ);
 
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-  $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
+
+  $grupo = MontaOrdemEtapa($l_chave_aux);
+  
+  if ($P4!=1) {
+    if ($l_destaque!='<b>' || ($l_destaque=='<b>' && (count($RS_Ativ)>0 || count($RS_Contr)>0))) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+  
+    $fechado = 'style="display:none"';
+    if(strpos($grupo,'.')===false) $fechado = '';
+
+    $l_html .= chr(13).'      <tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'" class="arvore" valign="top"  '.$fechado.' bgcolor="'.$w_cor.'">';
+  } else {
+    $imagem='';
+    $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+  }
+  $l_html .= chr(13).'        <td width="1%" nowrap>'; 
   if($P4!=1) $l_com = '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>'; else $l_com = '';
   $l_html .= chr(13).$l_com.ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
-  if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
-  else       $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
+  if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
+  else       $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
   if (nvl($l_nivel,0)==0) {
-    $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
   } else {
-    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).'<td>'.$l_destaque.$l_titulo.'</b></tr></table>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }
   if($P4!=1) $l_html .= chr(13).'        <td width="1%" nowrap>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
   else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
@@ -4676,7 +4711,12 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   //Listagem dos contratos da etapa 
   if (count($RS_Contr)>0) {
     foreach ($RS_Contr as $row) {
-      $l_contr1 .= chr(13).'<tr valign="top">';
+      if ($P4!=1) {
+        $l_contr1 .= chr(13).'<tr valign="top" bgcolor="'.$w_cor.'">';
+      } else {
+        $l_contr1 .= chr(13).'<tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'-'.f($row,'sq_siw_solicitacao').'" class="arvore" valign="top" style="display:none" bgcolor="'.$w_cor.'">';
+      }
+      $l_contr1 .= chr(13).'  <td bgcolor="'.$w_cor.'"></td>';
       $l_contr1 .= chr(13).'  <td>';
       $l_contr1 .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if($P4!=1) $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
@@ -4700,7 +4740,12 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   //Listagem das tarefas da etapa  
   if (count($RS_Ativ)>0) {
     foreach ($RS_Ativ as $row) {
-      $l_ativ .= chr(13).'<tr valign="top">';
+      if($P4!=1) {
+        $l_ativ .= chr(13).'<tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'-'.f($row,'sq_siw_solicitacao').'" class="arvore" valign="top"  style="display:none" bgcolor="'.$w_cor.'">';
+      } else {
+        $l_ativ .= chr(13).'<tr valign="top" bgcolor="'.$w_cor.'">';
+      }
+      $l_ativ .= chr(13).'  <td bgcolor="'.$w_cor.'"></td>';
       $l_ativ .= chr(13).'  <td>';
       $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if($P4!=1) $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';

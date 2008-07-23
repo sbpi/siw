@@ -660,15 +660,7 @@ function Rel_Projeto() {
       CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } elseif($p_tipo=='PDF'){
-      ob_start();  
-      Cabecalho();
-	  headerPdf();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório detalhado do projeto</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      headerPDF('RELATÓRIO DETALHADO DE PROJETOS');
       $w_embed = 'WORD';
     } else {
       Cabecalho();
