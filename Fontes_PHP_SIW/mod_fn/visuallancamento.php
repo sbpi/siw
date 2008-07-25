@@ -360,10 +360,9 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
            $l_html.=chr(13).'            <td rowspan=3>'.f($row,'nm_tipo_documento').'</td>';
            $l_html.=chr(13).'              <tr align="center"><td colspan=5 align="center">';
            $l_html.=chr(13).rubricalinha($RS3);
-        } else {
-          $l_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
         }
         $l_html.=chr(13).'          <tr align="center" valign="top">';
+        $l_html.=chr(13).'            <td rowspan=2>'.f($row,'nm_tipo_documento').'</td>';
         $l_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
         $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
         $l_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
