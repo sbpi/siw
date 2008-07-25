@@ -22,7 +22,7 @@ class dml_putSolicConcTransp {
                    'p_valor'                     =>array(toNumber(tvl($p_valor)),                          B_NUMERIC,      18,2),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
-                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,        60),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome_original'             =>array(tvl($p_nome_original),                            B_VARCHAR,       255),
                    'p_sq_veiculo'                =>array(tvl($p_sq_veiculo),                               B_INTEGER,        7),
                    'p_hodometro_saida'           =>array(tvl($p_hodometro_saida),                          B_INTEGER,        7),

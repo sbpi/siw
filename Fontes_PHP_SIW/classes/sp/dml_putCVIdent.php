@@ -20,7 +20,7 @@ class dml_putCVIdent {
                    'p_nome_resumido'             =>array($p_nome_resumido,                                 B_VARCHAR,        15),
                    'p_foto'                      =>array(tvl($p_foto),                                     B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
-                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,        60),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome_original'             =>array(tvl($p_nome_original),                            B_VARCHAR,       255),
                    'p_nascimento'                =>array($p_nascimento,                                    B_DATE,           32),
                    'p_sexo'                      =>array($p_sexo,                                          B_VARCHAR,         1),

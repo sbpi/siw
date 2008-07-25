@@ -22,7 +22,7 @@ class dml_putFinanceiroConc {
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,       500),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
-                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,        60),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome_original'             =>array(tvl($p_nome_original),                            B_VARCHAR,       255)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
