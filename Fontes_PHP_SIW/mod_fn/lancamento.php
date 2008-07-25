@@ -123,7 +123,7 @@ switch ($O) {
   case 'V': $w_TP=$TP.' - Envio';       break;
   case 'H': $w_TP=$TP.' - Herança';     break;
   default:  $w_TP=$TP.' - Listagem';    break;
-} 
+}
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
@@ -2639,14 +2639,7 @@ function Visual() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
   if ($w_tipo=='PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    headerpdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -2667,7 +2660,7 @@ function Visual() {
   ShowHTML(VisualLancamento($w_chave,'L',$w_usuario,$P1,$w_embed));
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   if ($w_tipo=='PDF') RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape(); 
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================
 // Rotina de exclusão

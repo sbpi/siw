@@ -1420,16 +1420,7 @@ function Visual() {
   $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
 
   if ($w_tipo=='PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Pedido de compra</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    //HeaderWord($_REQUEST['orientacao']);
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('<BODY>');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    headerPdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -1449,7 +1440,7 @@ function Visual() {
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$w_embed));
   if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  if ($w_tipo=='PDF') RodapePDF();
+  if ($w_tipo=='PDF')      RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 }
 // =========================================================================

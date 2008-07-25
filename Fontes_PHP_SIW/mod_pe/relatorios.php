@@ -137,14 +137,7 @@ function Rel_Executivo() {
       //CabecalhoWord($w_cliente,$w_TP,0);      
     }
     elseif($p_tipo=='PDF'){
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
+      headerpdf('RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -435,8 +428,8 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo=='PDF') RodapePDF('LANDSCAPE');
-  Rodape();
+  if     ($w_tipo=='PDF')      RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================
 // Relatório detalhado de programas
@@ -461,14 +454,7 @@ function Rel_Programas() {
       $w_embed = 'WORD';
     }
     elseif($p_tipo=='PDF'){
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+      headerpdf('RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
     
     } else {

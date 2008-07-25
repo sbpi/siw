@@ -163,14 +163,7 @@ function Rel_Progresso() {
       CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'EXCEL';
     } elseif($p_tipo=='PDF'){
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
+      headerPDF('RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -443,7 +436,10 @@ function Rel_Progresso() {
               $w_total_previsto  = 0;
               $w_total_real      = 0;
               foreach ($RS1 as $row1) {
-                $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,$w_inicio,$w_fim);
+                // A linha abaixo foi alterada para exibir todo o cronograma dos projetos, a pedido da ABDI.
+                // O funcionamento correto é para apresentar o cronograma do ano corrente ou do ano selecionado pelo usuário.
+                //$RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,$w_inicio,$w_fim);
+                $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row1,'sq_projeto_rubrica'),null,null,null);
                 $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
                 if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RS_Cronograma)+1).'"'; else $w_rowspan = '';
                 ShowHTML('      <tr valign="top">');
@@ -639,8 +635,8 @@ function Rel_Progresso() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo=='PDF') RodapePDF();
-  if ($p_tipo!='WORD') Rodape();
+  if     ($w_tipo=='PDF')  RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 
@@ -670,14 +666,7 @@ function Rel_Projeto() {
       CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='PDF') {
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio detalhado do projeto</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      headerPdf('RELATÓRIO DETALHADO DE PROJETOS',$w_pag)     ;
       $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -984,15 +973,8 @@ function Rel_Atualizacao() {
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';
-      } elseif($p_tipo=='PDF'){
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de atualização dos dados dos projetos</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
+    } elseif($p_tipo=='PDF'){
+      headerPdf('RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
