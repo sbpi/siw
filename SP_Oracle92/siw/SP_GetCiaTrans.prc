@@ -28,6 +28,13 @@ begin
          and (p_aquaviario is null or (p_aquaviario is not null and a.aquaviario = p_aquaviario))
          and (p_padrao     is null or (p_padrao     is not null and a.padrao = p_padrao))
          and (p_ativo      is null or (p_ativo      is not null and a.ativo  = p_ativo))
-         and (p_chave_aux  is null or (p_chave_aux  is not null and a.sq_cia_transporte <> p_chave_aux));
+         and (p_chave_aux  is null or (p_chave_aux  is not null and a.sq_cia_transporte <> p_chave_aux))
+         and (p_restricao  is null or (p_restricao  is not null and ((a.aereo      = 'S' and 'S' = (select aereo       from pd_meio_transporte where sq_meio_transporte = to_number(p_restricao))) or
+                                                                     (a.rodoviario = 'S' and 'S' = (select rodoviario  from pd_meio_transporte where sq_meio_transporte = to_number(p_restricao))) or
+                                                                     (a.rodoviario = 'S' and 'S' = (select ferroviario from pd_meio_transporte where sq_meio_transporte = to_number(p_restricao))) or
+                                                                     (a.aquaviario = 'S' and 'S' = (select aquaviario  from pd_meio_transporte where sq_meio_transporte = to_number(p_restricao)))
+                                                                    )
+                                      )
+             );
 end SP_GetCiaTrans;
 /

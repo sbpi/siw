@@ -23,6 +23,10 @@ create or replace procedure SP_PutViagemGeral
     p_sexo                in varchar2  default null,
     p_vinculo             in number    default null,
     p_inicio_atual        in date      default null,
+    p_passagem            in varchar2  default null,
+    p_diaria              in varchar2  default null,
+    p_hospedagem          in varchar2  default null,
+    p_veiculo             in varchar2  default null,
     p_chave_nova          out number,
     p_copia               in number   default null,
     p_codigo_interno      in out varchar2
@@ -115,9 +119,13 @@ begin
       
       -- Insere registro em PD_MISSAO
       insert into pd_missao
-        (sq_siw_solicitacao, cliente,   sq_pessoa,                     tipo,   justificativa_dia_util)
+        (sq_siw_solicitacao, cliente,   sq_pessoa,                     tipo,   justificativa_dia_util,
+         passagem,           diaria,    hospedagem,                    veiculo
+        )
       values
-        (w_chave,            p_cliente, Nvl(w_pessoa, p_solicitante),  p_tipo, p_justif_dia_util);
+        (w_chave,            p_cliente, Nvl(w_pessoa, p_solicitante),  p_tipo, p_justif_dia_util,
+         p_passagem,         p_diaria,  p_hospedagem,                  p_veiculo
+        );
 
       -- Insere log da solicitação
       Insert Into siw_solic_log 
@@ -174,7 +182,11 @@ begin
       -- Atualiza a tabela de demandas
       Update pd_missao set
           tipo                   = p_tipo,
-          justificativa_dia_util = p_justif_dia_util
+          justificativa_dia_util = p_justif_dia_util,
+          passagem               = p_passagem,
+          diaria                 = p_diaria,
+          hospedagem             = p_hospedagem,
+          veiculo                = p_veiculo
       where sq_siw_solicitacao = p_chave;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
