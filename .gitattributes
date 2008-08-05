@@ -802,6 +802,7 @@ Fontes_PHP_SIW/classes/sp/db_getMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
 Fontes_PHP_SIW/classes/sp/db_getModMaster.php -text
+Fontes_PHP_SIW/classes/sp/db_getMoeda.php -text
 Fontes_PHP_SIW/classes/sp/db_getNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_PE.php -text
@@ -964,6 +965,7 @@ Fontes_PHP_SIW/classes/sp/dml_CoEtnia.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoForm.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoGrDef.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoIdioma.php -text
+Fontes_PHP_SIW/classes/sp/dml_CoMoeda.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoPais.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoRegiao.php -text
 Fontes_PHP_SIW/classes/sp/dml_CoSegmento.php -text
