@@ -677,6 +677,7 @@ Fontes_PHP_SIW/classes/sp/db_getCadastrador_CL.php -text
 Fontes_PHP_SIW/classes/sp/db_getCadastrador_PD.php -text
 Fontes_PHP_SIW/classes/sp/db_getCall.php -text
 Fontes_PHP_SIW/classes/sp/db_getCargo.php -text
+Fontes_PHP_SIW/classes/sp/db_getCategoriaDiaria.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcData.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCcSubordination.php -text
@@ -1036,6 +1037,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCVIdent.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVIdioma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVProducao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCargo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCategoriaDiaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCiaTrans.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesConBan.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesEnd.php -text
