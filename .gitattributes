@@ -3559,6 +3559,7 @@ SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
+SP_Oracle92/siw/SP_PutCategoriaDiaria.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCoMoeda.prc -text
 SP_Oracle92/siw/SP_PutCodigoExterno.prc -text
@@ -3808,6 +3809,7 @@ SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getCLSolicItem.prc -text
+SP_Oracle92/siw/sp_getCategoriaDiaria.prc -text
 SP_Oracle92/siw/sp_getContasCronograma.prc -text
 SP_Oracle92/siw/sp_getContasRegistro.prc -text
 SP_Oracle92/siw/sp_getConvOutraParte.prc -text
