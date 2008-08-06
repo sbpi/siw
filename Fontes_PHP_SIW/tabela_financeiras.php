@@ -915,7 +915,7 @@ function Moeda() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_codigo','Código','1','1','3','3','','0123456789');
       Validate('w_nome','Nome','1','1','3','30','1','1');
-      Validate('w_sigla','Sigla','1','1','3','3','1','');
+      Validate('w_sigla','Sigla','1','1','3','5','1','');
       Validate('w_simbolo','Símbolo','1','1','3','10','1','');
       Validate('w_tipo','Tipo','1','1','1','1','1','');
       Validate('w_exclusao_ptax','Exclusão PTAX','DATA','','10','10','','1');
