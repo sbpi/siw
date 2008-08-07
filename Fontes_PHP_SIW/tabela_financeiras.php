@@ -1012,12 +1012,12 @@ function Moeda() {
     ShowHTML('      <tr><td colspan=2><b><u>S</u>ímbolo:</b><br><input '.$w_Disabled.' accesskey="S"  type="text" name="w_simbolo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_simbolo.'"></td>');
     ShowHTML('      <tr><td colspan=2><b><u>T</u>ipo:</b><br><input '.$w_Disabled.' accesskey="T"  type="text" name="w_tipo" class="sti" SIZE="1" MAXLENGTH="1" VALUE="'.$w_tipo.'"></td>');
     ShowHTML('      <tr><td colspan=2><b><u>E</u>xclusão PTAX:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_exclusao_ptax" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_exclusao_ptax.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-    ShowHTML('           </table>');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('           </table>');
     ShowHTML('      <tr><td colspan=5 align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
