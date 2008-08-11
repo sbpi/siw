@@ -3801,6 +3801,7 @@ SP_Oracle92/siw/siw_solicitacao.tab -text
 SP_Oracle92/siw/siw_tipo_apoio.tab -text
 SP_Oracle92/siw/siw_tramite.tab -text
 SP_Oracle92/siw/siw_tramite_atrib.tab -text
+SP_Oracle92/siw/soma_dias.fnc -text
 SP_Oracle92/siw/sp_ajustaDataEtapa.prc -text
 SP_Oracle92/siw/sp_ajustaPesoEtapa.prc -text
 SP_Oracle92/siw/sp_ajustaPesquisaMaterial.prc -text

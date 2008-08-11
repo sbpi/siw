@@ -14,6 +14,7 @@ create or replace procedure SP_PutPD_Deslocamento
     p_meio_transp         in number    default null,
     p_valor_trecho        in number    default null
    ) is
+   w_existe varchar2(1);
 begin
    If p_operacao = 'I' Then -- Inclusão
       -- Insere registro na tabela de deslocamentos
@@ -52,5 +53,26 @@ begin
       -- Remove o registro na tabela de deslocamentos
       delete pd_deslocamento where sq_deslocamento = p_chave_aux;
    End If;
+   
+   -- Verifica se a missão envolve trechos nacionais
+   select case count(a.sq_deslocamento) when 0 then 'N' else 'S' end
+     into w_existe
+     from pd_deslocamento        a
+          inner   join co_cidade b on (a.destino = b.sq_cidade)
+            inner join co_pais   c on (b.sq_pais = c.sq_pais)
+    where c.padrao = 'S';
+
+   update pd_missao set nacional = w_existe where sq_siw_solicitacao = p_chave;
+   
+   -- Verifica se a missão envolve trechos inernacionais
+   select case count(a.sq_deslocamento) when 0 then 'N' else 'S' end
+     into w_existe
+     from pd_deslocamento        a
+          inner   join co_cidade b on (a.destino = b.sq_cidade)
+            inner join co_pais   c on (b.sq_pais = c.sq_pais)
+    where c.padrao = 'N';
+
+   update pd_missao set internacional = w_existe where sq_siw_solicitacao = p_chave;
+   
 end SP_PutPD_Deslocamento;
 /
