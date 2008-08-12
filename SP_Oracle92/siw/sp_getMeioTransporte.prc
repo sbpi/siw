@@ -3,6 +3,7 @@ create or replace procedure SP_GetMeioTransporte
     p_restricao         in varchar default null,
     p_chave             in number  default null,
     p_ativo             in varchar default null,
+    p_nome              in varchar2 default null,
     p_result            out sys_refcursor) is
 begin
    -- Recupera os grupos de veículos
