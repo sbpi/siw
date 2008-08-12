@@ -12,7 +12,8 @@ create or replace procedure SP_PutPD_Deslocamento
     p_codigo_voo          in varchar2  default null,
     p_passagem            in varchar2  default null,
     p_meio_transp         in number    default null,
-    p_valor_trecho        in number    default null
+    p_valor_trecho        in number    default null,
+    p_compromisso         in varchar2  default null
    ) is
    w_existe varchar2(1);
 begin
@@ -22,13 +23,13 @@ begin
         (sq_deslocamento,         sq_siw_solicitacao, origem,         destino,
          saida,                   chegada, 
          passagem,                sq_meio_transporte, valor_trecho,   sq_cia_transporte,
-         codigo_voo)
+         codigo_voo,              compromisso)
       values
         (sq_deslocamento.nextval, p_chave,            p_origem,       p_destino, 
          to_date(to_char(p_data_saida,'dd/mm/yyyy')||', '||p_hora_saida,'dd/mm/yyyy, hh24:mi'), 
          to_date(to_char(p_data_chegada,'dd/mm/yyyy')||', '||p_hora_chegada,'dd/mm/yyyy, hh24:mi'),
          p_passagem,              p_meio_transp,      p_valor_trecho, p_sq_cia_transporte,
-         p_codigo_voo
+         p_codigo_voo,            p_compromisso
         );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de deslocamentos
@@ -41,13 +42,20 @@ begin
           sq_meio_transporte = p_meio_transp,
           valor_trecho       = p_valor_trecho,
           sq_cia_transporte  = p_sq_cia_transporte,
-          codigo_voo         = p_codigo_voo
+          codigo_voo         = p_codigo_voo,
+          compromisso        = p_compromisso
        where sq_deslocamento = p_chave_aux;
    Elsif p_operacao = 'P' Then
        update pd_deslocamento
          set sq_cia_transporte  = p_sq_cia_transporte,
              codigo_voo         = p_codigo_voo,
              sq_meio_transporte = p_meio_transp
+       where sq_deslocamento = p_chave_aux;       
+   Elsif p_operacao = 'C' Then
+       update pd_deslocamento
+         set sq_cia_transporte  = p_sq_cia_transporte,
+             codigo_voo         = p_codigo_voo,
+             valor_trecho       = p_valor_trecho
        where sq_deslocamento = p_chave_aux;       
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro na tabela de deslocamentos

@@ -6,16 +6,14 @@ create or replace procedure SP_GetCategoriaDiaria
     p_restricao       in  varchar2 default null,
     p_result          out sys_refcursor) is
 begin
-   -- Recupera as categorias de viagem
+   -- Recupera as categorias de diárias
    open p_result for
-      select a.sq_categoria_diaria as chave, a.cliente, a.nome,
-             case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo, a.ativo
+      select a.sq_categoria_diaria as chave, a.cliente, a.nome, a.ativo,
+             case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo
         from pd_categoria_diaria a
        where a.cliente = p_cliente
          and (p_chave      is null or (p_chave      is not null and a.sq_categoria_diaria = p_chave))
          and (p_nome       is null or (p_nome       is not null and upper(acentos(a.nome)) like upper(acentos(p_nome))))
-         and (p_ativo      is null or (p_ativo      is not null and a.ativo  = p_ativo))
-         and (p_restricao  is null or (p_restricao  is not null)
-             );
+         and (p_ativo      is null or (p_ativo      is not null and a.ativo  = p_ativo));
 end SP_GetCategoriaDiaria;
 /

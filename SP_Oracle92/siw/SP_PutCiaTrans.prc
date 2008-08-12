@@ -10,6 +10,7 @@ create or replace procedure SP_PutCiaTrans
     p_ativo                    in  varchar2 default null
    ) is
 begin
+
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pd_cia_transporte (

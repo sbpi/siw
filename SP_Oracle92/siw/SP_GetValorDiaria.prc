@@ -18,12 +18,13 @@ begin
                   when 5 then 'Oceania' 
              end as nm_continente,
              case tipo_diaria
-                  when 'D' then 'Diária Normal'
-                  when 'H' then 'Diária de Hospedagem'
-                  when 'L' then 'Diária de Locação'
+                  when 'D' then 'Diária'
+                  when 'H' then 'Hospedagem'
+                  when 'V' then 'Locação'
              end as nm_tipo_diaria,
              b.nome as nm_pais,
              c.nome as nm_cidade,
+             c.co_uf as nm_uf,
              d.nome as nm_moeda, d.sigla as sg_moeda,
              e.nome as nm_categoria_diaria
        from pd_valor_diaria                 a

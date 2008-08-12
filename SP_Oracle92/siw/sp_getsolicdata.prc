@@ -626,7 +626,6 @@ begin
                 d1.valor_passagem,    d1.passagem,                   d1.diaria,
                 d1.hospedagem,        d1.veiculo,                    d1.valor_previsto_bilhetes,
                 case d1.passagem   when 'S' then 'Sim' else 'Não' end as nm_passagem,
-                case d1.diaria     when 'S' then 'Sim' else 'Não' end as nm_diaria,
                 case d1.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospem,
                 case d1.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
@@ -638,6 +637,7 @@ begin
                 d7.exige_operacao,
                 d8.sq_posto_trabalho, d8.sq_posto_trabalho,          d8.sq_modalidade_contrato,
                 d8.matricula,
+                d9.nome as nm_diaria,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -673,8 +673,9 @@ begin
                             left       join gp_contrato_colaborador    d8 on (d4.cliente                 = d8.cliente      and
                                                                               d4.sq_pessoa               = d8.sq_pessoa    and
                                                                               d8.fim                     is null)
-                        left       join co_agencia                     d6 on (d1.sq_agencia              = d6.sq_agencia)
-                          left       join co_banco                     d7 on (d6.sq_banco                = d7.sq_banco)
+                        left           join co_agencia                 d6 on (d1.sq_agencia              = d6.sq_agencia)
+                          left         join co_banco                   d7 on (d6.sq_banco                = d7.sq_banco)
+                        left           join pd_categoria_diaria        d9 on (d1.diaria                  = d9.sq_categoria_diaria)
                       inner            join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
                         left           join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade   and
                                                                               e1.tipo_respons            = 'T'             and

@@ -340,6 +340,11 @@ begin
                      left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                        left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
             select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    'ANOTACAO' origem,
@@ -358,6 +363,11 @@ begin
                      left outer     join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
                        left outer   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                               (p_tipo = 1 and b.destinatario is null)
+                                                              )
+                                      )
+                   )
                and b.sq_siw_solicitacao = p_chave;
       End If;      
    Elsif w_modulo in ('SR','CO') Then -- Se for o módulo de recursos logísticos ou de compras

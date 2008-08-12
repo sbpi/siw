@@ -9,6 +9,7 @@ begin
       open p_result for 
          select b.sq_siw_solicitacao, b.inicio, b.fim, 
                 b1.nome as nm_tramite, b1.sigla as sg_tramite,
+                b2.sigla,
                 c.inicio_real, c.fim_real, 
                 c.assunto,
                 e.sq_solic_missao,
@@ -19,6 +20,7 @@ begin
                 inner  join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and 
                                                    Nvl(b1.sigla,'-')    <> 'CA'
                                                   )
+                inner  join siw_menu        b2 on (b.sq_menu            = b2.sq_menu)
                 inner  join gd_demanda      c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
                 inner  join pd_missao_solic e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
                 inner  join gd_demanda      f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)

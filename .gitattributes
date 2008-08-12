@@ -3550,6 +3550,7 @@ SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_GetOpiniao.prc -text
 SP_Oracle92/siw/SP_GetPDParametro.prc -text
+SP_Oracle92/siw/SP_GetPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_GetPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle92/siw/SP_GetParametro.prc -text
@@ -3771,6 +3772,7 @@ SP_Oracle92/siw/pj_projeto_representante.tab -text
 SP_Oracle92/siw/pj_recurso_etapa.tab -text
 SP_Oracle92/siw/plan_table.tab -text
 SP_Oracle92/siw/recompile.sql -text
+SP_Oracle92/siw/recuperaValorDiaria.fnc -text
 SP_Oracle92/siw/reinicializa_sequences.prc -text
 SP_Oracle92/siw/retornaAfericaoIndicador.fnc -text
 SP_Oracle92/siw/retornaExcedenteContrato.fnc -text

@@ -32,7 +32,8 @@ begin
                                   or (p_restricao = 'NOMEBRASIL'   and a.nome = 'Brasil')
                                   or (p_restricao = 'NOMEFRANCA'   and a.nome = 'França')
                                   or (p_restricao = 'BRASILFRANCA' and (a.nome = 'Brasil' or a.nome = 'França'))
-                                  or (p_restricao = 'INDICADOR'))
+                                  or (p_restricao = 'INDICADOR')
+                                  or (p_restricao like 'CONTINENTE%' and a.continente = replace(p_restricao,'CONTINENTE','')))
          and ((coalesce(p_restricao,'-')  = 'INDICADOR' and b.sq_pais is not null) or 
               (coalesce(p_restricao,'-') <> 'INDICADOR' and 
                (p_nome  is null or (p_nome is not null and acentos(a.nome) like '%'||acentos(p_nome)||'%'))

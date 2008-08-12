@@ -9,6 +9,7 @@ create or replace procedure SP_PutViagemGeral
     p_cadastrador         in number    default null,
     p_tipo                in varchar2  default null,
     p_descricao           in varchar2  default null,
+    p_agenda              in varchar2  default null,
     p_justif_dia_util     in varchar2  default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
@@ -24,9 +25,10 @@ create or replace procedure SP_PutViagemGeral
     p_vinculo             in number    default null,
     p_inicio_atual        in date      default null,
     p_passagem            in varchar2  default null,
-    p_diaria              in varchar2  default null,
+    p_diaria              in number     default null,
     p_hospedagem          in varchar2  default null,
     p_veiculo             in varchar2  default null,
+    p_proponente          in varchar2  default null,
     p_chave_nova          out number,
     p_copia               in number   default null,
     p_codigo_interno      in out varchar2
@@ -78,10 +80,10 @@ begin
            proponente,          ordem
          )
       (select
-           w_chave,             p_unid_resp,     null,              null,
+           w_chave,             p_unid_resp,     p_agenda,          null,
            p_aviso,             0,               null,              null,
            'N',                 null,            null,              0,
-           null,                0
+           p_proponente,        0
         from dual
       );
       
@@ -176,6 +178,8 @@ begin
       
       -- Atualiza a tabela de demandas
       Update gd_demanda set
+          assunto          = p_agenda,
+          proponente       = p_proponente,
           sq_unidade_resp  = p_unid_resp
       where sq_siw_solicitacao = p_chave;
       
