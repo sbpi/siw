@@ -3559,6 +3559,7 @@ SP_Oracle92/siw/SP_GetTramiteResp.prc -text
 SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
 SP_Oracle92/siw/SP_GetUserResp.prc -text
 SP_Oracle92/siw/SP_GetUsuarioTemp.prc -text
+SP_Oracle92/siw/SP_GetValorDiaria.prc -text
 SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
@@ -3593,6 +3594,7 @@ SP_Oracle92/siw/SP_PutSolicGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
+SP_Oracle92/siw/SP_PutValorDiaria.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
 SP_Oracle92/siw/SP_PutViagemGeral.prc -text
 SP_Oracle92/siw/SP_PutViagemOutra.prc -text
