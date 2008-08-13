@@ -9,6 +9,7 @@ include_once($w_dir_volta.'classes/db/abreSessao.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
+include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 include_once($w_dir_volta.'classes/sp/db_getMeioTransporte.php');
 include_once($w_dir_volta.'classes/sp/db_getValorDiaria.php');
@@ -24,6 +25,7 @@ include_once($w_dir_volta.'classes/sp/dml_putPDUnidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putPDUnidLimite.php');
 include_once($w_dir_volta.'classes/sp/dml_putPDUsuario.php');
 include_once($w_dir_volta.'classes/sp/dml_putCategoriaDiaria.php');
+include_once($w_dir_volta.'classes/sp/dml_putValorDiaria.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoAno.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
@@ -32,6 +34,9 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDiaria.php');
+include_once($w_dir_volta.'funcoes/selecaoCategoriaDiaria.php');
+include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
+
 
 // =========================================================================
 //  /tabelas.php
@@ -100,6 +105,9 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 
 $p_ordena       = strtolower($_REQUEST['p_ordena']);
 
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
 Main();
 
 FechaSessao($dbms);
@@ -118,6 +126,7 @@ function CiaTrans() {
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_nome         = $_REQUEST['w_nome'];
+    $w_sigla        = $_REQUEST['w_sigla'];
     $w_aereo        = $_REQUEST['w_aereo'];
     $w_rodoviario   = $_REQUEST['w_rodoviario'];
     $w_aquaviario   = $_REQUEST['w_aquaviario'];
@@ -125,24 +134,26 @@ function CiaTrans() {
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null);
+    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
       $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
-  } elseif (!(strpos('AE',$O)===false) && $w_troca=='') {
+  } elseif (!(strpos('AE',$O)===false) || nvl($w_troca,'')!='') {
     // Recupera os dados chave informada
-    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null);
+    $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
+    $w_sigla        = f($RS,'sigla');
     $w_aereo        = f($RS,'aereo');
     $w_rodoviario   = f($RS,'rodoviario');
     $w_aquaviario   = f($RS,'aquaviario');
     $w_padrao       = f($RS,'padrao');
     $w_ativo        = f($RS,'ativo');
+    $w_sigla        = f($RS,'sigla');
   } 
 
   Cabecalho();
@@ -152,6 +163,7 @@ function CiaTrans() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','2','30','1','1');
+      Validate('w_sigla','Sigla','1','1','2','20','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -184,38 +196,40 @@ function CiaTrans() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Aéreo','nm_aereo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Rodoviário','nm_rodoviario').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Aquaviário','nm_aquaviario').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aéreo','nm_aereo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Rodoviário','nm_rodoviario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aquaviário','nm_aquaviario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_aereo').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_rodoviario').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_aquaviario').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_aereo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_rodoviario').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_aquaviario').'</td>');
         if (Nvl(f($row,'ativo'),'')=='S') {
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         } else {
           ShowHTML('        <td align="center"><font color="red" size="1">'.f($row,'nm_ativo').'</td>');
         } 
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -235,7 +249,8 @@ function CiaTrans() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br>     <input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td></tr>');
+    ShowHTML('           <tr><td colspan=3><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_sigla.'"></td></tr>');
     ShowHTML('        <tr valign="top">');
     MontaRadioNS('<b>Aéreo?</b>',$w_aereo,'w_aereo');
     MontaRadioNS('<b>Rodoviário?</b>',$w_rodoviario,'w_rodoviario');
@@ -244,7 +259,7 @@ function CiaTrans() {
     MontaRadioNS('<b>Padrão?</b>',$w_padrao,'w_padrao');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -255,7 +270,7 @@ function CiaTrans() {
         ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -351,40 +366,40 @@ function MeioTrans() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Aéreo','aereo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Rodoviário','rodoviario').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ferroviário','ferroviario').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Aquaviário','aquaviario').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
-    //ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aéreo','aereo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Rodoviário','rodoviario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ferroviário','ferroviario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aquaviário','aquaviario').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
+    //ShowHTML('          <td><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1"><!>'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'aereo').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'rodoviario').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'ferroviario').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'aquaviario').'</td>');
+        ShowHTML('        <td><!>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'aereo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'rodoviario').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'ferroviario').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'aquaviario').'</td>');
         if (Nvl(f($row,'ativo'),'')=='S') {
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         } else {
           ShowHTML('        <td align="center"><font color="red" size="1">'.f($row,'nm_ativo').'</td>');
         } 
-        //ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        //ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -404,7 +419,7 @@ function MeioTrans() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioNS('<b>Aéreo?</b>',$w_aereo,'w_aereo');
     MontaRadioNS('<b>Rodoviário?</b>',$w_rodoviario,'w_rodoviario');
@@ -413,7 +428,7 @@ function MeioTrans() {
     ShowHTML('        <tr valign="top">');    
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -441,6 +456,9 @@ function MeioTrans() {
   Rodape();
 } 
 
+// =========================================================================
+// Rotina para registro das categorias e valores de diárias
+// -------------------------------------------------------------------------
 function ValorDiaria() {
   extract($GLOBALS);
   global $w_Disabled;
@@ -448,7 +466,6 @@ function ValorDiaria() {
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    
     $w_nacional    = $_REQUEST['w_nacional'];
     $w_continente  = $_REQUEST['w_continente'];
     $w_sq_pais     = $_REQUEST['w_sq_pais'];
@@ -457,17 +474,15 @@ function ValorDiaria() {
     $w_tipo_diaria = $_REQUEST['w_tipo_diaria'];
     $w_categoria   = $_REQUEST['w_categoria'];
     $w_valor       = $_REQUEST['w_valor'];
-    $p_uf          = $_REQUEST['p_uf'];
-    
+    $w_uf          = $_REQUEST['w_uf'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    //$RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null);
     $RS = db_getValorDiaria::getInstanceOf($dbms,$w_cliente,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'nm_continente','desc','nm_pais','asc','nm_cidade','asc','nm_categoria_diaria','asc','nm_tipo_diaria','asc');
     } else {
-      $RS = SortArray($RS,'padrao','desc','nome','asc');
+      $RS = SortArray($RS,'nm_continente','desc','nm_pais','asc','nm_cidade','asc','nm_categoria_diaria','asc','nm_tipo_diaria','asc');
     }
   } elseif (!(strpos('AE',$O)===false) || $w_troca > '') {
     // Recupera os dados chave informada
@@ -475,22 +490,40 @@ function ValorDiaria() {
     foreach($RS as $row) { $RS = $row; break; }
     $w_nacional    = f($RS,'nacional');
     $w_continente  = f($RS,'continente');
+    $w_pais        = f($RS,'pais');
     $w_sq_pais     = f($RS,'sq_pais');
     $w_sq_cidade   = f($RS,'sq_cidade');
     $w_sq_moeda    = f($RS,'sq_moeda');
     $w_tipo_diaria = f($RS,'tipo_diaria');
-    $w_categoria   = f($RS,'categoria');
-    $w_valor       = f($RS,'valor');
-    
+    $w_categoria   = f($RS,'sq_categoria_diaria');
+    $w_valor       = formatNumber(f($row,'valor'));
+    $w_uf          = f($RS, 'nm_uf');
   } 
+
+  if (nvl($w_nacional,'S')=='S') {
+    $w_continente = 1;
+    $w_sq_pais    = f($RS_Cliente,'sq_pais');
+  }
 
   Cabecalho();
   ShowHTML('<HEAD>');
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
+    FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_nome','Nome','1','1','2','30','1','1');
+      Validate('w_categoria','Categoria da diária','SELECT',1,1,18,'','1');
+      Validate('w_tipo_diaria','Tipo da diária','SELECT',1,1,1,'1','');
+      if ($w_nacional=='N') Validate('w_continente','Continente','SELECT',1,1,1,'','12345');
+      Validate('w_uf','Estado','SELECT','',2,2,'1','');
+      Validate('w_sq_cidade','Cidade','SELECT','',1,18,'','1');
+      ShowHTML('  if (theForm.w_uf.selectedIndex>0 && theForm.w_sq_cidade.selectedIndex==0) {');
+      ShowHTML('    alert("Se o estado for informado, é obrigatório indicar a cidade!");');
+      ShowHTML('    theForm.w_sq_cidade.focus();');
+      ShowHTML('    return false;');
+      ShowHTML('  } ');
+      Validate('w_sq_moeda','Unidade monetária','SELECT',1,1,18,'','1');
+      Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789,.');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -508,10 +541,10 @@ function ValorDiaria() {
 
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
+  if ($w_troca>'' && $w_troca!='w_continente') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif (!(strpos('IA',$O)===false)) {
-    BodyOpen('onLoad=\'document.Form.w_nome.focus()\';');
+  } elseif (strpos('IA',$O)!==false && $w_troca!='w_continente') {
+    BodyOpen('onLoad=\'document.Form.w_categoria.focus()\';');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
@@ -524,35 +557,37 @@ function ValorDiaria() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Continente','continente').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('País','sq_pais').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Cidade','sq_cidade').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Moeda Corrente','sq_moeda').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Tipo de Diária','tipo_diaria').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Valor da Diária','valor').'</font></td>');
-    //ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Continente','nm_continente').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('País','nm_pais').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Cidade','nm_cidade').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Categoria','nm_categoria_diaria').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_diaria').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Moeda','sg_moeda').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</font></td>');
+    //ShowHTML('          <td><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'continente').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.nvl(f($row,'sq_pais'), '---').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.nvl(f($row,'sq_cidade'), '---').'</td>');       
-        ShowHTML('        <td align="center"><font size="1">'.nvl(f($row,'sq_moeda'), '---').'</td>');       
-        ShowHTML('        <td align="center"><font size="1">'.nvl(f($row,'tipo_diaria'), '---').'</td>');
-        ShowHTML('        <td align="center"><font size="1"><b>'.nvl(f($row,'valor'), '---') . '</b> ' . f($row,'sigla') . '</td>');               
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.f($row,'nm_continente').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_pais').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_cidade').'</td>');       
+        ShowHTML('        <td>'.f($row,'nm_categoria_diaria').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_diaria').'</td>');
+        ShowHTML('        <td width="1%" nowrap align="center" title="'.f($row,'nm_moeda').'">'.f($row,'sg_moeda').'</td>');       
+        ShowHTML('        <td align="right">'.((f($row,'tipo_diaria')=='V') ? '-'.formatNumber(f($row,'valor'),0).'%' : formatNumber(f($row,'valor'))) . '</td>');
+        ShowHTML('        <td nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -568,44 +603,34 @@ function ValorDiaria() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-
+    
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-//    ShowHTML('           <td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td><table cellspacing="3" border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     ShowHTML('        <tr valign="top">');
-    MontaRadioSN('<b>Viagem Nacional?</b>',$w_nacional,'w_nacional',null,null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_regiao\'; document.Form.submit();"');    
-    ShowHTML('        <tr valign="top">');
-    if($_REQUEST['w_nacional'] == 'N'){
-        ShowHTML('<tr valign="top">');
-        selecaoContinente('<u>C</u>ontinente:','C','Selecione o continente na relação.',$w_continente,null,'w_continente',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_regiao\'; document.Form.submit();"');
-        ShowHTML('</tr>');
-    }
-    
-    if($_REQUEST['w_continente'] <> ''){
-        ShowHTML('<tr valign="top">');                
-        selecaoPais('<u>P</u>aís:','P','Selecione o país na relação.',$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_regiao\'; document.Form.submit();"');            
-        ShowHTML('</tr>');
-    }
-
-    if($_REQUEST['w_sq_pais'] <> ''){    
-        ShowHTML('<tr valign="top">');
-        SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$w_sq_pais,null,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
-        ShowHTML('</tr>');
-    }
-
-    if($_REQUEST['p_uf'] <> ''){
-        ShowHTML('<tr valign="top">');
-        SelecaoCidade('<u>C</u>idade:','T',null,$w_sq_cidade,$w_sq_pais,$p_uf,'w_sq_cidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');    
-        ShowHTML('<tr/>');
-    }
-    
-    ShowHTML('<tr valign="top">');
+    SelecaoCategoriaDiaria('Ca<u>t</u>egoria da diária:','G',null, $w_cliente, $w_categoria,null,'w_categoria',null,null);
     SelecaoTipoDiaria('Tipo de <u>D</u>iária:','D',null,$w_tipo_diaria,null,'w_tipo_diaria',null,null);
-    ShowHTML('<tr/>');        
+    MontaRadioSN('<b>Diária nacional?</b>',$w_nacional,'w_nacional',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_continente\'; document.Form.submit();"');    
+    ShowHTML('        <tr/>');
+    ShowHTML('        <tr valign="top">');
+    if ($w_nacional == 'N') {
+      selecaoContinente('<u>C</u>ontinente:','C','Selecione o continente na relação.',$w_continente,null,'w_continente',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_pais\'; document.Form.submit();"');
+      selecaoPais('<u>P</u>aís:','P','Selecione o país na relação.',$w_sq_pais,null,'w_sq_pais','CONTINENTE'.$w_continente,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
+    } else {
+      ShowHTML('<input type="hidden" name="w_sq_pais" value="'.$w_sq_pais.'"/>');
+      ShowHTML('<input type="hidden" name="w_continente" value="'.$w_continente.'"/>');
+    }
+    SelecaoEstado('E<u>s</u>tado:','S',null,$w_uf,$w_sq_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'w_sq_cidade\'; document.Form.submit();"');
+    SelecaoCidade('<u>C</u>idade:','C',null,$w_sq_cidade,$w_sq_pais,$w_uf,'w_sq_cidade',null,null);    
+    
+    ShowHTML('        <tr valign="top">');
+    selecaoMoeda('<u>U</u>nidade monetária:','U','Selecione a unidade monetária na relação.',$w_sq_moeda,null,'w_sq_moeda','ATIVO',null);
+    ShowHTML('          <td><b><u>V</u>alor:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr/>');
         
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -718,24 +743,24 @@ function Parametros() {
   ShowHTML('      <table width="100%" border="0">');
   ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><font size="1"><b>Parâmetros</td></td></tr>');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Parâmetros</td></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
   //ShowHTML '      <tr><td><font size=1>Falta definir a explicação.</font></td></tr>'
   //ShowHTML '      <tr><td align=''center'' height=''1'' bgcolor=''#000000''></td></tr>'
   ShowHTML('      </table>');
   ShowHTML('      <table width="100%" border="0">');
-  ShowHTML('      <tr><td><font size="1"><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
+  ShowHTML('      <tr><td><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
   //ShowHTML '          <td><font size=''1''><b><u>A</u>no corrente:</b><br><input ' & w_Disabled & ' accesskey=''A'' type=''text'' name=''w_ano_corrente'' class=''sti'' SIZE=''10'' MAXLENGTH=''10'' VALUE=''' & w_ano_corrente & '''></td>'
-  ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
-  ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
-  ShowHTML('      <tr><td><font size="1"><b><u>D</u>ias de antecedência para viagens nacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_antecedencia" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_antecedencia.'"></td>');
-  ShowHTML('          <td><font size="1"><b><u>D</u>ias de antecedência para viagens internacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_anteced_int" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_anteced_int.'"></td>');
-  ShowHTML('      <tr><td><font size="1"><b>D<u>i</u>as para prestação de contas:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dias_prest_contas" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_prest_contas.'"></td>');
+  ShowHTML('      <tr><td><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
+  ShowHTML('          <td><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+  ShowHTML('      <tr><td><b><u>D</u>ias de antecedência para viagens nacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_antecedencia" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_antecedencia.'"></td>');
+  ShowHTML('          <td><b><u>D</u>ias de antecedência para viagens internacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_anteced_int" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_anteced_int.'"></td>');
+  ShowHTML('      <tr><td><b>D<u>i</u>as para prestação de contas:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dias_prest_contas" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_prest_contas.'"></td>');
   ShowHTML('      </table>');
   ShowHTML('      <tr>');
   MontaRadioNS('<b>Controla limite orçamentário de passagens e diárias por unidade e ano?</b>',$w_limite_unidade,'w_limite_unidade');
   ShowHTML('      <tr>');
-  ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
   ShowHTML('      <tr><td align="center" colspan="3">');
@@ -836,30 +861,30 @@ function Unidade() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Unidade','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Unidade','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').' ('.f($row,'sigla').')</td>');
+        ShowHTML('        <td>'.f($row,'nome').' ('.f($row,'sigla').')</td>');
         if (f($row,'ativo')=='S') {
-          ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         } else {
           ShowHTML('        <td align="center"><font size="1" color="red">'.f($row,'nm_ativo').'</td>');
         } 
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         if ($w_limite_unidade=='S') {
@@ -891,7 +916,7 @@ function Unidade() {
     } 
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('         </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1018,29 +1043,29 @@ function LimiteUnidade() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <a accesskey="F" class="ss" href="#" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ano','ano').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Limite passagens','limite_passagem').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Limite diárias','limite_diaria').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ano','ano').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Limite passagens','limite_passagem').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Limite diárias','limite_diaria').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'ano').'</td>');
-        ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'limite_passagem'),2,',','.').'</td>');
-        ShowHTML('        <td align="right"><font size="1">'.number_format(f($row,'limite_diaria'),2,',','.').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="center">'.f($row,'ano').'</td>');
+        ShowHTML('        <td align="right">'.number_format(f($row,'limite_passagem'),2,',','.').'</td>');
+        ShowHTML('        <td align="right">'.number_format(f($row,'limite_diaria'),2,',','.').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_unidade').'&w_ano='.f($row,'ano').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_unidade').'&w_ano='.f($row,'ano').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1064,12 +1089,12 @@ function LimiteUnidade() {
       SelecaoAno('<U>A</U>no:','A',null,$w_ano,null,'w_ano',null,null);
     } else {
       ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
-      ShowHTML('          <td valign="top"><font size="1"><b>Ano:<br>'.$w_ano.'</b></td>');
+      ShowHTML('          <td valign="top"><b>Ano:<br>'.$w_ano.'</b></td>');
     } 
-    ShowHTML('          <td valign="top"><font size="1"><b><u>L</u>imite para passagens:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_passagem" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_passagem.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para passagens para a unidade selecionada."></td>');
-    ShowHTML('          <td valign="top"><font size="1"><b>L<u>i</u>mite para diárias:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_limite_diaria" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diaria.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para diárias para a unidade selecionada."></td>');
+    ShowHTML('          <td valign="top"><b><u>L</u>imite para passagens:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_passagem" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_passagem.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para passagens para a unidade selecionada."></td>');
+    ShowHTML('          <td valign="top"><b>L<u>i</u>mite para diárias:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_limite_diaria" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diaria.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para diárias para a unidade selecionada."></td>');
     ShowHTML('         </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1141,28 +1166,28 @@ function Usuario() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
-        ShowHTML('        <td><font size="1">'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.Nvl(f($row,'ramal'),'---').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
+        ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
+        ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1179,7 +1204,7 @@ function Usuario() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('<u>P</u>essoa:','p','Selecione a pessoa.',$w_chave,null,'w_chave','USUARIOS');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
     ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
@@ -1268,26 +1293,26 @@ function CategoriaDiaria() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1307,11 +1332,11 @@ function CategoriaDiaria() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1355,7 +1380,7 @@ function Grava() {
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         if ($_REQUEST['w_padrao']=='S') {
-          $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
+          $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Somente pode existir uma companhia padrão!\');');
@@ -1363,8 +1388,8 @@ function Grava() {
             retornaFormulario('w_nome');
             exit;
           } 
-        } 
-        $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null,null,null,null,$_REQUEST['w_chave'],null);
+        }
+        $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null,null,null,null,null,$_REQUEST['w_chave'],null);
         if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Companhia já cadastrada!\');');
@@ -1374,7 +1399,7 @@ function Grava() {
         } 
       } 
       dml_putCiaTrans::getInstanceOf($dbms,$O,$w_cliente,
-      $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
+      $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
       $_REQUEST['w_aquaviario'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1452,37 +1477,37 @@ function Grava() {
       ScriptClose();
       retornaFormulario('w_assinatura');
     } 
-  } elseif (!(strpos($SG,'PDVALDIAS')===false)) {
+  } elseif (!(strpos($SG,'PDVALDIA')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
 
-    /*if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
-        //if ($_REQUEST['w_padrao']=='S') {
-          /*$RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente,null,null,null);
-          if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Somente pode existir uma companhia padrão!\');');
-            ScriptClose();
-            retornaFormulario('w_nome');
-            exit;
-          } 
-        //} 
-        $RS = db_getMeioTransporte::getInstanceOf($dbms, $w_cliente, null, null, null, $_REQUEST['w_nome']);
-       
-        if (count($RS)>0) {        
-          foreach($RS as $row) { $RS = $row; break; }
-          if (f($RS,'chave')!=nvl($_REQUEST['w_chave'],0)) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Meio de transporte já cadastrado!\');');
-            ScriptClose();
-            retornaFormulario('w_nome');
-            exit;
+        $w_erro = false;
+        $RS = db_getValorDiaria::getInstanceOf($dbms, $w_cliente, null);
+        foreach ($RS as $row) {
+          if (f($row,'nacional')==$_REQUEST['w_nacional'] &&
+              f($row,'continente')==intVal($_REQUEST['w_continente']) &&
+              nvl(f($row,'sq_pais'),0)==nvl(intVal($_REQUEST['w_sq_pais']),0) &&
+              nvl(f($row,'sq_cidade'),0)==nvl(intVal($_REQUEST['w_sq_cidade']),0) &&
+              f($row,'tipo_diaria')==$_REQUEST['w_tipo_diaria'] &&
+              f($row,'sq_categoria_diaria')==intVal($_REQUEST['w_categoria']) &&
+              f($row,'chave')!=nvl($_REQUEST['w_chave'],0)) {
+            $w_erro = true;
+            break;
           }
-        } 
+        }
+        if ($w_erro) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Já existe valor de diária para os dados informados!\');');
+          ScriptClose();
+          retornaFormulario('w_tipo_diaria');
+          exit;
+        }
       }
-      dml_putMeioTrans::getInstanceOf($dbms, $O, $w_cliente,
-          $_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_aereo'],$_REQUEST['w_rodoviario'],
-          $_REQUEST['w_ferroviario'], $_REQUEST['w_aquaviario'],$_REQUEST['w_ativo']);
+      dml_putValorDiaria::getInstanceOf($dbms, $O, $w_cliente,
+          $_REQUEST['w_nacional'],$_REQUEST['w_continente'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_cidade'],
+          $_REQUEST['w_sq_moeda'], $_REQUEST['w_tipo_diaria'],$_REQUEST['w_categoria'], 
+          $_REQUEST['w_valor'], $_REQUEST['w_chave']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -1491,7 +1516,7 @@ function Grava() {
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
       ScriptClose();
       retornaFormulario('w_assinatura');
-    } */
+    } 
   } elseif (!(strpos($SG,'PDPARAM')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1593,7 +1618,7 @@ function Grava() {
     ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
     ShowHTML('  history.back(1);');
     ScriptClose();
-  } 
+  }
 } 
 
 // =========================================================================
