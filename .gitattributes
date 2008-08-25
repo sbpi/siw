@@ -2301,6 +2301,7 @@ SP_MSSQL2000/SIW/SP_PutEOLocal.sql -text
 SP_MSSQL2000/SIW/SP_PutEOResp.sql -text
 SP_MSSQL2000/SIW/SP_PutEOTipoUni.sql -text
 SP_MSSQL2000/SIW/SP_PutEOUnidade.sql -text
+SP_MSSQL2000/SIW/SP_PutHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoAreas.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoConc.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEnvio.sql -text
@@ -2330,12 +2331,18 @@ SP_MSSQL2000/SIW/SP_VerificaSenha.sql -text
 SP_MSSQL2000/SIW/SP_VerificaUsuario.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
 SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
+SP_MSSQL2000/SIW/SP_fGetPlano.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
+SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
+SP_MSSQL2000/SIW/sp_getNatureza_PE.sql -text
+SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
+SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
+SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
 SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
