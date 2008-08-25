@@ -2154,6 +2154,7 @@ SP_MSSQL2000/SIW/ACENTOS.sql -text
 SP_MSSQL2000/SIW/AC_CriaParametro.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
+SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressData.sql -text
@@ -2247,6 +2248,7 @@ SP_MSSQL2000/SIW/SP_GetSolicRecurso.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicResp.sql -text
 SP_MSSQL2000/SIW/SP_GetStateData.sql -text
 SP_MSSQL2000/SIW/SP_GetStateList.sql -text
+SP_MSSQL2000/SIW/SP_GetTipoIndicador.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteData.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteList.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteUser.sql -text
@@ -2321,6 +2323,7 @@ SP_MSSQL2000/SIW/SP_PutSiwMenEnd.sql -text
 SP_MSSQL2000/SIW/SP_PutSiwPesCC.sql -text
 SP_MSSQL2000/SIW/SP_PutSiwUsuario.sql -text
 SP_MSSQL2000/SIW/SP_PutSolicEtpRec.sql -text
+SP_MSSQL2000/SIW/SP_PutTipoIndicador.sql -text
 SP_MSSQL2000/SIW/SP_UpdatePassword.sql -text
 SP_MSSQL2000/SIW/SP_VerificaAssinat.sql -text
 SP_MSSQL2000/SIW/SP_VerificaSenha.sql -text
@@ -2328,8 +2331,11 @@ SP_MSSQL2000/SIW/SP_VerificaUsuario.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
 SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
+SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
+SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
+SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
 SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
