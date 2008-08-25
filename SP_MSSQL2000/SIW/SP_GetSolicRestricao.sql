@@ -1,22 +1,21 @@
-create or replace procedure sp_getSolicRestricao
-   (p_chave                 in  number   default null,
-    p_chave_aux             in  number   default null,
-    p_pessoa                in  number   default null,
-    p_pessoa_atualizacao    in  number   default null,
-    p_tipo_restricao        in  number   default null,
-    p_problema              in  varchar2 default null,
-    p_restricao             in  varchar2 default null,
-    p_result                out sys_refcursor) is
+create procedure sp_getSolicRestricao
+   (@p_chave                 int           = null,
+    @p_chave_aux             int           = null,
+    @p_pessoa                int           = null,
+    @p_pessoa_atualizacao    int           = null,
+    @p_tipo_restricao        int           = null,
+    @p_problema              varchar( 1)   = null,
+    @p_restricao             varchar(15)   = null) as
 begin
-   If p_restricao is null or p_restricao = 'EXISTERESTRICAO' Then
+   If @p_restricao is null or @p_restricao = 'EXISTERESTRICAO' Begin
       -- Recupera as metas ligadas a uma solicitação
-      open p_result for 
+      --open @p_result for 
          select a.sq_siw_restricao    as chave_aux,                    a.sq_siw_solicitacao as chave, 
                 a.sq_pessoa,           a.sq_pessoa_atualizacao,        a.sq_tipo_restricao,
                 a.risco,               a.problema,                     a.descricao,           
                 a.criticidade,         a.estrategia,                   a.acao_resposta,
                 a.data_situacao,       a.situacao_atual,               
-                to_char(a.ultima_atualizacao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_ultima_atualizacao,
+                dbo.to_char(a.ultima_atualizacao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_ultima_atualizacao,
                 a.probabilidade,       a.impacto,                      a.fase_atual,
                 case a.risco         when 'S' then 'Sim' else 'Não' end as nm_risco,
                 case a.risco         when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao,
@@ -39,7 +38,7 @@ begin
                 a4.ativo st_tramite,
                 c.sq_pessoa titular, d.sq_pessoa substituto, 
                 e.sq_pessoa tit_exec, f.sq_pessoa sub_exec,
-                i.nome_resumido as nm_resp,                            i.nome_resumido_ind as nm_resp_ind,
+                i.nome_resumido as nm_resp,                            i.nome_resumido_ind as nm_res@p_ind,
                 j.nome_resumido as nm_atualiz,                         j.nome_resumido_ind as nm_atualiz_ind,
                 b.nome nm_tipo
            from siw_restricao                          a
@@ -67,20 +66,20 @@ begin
                 inner          join siw_tipo_restricao b  on (a.sq_tipo_restricao     = b.sq_tipo_restricao) 
                 inner          join co_pessoa          i  on (a.sq_pessoa             = i.sq_pessoa)
                 inner          join co_pessoa          j  on (a.sq_pessoa_atualizacao = j.sq_pessoa)
-          where (p_chave     is null or (p_chave     is not null and a.sq_siw_solicitacao = p_chave))
-            and (p_chave_aux is null or (p_chave_aux is not null and ((p_restricao is null and a.sq_siw_restricao = p_chave_aux) or 
-                                                                      (p_restricao = 'EXISTEMETA' and a.sq_siw_solicitacao <> coalesce(p_chave_aux,0))
+          where (@p_chave     is null or (@p_chave     is not null and a.sq_siw_solicitacao = @p_chave))
+            and (@p_chave_aux is null or (@p_chave_aux is not null and ((@p_restricao is null and a.sq_siw_restricao = @p_chave_aux) or 
+                                                                      (@p_restricao = 'EXISTEMETA' and a.sq_siw_solicitacao <> coalesce(@p_chave_aux,0))
                                                                      )
                                         )
                 )
-            and (p_pessoa             is null or (p_pessoa              is not null and a.sq_pessoa             = p_pessoa))
-            and (p_pessoa_atualizacao is null or (p_pessoa_atualizacao  is not null and a.sq_pessoa_atualizacao = p_pessoa_atualizacao))
-            and (p_tipo_restricao     is null or (p_tipo_restricao      is not null and a.sq_tipo_restricao     = p_tipo_restricao))
-            and (p_problema           is null or (p_problema            is not null and a.problema              = p_problema));
+            and (@p_pessoa             is null or (@p_pessoa              is not null and a.sq_pessoa             = @p_pessoa))
+            and (@p_pessoa_atualizacao is null or (@p_pessoa_atualizacao  is not null and a.sq_pessoa_atualizacao = @p_pessoa_atualizacao))
+            and (@p_tipo_restricao     is null or (@p_tipo_restricao      is not null and a.sq_tipo_restricao     = @p_tipo_restricao))
+            and (@p_problema           is null or (@p_problema            is not null and a.problema              = @p_problema));
    
-   ElsIf p_restricao = 'ETAPA' Then
+   End Else If @p_restricao = 'ETAPA' Begin
       -- Recupera todas as questões ligadas a uma etapa
-      open p_result for 
+      --open @p_result for 
          select a.sq_siw_restricao    as chave_aux,                    a.sq_siw_solicitacao as chave, 
                 a.sq_pessoa,           a.sq_pessoa_atualizacao,        a.sq_tipo_restricao,
                 a.risco,               a.problema,                     a.descricao,           
@@ -99,7 +98,7 @@ begin
                                      when 'C' then 'Resolvido' 
                 end as nm_fase_atual,
                 d.nome nm_tipo,
-                e.nome_resumido||'('||e2.sigla||')' as nm_resp, 
+                e.nome_resumido+'('+e2.sigla+')' as nm_resp, 
                 coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2
            from siw_restricao                      a
                 inner     join siw_restricao_etapa b  on (a.sq_siw_restricao   = b.sq_siw_restricao)
@@ -119,21 +118,21 @@ begin
                 inner     join co_pessoa           e  on (a.sq_pessoa          = e.sq_pessoa)
                   inner   join sg_autenticacao     e1 on (e.sq_pessoa          = e1.sq_pessoa)
                     inner join eo_unidade          e2 on (e1.sq_unidade        = e2.sq_unidade)
-           where a.sq_siw_solicitacao = p_chave
-            and  b.sq_projeto_etapa   = p_chave_aux
-            and  c.sq_projeto_etapa   = p_chave_aux;  
+           where a.sq_siw_solicitacao = @p_chave
+            and  b.sq_projeto_etapa   = @p_chave_aux
+            and  c.sq_projeto_etapa   = @p_chave_aux;  
             
-   ElsIf p_restricao = 'TAREFA' Then
+   End Else If @p_restricao = 'TAREFA' Begin
       -- Recupera as tarefas de uma restricao
-       open p_result for            
+       --open @p_result for            
           select a.sq_siw_solicitacao, a.assunto,
                  a2.sigla as sg_servico,
                  b.sq_pessoa,
-                 c.nome_resumido||'('||d.sigla||')' as nm_resp_questao, 
-                 d.sigla as sg_unidade_resp_questao,
+                 c.nome_resumido+'('+d.sigla+')' as nm_res@p_questao, 
+                 d.sigla as sg_unidade_res@p_questao,
                  e.solicitante, e.inicio, e.fim, a.inicio_real, a.fim_real, e.sq_menu,
-                 e1.nome_resumido||'('||e3.sigla||')' as nm_resp_tarefa, 
-                 e3.sigla as sg_unidade_resp_tarefa,
+                 e1.nome_resumido+'('+e3.sigla+')' as nm_res@p_tarefa, 
+                 e3.sigla as sg_unidade_res@p_tarefa,
                  f.sigla as sg_tramite, f.nome as nm_tramite
             from gd_demanda                       a
                  inner       join siw_solicitacao a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
@@ -148,7 +147,6 @@ begin
                        inner join eo_unidade      e3 on (e2.sq_unidade         = e3.sq_unidade)
                  inner       join siw_tramite     f  on (e.sq_siw_tramite      = f.sq_siw_tramite and
                                                          coalesce(f.sigla,'-') <> 'CA')
-           where a.sq_siw_restricao = p_chave;
-   End If;
-end sp_getSolicRestricao;
-/
+           where a.sq_siw_restricao = @p_chave;
+   End
+end

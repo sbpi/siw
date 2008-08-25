@@ -2152,9 +2152,12 @@ Fontes_PHP_SIW/visualalerta.php -text
 Fontes_PHP_SIW/visualprojeto.php -text
 SP_MSSQL2000/SIW/ACENTOS.sql -text
 SP_MSSQL2000/SIW/AC_CriaParametro.sql -text
+SP_MSSQL2000/SIW/Acesso.sql -text
+SP_MSSQL2000/SIW/Acesso_Recurso.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
 SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
+SP_MSSQL2000/SIW/MontaOrdem.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressData.sql -text
@@ -2164,6 +2167,7 @@ SP_MSSQL2000/SIW/SP_GetAdressTPData.sql -text
 SP_MSSQL2000/SIW/SP_GetAdressTPList.sql -text
 SP_MSSQL2000/SIW/SP_GetAgree.sql -text
 SP_MSSQL2000/SIW/SP_GetAgreeType.sql -text
+SP_MSSQL2000/SIW/SP_GetAlerta.sql -text
 SP_MSSQL2000/SIW/SP_GetBankAccData.sql -text
 SP_MSSQL2000/SIW/SP_GetBankAccList.sql -text
 SP_MSSQL2000/SIW/SP_GetBankData.sql -text
@@ -2184,12 +2188,14 @@ SP_MSSQL2000/SIW/SP_GetCountryData.sql -text
 SP_MSSQL2000/SIW/SP_GetCountryList.sql -text
 SP_MSSQL2000/SIW/SP_GetCustomerData.sql -text
 SP_MSSQL2000/SIW/SP_GetCustomerSite.sql -text
+SP_MSSQL2000/SIW/SP_GetDataEspecial.sql -text
 SP_MSSQL2000/SIW/SP_GetDefData.sql -text
 SP_MSSQL2000/SIW/SP_GetDefGrpData.sql -text
 SP_MSSQL2000/SIW/SP_GetDefList.sql -text
 SP_MSSQL2000/SIW/SP_GetDeficGrpList.sql -text
 SP_MSSQL2000/SIW/SP_GetDeskTop.sql -text
 SP_MSSQL2000/SIW/SP_GetDeskTop_TT.sql -text
+SP_MSSQL2000/SIW/SP_GetDesktop_Recurso.sql -text
 SP_MSSQL2000/SIW/SP_GetEOAAtuac.sql -text
 SP_MSSQL2000/SIW/SP_GetEOAAtuacData.sql -text
 SP_MSSQL2000/SIW/SP_GetEtapaOrder.sql -text
@@ -2205,6 +2211,7 @@ SP_MSSQL2000/SIW/SP_GetFormatData.sql -text
 SP_MSSQL2000/SIW/SP_GetFormatList.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomData.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomList.sql -text
+SP_MSSQL2000/SIW/SP_GetIndicador.sql -text
 SP_MSSQL2000/SIW/SP_GetKindPersList.sql -text
 SP_MSSQL2000/SIW/SP_GetLinkData.sql -text
 SP_MSSQL2000/SIW/SP_GetLinkDataHelp.sql -text
@@ -2246,6 +2253,7 @@ SP_MSSQL2000/SIW/SP_GetSolicList.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicLog.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRecurso.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicResp.sql -text
+SP_MSSQL2000/SIW/SP_GetSolicRestricao.sql -text
 SP_MSSQL2000/SIW/SP_GetStateData.sql -text
 SP_MSSQL2000/SIW/SP_GetStateList.sql -text
 SP_MSSQL2000/SIW/SP_GetTipoIndicador.sql -text
@@ -2337,6 +2345,8 @@ SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
+SP_MSSQL2000/SIW/SolicRestricao.sql -text
+SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_getNatureza_PE.sql -text
@@ -2344,6 +2354,7 @@ SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
+SP_MSSQL2000/SIW/trunc.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
 SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
 SP_Oracle81/fbaj/LOADEXPORTTABLES.prc -text

@@ -22,7 +22,6 @@ begin
   End
   
   -- Monta o nome varrendo do registro informado para cima
-
   Open c_ordem
   Fetch Next from c_ordem into @sq_tipo_recurso, @sq_tipo_pai, @nome
   While @@Fetch_Status = 0 Begin
