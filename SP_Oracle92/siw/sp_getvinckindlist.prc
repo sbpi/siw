@@ -21,4 +21,4 @@ begin
          and ((p_interno     is null) or (p_interno     is not null and a.interno = p_interno))
      order by a.interno desc, b.nome, a.ordem;
 end SP_GetVincKindList;
-/
+
