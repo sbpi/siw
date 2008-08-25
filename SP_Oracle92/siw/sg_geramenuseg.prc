@@ -59,7 +59,7 @@ for crec in c_Segmento loop
             p2,                 p3,                         p4,                sigla, 
             imagem,             descentralizado,            externo,           target,
             emite_os,           consulta_opiniao,           envia_email,       exibe_relatorio,
-            como_funciona,      arquivo_proced,             vinculacao,        data_hora,
+            como_funciona,      vinculacao,                 data_hora,
             envia_dia_util,     descricao,                  justificativa,     controla_ano,
             libera_edicao
            )
@@ -70,7 +70,7 @@ for crec in c_Segmento loop
             drec.p2,            drec.p3,                    drec.p4,           drec.sigla,
             drec.imagem,        drec.descentralizado,       drec.externo,      drec.target,
             drec.emite_os,      drec.consulta_opiniao,      drec.envia_email,  drec.exibe_relatorio,
-            drec.como_funciona, drec.arquivo_proced,        drec.vinculacao,   drec.data_hora,
+            drec.como_funciona, drec.vinculacao,            drec.data_hora,
             drec.envia_dia_util,drec.descricao,             drec.justificativa,drec.controla_ano,
             drec.libera_edicao
        from siw_mod_seg a

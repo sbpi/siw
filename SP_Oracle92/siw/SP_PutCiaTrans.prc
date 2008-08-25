@@ -10,7 +10,7 @@ create or replace procedure SP_PutCiaTrans
     p_padrao                   in  varchar2 default null,
     p_ativo                    in  varchar2 default null
    ) is 
-   w_sigla varchar2(20) :=coalesce(p_sigla,'NI');   
+   w_sigla varchar2(20) := coalesce(acentos(p_sigla),'NI');   
 begin
 
    If p_operacao = 'I' Then

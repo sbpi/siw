@@ -11,11 +11,11 @@ Tipo diferente de 1 ou nulo => Retira caracteres acentuados e converte para minϊ
 BEGIN
 
    IF Tipo IS NULL OR Tipo <> 1 THEN
-      nome := ltrim(upper(translate(lower((nome)),'γβαΰικνυτσϊόη','aaaaeeiooouuc')));
+      nome := translate(lower((nome)),'γβαΰικνυτσϊόη','aaaaeeiooouuc');
    ELSE
       nome := replace(replace(translate(nome,'ΐΒΑΓΚΙΝΤΥΣΪάΗΰβαγκιντυσϊόη','AAAAEEIOOOUUCaaaaeeiooouuc'),'&','e'),'-','- ');
    END IF;
 
-   RETURN nome ;
+   RETURN upper(nome) ;
 END;
 /

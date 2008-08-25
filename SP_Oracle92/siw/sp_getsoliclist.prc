@@ -181,7 +181,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -331,7 +331,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -566,7 +566,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -790,7 +790,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -827,7 +827,7 @@ begin
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,
-                case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
+                case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa,    d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 coalesce(d3.valor,0) as valor_doc,
@@ -945,7 +945,7 @@ begin
                 )
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
@@ -960,7 +960,7 @@ begin
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
                  ((instr(p_restricao,'PROJ')    > 0    and q.sq_siw_solicitacao is not null) or
-                  --(instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
+                  --(instr(p_restricao,'ETAPA') > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.pessoa       is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
@@ -974,7 +974,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -1133,7 +1133,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               a.ordem as or_servico,
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -1305,7 +1305,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,

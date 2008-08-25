@@ -30,15 +30,15 @@ begin
                    case when h.sq_demanda_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
                    inner      join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner      join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -56,13 +56,13 @@ begin
                    )
             UNION
             select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from gd_demanda_log                     b 
                    left outer join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
                    inner      join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
@@ -86,18 +86,18 @@ begin
                    case when h.sq_projeto_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
                    coalesce(k.caminho,m.caminho) as caminho,
                    coalesce(k.tipo,m.tipo) as tipo,
                    coalesce(k.tamanho,m.tamanho) as tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                         a
                       inner      join co_pessoa          c on (a.sq_pessoa          = c.sq_pessoa)
                       inner      join siw_tramite        e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -118,13 +118,13 @@ begin
                    )
             UNION
             select b.sq_projeto_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pj_projeto_log                        b 
                       left outer join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
                       inner      join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
@@ -148,18 +148,18 @@ begin
                    case when h.sq_programa_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
                    coalesce(k.caminho,m.caminho) as caminho,
                    coalesce(k.tipo,m.tipo) as tipo,
                    coalesce(k.tamanho,m.tamanho) as tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                            a
                       inner      join co_pessoa             c on (a.sq_pessoa          = c.sq_pessoa)
                       inner      join siw_tramite           e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -179,13 +179,13 @@ begin
                    )
             UNION
             select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pe_programa_log                        b 
                       left       join co_pessoa           d on (b.destinatario       = d.sq_pessoa)
                       inner      join co_pessoa           c on (b.cadastrador        = c.sq_pessoa)
@@ -209,15 +209,15 @@ begin
                    case when h.sq_acordo_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    null as tipo_anotacao
               from siw_solic_log                       a
                    inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
@@ -236,13 +236,13 @@ begin
                    )
             UNION
             select b.sq_acordo_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data,
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    case when despacho is null then 'Anotação' else b.observacao end as tipo_anotacao
               from ac_acordo_log                       b 
                    left outer   join co_pessoa         d on (b.destinatario       = d.sq_pessoa)
@@ -267,15 +267,15 @@ begin
                    case when h.sq_lancamento_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                       a
                    inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -293,13 +293,13 @@ begin
                    )
             UNION
             select b.sq_lancamento_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from fn_lancamento_log                       b 
                    left outer   join co_pessoa             d on (b.destinatario       = d.sq_pessoa)
                    inner        join co_pessoa             c on (b.cadastrador        = c.sq_pessoa)
@@ -320,25 +320,25 @@ begin
          -- Recupera os encaminhamentos de uma demanda
          open p_result for
             select h.sq_demanda_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data,
-                   case when h.sq_demanda_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end despacho,
-                   'TRAMITACAO' origem,
-                   c.nome_resumido responsavel,
+                   case when h.sq_demanda_log is null then a.observacao else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho end as despacho,
+                   'TRAMITACAO' as origem,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase,
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite, 
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
-              from siw_solic_log                        a
-                     inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
-                     inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                     inner        join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                       inner      join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                     left outer   join gd_demanda_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                       left outer join co_pessoa         i on (h.destinatario       = i.sq_pessoa)
-                     left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                       left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
+              from siw_solic_log                       a
+                   inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
+                   inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                   inner        join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                     inner      join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                   left outer   join gd_demanda_log    h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                     left outer join co_pessoa         i on (h.destinatario       = i.sq_pessoa)
+                   left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                     left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
@@ -348,20 +348,20 @@ begin
             UNION
             select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
                    'ANOTACAO' origem,
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from gd_demanda_log                           b
-                     left outer     join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
-                     inner          join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
-                     inner          join siw_solicitacao    g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                       inner        join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                     left outer     join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
-                       left outer   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                   left outer     join co_pessoa          d on (b.destinatario       = d.sq_pessoa)
+                   inner          join co_pessoa          c on (b.cadastrador        = c.sq_pessoa)
+                   inner          join siw_solicitacao    g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                     inner        join siw_tramite        f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                   left outer     join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
+                     left outer   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
@@ -375,12 +375,12 @@ begin
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
             select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, a.observacao as despacho,
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite, 
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
                    inner      join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
                    inner      join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -403,34 +403,34 @@ begin
                    case when h.sq_programa_log is null 
                       then a.observacao 
                       else a.observacao||chr(13)||chr(10)||'DESPACHO: '||chr(13)||chr(10)||h.despacho
-                      end despacho,
-                   c.nome_resumido responsavel,
+                      end as despacho,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   i.nome_resumido destinatario,
+                   i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, 
-                   e.nome tramite,
+                   f.nome as fase, f.descricao,
+                   e.nome as tramite,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log   a
-                      inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
-                      inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                      inner      join siw_solicitacao g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                        inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                      left outer join pe_programa_log  h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                        left outer join co_pessoa     i on (h.destinatario       = i.sq_pessoa)
-                        left outer join pe_programa_log_arq j on (h.sq_programa_log  = j.sq_programa_log)
-                          left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
+                    inner      join co_pessoa       c on (a.sq_pessoa          = c.sq_pessoa)
+                    inner      join siw_tramite     e on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                    inner      join siw_solicitacao g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                      inner    join siw_tramite     f on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                    left outer join pe_programa_log  h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                      left outer join co_pessoa     i on (h.destinatario       = i.sq_pessoa)
+                      left outer join pe_programa_log_arq j on (h.sq_programa_log  = j.sq_programa_log)
+                        left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
             select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
-                   c.nome_resumido responsavel,
+                   c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   d.nome_resumido destinatario,
+                   d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome fase, f.nome tramite,
+                   f.nome as fase, f.nome as tramite, f.descricao,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pe_programa_log  b 
                       left outer join co_pessoa       d on (b.destinatario       = d.sq_pessoa)
                       inner      join co_pessoa       c on (b.cadastrador        = c.sq_pessoa)
@@ -460,11 +460,11 @@ begin
                    case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when i.sq_pessoa is not null then i.sq_pessoa     else l.sq_unidade end as sq_destinatario,
                    case when i.sq_pessoa is not null then i.nome_resumido else l.sigla      end as nm_destinatario,
-                   e.nome tramite,
-                   f.nome fase,
+                   e.nome as tramite,
+                   f.nome as fase, f.descricao,
                    h.interno, h.pessoa_externa,h.unidade_externa,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
-                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                    a
                    inner     join co_pessoa         a1 on (a.sq_pessoa          = a1.sq_pessoa)
                    inner     join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
@@ -484,15 +484,15 @@ begin
             select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
                    b1.nome as despacho,
                    b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
-                   'TRAMITACAO' origem,
+                   'TRAMITACAO' as origem,
                    e.sq_unidade as sq_registro, e.sigla as nm_registro, e.sq_unidade as sq_origem, e.sigla as nm_origem,
                    case when d.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when d.sq_pessoa is not null then d.sq_pessoa     else h.sq_unidade end as sq_destinatario,
                    case when d.sq_pessoa is not null then d.nome_resumido else h.sigla      end as nm_destinatario,
-                   f.nome tramite, f.nome fase,
+                   f.nome as tramite, f.nome as fase, f.descricao,
                    b.interno, b.pessoa_externa, b.unidade_externa,
                    null as sq_siw_arquivo, null as caminho, null as tipo, null as tamanho, 
-                   to_char(coalesce(b.recebimento, b.envio), 'DD/MM/YYYY, HH24:MI:SS') phpdt_data
+                   to_char(coalesce(b.recebimento, b.envio), 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pa_documento_log                   b
                    inner    join pa_tipo_despacho     b1 on (b.sq_tipo_despacho   = b1.sq_tipo_despacho)
                    inner    join co_pessoa            b2 on (b.cadastrador        = b2.sq_pessoa)

@@ -102,14 +102,14 @@ begin
          
          insert into co_pessoa_fisica 
                 (sq_pessoa, cpf,   sexo,   cliente)
-         values (w_pessoa,  p_cpf, p_sexo, p_cliente);
+         values (w_pessoa,  p_cpf, coalesce(p_sexo,'M'), p_cliente);
       Else
          -- Verifica se a pessoa tem registro em CO_PESSOA_FISICA. Se não tiver, grava
          select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = p_solicitante;
          If w_existe = 0 Then
             insert into co_pessoa_fisica 
                    (sq_pessoa,     cpf,   sexo,   cliente)
-            values (p_solicitante, p_cpf, p_sexo, p_cliente);
+            values (p_solicitante, p_cpf, coalesce(p_sexo,'M'), p_cliente);
          End If;
         
          -- Verifica se a pessoa tem indicação do tipo de vínculo. Se não tiver, grava

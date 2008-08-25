@@ -46,7 +46,7 @@ begin
             p2,                 p3,                         p4,                sigla, 
             imagem,             descentralizado,            externo,           target,
             emite_os,           consulta_opiniao,           envia_email,       exibe_relatorio,
-            como_funciona,      arquivo_proced,             vinculacao,        data_hora,
+            como_funciona,      vinculacao,                 data_hora,
             envia_dia_util,     descricao,                  justificativa
            )
     values (
@@ -56,7 +56,7 @@ begin
             crec.p2,            crec.p3,                    crec.p4,           crec.sigla,
             crec.imagem,        crec.descentralizado,       crec.externo,      crec.target,
             crec.emite_os,      crec.consulta_opiniao,      crec.envia_email,  crec.exibe_relatorio,
-            crec.como_funciona, crec.arquivo_proced,        crec.vinculacao,   crec.data_hora,
+            crec.como_funciona, crec.vinculacao,            crec.data_hora,
             crec.envia_dia_util,crec.descricao,             crec.justificativa
            );
   end loop;
@@ -73,4 +73,3 @@ begin
   
 end SG_GeraMenu;
 /
-

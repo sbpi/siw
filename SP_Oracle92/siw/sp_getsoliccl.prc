@@ -75,7 +75,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,

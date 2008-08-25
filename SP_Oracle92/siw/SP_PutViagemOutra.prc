@@ -28,7 +28,8 @@ create or replace procedure SP_PutViagemOutra
      p_agencia_estrang     in varchar2  default null,
      p_cidade_estrang      in varchar2  default null,
      p_informacoes         in varchar2  default null,
-     p_codigo_deposito     in varchar2  default null
+     p_codigo_deposito     in varchar2  default null,
+     p_sq_forma_pag        in number    default null
    ) is
 
    w_existe          number(4);
@@ -36,8 +37,13 @@ create or replace procedure SP_PutViagemOutra
    w_tipo_fone       number(18);
    w_chave_fone      number(18);
    w_chave_conta     number(18);
-   w_forma_pagamento varchar2(10) := 'CREDITO';
+   w_forma_pagamento varchar2(10) := null;
 begin
+   -- Se a forma de pagamento foi informada, recupera a sigla
+   If p_sq_forma_pag is not null Then
+      select sigla into w_forma_pagamento from co_forma_pagamento where sq_forma_pagamento = p_sq_forma_pag;
+   End If;
+
    -- Verifica se é a pessoa já existe
    select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
    If w_existe > 0 Then
@@ -278,20 +284,21 @@ begin
    End If;
 
    -- Atualiza a outra parte
-   update pd_missao
-     set sq_pessoa       = w_chave_pessoa,
-         sq_agencia       = null,
-         operacao_conta   = null,
-         numero_conta     = null,
-         sq_pais_estrang  = null,
-         aba_code         = null,
-         swift_code       = null,
-         endereco_estrang = null,
-         banco_estrang    = null,
-         agencia_estrang  = null,
-         cidade_estrang   = null,
-         informacoes      = null,
-         codigo_deposito  = null
+   update pd_missao 
+     set sq_pessoa          = w_chave_pessoa,
+         sq_forma_pagamento = p_sq_forma_pag,
+         sq_agencia         = null,
+         operacao_conta     = null,
+         numero_conta       = null,
+         sq_pais_estrang    = null,
+         aba_code           = null,
+         swift_code         = null,
+         endereco_estrang   = null,
+         banco_estrang      = null,
+         agencia_estrang    = null,
+         cidade_estrang     = null,
+         informacoes        = null,
+         codigo_deposito    = null
    where sq_siw_solicitacao = p_chave;
    
    If w_forma_pagamento in ('CREDITO','DEPOSITO') Then

@@ -43,6 +43,44 @@ begin
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira))
             and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null));
              
+   Elsif p_restricao = 'PDFINANC' Then
+      open p_result for 
+         select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,
+                a.valor_inicial, a.entrada_prevista, a.entrada_real, (a.entrada_prevista - a.entrada_real) entrada_pendente,
+                a.saida_prevista, a.saida_real, (a.saida_prevista-a.saida_real) saida_pendente,
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                case a.aplicacao_financeira when 'S' then 'Sim' else 'Não' end nm_aplicacao_financeira,
+                b.nome nm_cc, a.aplicacao_financeira,
+                c.total_previsto, c.total_real
+           from pj_rubrica                       a
+                inner join ct_cc                 b on (a.sq_cc              = b.sq_cc)
+                left  join (select sum(x.valor_previsto) as total_previsto, 
+                                   sum(x.valor_real) as total_real, 
+                                   x.sq_projeto_rubrica
+                              from pj_rubrica_cronograma x
+                             where ((p_inicio is null) or (p_inicio is not null and ((x.inicio  between p_inicio and p_fim) or
+                                                                                     (x.fim     between p_inicio and p_fim) or
+                                                                                     (p_inicio  between x.inicio and x.fim) or
+                                                                                     (p_fim     between x.inicio and x.fim)
+                                                                                     )
+                                                           )
+                                   )
+                            group by x.sq_projeto_rubrica
+                           )                     c on (a.sq_projeto_rubrica = c.sq_projeto_rubrica)
+                inner join pd_vinculo_financeiro d on (a.sq_projeto_rubrica = d.sq_projeto_rubrica and
+                                                       (p_codigo            = 'T' or
+                                                        (p_codigo           <> 'T' and
+                                                         ((p_codigo         = 'D' and d.diaria     = 'S') or
+                                                          (p_codigo         = 'H' and d.hospedagem = 'S')or
+                                                          (p_codigo         = 'V' and d.veiculo    = 'S')or
+                                                          (p_codigo         = 'S' and d.seguro     = 'S')or
+                                                          (p_codigo         = 'B' and d.bilhete    = 'S')
+                                                         )
+                                                        )
+                                                       )
+                                                      )
+          where a.sq_siw_solicitacao   = p_chave;
+             
    Elsif p_restricao = 'FICHA' Then
      open p_result for    
         select sum(a.valor) valor, 
@@ -69,9 +107,9 @@ begin
                inner          join ct_cc             n on (n.sq_cc              = f.sq_cc)
          where a.sq_rubrica_origem = p_chave_aux
            and m.sigla             <> 'CA'
-         group by c.vencimento, d.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, h.titulo, g.sq_siw_solicitacao,
-                  j.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla, n.nome
+         group by c.vencimento, d.codigo_interno, c.sq_siw_solicitacao, c.tipo, c.vencimento, d.descricao, e.sigla, c.tipo, 
+               e.nome, f.nome, f.codigo, h.titulo, g.sq_siw_solicitacao, j.codigo_interno, i.sq_siw_solicitacao, l.nome, l.sigla, m.sigla,
+               n.nome
      UNION
         select sum(a.valor_total) valor, 
                c.vencimento, d.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
@@ -97,9 +135,9 @@ begin
                inner          join ct_cc             n on (f.sq_cc              = n.sq_cc)
          where a.sq_projeto_rubrica = p_chave_aux
            and m.sigla             <> 'CA'
-         group by c.vencimento, d.codigo_interno, c.sq_siw_solicitacao, c.tipo, e.nome, h.titulo, h.sq_siw_solicitacao,
-                  j.codigo_interno, i.sq_siw_solicitacao, f.nome, f.codigo, d.descricao, l.nome, l.sigla, m.sigla,
-                  e.sigla, n.nome;
+         group by c.vencimento, d.codigo_interno, c.sq_siw_solicitacao, c.tipo, c.vencimento, d.descricao, e.sigla, c.tipo, 
+               e.nome, f.nome, f.codigo, h.titulo, g.sq_siw_solicitacao, j.codigo_interno, i.sq_siw_solicitacao, l.nome, l.sigla, m.sigla,
+               n.nome;
    End If;  
 End SP_GetSolicRubrica;
 /
