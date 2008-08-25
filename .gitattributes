@@ -2169,6 +2169,7 @@ SP_MSSQL2000/SIW/SP_GetBankData.sql -text
 SP_MSSQL2000/SIW/SP_GetBankHousData.sql -text
 SP_MSSQL2000/SIW/SP_GetBankHousList.sql -text
 SP_MSSQL2000/SIW/SP_GetBankList.sql -text
+SP_MSSQL2000/SIW/SP_GetBenef.sql -text
 SP_MSSQL2000/SIW/SP_GetCCData.sql -text
 SP_MSSQL2000/SIW/SP_GetCCList.sql -text
 SP_MSSQL2000/SIW/SP_GetCCSubordinat.sql -text
