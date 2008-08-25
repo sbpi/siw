@@ -1,14 +1,12 @@
-create or replace procedure SP_GetUserMail
-   (p_sq_menu   in number   default null,
-    p_sq_pessoa in number,
-    p_cliente   in number   default null,
-    p_restricao in varchar2 default null,
-    p_result    out sys_refcursor
-   ) is
+alter procedure dbo.SP_GetUserMail
+   (@p_sq_menu   int         =null,
+    @p_sq_pessoa int,
+    @p_cliente   int         =null,
+    @p_restricao varchar(30) =null
+   ) as
 begin
-   If p_restricao is null Then
+   If @p_restricao is null Begin
       -- Recupera a configuração de envio de email por serviço
-      open p_result for 
          select a.sq_pessoa_mail, a.sq_pessoa, a.sq_menu, a.alerta_diario, a.tramitacao,
                 a.conclusao, a.responsabilidade,
                 b.nome as nm_servico, b.sigla as sg_servico, b.envia_email,
@@ -30,12 +28,11 @@ begin
                                  and w.padrao             = 'S'
                              )               e on (a.sq_pessoa = e.sq_pessoa)
                 left    join co_pessoa       f on (a.sq_pessoa = f.sq_pessoa)
-          where a.sq_pessoa = p_sq_pessoa
-            and ((p_sq_menu  is null) or (p_sq_menu is not null and a.sq_menu = p_sq_menu))
-          order by c.nome, b.nome;
-   Elsif p_restricao = 'LISTA' Then
+          where a.sq_pessoa = @p_sq_pessoa
+            and ((@p_sq_menu  is null) or (@p_sq_menu is not null and a.sq_menu = @p_sq_menu))
+          order by dbo.acentos(c.nome), dbo.acentos(b.nome);
+   End Else If @p_restricao = 'LISTA' Begin
       -- Recupera a lista de menu do cliente.
-      open p_result for 
         select a.sq_menu,
                a.nome as nm_servico, a.sigla as sg_servico,
                a.acesso_geral, a.ultimo_nivel, a.tramite,  a.envia_email,
@@ -44,10 +41,9 @@ begin
           from siw_menu                  a
                inner join siw_modulo     b on (a.sq_modulo = b.sq_modulo)
                left  join sg_pessoa_mail c on (a.sq_menu   = c.sq_menu and
-                                               p_sq_pessoa = c.sq_pessoa)
-         where a.sq_pessoa = p_cliente
+                                               @p_sq_pessoa = c.sq_pessoa)
+         where a.sq_pessoa = @p_cliente
            and a.tramite   = 'S'
-        order by acentos(a.nome);   
-   End if;
-end SP_GetUserMail;
-/
+        order by dbo.acentos(a.nome);   
+   End
+end

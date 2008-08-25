@@ -9,7 +9,7 @@ begin
   If p_restricao is not null Then
      If upper(p_restricao) = 'IS NULL' Then
         open p_result for
-           select a.sq_menu,a.nome,a.finalidade,a.link,a.ordem,a.p1,a.p2,a.p3,a.p4,a.sigla,a.imagem, a.externo, Nvl(a.target,'content') target, a.ultimo_nivel, a.ativo, nvl(b.filho,0) Filho
+           select a.sq_menu,a.nome,a.finalidade,a.link,a.ordem,a.p1,a.p2,a.p3,a.p4,a.sigla,a.imagem, a.externo, coalesce(a.target,'content') target, a.ultimo_nivel, a.ativo, coalesce(b.filho,0) Filho
              from siw_menu a
                     left outer join
                       (select sq_menu_pai,count(*) Filho from siw_menu x where ativo = 'S' and ultimo_nivel = 'N' group by sq_menu_pai) b
@@ -21,7 +21,7 @@ begin
            order by 5,2;
      Else
         open p_result for
-           select a.sq_menu,a.nome,a.finalidade,a.link,a.ordem,a.p1,a.p2,a.p3,a.p4,a.sigla,a.imagem, a.externo, Nvl(a.target,'content') target, a.ultimo_nivel, a.ativo, nvl(b.filho,0) Filho
+           select a.sq_menu,a.nome,a.finalidade,a.link,a.ordem,a.p1,a.p2,a.p3,a.p4,a.sigla,a.imagem, a.externo, coalesce(a.target,'content') target, a.ultimo_nivel, a.ativo, coalesce(b.filho,0) Filho
              from siw_menu a
                     left outer join
                       (select sq_menu_pai,count(*) Filho from siw_menu x where ativo = 'S' and ultimo_nivel = 'N' group by sq_menu_pai) b

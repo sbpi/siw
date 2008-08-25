@@ -9,7 +9,7 @@ begin
       -- Recupera todos os endereços, independente do tipo
       open p_result for 
          select a.sq_pessoa_endereco, a.complemento, a.bairro, a.cep, a.padrao, a.logradouro, a.sq_cidade, 
-                a1.sq_tipo_endereco, a1.nome tipo_endereco, a1.email, a1.internet, 
+                a1.sq_tipo_endereco, a1.nome as tipo_endereco, a1.email, a1.internet, 
                 a.logradouro||' ('||case c.co_uf when 'EX' then b.nome||'-'||d.nome else b.nome||'-'||c.co_uf end ||')' as endereco,
                 b.nome||', '||c.nome||', '||d.nome as google,
                 b.nome || '-' || c.co_uf as cidade, 
@@ -47,7 +47,7 @@ begin
                 left    join siw_coordenada_endereco e on (a.sq_pessoa_endereco = e.sq_pessoa_endereco)
                   left  join siw_coordenada          f on (e.sq_siw_coordenada  = f.sq_siw_coordenada)
           where a.sq_pessoa = p_cliente
-           and (p_chave is null or (p_chave is not null and a.sq_pessoa_endereco = p_chave))          
+           and (p_chave is null or (p_chave is not null and a.sq_pessoa_endereco = p_chave))
          order by acentos(a.logradouro);
    Elsif p_restricao = 'EMAIL' Then
       -- Recupera apenas os endereços de e-mail

@@ -13,8 +13,8 @@ begin
             b.nome, b.nome_resumido, c.interno, d.sq_pessoa_endereco, e.codigo,
             f.cpf, f.sexo,
             case f.sexo when 'F' then 'Feminino' when 'M' then 'Masculino' else null end as nm_sexo,
-            to_char(a.ultima_troca_senha, 'DD/MM/YYYY, HH24:MI:SS') dt_ultima_troca_senha, 
-            to_char(a.ultima_troca_assin, 'DD/MM/YYYY, HH24:MI:SS') dt_ultima_troca_assin 
+            to_char(a.ultima_troca_senha, 'DD/MM/YYYY, HH24:MI:SS') as dt_ultima_troca_senha, 
+            to_char(a.ultima_troca_assin, 'DD/MM/YYYY, HH24:MI:SS') as dt_ultima_troca_assin 
        from sg_autenticacao a
             inner   join co_pessoa        b on (a.sq_pessoa       = b.sq_pessoa)
               left  join co_tipo_vinculo  c on (b.sq_tipo_vinculo = c.sq_tipo_vinculo)

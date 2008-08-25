@@ -57,7 +57,7 @@ begin
        from co_pessoa                           a
             left join  co_tipo_pessoa           c on (a.sq_tipo_pessoa     = c.sq_tipo_pessoa)
             left join  co_tipo_vinculo          d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
-            left join  (select w.sq_pessoa_conta, sq_pessoa, x.sq_banco, w.sq_agencia, 
+            left join  (select w.sq_pessoa_conta, w.sq_pessoa, x.sq_banco, w.sq_agencia, 
                                w.operacao, w.numero, x.codigo cd_agencia, x.nome nm_agencia,
                                y.codigo cd_banco, y.nome nm_banco
                           from co_pessoa_conta         w
@@ -67,7 +67,7 @@ begin
                            and w.padrao             = 'S'
                            and x.ativo              = 'S'
                        )                        e on (a.sq_pessoa          = e.sq_pessoa)
-            left join  (select sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -76,7 +76,7 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        b on (a.sq_pessoa          = b.sq_pessoa)
-            left join  (select sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero nr_telefone
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero nr_telefone
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -85,7 +85,7 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        f on (a.sq_pessoa          = f.sq_pessoa)
-            left join  (select sq_pessoa, w.sq_pessoa_telefone sq_pessoa_celular, w.numero nr_celular
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_celular, w.numero nr_celular
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -94,7 +94,7 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        l on (a.sq_pessoa          = l.sq_pessoa)
-            left join  (select sq_pessoa, sq_pessoa_endereco, sq_cidade, logradouro, complemento,
+            left join  (select w.sq_pessoa, sq_pessoa_endereco, sq_cidade, logradouro, complemento,
                                bairro, cep
                           from co_pessoa_endereco          w
                                inner join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
@@ -106,7 +106,7 @@ begin
                        )                        g on (a.sq_pessoa          = g.sq_pessoa)
             left join  co_cidade                h on (g.sq_cidade          = h.sq_cidade)
             left join  co_pais                  m on (h.sq_pais            = m.sq_pais)
-            left join  (select sq_pessoa, sq_pessoa_endereco, sq_cidade, logradouro, complemento,
+            left join  (select w.sq_pessoa, sq_pessoa_endereco, sq_cidade, logradouro, complemento,
                                bairro, cep
                           from co_pessoa_endereco          w
                                inner join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
@@ -118,7 +118,7 @@ begin
                        )                        g1 on (a.sq_pessoa         = g1.sq_pessoa)
             left join  co_cidade                h1 on (g1.sq_cidade        = h1.sq_cidade)
             left join  co_pais                  m1 on (h1.sq_pais          = m1.sq_pais)
-            left join  (select sq_pessoa, logradouro email
+            left join  (select w.sq_pessoa, logradouro email
                           from co_pessoa_endereco            w
                                inner   join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
                                inner   join co_pessoa        y on (w.sq_pessoa          = y.sq_pessoa)

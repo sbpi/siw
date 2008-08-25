@@ -2257,6 +2257,7 @@ SP_MSSQL2000/SIW/SP_GetUorgList.sql -text
 SP_MSSQL2000/SIW/SP_GetUorgResp.sql -text
 SP_MSSQL2000/SIW/SP_GetUserData.sql -text
 SP_MSSQL2000/SIW/SP_GetUserList.sql -text
+SP_MSSQL2000/SIW/SP_GetUserMail.sql -text
 SP_MSSQL2000/SIW/SP_GetUserModule.sql -text
 SP_MSSQL2000/SIW/SP_GetUserTypeData.sql -text
 SP_MSSQL2000/SIW/SP_GetUserTypeList.sql -text
@@ -2328,6 +2329,7 @@ SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
+SP_MSSQL2000/SIW/to_char.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
 SP_Oracle81/fbaj/LOADALBERGUISTA_DF.prc -text
 SP_Oracle81/fbaj/LOADEXPORTTABLES.prc -text

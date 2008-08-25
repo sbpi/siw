@@ -6,7 +6,7 @@ create or replace procedure SP_GetLinkSubMenu
 begin
    -- Recupera os links do sub-menu
    open p_result for 
-      select a.sq_menu menu_pai, b.sq_menu,b.nome,b.link,b.ordem,b.p1,b.p2,b.p3,b.p4,b.sigla,b.imagem,b.externo,Nvl(b.target,'content') target
+      select a.sq_menu menu_pai, b.sq_menu,b.nome,b.link,b.ordem,b.p1,b.p2,b.p3,b.p4,b.sigla,b.imagem,b.externo,coalesce(b.target,'content') as target
         from siw_menu a, siw_menu b 
        where a.sq_menu          = b.sq_menu_pai
          and b.ativo            = 'S'
@@ -16,4 +16,3 @@ begin
          order by b.ordem, b.nome;
 end SP_GetLinkSubMenu;
 /
-
