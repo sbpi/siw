@@ -2223,7 +2223,7 @@ SP_MSSQL2000/SIW/SP_GetLocalList.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuCode.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuData.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuLink.sql -text
-SP_MSSQL2000/SIW/SP_GetMenuList.sql -text
+SP_MSSQL2000/SIW/SP_GetMenuList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetMenuOrder.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuUpper.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuUser.sql -text
@@ -2348,11 +2348,15 @@ SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
+SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
+SP_MSSQL2000/SIW/sp_PutNatureza_PE.sql -text
 SP_MSSQL2000/SIW/sp_getNatureza_PE.sql -text
 SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
+SP_MSSQL2000/SIW/sp_getUnidade_PE.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
+SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_MSSQL2000/SIW/trunc.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
