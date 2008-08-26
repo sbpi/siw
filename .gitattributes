@@ -2357,7 +2357,10 @@ SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_getUnidade_PE.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
+SP_MSSQL2000/SIW/sp_putTipoDemanda.sql -text
 SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
+SP_MSSQL2000/SIW/sp_putTipoRecurso.sql -text
+SP_MSSQL2000/SIW/sp_putUnidade_PE.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_MSSQL2000/SIW/trunc.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
