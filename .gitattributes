@@ -2340,6 +2340,7 @@ SP_MSSQL2000/SIW/SP_VerificaUsuario.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
 SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
 SP_MSSQL2000/SIW/SP_fGetPlano.sql -text
+SP_MSSQL2000/SIW/SP_fGetSolic.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
