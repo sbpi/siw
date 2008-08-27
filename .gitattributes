@@ -2154,6 +2154,10 @@ SP_MSSQL2000/SIW/ACENTOS.sql -text
 SP_MSSQL2000/SIW/AC_CriaParametro.sql -text
 SP_MSSQL2000/SIW/Acesso.sql -text
 SP_MSSQL2000/SIW/Acesso_Recurso.sql -text
+SP_MSSQL2000/SIW/CalculaIDC.sql -text
+SP_MSSQL2000/SIW/CalculaIDE.sql -text
+SP_MSSQL2000/SIW/CalculaIGC.sql -text
+SP_MSSQL2000/SIW/CalculaIge.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
 SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
@@ -2230,7 +2234,7 @@ SP_MSSQL2000/SIW/SP_GetMenuUser.sql -text
 SP_MSSQL2000/SIW/SP_GetModData.sql -text
 SP_MSSQL2000/SIW/SP_GetModList.sql -text
 SP_MSSQL2000/SIW/SP_GetPersonData.sql -text
-SP_MSSQL2000/SIW/SP_GetPersonList.sql -text
+SP_MSSQL2000/SIW/SP_GetPersonList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetRegionData.sql -text
 SP_MSSQL2000/SIW/SP_GetRegionList.sql -text
 SP_MSSQL2000/SIW/SP_GetSegData.sql -text
@@ -2257,6 +2261,7 @@ SP_MSSQL2000/SIW/SP_GetSolicRestricao.sql -text
 SP_MSSQL2000/SIW/SP_GetStateData.sql -text
 SP_MSSQL2000/SIW/SP_GetStateList.sql -text
 SP_MSSQL2000/SIW/SP_GetTipoIndicador.sql -text
+SP_MSSQL2000/SIW/SP_GetTipoRestricao.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteData.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteList.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteUser.sql -text
@@ -2333,6 +2338,7 @@ SP_MSSQL2000/SIW/SP_PutSiwPesCC.sql -text
 SP_MSSQL2000/SIW/SP_PutSiwUsuario.sql -text
 SP_MSSQL2000/SIW/SP_PutSolicEtpRec.sql -text
 SP_MSSQL2000/SIW/SP_PutTipoIndicador.sql -text
+SP_MSSQL2000/SIW/SP_PutTipoRestricao.sql -text
 SP_MSSQL2000/SIW/SP_UpdatePassword.sql -text
 SP_MSSQL2000/SIW/SP_VerificaAssinat.sql -text
 SP_MSSQL2000/SIW/SP_VerificaSenha.sql -text
@@ -2348,6 +2354,7 @@ SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
+SP_MSSQL2000/SIW/dados_solic.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
@@ -2360,6 +2367,7 @@ SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_putTipoDemanda.sql -text
 SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_putTipoRecurso.sql -text
+SP_MSSQL2000/SIW/sp_putUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_putUnidade_PE.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_MSSQL2000/SIW/trunc.sql -text
