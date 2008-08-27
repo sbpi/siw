@@ -53,10 +53,9 @@ begin
             and a.sq_tipo_recurso not in (select chave from dbo.sp_fgettiporecurso(@p_chave, 'DOWN'))
          order by a.nome;
    End Else If upper(@p_restricao) = 'FOLHA' Begin
-     -- Recupera apenas os registros sem filhos
-      --open @p_result for
+     -- Recupera apenas os registros sem filhos      
          select a.sq_tipo_recurso as chave, a.sq_tipo_pai, a.nome, a.sigla,
-                dbo.dbo.montanometiporecurso(a.sq_tipo_recurso) as nome_completo
+                dbo.montanometiporecurso(a.sq_tipo_recurso,null) as nome_completo
            from eo_tipo_recurso a
                 left  join (select sq_tipo_pai
                               from eo_tipo_recurso 

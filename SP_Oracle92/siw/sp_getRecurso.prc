@@ -41,7 +41,7 @@ begin
                 left      join (select x.sq_recurso, sum(y.unidades_solicitadas) alocacao
                                   from siw_solic_recurso                     x
                                        inner join siw_solic_recurso_alocacao y on (x.sq_solic_recurso = y.sq_solic_recurso and
-                                                                                   trunc(sysdate)       between y.inicio and y.fim
+                                                                                   sysdate       between y.inicio and y.fim+1
                                                                                   )
                                 group by x.sq_recurso
                                )                  e  on (a.sq_recurso        = e.sq_recurso)
@@ -50,12 +50,12 @@ begin
                                        inner join eo_recurso_disponivel   y on (x.sq_recurso   = y.sq_recurso and
                                                                                 (1               = x.disponibilidade_tipo or
                                                                                  (1              <> x.disponibilidade_tipo and
-                                                                                  trunc(sysdate) between y.inicio and y.fim
+                                                                                  sysdate between y.inicio and y.fim+1
                                                                                  )
                                                                                 )
                                                                                )
                                        left  join eo_recurso_indisponivel z on (x.sq_recurso   = z.sq_recurso and
-                                                                                trunc(sysdate)   between z.inicio and z.fim
+                                                                                sysdate   between z.inicio and z.fim+1
                                                                                )
                                  where x.ativo        = 'S'
                                    and z.sq_recurso is null
@@ -113,7 +113,7 @@ begin
                 left      join (select x.sq_recurso, sum(y.unidades_solicitadas) alocacao
                                   from siw_solic_recurso                     x
                                        inner join siw_solic_recurso_alocacao y on (x.sq_solic_recurso = y.sq_solic_recurso and
-                                                                                   trunc(sysdate)       between y.inicio and y.fim
+                                                                                   sysdate       between y.inicio and y.fim+1
                                                                                   )
                                 group by x.sq_recurso
                                )                  e  on (a.sq_recurso        = e.sq_recurso)
@@ -122,12 +122,12 @@ begin
                                        inner join eo_recurso_disponivel   y on (x.sq_recurso   = y.sq_recurso and
                                                                                 (1               = x.disponibilidade_tipo or
                                                                                  (1              <> x.disponibilidade_tipo and
-                                                                                  trunc(sysdate) between y.inicio and y.fim
+                                                                                  sysdate between y.inicio and y.fim+1
                                                                                  )
                                                                                 )
                                                                                )
                                        left  join eo_recurso_indisponivel z on (x.sq_recurso   = z.sq_recurso and
-                                                                                trunc(sysdate)   between z.inicio and z.fim
+                                                                                sysdate   between z.inicio and z.fim+1
                                                                                )
                                  where x.ativo        = 'S'
                                    and z.sq_recurso is null
@@ -183,7 +183,7 @@ begin
                 left      join (select x.sq_recurso, sum(y.unidades_solicitadas) alocacao
                                   from siw_solic_recurso                     x
                                        inner join siw_solic_recurso_alocacao y on (x.sq_solic_recurso = y.sq_solic_recurso and
-                                                                                   trunc(sysdate)       between y.inicio and y.fim
+                                                                                   sysdate       between y.inicio and y.fim+1
                                                                                   )
                                 group by x.sq_recurso
                                )                  e  on (a.sq_recurso        = e.sq_recurso)
@@ -192,12 +192,12 @@ begin
                                        inner join eo_recurso_disponivel   y on (x.sq_recurso   = y.sq_recurso and
                                                                                 (1               = x.disponibilidade_tipo or
                                                                                  (1              <> x.disponibilidade_tipo and
-                                                                                  trunc(sysdate) between y.inicio and y.fim
+                                                                                  sysdate between y.inicio and y.fim+1
                                                                                  )
                                                                                 )
                                                                                )
                                        left  join eo_recurso_indisponivel z on (x.sq_recurso   = z.sq_recurso and
-                                                                                trunc(sysdate)   between z.inicio and z.fim
+                                                                                sysdate   between z.inicio and z.fim+1
                                                                                )
                                  where x.ativo        = 'S'
                                    and z.sq_recurso is null

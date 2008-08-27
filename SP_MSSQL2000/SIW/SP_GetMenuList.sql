@@ -30,7 +30,7 @@ begin
            and 1           = coalesce(a.numeracao_automatica,0)
            and a.sq_menu   <> coalesce(@p_chave,0)
            and b.sigla     = case when @p_modulo is null then b.sigla else @p_modulo end
-        order by dbo.dbo.acentos(a.nome);
+        order by dbo.acentos(a.nome);
    end else if upper(@p_operacao) = 'X' begin
       -- Recupera os links vinculados a serviços
         select a.sq_menu,
@@ -42,7 +42,7 @@ begin
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = @p_cliente
            and a.tramite   = 'S'
-           and b.sigla     = case when @p_modulo is null then b.sigla else @p_modulo end
+           and b.sigla     = coalesce(cast(@p_modulo as varchar),b.sigla)
         order by dbo.acentos(a.nome);
    end else if upper(@p_operacao) = 'XVINC' begin
       -- Recupera os links vinculados a serviços
@@ -72,6 +72,6 @@ begin
           from siw_menu              a
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = @p_cliente
-        order by dbo.dbo.acentos(a.nome);
+        order by dbo.acentos(a.nome);
     End
 end
