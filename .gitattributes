@@ -2217,6 +2217,7 @@ SP_MSSQL2000/SIW/SP_GetIdiomData.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomList.sql -text
 SP_MSSQL2000/SIW/SP_GetIndicador.sql -text
 SP_MSSQL2000/SIW/SP_GetKindPersList.sql -text
+SP_MSSQL2000/SIW/SP_GetLastDay.sql -text
 SP_MSSQL2000/SIW/SP_GetLinkData.sql -text
 SP_MSSQL2000/SIW/SP_GetLinkDataHelp.sql -text
 SP_MSSQL2000/SIW/SP_GetLinkDataUser.sql -text
@@ -2252,9 +2253,11 @@ SP_MSSQL2000/SIW/SP_GetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicEtpRec.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicGRA.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicGRI.sql -text
+SP_MSSQL2000/SIW/SP_GetSolicIndicador.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicInter.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicList.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicLog.sql -text
+SP_MSSQL2000/SIW/SP_GetSolicMeta.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRecurso.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicResp.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRestricao.sql -text
@@ -2304,6 +2307,7 @@ SP_MSSQL2000/SIW/SP_PutCoPesConBan.sql -text
 SP_MSSQL2000/SIW/SP_PutCoPesEnd.sql -text
 SP_MSSQL2000/SIW/SP_PutCoPesTel.sql -text
 SP_MSSQL2000/SIW/SP_PutDMSegVinc.sql -text
+SP_MSSQL2000/SIW/SP_PutDataEspecial.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaAreas.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaConc.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaEnvio.sql -text
