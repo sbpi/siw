@@ -55,7 +55,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
@@ -117,7 +117,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_projeto_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_projeto_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
@@ -178,7 +178,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
@@ -235,7 +235,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_acordo_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_acordo_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
@@ -292,7 +292,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_lancamento_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_lancamento_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
@@ -346,7 +346,7 @@ begin
                                       )
                    )
             UNION
-            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    'ANOTACAO' origem,
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
@@ -423,7 +423,7 @@ begin
                         left outer join siw_arquivo      k on (j.sq_siw_arquivo  = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
             UNION
-            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  Nvl(b.despacho, b.observacao),
+            select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,

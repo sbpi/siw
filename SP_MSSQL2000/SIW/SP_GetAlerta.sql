@@ -117,7 +117,7 @@ begin
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
                                                               )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa) as acesso
+                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa, null) as acesso
                                         from siw_solicitacao x, sg_autenticacao y
                                        where y.ativo = 'S'
                                      )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
@@ -360,7 +360,7 @@ begin
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
                                                               )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa) as acesso
+                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa, null) as acesso
                                         from siw_solicitacao x, sg_autenticacao y
                                        where y.ativo = 'S'
                                      )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
@@ -400,7 +400,7 @@ begin
                 coalesce(i.qtd,0) as qtd_visao,
                 coalesce(j.qtd,0) as qtd_dirigente,
                 coalesce(l.qtd,0) as qtd_tramite,
-                dbo.acesso(@p_solic,a.sq_pessoa)
+                dbo.acesso(@p_solic,a.sq_pessoa, null)
            from sg_autenticacao                        a 
                 left outer     join eo_unidade         c on (a.sq_unidade         = c.sq_unidade)
                   left outer   join co_pessoa_endereco f on (c.sq_pessoa_endereco = f.sq_pessoa_endereco)
@@ -428,7 +428,7 @@ begin
                                     )                  l on (a.sq_pessoa          = l.sq_pessoa)                                
           where a.cliente           = @p_cliente
             and a.sq_pessoa         <> (@p_cliente+1)
-            and 0                   < (select dbo.acesso(@p_solic, a.sq_pessoa) from dual)
+            and 0                   < (select dbo.acesso(@p_solic, a.sq_pessoa, null) from dual)
             and 'S'                 = a.ativo;
    End
 end

@@ -83,8 +83,8 @@ create or replace function Acesso
   w_unidade_resp           number(18);
 
   cursor c_unidade (p_unidade in number) is
-     select pt.sq_unidade, a.sq_unidade_pai, Nvl(pt.sq_pessoa, -1) as sq_pessoa_titular,
-            Nvl(ps.sq_pessoa, -1) as sq_pessoa_substituto
+     select pt.sq_unidade, a.sq_unidade_pai, coalesce(pt.sq_pessoa, -1) as sq_pessoa_titular,
+            coalesce(ps.sq_pessoa, -1) as sq_pessoa_substituto
       from eo_unidade a
            left join (select b.sq_unidade, a.sq_pessoa, a.nome_resumido as nome
                        from co_pessoa                  a
@@ -132,7 +132,7 @@ begin
                   end
         end as sq_cc,
         e.ordem, e.sigla, e.ativo, e.chefia_imediata,
-        Nvl(f.sq_pessoa,-1), Nvl(g.sq_pessoa,-1),
+        coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
         coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
    into w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
@@ -329,7 +329,7 @@ begin
     If w_chefe_beneficiario > 0 Then 
        Result := Result + 4; 
     Else
-          -- Verifica se o usuário é responsável por uma unidade envolvida na execução
+       -- Verifica se o usuário é responsável por uma unidade envolvida na execução
        select count(*) into w_existe
          from gd_demanda_envolv           a
                inner join eo_unidade_resp b on (a.sq_unidade   = b.sq_unidade and

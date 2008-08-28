@@ -1,12 +1,9 @@
-alter function CalculaIGC(
-	@p_chave int
-	) 
-returns float as
+alter function CalculaIGC(@p_chave int) returns float as
 Begin
   Declare @Result float;
   Set @Result = 0;
   Declare @w_existe int;
-  Declare @igc varchar(255);
+  Declare @igc float;
   
   Declare c_dados cursor for
      select coalesce(case when sum(valor_previsto) = 0 then -1 else sum(valor_real)/sum(valor_previsto) end,0) as igc
@@ -23,16 +20,16 @@ Begin
          inner join pj_projeto b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
    where a.sq_siw_solicitacao = coalesce(@p_chave,0);
   
-  If @w_existe = 0 Begin
-     Set @Result = 0;
-  End Else Begin
-  	While @@Fetch_Status = 0
-    Begin
-  	Set @Result = (@igc * 100);
-  	Fetch next from c_dados into @w_existe
-  	End
-	close c_dados
-	deallocate c_dados
+  If @w_existe = 0 Set @Result = 0;
+  Else Begin
+    Open c_dados
+    Fetch Next from c_dados into @igc
+    While @@Fetch_Status = 0 Begin
+       Set @Result = (@igc * 100.0);
+	Fetch next from c_dados into @igc
+    End
+    Close c_dados
+    Deallocate c_dados
   End
 
   Return @Result;

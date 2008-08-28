@@ -337,7 +337,7 @@ begin
                 coalesce(o1.ativo,'N') as st_sol,
                 p.nome_resumido nm_exec,
                 i.sq_projeto_etapa,   i1.titulo nm_etapa,
-                nvl(m1.qtd_rubrica,0) qtd_rubrica
+                coalesce(m1.qtd_rubrica,0) qtd_rubrica
            from siw_menu                                    a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -485,9 +485,9 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
-                case nvl(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end nm_projeto,
-                case nvl(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end sq_projeto,
-                case nvl(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end qtd_rubrica
+                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end nm_projeto,
+                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end sq_projeto,
+                case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end qtd_rubrica
            from siw_menu                                    a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -650,10 +650,10 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec,
-                soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a1.dias_antecedencia_int else a1.dias_antecedencia end), 'U') as limite_envio,
-                case d1.internacional when 'S' then a1.dias_antecedencia_int else a1.dias_antecedencia end as dias_antecedencia
+                soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
+                case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia
            from siw_menu                                               a
-                  inner                join pd_parametro               a1 on (a.sq_pessoa                = a1.cliente)
+                  inner                join pd_parametro              a11 on (a.sq_pessoa                = a11.cliente)
                   inner                join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left               join eo_unidade_resp            a3 on (a2.sq_unidade              = a3.sq_unidade   and
                                                                               a3.tipo_respons            = 'T'             and
@@ -911,7 +911,7 @@ begin
                                            group by sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join pe_programa_log      k  on (j.chave                    = k.sq_siw_solic_log)
-                       left          join sg_autenticacao      l  on (j.k.destinatario           = l.sq_pessoa)
+                       left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,3) = 'PAD' Then
       -- Recupera os programas que o usuário pode ver

@@ -18,6 +18,7 @@ begin
   While @@Fetch_Status = 0 Begin
      If @w_tipo is null  Set @Result = 'N';
      Else                Set @Result = @w_tipo;
+     Fetch Next from c_restricoes into @w_tipo
   End
   Close c_restricoes
   Deallocate c_restricoes

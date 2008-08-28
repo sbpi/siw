@@ -2159,11 +2159,13 @@ SP_MSSQL2000/SIW/CalculaIDE.sql -text
 SP_MSSQL2000/SIW/CalculaIGC.sql -text
 SP_MSSQL2000/SIW/CalculaIge.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
+SP_MSSQL2000/SIW/GESTOR.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
 SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
 SP_MSSQL2000/SIW/MontaOrdem.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
+SP_MSSQL2000/SIW/SOMA_DIAS.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressData.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressList.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressMenu.sql -text
@@ -2213,6 +2215,7 @@ SP_MSSQL2000/SIW/SP_GetFoneTypeData.sql -text
 SP_MSSQL2000/SIW/SP_GetFoneTypeList.sql -text
 SP_MSSQL2000/SIW/SP_GetFormatData.sql -text
 SP_MSSQL2000/SIW/SP_GetFormatList.sql -text
+SP_MSSQL2000/SIW/SP_GetGestor.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomData.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomList.sql -text
 SP_MSSQL2000/SIW/SP_GetIndicador.sql -text
@@ -2258,6 +2261,7 @@ SP_MSSQL2000/SIW/SP_GetSolicInter.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicList.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicLog.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicMeta.sql -text
+SP_MSSQL2000/SIW/SP_GetSolicObjetivo.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRecurso.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicResp.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRestricao.sql -text
@@ -2267,6 +2271,7 @@ SP_MSSQL2000/SIW/SP_GetTipoIndicador.sql -text
 SP_MSSQL2000/SIW/SP_GetTipoRestricao.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteData.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteList.sql -text
+SP_MSSQL2000/SIW/SP_GetTramiteResp.sql -text
 SP_MSSQL2000/SIW/SP_GetTramiteUser.sql -text
 SP_MSSQL2000/SIW/SP_GetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_GetUnitTypeData.sql -text
@@ -2357,8 +2362,10 @@ SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
+SP_MSSQL2000/SIW/VerificaDataEspecial.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/dados_solic.sql -text
+SP_MSSQL2000/SIW/sp_GetAcesso.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text

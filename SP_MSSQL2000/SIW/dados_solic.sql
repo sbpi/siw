@@ -29,13 +29,13 @@ Begin
 
   Declare @codigo    varchar(255);
   Declare @titulo    varchar(255);
-  Declare @sq_menu   varchar(255);
+  Declare @sq_menu   numeric(18);
   Declare @nome      varchar(255);
   Declare @sigla     varchar(255);
-  Declare @p1        varchar(255);
-  Declare @p2        varchar(255);
-  Declare @p3        varchar(255);
-  Declare @p4        varchar(255);
+  Declare @p1        numeric(18);
+  Declare @p2        numeric(18);
+  Declare @p3        numeric(18);
+  Declare @p4        numeric(18);
   Declare @link      varchar(255);
   Declare @sg_modulo varchar(255);
 
@@ -44,7 +44,6 @@ Begin
      select a.sq_menu, a.nome, a.sigla, a.p1, a.p2, a.p3, a.p4,
             coalesce(a1.link, replace(lower(a.link),'inicial','visual')) as link,
             a2.sigla as sg_modulo,
-            b.sq_siw_solicitacao,
             coalesce(b.codigo_interno, cast(b.sq_siw_solicitacao as varchar(255))) as codigo,
             coalesce(b.titulo, c.destino, d.assunto, b.descricao, b.justificativa) as titulo
        from siw_menu                             a
@@ -57,17 +56,24 @@ Begin
             left  join gd_demanda                d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
       where b.sq_siw_solicitacao = @p_chave;
 
-  if @p_chave is not null Begin
+  If @p_chave is not null Begin
     
      -- Verifica se a solicitação existe e, se existir, recupera seus dados
      select @w_reg = count(sq_siw_solicitacao) from siw_solicitacao where sq_siw_solicitacao = @p_chave;
      if @w_reg > 0 Begin
-     While  @@Fetch_Status = 0
-     Begin
-     Set @Result = @nome + ': ' + @codigo + '|@|' + @codigo + '|@|' + @titulo + '|@|' + @sq_menu + '|@|' + @nome + '|@|' + @sigla + '|@|' + @p1 + '|@|' + @p2 + '|@|' + @p3 + '|@|' + @p4 + '|@|' + @link + '|@|' + @sg_modulo;
-     Fetch next from c_dados into @w_reg
-	 End
-    	 end
-	  end
-	  return(@Result);
+        Open c_dados
+        Fetch Next from c_dados into @sq_menu, @nome, @sigla, @p1, @p2, @p3, @p4, @link, @sg_modulo, @codigo, @titulo;
+        While @@Fetch_Status = 0 Begin
+           Set @Result = @nome + ': ' + @codigo + '|@|' + @codigo + '|@|' + @titulo + '|@|' + cast(@sq_menu as varchar) + '|@|' + @nome + '|@|' + 
+                         coalesce(@sigla,'') + '|@|' + 
+                         coalesce(cast(@p1 as varchar),'') + '|@|' + 
+                         coalesce(cast(@p2 as varchar),'') + '|@|' + 
+                         coalesce(cast(@p3 as varchar),'') + '|@|' + 
+                         coalesce(cast(@p4 as varchar),'') + '|@|' + 
+                         @link + '|@|' + @sg_modulo;
+           Fetch Next from c_dados into @sq_menu, @nome, @sigla, @p1, @p2, @p3, @p4, @link, @sg_modulo, @codigo, @titulo;
+        End
+      End
+  End
+  return @Result;
 end

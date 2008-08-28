@@ -1,15 +1,16 @@
-create function CalculaIDE(
+alter function CalculaIDE(
 	@p_chave  int, 
 	@p_data   datetime = null, 
-	@p_inicio datetime = null) 
-returns float as
+	@p_inicio datetime = null
+   ) returns float as
+
 Begin
-  Declare @Result float;
-  Set     @Result = 0;
   Declare @w_existe int;
-  Declare @ide varchar(255);
+  Declare @ide      float;
+  Declare @Result   float;
+  Set @Result = 0;
   
-Declare c_dados  cursor for
+  Declare c_dados cursor for
      select case when previsto.valor is not null
                  then coalesce(realizado.valor,0)/coalesce(previsto.valor,1)
                  else 1
@@ -39,19 +40,17 @@ Declare c_dados  cursor for
          inner join pj_projeto b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
    where a.sq_siw_solicitacao = coalesce(@p_chave,0);
   
-  Open c_dados
-  
-
-  
-  If @w_existe = 0 Begin
-     Set @Result = 0;
-  End Else Begin
-    While @@Fetch_Status = 0
-      Begin
-        Set @Result = (@ide * 100);
-		Fetch next from c_dados into @w_existe
-      End
+  If @w_existe = 0 Set @Result = 0;
+  Else Begin
+    Open c_dados
+    Fetch Next from c_dados into @ide
+    While @@Fetch_Status = 0 Begin
+       Set @Result = (@ide * 100.0);
+	Fetch next from c_dados into @ide
+    End
+    Close c_dados
+    Deallocate c_dados
   End
   
-  Return coalesce(@Result,0);
+  Return @Result;
 end
