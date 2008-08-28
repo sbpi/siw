@@ -2160,6 +2160,7 @@ SP_MSSQL2000/SIW/CalculaIGC.sql -text
 SP_MSSQL2000/SIW/CalculaIge.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
 SP_MSSQL2000/SIW/GESTOR.sql -text
+SP_MSSQL2000/SIW/LastDay.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
 SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
 SP_MSSQL2000/SIW/MontaOrdem.sql -text
