@@ -1,5 +1,5 @@
 create or replace procedure SP_GetCityData
-   (p_sq_cidade  in  number,
+   (p_chave  in  number,
     p_result     out sys_refcursor
    ) is
 begin
@@ -10,6 +10,6 @@ begin
         from co_cidade a
              inner join co_uf   b on (a.sq_pais = b.sq_pais and a.co_uf = b.co_uf)
              inner join co_pais c on (a.sq_pais = c.sq_pais)
-       where sq_cidade = p_sq_cidade;
+       where sq_cidade = p_chave;
 end SP_GetCityData;
 /

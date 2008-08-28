@@ -9,6 +9,8 @@ begin
   
   If lower(@format)='dd/mm/yyyy, hh24:mi:ss'
      Set @Result = convert(varchar,@value,103)+', '+convert(varchar,@value,108)
+  Else If lower(@format)='dd/mm/yyyy'
+     Set @Result = convert(varchar,@value,103)
   Else If lower(@format)='dd/mm/yy, hh24:mi:ss'
      Set @Result = convert(varchar,@value,3)+', '+convert(varchar,@value,108)
 

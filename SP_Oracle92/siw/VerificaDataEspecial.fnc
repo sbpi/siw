@@ -43,14 +43,14 @@ begin
   If to_char(p_data,'d') in (1,7) Then return 'N'; End If;
 
   -- Define o cliente, usando a SBPI como padrão
-  w_cliente := coalesce(p_cliente,2);
+  w_cliente := coalesce(p_cliente,1);
   
   -- Recupera o país, estado e cidade padrão da organização
   select b.sq_cidade, b.co_uf, b.sq_pais
     into w_cidade,    w_uf,    w_pais
     from siw_cliente a 
          inner join co_cidade b on (a.sq_cidade_padrao = b.sq_cidade)
-   where a.sq_pessoa = coalesce(p_cliente,2);
+   where a.sq_pessoa = coalesce(p_cliente,1);
    
   -- Se a função recebeu país, estado ou cidade, estes prevalecem sobre os dados padrão
   If coalesce(p_pais, w_pais) <> w_pais Then

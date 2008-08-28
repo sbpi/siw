@@ -1,7 +1,7 @@
 alter function VerificaDataMovel
    (@p_ano  int, 
     @p_tipo varchar(1)
-   ) returns datetime as
+   ) returns datetime as --datetime as
 /**********************************************************************************
 * Finalidade: Retorna a data em que ocorre uma data móvel no ano informado
 * Autor     : Alexandre Vinhadelli Papadópolis
@@ -56,7 +56,7 @@ begin
   Set @m      = floor((@a + (11 * @h) + (22 * @l)) / 451);
   Set @p      = floor((@h + @l - (7 * @m) + 114) / 31);
   Set @q      = ((@h + @l - (7 * @m) + 114)%31);
-  Set @pascoa = cast(substring(cast((100+@q+1) as varchar),2,2)+'/'+substring(cast((100+@p) as varchar),2,2)+'/'+substring(cast((10000+@p_ano) as varchar),2,4) as datetime);
+  Set @pascoa = convert(datetime,substring(cast((100+@q+1) as varchar),2,2)+'/'+substring(cast((100+@p) as varchar),2,2)+'/'+substring(cast((10000+@p_ano) as varchar),2,4),103);
   
   -- Verifica a data a ser retornada, em função do tipo informado
   If      @l_tipo = 'D' Set @Result = @pascoa;
@@ -64,7 +64,7 @@ begin
   Else If @l_tipo = 'H' Set @Result = @pascoa + 60;
   Else Begin
      Set @dia = @pascoa - 42;
-     If datepart(d,@dia) > 3 Set @terca = @dia - datepart(d,@dia) - 3;  Else Set @terca = @dia - datepart(d,@dia) - 4;
+     If datepart(dw,@dia) > 3 Set @terca = @dia - datepart(dw,@dia) - 3;  Else Set @terca = @dia - datepart(dw,@dia) - 4;
      If      @l_tipo = 'S' Set @Result = @terca - 1;
      Else If @l_tipo = 'C' Set @Result = @terca;
      Else If @l_tipo = 'Q' Set @Result = @terca + 1;

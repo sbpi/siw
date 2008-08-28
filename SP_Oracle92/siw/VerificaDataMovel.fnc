@@ -10,7 +10,7 @@ create or replace function VerificaDataMovel
 * Parâmetros:
 *    p_ano     : ano de referência
 *    l_tipo    : S: segunda de carnaval
-*                T: terça de carnaval
+*                C: terça de carnaval
 *                Q: cinzas
 *                P: paixão de Cristo
 *                D: Páscoa
