@@ -1323,6 +1323,7 @@ Fontes_PHP_SIW/env.php -text
 Fontes_PHP_SIW/eo.php -text
 Fontes_PHP_SIW/eo_tabelas.php -text
 Fontes_PHP_SIW/execsql.html -text
+Fontes_PHP_SIW/exibePdf.php -text
 Fontes_PHP_SIW/favicon.ico -text
 Fontes_PHP_SIW/file.php -text
 Fontes_PHP_SIW/fonts/linux/Courier.gdf -text
@@ -2146,6 +2147,7 @@ Fontes_PHP_SIW/tabela_localizacao.php -text
 Fontes_PHP_SIW/tabela_siw.php -text
 Fontes_PHP_SIW/tarifacao.php -text
 Fontes_PHP_SIW/test.php -text
+Fontes_PHP_SIW/teste.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
 Fontes_PHP_SIW/visualalerta.php -text
@@ -2167,6 +2169,9 @@ SP_MSSQL2000/SIW/MontaOrdem.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
 SP_MSSQL2000/SIW/SOMA_DIAS.sql -text
+SP_MSSQL2000/SIW/SP_GETCONTASCRONOGRAMA.sql -text
+SP_MSSQL2000/SIW/SP_GETSOLICANEXO.sql -text
+SP_MSSQL2000/SIW/SP_GETTIPODEMANDA.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressData.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressList.sql -text
 SP_MSSQL2000/SIW/SP_GetAddressMenu.sql -text
@@ -2216,6 +2221,7 @@ SP_MSSQL2000/SIW/SP_GetFoneTypeData.sql -text
 SP_MSSQL2000/SIW/SP_GetFoneTypeList.sql -text
 SP_MSSQL2000/SIW/SP_GetFormatData.sql -text
 SP_MSSQL2000/SIW/SP_GetFormatList.sql -text
+SP_MSSQL2000/SIW/SP_GetGPColaborador.sql -text
 SP_MSSQL2000/SIW/SP_GetGestor.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomData.sql -text
 SP_MSSQL2000/SIW/SP_GetIdiomList.sql -text
@@ -2234,6 +2240,7 @@ SP_MSSQL2000/SIW/SP_GetMenuData.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuLink.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetMenuOrder.sql -text
+SP_MSSQL2000/SIW/SP_GetMenuRelac.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuUpper.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuUser.sql -text
 SP_MSSQL2000/SIW/SP_GetModData.sql -text
@@ -2266,6 +2273,7 @@ SP_MSSQL2000/SIW/SP_GetSolicObjetivo.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRecurso.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicResp.sql -text
 SP_MSSQL2000/SIW/SP_GetSolicRestricao.sql -text
+SP_MSSQL2000/SIW/SP_GetSolicRubrica.sql -text
 SP_MSSQL2000/SIW/SP_GetStateData.sql -text
 SP_MSSQL2000/SIW/SP_GetStateList.sql -text
 SP_MSSQL2000/SIW/SP_GetTipoIndicador.sql -text
@@ -2353,9 +2361,12 @@ SP_MSSQL2000/SIW/SP_UpdatePassword.sql -text
 SP_MSSQL2000/SIW/SP_VerificaAssinat.sql -text
 SP_MSSQL2000/SIW/SP_VerificaSenha.sql -text
 SP_MSSQL2000/SIW/SP_VerificaUsuario.sql -text
+SP_MSSQL2000/SIW/SP_fGetCC.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
+SP_MSSQL2000/SIW/SP_fGetLnkDataPrnts.sql -text
 SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
 SP_MSSQL2000/SIW/SP_fGetPlano.sql -text
+SP_MSSQL2000/SIW/SP_fGetProjetoEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolic.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
@@ -2366,16 +2377,23 @@ SP_MSSQL2000/SIW/SolicRestricao.sql -text
 SP_MSSQL2000/SIW/VerificaDataEspecial.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/dados_solic.sql -text
+SP_MSSQL2000/SIW/fGetUorgList.sql -text
 SP_MSSQL2000/SIW/sp_GetAcesso.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_PutNatureza_PE.sql -text
+SP_MSSQL2000/SIW/sp_fGetUnidade.sql -text
 SP_MSSQL2000/SIW/sp_getNatureza_PE.sql -text
 SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
+SP_MSSQL2000/SIW/sp_getRecurso.sql -text
+SP_MSSQL2000/SIW/sp_getRecurso_Disp.sql -text
+SP_MSSQL2000/SIW/sp_getRecurso_Indisp.sql -text
+SP_MSSQL2000/SIW/sp_getSolicRecursos.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_getUnidade_PE.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
+SP_MSSQL2000/SIW/sp_putSiwPessoaMail.sql -text
 SP_MSSQL2000/SIW/sp_putTipoDemanda.sql -text
 SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_putTipoRecurso.sql -text
