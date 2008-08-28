@@ -3,6 +3,8 @@ returns varchar(50) as
 begin
   Declare @Result           VarChar(4000)
 
+  If @value is null return null;
+
   Set @Result = Null
   
   If lower(@format)='dd/mm/yyyy, hh24:mi:ss'
