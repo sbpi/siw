@@ -2180,12 +2180,12 @@ SP_MSSQL2000/SIW/SP_GetAdressTPList.sql -text
 SP_MSSQL2000/SIW/SP_GetAgree.sql -text
 SP_MSSQL2000/SIW/SP_GetAgreeType.sql -text
 SP_MSSQL2000/SIW/SP_GetAlerta.sql -text
-SP_MSSQL2000/SIW/SP_GetBankAccData.sql -text
-SP_MSSQL2000/SIW/SP_GetBankAccList.sql -text
+SP_MSSQL2000/SIW/SP_GetBankAccData.sql -text svneol=unset#application/octet-stream
+SP_MSSQL2000/SIW/SP_GetBankAccList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetBankData.sql -text
 SP_MSSQL2000/SIW/SP_GetBankHousData.sql -text
-SP_MSSQL2000/SIW/SP_GetBankHousList.sql -text
-SP_MSSQL2000/SIW/SP_GetBankList.sql -text
+SP_MSSQL2000/SIW/SP_GetBankHousList.sql -text svneol=unset#application/octet-stream
+SP_MSSQL2000/SIW/SP_GetBankList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetBenef.sql -text
 SP_MSSQL2000/SIW/SP_GetCCData.sql -text
 SP_MSSQL2000/SIW/SP_GetCCList.sql -text
@@ -2317,7 +2317,7 @@ SP_MSSQL2000/SIW/SP_PutCOTipoVinc.sql -text
 SP_MSSQL2000/SIW/SP_PutCOUF.sql -text
 SP_MSSQL2000/SIW/SP_PutCTCC.sql -text
 SP_MSSQL2000/SIW/SP_PutCall.sql -text
-SP_MSSQL2000/SIW/SP_PutCoPesConBan.sql -text
+SP_MSSQL2000/SIW/SP_PutCoPesConBan.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutCoPesEnd.sql -text
 SP_MSSQL2000/SIW/SP_PutCoPesTel.sql -text
 SP_MSSQL2000/SIW/SP_PutDMSegVinc.sql -text
@@ -2372,7 +2372,9 @@ SP_MSSQL2000/SIW/SP_fGetSolicEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
+SP_MSSQL2000/SIW/SP_getIndicador_Aferidor.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
+SP_MSSQL2000/SIW/SP_putIndicador_Afericao.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
 SP_MSSQL2000/SIW/VerificaDataEspecial.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text

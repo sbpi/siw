@@ -13,7 +13,7 @@ begin
                 a.data_especial, a.nome, a.abrangencia, a.expediente, a.ativo,
                 case a.tipo 
                      when 'E' then cast(a.data_especial as datetime)
-                     when 'I' then cast(a.data_especial+'/'+coalesce(@p_ano,year(getDate())) as datetime)
+                     when 'I' then convert(datetime, a.data_especial+'/'+cast(coalesce(@p_ano,year(getDate())) as varchar),103)
                      else          dbo.VerificaDataMovel(coalesce(@p_ano,year(getDate())), a.tipo)
                 end as data_formatada,
                 case a.expediente
