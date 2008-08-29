@@ -2381,10 +2381,12 @@ SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/dados_solic.sql -text
 SP_MSSQL2000/SIW/fGetUorgList.sql -text
 SP_MSSQL2000/SIW/sp_GetAcesso.sql -text
+SP_MSSQL2000/SIW/sp_GetAfastamento.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_PutNatureza_PE.sql -text
+SP_MSSQL2000/SIW/sp_PutSolicInter.sql -text
 SP_MSSQL2000/SIW/sp_fGetUnidade.sql -text
 SP_MSSQL2000/SIW/sp_getNatureza_PE.sql -text
 SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
@@ -2393,6 +2395,7 @@ SP_MSSQL2000/SIW/sp_getRecurso_Disp.sql -text
 SP_MSSQL2000/SIW/sp_getRecurso_Indisp.sql -text
 SP_MSSQL2000/SIW/sp_getSolicRecursos.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
+SP_MSSQL2000/SIW/sp_getUnidade_PA.sql -text
 SP_MSSQL2000/SIW/sp_getUnidade_PE.sql -text
 SP_MSSQL2000/SIW/sp_putIndicador.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
@@ -2402,6 +2405,7 @@ SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_putTipoRecurso.sql -text
 SP_MSSQL2000/SIW/sp_putUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_putUnidade_PE.sql -text
+SP_MSSQL2000/SIW/sp_putsolicarquivo.sql -text
 SP_MSSQL2000/SIW/to_char.sql -text
 SP_MSSQL2000/SIW/trunc.sql -text
 SP_Oracle81/fbaj/LOADALBERGUISTA.prc -text
