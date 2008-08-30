@@ -4,34 +4,47 @@ alter function dbo.MontaOrdem(@p_chave int, @p_retorno varchar) returns varchar(
 --números para permitir a correta ordenação dos registros 
 --------------------------------------------------------
 Begin
+  if @p_chave is null return null;
+
   Declare @w_ordem numeric(18)
-  Declare @Result  Varchar(200)
-  Set @Result = ''
+  Declare @Result  Varchar(2000)
+  Set @Result = '';
 
+  Declare @stack  table (chave int, level int)
+  Declare @level int
+  Declare @ordem int
 
-  If @p_chave is null return null
+  -- Grava primeiro registro na pilha
+  Set @level = 1
+  Insert @stack Values (@p_chave, @level)
 
-  declare c_ordem cursor for
-     select ordem
-       from pj_projeto_etapa
-      where sq_projeto_etapa in (select chave from dbo.SP_fMontaOrdem(@p_chave))
+  While @level > 0 Begin
+     If exists (select * from @stack where  level = @level) Begin
+        -- seleciona a chave corrente e descarta o registro da pilha
+        select @p_chave = chave from @stack where level = @level
+        delete from @stack where level = @level and chave = @p_chave
 
-  -- Para todas as etapas superiores à informada, executa o bloco abaixo
-  Open c_ordem
+        -- pega a chave superior à atual
+        select @p_chave = sq_etapa_pai, @ordem = ordem
+          from pj_projeto_etapa
+         where sq_projeto_etapa = @p_chave;
 
-  Fetch next from c_ordem into @w_ordem
+        If @p_retorno is null 
+           Set @Result = cast(@ordem as varchar)+'.'+@Result;
+        Else 
+           Set @Result = substring(cast((1000+@ordem) as varchar),2,3)+@Result;
 
-  While @@Fetch_Status = 0
-  Begin
-     If @p_retorno is null 
-        Set @Result = cast(@w_ordem as varchar)+'.'+@Result;
-     Else 
-        Set @Result = substring(cast((1000+@w_ordem) as varchar),2,3)+@Result;
-     Fetch next from c_ordem into @w_ordem
+        -- se não tiver chave superior, não cria mais um nível
+        If @p_chave is not null Begin
+           Set @level = @level + 1
+           Insert @stack Values (@p_chave, @level)
+        End
+     END
+     ELSE Begin
+        SELECT @level = @level - 1
+     End
   End
-  Close c_ordem
-  Deallocate c_ordem
-
- If @p_retorno is null Set @Result = substring(@Result,1,len(@Result)-1);
- return(@Result)
-end
+  
+  If @p_retorno is null Set @Result = substring(@Result,1,len(@Result)-1);
+  Return @Result;
+End

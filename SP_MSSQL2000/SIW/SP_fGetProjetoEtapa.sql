@@ -7,19 +7,16 @@ Begin
 
   If @p_chave is null and @p_direction = 'UP' Begin
       Insert @stack1 
-          select sq_siw_solicitacao from pj_projeto_etapa where sq_etapa_pai is null;
+          select sq_projeto_etapa from pj_projeto_etapa where sq_etapa_pai is null;
   End Else If @p_chave is null and @p_direction = 'DOWN' Begin
       Insert @stack1 
-          select sq_siw_solicitacao from pj_projeto_etapa where 1 = 0;
+          select sq_projeto_etapa from pj_projeto_etapa where 1 = 1;
   End Else Begin
       Declare @exists int
     
       -- Grava primeiro registro na pilha
       Set @level = 1
       Insert @stack Values (@p_chave, @level)
-    
-      Insert @stack1 Values (@p_chave)
-    
     
       While @level > 0 Begin
          If exists (select * from @stack where  level = @level) Begin
@@ -30,13 +27,13 @@ Begin
     
                -- insere registro na tabela de retorno
                Insert @stack1
-                  select sq_siw_solicitacao
+                  select sq_projeto_etapa
                     from pj_projeto_etapa
                    where sq_etapa_pai = @p_chave
     
                -- insere registros na pilha
                Insert @stack
-                  select sq_siw_solicitacao, @level + 1
+                  select sq_projeto_etapa, @level + 1
                     from pj_projeto_etapa
                    where sq_etapa_pai = @p_chave
     
@@ -55,7 +52,7 @@ Begin
                -- pega a chave superior à atual
                select @p_chave = sq_etapa_pai
                  from pj_projeto_etapa
-                where sq_siw_solicitacao = @p_chave
+                where sq_projeto_etapa = @p_chave
     
                -- se não tiver chave superior, não cria mais um nível
                If @p_chave is not null Begin

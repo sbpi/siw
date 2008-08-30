@@ -9,6 +9,8 @@ begin
    If @p_restricao = 'SOLICGERAL' Begin
       -- Recupera usuários e solicitações
       --open@p_result for
+      select * 
+       from (
          select a.sq_pessoa as cliente, 
                 a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
@@ -18,10 +20,10 @@ begin
                 d.sq_menu, d.nome as nm_servico, d.sigla as sg_servico,
                 d1.nome as nm_unid_executora,
                 coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
-                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
+                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p2, coalesce(d2.p3, d.p3) as p3, coalesce(d2.p4, d.p4) as p4,
                 e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
-                f1.acesso, 
+                (select dbo.acesso(f.sq_siw_solicitacao, a2.sq_pessoa, null)) as acesso,
                 case when (f.fim<dbo.trunc(getDate())) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 coalesce(f.codigo_interno,cast(f.sq_siw_solicitacao as varchar)) as codigo,
                 coalesce(f.titulo,
@@ -117,12 +119,6 @@ begin
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
                                                               )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa, null) as acesso
-                                        from siw_solicitacao x, sg_autenticacao y
-                                       where y.ativo = 'S'
-                                     )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
-                                                               f1.sq_pessoa         = a2.sq_pessoa
-                                                              )
                       inner     join co_pessoa          f2 on (f.solicitante        = f2.sq_pessoa)
                         left    join sg_autenticacao    f7 on (f2.sq_pessoa         = f7.sq_pessoa)
                           left  join eo_unidade         f8 on (f7.sq_unidade        = f8.sq_unidade)
@@ -143,7 +139,6 @@ begin
                           left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
           where ((@p_cliente  is null and a.envia_mail_alerta = coalesce(@p_mail,'S')) or (@p_cliente is not null and a.sq_pessoa = @p_cliente))
             and (@p_usuario   is null or (@p_usuario is not null and a1.sq_pessoa = @p_usuario))
-            and f1.acesso    > 0
             and ((c.sigla    = 'PR' and g.sq_siw_solicitacao is not null and (f.fim < dbo.trunc(getDate()) or (g.aviso_prox_conc = 'S' and ((cast(f.fim as datetime)-cast(g.dias_aviso as integer))<=dbo.trunc(getDate()))))) or
                  (c.sigla    = 'PR' and h.sq_siw_solicitacao is not null and (f.fim < dbo.trunc(getDate()) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as datetime)-cast(h.dias_aviso as integer))<=dbo.trunc(getDate()))))) or
                  (c.sigla    = 'DM' and h.sq_siw_solicitacao is not null and (f.fim < dbo.trunc(getDate()) or (h.aviso_prox_conc = 'S' and ((cast(f.fim as datetime)-cast(h.dias_aviso as integer))<=dbo.trunc(getDate()))))) or
@@ -152,7 +147,9 @@ begin
                  (c.sigla    = 'PE' and k.sq_siw_solicitacao is not null and (f.fim < dbo.trunc(getDate()) or (k.aviso_prox_conc = 'S' and ((cast(f.fim as datetime)-cast(k.dias_aviso as integer))<=dbo.trunc(getDate()))))) or
                  (c.sigla    = 'PD' and l.sq_siw_solicitacao is not null and l.prestou_contas  = 'N' and (cast(f.fim as datetime)+cast(coalesce(w.dias_prestacao_contas,0) as integer))<=dbo.trunc(getDate())) or
                  (c.sigla    = 'SR' and f.fim < dbo.trunc(getDate()))
-                );
+                )
+          ) lista
+          where  0 < lista.acesso;
    End Else If @p_restricao = 'PACOTE' Begin
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       --open@p_result for
@@ -165,20 +162,20 @@ begin
                 d.nome as nm_servico, 
                 d1.nome as nm_unid_executora,
                 coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
-                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
+                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p2, coalesce(d2.p3, d.p3) as p3, coalesce(d2.p4, d.p4) as p4,
                 e.nome as nm_tramite,
                 f.sq_siw_solicitacao, f.fim, f.solicitante, f.executor,
                 coalesce(f.codigo_interno,cast(f.sq_siw_solicitacao as varchar))+' - '+f.titulo as nm_projeto,
                 f2.nome_resumido as nm_resp,
                 g1.nome as nm_unid_resp,
                 h.sq_projeto_etapa, h.titulo, h.descricao, h.inicio_previsto, h.fim_previsto, h.inicio_real, h.fim_real, 
-                h.perc_conclusao, h.orcamento, h.sq_unidade, h.sq_pessoa as sq_res@p_etapa, h.situacao_atual, h.peso, 
+                h.perc_conclusao, h.orcamento, h.sq_unidade, h.sq_pessoa as sq_resp_etapa, h.situacao_atual, h.peso, 
                 dbo.montaOrdem(h.sq_projeto_etapa,null) as cd_ordem,
                 case when (h.fim_previsto<dbo.trunc(getDate())) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
-                k.nome_resumido+' ('+k2.sigla+')' as nm_res@p_etapa, 
-                l.sigla as sg_unid_res@p_etapa,
-                l1.sq_pessoa as tit_unid_res@p_etapa,
-                l2.sq_pessoa as sub_unid_res@p_etapa,
+                k.nome_resumido+' ('+k2.sigla+')' as nm_resp_etapa, 
+                l.sigla as sg_unid_resp_etapa,
+                l1.sq_pessoa as tit_unid_resp_etapa,
+                l2.sq_pessoa as sub_unid_resp_etapa,
                 dbo.solicRestricao(f.sq_siw_solicitacao, h.sq_projeto_etapa) as restricao
            from siw_cliente                                   a
                 left                  join pd_parametro       w  on (a.sq_pessoa          = w.cliente)
@@ -258,7 +255,7 @@ begin
                 );
    End Else If @p_restricao = 'DOCUMENTOS' Begin
       -- Recupera itens da EAP
-      --open@p_result for
+      select * from (
          select a.sq_pessoa as cliente, 
                 a1.sq_pessoa as sq_usuario, a1.nome as nm_usuario, a1.sq_pessoa as usuario,
                 a2.email,
@@ -268,10 +265,10 @@ begin
                 d.sq_menu, d.nome as nm_servico, d.sigla as sg_servico,
                 d1.nome as nm_unid_executora,
                 coalesce(d2.link, replace(d.link,'inicial','visual')) as link, coalesce(d2.sigla, d.sigla) as sigla, 
-                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p1, coalesce(d2.p3, d.p3) as p1, coalesce(d2.p4, d.p4) as p4,
+                coalesce(d2.p1, d.p1) as p1, coalesce(d2.p2, d.p2) as p2, coalesce(d2.p3, d.p3) as p3, coalesce(d2.p4, d.p4) as p4,
                 e.sigla as sg_tramite, case when (c.sigla = 'SR' and e.sigla='AT') then 'Aguardando opinião' else e.nome end as nm_tramite, 
                 f.sq_siw_solicitacao, f.inicio, f.fim, f.solicitante,
-                f1.acesso, 
+                (select dbo.acesso(f.sq_siw_solicitacao, a2.sq_pessoa, null)) as acesso,
                 f3.nome as nm_unid_cad, f3.sigla as sg_unid_cad,
                 case when (f.fim<dbo.trunc(getDate())) then 'ATRASO' else 'PROXIMO' end as nm_tipo,
                 coalesce(f.codigo_interno,cast(f.sq_siw_solicitacao as varchar)) as codigo,
@@ -360,12 +357,6 @@ begin
                                                                  f.solicitante      = a2.sq_pessoa)
                                                                )
                                                               )
-                      inner     join (select x.sq_siw_solicitacao, y.sq_pessoa, dbo.acesso(x.sq_siw_solicitacao, y.sq_pessoa, null) as acesso
-                                        from siw_solicitacao x, sg_autenticacao y
-                                       where y.ativo = 'S'
-                                     )                  f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao and
-                                                               f1.sq_pessoa         = a2.sq_pessoa
-                                                              )
                       inner     join co_pessoa          f2 on (f.solicitante        = f2.sq_pessoa)
                         left    join sg_autenticacao    f7 on (f2.sq_pessoa         = f7.sq_pessoa)
                           left  join eo_unidade         f8 on (f7.sq_unidade        = f8.sq_unidade)
@@ -386,7 +377,7 @@ begin
                           left  join eo_unidade         l3 on (l2.sq_unidade        = l3.sq_unidade)
           where ((@p_cliente  is null and a.envia_mail_alerta = coalesce(@p_mail,'S')) or (@p_cliente is not null and a.sq_pessoa = @p_cliente))
             and (@p_usuario   is null or (@p_usuario is not null and a1.sq_pessoa = @p_usuario))
-            and f1.acesso    > 0;
+         ) lista where lista.acesso    > 0;
    End Else If @p_restricao = 'USUARIOS' Begin
       -- Verifica os usuários que tem acesso a um documento
       --open@p_result for         

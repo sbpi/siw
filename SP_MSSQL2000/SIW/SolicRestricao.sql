@@ -3,7 +3,7 @@ begin
   Declare @Result varchar(2);
   Declare @w_tipo varchar(255);
   Declare c_restricoes cursor for
-    select max(c.problema+c.criticidade) as tipo
+    select max(c.problema+cast(c.criticidade as varchar)) as tipo
       from siw_solicitacao                  a
            inner   join siw_restricao       c  on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
              left  join siw_restricao_etapa d  on (c.sq_siw_restricao   = d.sq_siw_restricao and

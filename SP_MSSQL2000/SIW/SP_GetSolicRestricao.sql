@@ -1,4 +1,4 @@
-create procedure sp_getSolicRestricao
+alter procedure sp_getSolicRestricao
    (@p_chave                 int           = null,
     @p_chave_aux             int           = null,
     @p_pessoa                int           = null,
