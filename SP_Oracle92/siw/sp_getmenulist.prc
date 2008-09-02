@@ -32,7 +32,7 @@ begin
            and 'S'         = a.tramite
            and 1           = coalesce(a.numeracao_automatica,0)
            and a.sq_menu   <> coalesce(p_chave,0)
-           and b.sigla     = coalesce(cast(@p_modulo as varchar),b.sigla)	
+           and b.sigla     = coalesce(to_char(p_modulo),b.sigla)	
         order by acentos(a.nome);
    Elsif upper(p_operacao) = 'X' Then
       -- Recupera os links vinculados a serviços

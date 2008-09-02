@@ -1,20 +1,20 @@
 alter procedure SP_putIndicador_Afericao
    (@p_operacao     varchar(1),
     @p_usuario      int,
-    @p_chave        int       = null,
-    @p_indicador    int       = null,
-    @p_afericao     datetime  = null,
-    @p_inicio       datetime  = null,
-    @p_fim          datetime  = null,
-    @p_pais         int       = null,
-    @p_regiao       int       = null,
-    @p_uf           varchar(2) = null,
-    @p_cidade       int       = null,
-    @p_base         int       = null,
-    @p_fonte        varchar(60) = null,
-    @p_valor        float       = null,
-    @p_previsao     varchar(1) = null,
-    @p_observacao   varchar(255) = null
+    @p_chave        int           = null,
+    @p_indicador    int           = null,
+    @p_afericao     datetime      = null,
+    @p_inicio       datetime      = null,
+    @p_fim          datetime      = null,
+    @p_pais         int           = null,
+    @p_regiao       int           = null,
+    @p_uf           varchar(2)    = null,
+    @p_cidade       int           = null,
+    @p_base         int           = null,
+    @p_fonte        varchar(60)   = null,
+    @p_valor        numeric(18,4) = null,
+    @p_previsao     varchar(1)    = null,
+    @p_observacao   varchar(255)  = null
    ) as
    Declare @w_chave  numeric(18);
    Declare @w_regiao numeric(18);

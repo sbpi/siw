@@ -5,10 +5,6 @@ create or replace procedure SP_GetEtpDataPrnts
 begin
    -- Recupera as etapas acima da informada
    open p_result for 
-      select sq_projeto_etapa, sq_etapa_pai, titulo, ordem
-        from pj_projeto_etapa
-      start with sq_projeto_etapa   = p_chave
-      connect by prior sq_etapa_pai = sq_projeto_etapa; 
+      select montaOrdem(p_chave, null) as ordem from dual;
 end SP_GetEtpDataPrnts;
 /
-

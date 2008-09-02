@@ -1,12 +1,17 @@
-create function pd_retornatrechos(@p_chave int) return varchar as
--- Retorna os trechos de uma viagem, recebendo a chave de siw_solicitacao
+alter function dbo.pd_retornatrechos(@p_chave int) returns varchar as
+begin
+  -- Retorna os trechos de uma viagem, recebendo a chave de si@w_solicitacao
   
-  declare @w_texto   varchar;
-  set @w_texto = '';
+  Declare @w_texto      varchar(2000);
+  Declare @w_chegada    varchar(100);
+  Declare @w_desloc     numeric(18);
+  Declare @w_origem     varchar(100);
+  Declare @w_destino    varchar(100);
+  Declare @w_nm_origem  varchar(100);
+  Declare @w_nm_destino varchar(100);
+  Set @w_texto = '';
 
-  declare  @w_chegada varchar;
-
-  cursor c_deslocamentos is
+  Declare c_deslocamentos cursor for
     select a.sq_deslocamento,
            b.nome as nm_cidade_origem,
            d.nome as nm_cidade_destino,
@@ -19,14 +24,19 @@ create function pd_retornatrechos(@p_chave int) return varchar as
              inner join co_pais   e on (d.sq_pais = e.sq_pais)
      where a.sq_siw_solicitacao = @p_chave
     order by a.saida, a.chegada;
-begin
-  -- Concatena em @w_texto cada cidade encontrada
-  for crec in c_deslocamentos loop 
-   set @w_chegada = crec.nm_cidade_destino; 
-   set @w_texto   = @w_texto + crec.nm_cidade_origem +' - '; 
-  end loop;
-  -- Configura o retorno
-  if len(@w_texto) > 0 begin set @w_texto = @w_texto+' '+@w_chegada; else set @w_texto = null; end;
-  return @w_texto;
-end;
 
+  -- Concatena em @w_texto cada cidade encontrada
+  Open c_deslocamentos
+  Fetch Next from c_deslocamentos into @w_desloc, @w_origem, @w_destino, @w_nm_origem, @w_nm_destino
+  While @@Fetch_Status = 0 Begin
+     Set @w_chegada = @w_destino; 
+     Set @w_texto   = @w_texto + @w_origem +' - '; 
+     Fetch Next from c_deslocamentos into @w_desloc, @w_origem, @w_destino, @w_nm_origem, @w_nm_destino
+  End
+  Close c_deslocamentos
+  Deallocate c_deslocamentos
+  
+  -- Configura o retorno
+  if len(@w_texto) > 0 Set @w_texto = @w_texto+' '+@w_chegada; else Set @w_texto = null;
+  return @w_texto;
+end
