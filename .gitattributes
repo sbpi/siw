@@ -2325,7 +2325,7 @@ SP_MSSQL2000/SIW/SP_PutDataEspecial.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaAreas.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaConc.sql -text
 SP_MSSQL2000/SIW/SP_PutDemandaEnvio.sql -text
-SP_MSSQL2000/SIW/SP_PutDemandaGeral.sql -text
+SP_MSSQL2000/SIW/SP_PutDemandaGeral.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutDemandaInter.sql -text
 SP_MSSQL2000/SIW/SP_PutEOAAtuac.sql -text
 SP_MSSQL2000/SIW/SP_PutEOLocal.sql -text
@@ -2383,8 +2383,10 @@ SP_MSSQL2000/SIW/fGetUorgList.sql -text
 SP_MSSQL2000/SIW/pd_retornatrechos.sql -text
 SP_MSSQL2000/SIW/sp_GetAcesso.sql -text
 SP_MSSQL2000/SIW/sp_GetAfastamento.sql -text
+SP_MSSQL2000/SIW/sp_GetCronograma.sql -text
 SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
+SP_MSSQL2000/SIW/sp_GetRelProgresso.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
 SP_MSSQL2000/SIW/sp_PutNatureza_PE.sql -text
 SP_MSSQL2000/SIW/sp_PutSolicInter.sql -text
