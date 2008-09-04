@@ -2242,7 +2242,7 @@ SP_MSSQL2000/SIW/SP_GetMenuList.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetMenuOrder.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuRelac.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuUpper.sql -text
-SP_MSSQL2000/SIW/SP_GetMenuUser.sql -text
+SP_MSSQL2000/SIW/SP_GetMenuUser.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetModData.sql -text
 SP_MSSQL2000/SIW/SP_GetModList.sql -text
 SP_MSSQL2000/SIW/SP_GetPersonData.sql -text

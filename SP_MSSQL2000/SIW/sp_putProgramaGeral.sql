@@ -20,8 +20,8 @@
     @p_executor            int =  null,
     @p_solic_pai           int =  null,
     @p_valor               int =  null,
-    @p_data_hora           int = null, --varchar
-    @p_aviso               int = null, --varchar
+    @p_data_hora           varchar(1) = null, --varchar
+    @p_aviso               varchar(1) = null, --varchar
     @p_dias                int =  null,
     @p_chave_nova          numeric(18) --out number
    ) as
@@ -219,7 +219,7 @@ begin
    
    If @p_operacao in ('I','A') and @p_objetivo is not null begin
       -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
-      while ( @w_objetivo is not null) begin
+      while ( len(@w_objetivo) > 0 ) begin
          set @w_item  = rtrim(ltrim(substring(@w_objetivo,1,charindex(',',@w_objetivo)-1)));
          If len(@w_item) > 0 begin
             insert into siw_solicitacao_objetivo(sq_siw_solicitacao, sq_plano, sq_peobjetivo) values (coalesce(@w_chave,@p_chave), @p_plano, cast(@w_item as numeric(18)));
