@@ -23,7 +23,7 @@
     @p_data_hora           varchar(1) = null, --varchar
     @p_aviso               varchar(1) = null, --varchar
     @p_dias                int =  null,
-    @p_chave_nova          numeric(18) --out number
+    @p_chave_nova          out numeric(18) --out number
    ) as
 begin
    
