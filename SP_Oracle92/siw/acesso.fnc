@@ -264,11 +264,11 @@ begin
  -- Se o serviço for vinculado à unidade
  If w_vinculacao = 'U' Then
     -- Verifica se o usuário está lotado ou se é titular/substituto 
-    -- da unidade de CADASTRAMENTO da solicitação ou se é
-    -- da unidade RESPONSÁVEL pelo projeto ou pela demanda
+    -- da unidade de CADASTRAMENTO da solicitação 
+    -- ou se é da unidade RESPONSÁVEL e o módulo for de protocolo
     If w_sq_unidade_lotacao   = w_unidade_solicitante or
        w_sq_unidade_lotacao   = w_unidade_resp Then
-       If w_interno = 'S' Then Result := Result + 1; End If;
+       If w_interno = 'S' and w_sg_modulo = 'PA' Then Result := Result + 1; End If;
     Elsif w_sq_pessoa_titular    = p_usuario or
           w_sq_pessoa_substituto = p_usuario
     Then

@@ -98,6 +98,7 @@ begin
                 coalesce(c.fim_real,        d.fim_real)        as fim_real,
                 coalesce(c.custo_real,      d.custo_real)      as custo_real,
                 cast(b.fim as date)-cast(coalesce(c.dias_aviso,d.dias_aviso) as integer) as aviso,
+                d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 
                 o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind, 
                 (select count(x.sq_siw_solicitacao) 
                    from siw_solicitacao x
@@ -118,6 +119,12 @@ begin
                         inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
                   left         join pe_programa               c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
                   left         join pj_projeto                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+                    left       join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
+                                             from pj_rubrica_cronograma x
+                                                  inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
+                                            where y.ativo = 'S'
+                                           group by y.sq_siw_solicitacao
+                                          )                   d2 on (d.sq_siw_solicitacao  = d2.sq_siw_solicitacao)
           where 'S'            = b1.ativo
             and 'GD'           <> a1.sigla
             and 'GDP'          <> substr(a.sigla,1,3)
