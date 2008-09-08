@@ -20,7 +20,7 @@ begin
       values
         (sq_documento_item.nextval, p_chave,            p_sq_projeto_rubrica, p_descricao,
          p_quantidade,              p_valor_unitario,   p_ordem,              p_data_cotacao,
-         p_valor_cotacao
+         coalesce(p_valor_cotacao,0)
         );
    Elsif p_operacao = 'A' Then -- Alteração
       update fn_documento_item
@@ -30,7 +30,7 @@ begin
              valor_unitario      = p_valor_unitario,
              ordem               = p_ordem,
              data_cotacao        = p_data_cotacao,
-             valor_cotacao       = p_valor_cotacao
+             valor_cotacao       = coalesce(p_valor_cotacao,0)
        where sq_documento_item = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_documento_item = p_chave_aux;
