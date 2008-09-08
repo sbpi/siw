@@ -14,7 +14,6 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
   $w_tramite_ativo = f($RS,'ativo');
 
-
   if ($l_o!='T' && $l_o!='V') {
     if ($l_tipo!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
   }

@@ -544,15 +544,15 @@ function FormataValor() {
     function FormataValor(campo, maximo, tammax, teclapres) {     
 		var mascara = "";
 		var decimal = "";
-	  //campo.setAttribute("id", campo.name);              		
+	    campo.setAttribute("id", campo.name);              		
 		mascara = repeteCaracter("#",tammax);
 
 		if(mascara != ""){
 			decimal = "," + mascara;
 		}
 
-	   $(campo).bind("keyup", function(e){
-			$(campo).val( mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
+	   $("#"+campo.id).bind("keyup", function(e){
+			$("#"+campo.id).val( mascaraGlobal('[###.]###' + decimal ,$("#"+campo.id).val()) );
 		});        
     }
 <?php
@@ -563,8 +563,8 @@ function FormataCPF() {
 ?>
   function FormataCPF (campo,teclapres) {		
 	   campo.setAttribute("id", campo.name);              				
-	   $(campo).bind("keyup", function(e){
-			$(campo).val( mascaraGlobal('###.###.###-##' ,$(campo).val()) );
+	   $("#"+campo.id).bind("keyup", function(e){
+			$("#"+campo.id).val( mascaraGlobal('###.###.###-##' ,$("#"+campo.id).val()) );
 		});   
   }
 <?php
@@ -574,8 +574,8 @@ function FormataCNPJ() {
 ?>
 	function FormataCNPJ (campo,teclapres) { 
 		campo.setAttribute("id", campo.name);              				
-		   $(campo).bind("keyup", function(e){
-				$(campo).val( mascaraGlobal('##.###.###/####-##' ,$(campo).val()) );
+		   $("#"+campo.id).bind("keyup", function(e){
+				$("#"+campo.id).val( mascaraGlobal('##.###.###/####-##' ,$("#"+campo.id).val()) );
 			});   	
 	}
 <?php
@@ -604,8 +604,8 @@ function FormataCEP() {
 ?>
 		function FormataCEP (campo,teclapres) { 
 		 campo.setAttribute("id", campo.name);              				
-		   $(campo).bind("keyup", function(e){
-				$(campo).val( mascaraGlobal('#####-###' ,$(campo).val()) );
+		   $("#"+campo.id).bind("keyup", function(e){
+				$("#"+campo.id).val( mascaraGlobal('#####-###' ,$("#"+campo.id).val()) );
 			});  
 		}
 <?php
@@ -700,7 +700,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   if ($AllowLetters>"" || $AllowDigits>"") {
     $checkOK="";
     if ($AllowLetters>"") {
-      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*€&%$#@!/º°ª²³?<>|+=_\\“”"\\\' '; }
+      if ($AllowLetters=='1') { $checkOK='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzÀÁÂÃÇÈÉÊÌÍÎÒÓÔÕÙÚÛÜÀÈÌÒÙÂÊÎÔÛàáâãçéêíîóôõúûüàèìòìâêîôû0123456789-–,.()-:;[]{}*&%$#@!/º°ª²³?<>|+=_\\“”"\\\' '; }
       else { $checkOK=$checkOK.$AllowLetters; }
     }
 

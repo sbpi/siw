@@ -8,6 +8,19 @@ if (isset($_SESSION['LOGON1'])) {
     echo '</SCRIPT>';
     exit();
 }
+
+if ($_SESSION['DBMS']=='' || isset($_POST['p_dbms'])) {
+    if (!isset($_POST['p_dbms'])) {
+        if (isset($_POST['p_cliente'])) {
+            if ($_POST['p_cliente']!=1) {
+                print '*** Erro';
+                exit();
+            }
+        }
+    }
+    else { $_SESSION['DBMS']=$_POST['p_dbms']; }
+}
+
 $w_dir_volta = '';
 include_once('constants.inc');
 include_once('jscript.php');
@@ -32,18 +45,6 @@ include_once('classes/sp/db_getCustomerSite.php');
 // -------------------------------------------------------------------------
 //
 // Declaração de variáveis
-
-if ($_SESSION['DBMS']=='' || isset($_POST['p_dbms'])) {
-    if (!isset($_POST['p_dbms'])) {
-        if (isset($_POST['p_cliente'])) {
-            if ($_POST['p_cliente']!=1) {
-                print '*** Erro';
-                exit();
-            }
-        }
-    }
-    else { $_SESSION['DBMS']=$_POST['p_dbms']; }
-}
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
@@ -79,7 +80,7 @@ exit;
 function Valida() {
     extract($GLOBALS);
     $w_erro=0;
-
+    
     if (db_verificaUsuario::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario)==0) {
       $w_erro=1;
     } else {
@@ -164,7 +165,7 @@ function Valida() {
       $_SESSION['LOGON']           = 'Sim';
       $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
       $_SESSION['ANO']             = Date('Y');
-
+      
       // Registra no servidor syslog
       $w_resultado = enviaSyslog('LV','LOGIN','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
       if ($w_resultado>'') {
@@ -278,7 +279,7 @@ function Valida() {
         $w_html .= '</table>'.$crlf;
         $w_html .= '</BODY>'.$crlf;
         $w_html .= '</HTML>'.$crlf;
-
+        
         // Executa a função de envio de e-mail
         $w_resultado=EnviaMail('Aviso de reinicialização de '.$w_texto_mail,$w_html,$_SESSION['EMAIL']);
 

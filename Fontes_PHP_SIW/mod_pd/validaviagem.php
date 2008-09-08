@@ -76,7 +76,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
       } else {
         // Verifica se o proposto tem os dados bancários cadastrados
         if (nvl(f($l_rs_solic,'sq_banco'),'')=='' || nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') {
-          $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do proposto e clique no botão "Gravar"';
+          $l_erro .= '<li>Dados bancários incompletos.';
           $l_tipo  = 0;
         } 
       } 
@@ -87,14 +87,10 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         $l_tipo  = 0;
       } 
 
-      if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
-        $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido.';
-        $l_tipo = 2;
-      } 
 /**
 *       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
 *       if ($l_existe_rs4==0) {
-*          $l_erro .= '<li>É obrigatório vincular a pelo menos uma atividade ou demanda eventual.';
+*          $l_erro .= '<li>É obrigatório vincular a PCD a pelo menos uma atividade ou demanda eventual.';
 *          $l_tipo  = 0;
 *       } 
 */
@@ -104,7 +100,10 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         // Verifica se o início da missão atende ao número de dias de antecedência regulamentares. 
         // Se não atender, deve ser informada justificativa.
         if (!(strpos('CH,DF,EA',Nvl(f($l_rs_tramite,'sigla'),'CH'))===false)) {
-
+          if ((f($l_rs_solic,'inicio')-f($l_rs2,'dias_antecedencia')<time()) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
+            $l_erro .= '<li>No encaminhamento da PCD deve ser informada a justificativa para não cumprimento dos '.f($l_rs2,'dias_antecedencia').' dias de antecedência do pedido.';
+            $l_tipo = 2;
+          } 
         } 
         
         if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {

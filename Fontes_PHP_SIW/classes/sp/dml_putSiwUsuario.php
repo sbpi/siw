@@ -13,9 +13,9 @@ class dml_putSiwUsuario {
          $p_cpf, $p_sexo, $p_vinculo, $p_tipo_pessoa, $p_unidade, $p_localizacao, $p_username, 
          $p_email, $p_gestor_seguranca, $p_gestor_sistema,$p_tipo_autenticacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwUsuario';
-     $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
+     $params=array('p_operacao'         =>array($operacao,              B_VARCHAR,      1),
                    'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
-                   'cliente'            =>array($p_cliente,             B_NUMERIC,     32),
+                   'p_cliente'          =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'             =>array($p_nome,                B_VARCHAR,     60),
                    'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     15),
                    'p_cpf'              =>array($p_cpf,                 B_VARCHAR,     14),

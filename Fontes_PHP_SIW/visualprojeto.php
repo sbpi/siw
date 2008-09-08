@@ -90,7 +90,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     // Se for listagem dos dados
     $l_html .= chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
     if($l_tipo!='WORD') {
-      if ($l_O != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_volta='.$_REQUEST['w_volta'].'&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações</a></td></tr>';
+      if ($l_O != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações</a></td></tr>';
     }
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
@@ -296,7 +296,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $w_cor_red  = $conTrBgColorLightRed2;
         }
         $l_html .= chr(13).'      <tr>';
-        if($l_tipo!='WORD') $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp;';
+        if($l_tipo!='WORD') $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp;';
         else       $l_html .= chr(13).'          <td>'.f($row,'codigo').'&nbsp;';
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'valor_inicial')).' </td>';
@@ -475,23 +475,18 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   // Etapas do projeto
   // Recupera todos os registros para a listagem
   if($l_nome_menu['ETAPA']!='') {
-    $w_p2 = '';
-    $w_p3 = '';
-    $RSQuery = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LISTA',null);
-    $RSQuery = SortArray($RSQuery,'ordem','asc');
-    // Recupera o código da opção de menu  a ser usada para listar as tarefas
-    if (count($RSQuery)>0) {
-      foreach ($RSQuery as $row) {
-        if (Nvl(f($row,'P2'),0) > 0) $w_p2 = f($row,'P2');
-        if (Nvl(f($row,'P3'),0) > 0) $w_p3 = f($row,'P3');
-      } 
-    } 
     $RSQuery = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'ARVORE',null);
     if (count($RSQuery)>0) {
       // Se não foram selecionados registros, exibe mensagem
-      // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
       if($l_tipo!='WORD') {
+        $RSQuery1 = db_getMenuCode::getInstanceOf($dbms,$w_cliente,'GDPCAD');
+        foreach($RSQuery1 as $row) { $RSQuery1 = $row; break; }
+        $w_p2 = f($RSQuery1,'sq_menu');
+        $RSQuery1 = db_getMenuCode::getInstanceOf($dbms,$w_cliente,'GDDCAD');
+        foreach($RSQuery1 as $row) { $RSQuery1 = $row; break; }
+        $w_p3 = f($RSQuery1,'sq_menu');
         if ($w_p2 > '') {
+          // Monta função JAVASCRIPT para fazer a chamada para a lista de tarefas
           $l_html .= chr(13).'<SCRIPT LANGUAGE="JAVASCRIPT">';
           $l_html .= chr(13).'  function lista (projeto, etapa) {';
           $l_html .= chr(13).'    document.Form1.p_projeto.value=projeto;';
@@ -502,7 +497,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
           $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
           $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
-           $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
+          $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
           $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
           $w_fases='';
           foreach($RSQuery1 as $row1) {
@@ -544,7 +539,6 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
         $l_html .= chr(13).'<input type="Hidden" name="p_fase" value="">';
       }
  
-      $RSQuery1 = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
       $l_html .= chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if($l_tipo!='WORD') {
         $l_html .= chr(13).'      <tr><td colspan="2">';
@@ -579,42 +573,47 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
       $w_total_orcamento = 0;
       $w_total_peso      = 0;
       $w_total_tarefa    = 0;
+      $w_pai             = 0;
 
       if ($l_O=='L' || $l_O=='V') {
-        if (count($RSQuery)>0) {
-          foreach($RSQuery as $row) {
-            $l_html .=  chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'));
-            if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
-            if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
-            if (nvl(f($row,'inicio_real'),'')!='' && ($w_real_menor=='' || $w_real_menor > f($row,'inicio_real'))) $w_real_menor = f($row,'inicio_real');
-            if (nvl(f($row,'fim_real'),'')!=''    && ($w_real_maior=='' || $w_real_maior < f($row,'fim_real')))    $w_real_maior = f($row,'fim_real');
-            if (f($row,'pacote_trabalho')=='S') {
-              $w_total_orcamento += nvl(f($row,'orcamento'),0);
-              $w_total_peso      += nvl(f($row,'peso'),0);
-            }
-            $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
-            $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
-          } 
-          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
-        }
+        foreach($RSQuery as $row) {
+          // Define o nível do item na árvore
+          if (nvl(f($row,'sq_etapa_pai'),0)==0) $w_ar[f($row,'sq_projeto_etapa')] = 0;
+          else $w_ar[f($row,'sq_projeto_etapa')] = $w_ar[f($row,'sq_etapa_pai')] + 1;
+
+          $l_html .=  chr(13).EtapaLinha($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),$w_ar[f($row,'sq_projeto_etapa')],f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'));
+          if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
+          if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
+          if (nvl(f($row,'inicio_real'),'')!='' && ($w_real_menor=='' || $w_real_menor > f($row,'inicio_real'))) $w_real_menor = f($row,'inicio_real');
+          if (nvl(f($row,'fim_real'),'')!=''    && ($w_real_maior=='' || $w_real_maior < f($row,'fim_real')))    $w_real_maior = f($row,'fim_real');
+          if (f($row,'pacote_trabalho')=='S') {
+            $w_total_orcamento += nvl(f($row,'orcamento'),0);
+            $w_total_peso      += nvl(f($row,'peso'),0);
+          }
+          $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+          $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
+        } 
+        $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
       } elseif ($l_O=='T'){
         //Se for visualização total, ira visualizar as etapas e as tarefas correspondentes
-        if (count($RSQuery)>0) {
-          foreach($RSQuery as $row) {
-            $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'));
-            if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
-            if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
-            if ($w_real_menor==''     || $w_real_menor > f($row,'inicio_real'))         $w_real_menor     = f($row,'inicio_real');
-            if ($w_real_maior==''     || $w_real_maior < f($row,'fim_real'))            $w_real_maior     = f($row,'fim_real');
-            if (f($row,'pacote_trabalho')=='S') {
-              $w_total_orcamento += nvl(f($row,'orcamento'),0);
-              $w_total_peso      += nvl(f($row,'peso'),0);
-            }
-            $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
-            $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
-          } 
-          $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
+        foreach($RSQuery as $row) {
+          // Define o nível do item na árvore
+          if (nvl(f($row,'sq_etapa_pai'),0)==0) $w_ar[f($row,'sq_projeto_etapa')] = 0;
+          else $w_ar[f($row,'sq_projeto_etapa')] = $w_ar[f($row,'sq_etapa_pai')] + 1;
+
+          $l_html .= chr(13).EtapaLinhaAtiv($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),null,'PROJETO','RESUMIDO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),$w_ar[f($row,'sq_projeto_etapa')],f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'));
+          if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
+          if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
+          if ($w_real_menor==''     || $w_real_menor > f($row,'inicio_real'))         $w_real_menor     = f($row,'inicio_real');
+          if ($w_real_maior==''     || $w_real_maior < f($row,'fim_real'))            $w_real_maior     = f($row,'fim_real');
+          if (f($row,'pacote_trabalho')=='S') {
+            $w_total_orcamento += nvl(f($row,'orcamento'),0);
+            $w_total_peso      += nvl(f($row,'peso'),0);
+          }
+          $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
+          $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
         } 
+        $l_html .= chr(13).EtapaLinha($l_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'',null,'PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo);
       } 
       $l_html .= chr(13).'         </table></td></tr>';
       

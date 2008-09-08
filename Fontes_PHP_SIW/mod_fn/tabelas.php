@@ -431,7 +431,7 @@ function Lancamento() {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
     } else {
-      $RS = SortArray($RS,'receita','desc','ordena','asc');
+      $RS = SortArray($RS,'receita','desc','nome','asc');
     }
   } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,$w_cliente,null);
@@ -488,7 +488,7 @@ function Lancamento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','ordena').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');

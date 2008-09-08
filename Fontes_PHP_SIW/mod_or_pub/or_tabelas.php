@@ -421,12 +421,12 @@ function PPA() {
     MontaRadioNS('<b>Selecionada Relevante?</b>',$w_selecionada_relevante,'w_selecionada_relevante');
     ShowHTML('      <tr><td colspan=3><table border=0 width="100%" cellspacing=0 cellpadding=0>');
     ShowHTML('         <tr valign="top">');
-    ShowHTML('           <td><b>A<u>p</u>rovado:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_aprovado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_aprovado,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('           <td><b><u>S</u>aldo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_saldo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_saldo,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('           <td><b>A<u>p</u>rovado:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_aprovado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_aprovado,'0,00').'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('           <td><b><u>S</u>aldo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_saldo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_saldo,'0,00').'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('         <tr valign="top">');
-    ShowHTML('           <td><b><u>E</u>mpenhado:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_empenhado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_empenhado,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('           <td><b><u>L</u>iquidado:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_liquidado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_liquidado,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('           <td><b>A l<u>i</u>quidar:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_liquidar" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_liquidar,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('           <td><b><u>E</u>mpenhado:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_empenhado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_empenhado,'0,00').'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('           <td><b><u>L</u>iquidado:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_liquidado" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_liquidado,'0,00').'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('           <td><b>A l<u>i</u>quidar:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_liquidar" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.Nvl($w_liquidar,'0,00').'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('           </table>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
@@ -1731,7 +1731,7 @@ function Rel_Sintetico_IP() {
                 if ($w_tipo_rel=='WORD') {
                   ShowHTML('      <td>'.f($RS3,'titulo').'</td>');
                 } else {
-                  ShowHTML('      <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($RS3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($RS3,'titulo').'</A></td>');
+                  ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($RS3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($RS3,'titulo').'</A></td>');
                 } 
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($RS3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.number_format(f($RS3,'quantidade'),0,',','.').'</td>');
@@ -1757,7 +1757,7 @@ function Rel_Sintetico_IP() {
                     if ($w_tipo_rel=='WORD') {
                       ShowHTML('      <td>'.f($row3,'titulo').'</td>');
                     } else {
-                      ShowHTML('      <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta','width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                     } 
                     ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                     ShowHTML('      <td nowrap align="right" >'.number_format(f($row3,'quantidade'),0,',','.').'</td>');
@@ -2116,7 +2116,7 @@ function Rel_Sintetico_PPA() {
                   if ($w_tipo_rel=='WORD') {
                     ShowHTML('<td>'.f($row3,'titulo').'</td>');
                   } else {
-                    ShowHTML('<td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta'.'\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                    ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta'.'\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   } 
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right">'.f($row3,'quantidade').'</td>');
@@ -2313,7 +2313,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_uni
   } else {
     $l_html=$l_html.chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
   } if ($l_word!='WORD') {
-    $l_html=$l_html.chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
+    $l_html=$l_html.chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'projeto.php?par=AtualizaEtapa&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
   } else {
     $l_html=$l_html.chr(13).'        '.$l_titulo.'</td>';
   } 

@@ -199,7 +199,7 @@ function Etapa() {
     ShowHTML('    ');
     ShowHTML('<tr><td align="center"><table width="97%" border="0">');
     ShowHTML('<tr><td>');
-    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);"><ol>');
     ShowHTML('  A finalidade desta tela é importar as etapas de um arquivo MS-Project para este projeto. O procedimento consiste em:');
     ShowHTML('  <li>Salve seu arquivo MS-Project como arquivo XML.');

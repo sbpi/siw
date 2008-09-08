@@ -2,7 +2,7 @@
 // =========================================================================
 // Montagem da seleção de tipo de autenticação
 // -------------------------------------------------------------------------
-function selecaoTipoAutenticacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoTipoAutenticacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
     extract($GLOBALS);
     $l_rs = db_getCustomerData::getInstanceOf($dbms,$chaveAux);
     
@@ -16,9 +16,9 @@ function selecaoTipoAutenticacao($label,$accesskey,$hint,$chave,$chaveAux,$campo
     }
     
     if (!isset($hint)) {
-        ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+        ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-        ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+        ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
 
     

@@ -9,19 +9,17 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_CoMoeda {
-   function getInstanceOf($dbms, $operacao, $chave, $p_codigo, $p_nome, $p_sigla, $p_simbolo, 
-           $p_tipo, $p_exclusao_ptax, $p_ativo) {
+   function getInstanceOf($dbms, $operacao, $chave, $p_nome, $p_codigo, $p_padrao, $p_ativo, $p_exige) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
-     $sql=$strschema.'sp_putCoMoeda';
+     $sql=$strschema.'sp_putCoBanco';
      $params=array('operacao'          =>array($operacao,          B_VARCHAR,      1),
                    'chave'             =>array($chave,             B_NUMERIC,     32),
-                   'p_codigo'          =>array($p_codigo,          B_VARCHAR,      3),
-                   'p_nome'            =>array($p_nome,            B_VARCHAR,     30),
-                   'p_sigla'           =>array($p_sigla,           B_VARCHAR,      5),
-                   'p_simbolo'         =>array($p_simbolo,         B_VARCHAR,     10),
-                   'p_tipo'            =>array($p_tipo,            B_VARCHAR,      1),
-                   'p_exclusao_ptax'    =>array($p_exclusao_ptax,  B_DATE,        32),
-                   'p_ativo'           =>array($p_ativo,           B_VARCHAR,      1)
+                   'p_nome'            =>array($p_nome,            B_VARCHAR,     60),
+                   'p_codigo'          =>array($p_codigo,          B_VARCHAR,     30),
+                   'p_padrao'          =>array($p_padrao,          B_VARCHAR,      1),
+                   'p_ativo'           =>array($p_ativo,           B_VARCHAR,      1),
+                   'p_exige'           =>array($p_exige,           B_VARCHAR,      1)
+                   
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

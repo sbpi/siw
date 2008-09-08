@@ -137,7 +137,14 @@ function Rel_Executivo() {
       $w_embed = 'WORD';
       //CabecalhoWord($w_cliente,$w_TP,0);
     }elseif($p_tipo=='PDF'){
-        headerpdf('RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
+        ob_start();  
+        Cabecalho();
+        ShowHTML('<HEAD>');
+        ShowHTML('<TITLE>Relatório executivo de programas e projetos</TITLE>');
+        ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+        ShowHTML('</HEAD>');
+        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+        CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E PROJETOS',$w_pag);
         $w_embed = 'WORD';
     } else {
       Cabecalho();
@@ -438,8 +445,8 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  if ($p_tipo=='PDF') RodapePDF();
+  if ($p_tipo!='WORD') Rodape();
   
   
 } 
@@ -465,7 +472,14 @@ function Rel_Programas() {
       CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
       $w_embed = 'WORD';      
     }elseif($p_tipo=='PDF'){
-        headerpdf('RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+        ob_start();  
+        Cabecalho();
+        ShowHTML('<HEAD>');
+        ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
+        ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+        ShowHTML('</HEAD>');
+        ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+        CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
         $w_embed = 'WORD';
     }else{
       Cabecalho();

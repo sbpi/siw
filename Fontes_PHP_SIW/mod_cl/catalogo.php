@@ -918,9 +918,9 @@ function PesquisaPreco() {
     ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_dias" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias,f($RS_Parametro,'dias_validade_pesquisa')).'" title=Dias de validade da pesquisa de preço."></td>');
     if(nvl($w_valor,'')!='') {
-      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
     } else {
-      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
+      ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
     }
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');

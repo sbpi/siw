@@ -41,27 +41,51 @@ class DatabaseQueriesFactory {
       @closedir($l_caminho); 
     }
 
-    if (@oci_server_version($conHandle)) {
-      switch($_SESSION['DBMS']) {
-        case ORA8  :
-          if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
-          else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
-          break;
-        case ORA9  :
-          if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
-          else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
-          break;
-        case ORA10  :
-          if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
-          else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
-          break;
-        }
-    } elseif (is_array(pg_version($conHandle))) {
-      if (empty($params)) return new PgSqlDatabaseQueries($query, $conHandle);
-      else return new PgSqlDatabaseQueryProc($query, $conHandle, $params); 
-    } else {
-      if (empty($params)) return new MSSqlDatabaseQueries($query, $conHandle); 
-      else  return new MSSqlDatabaseQueryProc($query, $conHandle, $params); 
+    if (function_exists(oci_server_version)) $oci8 = true; else $oci8 = false;
+    if (function_exists(pg_version)) $pg = true; else $pg = false;
+    if (function_exists(mssql_connect)) $mssql = true; else $mssql = false;
+
+    switch($_SESSION['DBMS']) {
+    case ORA8  :
+      if ($oci8) {
+        if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
+        else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo OCI8 não disponível na instalação do PHP.');
+      }
+      break;
+    case ORA9  :
+      if ($oci8) {
+        if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
+        else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo OCI8 não disponível na instalação do PHP.');
+      }
+      break;
+    case ORA10  :
+      if ($oci8) {
+        if (empty($params)) return new OraDatabaseQueries($query, $conHandle); 
+        else  return new OraDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo OCI8 não disponível na instalação do PHP.');
+      }
+      break;
+    case PGSQL  :
+      if ($pg) {
+        if (empty($params)) return new PgSqlDatabaseQueries($query, $conHandle);
+        else return new PgSqlDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo PGSQL não disponível na instalação do PHP.');
+      }
+      break;
+    case MSSQL  :
+      if ($mssql) {
+        if (empty($params)) return new MSSqlDatabaseQueries($query, $conHandle); 
+        else  return new MSSqlDatabaseQueryProc($query, $conHandle, $params); 
+      } else {
+        die('Módulo MSSQL não disponível na instalação do PHP.');
+      }
+      break;
     }
   }
 }

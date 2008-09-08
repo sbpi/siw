@@ -211,7 +211,7 @@ function ConsultaDoc() {
 
     ShowHTML('    </ul>');
     ShowHTML('    </table>');
-    ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
+    ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
 
     //CONTRATOS
     if ($_POST["p_sq_pessoa"]>"" || $_POST["p_cpf"]>"" || $_POST["p_cnpj"] || ($_POST["p_documento"]=="" && $_POST["p_inicio"]>"") || ($_POST["p_documento"]>"" && substr(strtoupper($_POST["p_documento"]),0,3)=='SA-')) {
@@ -371,7 +371,7 @@ function ConsultaDoc() {
       } 
     } 
 
-    ShowHTML('      <tr><td align="center" colspan="2"><br>Clique <a accesskey="F" class="SS" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
+    ShowHTML('      <tr><td align="center" colspan="2"><br>Clique <a accesskey="F" class="SS" href="#" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
     ShowHTML('     </tr></tr></td></table>');
 
     ShowHTML('</table>');

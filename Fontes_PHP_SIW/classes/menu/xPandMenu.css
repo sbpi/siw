@@ -153,7 +153,6 @@ BODY
     BACKGROUND-COLOR: #f5f5f5
 }
 
-
 textarea.STI
 {
     BORDER-RIGHT: black 1px solid;
@@ -186,7 +185,6 @@ textarea.STI
 {
     FONT-SIZE: 100%
 }
-
 table
 {
 	font:8px verdana,helvetica,clean,sans-serif;
@@ -194,7 +192,8 @@ table
 	font:x-small;
 }
 TD
-{  
+{
+  
 	font-size: 80%;
 }
 .LH
@@ -224,21 +223,5 @@ textarea.STIO
 }
 
 table ul li{
-
-
 	font-size: 100%;
-
-
-
-
-}
-
-.STIH{
-    BORDER-RIGHT: black 1px solid;
-    BORDER-TOP: black 1px solid;
-    FONT-SIZE: 100%;
-    BORDER-LEFT: black 1px solid;
-    COLOR: black;
-    BORDER-BOTTOM: black 1px solid;
-    BACKGROUND-COLOR: #efefef
 }

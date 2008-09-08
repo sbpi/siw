@@ -221,11 +221,12 @@ function ExibeDocs() {
       $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, $SG);
       $w_descricao=f($RS,'NOME');
     }
-
+    
     $node1 = &$root->addItem(new XNode($w_descricao,false,null,null,null,null,true));
 
     $RS = db_getLinkSubMenu::getInstanceOf($dbms, $p_cliente, $SG);
-    foreach ($RS as $row) {
+   
+    foreach ($RS as $row) {    
       $w_titulo = $TP.' - '.f($row,'nome');
       if (f($row,'imagem') > '') $w_Imagem=f($row,'imagem'); else $w_Imagem=$w_ImagemPadrao; 
       if (f($row,'externo')=='S')
@@ -297,7 +298,8 @@ function ExibeDocs() {
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.$_REQUEST['TP'].' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.$_REQUEST['O'].MontaFiltro('GET').'";\'>');
     } else {
       $RS = db_getLinkDataParent::getInstanceOf($dbms, $p_cliente, $SG);
-      $RS = SortArray($RS,'ordem','asc','nome','asc');
+      $RS = SortArray($RS,'ORDEM','asc','nome','asc');
+
       foreach($RS as $row) {
         if ($_REQUEST['w_cgccpf']>'') {
           ShowHTML('onLoad=\'javascript:top.content.location="'.f($row,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($row,'P1').'&P2='.f($row,'P2').'&P3='.f($row,'P3').'&P4='.f($row,'P4').'&TP='.$_REQUEST['TP'].' - '.f($row,'nome').'&SG='.f($row,'SIGLA').'&O='.$_REQUEST['O'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].MontaFiltro('GET').'";\'>');
@@ -516,7 +518,7 @@ function Vinculacao() {
     $RS = db_getMenuRelac::getInstanceOf($dbms, $w_sq_menu, null, null, null, null);
     ShowHTML('<tr><td>');
     ShowHTML('    <a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_menu='.$w_sq_menu.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <a class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
+    ShowHTML('    <a class="ss" href="#" onClick="opener.focus(); window.close();">Fechar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');

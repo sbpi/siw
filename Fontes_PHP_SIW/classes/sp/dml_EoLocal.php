@@ -10,17 +10,17 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_eOLocal {
    function getInstanceOf($dbms, $operacao, $chave, $sq_pessoa_endereco, $sq_unidade, $nome, $fax, $telefone, $ramal, $telefone2, $ativo) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTEOLOCAL';
-     $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
-                   'p_chave'                     =>array(tvl($chave),                                      B_INTEGER,        32),
-                   'p_sq_pessoa_endereco'        =>array(tvl($sq_pessoa_endereco),                         B_INTEGER,        32),
-                   'p_sq_unidade'                =>array($sq_unidade,                                      B_INTEGER,        32),
-                   'p_nome'                      =>array($nome,                                            B_VARCHAR,        30),
-                   'p_fax'                       =>array($fax,                                             B_VARCHAR,        12),
-                   'p_telefone'                  =>array($telefone,                                        B_VARCHAR,        12),
-                   'p_ramal'                     =>array($ramal,                                           B_VARCHAR,         6),
-                   'p_telefone2'                 =>array($telefone2,                                       B_VARCHAR,        12),
-                   'p_ativo'                     =>array($ativo,                                           B_VARCHAR,         1)
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putEOLocal';
+     $params=array('p_operacao'               =>array($operacao,                             B_VARCHAR,         1),
+                   'p_chave'                  =>array(tvl($chave),                           B_INTEGER,        32),
+                   'p_sq_pessoa_endereco'     =>array(tvl($sq_pessoa_endereco),              B_INTEGER,        32),
+                   'p_sq_unidade'             =>array(tvl($sq_unidade),                      B_INTEGER,        32),
+                   'p_nome'                   =>array(tvl($nome),                            B_VARCHAR,        30),
+                   'p_fax'                    =>array(tvl($fax),                             B_VARCHAR,        12),
+                   'p_telefone'               =>array(tvl($telefone),                        B_VARCHAR,        12),
+                   'p_ramal'                  =>array(tvl($ramal),                           B_VARCHAR,         6),
+                   'p_telefone2'              =>array(tvl($telefone2),                       B_VARCHAR,        12),
+                   'p_ativo'                  =>array(tvl($ativo),                           B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

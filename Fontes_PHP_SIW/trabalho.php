@@ -144,7 +144,7 @@ function Mesa() {
     ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  if ($_SESSION['DBMS']!=3) {
+  if ($_SESSION['DBMS']!=5) {
     // Exibe, se necessário, sinalizador para alerta
     $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     if (count($RS)>0) {
@@ -187,19 +187,21 @@ function Mesa() {
     }
     ShowHTML('        </tr>');
 
-    $RS = db_getDeskTop_Recurso::getInstanceOf($dbms, $w_cliente, $w_usuario);
-    foreach ($RS as $row) {
-      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-      ShowHTML('      <tr bgcolor="'.$w_cor.'">');
-      ShowHTML('        <td colspan=2 align="right"><b>'.f($row,'nm_opcao').'&nbsp;&nbsp;&nbsp;&nbsp;</b></td>');
-      ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=T">'.f($row,'qt_visao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-      if (f($row,'qt_gestao')>0) {
-        ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=I">'.f($row,'qt_gestao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-      } else {
-        ShowHTML('        <td align="right">&nbsp;</td>');
+    if ($_SESSION['DBMS']!=5) {
+      $RS = db_getDeskTop_Recurso::getInstanceOf($dbms, $w_cliente, $w_usuario);
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+        ShowHTML('        <td colspan=2 align="right"><b>'.f($row,'nm_opcao').'&nbsp;&nbsp;&nbsp;&nbsp;</b></td>');
+        ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=T">'.f($row,'qt_visao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        if (f($row,'qt_gestao')>0) {
+          ShowHTML('        <td align="right"><A class="HL" HREF="'.f($row,'link').'&R='.$w_pagina.$par.'&O=L&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.f($row,'nm_opcao').'&SG='.f($row,'sigla').'&p_volta=mesa&p_acesso=I">'.f($row,'qt_gestao').'</A>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        } else {
+          ShowHTML('        <td align="right">&nbsp;</td>');
+        }
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
       }
-      ShowHTML('        </td>');
-      ShowHTML('      </tr>');
     }
 
     // Verifica se é necessário colocar as ligações telefônicas
@@ -256,6 +258,7 @@ function Mesa() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
+    flush();
 
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
@@ -342,9 +345,10 @@ function Mesa() {
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
       ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
       if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
-        ShowHTML('              <b>Observações:</b>');
+        ShowHTML('              <b>Observações:<ul>');
         ShowHTML('              <li>Clique sobre o dia em destaque para ver detalhes.');
         ShowHTML('              <li>A cor vermelha indica ausências de '.$_SESSION['NOME_RESUMIDO'].'.');
+        ShowHTML('              </ul>');
       } else {
         ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
       }
@@ -441,7 +445,7 @@ function Mesa() {
               ShowHTML('                  </tr>');
             }
           }
-          ShowHTML('                </table>');
+          ShowHTML('                </table><br>');
           ShowHTML('        <tr><td><font size="1"><b>Legenda:</b><table border=0>'.ExibeImagemSolic('PD',null,null,null,null,null,null,null, null,true).'</table>');
         }
 

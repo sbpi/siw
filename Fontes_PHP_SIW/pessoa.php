@@ -163,6 +163,7 @@ function Benef() {
         $w_gestor_sistema       = $_REQUEST['w_gestor_sistema'];
         $w_tipo_autenticacao    = $_REQUEST['w_tipo_autenticacao'];
         $w_username_ant         = $_REQUEST['w_username_ant'];
+
     } else {
         if ($O=='I' && $w_sq_pessoa=='' && $w_cpf>'' && $SG=='SGUSU') {
             $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
@@ -192,6 +193,8 @@ function Benef() {
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
                     $w_username_ant         = f($RS,'username');
+							
+
                 }
             } elseif (nvl($w_username,'')>'') {
                 // Recupera os dados do beneficiário em co_pessoa
@@ -210,6 +213,7 @@ function Benef() {
                     $w_gestor_sistema       = f($RS,'gestor_sistema');
                     $w_tipo_autenticacao    = f($RS,'tipo_autenticacao');
                     $w_username_ant         = f($RS,'username');
+					var_dump($w_nome);
                 }
             }
         }
@@ -221,6 +225,7 @@ function Benef() {
             // Vide finalidade do parâmetro no cabeçalho da rotina
         }
     }
+
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
@@ -445,8 +450,8 @@ function Benef() {
                 if ($O=='A') $w_readonly='READONLY'; // Se for alteração, bloqueia a edição dos campos
                 ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
                 ShowHTML('          <tr><td><b>Da<u>t</u>a de entrada:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="T" type="text" name="w_entrada" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_entrada.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-                ShowHTML('              <td><b><u>L</u>imite para empréstimo:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="L" type="text" name="w_limite_emprestimo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_emprestimo.'" style="text-align:right;" onKeyDown="FormataValor(this,11,2,event)"></td>');
-                ShowHTML('              <td><b>Saldo de <u>f</u>érias:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="F" type="text" name="w_saldo_ferias" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saldo_ferias.'" style="text-align:right;" onKeyDown="FormataValor(this,6,1,event)"></td>');
+                ShowHTML('              <td><b><u>L</u>imite para empréstimo:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="L" type="text" name="w_limite_emprestimo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_limite_emprestimo.'" onKeyDown="FormataValor(this,11,2,event)"></td>');
+                ShowHTML('              <td><b>Saldo de <u>f</u>érias:</b><br><input '.$w_Disabled.' '.$w_readonly.' accesskey="F" type="text" name="w_saldo_ferias" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saldo_ferias.'" onKeyDown="FormataValor(this,6,1,event)"></td>');
                 if ($O=='I') { // Se for inclusão de funcionário, pergunta se deseja enviar e-mail
                     ShowHTML('          <tr><td><input type="checkbox" name="w_envia_mail" class="STC" VALUE="S" CHECKED> Enviar mensagem comunicando admissão de novo funcionário.</td>');
                 } elseif ($O=='E') { // Se for remoção de funcionário, pergunta se deseja enviar e-mail
@@ -914,7 +919,7 @@ function BuscaUsuario() {
                 ShowHTML('            <td>'.f($row,'nome_resumido').'</td>');
                 ShowHTML('            <td>'.f($row,'nome').'</td>');
                 ShowHTML('            <td>'.f($row,'sg_unidade').' ('.f($row,'nm_local').')</td>');
-                ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_pessoa').'\');">Selecionar</a>');
+                ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'sq_pessoa').'\');">Selecionar</a>');
             }
             ShowHTML('        </table></tr>');
             ShowHTML('      </center>');
@@ -1030,7 +1035,7 @@ function BuscaPessoa() {
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
                 ShowHTML('            <td align="center" width="1%" nowrap>'.nvl(f($row,'identificador_primario'),'---').'</td>');
                 ShowHTML('            <td>'.f($row,'nm_pessoa').'</td>');
-                ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'nm_pessoa').'\', '.f($row,'sq_pessoa').');">Selecionar</a>');
+                ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'nm_pessoa').'\', '.f($row,'sq_pessoa').');">Selecionar</a>');
             }
             ShowHTML('        </table></tr>');
             ShowHTML('      </center>');

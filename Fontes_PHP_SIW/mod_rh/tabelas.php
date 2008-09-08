@@ -470,7 +470,7 @@ function Tipoafast() {
     ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><u>L</u>imite de dias:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_dias" class="STI" SIZE="6" MAXLENGTH="6" VALUE="'.$w_limite_dias.'"></td>');
-    ShowHTML('          <td><b><u>P</u>ercentual da remuneração a ser pago quando afastado por este tipo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_perc_pag" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_perc_pag.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>P</u>ercentual da remuneração a ser pago quando afastado por este tipo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_perc_pag" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_perc_pag.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('      <tr><td><b>Aplica-se ao sexo:</b><br>');
     if ($w_sexo=='M') {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_sexo" value="F"> Feminino <br><input '.$w_Disabled.' type="radio" name="w_sexo" value="M" checked> Masculino <br><input '.$w_Disabled.' type="radio" name="w_sexo" value="A"> Ambos');
@@ -582,6 +582,7 @@ function DataEspecial() {
       $RS = SortArray($RS,'data_formatada','asc');
     }
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+
     $RS = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_chave         = f($RS,'chave');
@@ -664,6 +665,7 @@ function DataEspecial() {
         // Lista os registros selecionados para listagem
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
         foreach($RS1 as $row){ 
+
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td align="center">'.Nvl(f($row,'data_especial'),'---').'</td>');
@@ -1093,8 +1095,8 @@ function Cargo() {
     ShowHTML('      <tr><td colspan=2><b><u>C</u>ompetências:</b><br><textarea '.$w_Disabled.' accesskey="C"  name="w_competencias" class="sti" cols="80" rows="4">'.$w_competencias.'</textarea></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
-    ShowHTML('          <td width="10%"><b><u>P</u>iso salarial:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_salario_piso" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_salario_piso.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('          <td><b><u>T</u>eto salarial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_salario_teto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_salario_teto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td width="10%"><b><u>P</u>iso salarial:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_salario_piso" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_salario_piso.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>T</u>eto salarial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_salario_teto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_salario_teto.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('           </table>');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

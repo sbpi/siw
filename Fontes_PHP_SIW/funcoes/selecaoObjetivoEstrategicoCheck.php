@@ -3,13 +3,13 @@ include_once($w_dir_volta.'classes/sp/db_getObjetivo_PE.php');
 // =========================================================================
 // Montagem da seleção de objetivos estratégicos
 // -------------------------------------------------------------------------
-function selecaoObjetivoEstrategicoCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoObjetivoEstrategicoCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   if ($restricao=='ATIVOS') $l_ativo = 'S'; else $l_ativo = null;
   $RS = db_getObjetivo_PE::getInstanceOf($dbms,$chaveAux,null,$w_cliente,null,null,$l_ativo,null);
   $RS = SortArray($RS,'nome','asc');
   if (nvl($chaveAux,-1)!=-1) {
-    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b>');
+    ShowHTML('          <td valign="top"><b>'.$label.'</b>');
     foreach($RS as $row)  {
       $l_marcado = 'N';
       $l_chave   = $chave.',';

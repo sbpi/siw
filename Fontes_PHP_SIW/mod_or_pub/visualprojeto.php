@@ -113,7 +113,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           elseif (Nvl(f($row1,'perc_conclusao'),0)<100)   $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
           else         $l_html .=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
           if ($P4==1)  $l_html .=chr(13).f($row1,'titulo').'</td>';
-          else         $l_html .=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($row1,'sq_siw_solicitacao').'&w_chave_aux='.f($row1,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row1,'titulo').'</A></td>';
+          else         $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\'projeto.php?par=AtualizaEtapa&O=V&w_chave='.f($row1,'sq_siw_solicitacao').'&w_chave_aux='.f($row1,'sq_projeto_etapa').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row1,'titulo').'</A></td>';
           $l_html .=chr(13).'          <td>'.Nvl(f($row1,'unidade_medida'),'---').'</td>';
           $l_html .=chr(13).'          <td align="center">'.Nvl(f($row1,'nm_programada'),'---').'</td>';
           $l_html .=chr(13).'          <td align="center">'.Nvl(f($row1,'nm_cumulativa'),'---').'</td>';

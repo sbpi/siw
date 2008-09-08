@@ -818,7 +818,7 @@ function Geral() {
     ShowHTML('        <tr valign="top">');
     ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('              <td valign="top"><b><u>F</u>im previsto:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('              <td><b>Valo<u>r</u> previsto:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor previsto para execução do programa, ou zero se não for o caso."></td>');
+    ShowHTML('              <td><b>Valo<u>r</u> previsto:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor previsto para execução do programa, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b>Parc<u>e</u>rias:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_parcerias" size="90" maxlength="90" value="'.$w_parcerias.'" title="Informar quais são os parceiros externos na execução do programa (campo opcional)."></td>');
     ShowHTML('      <tr><td><b>En<u>d</u>ereço internet:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_ln_programa" size="90" maxlength="120" value="'.$w_ln_programa.'" title="Se desejar, informe o link do programa na internet."></td>');
@@ -1302,8 +1302,15 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
   }
   if ($w_o!='V') {
     if ($w_tipo=='PDF') {
-      if ($P1==1 || $P1==2) headerpdf('Ficha Resumida de '.f($RS_Menu,'nome'),0);
-      else                  headerpdf('Ficha de '.f($RS_Menu,'nome'),0);
+      ob_start();  
+      Cabecalho();
+      ShowHTML('<HEAD>');
+      ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
+      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
+      ShowHTML('</HEAD>');
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+      if ($P1==1 || $P1==2) CabecalhoWord($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),0);
+      else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
       $w_embed = 'WORD';
     } elseif ($w_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);     
@@ -1333,7 +1340,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
   // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
   ShowHTML(VisualPrograma($w_chave,$w_o,$w_usuario,$w_p1,$w_embed,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_recurso,$w_interessado,$w_anexo,$w_meta,$w_ocorrencia,$w_consulta));
   if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
-  if ($w_tipo=='PDF')      RodapePDF();
+  if ($w_tipo=='PDF') RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================
@@ -1642,7 +1649,7 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.Nvl($w_inicio_real,formataDataEdicao(f($RS,'inicio'))).'" title="Informe a data de início da execução do programa.(Usar formato dd/mm/aaaa)">'.ExibeCalendario('Form','w_inicio_real').'</td>');
   ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" value="'.Nvl($w_fim_real,formataDataEdicao(f($RS,'fim'))).'" title="Informe a data de término da execução do programa.(Usar formato dd/mm/aaaa)">'.ExibeCalendario('Form','w_fim_real').'</td>');
-  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
+  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Insira informações relevantes sobre o encerramento do exercício.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1671,7 +1678,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_apuracao,$l_indice,$l
   $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
   $l_html.=chr(13).'        <td nowrap '.$l_row.'>';
   if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
-  else                   $l_html.=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
+  else                   $l_html.=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
   $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
   $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.Nvl(formataDataEdicao($l_apuracao),'---').'</td>';
   $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'>'.Nvl($l_indice,'---').' %</td>';

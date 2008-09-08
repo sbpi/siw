@@ -91,7 +91,7 @@ class MSSqlDatabaseQueries extends DatabaseQueries {
     */
     
     function executeQuery() {
-        if(!($this->result = mssql_query($this->query, $this->conHandle))) { return false; }
+      if(!($this->result = mssql_query($this->query, $this->conHandle))) { return false; }
         else { 
            if(is_resource($this->result)) { $this-> num_rows = mssql_num_rows($this->result); }
            else { $this-> num_rows =  -1; }
@@ -108,13 +108,65 @@ class MSSqlDatabaseQueries extends DatabaseQueries {
     */
     
     function getResultArray() {
-        if(is_resource($this->result)) { return mssql_fetch_array($this->result); }
-        else { return null; }
+        if(is_resource($this->result)) { 
+          for ($i = 0; $i < mssql_num_fields($this->result); $i++) {
+            if (mssql_field_type($this->result, $i)=='datetime' || mssql_field_type($this->result, $i)=='date' || mssql_field_type($this->result, $i)=='numeric') { $this->column_datatype[mssql_field_name($this->result, $i)] = mssql_field_type($this->result, $i); }
+            elseif (substr(strtolower(mssql_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(mssql_field_name($this->result, $i))] = 'datetime'; }
+          }
+          $this->resultData  = mssql_fetch_array($this->result);
+          $this->num_rows    = mssql_num_rows($this->result);
+          if (isset($this->column_datatype)) {
+            foreach ($this->column_datatype as $key => $val) {
+              if (nvl($this->resultData[$key],'')>'') { 
+                if ($val=='datetime') {
+                  $tmp = $this->resultData[$key];
+                  if (strpos($tmp,',')===false) {
+                    $tmp = formatDateTime($this->resultData[$key]);
+                    $this->resultData[$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                  } else {
+                    $this->resultData[$key] = mktime(substr($tmp,12,2),substr($tmp,15,2),substr($tmp,18,2),substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4));
+                  }
+                } else {
+                  $this->temp[$key] = str_replace(',','.',$this->temp[$key]); 
+                }
+              }
+            }
+          }
+          return $this->resultData; 
+        } else { 
+          return null; 
+        }
     }
 
     function getResultData() {
-        if(is_resource($this->result)) { return $this->resultData = mssql_fetch_all($this->result); }
-        else { return null; }
+        if(is_resource($this->result)) { 
+          for ($i = 0; $i < mssql_num_fields($this->result); $i++) {
+            if (mssql_field_type($this->result, $i)=='datetime' || mssql_field_type($this->result, $i)=='date' || mssql_field_type($this->result, $i)=='numeric') { $this->column_datatype[mssql_field_name($this->result, $i)] = mssql_field_type($this->result, $i); }
+            elseif (substr(strtolower(mssql_field_name($this->result, $i)),0,6)=='phpdt_') { $this->column_datatype[strtolower(mssql_field_name($this->result, $i))] = 'datetime'; }
+          }
+          $this->resultData  = mssql_fetch_all($this->result);
+          $this->num_rows    = mssql_num_rows($this->result);
+          if (isset($this->column_datatype)) {
+            for ($i = 0; $i < $this->num_rows; $i++) {
+              foreach ($this->column_datatype as $key => $val) {
+                if ($val=='datetime') {
+                  $tmp = $this->resultData[$i][$key];
+                  if (strpos($tmp,',')===false) {
+                    $tmp = formatDateTime($this->resultData[$i][$key]);
+                    $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                  } else {
+                    $this->resultData[$i][$key] = toDate($this->resultData[$i][$key]);
+                  }
+                } else {
+                  $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                }
+              }
+            }
+          }
+          return $this->resultData; 
+        } else { 
+          return null; 
+        }
     }
 }
 
@@ -162,6 +214,14 @@ class MSSqlDatabaseQueryProc extends MSSqlDatabaseQueries {
         $this->params = $params;
     }
     
+    function mssql_fetch_all($resource) {
+      $temp = array();
+      while ($row=mssql_fetch_array($resource)) {
+        array_push($temp,$row);
+      }
+      return $temp;
+    }
+    
     /**
     * Method MSSqlDatabaseQueries::executeQuery()
     *
@@ -171,31 +231,71 @@ class MSSqlDatabaseQueryProc extends MSSqlDatabaseQueries {
     */    
     
     function executeQuery() {
+        if (substr($this->query,0,8)=='FUNCTION') $this->query = str_replace('.','.sp_Get',substr($this->query,8));
+      
         $this->stmt = mssql_init("$this->query",$this->conHandle);
-        
+
         foreach($this->params as $paramName=>$value) {
-            foreach($value as $paramValue=>$paramType) {
+          foreach($value as $paramValue=>$paramType) {
                 if (!($value[1]==B_CURSOR)) { 
-                   if ($value[1]==B_VARCHAR) {
-                      mssql_bind($this->stmt, "@$paramName", $value[0], $value[1], false, false, $value[2]); 
+                  if ($value[1]==B_VARCHAR) {
+                     mssql_bind($this->stmt, "@$paramName", $value[0], $value[1], false, is_null($value[0]), $value[2]); 
+                  } elseif ($value[1]==B_DATE) {
+                    mssql_bind($this->stmt, "@$paramName", toSQLDate($value[0]), SQLVARCHAR, false, is_null($value[0]), 30); 
+                  } else {
+                     mssql_bind($this->stmt, "@$paramName", $value[0], $value[1], false, is_null($value[0])); 
                    }
-                   else mssql_bind($this->stmt, "@$paramName", $value[0], $value[1], false, false); 
                 }
                  break;
             }
         }
-        
-        if(!($this->result = mssql_execute($this->stmt))) { return false; }
-        else {
-           if(is_resource($this->result)) { $this->num_rows = mssql_num_rows($this->result); }
+        if(!($this->result = mssql_execute($this->stmt))) { 
+
+          $this->error['message'] = mssql_get_last_message() ;
+
+          $this->error['sqltext'] = $this->query;
+          return false; 
+        } else {
+          if(is_resource($this->result)) { $this->num_rows = mssql_num_rows($this->result); }
            else { $this->num_rows = -1; }
            return true;
         }
     }
     
     function getResultData() {
-        if(is_resource($this->result)) { return $this->resultData = mssql_fetch_all($this->result); }
-        else { return null; }
+        if(is_resource($this->result)) {
+          for ($i = 0; $i < mssql_num_fields($this->result); $i++) {
+            if (mssql_field_type($this->result, $i)=='datetime' || mssql_field_type($this->result, $i)=='date' || mssql_field_type($this->result, $i)=='real') { 
+              $this->column_datatype[mssql_field_name($this->result, $i)] = mssql_field_type($this->result, $i); 
+            } elseif (substr(strtolower(mssql_field_name($this->result, $i)),0,6)=='phpdt_') { 
+              $this->column_datatype[strtolower(mssql_field_name($this->result, $i))] = 'datetime'; 
+            }
+          }
+          $this->resultData  = $this->mssql_fetch_all($this->result);
+          $this->num_rows    = mssql_num_rows($this->result);
+          if (isset($this->column_datatype)) {
+            for ($i = 0; $i < $this->num_rows; $i++) {
+              foreach ($this->column_datatype as $key => $val) {
+                if (nvl($this->resultData[$i][$key],'')>'') { 
+                  if ($val=='datetime') {
+                    $tmp = $this->resultData[$i][$key];
+                    if (strpos($tmp,',')===false) {
+                      $tmp = formatDateTime($this->resultData[$i][$key]);
+                      $this->resultData[$i][$key] = mktime(0,0,0,substr($tmp,3,2),substr($tmp,0,2),substr($tmp,6,4)); 
+                    } else {
+                      $this->resultData[$i][$key] = toDate($this->resultData[$i][$key]);
+                    }
+                  } else {
+                    $this->resultData[$i][$key] = str_replace(',','.',$this->resultData[$i][$key]); 
+                  }
+                }
+              }
+            }
+          }
+          return $this->resultData; 
+        } else { 
+          return null; 
+        }
     }
 } 
 

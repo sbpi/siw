@@ -9,9 +9,9 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getMenuData {
-   function getInstanceOf($dbms, $p_chave) {
+   function getInstanceOf($dbms, $p_sq_menu) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getMenuData';
-     $params=array("p_chave"    =>array($p_chave,       B_NUMERIC,     32),
+     $params=array("p_sq_menu"  =>array($p_sq_menu,     B_NUMERIC,     32),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

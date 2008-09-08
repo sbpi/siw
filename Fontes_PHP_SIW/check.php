@@ -1,5 +1,5 @@
 <?php
-error_reporting(2039);
+//error_reporting(2039);
 include_once('constants.inc');
 include_once('jscript.php');
 include_once('funcoes.php');

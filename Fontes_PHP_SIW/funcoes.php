@@ -52,8 +52,8 @@ function array_key_case_change(&$array, $mode = 'CASE_LOWER') {
 // Função para classificação de arrays
 // -------------------------------------------------------------------------
 function SortArray() {
-  $arguments = func_get_args();
-  $array = $arguments[0];
+  $arguments = array_change_key_case(func_get_args());
+  $array = array_change_key_case($arguments[0]);
   $code = '';
   for ($c = 1; $c < count($arguments); $c += 2) {
     if (in_array($arguments[$c + 1], array("asc", "desc"))) {
@@ -1761,19 +1761,14 @@ function MontaFiltroUpload($p_Form) {
 // -------------------------------------------------------------------------
 function MontaOrdemEtapa($l_chave) {
   extract($GLOBALS);
+  if (nvl($l_chave,'')=='') return null;
   include_once($w_dir_volta.'classes/sp/db_getEtapaDataParents.php');
-  $RSQuery = db_getEtapaDataParents::getInstanceOf($dbms, $l_chave);
-  $w_texto = '';
-  $w_contaux = 0;
-  foreach($RSQuery as $row) {
-    $w_contaux = $w_contaux+1;
-    if ($w_contaux==1) {
-      $w_texto = f($row,'ordem').'.'.$w_texto;
-    } else {
-      $w_texto = f($row,'ordem').'.'.$w_texto;
-    }
+  $l_rs = db_getEtapaDataParents::getInstanceOf($dbms, $l_chave);
+  foreach($l_rs as $row) {
+    $w_texto = f($row,'ordem');
+    break;
   }
-  return substr($w_texto,0,strlen($w_texto)-1);
+  return $w_texto;
 }
 
 // =========================================================================
@@ -2113,25 +2108,46 @@ function DataHora() { return diaSemana(date('l, d/m/Y, H:i:s')); }
 function toDate($date) { 
   if (strlen($date)!=20 && strlen($date)!=10) return nil;
   else {
-    if (strlen($date)==10) return mktime(0,0,0,substr($date,3,2),substr($date,0,2),substr($date,6,4));
-    else return mktime(substr($date,12,2),substr($date,15,2),substr($date,18,2),substr($date,3,2),substr($date,0,2),substr($date,6,4));
+    $l_date = $date;
+    $l_temp = substr($date,6,4).substr($date,3,2).substr($date,0,2).'000000';
+    if ($l_temp < 19011213204554) $l_date = '13/12/1901, 20:45:54';
+    elseif ($l_temp > 20381901031407) $l_date = '01/19/2038, 03:14:07';
+    if (strlen($l_date)==10) return mktime(0,0,0,substr($l_date,3,2),substr($l_date,0,2),substr($l_date,6,4));
+    else {
+      return mktime(substr($l_date,12,2),substr($l_date,15,2),substr($l_date,18,2),substr($l_date,3,2),substr($l_date,0,2),substr($l_date,6,4));
+    }
   }
+}
+
+// =========================================================================
+// Função que retorna um timestamp da string informada para o formato SQL Server
+// date: string contendo a data no formato DD/MM/YYYY, HH24:MI:SS
+// -------------------------------------------------------------------------
+function toSQLDate($date) { 
+  if (nvl($date,'')=='') return '';
+  if (strlen($date)==20) return substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2).' '.substr($l_date,12);
+  else                   return substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2);
 }
 
 // =========================================================================
 // Função que retorna um valor da string informada
 // valor: string contendo o valor
 // -------------------------------------------------------------------------
-function toNumber($valor) { return str_replace('.','',$valor); } 
+function toNumber($valor) { 
+  if ($_SESSION['DBMS']==2) return str_replace(',','.',str_replace('.','',$valor)); else return str_replace('.','',$valor); 
+} 
 
 // =========================================================================
 // Função que retorna uma data como string para manipulação em formulários
 // -------------------------------------------------------------------------
 function FormatDateTime($date) { 
-  if (strlen($date)!=8 && strlen($date)!=10) return null;
+  if (strlen($date)!=8 && strlen($date)!=10 && strlen($date)!=19) return null;
   else {
     if (strlen($date)==10) return $date;
-    else {
+    elseif (strlen($date)==19) {
+      $temp = substr($date,0,10);
+      $l_date = implode('/',array_reverse(explode('-',$temp)));
+    } else {
       $l_date = substr($date,0,2).'/'.substr($date,3,2).'/';
       if (substr($date,6,2) < 30) $l_date = $l_date.'20'.substr($date,6,2);
       else                        $l_date = $l_date.'19'.substr($date,6,2);
@@ -2427,7 +2443,6 @@ return $function_ret;
 // -------------------------------------------------------------------------
 function TrataErro($sp, $Err, $params, $file, $line, $object) {
   extract($GLOBALS);
-
   if (!(strpos($Err['message'],'ORA-02292')===false) || !(strpos($Err['message'],'ORA-02292')===false) ) {
      // REGISTRO TEM FILHOS
      ScriptOpen('JavaScript');
@@ -2487,7 +2502,11 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     if (is_array($params)) {
       $w_html .= "<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
       foreach ($params as $w_chave => $w_valor) {
-        $w_html .= chr(10).$w_chave.' ['.$w_valor[0].']<br>';
+        if ($_SESSION['DBMS']==2 && $w_valor[1]==B_DATE) {
+          $w_html .= chr(10).$w_chave.' ['.toSQLDate($w_valor[0]).']<br>';
+        } else {
+          $w_html .= chr(10).$w_chave.' ['.$w_valor[0].']<br>';
+        }
       }
     }
     $w_html .= "   <br><br></font>";
@@ -2521,13 +2540,13 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
 
     ShowHTML($w_html);
 
-    $w_resultado = EnviaMail('ERRO '.$conSgSistema,$w_html,'desenv@sbpi.com.br');
+    if ($conEnviaMail) $w_resultado = EnviaMail('ERRO '.$conSgSistema,$w_html,'desenv@sbpi.com.br');
     if ($w_resultado>'') {
        ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
        ShowHTML('   alert("Não foi possível enviar o e-mail comunicando sobre o erro. Favor copiar esta página e enviá-la por e-mail aos gestores do sistema.");');
        ShowHTML('</SCRIPT>');
     }
-
+    die();
   }
   exit;
 }
@@ -2914,6 +2933,9 @@ function DesConectaBD() {
 // Torna a chamada a um campo de recordset case insensitive
 // =========================================================================
 function f($rs, $fld) {
+  if (is_array($rs)) {
+    $rs =  array_change_key_case($rs,CASE_LOWER); 	
+  }  
   if (isset($rs[Strtolower($fld)])) {
     if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
       return str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtolower($fld)]));
@@ -2969,6 +2991,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 5: return date('d/m/y',$w_dt_grade);                         break;
         case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
         case 7: return date('Y-m-d',$w_dt_grade);                         break;
+        case 8: return date('Y-m-d H:i:s',$w_dt_grade);                   break;
       }
     } else {
       return $w_dt_grade;
