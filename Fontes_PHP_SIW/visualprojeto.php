@@ -296,7 +296,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $w_cor_red  = $conTrBgColorLightRed2;
         }
         $l_html .= chr(13).'      <tr>';
-        if($l_tipo!='WORD') $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp;';
+        if($l_tipo!='WORD') $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp;';
         else       $l_html .= chr(13).'          <td>'.f($row,'codigo').'&nbsp;';
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'valor_inicial')).' </td>';

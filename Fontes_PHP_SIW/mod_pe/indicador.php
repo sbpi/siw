@@ -1328,7 +1328,7 @@ function Solic() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if(f($row,'qtd_meta')>0) {
-          ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
         } else {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_plano='.f($row,'sq_plano').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
         }

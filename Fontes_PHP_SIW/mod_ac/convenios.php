@@ -1550,8 +1550,8 @@ function OutraParte() {
             if ($w_sq_tipo_pessoa==1) {
               ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O=A&w_cpf='.f($row,'cpf').'&w_sq_pessoa='.f($row,'sq_pessoa').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&Botao=Selecionar">Selecionar</A>&nbsp');
             } else {
-              ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&w_tipo=PREPOSTO&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Preposto').'&SG=GCCPREP\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Prep</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&w_tipo=REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Representante').'&SG=GCCREPRES\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Repr</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&w_tipo=PREPOSTO&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Preposto').'&SG=GCCPREP\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Prep</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'REPRESENTANTE&w_tipo=REPRESENTANTE&R='.$R.'&O=L&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_outra_parte='.f($row,'outra_parte').'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Representante').'&SG=GCCREPRES\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');"Botao=Selecionar">Repr</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_sq_acordo_outra_parte='.f($row,'sq_acordo_outra_parte').'&w_chave_aux='.$w_cliente.'&w_sq_pessoa='.f($row,'sq_pessoa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
             } 
             ShowHTML('        </td>');
@@ -2556,11 +2556,11 @@ function Parcelas() {
         ShowHTML('        <td>'.crlf2br(nvl(f($row,'observacao'),'---')).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if(nvl(f($row,'quitacao'),'')!='') {
-          ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Parcelas pagas não podem ser alteradas.\')";>AL</A>&nbsp');
-          ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Parcelas pagas não podem ser excluídas.\')";>EX</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Parcelas pagas não podem ser alteradas.\')";>AL</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Parcelas pagas não podem ser excluídas.\')";>EX</A>&nbsp');
         } else {
           if(nvl(f($row,'sq_acordo_aditivo'),'')!='' && $P1==1) {
-            ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Parcelas ligada a aditivo!\nUse a operação parcelas do aditivo.\')";>AL</A>&nbsp');
+            ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Parcelas ligada a aditivo!\nUse a operação parcelas do aditivo.\')";>AL</A>&nbsp');
           } else {
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_acordo_parcela').'&w_sq_acordo_aditivo='.f($row,'sq_acordo_aditivo').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
           }
