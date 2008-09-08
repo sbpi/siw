@@ -645,6 +645,11 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   ShowHTML($l_form);
   ShowHTML('</FORM>');
   ScriptOpen('JavaScript');
+  // Registra no servidor syslog erro na assinatura eletrônica
+  if (nvl($l_troca,'x')=='w_assinatura') {
+    $w_resultado = enviaSyslog('AI','ASSINATURA INVÁLIDA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
+    if ($w_resultado>'') ShowHTML('  alert(\'ATENÇÃO: erro no registro do log.\n'.$w_resultado.'\');');
+  }
   ShowHTML('  document.forms["RetornaDados"].submit();');
   ScriptClose();
 }
@@ -2314,6 +2319,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
     if (strcmp($error,'')) {
       // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
       if (strtoupper(PHP_OS)!='SUNOS') {
+        enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.f($RS_Cliente,'smtp_server').'] Porta ['.ini_get('smtp_port').'] Conta ['.f($RS_Cliente,'siw_email_conta').']');
         return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.f($RS_Cliente,'smtp_server').']\nPorta ['.ini_get('smtp_port').']\nConta ['.f($RS_Cliente,'siw_email_conta').']\n'.$error;
       } else {
         return null;
@@ -2321,6 +2327,60 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
     } else {
        return null;
     }
+  }
+}
+
+// =========================================================================
+// Rotina de registro de mensagem em servidor syslog
+// -------------------------------------------------------------------------
+function enviaSyslog($tipo, $objeto, $mensagem) {
+  if(function_exists('fsockopen')) {
+    extract($GLOBALS);
+  
+    include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
+    include_once($w_dir_volta.'classes/syslog/syslog.php');
+  
+    // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
+    $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+  
+    if (nvl(f($RS_Cliente,'syslog_server_name'),'')!='' &&
+        (($tipo=='LV' && nvl(f($RS_Cliente,'syslog_level_pass_ok'),'')!='') ||
+         ($tipo=='LI' && nvl(f($RS_Cliente,'syslog_level_pass_er'),'')!='') ||
+         ($tipo=='AI' && nvl(f($RS_Cliente,'syslog_level_sign_er'),'')!='') ||
+         ($tipo=='RI' && nvl(f($RS_Cliente,'syslog_level_res_er'),'')!='') ||
+         ($tipo=='GV' && nvl(f($RS_Cliente,'syslog_level_write_ok'),'')!='') ||
+         ($tipo=='GI' && nvl(f($RS_Cliente,'syslog_level_write_er'),'')!='')
+        )
+       ) {
+      switch ($tipo) {
+      case 'LV': $severity = f($RS_Cliente,'syslog_level_pass_ok');  break;
+      case 'LI': $severity = f($RS_Cliente,'syslog_level_pass_er');  break;
+      case 'AI': $severity = f($RS_Cliente,'syslog_level_sign_er');  break;
+      case 'RI': $severity = f($RS_Cliente,'syslog_level_res_er');   break;
+      case 'GV': $severity = f($RS_Cliente,'syslog_level_write_ok'); break;
+      case 'GI': $severity = f($RS_Cliente,'syslog_level_write_er'); break;
+      } 
+      $syslog = new Syslog();
+      $syslog->SetProtocol(f($RS_Cliente,'syslog_server_protocol'));
+      $syslog->SetPort(f($RS_Cliente,'syslog_server_port'));
+      $syslog->SetFacility(f($RS_Cliente,'syslog_facility'));
+      $syslog->SetFqdn(f($RS_Cliente,'syslog_fqdn'));
+      $syslog->SetSeverity($severity);
+      $syslog->SetHostname($_SERVER["REMOTE_ADDR"]);
+      $syslog->SetIpFrom($_SERVER["REMOTE_ADDR"]);
+      $prefixo = explode(' ',f($RS_Cliente,'siw_email_nome'));
+      $syslog->SetProcess($prefixo[0].' - '.$objeto);
+
+      //envia o registro para o servidor
+      $error = $syslog->Send(f($RS_Cliente,'syslog_server_name'),$mensagem,f($RS_Cliente,'syslog_timeout'));
+      if (strcmp($error,'')) {
+        return 'ERRO: ocorreu algum erro no envio da mensagem.\nSYSLOG ['.f($RS_Cliente,'syslog_server_name').']\nProtocolo ['.f($RS_Cliente,'syslog_server_protocol').']\nPorta ['.f($RS_Cliente,'syslog_server_port').']\n'.$error;
+      } else {
+        return null;
+      }
+    }
+  } else {
+    return null;
   }
 }
 
@@ -2560,7 +2620,7 @@ function RodapePDF() {
 <html>
 	<body>
 		<form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
-		<input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
+		<input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
     <input type="hidden" value="<?php echo $conFilePhysical . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
 		<input type="hidden" value="<?php echo $p_orientation; ?>" name="orientation">
 		</form>

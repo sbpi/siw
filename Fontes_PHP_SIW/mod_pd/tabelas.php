@@ -212,7 +212,7 @@ function CiaTrans() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
@@ -223,11 +223,7 @@ function CiaTrans() {
         ShowHTML('        <td align="center">'.f($row,'nm_aereo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_rodoviario').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_aquaviario').'</td>');
-        if (Nvl(f($row,'ativo'),'')=='S') {
-          ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
-        } else {
-          ShowHTML('        <td align="center"><font color="red" size="1">'.f($row,'nm_ativo').'</td>');
-        } 
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -305,7 +301,6 @@ function MeioTrans() {
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    //$RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null);
     $RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente,null,null,null,null);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -888,7 +883,7 @@ function Unidade() {
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         if ($w_limite_unidade=='S') {
-          ShowHTML('          <a class="HL" href="javascript:location.href=this.location.href" onclick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'LIMUNIDADE&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDUNIDLIM').'\',\'Limites\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Limites</a>');
+          ShowHTML('          <a class="HL" href="javascript:this.status.value;" onclick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'LIMUNIDADE&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDUNIDLIM').'\',\'Limites\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Limites</a>');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -1044,7 +1039,7 @@ function LimiteUnidade() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <a accesskey="F" class="ss" href="#" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');

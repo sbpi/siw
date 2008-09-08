@@ -24,6 +24,7 @@ include_once($w_dir_volta.'classes/sp/db_getDocumentoInter.php');
 include_once($w_dir_volta.'classes/sp/db_getDocumentoAssunto.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoGeral.php');
@@ -1633,7 +1634,7 @@ function Concluir() {
     ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de início da execução do programa.(Usar formato dd/mm/aaaa)"></td>');
     ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término da execução do programa.(Usar formato dd/mm/aaaa)"></td>');
   } 
-  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
+  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Insira informações relevantes sobre o encerramento do exercício.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1881,7 +1882,7 @@ function BuscaAssunto() {
           ShowHTML('            </td>');
           ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
           ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');
-          ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
+          ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
         } 
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');
@@ -1921,7 +1922,7 @@ function BuscaAssunto() {
           ShowHTML('            </td>');
           ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
           ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');
-          ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
+          ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
         } 
         ShowHTML('        </table></tr>');
         ShowHTML('      </center>');

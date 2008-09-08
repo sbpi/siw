@@ -1991,7 +1991,7 @@ function Rel_Sintetico_PR() {
                   }
                   $i=1;
                   if ($w_tipo_rel=='WORD')  ShowHTML('      <td>'.f($row3,'titulo').'</td>');
-                  else                      ShowHTML('      <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                  else                      ShowHTML('      <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                   ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                   ShowHTML('      <td nowrap align="right" >'.number_format(Nvl(f($row3,'quantidade'),0),2,',','.').'</td>');
                   $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
@@ -2349,7 +2349,7 @@ function Rel_Sintetico_PPA() {
                 }
                 $i=1;
                 if ($w_tipo_rel=='WORD')  ShowHTML('<td>'.f($row3,'titulo').'</td>');
-                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                else                      ShowHTML('<td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                 ShowHTML('      <td nowrap align="center">'.Nvl(f($row3,'unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.f($row3,'quantidade').'</td>');
                 $RS4 = db_getMetaMensal_IS::getInstanceOf($dbms,f($row3,'sq_meta'));
@@ -2657,7 +2657,7 @@ function Rel_Sintetico_Prog() {
                 if($i==1) ShowHTML('<tr><td colspan="2">&nbsp;');
                 $i=1;
                 if ($w_tipo_rel=='WORD')  ShowHTML('<td>'.f($row3,'titulo').'</td>');
-                else                      ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
+                else                      ShowHTML('<td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS2,'sq_siw_solicitacao').'&w_chave_aux='.f($row3,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row3,'titulo').'</A></td>');
                 ShowHTML('      <td nowrap align="right">'.number_format(Nvl(f($row3,'valor_referencia'),0),2,',','.').'</td>');
                 ShowHTML('      <td nowrap align="left" >'.Nvl(f($row3,'nm_unidade_medida'),'---').'</td>');
                 ShowHTML('      <td nowrap align="right" >'.number_format(Nvl(f($row3,'quantidade'),0),2,',','.').'</td>');
@@ -3254,7 +3254,7 @@ function Rel_Metas() {
           ShowHTML('      <td><b>&nbsp;</td>');
         } 
         if ($w_tipo_rel=='WORD') ShowHTML('<td>'.f($row,'titulo').'</td>');
-        else                     ShowHTML('<td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
+        else                     ShowHTML('<td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_meta').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
         if (Nvl(f($row,'cd_subacao'),'')>'') {
           $w_total_ppa=$w_total_ppa+1;
           ShowHTML('   <td><div align="center">Sim</div></td>');
@@ -4553,7 +4553,7 @@ function MetaLinha($l_chave,$l_chave_aux,$l_titulo,$l_word,$l_programada,$l_unid
   if ($l_exequivel=='N' || ($l_fim<addDays(time(),-1) && $l_perc<100)) $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   elseif ($l_perc<100)                          $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
   else                                          $l_html .=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';
-  if ($l_word!='WORD')  $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
+  if ($l_word!='WORD')  $l_html .=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'acao.php?par=AtualizaMeta&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Meta\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_titulo.'</A>';
   else                  $l_html .=chr(13).'        '.$l_titulo.'</td>';
   if ($l_loa>'')    $l_html .=chr(13).'        <td align="center">Sim</b>';
   else              $l_html .=chr(13).'        <td align="center">Não</b>';
@@ -4579,7 +4579,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_pr
   if ($l_exequivel=='S')    $l_html .=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">';
   else                      $l_html .=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=15 height=15 align="center">';
   if (Nvl($l_word,0)==1)    $l_html .=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
-  else                      $l_html .=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
+  else                      $l_html .=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
   $l_html .=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
   $l_html .=chr(13).'        <td nowrap align="right" '.$l_row.'>'.number_format(Nvl($l_valor_ref,0),2,',','.').' </td>';
   $l_html .=chr(13).'        <td nowrap align="right" '.$l_row.'>'.number_format(Nvl($l_valor_prog,0),2,',','.').' </td>';

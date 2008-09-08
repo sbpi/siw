@@ -1035,7 +1035,7 @@ function Geral() {
       case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início previsto do projeto."></td>');
               ShowHTML('              <td valign="top"><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução do projeto esteja concluído."></td>'); break;
     } 
-    ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
+    ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação deste projeto."></td>');
     ShowHTML('      <tr><td><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo do projeto. Preencha apenas se houver."></td>');
@@ -1880,7 +1880,7 @@ function AtualizaRubrica() {
     ShowHTML('  Orientação:<ul>');
     ShowHTML('  <li>Clique na operação "Atualizar" para informar o orçamento realizado da rubrica.');
     ShowHTML('  </ul></b></font></td>');
-    ShowHTML('<tr><td><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1976,7 +1976,7 @@ function AtualizaRubrica() {
       ShowHTML('        <td>'.FormataDataEdicao(f($row,'inicio'),1).'</td>');
       ShowHTML('        <td>'.FormataDataEdicao(f($row,'fim'),1).'</td>');
       ShowHTML('        <td>'.formatNumber(f($row,'valor_previsto')).'</td>');
-      ShowHTML('        <td><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_real')).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
+      ShowHTML('        <td><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'valor_real')).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
       ShowHTML('      </tr>');
     }
     ShowHTML('      <tr>');
@@ -2361,7 +2361,7 @@ function Etapas() {
     ShowHTML('        <td><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao(Nvl($w_inicio,time())).'" onKeyDown="FormataData(this,event);"  onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para início da etapa.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.FormataDataEdicao($w_fim).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data prevista para término da etapa.">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(nvl($w_orcamento,0)).'" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
+    ShowHTML('        <td><b>Orça<u>m</u>ento previsto:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_orcamento" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(nvl($w_orcamento,0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Orçamento previsto para execução desta etapa."></td>');
     MontaRadioSN('<b>Permite vinculação de tarefas?</b>',$w_vincula_atividade,'w_vincula_atividade','Marque SIM se desejar que tarefas sejam vinculadas a esta etapa.');
     MontaRadioNS('<b>Permite vinculação de contratos?</b>',$w_vincula_contrato,'w_vincula_contrato','Marque SIM se desejar que contratos sejam vinculados a esta etapa.');
     if ($w_pacote=='N') {
@@ -2520,10 +2520,10 @@ function Cronograma() {
       ShowHTML('  </ul></b></font></td>');
       
       ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
       ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     } else {
-      ShowHTML('<tr><td><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
       ShowHTML('        <td align="right"><b>Registros existentes: '.count($RS));
     }
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -2602,8 +2602,8 @@ function Cronograma() {
     ShowHTML('      <tr>');
     ShowHTML('        <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início do período de referência do cronograma.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Término do período de referência do cronograma.">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" onKeyDown="FormataValor(this,18,2,event);" title="Valor previsto para a rubrica no período."></td>');
-    if ($P1!=1) ShowHTML('        <td><b><u>E</u>xecutado:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
+    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor previsto para a rubrica no período."></td>');
+    if ($P1!=1) ShowHTML('        <td><b><u>E</u>xecutado:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor executado."></td>');
     else        ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.Nvl($w_valor_real,0).'">');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
@@ -2791,7 +2791,7 @@ function AtualizaEtapa() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -4071,10 +4071,22 @@ function Visual() {
     if ($w_embed!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
     $w_embed = 'HTML';
   }
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD' && nvl($_REQUEST['w_volta'],'')!='') {
+    if ($_REQUEST['w_volta']=='fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
+    } else {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
+    }
+  }
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,$O,$w_usuario,$w_embed));
-  if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
+  if ($w_embed!='WORD' && nvl($_REQUEST['w_volta'],'')!='') {
+    if ($_REQUEST['w_volta']=='fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
+    } else {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
+    }
+  }
   if     ($w_tipo=='PDF')  RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 }  
@@ -4458,7 +4470,7 @@ function Concluir() {
     case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de início previsto do projeto."></td>');
             ShowHTML('              <td valign="top"><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data de término previsto do projeto."></td>'); break;
   } 
-  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
+  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do projeto, ou zero se não for o caso."></td>');
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');

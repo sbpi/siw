@@ -508,7 +508,7 @@ function BuscaColaborador() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('            <td>'.f($row,'nome_resumido').'</td>');
         ShowHTML('            <td>'.f($row,'local').'</td>');
-        ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'sq_contrato_colaborador').'\');">Selecionar</a>');
+        ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'sq_contrato_colaborador').'\');">Selecionar</a>');
       } 
       ShowHTML('        </table></tr>');
       ShowHTML('      </center>');

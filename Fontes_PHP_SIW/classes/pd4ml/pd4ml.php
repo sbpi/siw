@@ -16,10 +16,12 @@ if (array_key_exists('url', $_POST)) {
 
   if (strpos(strtoupper(PHP_OS),'WIN')===false) {
     // UNIX version
+	//die('java -Xmx512m -Djava.awt.headless=true -cp .:pd4ml.jar Pd4Php \'' . $_POST['url'] . '\' '.$w_width.' A4 \'' . $_POST['orientation'] . '\' 2>&1');
     passthru('java -Xmx512m -Djava.awt.headless=true -cp .:pd4ml.jar Pd4Php \'' . $_POST['url'] . '\' '.$w_width.' A4 \'' . $_POST['orientation'] . '\' 2>&1');
   } else {
     // Windows version
     passthru('java -Xmx512m -cp .;pd4ml.jar Pd4Php ' . $_POST['url'] . ' '.$w_width.' A4 \'' . $_POST['orientation'] . '\'');
+
   }
   unlink($_POST['filename']);  
     

@@ -3,22 +3,22 @@ include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 // =========================================================================
 // Montagem da seleção de companhias de viagem
 // -------------------------------------------------------------------------
-function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
-  $RS = db_getCiaTrans::getInstanceOf($dbms,$cliente,null,null,null,null,null,null,'S',null,null);
+  $RS = db_getCiaTrans::getInstanceOf($dbms,$cliente,null,null,null,null,null,null,null,'S',null,$restricao);
   $RS = SortArray($RS,'padrao','desc','nome','asc');
   if (!isset($hint)) {
     if ($label=='') {
-      ShowHTML('          <td><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } 
   } else {
     if ($label=='') {
-      ShowHTML('          <td><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } 
   } 
   ShowHTML('          <option value="">---');

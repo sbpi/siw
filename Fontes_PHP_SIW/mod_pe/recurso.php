@@ -475,8 +475,8 @@ function Inicial() {
     if ($w_disponibilidade=='1') {
       ShowHTML('      <tr><td><br>');
       ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td title="Informe quantas unidades por dia o recurso está disponível."><b><u>L</u>imite diário de alocação</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_diario" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diario.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
-      ShowHTML('        <td title="Informe o valor mensal do recurso."><b><u>V</u>alor mensal do recurso:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('        <td title="Informe quantas unidades por dia o recurso está disponível."><b><u>L</u>imite diário de alocação</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_diario" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diario.'" style="text-align:right;" onKeyDown="FormataValor(this,18,1,event);"></td>');
+      ShowHTML('        <td title="Informe o valor mensal do recurso."><b><u>V</u>alor mensal do recurso:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
       ShowHTML('        <td title="Indique se, neste período, a alocação pode ser solicitada em qualquer dia ou apenas em dias úteis."><b>Alocação:</b><br>');
       if (Nvl($w_dia_util,'S')=='S') {
         ShowHTML('            <input '.$w_Disabled.' class="str" type="radio" name="w_dia_util" value="S" checked> Apenas em dias úteis<br><input '.$w_Disabled.' class="str" type="radio" name="w_dia_util" value="N"> Em qualquer dia');
@@ -689,7 +689,7 @@ function Disponivel() {
       // Se já existe um registro e o recurso não tem período disponível, não permite novas inclusões
       ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -766,13 +766,13 @@ function Disponivel() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0"><tr>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td title="Informe quantas unidades por dia o recurso está disponível."><b><u>L</u>imite diário de alocação</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_diario" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diario.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+    ShowHTML('          <td title="Informe quantas unidades por dia o recurso está disponível."><b><u>L</u>imite diário de alocação</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_diario" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diario.'" style="text-align:right;" onKeyDown="FormataValor(this,18,1,event);"></td>');
     if ($w_tipo_disp==1) {
-      ShowHTML('          <td title="Informe o valor mensal do recurso."><b><u>V</u>alor mensal do recurso:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('          <td title="Informe o valor mensal do recurso."><b><u>V</u>alor mensal do recurso:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
     } elseif ($w_tipo_disp==3) {
-      ShowHTML('          <td title="Informe o valor do recurso, para o período informado."><b><u>V</u>alor do recurso no período:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('          <td title="Informe o valor do recurso, para o período informado."><b><u>V</u>alor do recurso no período:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
     } else {
-      ShowHTML('          <td title="Informe o valor de cada unidade, para o período informado."><b><u>V</u>alor de cada unidade:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('          <td title="Informe o valor de cada unidade, para o período informado."><b><u>V</u>alor de cada unidade:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
     }
     ShowHTML('          <td title="Indique se, neste período, a alocação pode ser solicitada em qualquer dia ou apenas em dias úteis."><b>Alocação:</b><br>');
     if (Nvl($w_dia_util,'S')=='S') {
@@ -785,7 +785,7 @@ function Disponivel() {
       ShowHTML('          <td title="Informe a data inicial do período de disponibilidade."><b>Iní<u>c</u>io da disponibilidade:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta).'</td>');
       ShowHTML('          <td title="Informe a data final do período de disponibilidade."><b><u>T</u>érmino da disponibilidade:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta).'</td>');
       if ($w_tipo_disp==2) {
-        ShowHTML('          <td title="Informe a quantidade de unidades disponíveis para alocação no período. Lembre-se que as unidades serão distribuidas pelos dias do período."><b><u>U</u>nidades disponíveis no período</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+        ShowHTML('          <td title="Informe a quantidade de unidades disponíveis para alocação no período. Lembre-se que as unidades serão distribuidas pelos dias do período."><b><u>U</u>nidades disponíveis no período</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" style="text-align:right;" onKeyDown="FormataValor(this,18,1,event);"></td>');
       }
     }
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -933,7 +933,7 @@ function Indisponivel() {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Insira cada um dos períodos de indisponibilidade do recurso. Eles devem estar contidos por períodos de disponibilidade.<li>Não é permitida a sobreposição de períodos para um mesmo recurso.<li>Se o período é de apenas um dia, as datas de início e término devem ser iguais.</ul></b></font></td>');
     ShowHTML('<tr><td>');
     ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1366,7 +1366,7 @@ function Solic() {
     ShowHTML('  <li>Os períodos de alocaçao devem estar contidos em períodos de disponibilidade do recurso.');
     ShowHTML('  <li>O gestor do recurso fará a análise dos períodos desejados antes de autorizá-los.');
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    if($P1!=1)ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    if($P1!=1)ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1442,7 +1442,7 @@ function Solic() {
       ShowHTML('          <td><b>Período desejado para alocação do recurso:</b><br>');
       ShowHTML('            <input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta).' a ');
       ShowHTML('            <input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta));
-      ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+      ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" style="text-align:right;" onKeyDown="FormataValor(this,18,1,event);"></td>');
     }
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
@@ -1580,7 +1580,7 @@ function SolicPeriodo() {
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr><td>');
     ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1645,7 +1645,7 @@ function SolicPeriodo() {
     ShowHTML('          <td><b>Período desejado para alocação do recurso:</b><br>');
     ShowHTML('            <input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta).' a ');
     ShowHTML('            <input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta));
-    ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" onKeyDown="FormataValor(this,18,1,event);"></td>');
+    ShowHTML('          <td title="Informe quantas unidades por dia deseja alocar do recurso."><b><u>U</u>nidades diárias</b> (use uma casa decimal):</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_unidades" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_unidades.'" style="text-align:right;" onKeyDown="FormataValor(this,18,1,event);"></td>');
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {

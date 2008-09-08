@@ -1,7 +1,7 @@
 <?
 // Garante que a sessão será reinicializada.
 session_start();
-if (isset($_SESSION['LOGON'])) {
+if (isset($_SESSION['LOGON1'])) {
     echo '<SCRIPT LANGUAGE="JAVASCRIPT">';
     echo ' alert("Já existe outra sessão ativa!\nEncerre o sistema na outra janela do navegador ou aguarde alguns instantes.\nUSE SEMPRE A OPÇÃO \"SAIR DO SISTEMA\" para encerrar o uso da aplicação.");';
     echo ' history.back();';
@@ -121,173 +121,188 @@ function Valida() {
     }
 
     if ($w_erro>0) {
+      if     ($w_erro==1) $w_msg = 'Usuário inexistente!';
+      elseif ($w_erro==2) $w_msg = 'Senha inválida!';
+      elseif ($w_erro==3) $w_msg = 'Usuário com acesso bloqueado pelo gestor de segurança!';
+      elseif ($w_erro==4) $w_msg = 'Usuário com acesso bloqueado pelo gestor da rede local!';
+      elseif ($w_erro==5) $w_msg = 'Senha de rede inválida ou expirada!';
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\''.$w_msg.'!\');');
+
+      // Registra no servidor syslog
+      $w_resultado = enviaSyslog('LI','LOGIN INVÁLIDO',$wNoUsuario.' - '.$w_msg);
+      if ($w_resultado>'') ShowHTML('  alert(\'ATENÇÃO: erro no registro do log.\n'.$w_resultado.'\');');
+      
+      // Se for SBPI e senha inválida, devolve a username, dispensando sua redigitação.
+      if ($_SESSION['P_CLIENTE']==1 && $w_erro=2) {
+          $w_retorno = $_SERVER['HTTP_REFERER'];
+          $w_pos = strpos($w_retorno,'?');
+          if ($w_pos!==false) $w_retorno = substr($w_retorno,0,$w_pos);
+          ShowHTML('  location.href=\''.$w_retorno.'?Login='.$wNoUsuario.'\';');
+      } else {
+          ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
+      }
+      ScriptClose();
+    } else {
+      // Recupera informações do cliente, relativas ao envio de e-mail
+      $RS = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+      $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
+      $_SESSION['SIW_EMAIL_CONTA'] = f($RS, 'siw_email_conta');
+      $_SESSION['SIW_EMAIL_SENHA'] = f($RS,'siw_email_senha');
+
+      // Recupera informações a serem usadas na montagem das telas para o usuário
+      $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
+      $_SESSION['USERNAME']        = f($RS,'USERNAME');
+      $_SESSION['SQ_PESSOA']       = f($RS,'SQ_PESSOA');
+      $_SESSION['NOME']            = f($RS,'NOME');
+      $_SESSION['EMAIL']           = f($RS,'EMAIL');
+      $_SESSION['NOME_RESUMIDO']   = f($RS,'NOME_RESUMIDO');
+      $_SESSION['LOTACAO']         = f($RS,'SQ_UNIDADE');
+      $_SESSION['LOCALIZACAO']     = f($RS,'SQ_LOCALIZACAO');
+      $_SESSION['INTERNO']         = f($RS,'INTERNO');
+      $_SESSION['LOGON']           = 'Sim';
+      $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
+      $_SESSION['ANO']             = Date('Y');
+
+      // Registra no servidor syslog
+      $w_resultado = enviaSyslog('LV','LOGIN','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO']);
+      if ($w_resultado>'') {
         ScriptOpen('JavaScript');
-        if ($w_erro==1)     { ShowHTML('  alert(\'Usuário inexistente!\');'); }
-        elseif ($w_erro==2) { ShowHTML('  alert(\'Senha inválida!\');'); }
-        elseif ($w_erro==3) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor de segurança!\');'); }
-        elseif ($w_erro==4) { ShowHTML('  alert(\'Usuário com acesso bloqueado pelo gestor da rede local!\');'); }
-        elseif ($w_erro==5) { ShowHTML('  alert(\'Senha de rede inválida ou expirada!\');'); }
-        // Se for SBPI e senha inválida, devolve a username, dispensando sua redigitação.
-        if ($_SESSION['P_CLIENTE']==1 && $w_erro=2) {
-            $w_retorno = $_SERVER['HTTP_REFERER'];
-            $w_pos = strpos($w_retorno,'?');
-            if ($w_pos!==false) $w_retorno = substr($w_retorno,0,$w_pos);
-            ShowHTML('  location.href=\''.$w_retorno.'?Login='.$wNoUsuario.'\';');
+        ShowHTML('  alert(\''.$w_resultado.'\');');
+        ScriptClose();
+      }
+      
+      // Se a geração de log estiver ativada, registra.
+      if ($conLog) {
+        // Define o caminho fisico do diretório e do arquivo de log
+        $l_caminho = $conLogPath;
+        $l_arquivo = $l_caminho.$_SESSION['P_CLIENTE'].'/'.date(Ymd).'.log';
+
+        // Verifica a necessidade de criação dos diretórios de log
+        if (!file_exists($l_caminho)) mkdir($l_caminho);
+        if (!file_exists($l_caminho.$_SESSION['P_CLIENTE'])) mkdir($l_caminho.$_SESSION['P_CLIENTE']);
+
+        // Abre o arquivo de log
+        $l_log = @fopen($l_arquivo, 'a');
+
+        fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
+        fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
+        fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
+        fwrite($l_log, 'Ação   : LOGIN'.$crlf.$crlf);
+
+        // Fecha o arquivo e o diretório de log
+        @fclose($l_log);
+        @closedir($l_caminho);
+      }
+
+      if ($par=='Log') {
+        ScriptOpen('JavaScript');
+        if ($_POST['p_cliente']==6761 && $_POST['p_versao']==2) {
+          if ($RS['interno']=='S') {
+              ShowHTML('  top.location.href=\'cl_cespe/trabalho.php?par=mesa&TP=Acompanhamento\';');
+          } else {
+             $RS = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
+             ShowHTML('  location.href=\''.$RS['link'].'&O=&P1='.$RS['P1'].'&P2='.$RS['P2'].'&P3='.$RS['P3'].'&P4='.$RS['P4'].'&TP='.$RS['nome'].'&SG='.$RS['sigla'].'\';');
+          }
         } else {
-            ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
+            if ($_POST['p_cliente']==1) ShowHTML('  top.location.href=\'menu.php?par=Frames\';');
+            else                        ShowHTML('  location.href=\'menu.php?par=Frames\';');
         }
         ScriptClose();
-    } else {
-        // Recupera informações do cliente, relativas ao envio de e-mail
-        $RS = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-        $_SESSION['SMTP_SERVER']     = f($RS, 'smtp_server');
-        $_SESSION['SIW_EMAIL_CONTA'] = f($RS, 'siw_email_conta');
-        $_SESSION['SIW_EMAIL_SENHA'] = f($RS,'siw_email_senha');
+      } else {
+        // Configura texto
+        if ($w_tipo=='B') $w_texto_mail = 'senha'; else $w_texto_mail = 'assinatura eletrônica';
 
-        // Recupera informações a serem usadas na montagem das telas para o usuário
-        $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario);
-        $_SESSION['USERNAME']        = f($RS,'USERNAME');
-        $_SESSION['SQ_PESSOA']       = f($RS,'SQ_PESSOA');
-        $_SESSION['NOME']            = f($RS,'NOME');
-        $_SESSION['EMAIL']           = f($RS,'EMAIL');
-        $_SESSION['NOME_RESUMIDO']   = f($RS,'NOME_RESUMIDO');
-        $_SESSION['LOTACAO']         = f($RS,'SQ_UNIDADE');
-        $_SESSION['LOCALIZACAO']     = f($RS,'SQ_LOCALIZACAO');
-        $_SESSION['INTERNO']         = f($RS,'INTERNO');
-        $_SESSION['LOGON']           = 'Sim';
-        $_SESSION['ENDERECO']        = f($RS,'SQ_PESSOA_ENDERECO');
-        $_SESSION['ANO']             = Date('Y');
+        // Cria a nova senha, pegando a hora e o minuto correntes
+        $w_senha='nova'.date('is');
 
-        // Se a geração de log estiver ativada, registra.
-        if ($conLog) {
-            // Define o caminho fisico do diretório e do arquivo de log
-            $l_caminho = $conLogPath;
-            $l_arquivo = $l_caminho.$_SESSION['P_CLIENTE'].'/'.date(Ymd).'.log';
-
-            // Verifica a necessidade de criação dos diretórios de log
-            if (!file_exists($l_caminho)) mkdir($l_caminho);
-            if (!file_exists($l_caminho.$_SESSION['P_CLIENTE'])) mkdir($l_caminho.$_SESSION['P_CLIENTE']);
-
-            // Abre o arquivo de log
-            $l_log = @fopen($l_arquivo, 'a');
-
-            fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
-            fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
-            fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
-            fwrite($l_log, 'Ação   : LOGIN'.$crlf.$crlf);
-
-            // Fecha o arquivo e o diretório de log
-            @fclose($l_log);
-            @closedir($l_caminho);
-        }
-
-        if ($par=='Log') {
-          ScriptOpen('JavaScript');
-          if ($_POST['p_cliente']==6761 && $_POST['p_versao']==2) {
-            if ($RS['interno']=='S') {
-                ShowHTML('  top.location.href=\'cl_cespe/trabalho.php?par=mesa&TP=Acompanhamento\';');
-            } else {
-               $RS = db_getLinkData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], 'PJCADP');
-               ShowHTML('  location.href=\''.$RS['link'].'&O=&P1='.$RS['P1'].'&P2='.$RS['P2'].'&P3='.$RS['P3'].'&P4='.$RS['P4'].'&TP='.$RS['nome'].'&SG='.$RS['sigla'].'\';');
-            }
-          } else {
-              if ($_POST['p_cliente']==1) ShowHTML('  top.location.href=\'menu.php?par=Frames\';');
-              else                        ShowHTML('  location.href=\'menu.php?par=Frames\';');
-          }
-          ScriptClose();
+        // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
+        $w_html='<HTML>'.$crlf;
+        $w_html .= BodyOpenMail(null).$crlf;
+        $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
+        $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
+        $w_html .= '    <table width="97%" border="0">'.$crlf;
+        $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.strtoupper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
+        $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
+        $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+        if ($w_tipo=='B') {
+          $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
         } else {
-          // Configura texto
-          if ($w_tipo=='B') $w_texto_mail = 'senha'; else $w_texto_mail = 'assinatura eletrônica';
-
-          // Cria a nova senha, pegando a hora e o minuto correntes
-          $w_senha='nova'.date('is');
-
-          // Configura a mensagem automática comunicando ao usuário sua nova senha de acesso e assinatura eletrônica
-          $w_html='<HTML>'.$crlf;
-          $w_html .= BodyOpenMail(null).$crlf;
-          $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
-          $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
-          $w_html .= '    <table width="97%" border="0">'.$crlf;
-          $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.strtoupper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
-          $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
-          $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-          if ($w_tipo=='B') {
-            $w_html .= '         Sua senha e assinatura eletrônica foram reinicializadas. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
-          } else {
-            $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
-          }
-          $w_html .= '         <ul>'.$crlf;
-          $RS = db_getCustomerSite::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-          $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
-          DesconectaBD();
-          $w_html .= '         <li>Nome de usuário: <b>'.$_SESSION['USERNAME'].'</b></li>'.$crlf;
-          if ($w_tipo=='B') {
-            $w_html .= '         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.$crlf;
-          } else {
-            $w_html .= '         <li>Senha de acesso: <b>igual à senha da rede local</b></li>'.$crlf;
-          }
-          $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
-          $w_html .= '         </ul>'.$crlf;
-          $w_html .= '      </font></td></tr>'.$crlf;
-          $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-          $w_html .= '         Orientações e observações:<br>'.$crlf;
-          $w_html .= '         <ol>'.$crlf;
-          $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
-          if ($w_tipo=='B'){
-            $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
-            $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-            $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
-            $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-            $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-            $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
-            $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
-          } else {
-            $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
-            $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
-            $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
-            $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
-            $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
-          }
-          DesconectaBD();
-          $w_html .= '         </ol>'.$crlf;
-          $w_html .= '      </font></td></tr>'.$crlf;
-          $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
-          $w_html .= '         Dados da ocorrência:<br>'.$crlf;
-          $w_html .= '         <ul>'.$crlf;
-          $w_html .= '         <li>Data do servidor: <b>'.DataHora().'</b></li>'.$crlf;
-          $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
-          $w_html .= '         </ul>'.$crlf;
-          $w_html .= '      </font></td></tr>'.$crlf;
-          $w_html .= '    </table>'.$crlf;
-          $w_html .= '</td></tr>'.$crlf;
-          $w_html .= '</table>'.$crlf;
-          $w_html .= '</BODY>'.$crlf;
-          $w_html .= '</HTML>'.$crlf;
-
-          // Executa a função de envio de e-mail
-          $w_resultado=EnviaMail('Aviso de reinicialização de '.$w_texto_mail,$w_html,$_SESSION['EMAIL']);
-
-          ScriptOpen('JavaScript');
-          // Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
-          // caso contrário, avisa que o e-mail foi enviado para o usuário.
-          if (nvl($w_resultado,'')!='') {
-            ShowHTML('  alert(\'ATENÇÃO: sua '.$w_texto_mail.' NÃO FOI recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'\');');
-          } else {
-            // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
-            if ($w_tipo=='B') db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
-            db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
-
-            ShowHTML('  alert(\'Sua '.$w_texto_mail.' foi recriada e enviada para '.$_SESSION['EMAIL'].'!\');');
-          }
-
-          ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
-          ScriptClose();
-          // Eliminar todas as variáveis de sessão.
-          $_SESSION = array();
-          // Finalmente, destruição da sessão.
-          session_destroy();
+          $w_html .= '         Sua assinatura eletrônica foi reinicializada. A partir de agora, utilize os dados informados abaixo:<br>'.$crlf;
+        }
+        $w_html .= '         <ul>'.$crlf;
+        $RS = db_getCustomerSite::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+        $w_html .= '         <li>Endereço de acesso ao sistema: <b><a class="SS" href="'.$RS['LOGRADOURO'].'" target="_blank">'.$RS['LOGRADOURO'].'</a></b></li>'.$crlf;
+        DesconectaBD();
+        $w_html .= '         <li>Nome de usuário: <b>'.$_SESSION['USERNAME'].'</b></li>'.$crlf;
+        if ($w_tipo=='B') {
+          $w_html .= '         <li>Senha de acesso: <b>'.$w_senha.'</b></li>'.$crlf;
+        } else {
+          $w_html .= '         <li>Senha de acesso: <b>igual à senha da rede local</b></li>'.$crlf;
+        }
+        $w_html .= '         <li>Assinatura eletrônica: <b>'.$w_senha.'</b></li>'.$crlf;
+        $w_html .= '         </ul>'.$crlf;
+        $w_html .= '      </font></td></tr>'.$crlf;
+        $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+        $w_html .= '         Orientações e observações:<br>'.$crlf;
+        $w_html .= '         <ol>'.$crlf;
+        $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
+        if ($w_tipo=='B'){
+          $w_html .= '         <li>Troque sua senha de acesso e assinatura eletrônica no primeiro acesso que fizer ao sistema.</li>'.$crlf;
+          $w_html .= '         <li>Para trocar sua senha de acesso, localize no menu a opção <b>Troca senha</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+          $w_html .= '         <li>Para trocar sua assinatura eletrônica, localize no menu a opção <b>Assinatura eletrônica</b> e clique sobre ela, seguindo as orientações apresentadas.</li>'.$crlf;
+          $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+          $w_html .= '         <li>Tanto a senha quanto a assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+          $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua senha de acesso ou sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrar sua senha de acesso ou assinatura eletrônica, utilize a opção "Lembrar senha" na tela de autenticação do sistema.</li>'.$crlf;
+          $w_html .= '         <li>Se sua senha de acesso ou assinatura eletrônica for bloqueada, entre em contato com o gestor de segurança do sistema.</li>'.$crlf;
+        } else {
+          $w_html .= '         <li>Sua senha de acesso na aplicação é igual à senha da rede e NÃO FOI alterada.</li>'.$crlf;
+          $w_html .= '         <li>Troque sua assinatura eletrônica no primeiro acesso que fizer ao sistema. Para tanto, clique sobre a opção <b>Assinatura eletrônica</b>, localizada no menu principal, e siga as orientações apresentadas.</li>'.$crlf;
+          $w_html .= '         <li>Você pode fazer com que a senha de acesso e a assinatura eletrônica tenham o mesmo valor ou valores diferentes. A decisão é sua.</li>'.$crlf;
+          $w_html .= '         <li>A assinatura eletrônica têm tempo de vida máximo de <b>'.f($RS,'dias_vig_senha').'</b> dias. O sistema irá recomendar a troca <b>'.f($RS,'dias_aviso_expir').'</b> dias antes da expiração do tempo de vida.</li>'.$crlf;
+          $w_html .= '         <li>O sistema irá bloquear seu acesso se você errar sua assinatura eletrônica <b>'.f($RS,'maximo_tentativas').'</b> vezes consecutivas. Se você tiver dúvidas ou não lembrá-la, utilize a opção "Recriar senha" na tela de autenticação do sistema.</li>'.$crlf;
         }
         DesconectaBD();
+        $w_html .= '         </ol>'.$crlf;
+        $w_html .= '      </font></td></tr>'.$crlf;
+        $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
+        $w_html .= '         Dados da ocorrência:<br>'.$crlf;
+        $w_html .= '         <ul>'.$crlf;
+        $w_html .= '         <li>Data do servidor: <b>'.DataHora().'</b></li>'.$crlf;
+        $w_html .= '         <li>IP de origem: <b>'.$_SERVER['REMOTE_ADDR'].'</b></li>'.$crlf;
+        $w_html .= '         </ul>'.$crlf;
+        $w_html .= '      </font></td></tr>'.$crlf;
+        $w_html .= '    </table>'.$crlf;
+        $w_html .= '</td></tr>'.$crlf;
+        $w_html .= '</table>'.$crlf;
+        $w_html .= '</BODY>'.$crlf;
+        $w_html .= '</HTML>'.$crlf;
+
+        // Executa a função de envio de e-mail
+        $w_resultado=EnviaMail('Aviso de reinicialização de '.$w_texto_mail,$w_html,$_SESSION['EMAIL']);
+
+        ScriptOpen('JavaScript');
+        // Se ocorreu algum erro, avisa da impossibilidade de envio do e-mail,
+        // caso contrário, avisa que o e-mail foi enviado para o usuário.
+        if (nvl($w_resultado,'')!='') {
+          ShowHTML('  alert(\'ATENÇÃO: sua '.$w_texto_mail.' NÃO FOI recriada pois não foi possível proceder o envio do e-mail\n'.$w_resultado.'\');');
+        } else {
+          // Atualiza a senha de acesso e a assinatura eletrônica, igualando as duas
+          if ($w_tipo=='B') db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'PASSWORD');
+          db_updatePassword::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], $w_senha, 'SIGNATURE');
+
+          ShowHTML('  alert(\'Sua '.$w_texto_mail.' foi recriada e enviada para '.$_SESSION['EMAIL'].'!\');');
+        }
+
+        ShowHTML('  location.href=\''.$_SERVER['HTTP_REFERER'].'\';');
+        ScriptClose();
+        // Eliminar todas as variáveis de sessão.
+        $_SESSION = array();
+        // Finalmente, destruição da sessão.
+        session_destroy();
+      }
+      DesconectaBD();
     }
 }
 

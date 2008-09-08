@@ -87,13 +87,13 @@ $conEnviaMail   = false;
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
 $conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
-$conDefaultPath = 'http://www.sbpi.com.br';
+$conDefaultPath = 'http://io/siw/';
 $conNmSistema   = 'Solução Integrada Web';
 $conRootSIW     = 'http://www2.sbpi.com.br/desenv/';
-$conDiretorio   = '/var/www/html/desenv/';
+$conDiretorio   = 'c:/inetpub/wwwroot/desenv/';
 $conFontPath    = $conDiretorio.'fonts/linux/';
 $conFileVirtual = '/desenv/files/';
-$conFilePhysical= '/var/www/html/desenv/files/'; // Formato Linux
+$conFilePhysical= 'c:/inetpub/wwwroot/desenv/files/'; // Formato Linux
 //$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 
 // Define se deve ser gravado arquivo de log e o seu caminho

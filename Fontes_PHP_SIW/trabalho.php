@@ -342,10 +342,9 @@ function Mesa() {
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
       ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
       if ((count($RS_Viagem)>0 && nvl($w_viagem ,'')!='') || (count($RS_Afast)>0 && nvl($w_pessoal,'')!='')) {
-        ShowHTML('              <b>Observações:<ul>');
+        ShowHTML('              <b>Observações:</b>');
         ShowHTML('              <li>Clique sobre o dia em destaque para ver detalhes.');
         ShowHTML('              <li>A cor vermelha indica ausências de '.$_SESSION['NOME_RESUMIDO'].'.');
-        ShowHTML('              </ul>');
       } else {
         ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
       }
@@ -442,7 +441,7 @@ function Mesa() {
               ShowHTML('                  </tr>');
             }
           }
-          ShowHTML('                </table><br>');
+          ShowHTML('                </table>');
           ShowHTML('        <tr><td><font size="1"><b>Legenda:</b><table border=0>'.ExibeImagemSolic('PD',null,null,null,null,null,null,null, null,true).'</table>');
         }
 

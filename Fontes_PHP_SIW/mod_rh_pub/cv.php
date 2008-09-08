@@ -1598,7 +1598,7 @@ function BuscaAreaConhecimento() {
     ShowHTML('        </tr>');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><ul>');
     foreach ($RS as $row ){
-      ShowHTML('        <li><a class="SS" href="#" onClick="opener.document.Form.w_nm_area.value=''.f($row,'nome').' ('.f($row,'codigo_cnpq').')'; opener.document.Form.w_sq_area_conhecimento.value=''.f($row,'sq_area_conhecimento').''; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
+      ShowHTML('        <li><a class="SS" HREF="javascript:this.status.value;" onClick="opener.document.Form.w_nm_area.value=''.f($row,'nome').' ('.f($row,'codigo_cnpq').')'; opener.document.Form.w_sq_area_conhecimento.value=''.f($row,'sq_area_conhecimento').''; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
     } 
     ShowHTML('      </ul></tr>');
     ShowHTML('      </center>');

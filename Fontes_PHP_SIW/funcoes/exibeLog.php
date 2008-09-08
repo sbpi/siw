@@ -81,7 +81,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
     $i = 0;
     foreach($RS_Log as $row) {
       if ($i==0) {
-        $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row,'fase').'</b></td>';
+        $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row,'fase').'</b><br>'.crLf2Br(f($row,'descricao')).'</td>';
         $i = 1;
         if ($l_tramite_ativo=='S') {
           // Recupera os responsáveis pelo tramite

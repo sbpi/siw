@@ -242,7 +242,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
         if ($l_tipo=='WORD') {
           $l_html .= chr(13).'          <td>'.f($row,'codigo').'&nbsp';
         } else {
-          $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
+          $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
         }
         $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
         $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'valor_inicial')).' </td>';
@@ -1141,25 +1141,37 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   if ($l_ativ1 > '') $l_row += count($RS_Ativ);
 
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-  $l_html .= chr(13).'        <td width="1%" nowrap rowspan='.$l_row.'>';
-  //if ($p_tipo!='WORD') $l_html .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
+    $grupo = MontaOrdemEtapa($l_chave_aux);
+  
+  if ($l_tipo!='WORD') {
+    if ($l_destaque!='<b>' || ($l_destaque=='<b>' && (count($RS_Ativ)>0 || count($RS_Contr)>0))) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+  
+    $fechado = 'style="display:none"';
+    if(strpos($grupo,'.')===false) $fechado = '';
+
+    $l_html .= chr(13).'      <tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'" class="arvore" valign="top"  '.$fechado.' bgcolor="'.$w_cor.'">';
+  } else {
+    $imagem='';
+    $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+  }
+
+  $l_html .= chr(13).'        <td width="1%" nowrap>';
+  //if ($p_tipo!='WORD') $l_html .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
   if ($w_embed != 'WORD'){ 
-    $l_html .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
+        $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
   }
   if ($_REQUEST['p_sinal']) $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   //if ($_REQUEST['p_tipo']=='WORD') {
-  if ($w_embed == 'WORD') {
-    $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
+    if ($l_tipo=='WORD') {
+    $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
   } else {
-    $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
+    $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
   }
   if (nvl($l_nivel,0)==0) {
-    $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
   } else {
-    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).'<td>'.$l_destaque.$l_titulo.'</b></tr></table>';
-  }
-  //if ($_REQUEST['p_tipo']=='WORD') {
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
+  }//if ($_REQUEST['p_tipo']=='WORD') {
   if ($w_embed == 'WORD') {
     $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
   } else {
@@ -1223,8 +1235,13 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   //Listagem das tarefas da etapa  
   if (count($RS_Ativ)>0) {
     foreach ($RS_Ativ as $row) {
-      $l_ativ .= chr(13).'<tr valign="top">';
-      $l_ativ .= chr(13).'  <td>';
+      if ($l_tipo=='WORD') {
+        $l_contr1 .= chr(13).'<tr valign="top" bgcolor="'.$w_cor.'">';
+      } else {
+        $l_contr1 .= chr(13).'<tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'-'.f($row,'sq_siw_solicitacao').'" class="arvore" valign="top" style="display:none" bgcolor="'.$w_cor.'">';
+      }
+      $l_contr1 .= chr(13).'  <td bgcolor="'.$w_cor.'"></td>';
+      
       if ($_REQUEST['p_sinal']) $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       //if ($_REQUEST['p_tipo']=='WORD') {
       if ($w_embed == 'WORD') {      
@@ -1294,24 +1311,36 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   } 
   if ($l_recurso > '') $l_row = 'rowspan=2'; else $l_row = '';
   $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-  $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
-  $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
-//  if ($p_tipo!='WORD') $l_html .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
+  $grupo = MontaOrdemEtapa($l_chave_aux);
+  
+  if ($l_tipo!='WORD') {
+    if ($l_destaque!='<b>' && $P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+  
+    $fechado = 'style="display:none"';
 
-  if ($w_embed != 'WORD') $l_html .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=781,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
+    if(strpos($grupo,'.')===false) $fechado = '';
+
+    $l_html .= chr(13).'      <tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'" class="arvore" valign="top"  '.$fechado.' bgcolor="'.$w_cor.'">';
+  } else {
+    $imagem='';
+    $l_html .= chr(13).'      <tr valign="top" bgcolor="'.$w_cor.'">';
+  }
+  $l_html .= chr(13).'        <td width="1%" nowrap '.$l_row.'>'; 
+//  if ($p_tipo!='WORD') $l_html .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
+
+  if ($w_embed != 'WORD') $l_html .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.$l_chave.'&w_chave='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=781,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>';
   if ($_REQUEST['p_sinal']) $l_html .= chr(13).ExibeImagemSolic('ETAPA',$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,null,null,null,$l_perc);
   //if ($_REQUEST['p_tipo']=='WORD') {
-  if ($w_embed == 'WORD') {
-    $l_html .= chr(13).' '.MontaOrdemEtapa($l_chave_aux).$l_img.'</td>';
+   if ($l_tipo=='WORD') {
+    $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
   } else {
-    $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,MontaOrdemEtapa($l_chave_aux),$TP,$SG).$l_img.'</td>';
+    $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
   }
   if (nvl($l_nivel,0)==0) {
-    $l_html .= chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
   } else {
-    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).'<td>'.$l_destaque.$l_titulo.' '.'</b></tr></table>';
+    $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }
-  //if ($_REQUEST['p_tipo']=='WORD') {
   if ($w_embed == 'WORD') {
     $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
   } else {

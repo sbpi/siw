@@ -41,8 +41,9 @@ include_once('funcoes/selecaoAgencia.php');
 include_once('funcoes/selecaoTipoEndereco.php');
 include_once('funcoes/selecaoTipoFone.php');
 include_once('funcoes/selecaoModulo.php');
-
-
+include_once('funcoes/selecaoIP_Protocol.php');
+include_once('funcoes/selecaoSyslogSeverity.php');
+include_once('funcoes/selecaoSyslogFacility.php');
 
 // =========================================================================
 //  /cliente.php
@@ -1439,14 +1440,26 @@ function Configuracao() {
     
     $w_upload_maximo    = $_REQUEST['w_upload_maximo'];
     
-    $w_ad_account_sufix         = $_REQUEST["w_ad_account_sufix"];
-    $w_ad_base_dn               = $_REQUEST["w_ad_base_dn"];    
-    $w_ad_domain_controllers    = $_REQUEST["w_ad_domain_controllers"];
+    $w_ad_account_sufix         = $_REQUEST['w_ad_account_sufix'];
+    $w_ad_base_dn               = $_REQUEST['w_ad_base_dn'];    
+    $w_ad_domain_controllers    = $_REQUEST['w_ad_domain_controllers'];
     
-    $w_ol_account_sufix         = $_REQUEST["w_ol_account_sufix"];
-    $w_ol_base_dn               = $_REQUEST["w_ol_base_dn"];    
-    $w_ol_domain_controllers    = $_REQUEST["w_ol_domain_controllers"];   
+    $w_ol_account_sufix         = $_REQUEST['w_ol_account_sufix'];
+    $w_ol_base_dn               = $_REQUEST['w_ol_base_dn'];
+    $w_ol_domain_controllers    = $_REQUEST['w_ol_domain_controllers'];   
     
+    $w_sl_server                = $_REQUEST['w_sl_server'];
+    $w_sl_protocol              = $_REQUEST['w_sl_protocol'];
+    $w_sl_port                  = $_REQUEST['w_sl_port'];
+    $w_sl_facility              = $_REQUEST['w_sl_facility'];
+    $w_sl_base_dn               = $_REQUEST['w_sl_base_dn'];
+    $w_sl_timeout               = $_REQUEST['w_sl_timeout'];
+    $w_sl_pass_ok               = $_REQUEST['w_sl_pass_ok'];
+    $w_sl_pass_er               = $_REQUEST['w_sl_pass_er'];
+    $w_sl_sign_er               = $_REQUEST['w_sl_sign_er'];
+    $w_sl_write_ok              = $_REQUEST['w_sl_write_ok'];
+    $w_sl_write_er              = $_REQUEST['w_sl_write_er'];
+    $w_sl_res_er                = $_REQUEST['w_sl_res_er'];
     
   } elseif (strpos('IAEV',$O)!==false) {
     // Recupera a configuração do site do cliente
@@ -1467,6 +1480,19 @@ function Configuracao() {
     $w_ol_account_sufix         = f($RS,'ol_account_sufix');
     $w_ol_base_dn               = f($RS,'ol_base_dn');
     $w_ol_domain_controllers    = f($RS,'ol_domain_controlers');
+
+    $w_sl_server                = f($RS,'syslog_server_name');
+    $w_sl_protocol              = f($RS,'syslog_server_protocol');
+    $w_sl_port                  = f($RS,'syslog_server_port');
+    $w_sl_facility              = f($RS,'syslog_facility');
+    $w_sl_base_dn               = f($RS,'syslog_fqdn');
+    $w_sl_timeout               = f($RS,'syslog_timeout');
+    $w_sl_pass_ok               = f($RS,'syslog_level_pass_ok');
+    $w_sl_pass_er               = f($RS,'syslog_level_pass_er');
+    $w_sl_sign_er               = f($RS,'syslog_level_sign_er');
+    $w_sl_write_ok              = f($RS,'syslog_level_write_ok');
+    $w_sl_write_er              = f($RS,'syslog_level_write_er');
+    $w_sl_res_er                = f($RS,'syslog_level_res_er');
   } 
 
   Cabecalho();
@@ -1497,14 +1523,33 @@ function Configuracao() {
   
   Validate('w_upload_maximo','Limite para upload','1','1',1,18,'','0123456789');
   
-  Validate('w_ad_account_sufix','Account Sufix','1',null,5,40,'1','1');
-  Validate('w_ad_base_dn','Base DN','1',null,5,40,'1','1');
-  Validate('w_ad_domain_controllers','Domain Controllers','1',null,5,40,'1','1');
+  if(function_exists('ldap_connect')){
+    Validate('w_ad_account_sufix','Account Sufix','1',null,5,40,'1','1');
+    Validate('w_ad_base_dn','Base DN','1',null,5,40,'1','1');
+    Validate('w_ad_domain_controllers','Domain Controllers','1',null,5,40,'1','1');
   
-  Validate('w_ol_account_sufix','Account Sufix','1',null,5,40,'1','1');
-  Validate('w_ol_base_dn','Base DN','1',null,5,40,'1','1');
-  Validate('w_ol_domain_controllers','Domain Controllers','1',null,5,40,'1','1');  
+    Validate('w_ol_account_sufix','Account Sufix','1',null,5,40,'1','1');
+    Validate('w_ol_base_dn','Base DN','1',null,5,40,'1','1');
+    Validate('w_ol_domain_controllers','Domain Controllers','1',null,5,40,'1','1');  
+  }
   
+  if(function_exists('fsockopen')){
+    Validate('w_sl_server','Servidor Syslog','1',null,2,30,'1','1');
+    ShowHTML('  if (theForm.w_sl_server.value != "") { ');
+    Validate('w_sl_protocol','Protocolo','SELECT',1,1,10,'1','1');
+    Validate('w_sl_port','Porta','1',1,1,10,'','0123456789');
+    Validate('w_sl_facility','Categoria','1',1,1,2,'','0123456789');
+    Validate('w_sl_base_dn','Base DN','1',1,5,40,'1','1');
+    Validate('w_sl_timeout','Limite para conexão','1',1,1,2,'','0123456789');
+    Validate('w_sl_timeout','Tempo para conexão','1',1,1,2,'','0123456789');
+    Validate('w_sl_pass_ok','Login válido','SELECT',null,1,2,'','0123456789');
+    Validate('w_sl_pass_er','Login inválido','SELECT',null,1,2,'','0123456789');
+    Validate('w_sl_sign_er','Assinatura eletrônica inválida','SELECT',null,1,2,'','0123456789');
+    Validate('w_sl_res_er','Recurso indisponível','SELECT',null,1,2,'','0123456789');
+    Validate('w_sl_write_ok','Gravação com sucesso','SELECT',null,1,2,'','0123456789');
+    Validate('w_sl_write_er','Gravação com erro','SELECT',null,1,2,'','0123456789');
+    ShowHTML('  }');
+  }
   Validate('w_logo','Logo telas e relatórios','1','',3,100,'1','1');
   Validate('w_logo1','Logo menu','1','',3,100,'1','1');
   Validate('w_fundo','Fundo menu','1','',3,100,'1','1');
@@ -1559,7 +1604,7 @@ function Configuracao() {
         ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração dos serviços de Autenticação</td></td></tr>');
         ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-        ShowHTML('      <tr><td>Os dados do bloco abaixo são utilizados pelo mecanismo autenticação para validação da senha de acesso dos usuários.</td></tr>');
+        ShowHTML('      <tr><td>Os dados do bloco abaixo são utilizados pelo mecanismo de autenticação para validação da senha de acesso dos usuários.</td></tr>');
         ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td><table border="0" width="100%">');
         ShowHTML('          <tr><td colspan="3"><b>Configuração para MS-Active Directory</b>');
@@ -1572,6 +1617,35 @@ function Configuracao() {
         ShowHTML('             <td><b>A<u>c</u>count sufix:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_ol_account_sufix" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_account_sufix.'" title="Sufixo das contas de usuário para autenticação no Open LDAP."></td>');
         ShowHTML('             <td><b><u>B</u>ase DN:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_ol_base_dn" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_base_dn.'" title="Nome base do domínio para autenticação no Open LDAP."></td>');
         ShowHTML('             <td><b><u>D</u>omain controllers:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ol_domain_controllers" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_ol_domain_controllers.'" title="Lista de controladores Open LDAP, separados por vírgula, sem espaços."></td>');
+        ShowHTML('          </table>');        
+    }
+        
+    if(function_exists('fsockopen')){
+        ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Configuração do serviço Syslog</td></td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td>Os dados do bloco abaixo são utilizados para registro de logs em servidor Syslog.</td></tr>');
+        ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td><table border="0" width="100%">');
+        ShowHTML('          <tr><td colspan="3"><b>Configuração do servidor Syslog</b>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('             <td><b><u>S</u>ervidor:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sl_server" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_sl_server.'" title="IP ou nome do servidor Syslog."></td>');
+        selecaoIP_Protocol('<u>P</u>rotocolo:','P','Protocolo da camada de transporte',$w_sl_protocol,null,'w_sl_protocol',null,null);
+        ShowHTML('             <td><b><u>P</u>orta:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_sl_port" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_sl_port.'" title="Porta a ser usada para conexão ao servidor  (default 514)."></td>');
+        ShowHTML('          <tr valign="top">');
+        ShowHTML('             <td><b><u>B</u>ase DN:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_sl_base_dn" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_sl_base_dn.'" title="Nome base do domínio para conexão ao servidor."></td>');
+        ShowHTML('             <td><b><u>T</u>empo para conexão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_sl_timeout" class="sti" SIZE="4" MAXLENGTH="2" VALUE="'.$w_sl_timeout.'" title="Tempo limite para conexão ao servidor, em segundos (default 0)."></td>');
+        selecaoSyslogFacility('<u>C</u>ategoria:','C','Categoria das mensagens (facility)',$w_sl_facility,null,'w_sl_facility',null,null);
+        ShowHTML('          <tr valign="top">');
+        selecaoSyslogSeverity('<u>L</u>ogin válido:','L','Código da mensagem para senha de acesso correta.',$w_sl_pass_ok,null,'w_sl_pass_ok',null,null);
+        selecaoSyslogSeverity('<u>L</u>ogin inválido:','L','Código da mensagem para senha de acesso incorreta.',$w_sl_pass_er,null,'w_sl_pass_er',null,null);
+        ShowHTML('          <tr valign="top">');
+        selecaoSyslogSeverity('A<u>s</u>sinatura eletrônica inválida:','S','Código da mensagem para assinatura eletrônica incorreta.',$w_sl_sign_er,null,'w_sl_sign_er',null,null);
+        selecaoSyslogSeverity('<u>R</u>ecurso indisponível:','R','Código da mensagem para indisponibilidade de recurso (e-mail, upload, etc.)',$w_sl_res_er,null,'w_sl_res_er',null,null);
+        ShowHTML('          <tr valign="top">');
+        selecaoSyslogSeverity('<u>G</u>ravação com sucesso:','G','Código da mensagem para gravação de dados bem sucedida.',$w_sl_write_ok,null,'w_sl_write_ok',null,null);
+        selecaoSyslogSeverity('<u>G</u>ravação com erro:','G','Código da mensagem para erro na gravação de dados.',$w_sl_write_er,null,'w_sl_write_er',null,null);
         ShowHTML('          </table>');        
     }
         
@@ -1714,7 +1788,7 @@ function Grava() {
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento'],
             $_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta'],$_REQUEST['w_georeferencia'],$_REQUEST['w_googlemaps_key'],$_REQUEST['w_arp']);
-        ScriptOpen('JavaScript');
+            ScriptOpen('JavaScript');
         if ($O=='I') {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
         } else {
@@ -1928,7 +2002,10 @@ function Grava() {
             $_REQUEST["w_ad_domain_controllers"],
             $_REQUEST["w_ol_account_sufix"],
             $_REQUEST["w_ol_base_dn"],
-            $_REQUEST["w_ol_domain_controllers"]
+            $_REQUEST["w_ol_domain_controllers"],
+            $_REQUEST['w_sl_server'], $_REQUEST['w_sl_protocol'], $_REQUEST['w_sl_port'], $_REQUEST['w_sl_facility'],
+            $_REQUEST['w_sl_base_dn'], $_REQUEST['w_sl_timeout'], $_REQUEST['w_sl_pass_ok'], $_REQUEST['w_sl_pass_er'],
+            $_REQUEST['w_sl_sign_er'], $_REQUEST['w_sl_write_ok'], $_REQUEST['w_sl_write_er'], $_REQUEST['w_sl_res_er']
             );
          
          

@@ -2,18 +2,18 @@
 // =========================================================================
 // Montagem da seleção das unidades organizacionais
 // -------------------------------------------------------------------------
-function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
   include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
   if (count($RS)<=100) {
     $RS = SortArray($RS,'nome','asc');
-    $atributo = str_replace('onBlur','onChange',$atributo);
+    $atributo = str_replace('onBlur','onChange',$atributo,$colspan=1);
     if (!isset($hint)) {
-       ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+       ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-       ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+       ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
@@ -25,7 +25,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
     ShowHTML('          </select>');
   } else {
-    $atributo = str_replace('onChange','onBlur',$atributo);
+    $atributo = str_replace('onChange','onBlur',$atributo,$colspan=1);
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
       $RS = db_getUorgData::getInstanceOf($dbms, $chave);
@@ -34,15 +34,15 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
 
     if (!isset($hint)) {
-      ShowHTML('      <td valign="top"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td colspan="'.$colspan.'"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     } else {
-      ShowHTML('      <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     }
 
-    ShowHTML('              <a class="ss" href="#" onClick="window.open(\''.$conRootSIW.'eo.php?par=BuscaUnidade&TP='.$TP.'&w_ano='.$w_ano.'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Unidade\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar a unidade."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
-    ShowHTML('              <a class="ss" href="#" onClick="document.Form.'.$campo.'_nm.value=\'\'; document.Form.'.$campo.'.value=\'\'; return false;" title="Clique aqui para apagar o valor deste campo."><img src="images/Folder/Recyfull.gif" border=0 align=top height=15 width=15></a>');
+    ShowHTML('              <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'eo.php?par=BuscaUnidade&TP='.$TP.'&w_ano='.$w_ano.'&w_cliente='.$w_cliente.'&chaveAux='.$chaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Unidade\',\'top=10,left=10,width=780,height=550,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\'); return false;" title="Clique aqui para selecionar a unidade."><img src="images/Folder/Explorer.gif" border=0 align=top height=15 width=15></a>');
+    ShowHTML('              <a class="ss" HREF="javascript:this.status.value;" onClick="document.Form.'.$campo.'_nm.value=\'\'; document.Form.'.$campo.'.value=\'\'; return false;" title="Clique aqui para apagar o valor deste campo."><img src="images/Folder/Recyfull.gif" border=0 align=top height=15 width=15></a>');
   }
 }
 ?>

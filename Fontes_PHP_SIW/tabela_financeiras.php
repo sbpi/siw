@@ -326,7 +326,7 @@ function CentroCusto() {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     if ($O=='I') {
-      ShowHTML('      <tr><td><a accesskey="H" class="ss" href="#" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.'CENTROCUSTO&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_cc='.$w_sq_cc.'\',\'heranca\',\'top=70,left=10,width=780,height=200,toolbar=no,status=no,scrollbars=no\');"><u>H</u>erdar dados</a>&nbsp;');
+      ShowHTML('      <tr><td><a accesskey="H" class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.'CENTROCUSTO&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_cc='.$w_sq_cc.'\',\'heranca\',\'top=70,left=10,width=780,height=200,toolbar=no,status=no,scrollbars=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td><b>');      
     } 
@@ -916,7 +916,7 @@ function Moeda() {
       Validate('w_codigo','Código','1','1','3','3','','0123456789');
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','3','5','1','');
-      Validate('w_simbolo','Símbolo','1','1','3','10','1','');
+      Validate('w_simbolo','Símbolo','1','1','1','10','1','');
       Validate('w_tipo','Tipo','1','1','1','1','1','');
       Validate('w_exclusao_ptax','Exclusão PTAX','DATA','','10','10','','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');

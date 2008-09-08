@@ -23,6 +23,8 @@ include_once('classes/sp/dml_CoPais.php');
 include_once('funcoes/selecaoPais.php');
 include_once('funcoes/selecaoEstado.php');
 include_once('funcoes/selecaoRegiao.php');
+include_once('funcoes/selecaoMoeda.php');
+include_once('funcoes/selecaoContinente.php');
 
 // =========================================================================
 //  /tabela_localizacao.php
@@ -786,6 +788,8 @@ function Pais() {
     $w_sigla        = $_REQUEST['sigla'];
     $w_ativo        = $_REQUEST['ativo'];
     $w_padrao       = $_REQUEST['padrao'];
+    $w_continente   = $_REQUEST['w_continente'];
+    $w_sq_moeda     = $_REQUEST['w_sq_moeda'];
   } elseif ($O=='L') {
     $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
     if ($p_ordena>'') { 
@@ -796,11 +800,13 @@ function Pais() {
   } elseif ($O=='A' || $O=='E') {
     $w_sq_pais = $_REQUEST['w_sq_pais'];
     $RS = db_getCountryData::getInstanceOf($dbms,$w_sq_pais);
-    $w_nome     = f($RS,'nome');
-    $w_ddi      = f($RS,'ddi');
-    $w_sigla    = f($RS,'sigla');
-    $w_ativo    = f($RS,'ativo');
-    $w_padrao   = f($RS,'padrao');
+    $w_nome       = f($RS,'nome');
+    $w_ddi        = f($RS,'ddi');
+    $w_sigla      = f($RS,'sigla');
+    $w_ativo      = f($RS,'ativo');
+    $w_padrao     = f($RS,'padrao');
+    $w_sq_moeda   = f($RS,'sq_moeda');
+    $w_continente = f($RS,'continente');
   } 
 
   Cabecalho();
@@ -864,6 +870,8 @@ function Pais() {
     ShowHTML('          <td><b>Nome</td>');
     ShowHTML('          <td><b>Sigla</td>');
     ShowHTML('          <td><b>DDI</td>');
+    ShowHTML('          <td><b>Moeda</td>');
+    ShowHTML('          <td><b>Continente</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Padrao</td>');
     if ($w_libera_edicao=='S') {
@@ -871,7 +879,7 @@ function Pais() {
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
@@ -881,6 +889,8 @@ function Pais() {
         ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ddi').'</td>');
+        ShowHTML('        <td align="center" title="'.f($row,'nm_moeda').'">'.f($row,'sb_moeda').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_continente').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativodesc').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padraodesc').'</td>');
         if ($w_libera_edicao=='S') {
@@ -909,6 +919,10 @@ function Pais() {
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="50" maxlength="50" value="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><U>D</U>DI:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_ddi" size="10" maxlength="10" value="'.$w_ddi.'"></td>');
     ShowHTML('      <tr><td valign="top"><b><U>S</U>igla:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="STI" type="text" name="w_sigla" size="3" maxlength="3" value="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr>');
+    selecaoContinente('<u>C</u>ontinente:','C','Selecione o continente na relação.',$w_continente,null,'w_continente',null,null);
+    ShowHTML('      <tr>');
+    selecaoMoeda('<u>U</u>nidade monetária:','U','Selecione a unidade monetária na relação.',$w_sq_moeda,null,'w_sq_moeda',null,null);
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
@@ -1047,7 +1061,8 @@ function Grava() {
         } else {
           dml_CoPais::getInstanceOf($dbms, $O,
               $_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],
-              $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla']);
+              $_REQUEST['w_padrao'],$_REQUEST['w_ddi'],$_REQUEST['w_sigla'],$_REQUEST['w_sq_moeda'],
+              $_REQUEST['w_continente']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
           ScriptClose();

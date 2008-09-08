@@ -197,7 +197,7 @@ function Gerencial() {
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
-      $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null);
+      $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null,null,null,null,null,null,null,null);
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
     } 

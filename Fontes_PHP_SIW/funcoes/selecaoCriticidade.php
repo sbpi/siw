@@ -3,12 +3,12 @@
 // =========================================================================
 // Montagem da seleção de tipo de criticidade
 // -------------------------------------------------------------------------
-function SelecaoCriticidade ($label,$accesskey,$hint,$chave,$chave_aux1,$chave_aux2,$campo,$restricao,$atributo) {
+function SelecaoCriticidade ($label,$accesskey,$hint,$chave,$chave_aux1,$chave_aux2,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---'); 
   if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>Baixa');     else ShowHTML('          <option value="1">Baixa');

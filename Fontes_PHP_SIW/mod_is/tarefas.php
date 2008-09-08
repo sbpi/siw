@@ -743,7 +743,7 @@ function Geral() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,$w_sugestao).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('              <td valign="top"><font size="1"><b>Fim previs<u>t</u>o:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
-    ShowHTML('              <td valign="top"><font size="1"><b><u>R</u>ecurso programado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o recurso programado para a execução da tarefa."></td>');
+    ShowHTML('              <td valign="top"><font size="1"><b><u>R</u>ecurso programado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o recurso programado para a execução da tarefa."></td>');
     SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta tarefa.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><font size="1"><b>Parc<u>e</u>rias externas:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Informar quais são os parceiros externos na execução da tarefa (campo opcional)."></td>');
@@ -887,7 +887,7 @@ function Limite() {
       ShowHTML('   <tr><td><b>Fase Atual:</b></font></td>');
       ShowHTML('       <td>'.Nvl(f($RS1,'nm_tramite'),'-').'</font></td></tr>');
     } 
-    ShowHTML('      <tr><td valign="top"><b><u>L</u>mite orçamentário:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>L</u>mite orçamentário:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
     ShowHTML('          <td valign="top">');
     ShowHTML('            <table width="99%" border="0">');
     ShowHTML('              <tr><td valign="top"><b>Limite da unidade:</b><br>'.number_format(Nvl($w_limite,0),2,',','.').'</td>');
@@ -1576,7 +1576,7 @@ function Concluir() {
   ShowHTML('              <td valign="top"><font size="1"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de início da execução da tarefa.(Usar formato dd/mm/aaaa)"></td>');
   ShowHTML('              <td valign="top"><font size="1"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término da execução da tarefa.(Usar formato dd/mm/aaaa)"></td>');
   if ($w_ppa=='N') {
-    ShowHTML('              <td valign="top"><font size="1"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução da tarefa."></td>');
+    ShowHTML('              <td valign="top"><font size="1"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução da tarefa."></td>');
   } else {
     ShowHTML('              <td valign="top"><font size="1">&nbsp;</td>');
     ShowHTML('<INPUT type="hidden" name="w_custo_real" value="'.$w_custo_real.'">');

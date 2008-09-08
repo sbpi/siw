@@ -414,9 +414,11 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            }
         } else {
            if (substr($this->query,0,8)=='FUNCTION') {
+             $log = false;
              $this->query = substr($this->query,8);
              $this->result = oci_parse($this->conHandle, "select $this->query ($par) from dual");
            } else { 
+             $log = true;
              $this->result = oci_parse($this->conHandle, "begin $this->query ($par); end;");
            }
 
@@ -430,7 +432,24 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
            if(is_resource($this->result)) {
              if (!oci_execute($this->result)) {
                $this->error = oci_error($this->result);
+               // Registra no servidor syslog
+               $w_resultado = enviaSyslog('GR','ERRO ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+               if ($w_resultado>'') {
+                 ScriptOpen('JavaScript');
+                 ShowHTML('  alert(\''.$w_resultado.'\');');
+                 ScriptClose();
+               }
                return false; 
+             } else {
+               if ($log) {
+                 // Registra no servidor syslog
+                 $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+                 if ($w_resultado>'') {
+                   ScriptOpen('JavaScript');
+                   ShowHTML('  alert(\''.$w_resultado.'\');');
+                   ScriptClose();
+                 }
+               }               
              }
            } else { 
              $this->num_rows = -1; 
@@ -590,24 +609,41 @@ class PgSqlDatabaseQueryProc extends PgSqlDatabaseQueries {
           }
         } else {
           if (substr($this->query,0,8)=='FUNCTION') {
+            $log = false;
             $par = "select ".substr($this->query,8)." (".substr($par, 1).");";
           } else {
+            $log = true;
             if ($par=="") {
-                  $par = "rollback; begin; select $this->query; commit;";
+              $par = "rollback; begin; select $this->query; commit;";
             } else {
-                  $par = "rollback; begin; select $this->query (".substr($par, 1)."); commit;";
+              $par = "rollback; begin; select $this->query (".substr($par, 1)."); commit;";
             }
           }
         }
-        //if (strpos($par,'GESTOR')!==false) { echo $par; exit; }
 
         if (!($this->result = pg_query($this->conHandle, $par))) {
            $this->error['message'] = pg_last_error($this->conHandle);
            $this->error['sqltext'] = $par;
            $this->num_rows = -1; 
+           // Registra no servidor syslog
+           $w_resultado = enviaSyslog('GR','ERRO ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+           if ($w_resultado>'') {
+             ScriptOpen('JavaScript');
+             ShowHTML('  alert(\''.$w_resultado.'\');');
+             ScriptClose();
+           }
            return false;
         } else { 
            $this->num_rows = pg_num_rows($this->result); 
+           // Registra no servidor syslog
+           if ($log) {
+             $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);
+             if ($w_resultado>'') {
+               ScriptOpen('JavaScript');
+               ShowHTML('  alert(\''.$w_resultado.'\');');
+               ScriptClose();
+             }
+           }
            return true;
         }
     }

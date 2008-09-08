@@ -3,16 +3,16 @@ include_once($w_dir_volta.'classes/sp/db_getSegList.php');
 // =========================================================================
 // Montagem da seleção de segmentos de mercado
 // -------------------------------------------------------------------------
-function selecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoSegMercado($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
 
   $RS = db_getSegList::getInstanceOf($dbms, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');

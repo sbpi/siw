@@ -1105,7 +1105,7 @@ function Experiencia() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($row,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_chave='.f($row,'sq_cvpesexp').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" onClick="return confirm(\'Confirma a exclusão do emprego?\');">EX</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="javascript:location.href=this.location.href;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($row,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'\',\'Cargos').'\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Clique aqui para inserir os cargos que ocupou nesse emprego.">Cargos</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'CARGOS&R='.$w_pagina.'CARGOS&O=L&w_sq_cvpessoa='.$w_sq_cvpessoa.'&w_sq_cvpesexp='.f($row,'sq_cvpesexp').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cargos&SG=CVCARGOS'.MontaFiltro('GET').'\',\'Cargos').'\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Clique aqui para inserir os cargos que ocupou nesse emprego.">Cargos</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1142,7 +1142,7 @@ function Experiencia() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY="n" '.$w_Disabled.' class="sti" type="text" name="w_entrada" size="10" maxlength="10" value="'.$w_entrada.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     ShowHTML('              <td valign="top"><b><U>S</U>aída:</b></br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_saida" size="10" maxlength="10" value="'.$w_saida.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
-    ShowHTML('              <td valign="top"><b><u>U</u>ltimo salário mensal:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_ultimo_salario" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_ultimo_salario.'" onKeyDown="FormataValor(this,14,2, event)"></td>');
+    ShowHTML('              <td valign="top"><b><u>U</u>ltimo salário mensal:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_ultimo_salario" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_ultimo_salario.'" style="text-align:right;" onKeyDown="FormataValor(this,14,2, event)"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Mo<u>t</u>ivo saída:</b><br><textarea '.$w_Disabled.' accesskey="t"  name="w_motivo_saida" class="sti" cols="80" rows="4">'.$w_motivo_saida.'</textarea></td>');
     ShowHTML('      <tr valign="top"><td colspan="2">');
@@ -1967,7 +1967,7 @@ function BuscaAreaConhecimento() {
       ShowHTML('        </tr>');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td><ul>');
       foreach ($RS as $row) {
-        ShowHTML('        <li><a class="SS" href="#" onClick="opener.document.Form.w_nm_area.value=\''.f($row,'nome').'('.f($row,'codigo_cnpq').')\'; opener.document.Form.w_sq_area_conhecimento.value=\''.f($row,'sq_area_conhecimento').'\'; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
+        ShowHTML('        <li><a class="SS" HREF="javascript:this.status.value;" onClick="opener.document.Form.w_nm_area.value=\''.f($row,'nome').'('.f($row,'codigo_cnpq').')\'; opener.document.Form.w_sq_area_conhecimento.value=\''.f($row,'sq_area_conhecimento').'\'; window.close(); opener.focus();">'.f($row,'nome').' ('.f($row,'codigo_cnpq').')</a>');
       } 
       ShowHTML('      </ul></tr>');
       ShowHTML('      </center>');

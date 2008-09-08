@@ -746,7 +746,7 @@ function Aferidor() {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Insira cada uma das pessoas que terão a responsabilidade de registrar a aferição deste indicador.</ul></b></font></td>');
     ShowHTML('<tr><td>');
     ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -888,12 +888,12 @@ function AferidorPerm() {
   ShowHTML('</TABLE><BR>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($w_gestor_sistema=='S' || $w_gestor_modulo='S') {
-    ShowHTML('<tr><td colspan=3><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('<tr><td colspan=3><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Você tem permissão para registrar e alterar quaisquer aferições de todos os indicadores.</ul></b></font></td>');
   } else {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Você só pode registrar e alterar aferições de indicadores cujos períodos de permissão abranjam a data de hoje.<li>As aferiçoes que você inserir ou alterar devem ter período de referência contido em um dos períodos listados abaixo.</ul></b></font></td>');
     ShowHTML('<tr><td>');
-    ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1148,7 +1148,7 @@ function Afericao() {
     MontaRadioNS('<b>É projeção</b>?',$w_previsao,'w_previsao');
     ShowHTML('          <td title="Informe a data em que foi feita a aferição."><b><u>D</u>ata de aferição:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_afericao" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_afericao.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_afericao',$w_dir_volta).'</td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td title="Informe o valor aferido."><b><u>V</u>alor aferido:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+    ShowHTML('          <td title="Informe o valor aferido."><b><u>V</u>alor aferido:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);"></td>');
     ShowHTML('          <td coslpan=2 title="Informe o período de referência."><b><u>P</u>eríodo de referência:</b><br>');
     ShowHTML('            <input '.$w_Disabled.' accesskey="P" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_inicio',$w_dir_volta));
     ShowHTML('            a <input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyUp="SaltaCampo(this.form.name,this,10,event);" onKeyDown="FormataData(this,event);">'.ExibeCalendario('Form','w_fim',$w_dir_volta).'</td>');
@@ -1308,7 +1308,7 @@ function Solic() {
     ShowHTML('  <li>Cadastre todos os indicadores relevantes para o projeto.');
     ShowHTML('  </ul></b></font></td>');    
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&w_indicador='.$w_indicador.'&&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-    if (nvl($w_plano,'')!='') ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    if (nvl($w_plano,'')!='') ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1327,7 +1327,7 @@ function Solic() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if(f($row,'qtd_meta')>0) {
-          ShowHTML('          <A class="hl" HREF="javascript:location.href=this.location.href;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="alert(\'Não é possível desvincular indicador ligado a meta.\')";>Desvincular</A>&nbsp');
         } else {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_plano='.f($row,'sq_plano').'&w_chave_aux='.f($row,'sq_solic_indicador').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Desvinculação do indicador." onClick="return(confirm(\'Confirma desvinculação?\'));">Desvincular</A>&nbsp');
         }
@@ -1640,7 +1640,7 @@ function Meta() {
        ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     }
     if ($w_edita=='N' || nvl($w_plano,'')!='') {
-       ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+       ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     }
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -1740,8 +1740,8 @@ function Meta() {
         }
       }
       ShowHTML('      <tr valign="top">');
-      ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
-      ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>R</u>esultado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,4,event);"></td>');
+      ShowHTML('        <td title="Informe o valor do indicador no início do período."><b><u>V</u>alor base: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);"></td>');
+      ShowHTML('        <td title="Informe o valor a ser alcançado."><b><u>R</u>esultado: (use 4 casas decimais)</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);"></td>');
       ShowHTML('      <tr valign="top">');
       MontaRadioNS('<b>É cumulativa</b>?',$w_cumulativa,'w_cumulativa');
       SelecaoPessoa('<u>R</u>esponsável:','N','Selecione o responsável pelo acompanhamento da meta.',$w_pessoa,$w_chave,'w_pessoa','INTERNOS');
@@ -1795,7 +1795,7 @@ function Meta() {
           }
           ShowHTML('      <td align="right" nowrap>'.formatNumber(f($row,'valor_previsto'),4).'</td>');
           if (nvl(f($row,'valor_real'),'')=='') $w_valor_real = ''; else $w_valor_real = formatNumber(f($row,'valor_real'),4);
-          ShowHTML('      <td nowrap><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor executado."></td>');
+          ShowHTML('      <td nowrap><input '.$w_Disabled.' accesskey="E" type="text" name="w_valor_real[]" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor executado."></td>');
           ShowHTML('    </tr>');
         }
         ShowHTML('    </table>');
@@ -1941,10 +1941,10 @@ function CronMeta() {
       ShowHTML('  </ul></b></font></td>');
       
       ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_plano='.$w_plano.'&w_chave_pai='.$w_chave_pai.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      ShowHTML('        <a accesskey="F" class="ss" href="#" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
       ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     } else {
-      ShowHTML('<tr><td><a accesskey="F" class="ss" href="#" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+      ShowHTML('<tr><td><a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
       ShowHTML('        <td align="right"><b>Registros existentes: '.count($RS));
     }
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -2035,8 +2035,8 @@ function CronMeta() {
     ShowHTML('      <tr>');
     ShowHTML('        <td><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início do período de referência do cronograma.">'.ExibeCalendario('Form','w_inicio').'</td>');
     ShowHTML('        <td><b><u>F</u>im:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Término do período de referência do cronograma.">'.ExibeCalendario('Form','w_fim').'</td>');
-    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" onKeyDown="FormataValor(this,18,4,event);" title="Resultado previsto para a meta no período."></td>');
-    if ($P1!=1) ShowHTML('        <td><b><u>A</u>lcançado:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,4,event);" title="Informe o resultado alcançado."></td>');
+    ShowHTML('        <td><b><u>P</u>revisto:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_valor_previsto" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_previsto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Resultado previsto para a meta no período."></td>');
+    if ($P1!=1) ShowHTML('        <td><b><u>A</u>lcançado:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_valor_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o resultado alcançado."></td>');
     else        ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.Nvl($w_valor_real,0).'">');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
