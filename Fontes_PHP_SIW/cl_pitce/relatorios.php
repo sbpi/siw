@@ -635,8 +635,8 @@ function Rel_Progresso() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if ($p_tipo=='PDF') RodapePDF();
-  if ($p_tipo!='WORD') Rodape();
+  if     ($w_tipo=='PDF')  RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 

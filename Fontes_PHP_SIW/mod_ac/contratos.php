@@ -3312,15 +3312,7 @@ function Visual() {
 
   // Recupera o logo do cliente a ser usado nas listagens
   if ($w_tipo=='PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('<BODY>');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    headerPDF('Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -3343,8 +3335,8 @@ function Visual() {
   ShowHTML(VisualAcordo($w_chave,'L',$w_usuario,'4',$w_embed));
   if ($w_embed!='WORD') {
     ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></font></center>');
-  } 
-  if ($w_tipo=='PDF') RodapePDF();
+  }
+  if     ($w_tipo=='PDF')      RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 
 

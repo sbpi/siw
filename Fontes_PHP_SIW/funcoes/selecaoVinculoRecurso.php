@@ -2,7 +2,7 @@
 // =========================================================================
 // Montagem da seleção de vinculações de recurso.
 // -------------------------------------------------------------------------
-function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   
   if (nvl($restricao,'')=='') {
@@ -15,9 +15,9 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
 
     // Se restrição não for informado, exibe seleção dos objetos aos quais o recurso pode ser ligado
     if (!isset($hint)) {
-      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
     ShowHTML('          <option value="">Não vinculado');
     if (nvl($l_chave,'')=='PESSOA') ShowHTML('          <option value="PESSOA" SELECTED>Vinculado a pessoa'); else ShowHTML('          <option value="PESSOA">Vinculado a pessoa');
@@ -30,11 +30,11 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
     switch ($l_chave) {
       case 'PESSOA': 
         include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
-        SelecaoPessoa('<u>P</u>essoa:','P','Selecione a pessoa vinculada ao recurso.',$chave,null,'w_ch_vinculo','USUARIOS',$atributo,$colspan=1); 
+        SelecaoPessoa('<u>P</u>essoa:','P','Selecione a pessoa vinculada ao recurso.',$chave,null,'w_ch_vinculo','USUARIOS',$atributo); 
         break;
       case 'VEÍCULO':
         include_once($w_dir_volta.'funcoes/selecaoVeiculo.php');
-        SelecaoVeiculo('<u>V</u>eículo:','V','Selecione o veículo',$w_cliente,$chave,null,'w_ch_vinculo',null,$atributo,$colspan=1);
+        SelecaoVeiculo('<u>V</u>eículo:','V','Selecione o veículo',$w_cliente,$chave,null,'w_ch_vinculo',null,$atributo);
         break;
       case 'EQUIPAMENTO DE TI': 
         break;

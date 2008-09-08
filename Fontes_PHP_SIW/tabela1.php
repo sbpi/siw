@@ -625,7 +625,7 @@ function Grava() {
         dml_putSiwCliConf::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
             $_REQUEST['w_maximo_tentativas'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],null,null,null,null,null,null,null,
-            'AUTENTICACAO',null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+            'AUTENTICACAO',null);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();

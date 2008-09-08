@@ -11,11 +11,11 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getTipoLancamento {
    function getInstanceOf($dbms, $p_chave, $p_cliente, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getTipoLancamento';
-     $params=array('p_chave'                     =>array(tvl($p_chave),                           B_INTEGER,        32),
-                   'p_cliente'                   =>array($p_cliente,                              B_INTEGER,        32),
-                   'p_restricao'                 =>array($p_restricao,                            B_VARCHAR,        30),
-                   'p_result'                    =>array(null,                                    B_CURSOR,         -1)
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETTIPOLANCAMENTO';
+     $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
+                   'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        15),
+                   'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0);

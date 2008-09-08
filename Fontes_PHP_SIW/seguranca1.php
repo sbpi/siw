@@ -392,12 +392,13 @@ function Tramite() {
       Validate('w_ordem','Ordem','1','1','1','2','','0123456789');
       Validate('w_sigla','Sigla','1','','2','2','1','1');
       Validate('w_descricao','Descrição','1','','5','500','1','1');
-      ShowHTML('if(theForm.w_chefia_imediata[3].checked && theForm.w_destinatario[1].checked) {');
-      ShowHTML('   alert(\'No envio para todos os usuários internos, o destinatário deve ser indicado obrigatoriamente!\')');
-      ShowHTML('   return (false);');
-      ShowHTML('}');
+      if ($w_acesso_geral=='N') {
+        ShowHTML('if(theForm.w_chefia_imediata[3].checked && theForm.w_destinatario[1].checked) {');
+        ShowHTML('   alert(\'No envio para todos os usuários internos, o destinatário deve ser indicado obrigatoriamente!\')');
+        ShowHTML('   return (false);');
+        ShowHTML('}');
+      }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-      
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');

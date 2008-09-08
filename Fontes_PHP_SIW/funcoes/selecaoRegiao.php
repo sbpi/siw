@@ -3,16 +3,16 @@ include_once($w_dir_volta.'classes/sp/db_getRegionList.php');
 // =========================================================================
 // Montagem da seleção da região
 // -------------------------------------------------------------------------
-function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
   extract($GLOBALS);
   if ($restricao=='INDICADOR') $RS = db_getRegionList::getInstanceOf($dbms, nvl($chaveAux,0), $restricao, $w_cliente);
   else $RS = db_getRegionList::getInstanceOf($dbms, $chaveAux, null, null);
   $RS = SortArray($RS,'ordem','asc');
 
   if (!isset($hint)) {
-     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
 
   ShowHTML('          <option value="">---');

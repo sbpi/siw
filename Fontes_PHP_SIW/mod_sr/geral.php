@@ -684,14 +684,7 @@ function Visual() {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   if ($w_tipo=='PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,f($RS_Menu,'nome'),$w_pag);
+    headerpdf(f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } elseif ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
@@ -711,7 +704,7 @@ function Visual() {
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualGeral($w_chave,'L',$w_usuario,$SG,$w_embed));
   if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
-  if ($w_tipo=='PDF') RodapePDF();
+  if ($w_tipo=='PDF')      RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 
 

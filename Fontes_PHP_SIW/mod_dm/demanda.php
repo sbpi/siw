@@ -1511,7 +1511,7 @@ function Areas() {
 // -------------------------------------------------------------------------
 function Visual() {
   extract($GLOBALS);
-  global $w_Disabled;
+  global $RS_Menu;
 
   $w_chave = $_REQUEST['w_chave'];
   $w_tipo  = strtoupper(trim($_REQUEST['w_tipo']));
@@ -1526,14 +1526,7 @@ function Visual() {
     BodyOpenClean('onLoad=\'this.focus()\'; ');
     $w_embed = 'WORD';
   }  elseif($w_tipo == 'PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    headerPdf('Visualização de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   } else {
     Cabecalho();
@@ -1545,19 +1538,24 @@ function Visual() {
     CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);  
   } 
   
-  if ($w_embed != 'WORD') {
-    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
-  } 
+  if ($w_embed!='WORD' && nvl($_REQUEST['w_volta'],'')!='') {
+    if ($_REQUEST['w_volta']=='fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
+    } else {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
+    }
+  }
   // Chama a rotina de visualização dos dados da demanda, na opção 'Listagem'
   ShowHTML(VisualDemanda($w_chave,'L',$w_usuario,$w_embed));
-  if ($w_embed != 'WORD') {
-    ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
-  }
-    if($w_embed == 'WORD'){
-        RodapePdf();
-    }else{
-    Rodape();
+  if ($w_embed!='WORD' && nvl($_REQUEST['w_volta'],'')!='') {
+    if ($_REQUEST['w_volta']=='fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
+    } else {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
     }
+  }
+  if ($w_tipo=='PDF') RodapePDF();
+  elseif ($w_tipo!='WORD') Rodape();
 } 
 
 // =========================================================================

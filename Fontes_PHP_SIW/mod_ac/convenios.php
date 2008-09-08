@@ -2978,15 +2978,7 @@ function Visual() {
     BodyOpenClean('onLoad=\'this.focus()\';');
     $w_embed = 'WORD';
   } elseif ($w_tipo=='PDF') {
-    ob_start();  
-    Cabecalho();
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('<BODY>');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),$w_pag);
+    headerpdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
   } else {
     Cabecalho();

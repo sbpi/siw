@@ -384,7 +384,7 @@ function TipoAcordo() {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     //if ($O=='I') {
-      ShowHTML('      <tr><td><a accesskey="H" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca'.'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
+      ShowHTML('      <tr><td><a accesskey="H" class="SS" href="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca'.'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000"></td></tr>');
    // } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
@@ -1356,7 +1356,7 @@ function EspecDespesa() {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     if ($O=='I') {
-      ShowHTML('      <tr><td><a accesskey="H" class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca'.'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
+      ShowHTML('      <tr><td><a accesskey="H" class="SS" href="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_dir.$w_pagina.$par.'&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_tipo_acordo='.$w_sq_tipo_acordo).'\',\'heranca'.'\',\'top=70,left=100,width=500,height=200,toolbar=no,status=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000"></td></tr>');
     } 
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);

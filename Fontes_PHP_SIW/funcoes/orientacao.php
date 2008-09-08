@@ -7,25 +7,17 @@ header("Cache-Control: no-cache, must-revalidate",false);
 <script src="js/funcoes.js"></script>
 <html>
 <head>
-<!-- <style>
+<style>
 .vertical{
     text-decoration: none;
 }
-.vertical:hover span{
+.vertical:hover{
     text-decoration: underline;
-    }
-</style>-->
+}
+</style>
+
 <style>
-body{ 
-    behavior:url("csshover.htc"); 
-}
-label{
-    text-decoration: none;
-}
-#rvert:hover span{
-    text-decoration: underline;
-    cursor:pointer;
-}
+
 </style>
 </head>
 <body>
@@ -35,9 +27,9 @@ label{
       <table align="center">
         <tr>
           <td>  
-            <label style="cursor:pointer" for="rvert" id="rvert" onclick="gerar('PORTRAIT');" onmouseover="document.getElementById('vert').style.display = 'block';document.getElementById('hori').style.display = 'none';" value="retrato" >Retrato</label>
+            <label class="vertical" for="rvert" id="rvert" onclick="gerar('PORTRAIT');" onmouseover="document.getElementById('vert').style.display = 'block';document.getElementById('hori').style.display = 'none';" value="retrato" >Retrato</label>
             <p>
-            <label style="cursor:pointer" for="rhori" id="rhori" onclick="gerar('LANDSCAPE');" onmouseover="document.getElementById('hori').style.display = 'block';document.getElementById('vert').style.display = 'none';" value="paisagem" >Paisagem</label>
+            <label class="vertical" for="rhori" id="rhori" onclick="gerar('LANDSCAPE');" onmouseover="document.getElementById('hori').style.display = 'block';document.getElementById('vert').style.display = 'none';" value="paisagem" >Paisagem</label>
           </td>  
           <td>
             <div style="padding-left:60px">

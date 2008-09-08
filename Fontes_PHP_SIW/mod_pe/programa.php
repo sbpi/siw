@@ -1244,15 +1244,8 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
   }
   if ($w_o!='V') {
     if ($w_tipo=='PDF') {
-      ob_start();  
-      Cabecalho();
-      ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-      ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-      ShowHTML('</HEAD>');
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      if ($P1==1 || $P1==2) CabecalhoWord($w_cliente,'Ficha Resumida de '.f($RS_Menu,'nome'),0);
-      else                  CabecalhoWord($w_cliente,'Ficha de '.f($RS_Menu,'nome'),0);
+      if ($P1==1 || $P1==2) headerpdf('Ficha Resumida de '.f($RS_Menu,'nome'),0);
+      else                  headerpdf('Ficha de '.f($RS_Menu,'nome'),0);
       $w_embed = 'WORD';
     } elseif ($w_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
@@ -1282,7 +1275,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
   // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
   ShowHTML(VisualPrograma($w_chave,$w_o,$w_usuario,$w_p1,$w_embed,$w_identificacao,$w_responsavel,$w_qualitativa,$w_orcamentaria,$w_indicador,$w_recurso,$w_interessado,$w_anexo,$w_meta,$w_ocorrencia,$w_consulta));
   if ($w_embed!='WORD') ShowHTML('<tr><td colspan="2" ><div align="center"><font size="1"><b>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></div></td></tr>');
-  if ($w_tipo=='PDF') RodapePDF();
+  if     ($w_tipo=='PDF')      RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();
 } 
 // =========================================================================

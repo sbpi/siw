@@ -1091,7 +1091,6 @@ function Afericao() {
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'nm_base_geografica').'</td>');
         $w_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
-        //if (nvl(f($row,'referencia_inicio'),'')=='') print_r($row);
         ShowHTML('        <td align="center">');
         if ($w_array['TIPO']=='DIA') {
           ShowHTML('        '.date(d.'/'.m.'/'.y,$w_array['VALOR']));

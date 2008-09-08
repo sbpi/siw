@@ -155,12 +155,13 @@ function Usuarios() {
 
   if ($O=='L') {
     $RS = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_localizacao,$p_lotacao,$p_endereco,$p_gestor_seguranca,$p_gestor_sistema,$p_nome,$p_modulo,$p_uf,$p_interno,$p_ativo,$p_contratado,$p_visao_especial,$p_dirigente);
-    if ($p_ordena>'') {
+    if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1),'nome_resumido_ind','asc');
     } else {
       $RS = SortArray($RS,'nome_resumido_ind','asc');
     }
-  }
+  } 
+
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -226,6 +227,7 @@ function Usuarios() {
         } else { 
           ShowHTML('        <td align="center" nowrap><font color="#BC3131" size="1"><b>'.f($row,'username').'</b>');
         } 
+
         ShowHTML('        <td align="left" title="'.f($row,'nome').'">'.f($row,'nome_resumido').'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_sexo').'">'.nvl(f($row,'sexo'),'-').'</td>');
         ShowHTML('        <td align="center">'.f($row,'lotacao').'&nbsp;('.f($row,'localizacao').')</td>');
@@ -295,7 +297,7 @@ function Usuarios() {
     ShowHTML('      <tr><td><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
     ShowHTML('      <tr>');
     $RS1 = db_getCustomerData::getInstanceOf($dbms, $w_cliente);
-    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'p_uf',null,null);
+    selecaoEstado('E<u>s</u>tado:','S',null,$p_uf,f($RS1,'sq_pais'),null,'N','p_uf',null,null);
     ShowHTML('      <tr><td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Usuários:</b><br>');
@@ -768,7 +770,7 @@ function Menu() {
 
         ShowHTML('<A HREF="#'.f($row,'sq_menu').'"></A>');
         $w_Imagem='images/Folder/FolderClose.gif';
-        if (f($row,'tramite')=='S' && (nvl(f($row,'sq_unid_executora'),'')=='' || f($row,'qtd_tramite')==0 || f($row,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif';
+        if (f($row,'tramite')=='S' && (nvl(f($row,'sq_unid_executora'),'')=='' || f($row,'qtd_tramite')==0 || f($row,'qtd_resp')==0)) $w_Imagem=$conRootSIW.'images/ballc.gif'; 
         ShowHTML('<span><div align="left"><img src="'.$w_Imagem.'" border=0 align="center"> '.f($row,'nome').'');
         if (f($row,'ativo')=='S') $w_classe='hl'; else $w_classe='lh';
         ShowHTML('       <A class="'.$w_classe.'" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_menu='.f($row,'sq_menu').'&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=MENU'.MontaFiltro('GET').'" title="Altera as informações desta opção do menu">AL</A>&nbsp');

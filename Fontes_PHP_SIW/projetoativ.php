@@ -1551,15 +1551,7 @@ function Visual() {
     ShowHTML('</HEAD>');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
   } elseif($w_tipo == 'PDF'){
-    ob_start();
-    Cabecalho();    
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
-    ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    ShowHTML('</HEAD>');
-    ShowHTML('<BODY>');
-    CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
+    headerPdf('Visualização de '.f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   }else {
     Cabecalho();
@@ -1579,11 +1571,8 @@ function Visual() {
   if ($w_embed != 'WORD') {
     ShowHTML('<center><B><FONT SIZE=1>Clique <a class="HL" href="javascript:history.go(-1);">aqui</a> para voltar à tela anterior</b></center>');
   }
-  if($w_tipo == 'PDF'){
-    RodapePdf();  
-  }else{
-    Rodape();
-  }
+  if($w_tipo=='PDF') RodapePdf();  
+  else Rodape();
 } 
 
 // =========================================================================
