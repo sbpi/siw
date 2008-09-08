@@ -2358,7 +2358,7 @@ SP_MSSQL2000/SIW/SP_PutProjetoAreas.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoConc.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEnvio.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEtapa.sql -text
-SP_MSSQL2000/SIW/SP_PutProjetoGeral.sql -text
+SP_MSSQL2000/SIW/SP_PutProjetoGeral.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutProjetoInter.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoRec.sql -text
 SP_MSSQL2000/SIW/SP_PutSIWCliConf.sql -text
