@@ -1024,7 +1024,7 @@ function Geral() {
         ShowHTML('              <td valign="top"><b>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyUp="SaltaCampo(this.form.name,this,17,event);" onKeyDown="FormataDataHora(this,event);" title="Data/hora prevista para que a execução esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');
         break;
     } 
-    ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução, ou zero se não for o caso."></td>');
+    ShowHTML('              <td valign="top"><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução, ou zero se não for o caso."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação."></td>');
     ShowHTML('      <tr><td valign="top"><b>Nome do proponent<u>e</u> externo:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Proponente externo. Preencha apenas se houver."></td>');
@@ -1946,7 +1946,7 @@ function Concluir() {
       ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim_real.'" onKeyUp="SaltaCampo(this.form.name,this,17,event);" onKeyDown="FormataDataHora(this,event);" title="Informe a data real de término da execução."></td>');
       break;
   } 
-  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o custo real da execução, ou zero se não for o caso."></td>');
+  ShowHTML('              <td valign="top"><b>Custo <u>r</u>eal:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o custo real da execução, ou zero se não for o caso."></td>');
   ShowHTML('          </table>');
   ShowHTML('      <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva os resultados obtidos, em relação aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
@@ -2274,7 +2274,7 @@ function BuscaAtividade() {
           if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
           ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
           ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
-          ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
+          ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.$w_titulo.'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
           ShowHTML('      </tr>');
         } 
       } 
@@ -2309,7 +2309,7 @@ function BuscaAtividade() {
         if (strlen(Nvl(f($row,'assunto'),'-'))>50) $w_titulo = substr(Nvl(f($row,'assunto'),'-'),0,50).'...'; else $w_titulo = Nvl(f($row,'assunto'),'-');
         ShowHTML('        <td title="'.htmlspecialchars(f($row,'assunto')).'">'.htmlspecialchars($w_titulo).'</td>');
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>');
-        ShowHTML('        <td><a class="ss" href="#" onClick="javascript:volta(\''.str_replace("\r\n"," ",$w_titulo).'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
+        ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.str_replace("\r\n"," ",$w_titulo).'\', \''.f($row,'sq_siw_solicitacao').'\', '.f($row,'sq_siw_solicitacao').');">Selecionar</a>');
         ShowHTML('      </tr>');
       } 
     } 

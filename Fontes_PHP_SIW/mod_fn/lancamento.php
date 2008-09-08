@@ -869,7 +869,7 @@ function Geral() {
     if (substr($SG,0,3)=='FNR')     SelecaoFormaPagamento('<u>F</u>orma de recebimento:','F','Selecione na lista a forma de recebimento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     elseif (substr($SG,0,3)=='FND') SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     if ($w_qtd_nota==0) {
-      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     } else {
       ShowHTML('          <td>Valor:<br><b>'.$w_valor.'</b></td>');
       ShowHTML('          <INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
@@ -1614,7 +1614,7 @@ function Documentos() {
     if (Nvl($w_tipo,'-')=='NF') {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
-    ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+    ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     MontaRadioNS('<b>Patrimônio?</b>',$w_patrimonio,'w_patrimonio');
     ShowHTML('          </table>');
     if ($w_incid_tributo=='N' && $w_incid_retencao=='N' && substr(f($RS_Menu,'sigla'),2,1)=='D') {
@@ -1901,7 +1901,7 @@ function RubricaDoc() {
     if (Nvl($w_tipo,'-')=='NF') {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
-    ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+    ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('          <tr><td colspan="5" valign="top" align="center">&nbsp;');    
     ShowHTML('          <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Rubricas</td>');    
     ShowHTML('<tr><td align="center" colspan=5>');
@@ -1941,12 +1941,12 @@ function RubricaDoc() {
         ShowHTML('        <td align="left">'.f($row,'nm_cc').'</td>');
         if((f($RS2,'sq_rubrica_origem')==f($row,'sq_projeto_rubrica')) || (f($RS1,'tipo_rubrica')==1)) {
           if(f($RS1,'tipo_rubrica')==2) SelecaoRubrica(null,null, 'Selecione a rubrica de destino.', f($RS2,'sq_rubrica_destino'),f($RS1,'sq_projeto'),f($row,'sq_projeto_rubrica'),'w_sq_rubrica_destino[]',null,null);                  
-          ShowHTML('        <td><input type="text" name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS2,'valor'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor."></td>');
+          ShowHTML('        <td><input type="text" name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS2,'valor'),0),2,',','.').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor."></td>');
         } else {
           $w_Disabled = 'disabled';
           if(f($RS1,'tipo_rubrica')==2) SelecaoRubrica(null,null, 'Selecione a rubrica de destino.', f($RS2,'sq_rubrica_destino'),f($RS1,'sq_projeto'),f($row,'sq_projeto_rubrica'),'w_sq_rubrica_destino[]',null,null);        
           $w_Disabled = 'enabled';        
-          ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS2,'valor'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor."></td>');
+          ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($RS2,'valor'),0),2,',','.').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor."></td>');
         }
         ShowHTML('      </tr>');
       } 
@@ -2138,8 +2138,8 @@ function Itens() {
     }
     ShowHTML('      <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Escreva um texto de descrição para este item do documento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>O</u>rdem:<br><input accesskey="Q" type="text" name="w_ordem" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.$w_ordem.'" '.$w_Disabled.'"></td>');
-    ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_unitario" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_unitario.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário do item."></td>');
+    ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_unitario" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_unitario.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário do item."></td>');
     ShowHTML('      <tr><td colspan=3 align="center"><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
@@ -2267,19 +2267,19 @@ function Notas() {
     ShowHTML('        <td align="right">'.FormatNumber(Nvl(f($row,'parcela_exc'),0)).'</td>');
     ShowHTML('        <td align="right">'.FormatNumber(Nvl(f($row,'parcela_rea'),0)).'</td>');
     if (f($row,'abrange_inicial')=='S') {
-      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_inicial[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_inicial'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_inicial[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_inicial'),0),2).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_inicial[]" value="'.formatNumber(0,2).'">');
       ShowHTML('          <td>&nbsp;</td>');
     }
     if (f($row,'abrange_acrescimo')=='S') {
-      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_excedente[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_excedente'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_excedente[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_excedente'),0),2).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_excedente[]" value="'.formatNumber(0,2).'">');
       ShowHTML('          <td>&nbsp;</td>');
     }
     if (f($row,'abrange_reajuste')=='S') {
-      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_reajuste[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_reajuste'),0),2).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
+      ShowHTML('                     <td align="center"><input '.$w_Disabled.' type="text" name="w_reajuste[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.FormatNumber(Nvl(f($row,'valor_reajuste'),0),2).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do documento correspondente ao valor original da parcela."></td>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_reajuste[]" value="'.formatNumber(0,2).'">');
       ShowHTML('          <td>&nbsp;</td>');
@@ -2582,7 +2582,7 @@ function BuscaParcela() {
           }
           ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>');
           SelecaoTipoLancamento('','T', 'Selecione na lista o tipo de lançamento adequado.', f($row,'sq_tipo_lancamento'), $w_cliente, 'w_sq_tipo_lancamento[]', $SG, 'disabled');
-          ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($row,'valor'),0),2,',','.').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
+          ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($row,'valor'),0),2,',','.').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
         }
         ShowHTML('      </tr>');
       } 
@@ -3039,7 +3039,7 @@ function Concluir() {
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr>');
     ShowHTML('              <td><b><u>D</u>ata da liquidação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de liquidação deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
-    ShowHTML('              <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
+    ShowHTML('              <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
     if ($w_sg_forma_pagamento=='DEPOSITO')
       ShowHTML('              <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
     ShowHTML('          </table>');

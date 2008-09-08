@@ -69,7 +69,7 @@
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr valign="top">');
   ShowHTML('              <td valign="top"><b>Da<u>t</u>a de conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de término da solicitação."></td>');
-  ShowHTML('              <td valign="top"><b>Valo<u>r</u> (se houver):</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($w_valor,'0,00').'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o gasto com o atendimento da solicitação, ou zero se não for o caso."></td>');
+  ShowHTML('              <td valign="top"><b>Valo<u>r</u> (se houver):</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($w_valor,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o gasto com o atendimento da solicitação, ou zero se não for o caso."></td>');
   ShowHTML('          <tr valign="top">');
   SelecaoPessoa('Respo<u>n</u>sável pelo atendimento:','N','Selecione o responsável pelo atendimento na relação.',$w_executor,null,'w_executor','USUARIOS');
   ShowHTML('          </table>');

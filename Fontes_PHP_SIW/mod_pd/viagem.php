@@ -2058,7 +2058,7 @@ function DadosFinanceiros() {
   } else {
     MontaRadioNS('<b>Auxílio-Alimentação?</b>',$w_aux_alimentacao,'w_aux_alimentacao');
   } 
-  ShowHTML('            <td><b>Valor R$: </b><input type="text" name="w_vlr_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_alimentacao'),0)).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-alimentação."></td>');
+  ShowHTML('            <td><b>Valor R$: </b><input type="text" name="w_vlr_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_alimentacao'),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-alimentação."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr valign="top">');
   if (Nvl(f($RS,'valor_transporte'),0)>0) {
@@ -2066,7 +2066,7 @@ function DadosFinanceiros() {
   } else {
     MontaRadioNS('<b>Auxílio-Transporte?</b>',$w_aux_transporte,'w_aux_transporte');
   } 
-  ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_transporte'),0)).'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
+  ShowHTML('        <td><b>Valor R$: </b><input type="text" name="w_vlr_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(Nvl(f($RS,'valor_transporte'),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do auxílio-transporte."></td>');
   ShowHTML('        </tr>');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>');
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
@@ -2109,23 +2109,23 @@ function DadosFinanceiros() {
       ShowHTML('       <td>'.$w_vetor_trechos[$i][3].'</td>');
       ShowHTML('       <td align="center">'.$w_vetor_trechos[$i][4].'</td>');
       ShowHTML('       <td align="center">'.$w_vetor_trechos[$i][5].'</td>');
-      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="'.$w_vetor_trechos[$i][6].'" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este destino."></td>');
-      ShowHTML('       <td align="right"><input type="text" name="w_vlr_diarias[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vetor_trechos[$i][7].'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário das diárias para este destino."></td>');
+      ShowHTML('       <td align="right"><input type="text" name="w_qtd_diarias[]" class="sti" SIZE="10" MAXLENGTH="5" VALUE="'.$w_vetor_trechos[$i][6].'" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este destino."></td>');
+      ShowHTML('       <td align="right"><input type="text" name="w_vlr_diarias[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vetor_trechos[$i][7].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário das diárias para este destino."></td>');
       ShowHTML('     </tr>');
       $i += 1;
     } 
     ShowHTML('        <tr><td valign="top" colspan="5" align="center" bgcolor="'.$conTrBgColor.'"><b>Outros valores</td>');
     ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'">');
     ShowHTML('          <td align="right" colspan="4"><b>adicional:</b></td>');
-    ShowHTML('          <td align="right"><input type="text" name="w_adicional" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_adicional.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor adicional."></td>');
+    ShowHTML('          <td align="right"><input type="text" name="w_adicional" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_adicional.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor adicional."></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
     ShowHTML('          <td align="right" colspan="4"><b>desconto auxílio-alimentação:</b></td>');
-    ShowHTML('          <td align="right"><input type="text" name="w_desc_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_desc_alimentacao.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o desconto do auxílio-alimentação."></td>');
+    ShowHTML('          <td align="right"><input type="text" name="w_desc_alimentacao" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_desc_alimentacao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o desconto do auxílio-alimentação."></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'">');
     ShowHTML('          <td align="right" colspan="4"><b>desconto auxílio-transporte:</b></td>');
-    ShowHTML('          <td align="right"><input type="text" name="w_desc_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_desc_transporte.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o desconto do auxílio-transporte."></td>');
+    ShowHTML('          <td align="right"><input type="text" name="w_desc_transporte" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_desc_transporte.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o desconto do auxílio-transporte."></td>');
     ShowHTML('        </tr>');
     ShowHTML('        </table></td></tr>');
   } 
@@ -3720,7 +3720,7 @@ function InformarPassagens() {
   } 
   ShowHTML('        <tr><td colspan="2"><b>Nº do PTA/Ticket: </b><input type="text" name="w_pta" class="sti" SIZE="100" MAXLENGTH="100" VALUE="'.$w_pta.'" title="Informe o número do bilhete(PTA/eTicket)."></td>');
   ShowHTML('        <tr><td><b>Data da emissão: </b><input type="text" name="w_emissao_bilhete" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_emissao_bilhete.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-  ShowHTML('            <td><b>Valor das passagens R$: </b><input type="text" name="w_valor_passagem" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_passagem.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total das passagens."></td>');
+  ShowHTML('            <td><b>Valor das passagens R$: </b><input type="text" name="w_valor_passagem" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_passagem.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total das passagens."></td>');
   ShowHTML('        <tr><td align="center" colspan="2">');
   ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
   ShowHTML('            <input class="STB" type="button" onClick="window.close();" name="Botao" value="Fechar">');

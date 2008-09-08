@@ -803,7 +803,7 @@ function Limites() {
       ShowHTML('          <td><b>Ano:<br>'.$w_ano.'</b></td>');
       ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
     } 
-    ShowHTML('          <td><b><u>L</u>imite:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite orçamentário para a unidade selecionada."></td>');
+    ShowHTML('          <td><b><u>L</u>imite:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite orçamentário para a unidade selecionada."></td>');
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2"><hr>');
     if ($O=='E') {

@@ -76,7 +76,7 @@ function SortArray() {
 // -------------------------------------------------------------------------
 function exibeCalendario ($form, $campo) {
   extract($GLOBALS);
-  return '   <a class="ss" href="#" onClick="window.open(\''.$conRootSIW.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
 }
 
 // =========================================================================
@@ -408,7 +408,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   if (($p_tipo!='WORD' && $w_tipo!='WORD')) {
     ShowHTML('<TR><TD ALIGN="RIGHT">');
     if(nvl($l_chave,'')>'') {
-      if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
+      if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
     $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
@@ -752,7 +752,7 @@ function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -779,7 +779,7 @@ function ExibeFornecedor($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_eo/fornecedor.php?par=Visual&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Fornecedor\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste fornecedor!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_eo/fornecedor.php?par=Visual&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Fornecedor\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste fornecedor!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -793,9 +793,9 @@ function ExibePlano($p_dir,$p_cliente,$p_plano,$p_tp,$p_nome,$p_pitce=null) {
     $l_string='---';
   } else {
     if (nvl($p_pitce,'')=='') {
-      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pe/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+      $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pe/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
     } else {
-      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
+      $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/tabelas.php?par=TELAPLANO&w_cliente='.$p_cliente.'&w_sq_plano='.$p_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'plano\',\'width=780,height=500,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste plano!">'.$p_nome.'</A>';
     }
   }
   return $l_string;
@@ -809,7 +809,7 @@ function ExibeUnidadePacote($O,$p_cliente,$p_chave,$p_chave_aux,$p_unidade,$p_tp
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'projeto.php?par=InteressadoPacote&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_sq_unidade='.$p_unidade.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Interessados\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'projeto.php?par=InteressadoPacote&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_sq_unidade='.$p_unidade.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Interessados\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -824,7 +824,7 @@ function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
     if (Nvl($p_nome,'')=='') {
       $l_string='---';
     } else {
-      $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=TELAINDICADOR&w_cliente='.$p_cliente.'&w_sigla='.$p_sigla.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Indicador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste de indicador!">'.$p_nome.'</A>';
+      $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=TELAINDICADOR&w_cliente='.$p_cliente.'&w_sigla='.$p_sigla.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Indicador\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste de indicador!">'.$p_nome.'</A>';
     }
   } else {
     $l_string=$p_sigla;
@@ -840,7 +840,7 @@ function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
   if (Nvl($p_unidade,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
   }
   return $l_string;
 }
@@ -853,7 +853,7 @@ function ExibeRecurso($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/recurso.php?par=TELARECURSO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -866,7 +866,7 @@ function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic) {
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste material ou serviço!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_cl/catalogo.php?par=TELAMATERIAL&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'Telarecurso\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste material ou serviço!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -879,7 +879,7 @@ function ExibeRestricao($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp
   if (Nvl($p_tipo,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pr/restricao.php?par=VisualRestricao&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&O='.$O.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualRestriao\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta restricao!">'.$p_tipo.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pr/restricao.php?par=VisualRestricao&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&O='.$O.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualRestriao\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta restricao!">'.$p_tipo.'</A>';
   }
   return $l_string;
 }
@@ -890,9 +890,9 @@ function ExibeRestricao($O,$p_dir,$p_cliente,$p_tipo,$p_chave,$p_chave_aux,$p_tp
 function ExibeMeta($O,$p_dir,$p_cliente,$p_nome,$p_chave,$p_chave_aux,$p_tp,$p_solic,$p_plano=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_plano,'')!='') {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave=&w_chave_aux='.$p_chave_aux.'&w_plano='.$p_plano.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave=&w_chave_aux='.$p_chave_aux.'&w_plano='.$p_plano.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&w_solic='.$p_solic.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=VisualMeta&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_chave_aux='.$p_chave_aux.'&w_solic='.$p_solic.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'VisualMeta\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta meta!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -905,7 +905,7 @@ function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
   if (Nvl($p_dados,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L'.$p_dados.'&P1='.$l_p1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'TelaIndicador\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste indicador!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pe/indicador.php?par=FramesAfericao&R='.$w_pagina.$par.'&O=L'.$p_dados.'&P1='.$l_p1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\',\'TelaIndicador\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste indicador!">'.$p_nome.'</A>';
   }
   return $l_string;
 }
@@ -925,7 +925,7 @@ function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg)
     if($w_embed == 'WORD'){
         $l_string .= $p_etapa;
     }else{
-        $l_string .= '<A class="hl" HREF="#" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
+        $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.(($w_dir=='mod_pr/') ? '' : $w_dir).'projeto.php?par=AtualizaEtapa&w_chave='.$p_chave.'&O='.$O.'&w_chave_aux='.$p_chave_aux.'&w_tipo='.$p_tipo.'&P1='.$p_P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.$p_sg.'\',\'Etapa\',\'width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados!">'.$p_etapa.'</A>';
     }
   }
   return $l_string;
@@ -2838,7 +2838,7 @@ function Estrutura_Menu() {
        $l_titulo=f(row,'nome');
        if (f(row,'filho')>0) {
          $l_cont=$l_cont+1;
-         ShowHTML('            <LI class=menubar>::<A class=starter href="#"> '.f(row,'nome').'</A>');
+         ShowHTML('            <LI class=menubar>::<A class=starter HREF="javascript:this.status.value;"> '.f(row,'nome').'</A>');
          ShowHTML('            <UL class=menu id=menu'.$l_cont.'>');
          $l_cont1=0;
          $l_RS1 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row,'sq_menu'));
@@ -2846,7 +2846,7 @@ function Estrutura_Menu() {
            $l_titulo=$l_titulo.' - '.f(row1,'nome');
            if (f(row1,'filho')>0) {
               $l_cont1=$l_cont1+1;
-              ShowHTML('              <LI><A href="#"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
+              ShowHTML('              <LI><A HREF="javascript:this.status.value;"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row1,'nome').'</A> ');
               ShowHTML('              <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'>');
               $l_cont2=0;
               $l_RS2 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row1,'sq_menu'));
@@ -2854,7 +2854,7 @@ function Estrutura_Menu() {
                 $l_titulo=$l_titulo.' - '.f(row2,'nome');
                 if (f(row2,'filho')>0) {
                    $l_cont2=$l_cont2+1;
-                   ShowHTML('                <LI><A href="#"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
+                   ShowHTML('                <LI><A HREF="javascript:this.status.value;"><IMG height=12 alt=">" src="'.$conFileVirtual.$w_cliente.'/img/arrows.gif" width=8> '.f(row2,'nome').'</A> ');
                    ShowHTML('                <UL class=menu id=menu'.$l_cont.'_'.$l_cont1.'_'.$l_cont2.'>');
                    $l_RS3 = db_getLinkDataUser::getInstanceOf($dbms,$_SESSION['P_CLIENTE'], $_SESSION['SQ_PESSOA'], f(row2,'sq_menu'));
                    foreach($l_RS3 as $row3) {

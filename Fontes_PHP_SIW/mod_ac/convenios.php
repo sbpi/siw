@@ -1032,7 +1032,7 @@ function Geral() {
     if ($w_prazo_indeterm=='N') {
       ShowHTML('              <td><b><u>F</u>im vigência:</b><br><input '.$w_Disabled.' accesskey="F" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     } 
-    ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total real ou estimado."></td>');
+    ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total real ou estimado."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     SelecaoPessoa('Respo<u>n</u>sável monitoramento:','N','Selecione o responsável pelo monitoramento.',$w_solicitante,null,'w_solicitante','USUARIOS');
@@ -2622,20 +2622,20 @@ function Parcelas() {
     ShowHTML('          <td><b>Número de <u>o</u>rdem da parcela:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_ordem" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'" title="Informe o número de ordem da parcela, que indica a seqüência de pagamento."></td>');
     ShowHTML('          <td><b><u>D</u>ata de vencimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de vencimento da parcela.">'.ExibeCalendario('Form','w_data').'</td>');
     if(nvl($w_sq_acordo_aditivo,'')=='') {
-      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
+      ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
     } else {
       if(f($RS_Adit,'prorrogacao')=='S') {
-        ShowHTML('          <td><b><u>V</u>alor inicial:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor inicial da parcela."></td>');
+        ShowHTML('          <td><b><u>V</u>alor inicial:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_inicial" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_inicial.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor inicial da parcela."></td>');
       } else {
         ShowHTML('<INPUT type="hidden" name="w_valor_inicial" value="'.$w_valor_inicial.'">');
       }
       if(f($RS_Adit,'acrescimo')=='S'||f($RS_Adit,'supressao')=='S') {
-        ShowHTML('          <td><b><u>V</u>alor excedente:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_excedente" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_excedente.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor de excedente da parcela."></td>');
+        ShowHTML('          <td><b><u>V</u>alor excedente:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_excedente" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_excedente.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor de excedente da parcela."></td>');
       } else {
         ShowHTML('<INPUT type="hidden" name="w_valor_excedente" value="'.$w_valor_excedente.'">');
       }
       if(f($RS_Adit,'revisao')=='S') {
-        ShowHTML('          <td><b><u>V</u>alor reajuste:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_reajuste" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_reajuste.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor de reajuste da parcela."></td>');
+        ShowHTML('          <td><b><u>V</u>alor reajuste:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_reajuste" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_reajuste.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor de reajuste da parcela."></td>');
       } else {
         ShowHTML('<INPUT type="hidden" name="w_valor_reajuste" value="'.$w_valor_reajuste.'">');
       }
@@ -2698,7 +2698,7 @@ function Parcelas() {
     if(nvl($w_sq_acordo_aditivo,'')=='') {
       ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_valor_parcela" value="P" onClick="trataValor();"><td>A primeira parcela tem valor diferente das demais</td>');
       ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_valor_parcela" value="U" onClick="trataValor();"><td>A última parcela tem valor diferente das demais</td>');
-      ShowHTML('              <tr valign="top"><td colspan=2><td><b>Valor da parcela diferente das demais:</b> <input '.$w_Disabled.' type="text" name="w_valor_diferente" class="sti" SIZE="18" MAXLENGTH="18" onKeyDown="FormataValor(this, 18, 2, event); trataValorDiferente();" VALUE="" title="Informe o valor da primeira parcela. As demais terão valores iguais."></td>');
+      ShowHTML('              <tr valign="top"><td colspan=2><td><b>Valor da parcela diferente das demais:</b> <input '.$w_Disabled.' type="text" name="w_valor_diferente" class="sti" SIZE="18" MAXLENGTH="18" style="text-align:right;" onKeyDown="FormataValor(this, 18, 2, event); trataValorDiferente();" VALUE="" title="Informe o valor da primeira parcela. As demais terão valores iguais."></td>');
     }
     ShowHTML('              </table>');
     ShowHTML('          </table>');
@@ -3405,7 +3405,7 @@ function Concluir() {
     ShowHTML('          <tr valign="top">');
     ShowHTML('              <td><b><u>I</u>nício da vigência:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe o novo início da vigência."></td>');
     ShowHTML('              <td><b><u>T</u>érmino da vigência:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe o novo termino da vigência."></td>');
-    ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event);" TITLE="Informe o novo valor total real ou estimado."></td>');
+    ShowHTML('              <td><b>Valo<u>r</u>:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" TITLE="Informe o novo valor total real ou estimado."></td>');
     ShowHTML('          </table>');
   } 
 

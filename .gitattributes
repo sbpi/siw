@@ -1301,6 +1301,7 @@ Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_Medida_PPA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_Medida_SIG.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_PPA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_SIG.php -text
+Fontes_PHP_SIW/classes/sp/selecaoMoeda.php -text
 Fontes_PHP_SIW/classes/syslog/syslog.php -text
 Fontes_PHP_SIW/cliente.php -text
 Fontes_PHP_SIW/constants.inc -text
@@ -1363,6 +1364,7 @@ Fontes_PHP_SIW/funcoes.php -text
 Fontes_PHP_SIW/funcoes/FC_Colors.php -text
 Fontes_PHP_SIW/funcoes/FusionCharts.js -text
 Fontes_PHP_SIW/funcoes/FusionCharts.php -text
+Fontes_PHP_SIW/funcoes/ajaxLogin.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordOR.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordRel.php -text
 Fontes_PHP_SIW/funcoes/cabecalhoWordSint.php -text
@@ -2100,6 +2102,7 @@ Fontes_PHP_SIW/mod_pe/relatorios.php -text
 Fontes_PHP_SIW/mod_pe/tabelas.php -text
 Fontes_PHP_SIW/mod_pe/visualprograma.php -text
 Fontes_PHP_SIW/mod_pr/exibeprojeto.php -text
+Fontes_PHP_SIW/mod_pr/geral.php -text
 Fontes_PHP_SIW/mod_pr/graficos.php -text
 Fontes_PHP_SIW/mod_pr/project.php -text
 Fontes_PHP_SIW/mod_pr/relatorios.php -text

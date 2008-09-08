@@ -640,7 +640,7 @@ function LimiteUnidade() {
   if ($O=='L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <a accesskey="F" class="ss" href="#" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -687,8 +687,8 @@ function LimiteUnidade() {
       ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
       ShowHTML('          <td valign="top"><font size="1"><b>Ano:<br>'.$w_ano.'</b></td>');
     } 
-    ShowHTML('          <td valign="top"><font size="1"><b><u>L</u>imite para passagens:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_passagem" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_passagem.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para passagens para a unidade selecionada."></td>');
-    ShowHTML('          <td valign="top"><font size="1"><b>L<u>i</u>mite para diárias:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_limite_diaria" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diaria.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para diárias para a unidade selecionada."></td>');
+    ShowHTML('          <td valign="top"><font size="1"><b><u>L</u>imite para passagens:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_passagem" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_passagem.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para passagens para a unidade selecionada."></td>');
+    ShowHTML('          <td valign="top"><font size="1"><b>L<u>i</u>mite para diárias:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_limite_diaria" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_diaria.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o limite financeiro para diárias para a unidade selecionada."></td>');
     ShowHTML('         </table>');
     ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');

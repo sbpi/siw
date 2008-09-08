@@ -1,6 +1,6 @@
 <?php
 // MSSql 2000 SP 3 Database Constants
-define("MSSQL_SERVER_NAME", "netuno\netuno");
+define("MSSQL_SERVER_NAME", "NETUNO\NETUNO");
 define("MSSQL_DB_USERID", "SIW");
 define("MSSQL_DB_PASSWORD", "SIW");
 define("MSSQL_DATABASE_NAME", "SIWGP");
@@ -14,8 +14,8 @@ define("ORA8_DATABASE_NAME", "siw");
 define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
-define("ORA9_SERVER_NAME", "");
-//define("ORA9_SERVER_NAME", "XE.localdomain");
+//define("ORA9_SERVER_NAME", "io.sbpi.com.br");
+define("ORA9_SERVER_NAME", "MERCURIO.SBPI.COM.BR");
 define("ORA9_DB_USERID", "siw");
 define("ORA9_DB_PASSWORD", "siw");
 define("ORA9_DATABASE_NAME", "siw");
@@ -70,7 +70,9 @@ switch ($_SESSION["DBMS"]) {
       define("DATABASE_NAME", MSSQL_DATABASE_NAME);
       define("DATABASE_VERSION", MSSQL_VERSION_TEXT);
       define("B_VARCHAR", SQLVARCHAR);
-      define("B_NUMERIC", SQLINT4);
+      define("B_DATE", SQLINT8);
+      define("B_NUMERIC", SQLFLT8);
+      define("B_INTEGER", SQLINT4);
       define("B_CURSOR", -1);
       define("B_REQUIRED", true);
       define("B_OPTIONAL", false);

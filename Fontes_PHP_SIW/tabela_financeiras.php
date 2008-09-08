@@ -13,13 +13,16 @@ include_once('classes/sp/db_getBankHouseList.php');
 include_once('classes/sp/db_getBankHouseData.php');
 include_once('classes/sp/db_getBankList.php');
 include_once('classes/sp/db_getBankData.php');
+include_once('classes/sp/db_getMoeda.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_CtCc.php');
 include_once('classes/sp/dml_CoBanco.php');
 include_once('classes/sp/dml_CoAgencia.php');
+include_once('classes/sp/dml_CoMoeda.php');
 include_once('funcoes/selecaoCCSubordination.php');
 include_once('funcoes/selecaoCC.php');
 include_once('funcoes/selecaoBanco.php');
+
 
 // =========================================================================
 //  /Tabela_Financeiras.php
@@ -65,6 +68,7 @@ $w_pagina       = 'tabela_financeiras.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
+$p_ordena       = $_REQUEST['p_ordena'];
 $p_codigo       = $_REQUEST['p_codigo'];
 $p_nome         = trim(strtoupper($_REQUEST['p_nome']));
 $p_ativo        = $_REQUEST['p_ativo'];
@@ -322,7 +326,7 @@ function CentroCusto() {
     if ($O!='I' && $O!='A') $w_Disabled='disabled';
     // Se for inclusão de nova opção, permite a herança dos dados de outra, já existente.
     if ($O=='I') {
-      ShowHTML('      <tr><td><a accesskey="H" class="ss" href="#" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.'CENTROCUSTO&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_cc='.$w_sq_cc.'\',\'heranca\',\'top=70,left=10,width=780,height=200,toolbar=no,status=no,scrollbars=no\');"><u>H</u>erdar dados</a>&nbsp;');
+      ShowHTML('      <tr><td><a accesskey="H" class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.$par.'&R='.$w_pagina.'CENTROCUSTO&O=H&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_sq_cc='.$w_sq_cc.'\',\'heranca\',\'top=70,left=10,width=780,height=200,toolbar=no,status=no,scrollbars=no\');"><u>H</u>erdar dados</a>&nbsp;');
       ShowHTML('      <tr><td height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td><b>');      
     } 
@@ -375,7 +379,7 @@ function CentroCusto() {
     } elseif ($O=='D') {
         ShowHTML('  <tr><td align="center"  colspan="3"><input class="stb" type="submit" name="Botao" value="Desativar">');
     }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('</FORM>');
   } elseif ($O=='H') {
     AbreForm('Form',$R,'POST','return(Validacao(this));','content',$P1,$P2,$P3,$P4,$TP,$SG,$R,'I');
@@ -392,7 +396,7 @@ function CentroCusto() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Herdar">');
-    ShowHTML('            <input class="stb" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -587,7 +591,7 @@ function Agencia() {
     } elseif ($O=='A') {
         ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
     }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&p_nome='.$p_nome.'&p_ativo='.$p_ativo.'&p_ordena='.$p_ordena.'&O=L&p_sq_banco='.$p_sq_banco.'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -802,7 +806,7 @@ function Banco() {
     } elseif ($O=='A') {
         ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
     }
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -859,7 +863,190 @@ function Banco() {
 
   return $function_ret;
 } 
+// =========================================================================
+// Rotina da tabela de Moedas
+// -------------------------------------------------------------------------
+function Moeda() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave          = $_REQUEST['w_chave'];
 
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
+  if ($P1==2) {
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  }
+  Estrutura_CSS($w_cliente);
+  if ($O=='') $O='L';
+  if ($w_troca>'' && $O!='E') {
+    $w_tipo           = $_REQUEST['w_tipo'];
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_codigo         = $_REQUEST['w_codigo'];
+    $w_sigla          = $_REQUEST['w_sigla'];
+    $w_simbolo        = $_REQUEST['w_simbolo'];
+    $w_tipo           = $_REQUEST['w_tipo'];
+    $w_exclusao_ptax  = $_REQUEST['w_exclusao_ptax'];
+    $w_ativo          = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {
+    $RS = db_getMoeda::getInstanceOf($dbms,null,null,null,null,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    } else {
+      $RS = SortArray($RS,'nome','asc'); 
+    }
+  } elseif (!(strpos('AEV',$O)===false) || $w_troca>'') {
+    $RS = db_getMoeda::getInstanceOf($dbms,$w_chave,null,null,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_tipo          = f($RS,'sq_tipo_posto');
+    $w_nome          = f($RS,'nome');
+    $w_codigo        = f($RS,'codigo');
+    $w_sigla         = f($RS,'sigla');
+    $w_simbolo       = f($RS,'simbolo');
+    $w_tipo          = f($RS,'tipo') ;
+    $w_exclusao_ptax = formataDataEdicao(f($RS,'exclusao_ptax'));
+    $w_ativo = f($RS,'ativo');
+  } if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    CheckBranco();
+    FormataData();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_codigo','Código','1','1','3','3','','0123456789');
+      Validate('w_nome','Nome','1','1','3','30','1','1');
+      Validate('w_sigla','Sigla','1','1','3','5','1','');
+      Validate('w_simbolo','Símbolo','1','1','1','10','1','');
+      Validate('w_tipo','Tipo','1','1','1','1','1','');
+      Validate('w_exclusao_ptax','Exclusão PTAX','DATA','','10','10','','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad=\'document.Form.w_tipo.focus();\'');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad=\'this.focus();\'');
+  } else{
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','codigo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Símbolo','simbolo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','tipo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Exclusão PTAX','exclusao_ptax').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS,(($P3-1)*$P4),$P4);
+      foreach($RS1 as $row) { 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center">'.f($row,'codigo').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'simbolo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'tipo').'</td>');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'exclusao_ptax'),5).'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_moeda').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera dos dados deste registro.">AL </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_moeda').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui este registro.">EX </A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) {
+      $w_Disabled=' DISABLED ';
+    } 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('         <td colspan=2 width="100%"><table width="100%" border="0">');
+    ShowHTML('            <tr><td colspan=2><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_codigo.'"></td>');
+    ShowHTML('         </table>');
+    ShowHTML('         </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S"  type="text" name="w_sigla" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>S</u>ímbolo:</b><br><input '.$w_Disabled.' accesskey="S"  type="text" name="w_simbolo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_simbolo.'"></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>T</u>ipo:</b><br><input '.$w_Disabled.' accesskey="T"  type="text" name="w_tipo" class="sti" SIZE="1" MAXLENGTH="1" VALUE="'.$w_tipo.'"></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>E</u>xclusão PTAX:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_exclusao_ptax" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_exclusao_ptax.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr>');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td colspan=5 align="center"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+}
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -942,7 +1129,24 @@ function Grava() {
         RetornaFormulario('w_assinatura');
       } 
       break;
-    } 
+    case 'COMOEDA':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        dml_CoMoeda::getInstanceOf($dbms,$O,
+            $_REQUEST['w_chave'],$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
+            $_REQUEST['w_sigla'],$_REQUEST['w_simbolo'],$_REQUEST['w_tipo'],
+            $_REQUEST['w_exclusao_ptax'],$_REQUEST['w_ativo']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;
+    }
     return $function_ret;
 } 
 
@@ -956,6 +1160,7 @@ function Main() {
   case 'CENTROCUSTO': CentroCusto();  break;
   case 'AGENCIA':     Agencia();      break;
   case 'BANCO':       Banco();        break;
+  case 'MOEDA':       Moeda();        break;
   case 'GRAVA':       Grava();        break;
   default:
     Cabecalho();

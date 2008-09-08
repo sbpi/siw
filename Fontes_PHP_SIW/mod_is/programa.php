@@ -1091,7 +1091,7 @@ function RecursoProgramado() {
     }
     ShowHTML('<tr><td valign="top" colspan="2">*Valor Lei Orçamentária Anual - LOA2004 + Créditos</td>');
     ShowHTML('<tr><td valign="top" colspan="2">**Valor do Projeto de Lei Orçamentária  Anual - PLOA 2005</td>');
-    ShowHTML('<tr><td valign="top"><b><u>R</u>ecurso programado</b><br><input '.$w_Disabled.'accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" onKeyDown="FormataValor(this,18,2,event)"></td>');
+    ShowHTML('<tr><td valign="top"><b><u>R</u>ecurso programado</b><br><input '.$w_Disabled.'accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event)"></td>');
     ShowHTML('<tr><td><b><U>A</U>ssinatura Eletrônica</b><br><INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('<tr><td align="center"><hr>');
     ShowHTML('<tr><td align="center">');
@@ -1608,7 +1608,7 @@ function Indicadores() {
         if (f($row,'cd_indicador')>'') $w_ppa='sim'; else $w_ppa='não';
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_indicador').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'titulo').'</A></td>');
         ShowHTML('        <td align="center">'.$w_ppa.'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'cumulativa'),'---').'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'nm_tipo'),'---').'</td>');
@@ -1661,12 +1661,12 @@ function Indicadores() {
       SelecaoUniMedida_IS('Unidade de <U>m</U>edida:','M','Selecione a unidade de medida do indicador',$w_cd_unidade_medida,'w_cd_unidade_medida',null,null);
       if ($w_cd_indicador>'' && $O!='E' && $O!='V')$w_Disabled = ' ';
       MontaTipoIndicador('<b>Tipo de indicador?</b>',$w_tipo_in,'w_tipo_in');
-      ShowHTML('    <tr><td align="left"><b>Índice <u>p</u>rogramado:<br><input accesskey="P" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que se deseja alcançar ao final do exercício."></td>');
+      ShowHTML('    <tr><td align="left"><b>Índice <u>p</u>rogramado:<br><input accesskey="P" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que se deseja alcançar ao final do exercício."></td>');
       MontaRadioNS('<b>Indicador cumulativo?</b>',$w_cumulativa,'w_cumulativa');
       ShowHTML('         </table></td></tr>');
       if ($w_cd_indicador>'' && $O!='E' && $O!='V') $w_Disabled = ' DISABLED ';
       ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-      ShowHTML('    <tr><td valign="top"><b><u>Í</u>ndice referência:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_indice_ref" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_indice_ref.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que será utilizado como linha de base."></td>');
+      ShowHTML('    <tr><td valign="top"><b><u>Í</u>ndice referência:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_indice_ref" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_indice_ref.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que será utilizado como linha de base."></td>');
       ShowHTML('              <td><b><u>D</u>ata de referência:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_apuracao_ref" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_apuracao_ref.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data em que foi apurado o índice de referência.(Usar formato dd/mm/aaaa)"></td>');
       if ($w_cd_indicador>'' && $O!='E' && $O!='V') $w_Disabled=' ';
       ShowHTML('              <td align="left"><b>O<u>r</u>dem:<br><INPUT ACCESSKEY="R" TYPE="TEXT" CLASS="STI" NAME="w_ordem" SIZE=3 MAXLENGTH=3 VALUE="'.$w_ordem.'" '.$w_Disabled.'></td>');
@@ -1678,10 +1678,10 @@ function Indicadores() {
       SelecaoBaseGeografica_IS('<U>B</U>ase geográfica:','B','Selecione a base geográfica do indicador',$w_cd_base_geografica,'w_cd_base_geografica',null,null);
       ShowHTML('         </table></td></tr>');
       ShowHTML('    <tr><td valign="top"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-      ShowHTML('    <tr valign="top"><td><b>Previsão 2004:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_1" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_1.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 1º ano  (campo não obrigatório)."></td>');
-      ShowHTML('        <td><b>Previsão 2005:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_2" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_2.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 2º ano  (campo não obrigatório)."></td>');
-      ShowHTML('        <td><b>Previsão 2006:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_3" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_3.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 3º ano  (campo não obrigatório)."></td>');
-      ShowHTML('        <td><b>Previsão 2007:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_4" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_4.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 4º ano  (campo não obrigatório)."></td>');
+      ShowHTML('    <tr valign="top"><td><b>Previsão 2004:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_1" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_1.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 1º ano  (campo não obrigatório)."></td>');
+      ShowHTML('        <td><b>Previsão 2005:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_2" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_2.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 2º ano  (campo não obrigatório)."></td>');
+      ShowHTML('        <td><b>Previsão 2006:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_3" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_3.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 3º ano  (campo não obrigatório)."></td>');
+      ShowHTML('        <td><b>Previsão 2007:</b><br><input '.$w_Disabled.' type="text" name="w_prev_ano_4" class="STI" SIZE="12" MAXLENGTH="18" VALUE="'.$w_prev_ano_4.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice previsto para o 4º ano  (campo não obrigatório)."></td>');
       ShowHTML('    </table></td></tr>');
       if ($w_cd_indicador>'' && $O!='E' && $O!='V') $w_Disabled=' ';
       ShowHTML('    <tr><td><b><u>C</u>onceituação:</b><br><textarea '.$w_Disabled.' accesskey="C" name="w_conceituacao" class="STI" ROWS=5 cols=75 title="Descreva as características que definem o indicador e a forma como ele se expressa, se necessário agregando informações para a compreensão de seu conteúdo.">'.$w_conceituacao.'</TEXTAREA></td>');
@@ -1763,7 +1763,7 @@ function Indicadores() {
         ShowHTML('     <tr><td valign="top">&nbsp;</td>');
       } 
       ShowHTML('    <tr valign="top"><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('    <tr valign="top"><td><b><u>Í</u>ndice apurado:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_indice_apurado" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_indice_apurado.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que foi apurado."></td>');
+      ShowHTML('    <tr valign="top"><td><b><u>Í</u>ndice apurado:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_indice_apurado" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_indice_apurado.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o índice que foi apurado."></td>');
       ShowHTML('              <td><b>Da<u>t</u>a de apuração:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_apuracao_ind" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_apuracao_ind.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de apuração do índice.(Usar formato dd/mm/aaaa)"></td>');
       ShowHTML('         </table></td></tr>');
       ShowHTML('    <tr><td valign="top"><b><u>S</u>ituação atual do indicador:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva, de maneria sucinta, qual é a situação atual do indicador.">'.$w_situacao_atual.'</TEXTAREA></td>');
@@ -2220,7 +2220,7 @@ function Restricoes() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Restricao\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'descricao').'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=V&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_restricao').'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Restricao\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.f($row,'descricao').'</A></td>');
         ShowHTML('        <td>'.f($row,'nm_tp_restricao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if ($w_acesso==1) {
@@ -3213,7 +3213,7 @@ function Concluir() {
     ShowHTML('              <td valign="top"><b>Iní<u>c</u>io da execução:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="'.Nvl($w_inicio_real,'01/01/'.$w_ano).'" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de início da execução do programa.(Usar formato dd/mm/aaaa)"></td>');
     ShowHTML('              <td valign="top"><b><u>T</u>érmino da execução:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="'.Nvl($w_fim_real,'31/12/'.$w_ano).'" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término da execução do programa.(Usar formato dd/mm/aaaa)"></td>');
   } 
-  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
+  ShowHTML('              <td valign="top"><b><u>R</u>ecurso executado:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_custo_real" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_custo_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor que foi efetivamente gasto com a execução do programa."></td>');
   ShowHTML('          </table>');
   ShowHTML('    <tr><td valign="top"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Insira informações relevantes sobre o encerramento do exercício.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -3242,7 +3242,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_apuracao,$l_indice,$l
   $l_html.=chr(13).'      <tr bgcolor="'.$w_cor.'" valign="top">';
   $l_html.=chr(13).'        <td nowrap '.$l_row.'>';
   if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
-  else                          $l_html.=chr(13).'<A class="HL" HREF="#" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
+  else                          $l_html.=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
   $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
   $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.Nvl($FormataDataEdicao[$l_apuracao],'---').'</td>';
   $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'>'.Nvl($l_indice,'---').' %</td>';
@@ -3578,7 +3578,7 @@ function BuscaPrograma() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('            <td align="center">'.f($row,'cd_programa').'</td>');
         ShowHTML('            <td>'.f($row,'ds_programa').'</td>');
-        ShowHTML('            <td><a class="ss" href="#" onClick="javascript:volta(\''.f($row,'cd_programa').'\');">Selecionar</a>');
+        ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'cd_programa').'\');">Selecionar</a>');
       } 
       ShowHTML('        </table></tr>');
       ShowHTML('      </center>');
