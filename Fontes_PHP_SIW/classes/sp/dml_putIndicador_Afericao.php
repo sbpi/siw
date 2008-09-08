@@ -30,7 +30,6 @@ class dml_putIndicador_Afericao {
                    'p_previsao'        =>array(tvl($p_previsao),                     B_VARCHAR,         1),
                    'p_observacao'      =>array(tvl($p_observacao),                   B_VARCHAR,       255)
                   );
-
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

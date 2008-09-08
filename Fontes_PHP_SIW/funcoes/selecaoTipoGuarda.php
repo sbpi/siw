@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoGuarda_PA.php');
 // =========================================================================
 // Montagem da seleção do tipo de guardas
 // -------------------------------------------------------------------------
-function selecaoTipoGuarda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoTipoGuarda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if($restricao=='CORRENTE')       $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,'S',null,null,null,'S',null);
   elseif($restricao=='INTERMED')   $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,'S',null,null,'S',null);
@@ -12,9 +12,9 @@ function selecaoTipoGuarda($label,$accesskey,$hint,$chave,$chaveAux,$campo,$rest
   else                             $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,'S',null);
   $RS = SortArray($RS,'descricao','asc');
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {

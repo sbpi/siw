@@ -2,18 +2,18 @@
 // =========================================================================
 // Montagem da seleção das unidades organizacionais
 // -------------------------------------------------------------------------
-function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
   include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
   $RS = db_getUorgList::getInstanceOf($dbms, $w_cliente, $chaveAux, nvl($restricao,'ATIVO'), null, null, $w_ano);
   if (count($RS)<=100) {
     $RS = SortArray($RS,'nome','asc');
-    $atributo = str_replace('onBlur','onChange',$atributo);
+    $atributo = str_replace('onBlur','onChange',$atributo,$colspan=1);
     if (!isset($hint)) {
-       ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+       ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-       ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+       ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
@@ -25,7 +25,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
     ShowHTML('          </select>');
   } else {
-    $atributo = str_replace('onChange','onBlur',$atributo);
+    $atributo = str_replace('onChange','onBlur',$atributo,$colspan=1);
     ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
     if ($chave>'') {
       $RS = db_getUorgData::getInstanceOf($dbms, $chave);
@@ -34,10 +34,10 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
     }
 
     if (!isset($hint)) {
-      ShowHTML('      <td valign="top"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td colspan="'.$colspan.'"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     } else {
-      ShowHTML('      <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     }
 

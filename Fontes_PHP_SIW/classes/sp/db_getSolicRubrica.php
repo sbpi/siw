@@ -11,7 +11,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 class db_getSolicRubrica {
    function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_ativo, $p_sq_rubrica_destino, $p_codigo, $p_transferencia, 
         $p_inicio, $p_fim, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICRUBRICA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicRubrica';
      $params=array('p_chave'                  =>array($p_chave,                                   B_INTEGER,     32),
                    'p_chave_aux'              =>array(tvl($p_chave_aux),                          B_INTEGER,     32),
                    'p_ativo'                  =>array(tvl($p_ativo),                              B_VARCHAR,     2),

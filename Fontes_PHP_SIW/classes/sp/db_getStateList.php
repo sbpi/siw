@@ -9,10 +9,10 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getStateList {
-   function getInstanceOf($dbms, $p_pais, $p_regiao, $p_ativo, $p_restricao) {
+   function getInstanceOf($dbms, $p_sq_pais, $p_sq_regiao, $p_ativo, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getStateList';
-     $params=array("p_pais"      =>array($p_pais,       B_NUMERIC,     32),
-                   "p_regiao"    =>array($p_regiao,     B_NUMERIC,     32),
+     $params=array("p_sq_pais"   =>array($p_sq_pais,    B_NUMERIC,     32),
+                   "p_sq_regiao" =>array($p_sq_regiao,  B_NUMERIC,     32),
                    "p_ativo"     =>array($p_ativo,      B_VARCHAR,     1),
                    "p_restricao" =>array($p_restricao,  B_VARCHAR,     20),
                    "p_result"    =>array(null,          B_CURSOR,      -1)

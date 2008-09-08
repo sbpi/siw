@@ -3,14 +3,14 @@ include_once($w_dir_volta.'classes/sp/db_getMeioTransporte.php');
 // =========================================================================
 // Montagem da seleção de meios de transporte
 // -------------------------------------------------------------------------
-function selecaoMeioTransporte($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoMeioTransporte($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getMeioTransporte::getInstanceOf($dbms,$cliente,null,null,'S');
+  $RS = db_getMeioTransporte::getInstanceOf($dbms,$cliente,null,null,'S',null);
   $RS = SortArray($RS,'aereo','desc','nome','asc');
   if (!isset($hint))
-    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else
-    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0))

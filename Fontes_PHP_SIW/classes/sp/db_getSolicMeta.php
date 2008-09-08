@@ -11,8 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getSolicMeta {
    function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_chave_aux, $p_plano, $p_pessoa, $p_unidade, 
-            $p_titulo, $p_indicador, $p_tipo, $p_ativo, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_alt_i, 
-            $p_alt_f, $p_ref_i, $p_ref_f, $p_restricao) {
+            $p_titulo, $p_indicador, $p_tipo, $p_ativo, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_afe_i, 
+            $p_afe_f, $p_ref_i, $p_ref_f, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_getSolicMeta';
      $params=array('p_cliente'                =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_usuario'                =>array(tvl($p_usuario),                                  B_INTEGER,        32),
@@ -30,8 +30,8 @@ class db_getSolicMeta {
                    'p_regiao'                 =>array(tvl($p_regiao),                                   B_INTEGER,        32),
                    'p_uf'                     =>array(tvl($p_uf),                                       B_VARCHAR,         2),
                    'p_cidade'                 =>array(tvl($p_cidade),                                   B_INTEGER,        32),
-                   'p_alt_i'                  =>array(tvl($p_alt_i),                                    B_DATE,           32),
-                   'p_alt_f'                  =>array(tvl($p_alt_f),                                    B_DATE,           32),
+                   'p_afe_i'                  =>array(tvl($p_afe_i),                                    B_DATE,           32),
+                   'p_afe_f'                  =>array(tvl($p_afe_f),                                    B_DATE,           32),
                    'p_ref_i'                  =>array(tvl($p_ref_i),                                    B_DATE,           32),
                    'p_ref_f'                  =>array(tvl($p_ref_f),                                    B_DATE,           32),
                    'p_restricao'              =>array(tvl($p_restricao),                                B_VARCHAR,        15),

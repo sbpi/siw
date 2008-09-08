@@ -13,7 +13,7 @@ class dml_putIndicador {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_nome, $p_sigla, $p_tipo_indicador, $p_unidade_medida,
             $p_descricao, $p_forma_afericao, $p_fonte_comprovacao, $p_ciclo_afericao, $p_vincula_meta, $p_exibe_mesa, 
             $p_ativo) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putIndicador';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'SP_PUTINDICADOR';
      $params=array('p_operacao'                  =>array($operacao,                                   B_VARCHAR,         1),
                    'p_cliente'                   =>array(tvl($p_cliente),                             B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                               B_INTEGER,        32),
