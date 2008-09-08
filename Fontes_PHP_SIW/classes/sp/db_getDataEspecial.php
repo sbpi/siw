@@ -15,7 +15,7 @@ class db_getDataEspecial {
      $sql=$strschema.'SP_GETDATAESPECIAL';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
-                   'p_ano'                       =>array(tvl($p_ano),                                      B_VARCHAR,        32),
+                   'p_ano'                       =>array(tvl($p_ano),                                      B_VARCHAR,         4),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,         1),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),

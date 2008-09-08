@@ -12,9 +12,9 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class db_getIndicador {
    function getInstanceOf($dbms, $p_cliente, $p_usuario, $p_chave, $p_chave_aux, $p_nome, $p_sigla, $p_tipo, $p_ativo, 
             $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_afe_i, $p_afe_f, $p_ref_i, $p_ref_f, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema_PE.'sp_getIndicador';
-     $params=array('p_cliente'                =>array(tvl($p_cliente),                                  B_INTEGER,        32),
-                   'p_usuario'                =>array(tvl($p_usuario),                                  B_INTEGER,        32),
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getIndicador';
+     $params=array('p_cliente'                =>array($p_cliente,                                       B_INTEGER,        32),
+                   'p_usuario'                =>array($p_usuario,                                       B_INTEGER,        32),
                    'p_chave'                  =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_chave_aux'              =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
                    'p_nome'                   =>array(tvl($p_nome),                                     B_VARCHAR,        60),

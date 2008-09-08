@@ -38,7 +38,7 @@ class dml_putProjetoGeral {
                    'p_data_hora'            =>array(tvl($p_data_hora),            B_VARCHAR,         1),
                    'p_unid_resp'            =>array(tvl($p_unid_resp),            B_INTEGER,        32),
                    'p_codigo'               =>array(tvl($p_codigo),               B_VARCHAR,        60),
-                   'p_assunto'              =>array(tvl($p_assunto),              B_VARCHAR,      2000),
+                   'p_titulo'               =>array(tvl($p_assunto),              B_VARCHAR,      2000),
                    'p_prioridade'           =>array(tvl($p_prioridade),           B_INTEGER,        32),
                    'p_aviso'                =>array(tvl($p_aviso),                B_VARCHAR,         1),
                    'p_dias'                 =>array(nvl($p_dias,0),               B_INTEGER,        32),
