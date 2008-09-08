@@ -2401,6 +2401,8 @@ SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
 SP_MSSQL2000/SIW/dados_solic.sql -text
 SP_MSSQL2000/SIW/fGetUorgList.sql -text
 SP_MSSQL2000/SIW/pd_retornatrechos.sql -text
+SP_MSSQL2000/SIW/retornaAfericaoIndicador.sql -text
+SP_MSSQL2000/SIW/retornaExcedenteContrato.sql -text
 SP_MSSQL2000/SIW/sp_GetAcesso.sql -text
 SP_MSSQL2000/SIW/sp_GetAfastamento.sql -text
 SP_MSSQL2000/SIW/sp_GetCronograma.sql -text
@@ -2424,6 +2426,7 @@ SP_MSSQL2000/SIW/sp_getUnidade_PE.sql -text
 SP_MSSQL2000/SIW/sp_putIndicador.sql -text
 SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_putProgramaGeral.sql -text
+SP_MSSQL2000/SIW/sp_putProjetoGeralTeste.sql -text
 SP_MSSQL2000/SIW/sp_putSiwPessoaMail.sql -text
 SP_MSSQL2000/SIW/sp_putTipoDemanda.sql -text
 SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
