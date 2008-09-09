@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getUnidade_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getDocumentoInter.php');
 include_once($w_dir_volta.'classes/sp/db_getDocumentoAssunto.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
+include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
@@ -163,6 +164,9 @@ if ($P2>0) {
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+$RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'PA',null);
+foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
 
 $RS_PAUnidade = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],null,null);
 foreach($RS_PAUnidade as $row) { $RS_PAUnidade = $row; break; }
@@ -1973,6 +1977,7 @@ function Tramitacao() {
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_aviso            = $_REQUEST['w_aviso'];
     $w_dias             = $_REQUEST['w_dias'];
+    $w_protocolo        = $_REQUEST['w_protocolo'];
   }
 
   if ($O=='L') {
@@ -1980,6 +1985,7 @@ function Tramitacao() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
     $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    $w_existe = count($RS);
     
     if (count($w_chave) > 0) {
       $i = 0;
@@ -2016,8 +2022,9 @@ function Tramitacao() {
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
     ScriptClose();
-  } else {
+  } elseif ($w_existe) {
     ScriptOpen('JavaScript');
+    FormataProtocolo();
     CheckBranco();
     FormataData();
     SaltaCampo();
@@ -2043,6 +2050,9 @@ function Tramitacao() {
       Validate('w_sq_unidade','Unidade de destino','SELECT',1,1,18,'','0123456789');
     }
     Validate('w_tipo_despacho','Despacho','SELECT',1,1,18,'','0123456789');
+    if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
+      Validate('w_protocolo','ao processo','1','1','20','20','','0123456789./-'); 
+    }
     Validate('w_despacho','Detalhamento do despacho','','1','1','2000','1','1');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
@@ -2106,17 +2116,17 @@ function Tramitacao() {
     ShowHTML('          <td><b>Data</td>');
     ShowHTML('          <td><b>Origem</td>');
     ShowHTML('        </tr>');
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+    ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
+    ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $w_atual = '';
-      AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-      ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-      ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-      ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
-      ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
       $i = 0;
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -2162,13 +2172,15 @@ function Tramitacao() {
       SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
       ShowHTML('           </table>');
     }
-    ShowHTML('      <tr><td colspan=3><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-    selecaoTipoDespacho('Des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$w_tipo_despacho,null,'w_tipo_despacho','SELECAO',null);
-    ShowHTML('           </table>');
+    ShowHTML('      <tr valign="top">');
+    selecaoTipoDespacho('Des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$w_tipo_despacho,null,'w_tipo_despacho','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
+    if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
+      ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+    }
     ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
     ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('   <tr><td align="center" colspan=3><hr>');
-    ShowHTML('   <input class="STB" type="submit" name="Botao" value="Gerar Guia de Tramitação">');
+    if ($w_existe) ShowHTML('   <input class="STB" type="submit" name="Botao" value="Gerar Guia de Tramitação">');
     ShowHTML('</FORM>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -2574,14 +2586,39 @@ function Grava() {
         }
       }
 
+      // Se for informado um processo, verifica se ele existe
+      if (nvl($_REQUEST['w_protocolo'],'')!='') {
+        $p_prefixo      = substr($_REQUEST['w_protocolo'],0,5);
+        $p_numero       = substr($_REQUEST['w_protocolo'],6,6);
+        $p_ano          = substr($_REQUEST['w_protocolo'],13,4);
+        $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', $p_chave, $p_chave_aux, 
+            $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
+
+        $w_existe = 0;
+        foreach($RS as $row) {
+          if (f($row,'processo')=='S') {
+            $w_existe = 1;
+            break;
+          }
+        }
+
+        if ($w_existe==0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: O processo informado não existe!\');');
+          ScriptClose();
+          retornaFormulario('w_protocolo');
+          exit;
+        }
+      }
+
       for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
           dml_putDocumentoEnvio::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
               $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
               $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],$_REQUEST['w_pessoa_destino'],
-              $_REQUEST['w_tipo_despacho'],$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
-              $_REQUEST['w_retorno_limite'],$_REQUEST['w_pessoa_destino_nm'],$_REQUEST['w_unidade_externa'],
-              &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+              $_REQUEST['w_tipo_despacho'],$p_prefixo, $p_numero, $p_ano,$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],
+              $_REQUEST['w_dias'],$_REQUEST['w_retorno_limite'],$_REQUEST['w_pessoa_destino_nm'],
+              $_REQUEST['w_unidade_externa'],&$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
         } 
       }
       ScriptOpen('JavaScript');

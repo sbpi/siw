@@ -3,12 +3,12 @@
 // =========================================================================
 // Montagem da seleção de tipo de conclusão
 // -------------------------------------------------------------------------
-function SelecaoRestricao ($label,$accesskey,$hint,$chave,$campo,$restricao,$atributo) {
+function SelecaoRestricao ($label,$accesskey,$hint,$chave,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---'); 
   // Se não existir outro lançamento financeiro, trata o atual como sendo dotação inicial

@@ -20,6 +20,8 @@ include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoAutua.php');
+include_once($w_dir_volta.'classes/sp/dml_putDocumentoAnexa.php');
+include_once($w_dir_volta.'classes/sp/dml_putDocumentoJunta.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
@@ -404,8 +406,6 @@ function Anexar() {
   SaltaCampo();
   CheckBranco();
   ValidateOpen('Validacao');
-  Validate('w_protocolo','Protocolo que receberá o anexo','1','','20','20','','0123456789./-');
-  Validate('w_data','Data da anexação','DATA','1','10','10','','0123456789/');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -417,7 +417,7 @@ function Anexar() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_protocolo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -459,8 +459,9 @@ function Anexar() {
   ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
   ShowHTML('    <tr><td colspan=2><b>DADOS DA ANEXAÇÃO</b></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%"><u>P</u>rotocolo que receberá o anexo:<td><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td></tr>');
-  ShowHTML('    <tr><td width="30%"><u>D</u>ata da anexação:<td><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td></tr>');
+  ShowHTML('    <tr><td width="30%">Data da autuação:<td><b>'.formataDataEdicao(time()).'</b></td></tr>');
+  ShowHTML('    <tr><td width="30%"><u>P</u>rotocolo que receberá o anexo:<td><b>'.f($RS,'protocolo_pai').'</b></td></tr>');
+  ShowHTML('    <tr><td width="30%">Responsável pela anexação:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
 
   ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center"><hr>');
@@ -498,8 +499,6 @@ function Apensar() {
   SaltaCampo();
   CheckBranco();
   ValidateOpen('Validacao');
-  Validate('w_protocolo','Processo que receberá o apenso','1','','20','20','','0123456789./-');
-  Validate('w_data','Data da apensação','DATA','','10','10','','0123456789/');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -511,7 +510,7 @@ function Apensar() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_protocolo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -553,8 +552,9 @@ function Apensar() {
   ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
   ShowHTML('    <tr><td colspan=2><b>DADOS DA APENSAÇÃO</b></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%"><u>P</u>rocesso que receberá o apenso:<td><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td></tr>');
-  ShowHTML('    <tr><td width="30%"><u>D</u>ata da apensação:<td><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td></tr>');
+  ShowHTML('    <tr><td width="30%">Data da autuação:<td><b>'.formataDataEdicao(time()).'</b></td></tr>');
+  ShowHTML('    <tr><td width="30%"><u>P</u>rotocolo que receberá o anexo:<td><b>'.f($RS,'protocolo_pai').'</b></td></tr>');
+  ShowHTML('    <tr><td width="30%">Responsável pela anexação:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
 
   ShowHTML('    <tr><td width="30%"><U>A</U>ssinatura Eletrônica:<td> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td colspan=2 align="center"><hr>');
@@ -880,6 +880,39 @@ function Grava() {
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
       ScriptClose();
       retornaFormulario('w_assinatura');
+      exit;
+    } 
+  } elseif ($SG=='PADANEXA') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      dml_putDocumentoAnexa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Anexação realizada com sucesso!\');');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit;
+    } 
+  } elseif ($SG=='PADJUNTA') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      dml_putDocumentoJunta::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Apensação realizada com sucesso!\');');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit;
     } 
   } else {
     ScriptOpen('JavaScript');

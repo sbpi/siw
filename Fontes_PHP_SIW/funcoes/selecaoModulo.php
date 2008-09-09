@@ -3,14 +3,14 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 // =========================================================================
 // Montagem da seleção dos módulos contratados pelo cliente
 // -------------------------------------------------------------------------
-function selecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoModulo($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getSiwCliModLis::getInstanceOf($dbms, $chaveAux, $restricao, null);
   $RS = SortArray($RS,'nome','asc');
   if (!isset($hint)) {
-     ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-     ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+     ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {

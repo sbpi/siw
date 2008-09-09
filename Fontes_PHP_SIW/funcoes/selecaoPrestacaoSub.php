@@ -3,14 +3,14 @@ include_once($w_dir_volta.'classes/sp/db_getPrestacaoContas.php');
 // =========================================================================
 // Montagem da seleção das prestações de contas
 // -------------------------------------------------------------------------
-function selecaoPrestacaoSub($label,$accesskey,$hint,$chave,$chave_aux,$campo,$tipo,$restricao,$atributo) {
+function selecaoPrestacaoSub($label,$accesskey,$hint,$chave,$chave_aux,$campo,$tipo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getPrestacaoContas::getInstanceOf($dbms, $w_cliente, $chave_aux, null, null, $tipo, 'S', $restricao);
   $RS = SortArray($RS,'nome_completo','asc'); 
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   }
   ShowHTML('          <OPTION VALUE="">---');
   $w_qtd_projeto = 0;

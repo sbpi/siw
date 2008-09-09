@@ -452,6 +452,8 @@ begin
                    case when h.sq_documento_log is null 
                         then case when instr(upper(a.observacao),'AUTUA')>0       then 'AUTUA플O DE PROCESSO'
                                   when instr(upper(a.observacao),'RENUMERA플O')>0 then 'RENUMERA플O'
+                                  when instr(upper(a.observacao),'ANEXA')>0       then 'ANEXA플O'
+                                  when instr(upper(a.observacao),'APENSA')>0      then 'APENSA플O'
                                   else 'REGISTRO' 
                              end
                         else 'TRAMITE ORIGINAL' 
@@ -478,8 +480,10 @@ begin
                      left    join co_pessoa         i  on (h.pessoa_destino     = i.sq_pessoa)
                      left    join co_pessoa         n  on (h.cadastrador        = n.sq_pessoa)
                    left      join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                     left    join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                     left    join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo),
+                  pa_parametro                      p
              where a.sq_siw_solicitacao = p_chave
+               and p.cliente            = a1.sq_pessoa_pai
             UNION
             select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
                    b1.nome as despacho,

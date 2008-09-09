@@ -972,6 +972,7 @@ begin
                 dc.codigo as cd_assunto_avo, dc.descricao as ds_assunto_avo,
                 dd.codigo as cd_assunto_bis, dd.descricao as ds_assunto_bis,
                 df.sq_pessoa as pessoa_interes, df.nome as nm_pessoa_interes,
+                dg.prefixo||'.'||substr(1000000+dg.numero_documento,2,6)||'/'||dg.ano||'-'||substr(100+dg.digito,2,2) as protocolo_pai,
                 b.fim-k.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -1022,6 +1023,7 @@ begin
                                                                           de.principal               = 'S'
                                                                          )
                           left       join co_pessoa                df on (de.sq_pessoa               = df.sq_pessoa)
+                        left         join pa_documento             dg on (d.sq_documento_pai         = dg.sq_siw_solicitacao)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and

@@ -8,6 +8,9 @@ create or replace procedure sp_putDocumentoEnvio
     p_unidade_destino     in  number   default null,
     p_pessoa_destino      in  number   default null,
     p_tipo_despacho       in  number,
+    p_prefixo             in number   default null,
+    p_numero              in number   default null,
+    p_ano                 in number   default null,
     p_despacho            in  varchar2,
     p_emite_aviso         in  varchar2,
     p_dias_aviso          in  number   default null,
@@ -24,9 +27,20 @@ create or replace procedure sp_putDocumentoEnvio
    w_tramite       number(18);
    w_sg_tramite    varchar2(2);
    w_retorno_unid  number(18) := null;
+   w_pai           number(18) := null;
 begin
    -- Recupera os dados do trâmite atual
    select sigla into w_sg_tramite from siw_tramite a where a.sq_siw_tramite = p_tramite;
+   
+   -- Recupera a chave do protocolo informado
+   If p_prefixo is not null Then
+      select sq_siw_solicitacao
+        into w_pai
+        from pa_documento x
+       where x.prefixo          = p_prefixo
+         and x.numero_documento = p_numero
+         and x.ano              = p_ano;
+   End If;
    
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
    If w_sg_tramite = 'CI' Then
@@ -64,6 +78,11 @@ begin
    Else
       -- Se tramitação externa, mantém a unidade de posse e atualiza a pessoa externa
       update pa_documento a set a.pessoa_ext_posse = p_pessoa_destino where a.sq_siw_solicitacao = p_chave;
+   End If;
+   
+   -- Se anexação ou apensação, indica a que documento será juntado no recebimento
+   If w_pai is not null Then
+      update pa_documento a set a.sq_documento_pai = w_pai where a.sq_siw_solicitacao = p_chave;
    End If;
    
    -- Configura dados para gravação da tramitação

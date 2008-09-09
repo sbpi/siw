@@ -16,7 +16,7 @@ class dml_putProjetoGeral {
         $p_vincula_viagem, $p_sq_acao_ppa, $p_sq_orprioridade, $p_selecionada_mpog, $p_selecionada_relev, 
         $p_sq_tipo_pessoa, $p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
-     $sql=$strschema.'sp_putProjetoGeral';
+     $sql=$strschema.'sp_putProjetoGeralTeste';
      $params=array('p_operacao'             =>array($operacao,                    B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                B_INTEGER,        32),
                    'p_copia'                =>array(tvl($p_copia),                B_INTEGER,        32),

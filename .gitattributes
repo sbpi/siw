@@ -1069,11 +1069,13 @@ Fontes_PHP_SIW/classes/sp/dml_putDemandaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDemandaInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoAnexa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoJunta.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoReceb.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoAAtuac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putEoTipoPosto.php -text
@@ -4199,11 +4201,13 @@ SP_Oracle92/siw/sp_putConvOutroRep.prc -text
 SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putCronMeta.prc -text
 SP_Oracle92/siw/sp_putCronograma.prc -text
+SP_Oracle92/siw/sp_putDocumentoAnexa.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text
+SP_Oracle92/siw/sp_putDocumentoJunta.prc -text
 SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text

@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 // =========================================================================
 // Montagem da seleção do tipo da data
 // -------------------------------------------------------------------------
-function selecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $w_tipos = '';
   $RS1 = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,'VERIFICATIPO');
@@ -13,9 +13,9 @@ function selecaoTipoData($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restri
       $w_tipos = $w_tipos.f($row,'tipo');
     } 
   } if (Nvl($hint,'')>''){
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
   if (Nvl($chave,'')=='I') {

@@ -74,7 +74,7 @@ $conImgSheet     = 'images/Folder/SheetImg.gif';
 
 //---------------------------Definições de banco
 
-$strschema	= 'dbo.';
+$strschema	= 'desenv.';
 $strschema_is	= 'siw_is.';
 $conPageSize	= 30;
 $conRefreshSec  = 1000;
@@ -86,17 +86,17 @@ $conEnviaMail   = false;
 
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
-//$conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
-$conDefaultPath = 'http://netuno:8888/';
+$conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
+$conDefaultPath = 'http://www.sbpi.com.br';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://netuno:8888/siw/';
-$conDiretorio   = 'c:/inetpub/wwwroot/siw/';
+$conRootSIW     = 'http://www2.sbpi.com.br/desenv/';
+$conDiretorio   = '/var/www/html/desenv/';
 $conFontPath    = $conDiretorio.'fonts/linux/';
-$conFileVirtual = '/siw_files/';
-//$conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
-$conFilePhysical= 'c:/inetpub/wwwroot/siw_files/'; // Formato Windows (IIS)
+$conFileVirtual = '/desenv/files/';
+$conFilePhysical= '/var/www/html/desenv/files/'; // Formato Linux
+//$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 
 // Define se deve ser gravado arquivo de log e o seu caminho
-$conLog         = true;
+$conLog         = false;
 $conLogPath     = $conFilePhysical.'log/';
 ?>

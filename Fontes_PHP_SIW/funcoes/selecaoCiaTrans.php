@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 // =========================================================================
 // Montagem da seleção de companhias de viagem
 // -------------------------------------------------------------------------
-function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
 
   $RS = db_getCiaTrans::getInstanceOf($dbms,$cliente,null,null,null,null,null,null,'S',null,null);
@@ -18,7 +18,7 @@ function selecaoCiaTrans($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$camp
     if ($label=='') {
       ShowHTML('          <td><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } 
   } 
   ShowHTML('          <option value="">---');

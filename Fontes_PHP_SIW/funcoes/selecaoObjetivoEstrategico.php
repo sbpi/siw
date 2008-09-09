@@ -3,13 +3,13 @@ include_once($w_dir_volta.'classes/sp/db_getObjetivo_PE.php');
 // =========================================================================
 // Montagem da seleção de objetivos estratégicos
 // -------------------------------------------------------------------------
-function selecaoObjetivoEstrategico($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function selecaoObjetivoEstrategico($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getObjetivo_PE::getInstanceOf($dbms,$chaveAux,null,$w_cliente,null,null,'S',null);
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>0) {
-    if (!isset($hint)) ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br>');
-    else               ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+    if (!isset($hint)) ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br>');
+    else               ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
     if ($restricao=='CHECKBOX') {
       foreach($RS as $row) {
         $l_marcado = 'N';

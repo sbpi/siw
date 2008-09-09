@@ -24,6 +24,7 @@ begin
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
+             c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
@@ -44,6 +45,7 @@ begin
                  inner     join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
                  left      join co_pessoa            c3 on (c.pessoa_origem        = c3.sq_pessoa)
+                 left      join pa_documento         c5 on (c.sq_documento_pai     = c5.sq_siw_solicitacao)
                  left      join (select sq_siw_solicitacao, max(sq_documento_log) as sq_documento_log
                                    from pa_documento_log
                                   group by sq_siw_solicitacao
@@ -129,8 +131,8 @@ begin
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
          and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
-              (p_restricao = 'PADANEXA'   and d8.cliente is not null) or
-              (p_restricao = 'PADJUNTA'   and c.processo = 'S' and d9.cliente is not null) or
+              (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
+              (p_restricao = 'PADJUNTA'   and d9.cliente is not null and c.processo = 'S' and b.sq_solic_pai is null) or
               (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null)) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null)
@@ -194,6 +196,7 @@ begin
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
+             c5.prefixo||'.'||substr(1000000+c5.numero_documento,2,6)||'/'||c5.ano||'-'||substr(100+c5.digito,2,2) as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
@@ -212,6 +215,7 @@ begin
                  inner     join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
                  left      join co_pessoa            c3 on (c.pessoa_origem        = c3.sq_pessoa)
+                 left      join pa_documento         c5 on (c.sq_documento_pai     = c5.sq_siw_solicitacao)
                  inner     join pa_documento_log     d  on (c.sq_siw_solicitacao   = d.sq_siw_solicitacao and
                                                             d.recebimento          is null
                                                            )
@@ -238,7 +242,8 @@ begin
    Elsif p_restricao = 'EXISTE' Then
       -- Verifica a existência de um protocolo
       open p_result for
-      select a.sq_siw_solicitacao, a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
+      select a.sq_siw_solicitacao, a.processo,
+             a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
         from pa_documento a
        where a.prefixo          = p_prefixo 
          and a.numero_documento = p_numero 

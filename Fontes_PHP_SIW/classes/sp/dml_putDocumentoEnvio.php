@@ -11,8 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putDocumentoEnvio {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_interno, $p_unidade_origem, $p_unidade_destino,
-        $p_pessoa_destino, $p_tipo_despacho, $p_despacho, $p_aviso, $p_dias_aviso, $p_retorno_limite, $p_pessoa_externa,
-        $p_unidade_externa, $p_nu_guia, $p_ano_guia, $p_unidade_autuacao) {
+        $p_pessoa_destino,$p_tipo_despacho,$p_prefixo,$p_numero,$p_ano,$p_despacho,$p_aviso,$p_dias_aviso,$p_retorno_limite, 
+        $p_pessoa_externa,$p_unidade_externa, $p_nu_guia, $p_ano_guia, $p_unidade_autuacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoEnvio';
      $params=array('p_menu'                     =>array($p_menu,                                    B_INTEGER,        32),
                    'p_chave'                    =>array($p_chave,                                   B_INTEGER,        32),
@@ -23,6 +23,9 @@ class dml_putDocumentoEnvio {
                    'p_unidade_destino'          =>array($p_unidade_destino,                         B_INTEGER,        32),
                    'p_pessoa_destino'           =>array($p_pessoa_destino,                          B_INTEGER,        32),
                    'p_tipo_despacho'            =>array($p_tipo_despacho,                           B_INTEGER,        32),
+                   'p_prefixo'                  =>array(tvl($p_prefixo),                            B_INTEGER,        32),
+                   'p_numero'                   =>array(tvl($p_numero),                             B_INTEGER,        32),
+                   'p_ano'                      =>array(tvl($p_ano),                                B_INTEGER,        32),
                    'p_despacho'                 =>array(tvl($p_despacho),                           B_VARCHAR,      2000),
                    'p_aviso'                    =>array($p_aviso,                                   B_VARCHAR,         1),
                    'p_dias_aviso'               =>array($p_dias_aviso,                              B_INTEGER,         3),

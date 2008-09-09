@@ -56,7 +56,7 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
         $l_html.=chr(13).'       <td>'.f($row,'unidade_externa').'</td></tr>';
       }
       $l_html.=chr(13).'   <tr><td width="30%"><b>Despacho:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($row,'nm_despacho').'</td></tr>';
+      $l_html.=chr(13).'       <td>'.f($row,'nm_despacho').((nvl(f($row,'protocolo_pai'),'')!='') ? ' A '.f($row,'protocolo_pai') : '').'</td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Detalhamento:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'resumo').'</td></tr>';
 

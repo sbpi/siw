@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getOrPrioridade.php');
 // =========================================================================
 // Montagem da seleção de iniciativas prioritarias
 // -------------------------------------------------------------------------
-function SelecaoOrPrioridade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo) {
+function SelecaoOrPrioridade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getOrPrioridade::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
   $RS = SortArray($RS,'nome','asc');
