@@ -2355,7 +2355,7 @@ SP_MSSQL2000/SIW/SP_PutEOResp.sql -text
 SP_MSSQL2000/SIW/SP_PutEOTipoUni.sql -text
 SP_MSSQL2000/SIW/SP_PutEOUnidade.sql -text
 SP_MSSQL2000/SIW/SP_PutHorizonte_PE.sql -text
-SP_MSSQL2000/SIW/SP_PutProjetoAreas.sql -text
+SP_MSSQL2000/SIW/SP_PutProjetoAreas.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutProjetoConc.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEnvio.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEtapa.sql -text
@@ -2397,6 +2397,7 @@ SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getIndicador_Aferidor.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
 SP_MSSQL2000/SIW/SP_putIndicador_Afericao.sql -text
+SP_MSSQL2000/SIW/SP_putIndicador_Meta.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
 SP_MSSQL2000/SIW/VerificaDataEspecial.sql -text
 SP_MSSQL2000/SIW/VerificaDataMovel.sql -text
@@ -2412,7 +2413,9 @@ SP_MSSQL2000/SIW/sp_GetHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetObjetivo_PE.sql -text
 SP_MSSQL2000/SIW/sp_GetRelProgresso.sql -text
 SP_MSSQL2000/SIW/sp_GetUnidadeMedida.sql -text
+SP_MSSQL2000/SIW/sp_PutBaseLine.sql -text
 SP_MSSQL2000/SIW/sp_PutNatureza_PE.sql -text
+SP_MSSQL2000/SIW/sp_PutRestricaoEtapaInter.sql -text
 SP_MSSQL2000/SIW/sp_PutSolicInter.sql -text
 SP_MSSQL2000/SIW/sp_fGetUnidade.sql -text
 SP_MSSQL2000/SIW/sp_getMoeda.sql -text
@@ -2421,6 +2424,7 @@ SP_MSSQL2000/SIW/sp_getPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_getRecurso.sql -text
 SP_MSSQL2000/SIW/sp_getRecurso_Disp.sql -text
 SP_MSSQL2000/SIW/sp_getRecurso_Indisp.sql -text
+SP_MSSQL2000/SIW/sp_getSIWArquivo.sql -text
 SP_MSSQL2000/SIW/sp_getSolicRecursos.sql -text
 SP_MSSQL2000/SIW/sp_getTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_getUnidade_PA.sql -text
@@ -2430,6 +2434,7 @@ SP_MSSQL2000/SIW/sp_putPlanoEstrategico.sql -text
 SP_MSSQL2000/SIW/sp_putProgramaGeral.sql -text
 SP_MSSQL2000/SIW/sp_putProjetoGeralTeste.sql -text
 SP_MSSQL2000/SIW/sp_putSiwPessoaMail.sql -text
+SP_MSSQL2000/SIW/sp_putSolicRestricao.sql -text
 SP_MSSQL2000/SIW/sp_putTipoDemanda.sql -text
 SP_MSSQL2000/SIW/sp_putTipoInteressado.sql -text
 SP_MSSQL2000/SIW/sp_putTipoRecurso.sql -text
