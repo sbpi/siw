@@ -2191,6 +2191,7 @@ SP_MSSQL2000/SIW/MontaOrdem.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
 SP_MSSQL2000/SIW/SOMA_DIAS.sql -text
+SP_MSSQL2000/SIW/SP_CalculaPercEtapa.sql -text
 SP_MSSQL2000/SIW/SP_GETCONTASCRONOGRAMA.sql -text
 SP_MSSQL2000/SIW/SP_GETSOLICANEXO.sql -text
 SP_MSSQL2000/SIW/SP_GETTIPODEMANDA.sql -text
@@ -2232,7 +2233,7 @@ SP_MSSQL2000/SIW/SP_GetDeskTop_TT.sql -text
 SP_MSSQL2000/SIW/SP_GetDesktop_Recurso.sql -text
 SP_MSSQL2000/SIW/SP_GetEOAAtuac.sql -text
 SP_MSSQL2000/SIW/SP_GetEOAAtuacData.sql -text
-SP_MSSQL2000/SIW/SP_GetEtapaOrder.sql -text
+SP_MSSQL2000/SIW/SP_GetEtapaOrder.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_GetEtniaData.sql -text
 SP_MSSQL2000/SIW/SP_GetEtniaList.sql -text
 SP_MSSQL2000/SIW/SP_GetEtpDataPrnt.sql -text
@@ -2257,6 +2258,7 @@ SP_MSSQL2000/SIW/SP_GetLinkSubMenu.sql -text
 SP_MSSQL2000/SIW/SP_GetLnkDataPrnt.sql -text
 SP_MSSQL2000/SIW/SP_GetLnkDataPrnts.sql -text
 SP_MSSQL2000/SIW/SP_GetLocalList.sql -text
+SP_MSSQL2000/SIW/SP_GetMarcado.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuCode.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuData.sql -text
 SP_MSSQL2000/SIW/SP_GetMenuLink.sql -text
@@ -2357,11 +2359,14 @@ SP_MSSQL2000/SIW/SP_PutEOUnidade.sql -text
 SP_MSSQL2000/SIW/SP_PutHorizonte_PE.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoAreas.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutProjetoConc.sql -text
+SP_MSSQL2000/SIW/SP_PutProjetoDescritivo.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoEnvio.sql -text
-SP_MSSQL2000/SIW/SP_PutProjetoEtapa.sql -text
+SP_MSSQL2000/SIW/SP_PutProjetoEtapa.sql -text svneol=unset#application/octet-stream
 SP_MSSQL2000/SIW/SP_PutProjetoGeral.sql -text svneol=unset#application/octet-stream
+SP_MSSQL2000/SIW/SP_PutProjetoGeralRubrica.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoInter.sql -text
 SP_MSSQL2000/SIW/SP_PutProjetoRec.sql -text
+SP_MSSQL2000/SIW/SP_PutProjetoRubrica.sql -text
 SP_MSSQL2000/SIW/SP_PutSIWCliConf.sql -text
 SP_MSSQL2000/SIW/SP_PutSIWMenu.sql -text
 SP_MSSQL2000/SIW/SP_PutSIWModSeg.sql -text
@@ -2383,6 +2388,8 @@ SP_MSSQL2000/SIW/SP_UpdatePassword.sql -text
 SP_MSSQL2000/SIW/SP_VerificaAssinat.sql -text
 SP_MSSQL2000/SIW/SP_VerificaSenha.sql -text
 SP_MSSQL2000/SIW/SP_VerificaUsuario.sql -text
+SP_MSSQL2000/SIW/SP_ajustaDataEtapa.sql -text
+SP_MSSQL2000/SIW/SP_fCountProjetoEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetCC.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
 SP_MSSQL2000/SIW/SP_fGetLnkDataPrnts.sql -text
@@ -2396,6 +2403,7 @@ SP_MSSQL2000/SIW/SP_fGetUnitPaiList.sql -text
 SP_MSSQL2000/SIW/SP_fPutSgPerMen.sql -text
 SP_MSSQL2000/SIW/SP_getIndicador_Aferidor.sql -text
 SP_MSSQL2000/SIW/SP_getTipoRecurso.sql -text
+SP_MSSQL2000/SIW/SP_putContasCronograma.sql -text
 SP_MSSQL2000/SIW/SP_putIndicador_Afericao.sql -text
 SP_MSSQL2000/SIW/SP_putIndicador_Meta.sql -text
 SP_MSSQL2000/SIW/SolicRestricao.sql -text
