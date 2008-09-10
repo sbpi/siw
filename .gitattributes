@@ -2394,6 +2394,7 @@ SP_MSSQL2000/SIW/SP_fGetCC.sql -text
 SP_MSSQL2000/SIW/SP_fGetCCSubordinat.sql -text
 SP_MSSQL2000/SIW/SP_fGetLnkDataPrnts.sql -text
 SP_MSSQL2000/SIW/SP_fGetMenuList.sql -text
+SP_MSSQL2000/SIW/SP_fGetMenuUpper.sql -text
 SP_MSSQL2000/SIW/SP_fGetPlano.sql -text
 SP_MSSQL2000/SIW/SP_fGetProjetoEtapa.sql -text
 SP_MSSQL2000/SIW/SP_fGetSolic.sql -text
