@@ -175,8 +175,9 @@ begin
                      left  join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                      left  join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
                sg_autenticacao                       w
-       where a.sq_menu     = p_menu
-         and w.sq_pessoa   = p_pessoa
+       where a.sq_menu      = p_menu
+         and w.sq_pessoa    = p_pessoa
+         and b.sq_solic_pai is null
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
          and (b1.acesso    >= 8 or (c.unidade_int_posse = w.sq_unidade))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))

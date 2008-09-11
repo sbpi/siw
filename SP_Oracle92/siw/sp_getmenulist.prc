@@ -46,6 +46,7 @@ begin
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
+           and a.ativo     = 'S'
            and b.sigla     = case when p_modulo is null then b.sigla else p_modulo end
         order by acentos(a.nome);
    Elsif upper(p_operacao) = 'XVINC' Then
@@ -58,6 +59,7 @@ begin
                inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
          where a.sq_pessoa = p_cliente
            and a.tramite   = 'S'
+           and a.ativo     = 'S'
            --and a.sq_menu   <> p_chave
         order by acentos(a.nome);        
    Elsif upper(p_operacao) <> 'I' and upper(p_operacao) <> 'H' Then

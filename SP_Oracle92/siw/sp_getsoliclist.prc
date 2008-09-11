@@ -1304,7 +1304,7 @@ begin
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );
-   Elsif substr(p_restricao,1,3) = 'PAD' Then
+   Elsif substr(p_restricao,1,3) = 'PAD' or substr(p_restricao,1,4) = 'GRPA' Then
       -- Recupera os programas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -1345,8 +1345,9 @@ begin
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
-                d.volumes,
+                d.volumes,            d.unidade_int_posse,
                 d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
                 d1.descricao as ds_natureza,                         d1.ativo as st_natureza,
@@ -1358,7 +1359,7 @@ begin
                 cast(b.fim as date)-cast(k.dias_aviso as integer) as aviso,
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
-                e.vinculada as vinc_resp,e.adm_central as adm_resp,        e.sigla as sg_unidade_resp,
+                e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
@@ -1432,7 +1433,7 @@ begin
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from ac_acordo_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
-            and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
+            and (p_uorg_resp      is null or (p_uorg_resp   is not null and q.sq_unidade         = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
@@ -1444,6 +1445,7 @@ begin
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
+            and (p_proponente     is null or (p_proponente  is not null and d.pessoa_origem      = p_proponente))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and d.numero_original    = p_empenho))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
@@ -1454,6 +1456,13 @@ begin
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                )
+            and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
+                 ((p_restricao = 'GRPACC'      and b.sq_cc          is not null)   or 
+                  (p_restricao = 'GRPAPROP'    and d.pessoa_origem  is not null)   or 
+                  (p_restricao = 'GRPARESPATU' and b.executor       is not null)   or
+                  (p_restricao = 'GRPAVINC'    and b.sq_solic_pai   is not null)
+                 )
                 );
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
