@@ -1,4 +1,4 @@
-create procedure dbo.SP_PutProjetoEtapa
+alter procedure dbo.SP_PutProjetoEtapa
    (@p_operacao            varchar(1),
     @p_chave               int,
     @p_chave_aux           int       = null,
@@ -9,7 +9,7 @@ create procedure dbo.SP_PutProjetoEtapa
     @p_inicio              datetime  = null,
     @p_fim                 datetime  = null,
     @p_perc_conclusao      int       = null,
-    @p_orcamento           int       = null,
+    @p_orcamento           numeric(18,2)       = null,
     @p_sq_pessoa           int,
     @p_sq_unidade          int,
     @p_vincula_atividade   varchar(1)  = null,
@@ -33,11 +33,10 @@ create procedure dbo.SP_PutProjetoEtapa
 begin
    If @p_operacao = 'I' Begin -- Inclusão
       -- Recupera a próxima chave
-      Set @w_chave = @@Identity;
       
       -- Insere registro na tabela de etapas do projeto
       Insert Into pj_projeto_etapa 
-         ( sq_projeto_etapa,    sq_siw_solicitacao, sq_etapa_pai,            ordem, 
+         ( sq_siw_solicitacao, sq_etapa_pai,            ordem, 
            titulo,              descricao,          inicio_previsto,         fim_previsto, 
            perc_conclusao,      orcamento,          sq_pessoa,               sq_unidade,
            vincula_atividade,   vincula_contrato,   sq_pessoa_atualizacao,   ultima_atualizacao,
@@ -45,13 +44,15 @@ begin
            pacote_trabalho,     base_geografica,    sq_pais,                 sq_regiao,
            co_uf,               sq_cidade,          peso)
       Values
-         ( @w_chave,             @p_chave,            @p_chave_pai,             @p_ordem,
+         ( @p_chave,            @p_chave_pai,             @p_ordem,
            @p_titulo,            @p_descricao,        @p_inicio,                @p_fim,
            @p_perc_conclusao,    @p_orcamento,        @p_sq_pessoa,             @p_sq_unidade,
            @p_vincula_atividade, @p_vincula_contrato, @p_usuario,               getdate(),            
            @p_programada,        @p_cumulativa,       @p_quantidade,            @p_unidade_medida,
            @p_pacote,            @p_base,             @p_pais,                  @p_regiao,
            @p_uf,                @p_cidade,           @p_peso);
+
+      Set @w_chave = @@Identity;
 
       -- Recalcula os percentuais de execução dos pais da etapa
       exec sp_calculaPercEtapa @w_chave, null;

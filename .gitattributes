@@ -2184,6 +2184,7 @@ SP_MSSQL2000/SIW/CalculaIGC.sql -text
 SP_MSSQL2000/SIW/CalculaIge.sql -text
 SP_MSSQL2000/SIW/Criptografia.sql -text
 SP_MSSQL2000/SIW/GESTOR.sql -text
+SP_MSSQL2000/SIW/GetDataEtapa.sql -text
 SP_MSSQL2000/SIW/LastDay.sql -text
 SP_MSSQL2000/SIW/MARCADO.sql -text
 SP_MSSQL2000/SIW/MontaNomeTipoRecurso.sql -text
@@ -2191,6 +2192,7 @@ SP_MSSQL2000/SIW/MontaOrdem.sql -text
 SP_MSSQL2000/SIW/SG_GeraCliMod.sql -text
 SP_MSSQL2000/SIW/SG_GeraMenu.sql -text
 SP_MSSQL2000/SIW/SOMA_DIAS.sql -text
+SP_MSSQL2000/SIW/SP_AjustaPesoEtapa.sql -text
 SP_MSSQL2000/SIW/SP_CalculaPercEtapa.sql -text
 SP_MSSQL2000/SIW/SP_GETCONTASCRONOGRAMA.sql -text
 SP_MSSQL2000/SIW/SP_GETSOLICANEXO.sql -text

@@ -77,7 +77,7 @@ begin
             and (@p_gestora    is null or (@p_gestora   is not null and a.unidade_gestora = @p_gestora))
             and (@p_sigla      is null or (@p_sigla     is not null and a.sigla = upper(@p_sigla)))
             and (@p_ativo      is null or (@p_ativo     is not null and a.ativo = @p_ativo))
-            and a.sq_tipo_recurso in (select chave from dbo.sp_fgettiporecurso(@p_chave, 'UP'))
+            and a.sq_tipo_recurso not in (select chave from dbo.sp_fgettiporecurso(@p_chave, 'UP'))
 
          order by 5;
    End Else If upper(@p_restricao) = 'PAI' Begin

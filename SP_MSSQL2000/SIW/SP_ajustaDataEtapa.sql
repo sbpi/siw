@@ -9,7 +9,7 @@ Begin
   Declare @sq_siw_solicitacao numeric(18)
 
   -- Cursor que recupera todos os projetos
-  Declare c_projetos cursor for
+  Declare c_proj cursor for
     select a.sq_siw_solicitacao
            from pj_projeto a
                 inner join pj_projeto_etapa b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao);
@@ -22,6 +22,7 @@ Begin
         and a.pacote_trabalho    = 'S';
 
   Declare @w_etapa numeric(18);
+
   Declare c_pais cursor for
      select a.sq_projeto_etapa
        from pj_projeto_etapa a
@@ -34,13 +35,15 @@ Begin
      
 
     -- Atualiza as datas de todos os projetos
-    Open c_projetos
-    Fetch Next from c_projetos into @sq_siw_solicitacao
-    While @@fetch_status = 0 Begin
-        exec SP_ajustadataEtapa @sq_siw_solicitacao;
-        Fetch Next from c_projetos into @sq_siw_solicitacao
+    Open c_proj
+        Fetch Next from c_proj into @sq_siw_solicitacao
+        While @@fetch_status = 0 Begin
+            exec SP_ajustadataEtapa @sq_siw_solicitacao;
+            Fetch Next from c_proj into @sq_siw_solicitacao
+        End
+        Close c_proj
+        Deallocate c_proj
     End
-  End
   
   -- Reinicializa as datas das etapas que não são pacote de trabalho
   update pj_projeto_etapa set inicio_real = null, fim_real = null where pacote_trabalho = 'N' and sq_siw_solicitacao = @p_projeto;
@@ -89,6 +92,6 @@ Begin
      end
     fetch next from c_pacotes into @sq_etapa_pai, @inicio_real, @fim_real;
  End
-    close      C_Pacotes
-    deallocate C_Pacotes
+    close      c_pacotes
+    deallocate c_pacotes
 end
