@@ -26,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoGeral.php');
@@ -128,7 +129,7 @@ $p_ativo        = strtoupper($_REQUEST['p_ativo']);
 $p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
 $p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
 $p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_parcerias    = strtoupper($_REQUEST['p_parcerias']);
+$p_proponente    = strtoupper($_REQUEST['p_proponente']);
 $p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
 $p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
 $p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
@@ -193,6 +194,14 @@ function Inicial() {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
         $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Responsável <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       }
+      if ($p_proponente>'') {
+        $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_proponente,null,null);
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Procedência <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      }
+      if ($p_uorg_resp>'') {
+        $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+        $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade de posse <td>[<b>'.f($RS,'nome').'</b>]';
+      }
       if ($p_unidade>'') {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
         $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Unidade de origem <td>[<b>'.f($RS,'nome').'</b>]';
@@ -211,14 +220,14 @@ function Inicial() {
       // Se for cópia, aplica o filtro sobre todas as demandas visíveis pelo usuário
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
+          $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
           null, null, $p_empenho, $p_numero_orig);
     } else {      
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-          $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
+          $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
           null, null, $p_empenho, $p_numero_orig);
@@ -327,7 +336,7 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Recebimento','data_recebimento').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Limite','fim').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      ShowHTML('          <td rowspan=2><b>Operações</td>');
+      if ($P1!=3) ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Espécie','nm_especie').'</td>');
@@ -381,8 +390,8 @@ function Inicial() {
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data_recebimento')).'</td>');
         ShowHTML('        <td align="center">'.nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
-        if ($w_tipo!='WORD'){        
-        ShowHTML('        <td align="top" nowrap>');
+        if ($w_tipo!='WORD' && $P1!=3){
+          ShowHTML('        <td align="top" nowrap>');
           if ($P1!=3 && $P1!=5) {
             // Se não for acompanhamento
             if ($w_copia>'') {
@@ -2550,7 +2559,7 @@ function Grava() {
       } else {
         dml_putDocumentoEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
             $_REQUEST['w_interno'],$_REQUEST['w_unidade_posse'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_pessoa_destino'],
-            $_REQUEST['w_tipo_despacho'],$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
+            $_REQUEST['w_tipo_despacho'],null, null, null,$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
             $_REQUEST['w_retorno_limite'],$_REQUEST['w_pessoa_destino_nm'],$_REQUEST['w_unidade_externa'],
             &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
         // Envia e-mail comunicando a tramitação
