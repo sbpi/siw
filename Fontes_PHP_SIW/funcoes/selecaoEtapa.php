@@ -19,14 +19,14 @@ function selecaoEtapa($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo
   }
   foreach($RST as $rowT) {
     if ($restricao=='Grupo' && (f($rowT,'vincula_atividade')=='N' || f($rowT,'perc_conclusao')>=100)) { 
-      ShowHTML('          <option value="">'.f($rowT,'cd_ordem').'. '.f($rowT,'titulo')); 
+      ShowHTML('          <option value="">'.montaOrdemEtapa(f($rowT,'sq_projeto_etapa')).'. '.f($rowT,'titulo')); 
     } elseif ($restricao=='CONTRATO' && (f($rowT,'vincula_contrato')=='N' || f($rowT,'perc_conclusao')>=100)) { 
-      ShowHTML('          <option value="">'.f($rowT,'cd_ordem').'. '.f($rowT,'titulo')); 
+      ShowHTML('          <option value="">'.montaOrdemEtapa(f($rowT,'sq_projeto_etapa')).'. '.f($rowT,'titulo')); 
     } else { 
       if (nvl(f($rowT,'sq_projeto_etapa'),0)==nvl($chave,0)) { 
-        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'" SELECTED>'.f($rowT,'cd_ordem').'. '.f($rowT,'titulo')); 
+        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'" SELECTED>'.montaOrdemEtapa(f($rowT,'sq_projeto_etapa')).'. '.f($rowT,'titulo')); 
       } else { 
-        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'">'.f($rowT,'cd_ordem').'. '.f($rowT,'titulo')); 
+        ShowHTML('          <option value="'.f($rowT,'sq_projeto_etapa').'">'.montaOrdemEtapa(f($rowT,'sq_projeto_etapa')).'. '.f($rowT,'titulo')); 
       } 
     }
   }
