@@ -342,7 +342,7 @@ function Inicial() {
       ShowHTML('          <td><b>'.LinkOrdena('Espécie','nm_especie').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Nº','numero_original').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Data','inicio').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Origem','nm_origem').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Procedência','nm_origem').'</td>');
     } else {
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
@@ -355,7 +355,7 @@ function Inicial() {
       ShowHTML('          <td><b>Espécie</td>');
       ShowHTML('          <td><b>Nº</td>');
       ShowHTML('          <td><b>Data</td>');
-      ShowHTML('          <td><b>Origem</td>');
+      ShowHTML('          <td><b>Procedência</td>');
     }  
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
@@ -640,7 +640,7 @@ function Geral() {
     Validate('w_especie_documento','Espécie documental','SELECT',1,1,18,'','0123456789');
     Validate('w_doc_original','Nº do documento','1','1',1,30,'1','1');
     Validate('w_data_documento','Data do documento','DATA','1',10,10,'','0123456789/');
-    Validate('w_interno','Origem','SELECT',1,1,1,'SN','');
+    Validate('w_interno','Procedência','SELECT',1,1,1,'SN','');
     if ($w_interno=='N') {
       Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
       Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
@@ -2123,7 +2123,7 @@ function Tramitacao() {
     ShowHTML('          <td><b>Espécie</td>');
     ShowHTML('          <td><b>Nº</td>');
     ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Origem</td>');
+    ShowHTML('          <td><b>Procedência</td>');
     ShowHTML('        </tr>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -2290,7 +2290,7 @@ function Recebimento() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Guia</td>');
-    ShowHTML('          <td><b>Origem</td>');
+    ShowHTML('          <td><b>Procedência</td>');
     ShowHTML('          <td><b>Despacho</td>');
     ShowHTML('          <td><b>Protocolo</td>');
     ShowHTML('          <td><b>Envio</td>');

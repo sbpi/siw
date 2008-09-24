@@ -70,7 +70,7 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
       $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Data</b></font></td>';
-      $l_html.=chr(13).'       <td><font size=1><b>Origem</b></font></td>';
+      $l_html.=chr(13).'       <td><font size=1><b>Procedência</b></font></td>';
       $l_html.=chr(13).'     </tr>';
       $w_pag   += 1;
       $w_linha = 6;

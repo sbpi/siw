@@ -2,7 +2,8 @@
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
-function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificacao,$l_assunto_princ,$l_orcamentaria,$l_indicador,$l_recurso,$l_interessado,$l_anexo,$l_meta,$l_ocorrencia,$l_consulta) {
+function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identificacao,$l_assunto_princ,$l_orcamentaria,
+      $l_indicador,$l_recurso,$l_interessado,$l_anexo,$l_meta,$l_ocorrencia,$l_consulta) {
   extract($GLOBALS);
 
   //Recupera as informações do sub-menu
@@ -209,7 +210,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
           $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
           $l_html.=chr(13).'       <tr>';
           $l_html.=chr(13).'         <td colspan=3 bgColor="#f0f0f0" align="center"><b>Ocorrência</b></td>';
-          $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Origem</b></td>';
+          $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Procedência</b></td>';
           $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Destino</b></td>';
           $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Despacho / Descrição</b></td>';
           $l_html.=chr(13).'       </tr>';

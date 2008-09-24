@@ -195,7 +195,7 @@ function Inicial() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Último despacho','nm_despacho').'</td>');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Protocolo','protocolo').'</td>');
-    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Procedência','nm_unid_origem').'</td>');
+    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Unidade de Origem','nm_unid_origem').'</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Limite','fim').'</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
@@ -204,7 +204,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.linkOrdena('Espécie','nm_especie').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Nº','numero_original').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Data','inicio').'</td>');
-    ShowHTML('          <td><b>'.linkOrdena('Origem','nm_origem_doc').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Procedência','nm_origem_doc').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem

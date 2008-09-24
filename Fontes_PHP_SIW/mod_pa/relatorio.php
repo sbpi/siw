@@ -350,7 +350,7 @@ function Etiqueta() {
     ShowHTML('          <td><b>Espécie</td>');
     ShowHTML('          <td><b>Nº</td>');
     ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Origem</td>');
+    ShowHTML('          <td><b>Procedência</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
