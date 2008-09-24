@@ -195,7 +195,7 @@ function Inicial() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Último despacho','nm_despacho').'</td>');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Protocolo','protocolo').'</td>');
-    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Unidade de origem','nm_unid_origem').'</td>');
+    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Procedência','nm_unid_origem').'</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td rowspan=2><b>'.linkOrdena('Limite','fim').'</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
