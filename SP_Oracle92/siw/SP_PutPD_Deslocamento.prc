@@ -103,7 +103,8 @@ begin
      from pd_deslocamento        a
           inner   join co_cidade b on (a.destino = b.sq_cidade)
             inner join co_pais   c on (b.sq_pais = c.sq_pais)
-    where c.padrao = 'S';
+    where c.padrao = 'S'
+      and a.sq_siw_solicitacao = p_chave;
 
    update pd_missao set nacional = w_existe where sq_siw_solicitacao = p_chave;
    
@@ -113,7 +114,8 @@ begin
      from pd_deslocamento        a
           inner   join co_cidade b on (a.destino = b.sq_cidade)
             inner join co_pais   c on (b.sq_pais = c.sq_pais)
-    where c.padrao = 'N';
+    where c.padrao = 'N'
+      and a.sq_siw_solicitacao = p_chave;
 
    update pd_missao set internacional = w_existe where sq_siw_solicitacao = p_chave;
    

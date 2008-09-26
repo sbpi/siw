@@ -22,7 +22,8 @@ begin
                     then d.nome||'-'||d.co_uf
                     else d.nome||' ('||e.nome||')'
                     end nm_destino,
-                f.sq_diaria, f.quantidade, f.valor
+                f.sq_diaria, f.quantidade, f.valor, f.hospedagem_checkin, f.hospedagem_checkout, f.hospedagem_observacao,
+                f.veiculo_retirada, f.veiculo_devolucao
            from pd_deslocamento          a
                   inner      join   co_cidade b on (a.origem             = b.sq_cidade)
                     inner    join   co_pais   c on (b.sq_pais            = c.sq_pais)
@@ -55,6 +56,7 @@ begin
                 f.diaria, f.quantidade, f.valor, g1.sigla as sg_moeda_diaria, g.valor as vl_diaria, g.sq_valor_diaria as sq_valor_diaria,
                 f.hospedagem, f.hospedagem_qtd, f.hospedagem_valor, h1.sigla as sg_moeda_hospedagem, h.valor as vl_diaria_hospedagem, h.sq_valor_diaria as sq_diaria_hospedagem,
                 f.veiculo, f.veiculo_qtd, f.veiculo_valor, i1.sigla as sg_moeda_veiculo, i.valor as vl_diaria_veiculo, i.sq_valor_diaria as sq_diaria_veiculo,
+                f.hospedagem_checkin, f.hospedagem_checkout, f.hospedagem_observacao, f.veiculo_retirada, f.veiculo_devolucao,
                 m.sq_pdvinculo_financeiro as sq_fin_dia,
                 m1.sq_projeto_rubrica as sq_rub_dia, m1.codigo as cd_rub_dia, m1.nome as nm_rub_dia, m1.descricao as ds_rub_dia,
                 m2.sq_tipo_lancamento as sq_lan_dia, m2.nome as nm_lan_dia,

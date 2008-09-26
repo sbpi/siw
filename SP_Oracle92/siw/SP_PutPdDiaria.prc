@@ -27,7 +27,12 @@ create or replace procedure SP_PutPdDiaria
     p_fin_hsp               in  number   default null,
     p_rub_vei               in  number   default null,
     p_lan_vei               in  number   default null,
-    p_fin_vei               in  number   default null
+    p_fin_vei               in  number   default null,
+    p_hos_in                in  date     default null,
+    p_hos_out               in  date     default null,
+    p_hos_observ            in  varchar2 default null,
+    p_vei_ret               in  date     default null,
+    p_vei_dev               in  date     default null
    ) is
    w_reg      number(18);
    w_fin_dia  number(18) := p_fin_dia;
@@ -98,7 +103,8 @@ begin
          hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
          veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
          sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
-         sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo)
+         sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
+         hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao)
       (select sq_diaria.nextval,      p_chave,                         p_sq_cidade,
               case p_diaria when 'S' then p_quantidade else 0 end,
               case p_diaria when 'S' then p_valor else 0 end,
@@ -114,7 +120,12 @@ begin
               case p_veiculo when 'S' then p_justificativa_veiculo else null end,
               case p_diaria when 'S' then w_fin_dia else null end,
               case p_hospedagem when 'S' then w_fin_hsp else null end,
-              case p_veiculo when 'S' then w_fin_vei else null end
+              case p_veiculo when 'S' then w_fin_vei else null end,
+              case p_hospedagem when 'S' then p_hos_in else null end,
+              case p_hospedagem when 'S' then p_hos_out else null end,
+              case p_hospedagem when 'S' then p_hos_observ else null end,
+              case p_veiculo when 'S' then p_vei_ret else null end,
+              case p_veiculo when 'S' then p_vei_dev else null end
          from dual
       );
    Elsif p_operacao = 'A' Then
@@ -141,7 +152,12 @@ begin
              justificativa_veiculo      = case p_veiculo when 'S' then p_justificativa_veiculo else null end,
              sq_pdvinculo_diaria        = case p_diaria when 'S' then w_fin_dia else null end,
              sq_pdvinculo_hospedagem    = case p_hospedagem when 'S' then w_fin_hsp else null end,
-             sq_pdvinculo_veiculo       = case p_veiculo when 'S' then w_fin_vei else null end
+             sq_pdvinculo_veiculo       = case p_veiculo when 'S' then w_fin_vei else null end,
+             hospedagem_checkin         = case p_hospedagem when 'S' then p_hos_in else null end,
+             hospedagem_checkout        = case p_hospedagem when 'S' then p_hos_out else null end,
+             hospedagem_observacao      = case p_hospedagem when 'S' then p_hos_observ else null end,
+             veiculo_retirada           = case p_veiculo when 'S' then p_vei_ret else null end,
+             veiculo_devolucao          = case p_veiculo when 'S' then p_vei_dev else null end
        where sq_siw_solicitacao         = p_chave
          and sq_diaria                  = p_sq_diaria;
    End If;

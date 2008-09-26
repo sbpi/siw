@@ -83,11 +83,15 @@ begin
          select count(a.sq_pessoa) into w_existe 
            from co_pessoa_fisica a
                 join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-          where cpf = p_cpf;
+          where a.cpf       = p_cpf
+             or a.sq_pessoa = coalesce(w_chave,0);
          if w_existe = 0 then
             insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, p_cpf, p_sexo, p_cliente);
          else
-            Update co_pessoa_fisica set sexo  = p_sexo where sq_pessoa = w_chave;
+            Update co_pessoa_fisica 
+               set sexo  = p_sexo,
+                   cpf   = coalesce(p_cpf,cpf)
+             where sq_pessoa = w_chave;
          end if;
        End If;
 

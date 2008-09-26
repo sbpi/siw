@@ -20,6 +20,7 @@ create or replace procedure SP_PutViagemEnvio
    i               number(18);
    w_ci            number(18);
    w_ee            number(18);
+   w_salto         number(4);
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
@@ -115,10 +116,32 @@ create or replace procedure SP_PutViagemEnvio
 begin
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
    If p_devolucao = 'N' Then
+      -- Decide para qual trâmite irá enviar
+      select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+         from siw_tramite a
+        where sq_siw_tramite = p_tramite;
+  
+      If w_sg_tramite = 'CI' Then
+         -- Se cadastramento inicial
+         select count(*) into w_existe
+           from pd_deslocamento        a
+                inner   join co_cidade b on (a.destino = b.sq_cidade)
+                  inner join co_pais   c on (b.sq_pais = c.sq_pais and c.padrao = 'N')
+          where a.sq_siw_solicitacao = p_chave;
+        
+         -- Se viagem para exterior, vai para a cotação de preços; senão vai para aprovação
+         If w_existe > 0 
+            Then w_salto := 1;
+            Else w_salto := 2;
+         End If;
+      Else
+         w_salto := 1;
+      End If;
+      
       select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
          from siw_tramite a
         where a.sq_menu = p_menu
-          and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = p_tramite);
+          and a.ordem   = (select ordem+w_salto from siw_tramite where sq_siw_tramite = p_tramite);
    Else
       select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
          from siw_tramite a
