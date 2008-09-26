@@ -14,6 +14,7 @@ begin
         from pd_meio_transporte a
        where a.cliente = p_cliente
          and ((p_chave is null)  or (p_chave is not null and a.sq_meio_transporte = p_chave))
-         and ((p_ativo is null)  or (p_ativo is not null and a.ativo              = p_ativo));
+         and ((p_ativo is null)  or (p_ativo is not null and a.ativo              = p_ativo))
+         and ((p_nome is null)   or (p_nome  is not null and acentos(a.nome)      = acentos(p_nome)));
 end SP_GetMeioTransporte;
 /
