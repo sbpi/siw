@@ -272,18 +272,21 @@ begin
                         left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao         = m1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                      = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante                = o.sq_pessoa)
-                        inner        join sg_autenticacao      o1 on (o.sq_pessoa                  = o1.sq_pessoa)
-                          inner      join eo_unidade           o2 on (o1.sq_unidade                = o2.sq_unidade)
+                        left         join sg_autenticacao      o1 on (o.sq_pessoa                  = o1.sq_pessoa)
+                          left       join eo_unidade           o2 on (o1.sq_unidade                = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                   = p.sq_pessoa)
                    left              join eo_unidade           c  on (a.sq_unid_executora          = c.sq_unidade)
-                   left              join pj_etapa_demanda     i  on (b.sq_siw_solicitacao        = i.sq_siw_solicitacao)
+                   left              join pj_etapa_demanda     i  on (b.sq_siw_solicitacao         = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa           = q.sq_projeto_etapa)
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
+                   left              join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                             from siw_solic_log x
+                                           group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao         = j.sq_siw_solicitacao)
-                     left            join gd_demanda_log       k  on (j.chave                      = k.sq_siw_solic_log)
-                       left          join sg_autenticacao      l  on (k.destinatario               = l.sq_pessoa)
+                      left           join (select x.sq_siw_solic_log, y.sq_pessoa, y.sq_unidade
+                                             from gd_demanda_log             x
+                                                  inner join sg_autenticacao y on (x.destinatario = y.sq_pessoa)
+                                            where x.sq_siw_solic_log is not null
+                                          )                    l  on (j.chave                      = l.sq_siw_solic_log)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao   = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais              = p_pais))
