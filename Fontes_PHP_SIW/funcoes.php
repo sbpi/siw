@@ -87,6 +87,16 @@ function callback($buffer) {
 }
 
 // =========================================================================
+// Abre e fecha a arvore.
+// -------------------------------------------------------------------------
+function colapsar($w_chave){
+	$saida = "&nbsp;";
+	$saida .= "<img src='images/mais.jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$w_chave.",this)'/>";		
+	$saida .= "&nbsp;";
+	return $saida;
+}
+
+// =========================================================================
 // Gera um link chamando o arquivo desejado
 // -------------------------------------------------------------------------
 function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
@@ -122,6 +132,7 @@ function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
   $l_arquivo  = $l_caminho.$l_nome_arq;
   // Abre o arquivo de log
   $l_arq = @fopen($l_arquivo, 'w');
+  $l_html = str_replace("display:none","",$l_html);
   fwrite($l_arq,'<HTML>');
   fwrite($l_arq,'<HEAD>');
   fwrite($l_arq,'<TITLE>Visualização de '.$l_nome.'</TITLE>');
@@ -1822,6 +1833,29 @@ function Tvl($expressao) { if (!isset($expressao) || $expressao==='' || $express
 // Retorna valores nulos se chegar cadeia vazia
 // -------------------------------------------------------------------------
 function Cvl($expressao) { if (!isset($expressao) || $expressao=='') { return 0; } else { return $expressao; } }
+
+// =========================================================================
+// Informar os dados de uma variavel mostrando a linha do arquivo em que a função foi chamada.
+// 
+function dbg($var=NULL, $morte=FALSE){
+	print "/*<center>-- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
+	print "<strong>DEBUG INICIO</strong>";
+	print " ----- ----- ----- ----- ----- ----- ----- ----- ----- --</center> \n ";
+	$array = debug_backtrace();
+	print("<center>linha '". $array[0]['line'] ."' do arquivo '".
+	$array[0]['file'] ."'</center> \n ");
+	print("<pre><font size='3'> \n ");
+	var_dump($var);
+	print("</font></pre> \n ");
+	print "<center>---- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
+	print "<strong>DEBUG FIM</strong>";
+	print " ----- ----- ----- ----- ----- ----- ----- ----- ----- ----</center> \n ";
+
+	if( $morte )
+	{
+		die("<center><font color='#ff0000'><strong>D I E</strong></font></center>  */ \n ");
+	}
+}
 
 // =========================================================================
 // Retorna o caminho físico para o diretório  do cliente informado

@@ -302,3 +302,39 @@ function replaceAll(str, de, para) {  var pos = str.indexOf(de);
   while (pos > -1) {    str = str.replace(de, para);
     pos = str.indexOf(de);  }  return (str);
 }
+
+function colapsar(chave,obj){
+
+	var id = "tr[id^=tr-" + chave + "]";
+	var src = $(obj).attr("src");
+	var img = "img[id^=img-" + chave + "]";
+	var parte = "";
+	if(src.indexOf("mais") != -1){
+
+		$(id).each(function(){
+			$(this).show();
+		});	
+
+		$(img).each(function(){
+			$(this).attr("src",src.replace("mais","menos"));
+		});
+
+		$(obj).attr("src",src.replace("mais","menos"));
+
+	}else{
+
+		$(id).each(function(){
+			 parte = $(this).attr("id").split("-");			
+			 if( parte.length > 2 ){
+				$(this).hide();
+			 }
+		});
+
+		$(img).each(function(){
+			$(this).attr("src",src.replace("menos","mais"));
+		});
+	
+		$(obj).attr("src",src.replace("menos","mais"));
+
+	}
+}
