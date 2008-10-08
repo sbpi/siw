@@ -1725,14 +1725,17 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
     $w_html.=$crlf.'<table width="95%" border="0" cellspacing="3">';
     // Chama a rotina de visualização dos dados do registro, na opção 'Listagem'
-    $w_html.=$crlf. VisualPrograma($w_chave,'V',$w_usuario,$P1,$P4,'S','N','N','N','N','N','N','N','N','N','N');
-    $w_html.=$crlf.'</table>';
+    $w_html.=$crlf. VisualPrograma($p_solic,'V',$w_usuario,$P1,$P4,'S','N','N','N','N','N','N','N','N','N','N');
+	
+
     if ($p_tipo==2) {
       // Se for tramitação
       // Encaminhamentos
       $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
+
       foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
+	  $w_data_encaminhamento = f($RS,'phpdt_data');
       $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
       $w_html.=$crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
       $w_html.=$crlf.'          <tr valign="top">';
@@ -1762,6 +1765,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html.='</table>'.$crlf;
     $w_html.='</BODY>'.$crlf;
     $w_html.='</HTML>'.$crlf;
+
     // Se o solicitante tiver ativo
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
@@ -1982,9 +1986,12 @@ function Grava() {
             $w_html = VisualPrograma($_REQUEST['w_chave'],'T',$w_usuario,$P1,'WORD','S','S','S','S','S','S','S','S','S','S','S');
             CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
           }
+		  // Envia e-mail comunicando a tramitação
+		  SolicMail($_REQUEST['w_chave'],2);		 
         }
-        // Envia e-mail comunicando a tramitação
-        if ($_REQUEST['w_novo_tramite']>'') SolicMail($_REQUEST['w_chave'],2);
+        
+
+
         if ($P1==1) {
           // Se for envio da fase de cadastramento, remonta o menu principal
           // Recupera os dados para montagem correta do menu
