@@ -26,9 +26,9 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
   }
   $RS = SortArray($RS,'titulo','asc', 'inicio', 'asc');
   if (!isset($hint)) 
-    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else
-    ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
     if (nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0))

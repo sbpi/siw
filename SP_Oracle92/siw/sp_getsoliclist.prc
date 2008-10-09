@@ -1349,7 +1349,13 @@ begin
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
                 d.volumes,            d.unidade_int_posse,
+                d.tipo_juntada,
+                case d.interno when 'S' then e.sigla else d2.nome_resumido end as nm_origem_doc,
+                case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
+                to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
+                to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
+                case d.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo_protocolo,
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
@@ -1364,7 +1370,7 @@ begin
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
                 e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
-                f.sq_pais,            f.sq_regiao,                   f.co_uf,
+                k1.sq_tipo_despacho, k1.nome as nm_tipo_despacho,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
@@ -1418,40 +1424,50 @@ begin
                                                                           q2.fim                     is null
                                                                          )
                         left         join co_pessoa                r  on (d.pessoa_ext_posse         = r.sq_pessoa)
-                      inner          join co_cidade                f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join ct_cc                    n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa                o  on (b.solicitante              = o.sq_pessoa)
                         left         join sg_autenticacao          o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           left       join eo_unidade               o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
+                   left              join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
                                              from siw_solic_log
                                            group by sq_siw_solicitacao
                                           )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join pa_documento_log         k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao          l  on (k.recebedor                = l.sq_pessoa)
+                       left          join pa_tipo_despacho         k1 on (k.sq_tipo_despacho         = k1.sq_tipo_despacho)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
-            and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
-            and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
-            and (p_cidade         is null or (p_cidade      is not null and f.sq_cidade          = p_cidade))
-            and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from ac_acordo_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
+            and (p_pais           is null or (p_pais        is not null and d.prefixo            = p_pais))
+            and (p_regiao         is null or (p_regiao      is not null and d.numero_documento   =  p_regiao))
+            and (p_cidade         is null or (p_cidade      is not null and d.ano                = p_cidade))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and q.sq_unidade         = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
-            --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa   = p_atividade))
-            and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
-            and (p_assunto        is null or (p_assunto     is not null and d4.sq_assunto        = p_assunto))
+            --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
+            and (p_uf             is null or (p_uf          is not null and d.processo           = p_uf))
+            and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao) like '%'||acentos(p_assunto)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and b.inicio             between p_ini_i and p_ini_f))
             and (p_fim_i          is null or (p_fim_i       is not null and b.fim                between p_fim_i and p_fim_f))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
-            and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and (p_proponente     is null or (p_proponente  is not null and d.pessoa_origem      = p_proponente))
+            and (p_solicitante    is null or (p_solicitante is not null and d7.sq_especie_documento = p_solicitante))
+            and (p_proponente     is null or (p_proponente  is not null and (to_char(d.pessoa_origem) = p_proponente or d2.nome_indice like '%'||acentos(p_proponente)||'%' or d2.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
+            and (p_prioridade     is null or (p_prioridade  is not null and coalesce(k1.sq_tipo_despacho,0) = p_prioridade))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
-            and (p_empenho        is null or (p_empenho     is not null and d.numero_original    = p_empenho))
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+            and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
+            and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
+                                                                                   from pa_documento_interessado x
+                                                                                        inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
+                                                                                  where x.sq_siw_solicitacao = d.sq_siw_solicitacao
+                                                                                    and (y.nome_indice       like '%'||p_processo||'%' or
+                                                                                         y.nome_resumido_ind like '%'||p_processo||'%'
+                                                                                        )
+                                                                                )
+                                             )
+                )
+            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI' and b.cadastrador     = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
@@ -1460,11 +1476,12 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-            and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
-                 ((p_restricao = 'GRPACC'      and b.sq_cc          is not null)   or 
-                  (p_restricao = 'GRPAPROP'    and d.pessoa_origem  is not null)   or 
-                  (p_restricao = 'GRPARESPATU' and b.executor       is not null)   or
-                  (p_restricao = 'GRPAVINC'    and b.sq_solic_pai   is not null)
+            and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
+                 ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 
+                  (p_restricao = 'GRPAPRIO'    and k1.sq_tipo_despacho is not null)   or 
+                  (p_restricao = 'GRPAPROP'    and d.pessoa_origem     is not null)   or 
+                  (p_restricao = 'GRPARESPATU' and b.executor          is not null)   or
+                  (p_restricao = 'GRPAVINC'    and b.sq_solic_pai      is not null)
                  )
                 );
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then

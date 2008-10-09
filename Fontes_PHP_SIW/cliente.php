@@ -14,6 +14,7 @@ include_once('classes/sp/db_getAddressList.php');
 include_once('classes/sp/db_getAddressData.php');
 include_once('classes/sp/db_getBenef.php');
 include_once('classes/sp/db_getCustomerData.php');
+include_once('classes/sp/db_getPersonData.php');
 include_once('classes/sp/db_getFoneList.php');
 include_once('classes/sp/db_getFoneData.php');
 include_once('classes/sp/db_getContaBancoList.php');
@@ -867,6 +868,8 @@ function Telefones() {
     $w_numero               = f($RS,'numero');
     $w_padrao               = f($RS,'padrao');
   } 
+  // Recupera os dados da pessoa
+  $RS_Benef = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -973,7 +976,7 @@ function Telefones() {
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td valign="top"><b><u>D</u>DD:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ddd" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ddd.'" title="Informe o DDD deste número."></td>');
     ShowHTML('          <td valign="top"><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="25" MAXLENGTH="25" VALUE="'.$w_numero.'" title="Informe o número do telefone."></td>');
-    selecaoTipoFone('<u>T</u>ipo:','T','Selecione na lista o tipo deste telefone.',$w_sq_tipo_telefone,$w_tipo_pessoa,'w_sq_tipo_telefone',null,null);
+    selecaoTipoFone('<u>T</u>ipo:','T','Selecione na lista o tipo deste telefone.',$w_sq_tipo_telefone,f($RS_Benef,'nm_tipo_pessoa'),'w_sq_tipo_telefone',null,null);
     ShowHTML('        <tr valign="top">');
     selecaoPais('<u>P</u>aís:','P','Selecione na lista o país onde o endereço localiza-se.',$w_pais,null,'w_pais',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_uf\'; document.Form.submit();"');
     selecaoEstado('E<u>s</u>tado:','S','Selecione na lista o estado deste endereço.',$w_uf,$w_pais,null,'w_uf',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_cidade\'; document.Form.submit();"');

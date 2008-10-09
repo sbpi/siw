@@ -634,6 +634,7 @@ function Rel_Progresso() {
 // -------------------------------------------------------------------------
 function Rel_Projeto() {
   extract($GLOBALS);
+
   $p_plano     = $_REQUEST['p_plano'];
   $p_objetivo  = $_REQUEST['p_objetivo'];
   $p_programa  = $_REQUEST['p_programa'];
@@ -679,7 +680,7 @@ function Rel_Projeto() {
       if ($p_plano) {    
         $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_plano,null,null,null,null,null,'REGISTROS');
         foreach ($RS_Plano as $row) { $RS_Plano = $row; break; }
-        ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICO:<td>'.f($RS_Plano,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>PLANO ESTRATÉGICOd:<td>'.f($RS_Plano,'titulo').'</td></tr>');
       }
       if ($p_objetivo) {
         $RS_Objetivo = db_getObjetivo_PE::getInstanceOf($dbms,$p_plano,$p_objetivo,$w_cliente,null,null,null,null);
@@ -697,6 +698,7 @@ function Rel_Projeto() {
       ShowHTML('     </table>');
     }
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
+
     $w_projeto_atual = 0;
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'REL_DET');
     $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc'); 
@@ -720,10 +722,10 @@ function Rel_Projeto() {
       }
     }
     if ($w_cont==1) $p_plano = $w_registro;
-  
+
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de projetos!</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');

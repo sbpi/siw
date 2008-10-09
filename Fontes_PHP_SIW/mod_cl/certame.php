@@ -460,7 +460,7 @@ function Inicial() {
             if (f($row,'sg_tramite')=='EE') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=N&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Propostas'.'&SG='.substr($SG,0,4).'PRECO').'\',\'Proposta\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Inseri as propostas da licitação.">Propostas</A>&nbsp');
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Situação&SG=CLLCSITUACAO'.MontaFiltro('GET').'" title="Alerar a situação da solicitacao.">IN</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Situação&SG=CLLCSITUACAO'.MontaFiltro('GET').'" title="Alterar a situação da solicitação.">IN</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='PP') {
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PesquisaPreco&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&w_pesquisa=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Pesquisa de preço'.'&SG='.substr($SG,0,4).'PRECO').'\',\'PesquisaPreco\',\'resizable=yes,status=no,toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Inseri a pesquisa de preco do itens da solicitação.">Pesquisa de preço</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='EA') {
@@ -941,7 +941,7 @@ function Itens() {
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
-    $w_quantidade          = formatNumber(f($RS,'quantidade_autorizada'));
+    $w_quantidade          = formatNumber(f($RS,'quantidade_autorizada'),0);
     $w_cancelado           = f($RS,'cancelado');
     $w_motivo_cancelamento = f($RS,'motivo_cancelamento');
   } 
@@ -1117,7 +1117,7 @@ function Itens() {
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
         ShowHTML('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic')).'</td>');
-        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade_autorizada')).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>');
       }
     } 
     ShowHTML('      </center>');
@@ -1218,7 +1218,7 @@ function ItensContrato() {
     $w_nm_material         = f($RS,'nome');
     $w_nm_unidade_medida   = f($RS,'nm_unidade_medida');
     $w_codigo              = f($RS,'codigo_interno');
-    $w_quantidade          = formatNumber(f($RS,'quantidade'));
+    $w_quantidade          = formatNumber(f($RS,'quantidade'),0);
     $w_ordem               = f($RS,'ordem');
     $w_valor               = formatNumber(f($RS,'valor_unit_est'),4);
     $w_fabricante          = f($RS,'fabricante');
@@ -1376,7 +1376,7 @@ function ItensContrato() {
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
         ShowHTML('        <td width="1%" nowrap align="center">'.f($row,'nm_cancelado').'</td>');
         ShowHTML('        <td width="1%" nowrap align="right">'.formatNumber(f($row,'valor_unit_est'),4).'</td>');
-        ShowHTML('        <td width="1%" nowrap align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');
+        ShowHTML('        <td width="1%" nowrap align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
         ShowHTML('        <td width="1%" nowrap align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         if ($P1==1) ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
@@ -1390,7 +1390,6 @@ function ItensContrato() {
   } elseif ($O=='Z') {
     ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
-    ShowHTML('  <li>O campo quantidade, quando solicitado, deve ser informado com duas casas decimais. Ex: se quantidade for "25", informe "25,00", digitando apenas os números.');
     ShowHTML('  <li>Se o item desejado não constar da lista, entre em contato com a área de padronização de materiais para criar um novo código.');
     ShowHTML('  </ul></b></font></td>');
 
@@ -1431,7 +1430,7 @@ function ItensContrato() {
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');        
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),2).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe a  quantidade."></td>');
+        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.formatNumber(f($row,'quantidade'),0).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe a  quantidade."></td>');
       }
     } 
     ShowHTML('      </center>');
@@ -1481,7 +1480,7 @@ function ItensContrato() {
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
-    ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
     ShowHTML('          <td title="Informe o múltiplo de unidades a ser solicitado."><b><b>Fa<u>t</u>or de embalagem:</b><br></b><input '.$w_Disabled.' accesskey="T" type="text" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fator.'"></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
@@ -1893,7 +1892,7 @@ function PesquisaPreco() {
       ShowHTML('         document.Form["w_fabricante[]"][i].disabled=false; ');
       ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=false; ');
       ShowHTML('         document.Form["w_embalagem[]"][i].disabled=false; ');
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][i].disabled=false; ');
       ShowHTML('       } ');
       ShowHTML('    } else { ');
       ShowHTML('       for (i=1; i < document.Form["w_chave_aux[]"].length; i++) {');
@@ -1904,7 +1903,7 @@ function PesquisaPreco() {
       ShowHTML('         document.Form["w_fabricante[]"][i].disabled=true; ');
       ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=true; ');
       ShowHTML('         document.Form["w_embalagem[]"][i].disabled=true; ');
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=true; ');
+      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][i].disabled=true; ');
       ShowHTML('       } ');
       ShowHTML('    }');
       ShowHTML('  }');
@@ -1924,9 +1923,9 @@ function PesquisaPreco() {
     } elseif ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
       if ($w_tipo_pessoa==1) {
-        Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
+        Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
       } else {
-        Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
+        Validate('w_cnpj','CNPJ','CNPJ','1','18','18','','0123456789/-.');
       }
       Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
       if ($w_tipo_pessoa==1) {
@@ -1950,52 +1949,21 @@ function PesquisaPreco() {
       } else {
         Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
       }
-      Validate('w_ddd','DDD','1','',3,4,'','0123456789');
-      Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
+      Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
+      Validate('w_nr_telefone','Telefone','1','1',7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');
       Validate('w_nr_celular','Celular','1','',7,25,'1','1');
-      Validate('w_logradouro','Endereço','1','',4,60,'1','1');
+      Validate('w_logradouro','Endereço','1','1',4,60,'1','1');
       Validate('w_complemento','Complemento','1','',2,20,'1','1');
       Validate('w_bairro','Bairro','1','',2,30,'1','1');
-      Validate('w_sq_pais','País','SELECT','',1,10,'1','1');
-      Validate('w_co_uf','UF','SELECT','',1,10,'1','1');
-      Validate('w_sq_cidade','Cidade','SELECT','',1,10,'','1');
+      Validate('w_sq_pais','País','SELECT','1',1,10,'1','1');
+      Validate('w_co_uf','UF','SELECT','1',1,10,'1','1');
+      Validate('w_sq_cidade','Cidade','SELECT','1',1,10,'','1');
       if (Nvl($w_pd_pais,'S')=='S') {
-        Validate('w_cep','CEP','1','',9,9,'','0123456789-');
+        Validate('w_cep','CEP','1','1',9,9,'','0123456789-');
       } else {
         Validate('w_cep','CEP','1','',5,9,'','0123456789');
-      } 
-      ShowHTML('  if ((theForm.w_nr_telefone.value+theForm.w_nr_fax.value+theForm.w_nr_celular.value)!="" && theForm.w_ddd.value=="") {');
-      ShowHTML('     alert(\'O campo DDD é obrigatório quando informar telefone, fax ou celular!\');');
-      ShowHTML('     theForm.w_ddd.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_ddd.value!="" && theForm.w_nr_telefone.value=="") {');
-      ShowHTML('     alert(\'Se informar o DDD, então informe obrigatoriamente o telefone!\\nFax e celular são opcionais.\');');
-      ShowHTML('     theForm.w_nr_telefone.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_ddd.value!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
-      ShowHTML('     alert(\'Se informar telefone, fax ou celular, então informe o país, estado e cidade!\');');
-      ShowHTML('     theForm.w_sq_pais.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if ((theForm.w_complemento.value+theForm.w_bairro.value+theForm.w_cep.value)!="" && theForm.w_logradouro.value=="") {');
-      ShowHTML('     alert(\'O campo logradouro é obrigatório quando informar os campos complemento, bairro ou CEP!\');');
-      ShowHTML('     theForm.w_logradouro.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_logradouro.value!="" && theForm.w_cep.value=="") {');
-      ShowHTML('     alert(\'O campo CEP é obrigatório quando informar o endereço da pessoa!\');');
-      ShowHTML('     theForm.w_cep.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      Validate('w_email','E-Mail','1','',4,60,'1','1');
-      ShowHTML('  if ((theForm.w_ddd.value+theForm.w_logradouro.value+theForm.w_email.value)!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
-      ShowHTML('     alert(\'Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!\');');
-      ShowHTML('     theForm.w_sq_pais.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');      
+      }
       ShowHTML('  var i; ');
       ShowHTML('  var w_erro=true; ');
       ShowHTML('  var w_cont=1; ');
@@ -2173,7 +2141,7 @@ function PesquisaPreco() {
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
             ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>');
             ShowHTML('        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
-            ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),2),'---').'</td>');
+            ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>');
             $w_atual      = f($row,'sq_material');
           } else {
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -2361,7 +2329,7 @@ function PesquisaPreco() {
           ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_fabricante[$i],f($row,'fabricante')).'"></td>');
           ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_marca_modelo[$i],f($row,'marca_modelo')).'"></td>');
           ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem[]" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.nvl($w_embalagem[$i],f($row,'embalagem')).'"></td>');
-          if ($w_pesquisa=='S') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
+          if ($w_pesquisa=='N') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
           ShowHTML('        </table>');
           ShowHTML('        </tr>');
           $i += 1;
@@ -2659,7 +2627,7 @@ function DadosAnalise() {
     ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
     ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
     $w_atual = f($row,'sq_material');
-    ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),2).'</td>');
+    ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
     $i += 1;
   } 
   ShowHTML('      </table>');
@@ -3541,7 +3509,7 @@ function Grava() {
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],$_REQUEST['w_solic_pai'],
           $_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],
-          nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],$_REQUEST['w_codigo'],
+          nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',null,null,
           $_REQUEST['w_arp'],'N',null,&$w_chave_nova,$_REQUEST['w_copia']);        
 
@@ -3949,7 +3917,7 @@ function Grava() {
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
               null,null,null,null);
           // Envia e-mail comunicando a conclusão
-          SolicMail($_REQUEST['w_chave']);
+          SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

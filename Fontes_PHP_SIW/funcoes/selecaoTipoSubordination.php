@@ -8,9 +8,9 @@ function selecaoTipoSubordination($label,$accesskey,$hint,$chave,$chave_aux,$cam
   $RS = db_getTipoRecurso::getInstanceOf($dbms, $w_cliente, $chave, null, null, null, null, 'S', $restricao);
   $RS = SortArray($RS,'nome_completo','asc'); 
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <OPTION VALUE="">---');
   foreach($RS as $row)  {

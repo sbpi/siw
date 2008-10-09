@@ -8,9 +8,9 @@ function selecaoSP($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,
   $RS = db_getStoredProcedure::getInstanceOf($dbms,$cliente,null,$chave,null,null,$chaveAux2,null,$restricao);
   $RS = SortArray($RS,'nm_sp','asc');
   if (Nvl($hint,'')>'')
-    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   else
-    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {
     if (Nvl(f($row,'chave'),0)==Nvl($chaveAux,0))

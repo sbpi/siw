@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putCLGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante,$p_cadastrador, $p_executor, 
-        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_codigo, 
+        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_valor, $p_codigo, 
         $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_decisao_judicial, $p_numero_original, $p_data_recebimento, 
         $p_arp, $p_interno, $p_especie_documento, $p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
@@ -31,6 +31,7 @@ class dml_putCLGeral {
                    'p_observacao'           =>array(tvl($p_observacao),           B_VARCHAR,      2000),
                    'p_inicio'               =>array(tvl($p_inicio),               B_DATE,           32),
                    'p_fim'                  =>array(tvl($p_fim),                  B_DATE,           32),
+                   'p_valor'                =>array(toNumber(tvl($p_valor)),      B_NUMERIC,      18,2),
                    'p_codigo'               =>array(tvl($p_codigo),               B_VARCHAR,        60),
                    'p_prioridade'           =>array(tvl($p_prioridade),           B_INTEGER,        32),
                    'p_aviso'                =>array(tvl($p_aviso),                B_VARCHAR,         1),

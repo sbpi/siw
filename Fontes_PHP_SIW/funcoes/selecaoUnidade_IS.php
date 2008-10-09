@@ -20,19 +20,19 @@ function selecaoUnidade_IS($label,$accesskey,$hint,$chave,$chaveAux,$campo,$atri
       }
     } 
     if (!isset($hint)) {
-      ShowHTML('      <td valign="top"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td valign="top"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="STS" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     } else {
-      ShowHTML('      <td valign="top"title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+      ShowHTML('      <td valign="top"title="'.$hint.'"><b>'.$label.'</b><br>');
       ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="STS" type="text" name="'.$campo.'_nm'.'" SIZE="60" VALUE="'.$w_nm_unidade.'" '.$atributo.'>');
     } 
     ShowHTML('              <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_dir_volta.'eo.php?par=BuscaUnidade&TP='.$TP.'&w_cliente='.$w_cliente.'&ChaveAux='.$ChaveAux.'&restricao='.$restricao.'&campo='.$campo.'\',\'Unidade\',\'top=70 left=100 width=600 height=400 toolbar=yes status=yes resizable=yes scrollbars=yes\'); return false;" title="Clique aqui para selecionar a unidade."><img src=images/Folder/Explorer.gif border=0></a>');
     ShowHTML('              <a class="SS" HREF="javascript:this.status.value;" onClick="document.Form.'.$campo.'_nm.value=\'\'; document.Form.'.$campo.'.value=\'\'; return false;" title="Clique aqui para apagar o valor deste campo."><img src="images/Folder/Recyfull.gif" border=0></a>');
   } else {
     if (!isset($hint))
-      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     else
-      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'chave'),0)==nvl($chave,0))

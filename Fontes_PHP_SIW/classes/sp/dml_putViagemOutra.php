@@ -10,8 +10,12 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putViagemOutra {
-   function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_chave_aux, $p_sq_pessoa, $p_cpf, $p_nome, $p_nome_resumido, $p_sexo, $p_vinculo, $p_matricula, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_sq_agencia, $p_op_conta, $p_nr_conta, $p_sq_pais_estrang, $p_aba_code, $p_swift_code, $p_endereco_estrang, $p_banco_estrang, $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTVIAGEMOUTRA';
+   function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_chave_aux, $p_sq_pessoa, $p_cpf, $p_nome, 
+          $p_nome_resumido, $p_sexo, $p_vinculo, $p_matricula, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, 
+          $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_sq_agencia, $p_op_conta, $p_nr_conta, $p_sq_pais_estrang, 
+          $p_aba_code, $p_swift_code, $p_endereco_estrang, $p_banco_estrang, $p_agencia_estrang, $p_cidade_estrang, 
+          $p_informacoes, $p_codigo_deposito, $p_forma_pag) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putViagemOutra';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -41,7 +45,8 @@ class dml_putViagemOutra {
                    'p_agencia_estrang'           =>array(tvl($p_agencia_estrang),                          B_VARCHAR,        60),
                    'p_cidade_estrang'            =>array(tvl($p_cidade_estrang),                           B_VARCHAR,        60),
                    'p_informacoes'               =>array(tvl($p_informacoes),                              B_VARCHAR,       200),
-                   'p_codigo_deposito'           =>array(tvl($p_codigo_deposito),                          B_VARCHAR,        50)
+                   'p_codigo_deposito'           =>array(tvl($p_codigo_deposito),                          B_VARCHAR,        50),
+                   'p_forma_pag'                 =>array(tvl($p_forma_pag),                                B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

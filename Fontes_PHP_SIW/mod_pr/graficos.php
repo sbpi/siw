@@ -370,7 +370,8 @@ function Gera_Gantt() {
   $j = 0;
   foreach($RS as $row) {
     // you need to set groups to graphic be created
-    if (strlen(f($row,'cd_ordem').'. '.f($row,'titulo')) > 45) $l_titulo = substr(f($row,'cd_ordem').'. '.f($row,'titulo'),0,45).'..'; else $l_titulo = f($row,'cd_ordem').'. '.f($row,'titulo');
+	$ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
+    if (strlen($ordem.'. '.f($row,'titulo')) > 45) $l_titulo = substr($ordem.'. '.f($row,'titulo'),0,45).'..'; else $l_titulo = $ordem.'. '.f($row,'titulo');
     $definitions['groups']['group'][$i]['name'] = $l_titulo;
     $definitions['groups']['group'][$i]['start'] = f($row,'inicio_previsto');
     $definitions['groups']['group'][$i]['end'] = addDays(f($row,'fim_previsto'),1);
@@ -388,7 +389,8 @@ function Gera_Gantt() {
       $definitions['groups']['group'][$i]['phase'][$j] = $j;
 
       //you have to set planned phase name even when show only planned adjusted
-      if (strlen(f($row1,'cd_ordem').'. '.f($row1,'titulo')) > 45) $l_titulo = substr(f($row1,'cd_ordem').'. '.f($row1,'titulo'),0,45).'..'; else $l_titulo = f($row1,'cd_ordem').'. '.f($row1,'titulo');
+      $ordem1 = montaOrdemEtapa(f($row,'sq_projeto_etapa')); 
+      if (strlen($ordem1.'. '.f($row1,'titulo')) > 45) $l_titulo = substr($ordem1.'. '.f($row1,'titulo'),0,45).'..'; else $l_titulo = $ordem1.'. '.f($row1,'titulo');
       $definitions['planned']['phase'][$j]['name'] = $l_titulo;
 
       //define the start and end of each phase. Set only what you want/need to show. Not defined values will not draws bars
@@ -485,12 +487,13 @@ foreach ($RS as $row) {
  if($maiorData < f($row,'fim_previsto'))		$maiorData = f($row,'fim_previsto');
  if($maiorData < f($row,'fim_real') && nvl(f($row,'fim_real'),'')!='')			$maiorData = f($row,'fim_real');
 
+$ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
 
   $array = array($i,
                  ((f($row,'pacote_trabalho')=='N') ? ACTYPE_GROUP : ACTYPE_NORMAL),
-                 str_repeat(' ',f($row,'level')*2).f($row,'cd_ordem').'. '.f($row,'titulo'),
-                 formataDataEdicao(f($row,'inicio_previsto'),7),
-                 formataDataEdicao(f($row,'fim_previsto'),7),
+                 str_repeat(' ',f($row,'level')*2).$ordem.'. '.f($row,'titulo')   ,
+                 formataDataEdicao(f($row,'inicio_previsto'),7) ,
+                 formataDataEdicao(f($row,'fim_previsto'),7)    ,
                  f($row,'perc_conclusao') . '%'
                 );
   array_push($perc,array($i,f($row,'perc_conclusao')/100));

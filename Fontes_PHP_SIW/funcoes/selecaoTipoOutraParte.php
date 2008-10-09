@@ -5,9 +5,9 @@
 function SelecaoTipoOutraParte ($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---'); 
   if (nvl($chave,0)==1) ShowHTML('          <option value="1" SELECTED>concedente/contratante/parceiro');         else ShowHTML('          <option value="1">concedente/contratante/parceiro');

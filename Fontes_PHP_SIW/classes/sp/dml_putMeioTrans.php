@@ -18,7 +18,7 @@ class dml_putMeioTrans {
                    'p_nome'              =>array(tvl($p_nome),                    B_VARCHAR,        60),
                    'p_aereo'             =>array(tvl($p_aereo),                   B_VARCHAR,         1),
                    'p_rodoviario'        =>array(tvl($p_rodoviario),              B_VARCHAR,         1),
-                   'p_ferroviario'       =>array(tvl($p_rodoviario),              B_VARCHAR,         1),
+                   'p_ferroviario'       =>array(tvl($p_ferroviario),              B_VARCHAR,         1),
                    'p_aquaviario'        =>array(tvl($p_aquaviario),              B_VARCHAR,         1),
                    'p_ativo'             =>array(tvl($p_ativo),                   B_VARCHAR,         1)
                   );

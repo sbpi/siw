@@ -420,7 +420,7 @@ function Inicial() {
         if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       } 
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
+      if ($_SESSION['INTERNO']=='S' || $P1 == 1) ShowHTML('          <td><b>Operações</td>');
     } else {
       ShowHTML('          <td><b>Nº</td>');
       ShowHTML('          <td><b>Responsável</td>');
@@ -503,7 +503,7 @@ function Inicial() {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
         if ($w_tipo!='WORD') {
-          if ($_SESSION['INTERNO']=='S') {
+          if ($_SESSION['INTERNO']=='S' || $P1 == 1) {
             ShowHTML('        <td align="top" nowrap>');
             if ($P1!=3) {
               // Se não for acompanhamento
@@ -516,7 +516,7 @@ function Inicial() {
                 }
               } elseif ($P1==1) {
                 // Se for cadastramento
-                if ($w_submenu>'') {
+                if ($w_submenu > '') {
                   ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento=Nr. '.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda" TARGET="menu">AL</a>&nbsp;');
                 } else {
                   ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da demanda">AL</A>&nbsp');
@@ -532,7 +532,7 @@ function Inicial() {
                   if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                     ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a demanda para outro responsável.">EN</A>&nbsp');
                   } else {
-                    ShowHTML('          ---&nbsp');
+                    ShowHTML('          ---&nbsp;');
                   }
                 } 
               } 
@@ -1046,9 +1046,9 @@ function Geral() {
       ShowHTML('      <tr><td><table border="0" width="100%">');
       ShowHTML('          <tr>');
       if(nvl($w_envio,'')=='S') {
-        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
+        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
       } else {
-        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
       }
       if(nvl($w_envio,'')=='S') {
         ShowHTML('          <tr>');
@@ -1199,7 +1199,9 @@ function Anexos() {
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b></font>.</td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     }  
-    ShowHTML('      <tr><td><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
+    ShowHTML('      <tr><td><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" V<FORM METHOD=POST ACTION="">
+		AL
+    </FORM>UE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
     ShowHTML('      <tr><td><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="OBRIGATÓRIO. Descreva a finalidade do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
     if ($w_caminho>'') {

@@ -8,8 +8,8 @@ function selecaoObjetivoEstrategico($label,$accesskey,$hint,$chave,$chaveAux,$ca
   $RS = db_getObjetivo_PE::getInstanceOf($dbms,$chaveAux,null,$w_cliente,null,null,'S',null);
   $RS = SortArray($RS,'nome','asc');
   if (count($RS)>0) {
-    if (!isset($hint)) ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br>');
-    else               ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+    if (!isset($hint)) ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br>');
+    else               ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br>');
     if ($restricao=='CHECKBOX') {
       foreach($RS as $row) {
         $l_marcado = 'N';

@@ -1162,7 +1162,6 @@ function Grava() {
             ScriptClose();     
           } 
         } 
-        echo nvl($_REQUEST['w_passagem'],'nulo');
         dml_putGPModalidade::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
         $_REQUEST['w_sigla'],$_REQUEST['w_ferias'],$_REQUEST['w_username'],$_REQUEST['w_passagem'],$_REQUEST['w_diaria'],
         $_REQUEST['w_ativo']);

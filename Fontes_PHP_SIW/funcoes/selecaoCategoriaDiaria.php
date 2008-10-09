@@ -18,7 +18,7 @@ function selecaoCategoriaDiaria($label,$accesskey,$hint,$cliente,$chave,$chaveAu
     if ($label=='') {
       ShowHTML('          <td colspan="'.$colspan.'"><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td valign="top" TITLE="'.$hint.'" colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top" TITLE="'.$hint.'" colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } 
   } 
   ShowHTML('          <option value="">---');

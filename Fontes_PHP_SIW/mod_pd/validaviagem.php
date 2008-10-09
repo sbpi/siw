@@ -75,7 +75,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         $l_tipo  = 0;
       } else {
         // Verifica se o proposto tem os dados bancários cadastrados
-        if (nvl(f($l_rs_solic,'sq_banco'),'')=='' || nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') {
+        if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='') {
           $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do proposto e clique no botão "Gravar"';
           $l_tipo  = 0;
         } 
@@ -88,7 +88,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
       } 
 
       if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
-        $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido.';
+        $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
         $l_tipo = 2;
       } 
 /**
@@ -111,7 +111,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
           foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
           if (f($l_rs5,'existe')==0) {
-            $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam zeros.';
+            $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam iguais a zero.';
             $l_tipo  = 0;
           } 
         } elseif (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {

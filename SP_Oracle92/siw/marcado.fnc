@@ -31,6 +31,7 @@ create or replace function MARCADO
   w_acesso_geral        number(18);
   w_vinculo             number(10);
   w_existe              number(10);
+  w_sg_tramite          siw_tramite.sigla%type;
   Result                number := 0;
 begin
 
@@ -52,8 +53,13 @@ begin
     and a.sq_menu   = p_menu
     and b.sq_pessoa = p_pessoa;
   
+ If p_tramite is not null Then
+    select sigla into w_sg_tramite
+      from siw_tramite a
+     where a.sq_siw_tramite = p_tramite;
+ End If;
  
- If w_acesso_geral > 0 Then -- Se a opção, ou alguma opção a ela subordinada, é de acesso geral
+ If w_acesso_geral > 0 and (p_tramite is null or (p_tramite is not null and w_sg_tramite = 'CI')) Then -- Se a opção, ou alguma opção a ela subordinada, é de acesso geral
     Result := 3;
  Elsif w_sq_servico = 'N' Then -- Se a opção não for vinculada a serviço
     -- Verifica se o usuário é gestor do módulo

@@ -15,6 +15,7 @@ create or replace procedure SP_PutCLGeral
     p_observacao          in varchar2  default null,
     p_inicio              in date      default null,
     p_fim                 in date      default null,
+    p_valor               in number    default null,
     p_codigo              in varchar2  default null,
     p_prioridade          in number    default null,
     p_aviso               in varchar2  default null,
@@ -28,15 +29,16 @@ create or replace procedure SP_PutCLGeral
     p_especie_documento   in number    default null,
     p_chave_nova          out number
    ) is
-   w_arq       varchar2(4000) := ', ';
-   w_chave     number(18);
-   w_log_sol   number(18);
-   w_item      varchar2(18);   
-   w_objetivo  varchar2(200) := p_objetivo ||',';   
-   w_codigo    varchar(60);
+   w_arq         varchar2(4000) := ', ';
+   w_chave       number(18);
+   w_log_sol     number(18);
+   w_item        varchar2(18);   
+   w_objetivo    varchar2(200) := p_objetivo ||',';   
+   w_codigo      varchar(60);
    w_unidade_pai number(18);
    w_data        date;
-   w_dias      number(3);
+   w_dias        number(3);
+   w_parametro   cl_parametro%rowtype;
 
 
    cursor c_arquivos is
@@ -44,6 +46,10 @@ create or replace procedure SP_PutCLGeral
 begin
    -- Recupera a hora atual
    w_data := sysdate;
+   
+   -- Recupera os parâmetros do módulo
+   select * into w_parametro
+     from cl_parametro where cliente = (select sq_pessoa from siw_menu where sq_menu = p_menu);
    
    -- Se for decisão judicial calcula o número de dias para aviso
    If p_decisao_judicial = 'S' Then
@@ -67,13 +73,13 @@ begin
          cadastrador,        executor,      justificativa,       inicio,
          fim,                inclusao,      ultima_alteracao,    sq_unidade,
          sq_cc,              sq_solic_pai,  sq_cidade_origem,    sq_plano,
-         codigo_interno,     observacao)
+         codigo_interno,     observacao,    valor)
       (select
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_executor,    p_justificativa,     case p_decisao_judicial when 'S' then p_inicio else w_data end,
          p_fim,              w_data,        w_data,              p_unidade,
          p_sqcc,             p_solic_pai,   p_cidade,            p_plano,
-         p_codigo,           p_observacao
+         p_codigo,           p_observacao,  coalesce(p_valor,0)
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -171,6 +177,7 @@ begin
           executor         = p_executor,
           inicio           = p_inicio,
           fim              = p_fim,
+          valor            = coalesce(p_valor,valor),
           ultima_alteracao = w_data,
           sq_cidade_origem = p_cidade
       where sq_siw_solicitacao = p_chave;

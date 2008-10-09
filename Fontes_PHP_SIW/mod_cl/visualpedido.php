@@ -119,13 +119,15 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
+    if ($w_pede_valor_pedido=='N') $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
     $l_html.=chr(13).'        </tr>';
     $l_html.=chr(13).'        <tr align="center">';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Solicitada</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Autorizada</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
+    if ($w_pede_valor_pedido=='N') {
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Unitário</td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Total</td>';
+    }
     $l_html.=chr(13).'        </tr>';
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -148,26 +150,30 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
         }
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'pesquisa_preco_medio'),4).'</td>';
-        if($w_sg_tramite=='AT') {
-          $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada')),4).'</td>';
-        } else {
-          $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade')),4).'</td>';
-        }
-        if($w_sg_tramite=='AT') {
-          $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada'));
-        } else {
-          $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));
+        if ($w_pede_valor_pedido=='N') {
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'pesquisa_preco_medio'),4).'</td>';
+          if($w_sg_tramite=='AT') {
+            $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada')),4).'</td>';
+          } else {
+            $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade')),4).'</td>';
+          }
+          if($w_sg_tramite=='AT') {
+            $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada'));
+          } else {
+            $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));
+          }
         }
         $l_html.=chr(13).'        </tr>';
       }
     } 
-    $l_html.=chr(13).'      <tr align="center">';
-    $l_html.=chr(13).'        <td align="right" colspan="6"><b>Total</b></td>';
-    $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
-    $l_html.=chr(13).'      </tr>';
+    if ($w_pede_valor_pedido=='N') {
+      $l_html.=chr(13).'      <tr align="center">';
+      $l_html.=chr(13).'        <td align="right" colspan="6"><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
+      $l_html.=chr(13).'      </tr>';
+    }
     $l_html.=chr(13).'         </table></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2">(*) Calculado a partir do preço médio do item.';
+    if ($w_pede_valor_pedido=='N') $l_html.=chr(13).'      <tr><td colspan="2">(*) Calculado a partir do preço médio do item.';
   }
   if ($l_O=='L' || $l_O=='V') {
     // Se for listagem dos dados

@@ -10,9 +10,9 @@ function selecaoOpiniao($label,$accesskey,$hint,$chave,$cliente,$campo,$restrica
   if ($atributo=='SELECT') {
     if (Nvl($label,'')>'') $l_label=$label.'<br>'; else $l_label='';
     if (!isset($hint))
-      ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$l_label.'</b><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$l_label.'</b><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     else
-      ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><font size="1"><b>'.$l_label.'</b><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$l_label.'</b><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach ($l_RS as $row) {
       if (nvl(f($row,'sigla'),'')==nvl($chave,''))

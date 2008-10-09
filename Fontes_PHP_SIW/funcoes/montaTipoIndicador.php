@@ -4,7 +4,7 @@
 // -------------------------------------------------------------------------
 function montaTipoIndicador($label,$chave,$campo) {
   extract($GLOBALS);
-  ShowHTML('          <td><font size="1">');
+  ShowHTML('          <td>');
   if (Nvl($label,'')>'') ShowHTML($label.'</b><br>');
   if (strtoupper($chave)=='P')
     ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="P" checked> Processo <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="R"> Resultado <input '.$w_Disabled.' type="radio" name="'.$campo.'" value=""> ND ');

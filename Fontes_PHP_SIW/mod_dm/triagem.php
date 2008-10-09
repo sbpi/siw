@@ -1050,9 +1050,9 @@ function Geral() {
       ShowHTML('      <tr><td><table border="0" width="100%">');
       ShowHTML('          <tr>');
       if(nvl($w_envio,'')=='S') {
-        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
+        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_dias\'; document.Form.submit();"');
       } else {
-        MontaRadioNS('<b>Envia '.strtolower(substr(f($RS_Menu,'nome'),0,-1)).'?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+        MontaRadioNS('<b>Envia para a próxima fase?</b>',$w_envio,'w_envio',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
       }
       if(nvl($w_envio,'')=='S') {
         ShowHTML('          <tr>');

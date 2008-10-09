@@ -109,7 +109,7 @@ function Cidade() {
   $p_ativo      = strtoupper($_REQUEST['p_ativo']);
   $p_ordena     = strtolower($_REQUEST['p_ordena']);
 
-  if ($p_sq_pais.$p_co_uf.$p_nome=='') $O='P';
+  if ($O!='I' && $p_sq_pais.$p_co_uf.$p_nome=='') $O='P';
   if ($w_troca>'' && $O!='E')  {
     $w_sq_cidade    = $_REQUEST['w_sq_cidade'];
     $w_sq_pais      = $_REQUEST['w_sq_pais'];
@@ -305,6 +305,7 @@ function Cidade() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Incluir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -340,7 +341,7 @@ function Estado() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
-  if ($p_sq_pais=='') $O='P';
+  if ($O!='I' && $p_sq_pais=='') $O='P';
   if ($w_troca>'' && $O!='E')  {
     $w_co_uf        = $_REQUEST['w_co_uf'];
     $w_sq_pais      = $_REQUEST['w_sq_pais'];
@@ -550,6 +551,7 @@ function Estado() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Incluir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

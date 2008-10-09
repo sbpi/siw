@@ -26,7 +26,7 @@ function barra_flash($datay, $tipo) {
 	}
 		
      $titulo = $datay["nome"].' - Resumo';
-	 $strXML = "<graph  baseFontSize='11' caption='" .$titulo. "' xAxisName='' yAxisName='Quantidade' decimalPrecision='0' formatNumberScale='0'>";
+	 $strXML = "<graph showLimits='0' baseFontSize='11'  caption='" .$titulo. "' xAxisName='' yAxisName='Quantidade' decimalPrecision='0' formatNumberScale='0'>";
 	 
 	foreach ($arrData as $arSubData){
 			$strXML .= "<set name='" . $arSubData[1] . "' value='" . $arSubData[2] . "' color='" .getFCColor() . "' />";

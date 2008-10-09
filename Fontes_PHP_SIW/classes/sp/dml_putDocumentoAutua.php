@@ -9,11 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putDocumentoAutua {
-   function getInstanceOf($dbms, $chave, $unidade, $usuario) {
+   function getInstanceOf($dbms, $chave, $unidade, $usuario, $p_descricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoAutua';
      $params=array('p_chave'              =>array(tvl($chave),                              B_INTEGER,        32),
                    'p_unidade'            =>array(tvl($unidade),                            B_INTEGER,        32),
-                   'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32)
+                   'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
+                   'p_descricao'          =>array(tvl($p_descricao),                        B_VARCHAR,      2000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

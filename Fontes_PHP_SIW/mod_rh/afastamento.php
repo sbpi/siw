@@ -626,8 +626,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     default:

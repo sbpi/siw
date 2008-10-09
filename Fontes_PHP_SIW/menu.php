@@ -298,7 +298,7 @@ function ExibeDocs() {
       ShowHTML('onLoad=\'javascript:top.content.location="'.f($RS,'LINK').'&R='.$_REQUEST['R'].'&P1='.f($RS,'P1').'&P2='.f($RS,'P2').'&P3='.f($RS,'P3').'&P4='.f($RS,'P4').'&TP='.$_REQUEST['TP'].' - '.f($RS,'nome').'&SG='.f($RS,'SIGLA').'&O='.$_REQUEST['O'].MontaFiltro('GET').'";\'>');
     } else {
       $RS = db_getLinkDataParent::getInstanceOf($dbms, $p_cliente, $SG);
-      $RS = SortArray($RS,'ORDEM','asc','nome','asc');
+      $RS = SortArray($RS,'ordem','asc','nome','asc');
 
       foreach($RS as $row) {
         if ($_REQUEST['w_cgccpf']>'') {
@@ -364,6 +364,7 @@ function TrocaSenha() {
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
+
   if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

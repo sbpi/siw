@@ -15,9 +15,9 @@ function formulario($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2
     $l_RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
     $l_RS = SortArray($l_RS,'titulo','asc');
     if (!isset($hint))
-      ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     else
-      ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($l_RS as $l_row) {
       if (nvl(f($l_row,'chave'),0)==nvl($chave,0)) {
@@ -53,9 +53,9 @@ function formulario($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2
                 null,null,null,null,null,null,null,
                 null,null,null,$l_fase,null,null,null,null,null);
       if (!isset($hint))
-        ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+        ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       else
-        ShowHTML('          <td valign="top" TITLE="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+        ShowHTML('          <td valign="top" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       $l_cont = 0;
       $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);
       $l_sigla = f($l_RS1,'sigla');

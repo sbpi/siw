@@ -157,7 +157,7 @@ function AcessoTramite() {
     } 
     ValidateOpen('Validacao');
     if ($O=='I') {
-      Validate('p_nome','Nome','1','','4','40','1','1');
+      Validate('p_nome','Nome','1','','2','40','1','1');
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -388,7 +388,7 @@ function Tramite() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (strpos('IA',$O)!==false) {
-      Validate('w_nome','Nome','1','1','3','50','1','1');
+      Validate('w_nome','Nome','1','1','2','50','1','1');
       Validate('w_ordem','Ordem','1','1','1','2','','0123456789');
       Validate('w_sigla','Sigla','1','','2','2','1','1');
       Validate('w_descricao','Descrição','1','','5','500','1','1');

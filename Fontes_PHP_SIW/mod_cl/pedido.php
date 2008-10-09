@@ -23,6 +23,7 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteSolic.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
+include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicObjetivo.php');
 include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
@@ -173,6 +174,11 @@ if ($P2>0) {
 if (f($RS_Menu,'ultimo_nivel')=='S') { 
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+// Recupera os parâmetros de funcionamento do módulo de compras
+$RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
+foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
+$w_pede_valor_pedido       = f($RS_Parametro,'pede_valor_pedido');
 
 Main();
 
@@ -355,6 +361,7 @@ function Inicial() {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       } 
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Judicial','decisao_judicial').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Valor estimado','valor').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -378,6 +385,7 @@ function Inicial() {
         ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       } 
       ShowHTML('          <td rowspan=2><b>Judicial</td>');
+      ShowHTML('          <td rowspan=2><b>Valor estimado</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>De</td>');
@@ -409,6 +417,7 @@ function Inicial() {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
         ShowHTML('        <td align="center" nowrap>'.RetornaSimNao(f($row,'decisao_judicial')).'</td>');
+        ShowHTML('        <td align="right" nowrap>'.formatNumber(f($row,'valor')).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
@@ -600,6 +609,7 @@ function Geral() {
     $w_executor                 = $_REQUEST['w_executor'];
     $w_inicio                   = $_REQUEST['w_inicio'];
     $w_fim                      = $_REQUEST['w_fim'];
+    $w_valor                    = $_REQUEST['w_valor'];
     $w_inclusao                 = $_REQUEST['w_inclusao'];
     $w_ultima_alteracao         = $_REQUEST['w_ultima_alteracao'];
     $w_justificativa            = $_REQUEST['w_justificativa'];
@@ -613,12 +623,12 @@ function Geral() {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
       if ($w_copia>'') {
-      $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
           null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
       } else {
-      $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
           null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
@@ -635,6 +645,7 @@ function Geral() {
         foreach($RS1 as $row) { $w_objetivo .= ','.f($row,'sq_peobjetivo'); }
         $w_objetivo = substr($w_objetivo,1);
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
+        $w_solic_pai         = f($RS,'sq_solic_pai');
         $w_prioridade        = f($RS,'prioridade');
         $w_aviso             = f($RS,'aviso_prox_conc');
         $w_dias              = f($RS,'dias_aviso');
@@ -650,6 +661,7 @@ function Geral() {
         $w_observacao        = f($RS,'observacao');
         $w_inicio            = FormataDataEdicao(f($RS,'inicio'));
         $w_fim               = FormataDataEdicao(f($RS,'fim'));
+        $w_valor             = formatNumber(f($RS,'valor'));
         $w_inclusao          = f($RS,'inclusao');
         $w_ultima_alteracao  = f($RS,'ultima_alteracao');
         $w_decisao_judicial  = f($RS,'decisao_judicial');
@@ -677,6 +689,7 @@ function Geral() {
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
   CheckBranco();
+  FormataValor();
   FormataData();
   SaltaCampo();
   ShowHTML('function botoes() {');
@@ -733,6 +746,10 @@ function Geral() {
        CompData('w_fim','Limite para atendimento','>=','w_data_recebimento','Data atual');
     } else {
       CompData('w_fim','Limite para atendimento','>=','w_inicio','Data atual');
+    }
+    if ($w_pede_valor_pedido=='S') {
+      Validate('w_valor','Valor estimado','VALOR',1,4,18,'','0123456789,.');
+      CompValor('w_valor','Valor estimado','>',0,'zero');
     }
     if($w_cadgeral=='S') {
       Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
@@ -795,13 +812,12 @@ function Geral() {
     }
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do pedido de compra, bem como para o controle de sua execução.</td></tr>');
-    ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
+    ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3 valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan=3>Os dados deste bloco serão utilizados para identificação do pedido de compra, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
     if(nvl(f($RS_Menu,'numeracao_automatica'),0)==0) {
       ShowHTML('      <tr><td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo" size="18" maxlength="60" value="'.$w_codigo.'"></td>');
     }
@@ -828,15 +844,17 @@ function Geral() {
       ShowHTML('          <tr valign="top">');
       SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
     }
-    ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
     if (f($RS_Unid_CL,'registra_judicial')=='S') {
       MontaRadioNS('<b>Decisão judicial?</b>',$w_decisao_judicial,'w_decisao_judicial',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_alerta\'; document.Form.submit();"');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_decisao_judicial" value="N">');
     }
-    SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
-    ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
-    ShowHTML ('         </table>');
+    if(nvl($w_decisao_judicial,'N')=='S') {
+      ShowHTML('       <tr valign="top">');
+      ShowHTML('          <td valign="top"><b><U>N</U>úmero original:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_numero_original" size="30" maxlength="30" value="'.$w_numero_original.'"></td>');
+      ShowHTML('          <td valign="top"><b><u>D</u>ata de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_recebimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de recebimento do pedido.">'.ExibeCalendario('Form','w_data_recibimento').'</td>');
+      selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$w_especie_documento,null,'w_especie_documento',null,null);
+    }
     if ($w_cadgeral=='N') {
       ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$w_solicitante.'">');
     } else {
@@ -847,34 +865,27 @@ function Geral() {
         SelecaoPessoaOrigem('<u>S</u>olicitante:','s','Clique na lupa para selecionar o solicitante do pedido.',$w_solicitante,null,'w_solicitante',null,null,null);
       }
     }
-    if(nvl($w_decisao_judicial,'N')=='S') {
-      ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
-      ShowHTML('       <tr valign="top">');
-      ShowHTML('          <td valign="top"><b><U>N</U>úmero original:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_numero_original" size="30" maxlength="30" value="'.$w_numero_original.'"></td>');
-      ShowHTML('          <td valign="top"><b><u>D</u>ata de recebimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_recebimento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_recebimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data de recebimento do pedido.">'.ExibeCalendario('Form','w_data_recibimento').'</td>');
-      selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$w_especie_documento,null,'w_especie_documento',null,null);
-      ShowHTML ('         </table>');
-    }
-    ShowHTML('      <tr><td valign="top" colspan=2><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td valign="top" colspan=2><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    ShowHTML('          <tr valign="top">');
+    SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
+    ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
+    if ($w_pede_valor_pedido=='S') ShowHTML('            <td valign="top"><b><u>V</u>alor estimado:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado para a solicitação."></td>');
+    ShowHTML('      <tr><td valign="top" colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top" colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     if(nvl($w_decisao_judicial,'N')=='N') {
-      ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
-      ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
-      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data Término previsto do projeto.</td></tr>');
-      ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td><table border="0" width="100%">');
-      ShowHTML('          <tr valign="top">');
+      ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td colspan=3 valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
+      ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td colspan=3>Os dados abaixo indicam como deve ser tratada a proximidade da data Término previsto do projeto.</td></tr>');
+      ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr valign="top">');
       MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-      ShowHTML('              <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data Término previsto do projeto."></td>');
-      ShowHTML('          </table>');
-      ShowHTML ('         </table>');
+      ShowHTML('        <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data Término previsto do projeto."></td>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_aviso" value="S">');
     }
-    // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
+
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
     $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
@@ -953,7 +964,7 @@ function Itens() {
     foreach ($RS as $row) {$RS = $row; break;}
     $w_chave_aux           = f($RS,'chave');
     $w_material            = f($RS,'sq_material');
-    $w_quantidade          = f($RS,'quantidade');
+    $w_quantidade          = formatNumber(f($RS,'quantidade'),0);
   } 
 
   // Recupera informações sobre o tipo do material ou serviço
@@ -1104,7 +1115,7 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
-        ShowHTML('        <td align="right">'.f($row,'quantidade').'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
@@ -1153,7 +1164,7 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');        
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'chave'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'quantidade').'" title="Informe a  quantidade."></td>');
+        ShowHTML('        <td><input type="text" disabled name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.f($row,'quantidade').'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade."></td>');
       }
     } 
     ShowHTML('      </center>');
@@ -1183,7 +1194,7 @@ function Itens() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('      <tr><td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.'></td>');
+    ShowHTML('      <tr><td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
     ShowHTML('      <tr><td colspan=3 align="center"><hr>');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.$w_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
@@ -1781,7 +1792,7 @@ function Concluir() {
   ValidateOpen('Validacao');
 
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
-  Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789');
+  Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
   ShowHTML('  }');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1840,9 +1851,9 @@ function Concluir() {
     ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
     ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
     ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'">');
-    ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.f($row,'quantidade').'">');
+    ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.formatNumber(f($row,'quantidade'),0).'">');
     ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
-    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.Nvl(f($row,'quantidade'),0).'" title="Informe a  quantidade autorizada para compra."></td>');
+    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.Nvl(formatNumber(f($row,'quantidade'),0),0).'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para compra."></td>');
     ShowHTML('        </tr>');
   }
   ShowHTML('    </table>');
@@ -2210,7 +2221,7 @@ function Grava() {
           $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
           $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
-          $_REQUEST['w_fim'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
+          $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
           $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',$_REQUEST['w_especie_documento'],&$w_chave_nova,$_REQUEST['w_copia']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
@@ -2396,17 +2407,9 @@ function Grava() {
           // Envia e-mail comunicando o envio
           SolicMail($_REQUEST['w_chave'],2);
           // Se for envio da fase de cadastramento, remonta o menu principal
-          if ($P1==1) {
-            // Recupera os dados para montagem correta do menu
-            $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-            ScriptOpen('JavaScript');
-            ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG='.f($RS,'sigla').'&TP='.RemoveTP(RemoveTP($TP)).MontaFiltro('GET')).'\';');
-            ScriptClose();
-          } else {
-            ScriptOpen('JavaScript');
-            ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
-            ScriptClose();
-          } 
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+          ScriptClose();
         } 
       } else {
         ScriptOpen('JavaScript');
@@ -2418,12 +2421,6 @@ function Grava() {
     case 'CLPCCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        for ($i=0; $i<=count($_POST['w_sq_solicitacao_item'])-1; $i=$i+1) {
-          if ($_REQUEST['w_sq_solicitacao_item'][$i]>'') {
-            dml_putCLSolicItem::getInstanceOf($dbms,'C',$_REQUEST['w_sq_solicitacao_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
-                Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
-          }
-        }
         $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,
                 null,null,null,null,null,null,null,null,null,null,
                 $_REQUEST['w_chave'],null,null,null,null,null,null,
@@ -2435,6 +2432,15 @@ function Grava() {
           ScriptClose();
           exit();
         } else {
+          // Grava as quantidades autorizadas
+          for ($i=0; $i<=count($_POST['w_sq_solicitacao_item'])-1; $i=$i+1) {
+            if ($_REQUEST['w_sq_solicitacao_item'][$i]>'') {
+              dml_putCLSolicItem::getInstanceOf($dbms,'C',$_REQUEST['w_sq_solicitacao_item'][$i],$_REQUEST['w_chave'],null,Nvl($_REQUEST['w_material'][$i],0),
+                  Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
+            }
+          }
+
+          // Conclui a solicitação
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
               null,null,null,null);
           // Envia e-mail comunicando a conclusão

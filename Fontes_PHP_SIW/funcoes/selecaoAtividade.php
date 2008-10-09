@@ -12,10 +12,10 @@ function selecaoAtividade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restr
   }
 
   if (!isset($hint)) {
-    ShowHTML('      <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br>');
+    ShowHTML('      <td colspan="'.$colspan.'"><b>'.$label.'</b><br>');
     ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="70" VALUE="'.$w_titulo.'" '.$atributo.'>');
   } else {
-    ShowHTML('      <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br>');
+    ShowHTML('      <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br>');
     ShowHTML('          <input READONLY ACCESSKEY="'.$accesskey.'" CLASS="sti" type="text" name="'.$campo.'_nm'.'" SIZE="70" VALUE="'.$w_titulo.'" '.$atributo.'>');
   }
 

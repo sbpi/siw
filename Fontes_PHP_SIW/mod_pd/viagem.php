@@ -127,7 +127,6 @@ $w_pagina       = 'viagem.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
 $w_troca        = $_REQUEST['w_troca'];
-
 if (strpos('PDANEXO,PDDIARIA,PDTRECHO,PDVINC',nvl($SG,'nulo'))!==false) {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='' && $_REQUEST['w_demanda']=='' && $_REQUEST['w_trechos']=='' && $_REQUEST['w_troca']=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {
@@ -464,11 +463,11 @@ function Inicial() {
             if (f($row,'sg_tramite')=='DF') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'InformarCotacao&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Informar dados das passagens&SG=COTPASS').'\',\'Passagens\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar a cotação das passagens.">Cotação</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Diarias&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar os dados financeiros da viagem.">Diárias</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar os dados financeiros da viagem.">Diárias</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='AE' || f($row,'sg_tramite')=='AC') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Bilhetes&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Bilhetes&SG=INFBIL').'\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">Bilhetes</A>&nbsp');
-              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Diarias&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar os dados financeiros da viagem.">Diárias</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar os dados financeiros da viagem.">Diárias</A>&nbsp');
             } elseif (f($row,'sg_tramite')=='PD') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PagDiaria&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar o pagamento de diárias.">Informar</A>&nbsp');
@@ -805,16 +804,16 @@ function Geral() {
     ShowHTML('  w_data = theForm.w_inicio.value;');
     ShowHTML('  w_data = w_data.substr(3,2) + \'/\' + w_data.substr(0,2) + \'/\' + w_data.substr(6,4);');
     ShowHTML('  w_data1  = new Date(Date.parse(w_data));');
-    ShowHTML('  if ((w_data1.getDay() == 0 || w_data1.getDay() == 5 || w_data1.getDay() == 6) && theForm.w_justif_dia_util.value==\'\') {');
-    ShowHTML('     alert(\'É necessário justificar o início de viagens em sextas-feiras, sábados, domingos e feriados!\');');
+    ShowHTML('  if ((w_data1.getDay() == 0 || w_data1.getDay() == 6) && theForm.w_justif_dia_util.value==\'\') {');
+    ShowHTML('     alert(\'É necessário justificar o início de viagens em sábados, domingos e feriados!\');');
     ShowHTML('     theForm.w_inicio.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
     ShowHTML('  w_data = theForm.w_fim.value;');
     ShowHTML('  w_data = w_data.substr(3,2) + \'/\' + w_data.substr(0,2) + \'/\' + w_data.substr(6,4);');
     ShowHTML('  w_data2  = new Date(Date.parse(w_data));');
-    ShowHTML('  if ((w_data2.getDay() == 0 || w_data2.getDay() == 5 || w_data2.getDay() == 6) && theForm.w_justif_dia_util.value==\'\') {');
-    ShowHTML('     alert(\'É necessário justificar o término de viagens em sextas-feiras, sábados, domingos e feriados!\');');
+    ShowHTML('  if ((w_data2.getDay() == 0 || w_data2.getDay() == 6) && theForm.w_justif_dia_util.value==\'\') {');
+    ShowHTML('     alert(\'É necessário justificar o término de viagens em sábados, domingos e feriados!\');');
     ShowHTML('     theForm.w_fim.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -936,7 +935,7 @@ function Geral() {
     ShowHTML('              <td valign="top"><b>Último re<u>t</u>orno:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr><td><b><u>S</u>ubstituto eventual:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="'.$w_proponente.'" title="Indique o(s) substituto(s) eventual(is) durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea '.$w_Disabled.' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">'.$w_assunto.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td colspan="4" valign="top"><b><u>J</u>ustificativa para início e término de viagens em sextas-feiras, sábados, domingos e feriados:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justif_dia_util" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, início ou término de viagens sextas-feiras, sábados, domingos e feriados. Caso contrário, deixe este campo em branco.">'.$w_justif_dia_util.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="4" valign="top"><b><u>J</u>ustificativa para início e término de viagens em sábados, domingos e feriados:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justif_dia_util" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, início ou término de viagens em sábados, domingos e feriados. Caso contrário, deixe este campo em branco.">'.$w_justif_dia_util.'</TEXTAREA></td>');
 
     ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1176,7 +1175,7 @@ function OutraParte() {
       } 
     } 
   } 
-
+  
   // Recupera a sigla da forma de pagamento e, se necessário, recupera a conta padrão do beneficiário
   if (nvl($w_sq_forma_pag,'')!='') {
     $RS_Forma_Pag = db_getFormaPagamento::getInstanceOf($dbms, $w_cliente, $w_sq_forma_pag,null, 'REGISTRO',null,null);
@@ -1184,19 +1183,24 @@ function OutraParte() {
     $w_forma_pagamento = f($RS_Forma_Pag,'sigla');
 
     if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
-      if (Nvl($w_nr_conta,'')=='') {
+		
+      if (Nvl($w_sq_banco,'')=='' && Nvl($w_nr_conta,'')=='') {
         $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
         if (count($RS)>0) {
+
           foreach($RS as $row) { $RS = $row; break; }
-          $w_sq_banco     = f($RS,'sq_banco');
-          $w_sq_agencia   = f($RS,'sq_agencia');
-          $w_operacao     = f($RS,'operacao');
-          $w_nr_conta     = f($RS,'nr_conta');
+          if (Nvl(f($RS,'nr_conta'),'')!='') {
+            $w_sq_banco     = f($RS,'sq_banco');
+            $w_sq_agencia   = f($RS,'sq_agencia');
+            $w_operacao     = f($RS,'operacao');
+            $w_nr_conta     = f($RS,'nr_conta');
+          }
         }
       }
     } 
   } 
-  
+ 
+
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
     $RS_Banco = db_getBankData::getInstanceOf($dbms, $w_sq_banco);
@@ -1600,12 +1604,6 @@ function Trechos() {
     CompHora('w_hora_saida','Hora de saída','<','w_hora_chegada','Hora de chegada');
     ShowHTML('  }');
     Validate('w_meio_transp','Meio de transporte','SELECT',1,1,18,'','1');
-    if ($w_passagem=='S') {
-      Validate('w_valor_trecho','Valor estimado','VALOR','1',4,18,'','0123456789,.');
-      CompValor('w_valor_trecho','Valor estimado','>=','0,00','zero');
-      Validate('w_cia_aerea','Companhia cotada','SELECT','',1,18,'','1');
-      Validate('w_codigo_voo','Número vôo','','',2,30,'','0123456789');
-    }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   } 
@@ -1614,7 +1612,7 @@ function Trechos() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpenClean('onLoad=\'document.Form.'.(($w_passagem=='S') ? $w_troca : 'Botao[0]').'.focus()\';');
+    BodyOpenClean('onLoad=\'document.Form.'.(($P1!=1 && $w_passagem=='S') ? $w_troca : 'Botao[0]').'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_pais_orig.focus()\';');
   } else {
@@ -1639,9 +1637,9 @@ function Trechos() {
     ShowHTML('          <td><b>Compromisso<br>dia viagem</td>');
     ShowHTML('          <td><b>Transporte</td>');
     ShowHTML('          <td><b>Bilhete</td>');
-    ShowHTML('          <td><b>Valor</td>');
-    ShowHTML('          <td><b>Companhia</td>');
-    ShowHTML('          <td><b>Vôo</td>');
+    //ShowHTML('          <td><b>Valor</td>');
+    //ShowHTML('          <td><b>Companhia</td>');
+    //ShowHTML('          <td><b>Vôo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1657,9 +1655,9 @@ function Trechos() {
         ShowHTML('        <td align="center">'.f($row,'nm_compromisso').'</td>');
         ShowHTML('        <td align="center">'.nvl(f($row,'nm_meio_transporte'),'---').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_passagem').'</td>');
-        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_trecho')).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_cia_transporte').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'codigo_voo').'</td>');
+        //ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_trecho')).'</td>');
+        //ShowHTML('        <td>'.f($row,'nm_cia_transporte').'</td>');
+        //ShowHTML('        <td align="center">'.f($row,'codigo_voo').'</td>');
         ShowHTML('        <td nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave_aux='.f($row,'sq_deslocamento').'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera os dados do trecho.">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave_aux='.f($row,'sq_deslocamento').'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do trecho." onClick="return(confirm(\'Confirma exclusão do trecho?\'));">EX</A>&nbsp');
@@ -1700,11 +1698,20 @@ function Trechos() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr valign="top">');
     SelecaoMeioTransporte('<u>M</u>eio de transporte:','M',null,$w_cliente,$w_meio_transp,null,'w_meio_transp',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_meio_transp\'; document.Form.submit();"');
+    // Se for primeira saída ou último retorno, informa se há compromisso no dia da viagem
+    if ($w_cidade_orig==$w_cidade_padrao || $w_cidade_dest==$w_cidade_padrao) {
+      ShowHTML('        <td colspan="4"><table width="97%" border="0" cellpadding=0 cellspacing=0>');
+      MontaRadioSN('<b>Há compromisso relativo à viagem no dia da viagem?</b>',$w_compromisso,'w_compromisso',null,null,null);
+      ShowHTML('      </table>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_compromisso" value="S">');
+    }
     if (f($RS_Solic,'passagem')=='S') {
-      ShowHTML('        <td colspan="4"><table width="97%" border="0">');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td colspan="5"><table width="97%" border="0" cellpadding=0 cellspacing=0>');
       ShowHTML('        <tr valign="top">');
       MontaRadioSN('<b>Adquire bilhete para o trecho?</b>',$w_passagem,'w_passagem',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor_trecho\'; document.Form.submit();"');
-      if ($w_passagem=='S') {
+      if ($P1!=1 && $w_passagem=='S') {
         ShowHTML('            <td><b><u>V</u>alor estimado do trecho (R$):</b><br><input type="text" accesskey="V" name="w_valor_trecho" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_trecho.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado do bilhete deste trecho."></td>');
         SelecaoCiaTrans('<u>C</u>ompanhia cotada','C','Selecione a companhia de transporte onde foi feita a cotação.',$w_cliente,$w_cia_aerea,null,'w_cia_aerea',$w_meio_transp,null);
         ShowHTML('            <td><b>Código do vô<u>o</u>:</b><br><input type="text" accesskey="O" name="w_codigo_voo" class="sti" SIZE="5" MAXLENGTH="30" VALUE="'.$w_codigo_voo.'" title="Informe o código do vôo cotado."></td>');
@@ -1732,14 +1739,6 @@ function Trechos() {
       ShowHTML('<INPUT type="hidden" name="w_valor_trecho" value="0,00">');
       ShowHTML('<INPUT type="hidden" name="w_cia_aerea" value="">');
       ShowHTML('<INPUT type="hidden" name="w_codigo_voo" value="">');
-    }
-    // Se for primeira saída ou último retorno, informa se há compromisso no dia da viagem
-    if ($w_cidade_orig==$w_cidade_padrao || $w_cidade_dest==$w_cidade_padrao) {
-      ShowHTML('      <tr valign="top"><tr><td colspan="5"><table border="0" width="100%">');
-      MontaRadioSN('<b>Há compromisso relativo à viagem no dia da viagem?</b>',$w_compromisso,'w_compromisso',null,null,null);
-      ShowHTML('      </table>');
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_compromisso" value="S">');
     }
     ShowHTML('      <tr><td colspan="5"><table border="0" width="100%">');
     ShowHTML('      <tr><td align="center" colspan="5" height="1" bgcolor="#000000"></TD></TR>');
@@ -2948,6 +2947,11 @@ function Diarias() {
     $w_fin_vei              = $_REQUEST['w_fin_vei'];
     $w_rub_vei              = $_REQUEST['w_rub_vei'];
     $w_lan_vei              = $_REQUEST['w_lan_vei'];
+    $w_hos_in               = $_REQUEST['w_hos_in'];
+    $w_hos_out              = $_REQUEST['w_hos_out'];
+    $w_hos_observ           = $_REQUEST['w_hos_observ'];
+    $w_vei_ret              = $_REQUEST['w_vei_ret'];
+    $w_vei_dev              = $_REQUEST['w_vei_dev'];
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
@@ -2995,7 +2999,12 @@ function Diarias() {
     $w_fin_vei              = $w_trechos[40];
     $w_rub_vei              = $w_trechos[41];
     $w_lan_vei              = $w_trechos[42];
-    $w_max_hosp             = (toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400;
+    $w_hos_in               = $w_trechos[43];
+    $w_hos_out              = $w_trechos[44];
+    $w_hos_observ           = $w_trechos[45];
+    $w_vei_ret              = $w_trechos[46];
+    $w_vei_dev              = $w_trechos[47];
+    $w_max_hosp             = ceil((toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400);
     $w_max_diaria           = $w_max_hosp;
     if ($w_compromisso_chegada=='N') $w_max_diaria -= 0.5;
     if ($w_compromisso_saida=='N')   $w_max_diaria -= 0.5;
@@ -3010,7 +3019,668 @@ function Diarias() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Diárias</TITLE>');
+  if ($O=='L') {
+    ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+    ShowHTML('  function altera (solic, texto) {');
+    ShowHTML('    document.Form.w_chave.value=solic;');
+    ShowHTML('    document.Form.w_trechos.value=texto;');
+    ShowHTML('    document.Form.submit();');
+    ShowHTML('  }');
+    ShowHTML('</SCRIPT>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML('function marcaDiaria() { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_diaria==undefined) return true;');
+    ShowHTML('  if (obj.w_diaria[0].checked) {');
+    ShowHTML('    $(obj.w_justificativa_diaria).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_justificativa_diaria).attr("class","STI");');
+    if (count($RS_Fin_Dia)>1) { 
+      ShowHTML('    $(obj.w_rub_dia).attr("disabled","");');
+      ShowHTML('    $(obj.w_rub_dia).attr("class","STIO");');
+      ShowHTML('    $(obj.w_lan_dia).attr("disabled","");');
+      ShowHTML('    $(obj.w_lan_dia).attr("class","STIO");');
+    }
+    ShowHTML('    obj.w_justificativa_diaria.value="";');
+    ShowHTML('  } else {');
+    ShowHTML('    $(obj.w_justificativa_diaria).attr("readonly","");');
+    ShowHTML('    $(obj.w_justificativa_diaria).attr("class","STIO");');
+    if (count($RS_Fin_Dia)>1) { 
+      ShowHTML('    $(obj.w_rub_dia).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_rub_dia).attr("class","STI");');
+      ShowHTML('    $(obj.w_lan_dia).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_lan_dia).attr("class","STI");');
+    }
+    ShowHTML('    obj.w_justificativa_diaria.focus();');
+    ShowHTML('  }');
+    ShowHTML('}');
+    ShowHTML('function marcaHospedagem() { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_hospedagem==undefined) return true;');
+    ShowHTML('  if (obj.w_hospedagem[0].checked) {');
+    ShowHTML('    $(obj.w_hos_in).attr("readonly","");');
+    ShowHTML('    $(obj.w_hos_in).attr("class","STIO");');
+    ShowHTML('    $(obj.w_hos_out).attr("readonly","");');
+    ShowHTML('    $(obj.w_hos_out).attr("class","STIO");');
+    ShowHTML('    $(obj.w_hos_observ).attr("readonly","");');
+    ShowHTML('    $(obj.w_hos_observ).attr("class","STIO");');
+    ShowHTML('    if (obj.w_hos_in.value=="") {');
+    ShowHTML('      obj.w_hos_in.value=obj.w_dt_chegada.value;');
+    ShowHTML('      obj.w_hos_out.value=obj.w_dt_saida.value;');
+    ShowHTML('    }');
+    if (count($RS_Fin_Hsp)==1) { 
+      ShowHTML('    $(obj.w_rub_hsp).attr("disabled","");');
+      ShowHTML('    $(obj.w_rub_hsp).attr("class","STIO");');
+      ShowHTML('    $(obj.w_lan_hsp).attr("disabled","");');
+      ShowHTML('    $(obj.w_lan_hsp).attr("class","STIO");');
+    }
+    ShowHTML('    obj.w_hos_in.focus();');
+    ShowHTML('  } else {');
+    ShowHTML('    $(obj.w_hos_in).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_hos_in).attr("class","STI");');
+    ShowHTML('    $(obj.w_hos_out).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_hos_out).attr("class","STI");');
+    ShowHTML('    $(obj.w_hos_observ).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_hos_observ).attr("class","STI");');
+    ShowHTML('    obj.w_hos_in.value="";');
+    ShowHTML('    obj.w_hos_out.value="";');
+    ShowHTML('    obj.w_hos_observ.value="";');
+    if (count($RS_Fin_Hsp)==1) { 
+      ShowHTML('    $(obj.w_rub_hsp).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_rub_hsp).attr("class","STI");');
+      ShowHTML('    $(obj.w_lan_hsp).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_lan_hsp).attr("class","STI");');
+    }
+    ShowHTML('  }');
+    ShowHTML('}');
+    ShowHTML('function marcaLocacao() { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_veiculo==undefined) return true;');
+    ShowHTML('  if (obj.w_veiculo[0].checked) {');
+    ShowHTML('    if (obj.w_vei_ret.value=="") {');
+    ShowHTML('      obj.w_vei_ret.value=obj.w_dt_chegada.value;');
+    ShowHTML('      obj.w_vei_dev.value=obj.w_dt_saida.value;');
+    ShowHTML('    }');
+    ShowHTML('    $(obj.w_vei_ret).attr("readonly","");');
+    ShowHTML('    $(obj.w_vei_ret).attr("class","STIO");');
+    ShowHTML('    $(obj.w_vei_dev).attr("readonly","");');
+    ShowHTML('    $(obj.w_vei_dev).attr("class","STIO");');
+    ShowHTML('    $(obj.w_justificativa_veiculo).attr("readonly","");');
+    ShowHTML('    $(obj.w_justificativa_veiculo).attr("class","STIO");');
+    if (count($RS_Fin_Vei)==1) { 
+      ShowHTML('    $(obj.w_rub_vei).attr("disabled","");');
+      ShowHTML('    $(obj.w_rub_vei).attr("class","STIO");');
+      ShowHTML('    $(obj.w_lan_vei).attr("disabled","");');
+      ShowHTML('    $(obj.w_lan_vei).attr("class","STIO");');
+    }
+    ShowHTML('    obj.w_vei_ret.focus();');
+    ShowHTML('  } else {');
+    ShowHTML('    $(obj.w_vei_ret).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_vei_ret).attr("class","STI");');
+    ShowHTML('    $(obj.w_vei_dev).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_vei_dev).attr("class","STI");');
+    ShowHTML('    $(obj.w_justificativa_veiculo).attr("readonly","readonly");');
+    ShowHTML('    $(obj.w_justificativa_veiculo).attr("class","STI");');
+    ShowHTML('    obj.w_vei_ret.value="";');
+    ShowHTML('    obj.w_vei_dev.value="";');
+    ShowHTML('    obj.w_justificativa_veiculo.value="";');
+    if (count($RS_Fin_Vei)==1) { 
+      ShowHTML('    $(obj.w_rub_vei).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_rub_vei).attr("class","STI");');
+      ShowHTML('    $(obj.w_lan_vei).attr("disabled","disabled");');
+      ShowHTML('    $(obj.w_lan_vei).attr("class","STI");');
+    }
+    ShowHTML('  }');
+    ShowHTML('}');
+    ShowHTML('function calculaDiaria(valor) { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_diaria[0].checked) {');
+    ShowHTML('    var w_qtd = replaceAll(valor,".","");');
+    ShowHTML('    w_qtd = replaceAll(w_qtd,",",".");');
+    ShowHTML('    var w_val = obj.w_vl_diaria.value;');
+    ShowHTML('    w_val = replaceAll(w_val,".","");');
+    ShowHTML('    w_val = replaceAll(w_val,",",".");');
+    ShowHTML('    var w_res = parseFloat(w_val*w_qtd,2);');
+    ShowHTML('    if (w_res==0) obj.w_valor.value="0,00";');
+    ShowHTML('    else obj.w_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('  }');
+    ShowHTML('}');
+    ShowHTML('function calculaHospedagem(valor) { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_hospedagem[0].checked) {');
+    ShowHTML('    var w_qtd = replaceAll(valor,".","");');
+    ShowHTML('    w_qtd = replaceAll(w_qtd,",",".");');
+    ShowHTML('    var w_val = obj.w_vl_diaria_hospedagem.value;');
+    ShowHTML('    w_val = replaceAll(w_val,".","");');
+    ShowHTML('    w_val = replaceAll(w_val,",",".");');
+    ShowHTML('    w_res = parseFloat(w_val*w_qtd,2);');
+    ShowHTML('    if (w_res==0) obj.w_hospedagem_valor.value="0,00";');
+    ShowHTML('    else obj.w_hospedagem_valor.value = mascaraGlobal("[###.]###,##",w_res*100);');
+    ShowHTML('  }');
+    ShowHTML('}');
+    ShowHTML('function calculaLocacao(valor) { ');
+    ShowHTML('  var obj=document.Form;');
+    ShowHTML('  if (obj.w_veiculo[0].checked) {');
+    ShowHTML('    var w_qtd = replaceAll(valor,".","");');
+    ShowHTML('    w_qtd = replaceAll(w_qtd,",",".");');
+    ShowHTML('    var w_val = obj.w_vl_diaria.value;');
+    ShowHTML('    var w_per = obj.w_vl_diaria_veiculo.value;');
+    ShowHTML('    w_val = replaceAll(w_val,".","");');
+    ShowHTML('    w_val = replaceAll(w_val,",",".");');
+    ShowHTML('    w_per = replaceAll(w_per,".","");');
+    ShowHTML('    w_per = replaceAll(w_per,",",".");');
+    ShowHTML('    w_res = parseFloat(w_val*w_per*w_qtd,2);');
+    ShowHTML('    if (w_res==0) obj.w_veiculo_valor.value="0,00";');
+    ShowHTML('    else obj.w_veiculo_valor.value = mascaraGlobal("[###.]###,##",w_res);');
+    ShowHTML('  }');
+    ShowHTML('}');
+    
+    FormataData();
+    CheckBranco();
+    SaltaCampo();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (nvl($w_sq_valor_diaria,'')!='' && nvl(f($RS_Solic,'diaria'),'')!='') {
+      ShowHTML('  if (theForm.w_diaria[0].checked) {');
+      if (count($RS_Fin_Dia)>1) { 
+        ShowHTML('    if(theForm.w_rub_dia.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar a rubrica para pagamento de diárias!");');
+        ShowHTML('      theForm.w_rub_dia.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_rub_dia','Rubrica para pagamento de diárias','SELECT','',1,18,'','1');
+        ShowHTML('    if(theForm.w_lan_dia.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de diárias!");');
+        ShowHTML('      theForm.w_lan_dia.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_lan_dia','Tipo de lançamento para pagamento de diárias','SELECT','',1,18,'','1');
+      }
+      ShowHTML('  } else {');
+        Validate('w_justificativa_diaria','Justificativa para não pagamento de diárias','','1',3,500,'1','1');
+      ShowHTML('  }');
+    }
+    if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
+      ShowHTML('  if (theForm.w_hospedagem[0].checked) {');
+      Validate('w_hos_in','Data de check in','DATA','1',10,10,'','0123456789/');
+      CompData('w_hos_in','Data de check in','>=','w_dt_chegada','Chegada à localidade');
+      Validate('w_hos_out','Data de check out','DATA','1',10,10,'','0123456789/');
+      CompData('w_hos_out','Data de check out','>=','w_hos_in','Data de check in');
+      CompData('w_hos_in','Data de check out','<=','w_dt_saida','Saída da localidade');
+      Validate('w_hos_observ','Observações sobre a hospedagem','',1,5,255,'1','1');
+      if (count($RS_Fin_Hsp)>1) { 
+        ShowHTML('    if(theForm.w_rub_hsp.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar a rubrica para pagamento de hospedagens!");');
+        ShowHTML('      theForm.w_rub_hsp.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_rub_hsp','Rubrica para pagamento de diárias','SELECT','',1,18,'','1');
+        ShowHTML('    if(theForm.w_lan_hsp.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de hospedagens!");');
+        ShowHTML('      theForm.w_lan_hsp.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_lan_hsp','Tipo de lançamento para pagamento de hospedagens','SELECT','',1,18,'','1');
+      }
+      ShowHTML('  }');
+    }
+    if (nvl($w_sq_diaria_veiculo,'')!='' && f($RS_Solic,'veiculo')=='S') {
+      ShowHTML('  if (theForm.w_veiculo[0].checked) {');
+      Validate('w_vei_ret','Data de retirada','DATA','1',10,10,'','0123456789/');
+      CompData('w_vei_ret','Data de retirada','>=','w_dt_chegada','Chegada à localidade');
+      Validate('w_vei_dev','Data de devolução','DATA','1',10,10,'','0123456789/');
+      CompData('w_vei_dev','Data de devolução','>=','w_vei_ret','Data de retirada');
+      CompData('w_vei_dev','Data de retirada','<=','w_dt_saida','Saída da localidade');
+      Validate('w_justificativa_veiculo','Justificativa para locação de veículo','','',3,500,'1','1');
+      ShowHTML('    if(theForm.w_justificativa_veiculo.value=="") {');
+      ShowHTML('      alert("Favor informar a justificativa para locação de veículo!");');
+      ShowHTML('      theForm.w_justificativa_veiculo.focus();');
+      ShowHTML('      return (false);');
+      ShowHTML('    }');
+      if (count($RS_Fin_Vei)>1) { 
+        ShowHTML('    if(theForm.w_rub_vei.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar a rubrica para pagamento de locações de veículo!");');
+        ShowHTML('      theForm.w_rub_vei.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_rub_vei','Rubrica para pagamento de diárias','SELECT','',1,18,'','1');
+        ShowHTML('    if(theForm.w_lan_vei.selectedIndex==0) {');
+        ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de locações de veículo!");');
+        ShowHTML('      theForm.w_lan_vei.focus();');
+        ShowHTML('      return (false);');
+        ShowHTML('    }');
+        Validate('w_lan_vei','Tipo de lançamento para pagamento de locações de veículo','SELECT','',1,18,'','1');
+      }
+      ShowHTML('  }');
+    }
+    ValidateClose();
+    ScriptClose();
+  }
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($O!='L') {
+    BodyOpen('onLoad="this.focus(); marcaDiaria(); marcaHospedagem(); marcaLocacao();"');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  }
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('      <table width="99%" border="0">');
+    ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cálculo das diárias (Categoria '.f($RS_Solic,'nm_diaria').')</td>');
+    if (count($RS)>0) {
+      $i = 1;
+      foreach($RS as $row) {
+        $w_trechos[$i][1]  = f($row,'sq_diaria');
+        $w_trechos[$i][2]  = f($row,'sq_deslocamento');
+        $w_trechos[$i][3]  = f($row,'sq_deslocamento');
+        $w_trechos[$i][4]  = f($row,'cidade_dest');
+        $w_trechos[$i][5]  = f($row,'nm_destino');
+        $w_trechos[$i][6]  = f($row,'phpdt_chegada');
+        $w_trechos[$i][7]  = f($row,'phpdt_saida');
+        $w_trechos[$i][8]  = Nvl(f($row,'quantidade'),0);
+        $w_trechos[$i][9]  = Nvl(f($row,'valor'),0);
+        $w_trechos[$i][10] = f($row,'saida');
+        $w_trechos[$i][11] = f($row,'chegada');
+        $w_trechos[$i][12] = f($row,'diaria');
+        $w_trechos[$i][13] = f($row,'sg_moeda_diaria');
+        $w_trechos[$i][14] = f($row,'vl_diaria');
+        $w_trechos[$i][15] = f($row,'hospedagem');
+        $w_trechos[$i][16] = Nvl(f($row,'hospedagem_qtd'),0);
+        $w_trechos[$i][17] = Nvl(f($row,'hospedagem_valor'),0);
+        $w_trechos[$i][18] = f($row,'sg_moeda_hospedagem');
+        $w_trechos[$i][19] = f($row,'vl_diaria_hospedagem');
+        $w_trechos[$i][20] = f($row,'veiculo');
+        $w_trechos[$i][21] = Nvl(f($row,'veiculo_qtd'),0);
+        $w_trechos[$i][22] = Nvl(f($row,'veiculo_valor'),0);
+        $w_trechos[$i][23] = f($row,'sg_moeda_veiculo');
+        $w_trechos[$i][24] = f($row,'vl_diaria_veiculo');
+        $w_trechos[$i][25] = f($row,'sq_valor_diaria');
+        $w_trechos[$i][26] = f($row,'sq_diaria_hospedagem');
+        $w_trechos[$i][27] = f($row,'sq_diaria_veiculo');
+        $w_trechos[$i][28] = f($row,'justificativa_diaria');
+        $w_trechos[$i][29] = f($row,'justificativa_veiculo');
+        $w_trechos[$i][30] = f($row,'compromisso');
+        $w_trechos[$i][31] = f($row,'compromisso');
+        $w_trechos[$i][32] = 'N';
+        $w_trechos[$i][33] = 'N';
+        $w_trechos[$i][34] = f($row,'sq_fin_dia');
+        $w_trechos[$i][35] = f($row,'sq_rub_dia');
+        $w_trechos[$i][36] = f($row,'sq_lan_dia');
+        $w_trechos[$i][37] = f($row,'sq_fin_hsp');
+        $w_trechos[$i][38] = f($row,'sq_rub_hsp');
+        $w_trechos[$i][39] = f($row,'sq_lan_hsp');
+        $w_trechos[$i][40] = f($row,'sq_fin_vei');
+        $w_trechos[$i][41] = f($row,'sq_rub_vei');
+        $w_trechos[$i][42] = f($row,'sq_lan_vei');
+        $w_trechos[$i][43] = formataDataEdicao(f($row,'hospedagem_checkin'));
+        $w_trechos[$i][44] = formataDataEdicao(f($row,'hospedagem_checkout'));
+        $w_trechos[$i][45] = f($row,'hospedagem_observacao');
+        $w_trechos[$i][46] = formataDataEdicao(f($row,'veiculo_retirada'));
+        $w_trechos[$i][47] = formataDataEdicao(f($row,'veiculo_devolucao'));
+        // Cria array para guardar o valor total por moeda
+        if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
+        if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
+        if ($w_trechos[$i][12]>'') $w_total[$w_trechos[$i][23]] = 0;
+        if ($i==1) {
+          // Se a primeira saída for após as 18:00, deduz meia diária
+          if (intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_saida'),2)))>180000) {
+            $w_trechos[$i][32] = 'S';
+          }
+        } else {
+          // Se a última chegada for até 12:00, deduz meia diária
+          if ($i==count($RS) && intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_chegada'),2)))<=120000) {
+            $w_trechos[$i-1][33] = 'S';
+          }
+          $w_trechos[$i-1][3]  = f($row,'sq_deslocamento');
+          $w_trechos[$i-1][7]  = f($row,'phpdt_saida');
+          $w_trechos[$i-1][31] = f($row,'compromisso');
+        }
+        $i += 1;
+      } 
+      ShowHTML('     <tr><td align="center" colspan="2">');
+      ShowHTML('       <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('         <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('           <td><b>Destino</td>');
+      ShowHTML('           <td><b>Chegada</td>');
+      ShowHTML('           <td><b>Saída</td>');
+      ShowHTML('           <td><b>Operações</td>');
+      ShowHTML('         </tr>');
+      $w_cor          = $conTrBgColor;
+      $j              = $i;
+      $i              = 1;
+      $w_diarias      = 0;
+      $w_locacoes     = 0;
+      $w_hospedagens  = 0;
+      $w_tot_local    = 0;
+      AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return true;',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'A');
+      ShowHTML(MontaFiltro('POST'));
+      ShowHTML('       <input type="hidden" name="w_chave" value="">');
+      ShowHTML('       <input type="hidden" name="w_trechos" value="">');
+      while($i!=($j-1)) {
+        $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
+        if ($w_max_hosp >=0) {
+          $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
+          $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+          $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
+          
+          if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
+          if ($w_locacoes<>0)   $w_total[$w_trechos[$i][23]] += $w_locacoes;
+          if ($w_hospedagens>0) $w_total[$w_trechos[$i][18]] += $w_hospedagens;
+          
+          $w_tot_local = $w_diarias + $w_hospedagens + $w_locacoes;
+                         
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('     <tr valign="top" bgcolor="'.$w_cor.'">');
+          ShowHTML('       <td>'.$w_trechos[$i][5].': '.$w_max_hosp);
+          if ($w_max_hosp==1) ShowHTML(' dia'); else ShowHTML(' dias');
+          if ($w_trechos[$i][32]=='S') ShowHTML('<br>Saída após 18:00'); 
+          if ($w_trechos[$i][32]=='S') ShowHTML('<br>Chegada até 12:00');
+          if ($w_trechos[$i][30]=='N') ShowHTML('<br>Sem compromisso na ida');
+          if ($w_trechos[$i][31]=='N') ShowHTML('<br>Sem compromisso na volta');
+          ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</b></td>');
+          ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</b></td>');
+          ShowHTML('       <td>');
+          ShowHTML('          <A class="HL" HREF="javascript:altera('.f($row,'sq_siw_solicitacao').',\''.base64_encode(serialize($w_trechos[$i])).'\');" title="Informa as diárias">Informar</A>&nbsp');
+          ShowHTML('       </td>');
+        }
+        $i += 1;
+      }
+      ShowHTML('       </FORM>');
+      ShowHTML('        </table></td></tr>');
+    }
+  } else { 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_diaria" value="'.$w_sq_diaria.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_cidade" value="'.$w_cidade_dest.'">');
+    ShowHTML('<INPUT type="hidden" name="w_desloc_saida" value="'.$w_desloc_saida.'">');
+    ShowHTML('<INPUT type="hidden" name="w_desloc_chegada" value="'.$w_desloc_chegada.'">');
+    ShowHTML('<INPUT type="hidden" name="w_max_hosp" value="'.$w_max_hosp.'">');
+    ShowHTML('<INPUT type="hidden" name="w_max_diaria" value="'.$w_max_diaria.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_valor_diaria" value="'.$w_sq_valor_diaria.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_diaria_hospedagem" value="'.$w_sq_diaria_hospedagem.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_diaria_veiculo" value="'.$w_sq_diaria_veiculo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_compromisso_chegada" value="'.$w_compromisso_chegada.'">');
+    ShowHTML('<INPUT type="hidden" name="w_compromisso_saida" value="'.$w_compromisso_saida.'">');
+    ShowHTML('<INPUT type="hidden" name="w_meia_ida" value="'.$w_meia_ida.'">');
+    ShowHTML('<INPUT type="hidden" name="w_meia_volta" value="'.$w_meia_volta.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cidade_dest" value="'.$w_cidade_dest.'">');
+    ShowHTML('<INPUT type="hidden" name="w_nm_destino" value="'.$w_nm_destino.'">');
+    ShowHTML('<INPUT type="hidden" name="w_phpdt_chegada" value="'.$w_phpdt_chegada.'">');
+    ShowHTML('<INPUT type="hidden" name="w_phpdt_saida" value="'.$w_phpdt_saida.'">');
+    ShowHTML('<INPUT type="hidden" name="w_dt_chegada" value="'.formataDataEdicao($w_phpdt_chegada).'">');
+    ShowHTML('<INPUT type="hidden" name="w_dt_saida" value="'.formataDataEdicao($w_phpdt_saida).'">');
+    ShowHTML('<INPUT type="hidden" name="w_saida" value="'.$w_saida.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chegada" value="'.$w_chegada.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sg_moeda_diaria" value="'.$w_sg_moeda_diaria.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sg_moeda_hospedagem" value="'.$w_sg_moeda_hospedagem.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sg_moeda_veiculo" value="'.$w_sg_moeda_veiculo.'">');
+    
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'"><td><table border=0 width="100%">');
+    ShowHTML('          <tr valign="top">');
+    ShowHTML('            <td>Cidade:<br><b>'.$w_nm_destino.'</b></td>');
+    ShowHTML('            <td>Estada:<br><b>'.$w_max_hosp.(($w_max_hosp==1) ? ' dia' : ' dias').'</b></td>');
+    ShowHTML('            <td>Chegada:<br><b>'.substr(FormataDataEdicao($w_phpdt_chegada,4),0,-3).'</b></td>');
+    ShowHTML('            <td>Saída:<br><b>'.substr(FormataDataEdicao($w_phpdt_saida,4),0,-3).'</b></td>');
+    ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
+    // Define as quantidades conforme regras
+    if ($w_max_hosp==$w_max_diaria) {
+      $w_quantidade     = formatNumber($w_max_hosp,1);
+      $w_hospedagem_qtd = formatNumber($w_max_hosp,1);
+      $w_veiculo_qtd    = formatNumber($w_max_hosp,1);
+    } else {
+      $w_quantidade       = formatNumber($w_max_diaria,1);
+      $w_hospedagem_qtd   = formatNumber($w_max_hosp,1);
+      $w_veiculo_qtd      = formatNumber($w_max_hosp,1);
+    }
+    // Calcula os valores a serem pagos
+    $w_valor            = formatNumber($w_quantidade * $w_vl_diaria);
+    $w_hospedagem_valor = formatNumber($w_hospedagem_qtd * $w_vl_diaria_hospedagem);
+    $w_veiculo_valor    = formatNumber($w_veiculo_qtd * $w_vl_diaria_veiculo * $w_vl_diaria / 100);
+    
+    if (nvl($w_sq_valor_diaria,'')!='' && nvl(f($RS_Solic,'diaria'),'')!='') {
+      ShowHTML('          <tr valign="top">');
+      MontaRadioSN('<b>Diárias?</b>',$w_diaria,'w_diaria','Informe Sim se desejar pagamento das diárias.',null,'onClick="marcaDiaria()"');
+      if (nvl($w_sq_valor_diaria,'')=='' || nvl(f($RS_Solic,'diaria'),'')=='' || $w_diaria=='N') $w_Disabled = ' DISABLED '; else $w_Disabled = '';
+      ShowHTML('            <td colspan="3" valign="top"><b><u>J</u>ustificativa para o não pagamento de diárias:</b><br><textarea '.(($w_diaria=='N') ? 'class="STIO"' : 'READONLY class="STI"').' accesskey="J" name="w_justificativa_diaria" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, o motivo para diária cheia em dia de viagem sem compromisso relativo à viagem. Caso contrário, deixe este campo em branco.">'.$w_justificativa_diaria.'</TEXTAREA></td>');
+      ShowHTML('<INPUT type="hidden" name="w_vl_diaria" value="'.$w_vl_diaria.'">');
+      ShowHTML('<INPUT type="hidden" name="w_quantidade" value="'.$w_quantidade.'">');
+      ShowHTML('<INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
+      if (count($RS_Fin_Dia)>1) { 
+        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
+        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('          <tr><td>');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dia,f($RS_Solic,'sq_solic_pai'),'D','w_rub_dia','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dia\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dia,$w_cliente,'w_lan_dia',str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_dia,10,'0',STR_PAD_LEFT).'D',null);
+        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+      } elseif (count($RS_Fin_Dia)==1) {
+        foreach($RS_Fin_Dia as $row) { $RS_Fin_Dia = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_fin_dia" value="'.f($RS_Fin_Dia,'chave').'">');
+      }
+    }
+    $w_Disabled = '';
+    if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
+      ShowHTML('          <tr valign="top">');
+      MontaRadioNS('<b>Hospedagem?</b>',$w_hospedagem,'w_hospedagem','Informe Sim se desejar pagamento das hospedagens.',null,'onClick="marcaHospedagem()"');
+      if (nvl($w_sq_diaria_hospedagem,'')=='' || nvl(f($RS_Solic,'hospedagem'),'')=='' || $w_hospedagem=='N') $w_Disabled = ' DISABLED '; else $w_Disabled = '';
+      ShowHTML('          <td><b><u>C</u>heck in:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_in" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.$w_hos_in.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+      ShowHTML('          <td><b><u>C</u>heck out:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_out" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.$w_hos_out.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+      ShowHTML('        <tr><td><td colspan="3" valign="top"><b><u>O</u>bservações:</b><br><textarea class="STI" accesskey="J" name="w_hos_observ" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' ROWS=3 cols=75 title="Se houver hospedagens, indique neste campo observações quaisquer que julgar relevantes. Caso contrário, deixe este campo em branco.">'.$w_hos_observ.'</TEXTAREA></td>');
+      ShowHTML('<INPUT type="hidden" name="w_vl_diaria_hospedagem" value="'.$w_vl_diaria_hospedagem.'">');
+      ShowHTML('<INPUT type="hidden" name="w_hospedagem_qtd" value="'.$w_hospedagem_qtd.'">');
+      ShowHTML('<INPUT type="hidden" name="w_hospedagem_valor" value="'.$w_hospedagem_valor.'">');
+      if (count($RS_Fin_Hsp)>1) { 
+        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
+        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('          <tr><td>');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_hsp,f($RS_Solic,'sq_solic_pai'),'D','w_rub_hsp','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,$w_cliente,'w_lan_hsp',str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
+        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+      } elseif (count($RS_Fin_Hsp)==1) {
+        foreach($RS_Fin_Hsp as $row) { $RS_Fin_Hsp = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_fin_hsp" value="'.f($RS_Fin_Hsp,'chave').'">');
+      }
+    }
+    $w_Disabled = '';
+    if (nvl($w_sq_diaria_veiculo,'')!='' && f($RS_Solic,'veiculo')=='S') {
+      ShowHTML('          <tr valign="top">');
+      MontaRadioNS('<b>Veículo?</b>',$w_veiculo,'w_veiculo','Informe Sim se desejar locação de veículo.',null,'onClick="marcaLocacao()"');
+      if (nvl($w_sq_diaria_veiculo,'')=='' || nvl(f($RS_Solic,'veiculo'),'')=='' || $w_veiculo=='N') $w_Disabled = ' DISABLED '; else $w_Disabled = '';
+      ShowHTML('          <td><b><u>R</u>etirada:</b><br><input accesskey="C" type="text" name="w_vei_ret" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.$w_vei_ret.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+      ShowHTML('          <td><b><u>D</u>evolução:</b><br><input accesskey="C" type="text" name="w_vei_dev" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.$w_vei_dev.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+      ShowHTML('          <tr><td><td colspan="3" valign="top"><b><u>J</u>ustificativa para locação de veículo:</b><br><textarea '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' accesskey="J" name="w_justificativa_veiculo" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, a necessidade de locação de veículo. Caso contrário, deixe este campo em branco.">'.$w_justificativa_veiculo.'</TEXTAREA></td>');
+      ShowHTML('<INPUT type="hidden" name="w_vl_diaria_veiculo" value="'.$w_vl_diaria_veiculo.'">');
+      ShowHTML('<INPUT type="hidden" name="w_veiculo_qtd" value="'.$w_veiculo_qtd.'">');
+      ShowHTML('<INPUT type="hidden" name="w_veiculo_valor" value="'.$w_veiculo_valor.'">');
+      if (count($RS_Fin_Vei)>1) { 
+        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
+        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('          <tr><td>');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_vei,f($RS_Solic,'sq_solic_pai'),'D','w_rub_vei','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_vei\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,$w_cliente,'w_lan_vei',str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
+        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+      } elseif (count($RS_Fin_Vei)==1) {
+        foreach($RS_Fin_Vei as $row) { $RS_Fin_Vei = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_fin_vei" value="'.f($RS_Fin_Vei,'chave').'">');
+      }
+    }
+    ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
+    ShowHTML('          <tr><td align="center" colspan=4>');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('        </table>');
+    ShowHTML('</FORM>');
+  }
+  ShowHTML('      </table>');
+  ShowHTML('    </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina para solicitação das diárias
+// -------------------------------------------------------------------------
+function Diarias_Solic() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave  = $_REQUEST['w_chave'];
+  $w_menu   = $_REQUEST['w_menu'];
+  
+  // Recupera os dados da solicitação
+  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
+
+  // Verifica se a misão permite registro de diárias, hospedagens ou locações de veículos
+  if (nvl(f($RS_Solic,'diaria'),'')=='' && f($RS_Solic,'hospedagem')=='N' && f($RS_Solic,'veiculo')=='N') {
+    Cabecalho();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpen('onLoad=this.focus();');
+    Estrutura_Topo_Limpo();
+    Estrutura_Menu();
+    Estrutura_Corpo_Abre();
+    Estrutura_Texto_Abre();
+    ShowHTML('<div align=center><center>Na tela de dados gerais, esta solicitação foi indicada como não tendo diárias!</center></div>');
+    Estrutura_Texto_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+    Estrutura_Fecha();
+    Rodape();
+    exit;
+  }
+  if ($w_troca > '') {
+    $w_max_hosp             = $_REQUEST['w_max_hosp'];
+    $w_max_diaria           = $_REQUEST['w_max_diaria'];
+    $w_sq_diaria            = $_REQUEST['w_sq_diaria'];
+    $w_desloc_saida         = $_REQUEST['w_desloc_saida'];
+    $w_desloc_chegada       = $_REQUEST['w_desloc_chegada'];
+    $w_cidade_dest          = $_REQUEST['w_cidade_dest'];
+    $w_nm_destino           = $_REQUEST['w_nm_destino'];
+    $w_phpdt_chegada        = $_REQUEST['w_phpdt_chegada'];
+    $w_phpdt_saida          = $_REQUEST['w_phpdt_saida'];
+    $w_saida                = $_REQUEST['w_saida'];
+    $w_chegada              = $_REQUEST['w_chegada'];
+    $w_diaria               = $_REQUEST['w_diaria'];
+    $w_quantidade           = $_REQUEST['w_quantidade'];
+    $w_valor                = $_REQUEST['w_valor'];
+    $w_sg_moeda_diaria      = $_REQUEST['w_sg_moeda_diaria'];
+    $w_vl_diaria            = $_REQUEST['w_vl_diaria'];
+    $w_hospedagem           = $_REQUEST['w_hospedagem'];
+    $w_hospedagem_qtd       = $_REQUEST['w_hospedagem_qtd'];
+    $w_hospedagem_valor     = $_REQUEST['w_hospedagem_valor'];
+    $w_sg_moeda_hospedagem  = $_REQUEST['w_sg_moeda_hospedagem'];
+    $w_vl_diaria_hospedagem = $_REQUEST['w_vl_diaria_hospedagem'];
+    $w_veiculo              = $_REQUEST['w_veiculo'];
+    $w_veiculo_qtd          = $_REQUEST['w_veiculo_qtd'];
+    $w_veiculo_valor        = $_REQUEST['w_veiculo_valor'];
+    $w_sg_moeda_veiculo     = $_REQUEST['w_sg_moeda_veiculo'];
+    $w_vl_diaria_veiculo    = $_REQUEST['w_vl_diaria_veiculo'];
+    $w_sq_valor_diaria      = $_REQUEST['w_sq_valor_diaria'];
+    $w_sq_diaria_hospedagem = $_REQUEST['w_sq_diaria_hospedagem'];
+    $w_sq_diaria_veiculo    = $_REQUEST['w_sq_diaria_veiculo'];
+    $w_justificativa_diaria = $_REQUEST['w_justificativa_diaria'];
+    $w_justificativa_veiculo= $_REQUEST['w_justificativa_veiculo'];
+    $w_compromisso_chegada  = $_REQUEST['w_compromisso_chegada'];
+    $w_compromisso_saida    = $_REQUEST['w_compromisso_saida'];
+    $w_meia_ida             = $_REQUEST['w_meia_ida'];
+    $w_meia_volta           = $_REQUEST['w_meia_volta'];
+    $w_fin_dia              = $_REQUEST['w_fin_dia'];
+    $w_rub_dia              = $_REQUEST['w_rub_dia'];
+    $w_lan_dia              = $_REQUEST['w_lan_dia'];
+    $w_fin_hsp              = $_REQUEST['w_fin_hsp'];
+    $w_rub_hsp              = $_REQUEST['w_rub_hsp'];
+    $w_lan_hsp              = $_REQUEST['w_lan_hsp'];
+    $w_fin_vei              = $_REQUEST['w_fin_vei'];
+    $w_rub_vei              = $_REQUEST['w_rub_vei'];
+    $w_lan_vei              = $_REQUEST['w_lan_vei'];
+    $w_hos_in               = $_REQUEST['w_hos_in'];
+    $w_hos_out              = $_REQUEST['w_hos_out'];
+    $w_hos_observ           = $_REQUEST['w_hos_observ'];
+    $w_vei_ret              = $_REQUEST['w_vei_ret'];
+    $w_vei_dev              = $_REQUEST['w_vei_dev'];
+  } elseif ($O=='L') {
+    $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
+    $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+  } elseif (strpos('AE',$O)!==false) {
+    $w_trechos = unserialize(base64_decode($_REQUEST['w_trechos']));
+    $w_sq_diaria            = $w_trechos[1];
+    $w_desloc_saida         = $w_trechos[2];
+    $w_desloc_chegada       = $w_trechos[3];
+    $w_cidade_dest          = $w_trechos[4];
+    $w_nm_destino           = $w_trechos[5];
+    $w_phpdt_chegada        = $w_trechos[6];
+    $w_phpdt_saida          = $w_trechos[7];
+    $w_saida                = $w_trechos[10];
+    $w_chegada              = $w_trechos[11];
+    $w_diaria               = $w_trechos[12];
+    $w_quantidade           = formatNumber($w_trechos[8],1);
+    $w_valor                = formatNumber($w_trechos[9]);
+    $w_sg_moeda_diaria      = $w_trechos[13];
+    $w_vl_diaria            = formatNumber($w_trechos[14]);
+    $w_hospedagem           = $w_trechos[15];
+    $w_hospedagem_qtd       = formatNumber($w_trechos[16],1);
+    $w_hospedagem_valor     = formatNumber($w_trechos[17]);
+    $w_sg_moeda_hospedagem  = $w_trechos[18];
+    $w_vl_diaria_hospedagem = formatNumber($w_trechos[19]);
+    $w_veiculo              = $w_trechos[20];
+    $w_veiculo_qtd          = formatNumber($w_trechos[21],1);
+    $w_veiculo_valor        = formatNumber($w_trechos[22]);
+    $w_sg_moeda_veiculo     = $w_trechos[23];
+    $w_vl_diaria_veiculo    = $w_trechos[24];
+    $w_sq_valor_diaria      = $w_trechos[25];
+    $w_sq_diaria_hospedagem = $w_trechos[26];
+    $w_sq_diaria_veiculo    = $w_trechos[27];
+    $w_justificativa_diaria = $w_trechos[28];
+    $w_justificativa_veiculo= $w_trechos[29];
+    $w_compromisso_chegada  = $w_trechos[30];
+    $w_compromisso_saida    = $w_trechos[31];
+    $w_meia_ida             = $w_trechos[32];
+    $w_meia_volta           = $w_trechos[33];
+    $w_fin_dia              = $w_trechos[34];
+    $w_rub_dia              = $w_trechos[35];
+    $w_lan_dia              = $w_trechos[36];
+    $w_fin_hsp              = $w_trechos[37];
+    $w_rub_hsp              = $w_trechos[38];
+    $w_lan_hsp              = $w_trechos[39];
+    $w_fin_vei              = $w_trechos[40];
+    $w_rub_vei              = $w_trechos[41];
+    $w_lan_vei              = $w_trechos[42];
+    $w_hos_in               = $w_trechos[43];
+    $w_hos_out              = $w_trechos[44];
+    $w_hos_observ           = $w_trechos[45];
+    $w_vei_ret              = $w_trechos[46];
+    $w_vei_dev              = $w_trechos[47];
+    $w_max_hosp             = ceil((toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400);
+    $w_max_diaria           = $w_max_hosp;
+    if ($w_compromisso_chegada=='N') $w_max_diaria -= 0.5;
+    if ($w_compromisso_saida=='N')   $w_max_diaria -= 0.5;
+    if ($w_meia_ida=='S')            $w_max_diaria -= 0.5;
+    if ($w_meia_volta=='S')          $w_max_diaria -= 0.5;
+  }
+  // Recupera as possibilidades de vinculação financeira para diárias, hospedagens e locações de veículo
+  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null);
+  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null);
+  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null);
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Diárias</TITLE>');
+  if ($O=='L') {
+    ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
+    ShowHTML('  function altera (solic, texto) {');
+    ShowHTML('    document.Form.w_chave.value=solic;');
+    ShowHTML('    document.Form.w_trechos.value=texto;');
+    ShowHTML('    document.Form.submit();');
+    ShowHTML('  }');
+    ShowHTML('</SCRIPT>');
+  } else {
     ScriptOpen('JavaScript');
     ShowHTML('function marcaDiaria() { ');
     ShowHTML('  var obj=document.Form;');
@@ -3276,7 +3946,7 @@ function Diarias() {
   if ($O=='L') {
     ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('      <table width="99%" border="0">');
-    ShowHTML('        <tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    if ($P1!=1) ShowHTML('        <tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cálculo das diárias (Categoria '.f($RS_Solic,'nm_diaria').')</td>');
     if (count($RS)>0) {
       $i = 1;
@@ -3323,6 +3993,11 @@ function Diarias() {
         $w_trechos[$i][40] = f($row,'sq_fin_vei');
         $w_trechos[$i][41] = f($row,'sq_rub_vei');
         $w_trechos[$i][42] = f($row,'sq_lan_vei');
+        $w_trechos[$i][43] = formataDataEdicao(f($row,'hospedagem_checkin'));
+        $w_trechos[$i][44] = formataDataEdicao(f($row,'hospedagem_checkout'));
+        $w_trechos[$i][45] = f($row,'hospedagem_observacao');
+        $w_trechos[$i][46] = formataDataEdicao(f($row,'veiculo_retirada'));
+        $w_trechos[$i][47] = formataDataEdicao(f($row,'veiculo_devolucao'));
         // Cria array para guardar o valor total por moeda
         if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
         if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -3358,8 +4033,12 @@ function Diarias() {
       $w_locacoes     = 0;
       $w_hospedagens  = 0;
       $w_tot_local    = 0;
+      AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return true;',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'A');
+      ShowHTML(MontaFiltro('POST'));
+      ShowHTML('       <input type="hidden" name="w_chave" value="">');
+      ShowHTML('       <input type="hidden" name="w_trechos" value="">');
       while($i!=($j-1)) {
-        $w_max_hosp     = (toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400;
+        $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
         if ($w_max_hosp >=0) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
@@ -3373,62 +4052,66 @@ function Diarias() {
                          
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('     <tr valign="top" bgcolor="'.$w_cor.'">');
-          ShowHTML('       <td rowspan="2"><b>'.$w_trechos[$i][5].': '.$w_max_hosp);
+          ShowHTML('       <td'.(($P1!=1) ? ' rowspan="2"' : '').'>'.(($P1!=1) ? '<b>' : '').$w_trechos[$i][5].': '.$w_max_hosp);
           if ($w_max_hosp==1) ShowHTML(' dia'); else ShowHTML(' dias');
           if ($w_trechos[$i][32]=='S') ShowHTML('<br>Saída após 18:00'); 
           if ($w_trechos[$i][32]=='S') ShowHTML('<br>Chegada até 12:00');
           if ($w_trechos[$i][30]=='N') ShowHTML('<br>Sem compromisso na ida');
           if ($w_trechos[$i][31]=='N') ShowHTML('<br>Sem compromisso na volta');
-          ShowHTML('<br>'.$w_trechos[$i][13].' '.formatNumber($w_tot_local));
-          ShowHTML('       <td align="center"><b>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</b></td>');
-          ShowHTML('       <td align="center"><b>'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</b></td>');
-          ShowHTML('       <td rowspan="2">');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_trechos='.base64_encode(serialize($w_trechos[$i])).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Informa as diárias">Informar</A>&nbsp');
+          if ($P1!=1) ShowHTML('<br>'.$w_trechos[$i][13].' '.formatNumber($w_tot_local));
+          ShowHTML('       <td align="center">'.(($P1!=1) ? '<b>' : '').substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</b></td>');
+          ShowHTML('       <td align="center">'.(($P1!=1) ? '<b>' : '').substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</b></td>');
+          ShowHTML('       <td'.(($P1!=1) ? ' rowspan="2"' : '').'>');
+          ShowHTML('          <A class="HL" HREF="javascript:altera('.f($row,'sq_siw_solicitacao').',\''.base64_encode(serialize($w_trechos[$i])).'\');" title="Informa as diárias">Informar</A>&nbsp');
           ShowHTML('       </td>');
-          ShowHTML('     <tr bgcolor="'.$w_cor.'"><td colspan="2"><table width="100%" border=1>');
-          ShowHTML('       <tr valign="top" align="center">');
-          ShowHTML('         <td>Item');
-          ShowHTML('         <td width="20%">Quantidade');
-          ShowHTML('         <td width="20%">$ Unitário');
-          ShowHTML('         <td width="20%">$ Total');
-          ShowHTML('       </tr>');
-          if ($w_trechos[$i][25]>'' && nvl(f($RS_Solic,'diaria'),'')!='') {
-            ShowHTML('       <tr valign="top">');
-            ShowHTML('         <td>Diária ('.$w_trechos[$i][13].')</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][8],1).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][9]).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_diarias,2).'</td>');
+          if ($P1!=1) {
+            ShowHTML('     <tr bgcolor="'.$w_cor.'"><td colspan="2"><table width="100%" border=1>');
+            ShowHTML('       <tr valign="top" align="center">');
+            ShowHTML('         <td>Item');
+            ShowHTML('         <td width="20%">Quantidade');
+            ShowHTML('         <td width="20%">$ Unitário');
+            ShowHTML('         <td width="20%">$ Total');
             ShowHTML('       </tr>');
+            if ($w_trechos[$i][25]>'' && nvl(f($RS_Solic,'diaria'),'')!='') {
+              ShowHTML('       <tr valign="top">');
+              ShowHTML('         <td>Diária ('.$w_trechos[$i][13].')</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][8],1).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][9]).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_diarias,2).'</td>');
+              ShowHTML('       </tr>');
+            }
+            if ($w_trechos[$i][27]>'' && f($RS_Solic,'veiculo')=='S' && $w_trechos[$i][21]>0) {
+              ShowHTML('       <tr valign="top">');
+              ShowHTML('         <td>Veículo ('.$w_trechos[$i][23].') -'.formatNumber($w_trechos[$i][24],0).'%</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][21],1).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber(-1*$w_trechos[$i][9]*$w_trechos[$i][22]/100).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_locacoes,2).'</td>');
+              ShowHTML('       </tr>');
+            }
+            if ($w_trechos[$i][26]>'' && f($RS_Solic,'hospedagem')=='S' && $w_trechos[$i][16]>0) {
+              ShowHTML('       <tr valign="top">');
+              ShowHTML('         <td>Hospedagem ('.$w_trechos[$i][18].')</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][16],1).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][17]).'</td>');
+              ShowHTML('         <td align="right">'.formatNumber($w_hospedagens,2).'</td>');
+              ShowHTML('       </tr>');
+            }
+            ShowHTML('     </tr></table>');
           }
-          if ($w_trechos[$i][27]>'' && f($RS_Solic,'veiculo')=='S' && $w_trechos[$i][21]>0) {
-            ShowHTML('       <tr valign="top">');
-            ShowHTML('         <td>Veículo ('.$w_trechos[$i][23].') -'.formatNumber($w_trechos[$i][24],0).'%</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][21],1).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber(-1*$w_trechos[$i][9]*$w_trechos[$i][22]/100).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_locacoes,2).'</td>');
-            ShowHTML('       </tr>');
-          }
-          if ($w_trechos[$i][26]>'' && f($RS_Solic,'hospedagem')=='S' && $w_trechos[$i][16]>0) {
-            ShowHTML('       <tr valign="top">');
-            ShowHTML('         <td>Hospedagem ('.$w_trechos[$i][18].')</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][16],1).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_trechos[$i][17]).'</td>');
-            ShowHTML('         <td align="right">'.formatNumber($w_hospedagens,2).'</td>');
-            ShowHTML('       </tr>');
-          }
-          ShowHTML('     </tr></table>');
         }
         $i += 1;
       }
       ShowHTML('        </table></td></tr>');
-      ShowHTML('     <tr><td align="center"><b>TOTAL SOLICITADO:');
-      foreach($w_total as $k => $v) {
-        ShowHTML('       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v));
+      if ($P1!=1) {
+        ShowHTML('     <tr><td align="center"><b>TOTAL SOLICITADO:');
+        foreach($w_total as $k => $v) {
+          ShowHTML('       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v));
+        }
+        ShowHTML('     </tr>');
       }
-      ShowHTML('     </tr>');
     }
   } else { 
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_diaria" value="'.$w_sq_diaria.'">');
@@ -3514,6 +4197,9 @@ function Diarias() {
       ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria_hospedagem.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
       ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_hospedagem_qtd" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hospedagem_qtd.'" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
       ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_hospedagem_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_hospedagem_valor.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
+      ShowHTML('<INPUT type="hidden" name="w_hos_in" value="'.$w_hos_in.'">');
+      ShowHTML('<INPUT type="hidden" name="w_hos_out" value="'.$w_hos_out.'">');
+      ShowHTML('<INPUT type="hidden" name="w_hos_observ" value="'.$w_hos_observ.'">');
       if (count($RS_Fin_Hsp)>1) { 
         ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -3534,6 +4220,8 @@ function Diarias() {
       ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_veiculo_qtd" SIZE="5" MAXLENGTH="5" VALUE="'.$w_veiculo_qtd.'" style="text-align:right;" onBlur="calculaLocacao(this.value);" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
       ShowHTML('            <td><b>Valor a ser abatido ('.$w_sg_moeda_veiculo.'):</b><br><input type="text" '.(($w_veiculo=='S') ? '' : 'READONLY').' name="w_veiculo_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_veiculo_valor.'" style="text-align:right;" title="Valor cheio da veiculo."></td>');
       ShowHTML('          <tr><td><td colspan="3" valign="top"><b><u>J</u>ustificativa para locação de veículo:</b><br><textarea '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' accesskey="J" name="w_justificativa_veiculo" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, a necessidade de locação de veículo. Caso contrário, deixe este campo em branco.">'.$w_justificativa_veiculo.'</TEXTAREA></td>');
+      ShowHTML('<INPUT type="hidden" name="w_vei_ret" value="'.$w_vei_ret.'">');
+      ShowHTML('<INPUT type="hidden" name="w_vei_dev" value="'.$w_vei_dev.'">');
       if (count($RS_Fin_Vei)>1) { 
         ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -3549,7 +4237,7 @@ function Diarias() {
     ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
     ShowHTML('          <tr><td align="center" colspan=4>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave.'&O=L').'\';" name="Botao" value="Cancelar">');
     ShowHTML('        </table>');
     ShowHTML('</FORM>');
   }
@@ -3721,7 +4409,7 @@ function Encaminhamento() {
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if ($O=='V') {
+  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($w_sg_tramite=='CI') {
@@ -4854,7 +5542,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($_POST['w_sq_diaria']>'') $w_operacao = 'A'; else $w_operacao = 'I';
-        
+
         dml_putPD_Diaria::getInstanceOf($dbms,$w_operacao,$_REQUEST['w_chave'],$_POST['w_sq_diaria'],
             $_POST['w_sq_cidade'],$_POST['w_diaria'],Nvl($_POST['w_quantidade'],0),Nvl($_POST['w_vl_diaria'],0),
             $_POST['w_hospedagem'],$_POST['w_hospedagem_qtd'],$_POST['w_vl_diaria_hospedagem'],
@@ -4863,7 +5551,9 @@ function Grava() {
             $_POST['w_sq_diaria_hospedagem'],$_POST['w_sq_diaria_veiculo'],$_POST['w_justificativa_diaria'],
             $_POST['w_justificativa_veiculo'],$_POST['w_rub_dia'],$_POST['w_lan_dia'],$_POST['w_fin_dia'],
             $_POST['w_rub_hsp'],$_POST['w_lan_hsp'],$_POST['w_fin_hsp'],
-            $_POST['w_rub_vei'],$_POST['w_lan_vei'],$_POST['w_fin_vei']);
+            $_POST['w_rub_vei'],$_POST['w_lan_vei'],$_POST['w_fin_vei'],
+            $_REQUEST['w_hos_in'],$_REQUEST['w_hos_out'],$_REQUEST['w_hos_observ'],
+            $_REQUEST['w_vei_ret'],$_REQUEST['w_vei_dev']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -4878,7 +5568,6 @@ function Grava() {
     case 'PDTRECHO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-
         dml_putPD_Deslocamento::getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
             $_REQUEST['w_cidade_orig'],$_REQUEST['w_data_saida'],$_REQUEST['w_hora_saida'],
@@ -5130,6 +5819,7 @@ function Grava() {
                 if($w_sg_tramite=='CI') {
                   $w_html = VisualViagem($w_chave,'L',$w_usuario,$P1,'1');
                   CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+                  exit();
                 }
               }      
             } else {
@@ -5164,7 +5854,6 @@ function Grava() {
               ShowHTML('  alert(\'ATENÇÃO: Não há nenhuma pessoa habilitada a cumprir o trâmite "'.f($RS,'nome').'"!\');');
               ScriptClose();
               retornaFormulario('w_observacao');
-              exit();
             } 
             if ($_REQUEST['w_envio']=='N') {
               dml_putViagemEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
@@ -5255,6 +5944,7 @@ function Main() {
   case 'DADOSFINANCEIROS':  DadosFinanceiros(); break;
   case 'PAGDIARIA':         PagamentoDiaria(); break;
   case 'DIARIAS':           Diarias(); break;
+  case 'DIARIAS_SOLIC':     Diarias_Solic(); break;
   case 'VISUAL':            Visual(); break;
   case 'EXCLUIR':           Excluir(); break;
   case 'ENVIO':             Encaminhamento(); break;

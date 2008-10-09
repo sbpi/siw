@@ -58,7 +58,7 @@ begin
                sg_autenticacao                       w
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (b1.acesso    >= 8 or c.unidade_int_posse = w.sq_unidade or b.cadastrador = p_pessoa or
+         and (p_restricao = 'RELPAETIQ' or 
               (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem)
              )
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
@@ -132,7 +132,7 @@ begin
          and (p_tipo       = 1 or (p_tipo      = 2 and b1.acesso > 0))
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
-              (p_restricao = 'PADJUNTA'   and d9.cliente is not null and c.processo = 'S' and b.sq_solic_pai is null) or
+              (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null)) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null)
@@ -245,8 +245,10 @@ begin
       open p_result for
       select a.sq_siw_solicitacao, a.processo,
              a.prefixo||'.'||substr(1000000+a.numero_documento,2,6)||'/'||a.ano||'-'||substr(100+a.digito,2,2) as protocolo
-        from pa_documento a
-       where a.prefixo          = p_prefixo 
+        from siw_solicitacao         b
+             inner join pa_documento a on (b.sq_siw_solicitacao = a.sq_siw_solicitacao)
+       where b.sq_menu          = p_menu
+         and a.prefixo          = p_prefixo 
          and a.numero_documento = p_numero 
          and a.ano              = p_ano;
    End If;

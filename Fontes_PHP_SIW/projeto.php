@@ -2289,6 +2289,7 @@ function Etapas() {
       $w_total_peso      = 0;
       $w_total_tarefa    = 0;
       $w_total_anexo     = 0;
+
       foreach($RS as $row) {
         ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((f($row,'pacote_trabalho')=='S') ? '<b>' : ''),'S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),1));
         
@@ -2797,7 +2798,7 @@ function AtualizaEtapa() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>Etapa</td>');
-    ShowHTML('          <td rowspan=2><b>Título</td>');
+    ShowHTML('          <td rowspan=2><b>'.colapsar($w_chave).'Título</td>');
     ShowHTML('          <td rowspan=2><b>Responsável</td>');
     ShowHTML('          <td colspan=2><b>Execução Prevista</td>');
     ShowHTML('          <td colspan=2><b>Execução Real</td>');
@@ -4494,7 +4495,7 @@ function Concluir() {
 function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_arquivo=0,$l_p1=null){
   extract($GLOBALS);
   global $w_cor;
-  
+
   $l_recurso = '';
   $l_img = '';
   if (nvl($l_destaque,'')!='' || substr(nvl($l_restricao,'-'),0,1)=='S') {

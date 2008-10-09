@@ -14,6 +14,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
+  $w_or_tramtie     = f($RS,'or_tramite');
   $w_tramite        = f($RS,'sq_siw_tramite');
   $w_tramite_ativo  = f($RS,'ativo');
   $w_valor_inicial  = f($RS,'valor');
@@ -91,7 +92,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {
         // Se o campo de justificativa de dias úteis para estiver preenchido, exibe
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Justif. início/término sextas, sábados, domingos e feriados:</b></td><td>'.crLf2Br(f($RS,'justificativa_dia_util')).' </b></td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Justif. início/término sábados, domingos e feriados:</b></td><td>'.crLf2Br(f($RS,'justificativa_dia_util')).' </b></td></tr>';
       } 
       if (Nvl(f($RS,'justificativa'),'')>'') {
         // Se o campo de justificativa estiver preenchido, exibe
@@ -253,9 +254,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'          <td><b>Agenda no<br>dia viagem</td>';
       $l_html.=chr(13).'          <td><b>Transp.</td>';
       $l_html.=chr(13).'          <td><b>Emite<br>bilhete</td>';
-      $l_html.=chr(13).'          <td><b>Valor</td>';
-      $l_html.=chr(13).'          <td><b>Cia.</td>';
-      $l_html.=chr(13).'          <td><b>Vôo</td>';
+      //$l_html.=chr(13).'          <td><b>Valor</td>';
+      //$l_html.=chr(13).'          <td><b>Cia.</td>';
+      //$l_html.=chr(13).'          <td><b>Vôo</td>';
       $l_html.=chr(13).'        </tr>';
       if (count($RS1)==0) {
         // Se não foram selecionados registros, exibe mensagem 
@@ -272,24 +273,142 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'        <td align="center">'.f($row,'nm_compromisso').'</td>';
           $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'nm_meio_transporte'),'---').'</td>';
           $l_html.=chr(13).'        <td align="center">'.f($row,'nm_passagem').'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_trecho')).'</td>';
-          $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_cia_transporte'),'&nbsp;').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'codigo_voo'),'&nbsp;').'</td>';
+          //$l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_trecho')).'</td>';
+          //$l_html.=chr(13).'        <td>'.nvl(f($row,'nm_cia_transporte'),'&nbsp;').'</td>';
+          //$l_html.=chr(13).'        <td align="center">'.nvl(f($row,'codigo_voo'),'&nbsp;').'</td>';
           $l_html.=chr(13).'      </tr>';
           $w_tot_bilhete  += nvl(f($row,'valor_trecho'),0);
         } 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan=7><b>TOTAL</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.Nvl(formatNumber($w_tot_bilhete),0).'</b></td>';
-        $l_html.=chr(13).'        <td colspan=2>&nbsp;</td>';
+        //$l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+        //$l_html.=chr(13).'        <td align="right" colspan=7><b>TOTAL</b></td>';
+        //$l_html.=chr(13).'        <td align="right"><b>'.Nvl(formatNumber($w_tot_bilhete),0).'</b></td>';
+        //$l_html.=chr(13).'        <td colspan=2>&nbsp;</td>';
       } 
       $l_html.=chr(13).'    </table>';
       $l_html.=chr(13).'  </td>';
       $l_html.=chr(13).'</tr>';
     }
 
-    // Diárias
+    // Diárias, hospedagens e veículos
     if($l_diaria=='S') {
+      $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDDIARIA');
+      $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+      if (count($RS1)>0) {
+        $i = 1;
+        foreach($RS1 as $row) {
+          $w_trechos[$i][1]  = f($row,'sq_diaria');
+          $w_trechos[$i][2]  = f($row,'sq_deslocamento');
+          $w_trechos[$i][3]  = f($row,'sq_deslocamento');
+          $w_trechos[$i][4]  = f($row,'cidade_dest');
+          $w_trechos[$i][5]  = f($row,'nm_destino');
+          $w_trechos[$i][6]  = f($row,'phpdt_chegada');
+          $w_trechos[$i][7]  = f($row,'phpdt_saida');
+          $w_trechos[$i][8]  = Nvl(f($row,'quantidade'),0);
+          $w_trechos[$i][9]  = Nvl(f($row,'valor'),0);
+          $w_trechos[$i][10] = f($row,'saida');
+          $w_trechos[$i][11] = f($row,'chegada');
+          $w_trechos[$i][12] = f($row,'diaria');
+          $w_trechos[$i][13] = f($row,'sg_moeda_diaria');
+          $w_trechos[$i][14] = f($row,'vl_diaria');
+          $w_trechos[$i][15] = f($row,'hospedagem');
+          $w_trechos[$i][16] = Nvl(f($row,'hospedagem_qtd'),0);
+          $w_trechos[$i][17] = Nvl(f($row,'hospedagem_valor'),0);
+          $w_trechos[$i][18] = f($row,'sg_moeda_hospedagem');
+          $w_trechos[$i][19] = f($row,'vl_diaria_hospedagem');
+          $w_trechos[$i][20] = f($row,'veiculo');
+          $w_trechos[$i][21] = Nvl(f($row,'veiculo_qtd'),0);
+          $w_trechos[$i][22] = Nvl(f($row,'veiculo_valor'),0);
+          $w_trechos[$i][23] = f($row,'sg_moeda_veiculo');
+          $w_trechos[$i][24] = f($row,'vl_diaria_veiculo');
+          $w_trechos[$i][25] = f($row,'sq_valor_diaria');
+          $w_trechos[$i][26] = f($row,'sq_diaria_hospedagem');
+          $w_trechos[$i][27] = f($row,'sq_diaria_veiculo');
+          $w_trechos[$i][28] = f($row,'justificativa_diaria');
+          $w_trechos[$i][29] = f($row,'justificativa_veiculo');
+          $w_trechos[$i][30] = f($row,'compromisso');
+          $w_trechos[$i][31] = f($row,'compromisso');
+          $w_trechos[$i][32] = 'N';
+          $w_trechos[$i][33] = 'N';
+          $w_trechos[$i][34] = formataDataEdicao(f($row,'hospedagem_checkin'));
+          $w_trechos[$i][35] = formataDataEdicao(f($row,'hospedagem_checkout'));
+          $w_trechos[$i][36] = f($row,'hospedagem_observacao');
+          $w_trechos[$i][37] = formataDataEdicao(f($row,'veiculo_retirada'));
+          $w_trechos[$i][38] = formataDataEdicao(f($row,'veiculo_devolucao'));
+          
+          // Cria array para guardar o valor total por moeda
+          if ($w_trechos[$i][13]>'') $w_tot_diaria[$w_trechos[$i][13]] = 0;
+          if ($w_trechos[$i][18]>'') $w_tot_diaria[$w_trechos[$i][18]] = 0;
+          if ($w_trechos[$i][12]>'') $w_tot_diaria[$w_trechos[$i][23]] = 0;
+          if ($i==1) {
+            // Se a primeira saída for após as 18:00, deduz meia diária
+            if (intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_saida'),2)))>180000) {
+              $w_trechos[$i][32] = 'S';
+            }
+          } else {
+            // Se a última chegada for até 12:00, deduz meia diária
+            if ($i==count($RS1) && intVal(str_replace(':','',formataDataEdicao(f($row,'phpdt_chegada'),2)))<=120000) {
+              $w_trechos[$i-1][33] = 'S';
+            }
+            $w_trechos[$i-1][3]  = f($row,'sq_deslocamento');
+            $w_trechos[$i-1][7]  = f($row,'phpdt_saida');
+            $w_trechos[$i-1][31] = f($row,'compromisso');
+          }
+          $i += 1;
+        } 
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        $w_cor          = $conTrBgColor;
+        $j              = $i;
+        $i              = 1;
+        $w_diarias      = 0;
+        $w_locacoes     = 0;
+        $w_hospedagens  = 0;
+        $w_tot_local    = 0;
+        while($i!=($j-1)) {
+          $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
+          $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
+          $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+          $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
+          
+          if ($w_diarias>0)     $w_tot_diaria[$w_trechos[$i][13]] += $w_diarias;
+          if ($w_locacoes<>0)   $w_tot_diaria[$w_trechos[$i][23]] += $w_locacoes;
+          if ($w_hospedagens>0) $w_tot_diaria[$w_trechos[$i][18]] += $w_hospedagens;
+          
+          $w_tot_local = $w_diarias + $w_hospedagens + $w_locacoes;
+          
+          if ($w_tot_local!=0) {
+            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+            
+            // Configura a quantidade de linhas do trecho
+            $rowspan = 1;
+            if ($w_trechos[$i][27]>'' && f($RS,'veiculo')=='S' && $w_trechos[$i][21]>0)    $rowspan+=1;
+            if ($w_trechos[$i][26]>'' && f($RS,'hospedagem')=='S' && $w_trechos[$i][16]>0) $rowspan+=1;
+            $rowspan_local = $rowspan;
+            if ($w_trechos[$i][28]>'') $rowspan_local += 1;
+            if ($w_trechos[$i][29]>'') $rowspan_local += 1;
+            
+            $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);"><b>'.$w_trechos[$i][5].'</b></td>';
+            $l_html.=chr(13).'      <tr valign="top"><td><b>Estada:</b><td>'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).' a '.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).' ('.$w_max_hosp;
+            if ($w_max_hosp==1) $l_html.=chr(13).' dia)'; else $l_html.=chr(13).' dias)';
+            $l_html.=chr(13).'      <tr valign="top"><td><b>Diárias:</b><td>';
+            if ($w_trechos[$i][25]>'' && nvl(f($RS,'diaria'),'')!='') {
+              $l_html.=chr(13).'Sim</td>';
+            } else {
+              $l_html.=chr(13).'Não. Motivo: '.crlf2br($w_trechos[$i][28]).'</td>';
+            }
+            if ($w_trechos[$i][26]>'' && f($RS,'hospedagem')=='S') {
+              $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
+            }
+            if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
+              $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
+            }
+          }
+          $i += 1;
+        }
+      }
+    }
+
+    // Pagamento de diárias
+    if($l_diaria=='S' && $w_or_tramite >= 6) {
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
@@ -349,11 +468,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
           $i += 1;
         } 
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'           <td><b>Destino</td>';
+        $l_html.=chr(13).'           <td><b>Localidade</td>';
         $l_html.=chr(13).'           <td><b>Chegada</td>';
         $l_html.=chr(13).'           <td><b>Saída</td>';
         $l_html.=chr(13).'           <td><b>Item</td>';
@@ -369,7 +488,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $w_hospedagens  = 0;
         $w_tot_local    = 0;
         while($i!=($j-1)) {
-          $w_max_hosp     = (toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400;
+          $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -449,64 +568,66 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Bilhete de passagem
-    $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
-    $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
-    if (count($RS1)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BILHETES EMITIDOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td rowspan=2><b>Emissão</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Cia.</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Número</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Trecho</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>RLOC</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Classe</td>';
-      $l_html.=chr(13).'          <td colspan=4><b>Valores</td>';
-      $l_html.=chr(13).'        </tr>';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Bilhete</td>';
-      $l_html.=chr(13).'          <td><b>Embarque</td>';
-      $l_html.=chr(13).'          <td><b>PTA</td>';
-      $l_html.=chr(13).'          <td><b>Total</td>';
-      $l_html.=chr(13).'        </tr>';
-      $w_cor=$conTrBgColor;
-      $i             = 1;
-      $w_tot_bil     = 0;
-      $w_tot_pta     = 0;
-      $w_tot_tax     = 0;
-      $w_tot_bilhete = 0;
-      $w_total       = 0;
-      foreach ($RS1 as $row) {
-        $w_tot_bilhete = f($row,'valor_bilhete')+formatNumber(f($row,'valor_pta'))+formatNumber(f($row,'valor_taxa_embarque'));
-        $w_tot_bil     += f($row,'valor_bilhete');
-        $w_tot_pta     += f($row,'valor_pta');
-        $w_tot_tax     += f($row,'valor_taxa_embarque');
-        $w_total       += $w_tot_bilhete;
-        $l_html.=chr(13).'        <tr valign="middle">';
-        $l_html.=chr(13).'           <td align="center">'.FormataDataEdicao(f($row,'data'),5).'</td>';
-        $l_html.=chr(13).'           <td>'.f($row,'nm_cia_transporte').'</td>';
-        $l_html.=chr(13).'           <td>'.f($row,'numero').'</td>';
-        $l_html.=chr(13).'           <td>'.f($row,'trecho').'</td>';
-        $l_html.=chr(13).'           <td>'.f($row,'rloc').'</td>';
-        $l_html.=chr(13).'           <td align="center">'.f($row,'classe').'</td>';
-        $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_bilhete')).'</td>';
-        $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_taxa_embarque')).'</td>';
-        $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_pta')).'</td>';
-        $l_html.=chr(13).'           <td align="right">'.formatNumber($w_tot_bilhete).'</td>';
+    if ($w_or_tramite >= 6) {
+      $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
+      $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
+      if (count($RS1)>0) {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BILHETES EMITIDOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+        $l_html.=chr(13).'          <td rowspan=2><b>Emissão</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Cia.</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Número</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Trecho</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>RLOC</td>';
+        $l_html.=chr(13).'          <td rowspan=2><b>Classe</td>';
+        $l_html.=chr(13).'          <td colspan=4><b>Valores</td>';
         $l_html.=chr(13).'        </tr>';
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="6"><b>TOTAIS</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_bil).'</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_tax).'</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_pta).'</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
-        $l_html.=chr(13).'      </tr>';
-      } 
-      $l_html.=chr(13).'         </table></td></tr>';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+        $l_html.=chr(13).'          <td><b>Bilhete</td>';
+        $l_html.=chr(13).'          <td><b>Embarque</td>';
+        $l_html.=chr(13).'          <td><b>PTA</td>';
+        $l_html.=chr(13).'          <td><b>Total</td>';
+        $l_html.=chr(13).'        </tr>';
+        $w_cor=$conTrBgColor;
+        $i             = 1;
+        $w_tot_bil     = 0;
+        $w_tot_pta     = 0;
+        $w_tot_tax     = 0;
+        $w_tot_bilhete = 0;
+        $w_total       = 0;
+        foreach ($RS1 as $row) {
+          $w_tot_bilhete = f($row,'valor_bilhete')+formatNumber(f($row,'valor_pta'))+formatNumber(f($row,'valor_taxa_embarque'));
+          $w_tot_bil     += f($row,'valor_bilhete');
+          $w_tot_pta     += f($row,'valor_pta');
+          $w_tot_tax     += f($row,'valor_taxa_embarque');
+          $w_total       += $w_tot_bilhete;
+          $l_html.=chr(13).'        <tr valign="middle">';
+          $l_html.=chr(13).'           <td align="center">'.FormataDataEdicao(f($row,'data'),5).'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'nm_cia_transporte').'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'numero').'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'trecho').'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'rloc').'</td>';
+          $l_html.=chr(13).'           <td align="center">'.f($row,'classe').'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_bilhete')).'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_taxa_embarque')).'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_pta')).'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber($w_tot_bilhete).'</td>';
+          $l_html.=chr(13).'        </tr>';
+          $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+          $l_html.=chr(13).'        <td align="right" colspan="6"><b>TOTAIS</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_bil).'</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_tax).'</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_pta).'</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+          $l_html.=chr(13).'      </tr>';
+        } 
+        $l_html.=chr(13).'         </table></td></tr>';
+      }
     } 
   
-    if (1==1) {
+    if ($w_or_tramite >= 6) {
     //if ($w_tipo_visao!=2) {
       // Previsão orçamentária-financeira
 

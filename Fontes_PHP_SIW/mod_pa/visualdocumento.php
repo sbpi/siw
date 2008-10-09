@@ -19,6 +19,12 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   $l_html='';
   // Recupera os dados do documento
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
+  
+  if (nvl(f($RS,'sq_solic_pai'),'')!='') {
+    $RS_Pai = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PADCAD');
+    if (f($RS,'tipo_juntada')=='A') $w_tipo_juntada = 'ANEXO AO PROCESSO '.f($RS_Pai,'protocolo');
+    else                            $w_tipo_juntada = 'APENSO AO PROCESSO '.f($RS_Pai,'protocolo');
+  }
 
   $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
   if ($O!='T' && $O!='V') {
@@ -26,7 +32,10 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   if (f($RS,'processo')=='S') $w_tipo = 'PROCESSO'; else $w_tipo='DOCUMENTO';
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td>';
+  if (nvl(f($RS,'sq_solic_pai'),'')!='') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.$w_tipo_juntada.'</b></font></td>';
+  }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
   if ($l_identificacao=='S') {
@@ -68,7 +77,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'       <td>'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
     $l_html.=chr(13).'   <tr><td valign="top"><b>Assunto:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.f($RS,'cd_assunto').'-'.f($RS,'ds_assunto').'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Complemento do assunto:</b></td>';
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento do assunto:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'descricao'),'---')).'</td></tr>';
   } 
 
@@ -141,6 +150,51 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'   <tr><td><b>Unidade autuadora:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
   } 
+
+  // Dados da juntada
+  if (nvl(f($RS,'sq_solic_pai'),'')!='') {
+    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>DADOS DA '.((f($RS,'tipo_juntada')=='A') ? 'ANEXAÇÃO' : 'APENSAÇÃO').'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Data:</b></td>';
+    $l_html.=chr(13).'       <td align="justify">'.f($RS,'phpdt_juntada').'</td></tr>';
+  }
+  
+  $RS_Juntado = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,
+      $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+      $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+      $p_uorg_resp, $p_numero_doc, $p_prazo, $p_fase, $p_sqcc, f($RS,'sq_siw_solicitacao'), $p_atividade, 
+      null, null, $p_empenho, $p_numero_orig);
+
+  if (count($RS_Juntado)>0) {
+    $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>DOCUMENTOS JUNTADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr valign="top" align="center">';
+    $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Situação</b></td>';
+    $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Protocolo</b></td>';
+    $l_html.=chr(13).'         <td colspan=4 bgColor="#f0f0f0" align="center"><b>Documento original</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    $l_html.=chr(13).'       <tr valign="top" align="center">';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Espécie</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Nº</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Procedência</td>';
+    $l_html.=chr(13).'        </tr>';
+    foreach ($RS_Juntado as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html.=chr(13).'        <td>'.f($row,'nm_tipo_juntada').'</td>';
+      $l_html.=chr(13).'        <td align="center">'.f($row,'protocolo').'</td>';
+      $l_html.=chr(13).'        <td>'.f($row,'nm_especie').'</td>';
+      $l_html.=chr(13).'        <td>'.f($row,'numero_original').'</td>';
+      $l_html.=chr(13).'        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>';
+      $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_origem_doc'),'&nbsp;').'</td>';
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'      </center>';
+    $l_html.=chr(13).'    </table>';
+    $l_html.=chr(13).'  </td>';
+    $l_html.=chr(13).'</tr>';
+  }
 
   if ($O=='T') {
     // Interessados na execução do documento

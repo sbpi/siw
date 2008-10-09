@@ -8,9 +8,9 @@ function selecaoDispRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
   $RS = db_getRecurso_Disp::getInstanceOf($dbms,$w_cliente,$chaveAux,null,null,null,'REGISTROS');
   $RS = SortArray($RS,'inicio','desc','fim','desc');
   if (Nvl($hint,'')>'') {
-    ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {
-    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
   foreach ($RS as $row) {

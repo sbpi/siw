@@ -34,23 +34,23 @@ function CabecalhoWordSint($w_logo,$w_pag,$w_linha,$p_responsavel,$p_prioridade,
   ShowHTML('<tr><td align="center" colspan=3>');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('      <tr bgcolor="'.$conTrBgColor.'" align="center">');
-  ShowHTML('        <td><font size="1"><b>Nome</font></td>');
+  ShowHTML('        <td><b>Nome</font></td>');
   if (!(strpos($p_campos,'responsavel')===false)) {
-    ShowHTML('     <td><font size="1"><b>Responsável</font></td>');
+    ShowHTML('     <td><b>Responsável</font></td>');
   } if (!(strpos($p_campos,'email')===false)) {
-    ShowHTML('     <td><font size="1"><b>e-Mail</font></td>');
+    ShowHTML('     <td><b>e-Mail</font></td>');
   } if (!(strpos($p_campos,'telefone')===false)) {
-    ShowHTML('     <td><font size="1"><b>Telefone</font></td>');
+    ShowHTML('     <td><b>Telefone</font></td>');
   } if (!(strpos($p_campos,'aprovado')===false)) {
-    ShowHTML('          <td><font size="1"><b>Aprovado</font></td>'); 
+    ShowHTML('          <td><b>Aprovado</font></td>'); 
   } if (!(strpos($p_campos,'empenhado')===false)) {
-    ShowHTML('          <td><font size="1"><b>Empenhado</font></td>');  
+    ShowHTML('          <td><b>Empenhado</font></td>');  
   } if (!(strpos($p_campos,'saldo')===false)) {
-    ShowHTML('          <td><font size="1"><b>Saldo</font></td>'); 
+    ShowHTML('          <td><b>Saldo</font></td>'); 
   } if (!(strpos($p_campos,'liquidado')===false)) {
-    ShowHTML('          <td><font size="1"><b>Liquidado</font></td>');
+    ShowHTML('          <td><b>Liquidado</font></td>');
   } if (!(strpos($p_campos,'liquidar')===false)) {
-    ShowHTML('          <td><font size="1"><b>A liquidar</font></td>');   
+    ShowHTML('          <td><b>A liquidar</font></td>');   
   }
   ShowHTML('      </tr>');
 } 

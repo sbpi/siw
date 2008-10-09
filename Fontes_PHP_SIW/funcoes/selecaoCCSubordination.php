@@ -7,9 +7,9 @@ function selecaoCCSubordination($label,$accesskey,$hint,$chave,$pai,$campo,$rest
   extract($GLOBALS);
   $RS = db_getCCSubordination::getInstanceOf($dbms, $w_cliente, $chave, $restricao);
   if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
+    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
   }
   ShowHTML('          <OPTION VALUE="">---');
   foreach($RS as $row)  {

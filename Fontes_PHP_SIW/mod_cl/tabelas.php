@@ -710,6 +710,7 @@ function Parametro() {
   $w_banco_ata_central       = f($RS,'banco_ata_central');
   $w_banco_preco_central     = f($RS,'banco_preco_central');
   $w_codificacao_central     = f($RS,'codificacao_central');  
+  $w_pede_valor_pedido       = f($RS,'pede_valor_pedido');
   Cabecalho();
   ShowHTML('<HEAD>');
   ScriptOpen('JavaScript');
@@ -746,6 +747,7 @@ function Parametro() {
   MontaRadioSN('    <b>Banco preço central</b>',$w_banco_preco_central,'w_banco_preco_central');
   ShowHTML('      <tr valign="top">');
   MontaRadioSN('    <b>Codificação Central</b>',$w_codificacao_central,'w_codificacao_central');
+  MontaRadioNS('    <b>Pedido de compra solicita valor?</b>',$w_pede_valor_pedido,'w_pede_valor_pedido','Se sim, o usuário deve informar o valor estimado; caso contrário, será calculado a partir dos itens.');
   ShowHTML('      <tr valign="top"><td colspan="2"><table width="97%" border="0">');
   ShowHTML('        <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
   ShowHTML('     </table>');
@@ -1231,7 +1233,8 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCLParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_ano_corrente'],$_REQUEST['w_dias_validade_pesquisa'],$_REQUEST['w_dias_aviso_pesquisa'],
             $_REQUEST['w_percentual_acrescimo'],$_REQUEST['w_compra_central'],$_REQUEST['w_pesquisa_central'],$_REQUEST['w_contrato_central'],
-            $_REQUEST['w_banco_ata_central'],$_REQUEST['w_banco_preco_central'],$_REQUEST['w_codificacao_central']);
+            $_REQUEST['w_banco_ata_central'],$_REQUEST['w_banco_preco_central'],$_REQUEST['w_codificacao_central'],
+            $_REQUEST['w_pede_valor_pedido']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

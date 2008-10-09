@@ -1448,7 +1448,6 @@ function Grava() {
           }*/ 
         //} 
         $RS = db_getMeioTransporte::getInstanceOf($dbms, $w_cliente, null, null, null, $_REQUEST['w_nome']);
-       
         if (count($RS)>0) {        
           foreach($RS as $row) { $RS = $row; break; }
           if (f($RS,'chave')!=nvl($_REQUEST['w_chave'],0)) {

@@ -18,6 +18,7 @@ create or replace procedure SP_PutCLSolicItem
    w_reg        cl_solicitacao_item%rowtype;
    w_menu       siw_menu%rowtype;
    w_sg_tramite siw_tramite.sigla%type;
+   w_parametro  cl_parametro%rowtype;
 begin
    -- recupera os dados do serviço
    select b.* into w_menu
@@ -25,6 +26,10 @@ begin
           inner join siw_menu b on (a.sq_menu = b.sq_menu)
      where a.sq_siw_solicitacao = p_chave;
      
+   -- Recupera os parâmetros do módulo
+   select * into w_parametro
+     from cl_parametro where cliente = w_menu.sq_pessoa;
+
    If p_operacao = 'I' Then
       select sq_solicitacao_item.nextval into w_chave from dual;
       -- Insere registro
@@ -118,9 +123,11 @@ begin
          select coalesce(pesquisa_preco_medio,0) into w_valor           from cl_material         where sq_material         = w_material;
     
          -- Atualiza o valor da solicitação
-         update siw_solicitacao 
-            set valor = (coalesce(valor,0) - (w_valor*w_qtd))
-         where sq_siw_solicitacao = p_chave;
+         If substr(w_menu.sigla,1,4) <> 'CLPC' or (substr(w_menu.sigla,1,4) = 'CLPC' and w_parametro.pede_valor_pedido = 'N') Then
+            update siw_solicitacao 
+               set valor = (coalesce(valor,0) - (w_valor*w_qtd))
+            where sq_siw_solicitacao = p_chave;
+         End If;
     
          -- Tratamento para item de pedido de compra
          delete cl_solicitacao_item where sq_solicitacao_item = p_chave_aux;
@@ -216,21 +223,23 @@ begin
             where x.sq_siw_solicitacao = p_chave;
          End If; 
       else
-         -- Tratamento para item de licitação
-         select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
-
-         -- Atualiza o valor da solicitação
-         If p_operacao = 'A' or p_operacao = 'C' Then
-            -- Primeiro subtrai o valor atual do item se for alteração ou cópia
+         If substr(w_menu.sigla,1,4) <> 'CLPC' or (substr(w_menu.sigla,1,4) = 'CLPC' and w_parametro.pede_valor_pedido = 'N') Then
+            -- Tratamento para item de licitação
+            select coalesce(pesquisa_preco_medio,0) into w_valor from cl_material where sq_material = w_material;
+    
+            -- Atualiza o valor da solicitação
+            If p_operacao = 'A' or p_operacao = 'C' Then
+               -- Primeiro subtrai o valor atual do item se for alteração ou cópia
+               update siw_solicitacao set
+                   valor = (coalesce(valor,0)-(p_qtd_ant*w_valor))
+               where sq_siw_solicitacao = p_chave;
+            End If;
+              
+            -- Acresce o valor da solicitação com o valor do item
             update siw_solicitacao set
-                valor = (coalesce(valor,0)-(p_qtd_ant*w_valor))
-            where sq_siw_solicitacao = p_chave;
+                valor = (coalesce(valor,0)+(w_qtd*w_valor))
+             where sq_siw_solicitacao = p_chave;
          End If;
-          
-         -- Acresce o valor da solicitação com o valor do item
-         update siw_solicitacao set
-             valor = (coalesce(valor,0)+(w_qtd*w_valor))
-          where sq_siw_solicitacao = p_chave;   
       End If;
 
    End if;

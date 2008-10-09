@@ -14,6 +14,12 @@ create or replace procedure SP_PutSolicConc
    ) is
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+   w_menu          siw_menu%rowtype;
+   w_menu_lic      siw_menu%rowtype;
+   w_solic         siw_solicitacao%rowtype;
+   w_pedido        cl_solicitacao%rowtype;
+   w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
+   w_codigo        siw_solicitacao.codigo_interno%type;
    
    cursor c_vencedor is
        select x.*
@@ -122,5 +128,83 @@ begin
       insert into siw_solic_log_arq (sq_siw_solic_log, sq_siw_arquivo)
       values (w_chave_dem, w_chave_arq);
    End If;
+
+   -- Recupera os dados do serviço
+   select * into w_menu from siw_menu where sq_menu = p_menu;
+
+   -- Se ABDI e Pedido de compra, gera licitação na fase de cotação de preços
+   If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
+
+      -- Recupera os dados do serviço de licitação
+      select * into w_menu_lic from siw_menu where sq_pessoa = w_menu.sq_pessoa and tramite = 'S' and substr(sigla,1,4)='CLLC';
+
+      -- Recupera os dados da solicitação
+      select * into w_solic from siw_solicitacao where sq_siw_solicitacao = p_chave;
+      
+      -- Recupera os dados do pedido
+      select * into w_pedido from cl_solicitacao where sq_siw_solicitacao = p_chave;
+      
+      -- Gera a solicitação
+      sp_putclgeral(p_operacao          => 'I',
+                    p_chave             => null,
+                    p_copia             => null,
+                    p_menu              => w_menu_lic.sq_menu,
+                    p_unidade           => w_solic.sq_unidade,
+                    p_solicitante       => w_solic.solicitante,
+                    p_cadastrador       => w_solic.cadastrador,
+                    p_executor          => null,
+                    p_plano             => w_solic.sq_plano,
+                    p_objetivo          => null,
+                    p_sqcc              => w_solic.sq_cc,
+                    p_solic_pai         => w_solic.sq_solic_pai,
+                    p_justificativa     => w_solic.justificativa,
+                    p_observacao        => w_solic.observacao,
+                    p_inicio            => w_solic.inicio,
+                    p_fim               => w_solic.fim,
+                    p_valor             => w_solic.valor,
+                    p_codigo            => null,
+                    p_prioridade        => w_pedido.prioridade,
+                    p_aviso             => w_pedido.aviso_prox_conc,
+                    p_dias              => w_pedido.dias_aviso,
+                    p_cidade            => w_solic.sq_cidade_origem,
+                    p_decisao_judicial  => w_pedido.decisao_judicial,
+                    p_numero_original   => w_pedido.numero_original,
+                    p_data_recebimento  => w_pedido.data_recebimento,
+                    p_arp               => w_pedido.arp,
+                    p_interno           => w_pedido.interno,
+                    p_especie_documento => w_pedido.sq_especie_documento,
+                    p_chave_nova        => w_chave_nova);
+     
+      -- Recupera os dados da licitação criada
+      select * into w_solic from siw_solicitacao where sq_siw_solicitacao = w_chave_nova;
+
+      -- Grava os itens da licitação
+      for crec in c_itens loop
+          sp_putclsolicitem(p_operacao            => 'V',
+                            p_chave_aux           => null,
+                            p_chave               => w_chave_nova,
+                            p_chave_aux2          => crec.sq_solicitacao_item,
+                            p_material            => null,
+                            p_quantidade          => null,
+                            p_qtd_ant             => null,
+                            p_valor               => null,
+                            p_cancelado           => null,
+                            p_motivo_cancelamento => null);
+      end loop;
+
+      -- Gera a solicitação
+      sp_putsolicenvio(p_menu          => w_menu_lic.sq_menu,
+                       p_chave         => w_chave_nova,
+                       p_pessoa        => p_pessoa,
+                       p_tramite       => w_solic.sq_siw_tramite,
+                       p_novo_tramite  => null,
+                       p_devolucao     => 'N',
+                       p_despacho      => 'Envio automático de licitação.',
+                       p_caminho       => null,
+                       p_tamanho       => null,
+                       p_tipo          => null,
+                       p_nome_original => null);
+   End If;
+
 end SP_PutSolicConc;
 /

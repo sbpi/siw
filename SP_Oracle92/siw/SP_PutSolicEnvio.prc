@@ -15,8 +15,10 @@ create or replace procedure SP_PutSolicEnvio
    w_chave_arq     number(18) := null;
    w_tramite       number(18);
    w_sg_tramite    siw_tramite.sigla%type;
+   w_or_tramite    siw_tramite.ordem%type;
    w_menu          siw_menu%rowtype;
    w_cont          number(4);
+   w_solic         siw_solicitacao%rowtype;
 
 begin
    -- Recupera os dados do serviço
@@ -25,13 +27,30 @@ begin
    -- Se houve mudança no trâmite atual, recupera o trâmite para o qual está sendo enviada a solicitação
    If p_tramite <> nvl(p_novo_tramite, 0) Then
       If p_devolucao = 'N' Then
-         select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+         select sq_siw_tramite, sigla, ordem into w_tramite, w_sg_tramite, w_or_tramite
             from siw_tramite a
            where a.sq_menu = p_menu
              and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = p_tramite);
          
-         If w_sg_tramite = 'PP' Then
-            -- Se o trâmite for de pesquisa de preços e tiver o número necessário de pesquisas, pula para o próximo.
+         -- Recupera os dados da solicitação
+         select * into w_solic from siw_solicitacao where sq_siw_solicitacao = p_chave;
+
+         -- Decide a tramitação em função do valor do pedido
+         If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' and w_or_tramite = 3 and w_solic.valor > 5000 Then
+            
+            If w_solic.valor > 5000 and w_solic.valor <= 15000 Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+            Else
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.ordem   = (select ordem+2 from siw_tramite where sq_siw_tramite = w_tramite);
+            End If;
+         Elsif w_sg_tramite = 'PP' and substr(w_menu.sigla,1,4)='CLRP' Then
+            -- Se o trâmite for de pesquisa de preços de pedido de ARP e tiver o número necessário de pesquisas, pula para o próximo.
             select count(*)
               into w_cont
               from (select a.sq_solicitacao_item, coalesce(i.qtd_cotacao,0) as qtd

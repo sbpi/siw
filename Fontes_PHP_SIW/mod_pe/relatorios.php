@@ -197,39 +197,41 @@ function Rel_Executivo() {
           }
           $w_proj = 0;
           foreach($RS1 as $row1) {
-            if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
-              //Programas
-              if (nvl(f($row1,'sq_solic_pai'),'')=='') {
-                ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
-              } else {
-                ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+            if ($p_resumo || ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano)) {
+              if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
+                //Programas
+                if (nvl(f($row1,'sq_solic_pai'),'')=='') {
+                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                } else {
+                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                }
+                ShowHTML('          <tr align="center">');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
+                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
+                ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
+                ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>');
+                if ($w_embed !='WORD') {
+                  ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
+                  ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').'</b></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').'</b></td>');
+                } else {
+                  ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDE</b></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGE</b></td>');
+                  ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDC</b></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGC</b></td>');
+                }
+                ShowHTML('          </tr>');
+                ShowHTML('          <tr align="center">');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
+                ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
+                ShowHTML('          </tr>');
               }
-              ShowHTML('          <tr align="center">');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Projeto</b></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável</b></td>');
-              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Previsto</b></td>');
-              ShowHTML('            <td colspan=3 bgColor="#f0f0f0"><b>Realizado</b></td>');
-              if ($w_embed !='WORD') {
-                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').'</b></td>');
-                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').'</b></td>');
-                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').'</b></td>');
-                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').'</b></td>');
-              } else {
-                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDE</b></td>');
-                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGE</b></td>');
-                ShowHTML('            <td rowspan=2 colspan=2 bgColor="#f0f0f0"><b>IDC</b></td>');
-                ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>IGC</b></td>');
-              }
-              ShowHTML('          </tr>');
-              ShowHTML('          <tr align="center">');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Início</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Fim</b></td>');
-              ShowHTML('            <td bgColor="#f0f0f0"><b>Orçamento</b></td>');
-              ShowHTML('          </tr>');
 
               $RS3 = db_getSolicList::getInstanceOf($dbms,f($RS2,'sq_menu'),$w_usuario,'ESTRUTURA',7,
                   $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
@@ -277,11 +279,11 @@ function Rel_Executivo() {
                       if (f($row3,'idc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'idc'),2).'%'.'</td>');
                       if (f($row3,'igc')<0) ShowHTML('            <td align="center">*</td>'); else ShowHTML('            <td align="right">'.formatNumber(f($row3,'igc'),2).'%'.'</td>');
                     }
-                    if (f($row3,'qt_filho')==0) {
-                      $l_previsto[$w_proj] += nvl(f($row3,'orc_previsto'),f($row3,'valor'));
-                      $l_realizado[$w_proj] += nvl(f($row3,'orc_real'),f($row3,'custo_real'));
-                    }
                   } 
+                  if (f($row3,'qt_filho')==0) {
+                    $l_previsto[$w_proj] += nvl(f($row3,'orc_previsto'),f($row3,'valor'));
+                    $l_realizado[$w_proj] += nvl(f($row3,'orc_real'),f($row3,'custo_real'));
+                  }
                 }
                 if ($p_projeto=='S') {
                   ShowHTML('<tr valign="top">');

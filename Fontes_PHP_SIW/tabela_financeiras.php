@@ -436,7 +436,7 @@ function Agencia() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
-  if ($p_sq_banco=='') $O='P';
+  if ($O!='I' && $p_sq_banco=='') $O='P';
 
   if ($w_troca>'' && $O!='E') {
     $w_sq_agencia   = $_REQUEST['w_sq_agencia'];
@@ -625,6 +625,7 @@ function Agencia() {
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';" name="Botao" value="Incluir">');
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_sq_banco='.$p_sq_banco.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');

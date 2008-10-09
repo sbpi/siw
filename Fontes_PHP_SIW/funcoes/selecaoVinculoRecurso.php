@@ -15,9 +15,9 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
 
     // Se restrição não for informado, exibe seleção dos objetos aos quais o recurso pode ser ligado
     if (!isset($hint)) {
-      ShowHTML('          <td colspan="'.$colspan.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><font size="1"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
     ShowHTML('          <option value="">Não vinculado');
     if (nvl($l_chave,'')=='PESSOA') ShowHTML('          <option value="PESSOA" SELECTED>Vinculado a pessoa'); else ShowHTML('          <option value="PESSOA">Vinculado a pessoa');
