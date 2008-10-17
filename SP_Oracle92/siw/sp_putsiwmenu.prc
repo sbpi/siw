@@ -40,7 +40,8 @@ create or replace procedure SP_PutSIWMenu
     p_sequencial          in  number default null,
     p_ano_corrente        in  number default null,
     p_prefixo             in  varchar2 default null,
-    p_sufixo              in  varchar2 default null
+    p_sufixo              in  varchar2 default null,
+    p_envio_inclusao      in  varchar2 default null
    ) is
    w_chave        number(18);
    w_sequencial   number(18) := coalesce(p_sequencial,0);
@@ -56,7 +57,7 @@ begin
          sq_pessoa, nome, acesso_geral, sq_modulo, sq_unid_executora,
          tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, destinatario,
          controla_ano, libera_edicao, numeracao_automatica, servico_numerador, sequencial, ano_corrente,
-         prefixo, sufixo)
+         prefixo, sufixo, envio_inclusao)
       values (w_Chave, p_sq_menu_pai, p_link,
          p_p1, p_p2, p_p3, p_p4, upper(trim(p_sigla)), trim(p_imagem), trim(p_target),
          p_emite_os, p_consulta_opiniao, p_envia_email, p_exibe_relatorio, trim(p_como_funciona), p_vinculacao,
@@ -64,7 +65,7 @@ begin
          p_cliente, p_nome, p_acesso_geral, p_modulo, p_sq_unidade_exec,
          p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, Nvl(p_envio,'S'),
          Nvl(p_controla_ano,'N'), p_libera_edicao, p_numeracao, p_numerador, p_sequencial, p_ano_corrente,
-         p_prefixo, p_sufixo);
+         p_prefixo, p_sufixo, Nvl(p_envio_inclusao,'N'));
       
       -- Cria a opção do menu para todos os endereços da organização
       insert into siw_menu_endereco (sq_menu, sq_pessoa_endereco) 
@@ -130,7 +131,7 @@ begin
           libera_edicao        = p_libera_edicao,      numeracao_automatica = p_numeracao,
           servico_numerador    = p_numerador,          sequencial           = w_sequencial,
           ano_corrente         = p_ano_corrente,       prefixo              = p_prefixo,
-          sufixo               = p_sufixo
+          sufixo               = p_sufixo,             envio_inclusao       = Nvl(p_envio_inclusao,'N')
       where sq_menu = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove as configurações de e-mail do serviço

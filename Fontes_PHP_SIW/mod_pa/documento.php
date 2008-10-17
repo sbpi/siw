@@ -50,6 +50,7 @@ include_once($w_dir_volta.'funcoes/selecaoEspecieDocumento.php');
 include_once($w_dir_volta.'funcoes/selecaoOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
+include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
@@ -184,7 +185,7 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $p_uf;
-  $w_tipo=$_REQUEST['w_tipo'];  
+  $w_tipo=$_REQUEST['w_tipo'];
   if ($O=='L') {
     if (!(strpos(strtoupper($R),'GR_')===false)) {
       $w_filtro='';
@@ -255,9 +256,19 @@ function Inicial() {
       $RS = SortArray($RS,'phpdt_fim','asc');
     }
   }
-  if ($w_tipo=='WORD') {
+  if ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
+    $w_embed = 'WORD';
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  }elseif($w_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     cabecalho();
     ShowHTML('<HEAD>');
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -295,24 +306,32 @@ function Inicial() {
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
+    if ($w_troca>'') {
+      // Se for recarga da página
+      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+    } elseif ($O=='I' || $O=='A') {
+      BodyOpen('onLoad=\'document.Form.w_tipo.focus()\';');
+    } elseif ($O=='E') {
+      BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    } else {
+      BodyOpen(null);
+    } 
+    Estrutura_Topo_Limpo();
+    Estrutura_Menu();
+    Estrutura_Corpo_Abre();
+    if($w_embed!='WORD') {
+      if ((strpos(strtoupper($R),'GR_'))===false) {
+        Estrutura_Texto_Abre();
+      } else {
+        CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
+      }
+    }
+    if ($w_filtro > '') ShowHTML($w_filtro);
   }
-  if ($w_troca>'') {
-    // Se for recarga da página
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=\'document.Form.w_tipo.focus()\';');
-  } elseif ($O=='E') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  } else {
-    BodyOpen(null);
-  } 
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
-  ShowHTML('<HR>');
-  if ($w_filtro>'') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr>');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('<td><font size="2">');
       if ($P1==1 && $w_copia=='') {
         // Se for cadastramento e não for resultado de busca para cópia
@@ -338,22 +357,24 @@ function Inicial() {
       } 
     }
     ShowHTML('    <td align="right">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD' && strpos(strtoupper($R),'GR_')===false) {
       ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
       ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     } 
     ShowHTML('    <b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.(($w_embed=='WORD') ? 1 : $conTableBorder).'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.LinkOrdena('Protocolo','protocolo').'</td>');
-      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.LinkOrdena('Tipo','nm_tipo_protocolo').'</td>');
-      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.LinkOrdena('Posse','sg_unidade_posse').'</td>');
+      ShowHTML('          <td rowspan=2 width="50"><b>'.LinkOrdena('Tipo','nm_tipo_protocolo').'</td>');
+      ShowHTML('          <td rowspan=2 nowrap><b>'.LinkOrdena('Posse','sg_unidade_posse').'</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Recebimento','data_recebimento').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Limite','fim').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Assunto','cd_assunto').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Resumo','ds_assunto').'</td>');
+      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Recebimento','data_recebimento').'</td>');
+      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Limite','fim').'</td>');
+      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       if ($P1!=3) ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -366,9 +387,11 @@ function Inicial() {
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Posse</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
-      ShowHTML('          <td rowspan=2><b>Recebimento</td>');
-      ShowHTML('          <td rowspan=2><b>Limite</td>');
-      ShowHTML('          <td rowspan=2><b>Fase atual</td>');
+      ShowHTML('          <td rowspan=2><b>Assunto</td>');
+      ShowHTML('          <td rowspan=2><b>Resumo</td>');
+      //ShowHTML('          <td rowspan=2><b>Recebimento</td>');
+      //ShowHTML('          <td rowspan=2><b>Limite</td>');
+      //ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>Espécie</td>');
@@ -380,11 +403,11 @@ function Inicial() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="2"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);      
+      if ($w_embed!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4); else $RS1 = $RS;
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap>');
+        ShowHTML('        <td width="1%" nowrap>');
         if (nvl(f($row,'conclusao'),'nulo')=='nulo') {
           if (f($row,'fim')<addDays(time(),-1)) {
             ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
@@ -400,18 +423,36 @@ function Inicial() {
             ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
           } 
         }
-        if ($w_tipo!='WORD') ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+        if ($w_embed!='WORD') ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
         else                 ShowHTML('        '.f($row,'protocolo').'');
-        ShowHTML('        <td width="1%" nowrap>'.f($row,'nm_tipo_protocolo').'</td>');
-        ShowHTML('        <td width="1%" nowrap>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_posse'),f($row,'unidade_int_posse'),$TP).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
-        ShowHTML('        <td>'.f($row,'numero_original').'</td>');
-        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio')).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_origem').'</td>');
-        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data_recebimento')).'</td>');
-        ShowHTML('        <td align="center">'.nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>');
-        ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
-        if ($w_tipo!='WORD' && $P1!=3){
+        ShowHTML('        </td>');
+        ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo_protocolo').'</td>');
+        if ($w_embed!='WORD') ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_posse'),f($row,'unidade_int_posse'),$TP).'</td>');
+        else                 ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'sg_unidade_posse').'');
+        
+        ShowHTML('        <td nowrap>&nbsp;'.f($row,'nm_especie').'</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'numero_original').'</td>');
+        ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
+        if (f($row,'interno')=='S') {
+          if ($w_embed!='WORD') ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'nm_origem_resumido'),f($row,'sq_origem'),$TP).'</td>');
+          else                 ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_resumido').'');
+        } else {
+          if ($w_embed!='WORD') ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'sq_origem'),$TP,f($row,'nm_origem_resumido')).'</td>');
+          else                 ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_resumido').'');
+        }
+        if ($w_embed!='WORD') ShowHTML('        <td width="50" nowrap title="'.f($row,'ds_assunto').'">&nbsp;'.ExibeAssunto('../',$w_cliente,f($row,'cd_assunto'),f($row,'sq_assunto'),$TP).'</td>');
+        else                 ShowHTML('        <td width="50" nowrap title="'.f($row,'ds_assunto').'">&nbsp;'.f($row,'cd_assunto').'</td>');
+        if ($_REQUEST['p_tamanho']=='N') {
+          ShowHTML('        <td width="50%">'.Nvl(f($row,'descricao'),'-').'</td>');
+        } else {
+          if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
+          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+          else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
+        }
+        //ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data_recebimento')).'</td>');
+        //ShowHTML('        <td align="center">'.nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>');
+        //ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
+        if ($w_embed!='WORD' && $P1!=3){
           ShowHTML('        <td align="top" nowrap>');
           if ($P1!=3 && $P1!=5) {
             // Se não for acompanhamento
@@ -456,7 +497,7 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    if ($w_tipo!='WORD'){    
+    if ($w_embed!='WORD'){    
     ShowHTML('<tr><td align="center" colspan=3>');    
       if ($R>'') {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -535,7 +576,8 @@ function Inicial() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  Rodape();
+  if($w_tipo == 'PDF') RodapePdf();
+  else Rodape();
 } 
 // =========================================================================
 // Rotina dos dados gerais
@@ -1504,8 +1546,8 @@ function Encaminhamento() {
   ShowHTML('     <tr valign="top">');
   selecaoTipoDespacho('Des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$w_tipo_despacho,null,'w_tipo_despacho','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
   if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
-      ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
-    }
+    ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+  }
   ShowHTML('           </table>');
   ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
 
@@ -1989,21 +2031,22 @@ function BuscaAssunto() {
 function Tramitacao() {
   extract($GLOBALS);
   global $w_Disabled;
-
+//exibevariaveis();
   // Recupera as variáveis utilizadas na filtragem
-  $p_protocolo    = $_REQUEST['p_protocolo'];
-  $p_chave        = explodeArray($_REQUEST['p_chave']);
-  $p_chave_aux    = $_REQUEST['p_chave_aux'];
-  $p_prefixo      = substr($p_protocolo,0,5);
-  $p_numero       = substr($p_protocolo,6,6);
-  $p_ano          = substr($p_protocolo,13,4);
-  $p_unid_autua   = $_REQUEST['p_unid_autua'];
-  $p_unid_posse   = $_REQUEST['p_unid_posse'];
-  $p_nu_guia      = $_REQUEST['p_nu_guia'];
-  $p_ano_guia     = $_REQUEST['p_ano_guia'];
-  $p_ini          = $_REQUEST['p_ini'];
-  $p_fim          = $_REQUEST['p_fim'];
-
+  $p_protocolo      = $_REQUEST['p_protocolo'];
+  $p_chave          = explodeArray($_REQUEST['p_chave']);
+  $p_chave_aux      = $_REQUEST['p_chave_aux'];
+  $p_prefixo        = $_REQUEST['p_prefixo'];
+  $p_numero         = $_REQUEST['p_numero'];
+  $p_ano            = $_REQUEST['p_ano'];
+  $p_unid_autua     = $_REQUEST['p_unid_autua'];
+  $p_unid_posse     = $_REQUEST['p_unid_posse'];
+  $p_nu_guia        = $_REQUEST['p_nu_guia'];
+  $p_ano_guia       = $_REQUEST['p_ano_guia'];
+  $p_ini            = $_REQUEST['p_ini'];
+  $p_fim            = $_REQUEST['p_fim'];
+  $p_tipo_despacho  = nvl($_REQUEST['w_tipo_despacho'],$_REQUEST['p_tipo_despacho']);
+  
   if ($w_troca>'') {
     // Se for recarga da página
     $w_chave            = $_REQUEST['w_chave'];
@@ -2012,17 +2055,38 @@ function Tramitacao() {
     $w_sq_unidade       = $_REQUEST['w_sq_unidade'];
     $w_pessoa_destino   = $_REQUEST['w_pessoa_destino'];
     $w_unidade_externa  = $_REQUEST['w_unidade_externa'];
-    $w_tipo_despacho    = $_REQUEST['w_tipo_despacho'];
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_aviso            = $_REQUEST['w_aviso'];
     $w_dias             = $_REQUEST['w_dias'];
     $w_protocolo        = $_REQUEST['w_protocolo'];
   }
+  
+  if ($p_tipo_despacho>'') {
+    $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,$p_tipo_despacho,$w_cliente,null,null,null,null);
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_nm_tipo_despacho = f($RS,'nome');
+  }
 
-  if ($O=='L') {
+  // Verifica se a unidade de lotação do usuário está cadastrada na relação de unidades do módulo
+  $RS_Prot = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,'MOD_PA_PROT',null,null,$w_ano);
+  foreach($RS_Prot as $row) { $RS_Prot = $row; break; }
+  
+  if ($p_tipo_despacho==f($RS_Parametro,'despacho_autuar') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_anexar') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_eliminar') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')
+     ) $w_envia_protocolo = 'S'; else $w_envia_protocolo = 'N';  
+  
+  if ($p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';  
+  
+     if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
-        $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
+        $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, 
+        $p_tipo_despacho);
     $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
     $w_existe = count($RS);
     
@@ -2049,7 +2113,10 @@ function Tramitacao() {
     SaltaCampo();
     CheckBranco();
     ValidateOpen('Validacao');
-    Validate('p_protocolo','Número de protocolo','1','','20','20','','0123456789./-'); 
+    Validate('p_tipo_despacho','Despacho','SELECT',1,1,18,'','0123456789');
+    Validate('p_prefixo','Prefixo','1','','5','5','','0123456789'); 
+    Validate('p_numero','Número','1','','1','6','','0123456789'); 
+    Validate('p_ano','Ano','1','','4','4','','0123456789'); 
     Validate('p_ini','Início','DATA','','10','10','','0123456789/');
     Validate('p_fim','Término','DATA','','10','10','','0123456789/');
     ShowHTML('  if ((theForm.p_ini.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_ini.value == \'\' && theForm.p_fim.value != \'\')) {');
@@ -2081,23 +2148,30 @@ function Tramitacao() {
     ShowHTML('  else {');
     ShowHTML('     theForm.w_dias.value = \'\';');
     ShowHTML('  }');
-    Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
-    if ($w_interno=='N') {
-      Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
-      Validate('w_unidade_externa','Unidade externa','','',2,60,'1','1');
+    if ($w_envia_protocolo=='N') {
+      Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
+      if ($w_interno=='N') {
+        Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
+        Validate('w_unidade_externa','Unidade externa','','',2,60,'1','1');
+      } else {
+        Validate('w_sq_unidade','Unidade de destino','SELECT',1,1,18,'','0123456789');
+      }
+    }
+    if ($p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $p_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
+      Validate('w_protocolo_nm','ao processo','hidden','1','20','20','','0123456789./-'); 
+    }
+    if ($w_desmembrar=='S') {
+      Validate('w_despacho','Protocolos a serem desmembrados','','1','1','2000','1','1');
     } else {
-      Validate('w_sq_unidade','Unidade de destino','SELECT',1,1,18,'','0123456789');
+      Validate('w_despacho','Detalhamento do despacho','','1','1','2000','1','1');
     }
-    Validate('w_tipo_despacho','Despacho','SELECT',1,1,18,'','0123456789');
-    if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
-      Validate('w_protocolo','ao processo','1','1','20','20','','0123456789./-'); 
-    }
-    Validate('w_despacho','Detalhamento do despacho','','1','1','2000','1','1');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
     ShowHTML('  if (theForm["w_chave[]"].value==undefined) {');
     ShowHTML('     for (i=0; i < theForm["w_chave[]"].length; i++) {');
-    ShowHTML('       if (theForm["w_chave[]"][i].checked) w_erro=false;');
+    ShowHTML('       if (theForm["w_chave[]"][i].checked) {');
+    ShowHTML('          w_erro=false; ');
+    ShowHTML('       }');
     ShowHTML('     }');
     ShowHTML('  } else {');
     ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
@@ -2117,18 +2191,18 @@ function Tramitacao() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='P') {
-    BodyOpen('onLoad=\'document.Form.p_protocolo.focus()\';');
+    BodyOpen('onLoad=\'document.Form.p_tipo_despacho.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } 
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('  ATENÇÃO:<ul>');
-    ShowHTML('  <li>Preencha primeiro os dados do trâmite. Em seguida selecione os protocolos que devem fazer parte da guia de tramitação.');
+    ShowHTML('  <li>PROTOCOLOS JUNTADOS SÓ PODEM SER ENVIADOS SE FOR APENSAÇÃO E O DESPACHO FOR <I>"DESMEMBRAR"</I>.');
     ShowHTML('  <li>Se o trâmite for para pessoa jurídica, não se esqueça de informar para qual unidade dessa entidade você está enviando.');
     ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão <i>Gerar Guia de Tramitação</i>.');
     ShowHTML('  </ul></b></font></td>');
@@ -2144,10 +2218,10 @@ function Tramitacao() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
-    ShowHTML('          <td rowspan=2><b>Tipo</td>');
-    ShowHTML('          <td rowspan=2><b>Protocolo</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
-    ShowHTML('          <td rowspan=2><b>Limite</td>');
+    ShowHTML('          <td rowspan=2><b>Resumo</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Espécie</td>');
@@ -2160,6 +2234,7 @@ function Tramitacao() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo_despacho" value="'.$p_tipo_despacho.'">');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -2170,23 +2245,25 @@ function Tramitacao() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
-        ShowHTML('        <td align="center">'); 
+        ShowHTML('        <td align="center" width="1%" nowrap>'); 
         ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
         ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
         ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">'); 
         if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
-          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
+          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_solic_pai').'" ></td>'); 
         } else {
           ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
         }
         ShowHTML('        </td>');
-        ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
-        ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
-        ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
-        ShowHTML('        <td>'.f($row,'numero_original').'</td>');
-        ShowHTML('        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>');
-        ShowHTML('        <td>'.f($row,'nm_origem_doc').'</td>');
-        ShowHTML('        <td align="center">'.((nvl(f($row,'fim'),'')!='') ? date(d.'/'.m.'/'.y,f($row,'fim')) : '&nbsp;').'</td>');
+        ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+        ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_especie').'</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'numero_original').'</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
+        if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
+        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+        else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
         ShowHTML('      </tr>');
         $i += 1;
       } 
@@ -2200,24 +2277,35 @@ function Tramitacao() {
     MontaRadioNS('<b>Emite alerta de não encaminhamento?</b>',$w_aviso,'w_aviso');
     ShowHTML('           <td valign="top"><b>Quantos <U>d</U>ias após esta tramitação?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="A partir de quantos dias após este encaminhamento o sistema deve emitir o alerta."></td>');
     ShowHTML('      <tr><td>&nbsp;</td></br>');
-    ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
-    ShowHTML('      <tr valign="top">');
-    selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
-    if ($w_interno=='N') {
-      SelecaoPessoaOrigem('<u>P</u>essoa de destino:','P','Clique na lupa para selecionar a pessoa de destino.',$w_pessoa_destino,null,'w_pessoa_destino',null,null,null);
-      ShowHTML('        <td><b>U<U>n</U>idade externa: (preencher apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="'.$w_unidade_externa.'"></td>');
+    if ($w_envia_protocolo=='S') {
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: '.strtoupper(f($RS_Prot,'nome')).'</b></font></td></tr>');
+      ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.f($RS_Prot,'sq_unidade').'">');
+      ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
     } else {
-      ShowHTML('          <td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-      SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
-      ShowHTML('           </table>');
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
+      ShowHTML('      <tr valign="top">');
+      selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+      if ($w_interno=='N') {
+        SelecaoPessoaOrigem('<u>P</u>essoa de destino:','P','Clique na lupa para selecionar a pessoa de destino.',$w_pessoa_destino,null,'w_pessoa_destino',null,null,null,2);
+        ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="'.$w_unidade_externa.'"></td>');
+      } else {
+        ShowHTML('          <td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
+        SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
+        ShowHTML('           </table>');
+      }
     }
-    ShowHTML('<tr valign="top">');
-    selecaoTipoDespacho('Des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$w_tipo_despacho,null,'w_tipo_despacho','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
-    if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
-      ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+    ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
+    ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESPACHO: '.$w_nm_tipo_despacho.'</b></font></td></tr>');
+    if ($p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $p_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
+      SelecaoProtocolo('ao <U>p</U>rocesso:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+      //ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
     }
 
-    ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
+    if ($w_desmembrar=='S') {
+      ShowHTML('    <tr><td valign="top" colspan=3><b>Protocolos a serem d<u>e</u>smembrados:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Relacione o(s) protocolo(s) a ser(em) desmembrado(s).">'.$w_despacho.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
+    }
     ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('   <tr><td align="center" colspan=3><hr>');
     if ($w_existe) ShowHTML('   <input class="STB" type="submit" name="Botao" value="Gerar Guia de Tramitação">');
@@ -2225,17 +2313,21 @@ function Tramitacao() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif ($O=='P') {
-    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-    ShowHTML('  Orientação:<ul>');
-    ShowHTML('  <li>Informe quaisquer critérios de busca e clique sobre o botão <i>Aplicar filtro</i>.');
-    ShowHTML('  <li>Para pesquisa por período é obrigatório informar as datas de início e término.');
-    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todas as guias que você tem acesso.');
-    ShowHTML('  </ul></b></font></td>');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><b><u>P</u>rotocolo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$p_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+    ShowHTML('<tr><td bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  <B>ORIENTAÇÃO:</B><ul>');
+    ShowHTML('  <li><b>INFORME O DESPACHO A SER UTILIZADO PARA ESTE ENVIO DE PROTOCOLO(S).</b>');
+    ShowHTML('  <li>Informe quaisquer critérios de busca e clique sobre o botão <i>Aplicar filtro</i>.');
+    ShowHTML('  <li>Para pesquisa por período é obrigatório informar as datas de início e término.');
+    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todas as guias que você tem acesso.');
+    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('<tr valign="top">');
+    selecaoTipoDespacho('Des<u>p</u>acho a ser usado para o envio:','P','Selecione o despacho a ser utilizado para os documentos relacionados na próxima tela.',$w_cliente,$p_tipo_despacho,null,'p_tipo_despacho','SELECAO',null);
+    ShowHTML('<tr><td><br><font size="2"><b>FILTRAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
+    ShowHTML('      <tr><td><b>Protocolo:<br><INPUT class="STI" type="text" name="p_prefixo" size="6" maxlength="5" value="'.$p_prefixo.'">.<INPUT class="STI" type="text" name="p_numero" style="text-align:right;" size="7" maxlength="6" value="'.$p_numero.'">/<INPUT class="STI" type="text" name="p_ano" size="4" maxlength="4" value="'.$p_ano.'"></td>');
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade que detém a posse do protocolo:','U','Selecione a unidade de posse.',$p_unid_posse,null,'p_unid_posse','MOD_PA',null);
     ShowHTML('      <tr valign="top">');
@@ -2272,12 +2364,12 @@ function Recebimento() {
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, null, null, 
-        null, null, null, null, null, null, null, null, null, null);
+        null, null, null, null, null, null, null, null, null, null, null);
     $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
   } elseif ($O=='R') {
     // Recupera os protocolos da guia
     $RS_Dados = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, null, null, 
-        null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, 2);
+        null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, 2, null);
   }
 
   Cabecalho();
@@ -2371,6 +2463,7 @@ function Recebimento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     // Chama a rotina de visualização dos protocolos da guia
     ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu,'sq_menu'), 'TELA'));
+
     ShowHTML('<HR>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="'.$w_unid_autua.'">');
@@ -2402,6 +2495,304 @@ function Recebimento() {
   ShowHTML('</center>');
   Rodape();
 }
+
+// =========================================================================
+// Rotina de busca de protocolos
+// -------------------------------------------------------------------------
+function BuscaProtocolo() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_ano        = $_REQUEST['w_ano'];
+  $w_cliente    = $_REQUEST['w_cliente'];
+  $chaveaux     = $_REQUEST['chaveaux'];
+  $restricao    = $_REQUEST['restricao'];
+  $campo        = $_REQUEST['campo'];
+
+  $l_exibe         = strtoupper($_REQUEST['exibe']);
+  $l_tipo          = strtoupper($_REQUEST['l_tipo']);
+  $l_chave_pai     = strtoupper($_REQUEST['l_chave_pai']);
+  $l_atividade     = strtoupper($_REQUEST['l_atividade']);
+  $l_graf          = strtoupper($_REQUEST['l_graf']);
+  $l_ativo         = strtoupper($_REQUEST['l_ativo']);
+  $l_solicitante   = strtoupper($_REQUEST['l_solicitante']);
+  $l_prioridade    = strtoupper($_REQUEST['l_prioridade']);
+  $l_unidade       = strtoupper($_REQUEST['l_unidade']);
+  $l_proponente    = strtoupper($_REQUEST['l_proponente']);
+  $l_ordena        = strtolower($_REQUEST['l_ordena']);
+  $l_ini_i         = strtoupper($_REQUEST['l_ini_i']);
+  $l_ini_f         = strtoupper($_REQUEST['l_ini_f']);
+  $l_fim_i         = strtoupper($_REQUEST['l_fim_i']);
+  $l_fim_f         = strtoupper($_REQUEST['l_fim_f']);
+  $l_atraso        = strtoupper($_REQUEST['l_atraso']);
+  $l_chave         = strtoupper($_REQUEST['l_chave']);
+  $l_assunto       = strtoupper($_REQUEST['l_assunto']);
+  $l_pais          = strtoupper($_REQUEST['l_pais']);
+  $l_regiao        = strtoupper($_REQUEST['l_regiao']);
+  $l_uf            = strtoupper($_REQUEST['l_uf']);
+  $l_cidade        = strtoupper($_REQUEST['l_cidade']);
+  $l_usu_resp      = strtoupper($_REQUEST['l_usu_resp']);
+  $l_uorg_resp     = strtoupper($_REQUEST['l_uorg_resp']);
+  $l_processo       = strtoupper($_REQUEST['l_processo']);
+  $l_prazo         = strtoupper($_REQUEST['l_prazo']);
+  $l_fase          = explodeArray($_REQUEST['l_fase']);
+  $l_sqcc          = strtoupper($_REQUEST['l_sqcc']);
+  $l_agrega        = strtoupper($_REQUEST['l_agrega']);
+  $l_tamanho       = strtoupper($_REQUEST['l_tamanho']);
+  $l_sq_menu_relac = strtoupper($_REQUEST['l_sq_menu_relac']);
+  $l_chave_pai     = strtoupper($_REQUEST['l_chave_pai']);
+  $l_empenho       = strtolower($_REQUEST['l_empenho']);
+  
+  // Se juntada, busca somente processos
+  if ($restricao=='JUNTADA') $l_uf = 'S';
+  
+  $RS = db_getSolicList::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$w_usuario,f($RS_Menu,'sigla'),5,
+      $l_ini_i,$l_ini_f,$l_fim_i,$l_fim_f,$l_atraso,$l_solicitante,
+      $l_unidade,$l_prioridade,$l_ativo,$l_proponente,
+      $l_chave, $l_assunto, $l_pais, $l_regiao, $l_uf, $l_cidade, $l_usu_resp,
+      $l_uorg_resp, $l_palavra, $l_prazo, $l_fase, $l_sqcc, $l_chave_pai, $l_atividade, null, null, 
+      $l_empenho, $l_processo);
+  $RS = SortArray($RS,'protocolo','asc');
+      
+  Cabecalho();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<TITLE>Seleção de protocolo</TITLE>');
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ScriptOpen('JavaScript');
+  ShowHTML('  function volta(l_protocolo, l_chave) {');
+  ShowHTML("     opener.document.Form.".$campo."_nm.value=l_protocolo.replace('\'','\"');");
+  ShowHTML('     opener.document.Form.'.$campo.'.value=l_chave;');
+  ShowHTML('     opener.document.Form.'.$campo.'_nm.focus();');
+  ShowHTML('     window.close();');
+  ShowHTML('     opener.focus();');
+  ShowHTML('   }');
+  if (count($RS)>50 || $l_exibe>'') {
+    CheckBranco();
+    FormataData();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    Validate('l_proponente','Origem externa','','','2','90','1','');
+    Validate('l_assunto','Detalhamento','','','2','90','1','1');
+    Validate('l_processo','Palavras-chave','','','2','90','1','1');
+    Validate('l_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
+    Validate('l_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+    ShowHTML('  if ((theForm.l_ini_i.value != \'\' && theForm.l_ini_f.value == \'\') || (theForm.l_ini_i.value == \'\' && theForm.l_ini_f.value != \'\')) {');
+    ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
+    ShowHTML('     theForm.l_ini_i.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  var i; ');
+    ShowHTML('  var w_erro=true; ');
+    ShowHTML('  for (i=0; i < theForm["l_fase[]"].length; i++) {');
+    ShowHTML('    if (theForm["l_fase[]"][i].checked) w_erro=false;');
+    ShowHTML('  }');
+    ShowHTML('  if (w_erro) {');
+    ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
+    ShowHTML('    return false;');
+    ShowHTML('  }');      
+    CompData('l_ini_i','Recebimento inicial','<=','l_ini_f','Recebimento final');
+    Validate('l_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
+    Validate('l_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
+    ShowHTML('  if ((theForm.l_fim_i.value != \'\' && theForm.l_fim_f.value == \'\') || (theForm.l_fim_i.value == \'\' && theForm.l_fim_f.value != \'\')) {');
+    ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
+    ShowHTML('     theForm.l_fim_i.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    CompData('l_fim_i','Conclusão inicial','<=','l_fim_f','Conclusão final');
+    ShowHTML('  theForm.exibe.value=true;');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+  } 
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=this.focus();');
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="100%" border="0">');
+  if (count($RS)>50 || $l_exibe>'') {
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="chaveaux" value="'.$chaveaux.'">');
+    ShowHTML('<INPUT type="hidden" name="restricao" value="'.$restricao.'">');
+    ShowHTML('<INPUT type="hidden" name="campo" value="'.$campo.'">');
+    ShowHTML('<INPUT type="hidden" name="exibe" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan=2><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Protocolo:<br><INPUT class="STI" type="text" name="l_pais" size="6" maxlength="5" value="'.$l_pais.'">.<INPUT class="STI" type="text" name="l_regiao" style="text-align:right;" size="7" maxlength="6" value="'.$l_regiao.'">/<INPUT class="STI" type="text" name="l_cidade" size="4" maxlength="4" value="'.$l_cidade.'"></td>');
+    ShowHTML('          <td><b>Buscar por?</b><br>');
+    if ($l_uf=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="l_uf" value="S" checked> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value=""> Ambos');
+    } elseif ($l_uf=='N') {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="l_uf" value="S"> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value="N" checked> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value=""> Ambos');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="l_uf" value="S"> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_uf" value="" checked> Ambos');
+    }
+    
+    ShowHTML('      <tr valign="top">');
+    SelecaoUnidade('<U>U</U>nidade de posse:','U','Selecione a Unidade de posse do protocolo na relação.',$l_uorg_resp,null,'l_uorg_resp',null,null);
+    selecaoTipoDespacho('Último des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$l_prioridade,null,'l_prioridade','SELECAO',null);
+    
+    ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
+    ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="l_empenho" size="10" maxlength="30" value="'.$l_empenho.'">');
+    selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$l_solicitante,null,'l_solicitante',null,null);
+    ShowHTML('      <tr>');
+    ShowHTML('          <td><b><u>C</u>riado/Recebido entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="l_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$l_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','l_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="l_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$l_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','l_ini_f').'</td>');
+    ShowHTML('          <td><b>Limi<u>t</u>e para tramitação entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="l_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$l_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','l_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="l_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$l_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','l_fim_f').'</td>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoUnidade('<U>O</U>rigem interna:','O',null,$l_unidade,null,'l_unidade',null,null);
+    ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="l_proponente" size="25" maxlength="90" value="'.$l_proponente.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b><U>A</U>ssunto:<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="l_assunto" size="40" maxlength="30" value="'.$l_assunto.'"></td>');
+    ShowHTML('          <td><b><U>I</U>nteressado:<br><INPUT ACCESSKEY="I" '.$w_Disabled.' class="STI" type="text" name="l_processo" size="30" maxlength="30" value="'.$l_processo.'"></td>');
+    ShowHTML('        </tr></table>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Apenas protocolos com data limite excedida?</b><br>');
+    if ($l_atraso=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="l_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_atraso" value="N"> Não');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="l_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="l_atraso" value="N" checked> Não');
+    } 
+    SelecaoFaseCheck('Recuperar fases:','S',null,$l_fase,$w_menu,'l_fase[]',null,null);
+    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('            <input class="stb" type="button" name="Botao" value="Cancelar" onClick="window.close(); opener.focus();">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+    if ($l_exibe>'') {
+      ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+      ShowHTML('<tr><td>');
+      ShowHTML('    <TABLE WIDTH="100%" border=0>');
+      if (count($RS)<=0) {
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      } else {
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
+        ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+        ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
+        ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</td>');
+        ShowHTML('            <td colspan=4><b>Documento original</td>');
+        ShowHTML('            <td rowspan=2><b>Operações</td>');
+        ShowHTML('          </tr>');
+        ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+        ShowHTML('            <td><b>Espécie</td>');
+        ShowHTML('            <td><b>Nº</td>');
+        ShowHTML('            <td><b>Data</td>');
+        ShowHTML('            <td><b>Procedência</td>');
+        ShowHTML('          </tr>');
+        foreach($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td nowrap>');
+          if (nvl(f($row,'conclusao'),'nulo')=='nulo') {
+            if (f($row,'fim')<addDays(time(),-1)) {
+              ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+              ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+            } 
+          } else {
+            if (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
+              ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
+            } else {
+              ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+            } 
+          }
+          if ($w_tipo!='WORD') ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+          else                 ShowHTML('        '.f($row,'protocolo').'');
+          ShowHTML('        <td width="1%" nowrap>'.f($row,'nm_tipo_protocolo').'</td>');
+          ShowHTML('        <td width="1%" nowrap>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_posse'),f($row,'unidade_int_posse'),$TP).'</td>');
+          ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
+          ShowHTML('        <td>'.f($row,'numero_original').'</td>');
+          ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio')).'</td>');
+          ShowHTML('        <td>'.f($row,'nm_origem').'</td>');
+          ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'protocolo').'\', \''.f($row,'protocolo').'\');">Selecionar</a>');
+        } 
+        ShowHTML('        </table></tr>');
+        ShowHTML('      </center>');
+        ShowHTML('    </table>');
+        ShowHTML('  </td>');
+        ShowHTML('</tr>');
+      } 
+    } 
+  } else {
+    ShowHTML('<tr><td align="right"><b>Registros: '.count($RS));
+    ShowHTML('<tr><td colspan=6>');
+    ShowHTML('    <TABLE WIDTH="100%" border=0>');
+    if (count($RS)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
+      ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
+      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
+      ShowHTML('            <td rowspan=2 width="1%" nowrap><b>Posse</td>');
+      ShowHTML('            <td colspan=4><b>Documento original</td>');
+      ShowHTML('            <td rowspan=2><b>Operações</td>');
+      ShowHTML('          </tr>');
+      ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('            <td><b>Espécie</td>');
+      ShowHTML('            <td><b>Nº</td>');
+      ShowHTML('            <td><b>Data</td>');
+      ShowHTML('            <td><b>Procedência</td>');
+      ShowHTML('          </tr>');
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td nowrap>');
+        if (nvl(f($row,'conclusao'),'nulo')=='nulo') {
+          if (f($row,'fim')<addDays(time(),-1)) {
+            ShowHTML('           <img src="'.$conImgAtraso.'" border=0 width=15 heigth=15 align="center">');
+          } elseif (f($row,'aviso_prox_conc')=='S' && (f($row,'aviso')<=addDays(time(),-1))) {
+            ShowHTML('           <img src="'.$conImgAviso.'" border=0 width=15 height=15 align="center">');
+          } else {
+            ShowHTML('           <img src="'.$conImgNormal.'" border=0 width=15 height=15 align="center">');
+          } 
+        } else {
+          if (f($row,'fim')<Nvl(f($row,'fim_real'),f($row,'fim'))) {
+            ShowHTML('           <img src="'.$conImgOkAtraso.'" border=0 width=15 heigth=15 align="center">');
+          } else {
+            ShowHTML('           <img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">');
+          } 
+        }
+        if ($w_tipo!='WORD') ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+        else                 ShowHTML('        '.f($row,'protocolo').'');
+        ShowHTML('        <td width="1%" nowrap>'.f($row,'nm_tipo_protocolo').'</td>');
+        ShowHTML('        <td width="1%" nowrap>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_posse'),f($row,'unidade_int_posse'),$TP).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
+        ShowHTML('        <td>'.f($row,'numero_original').'</td>');
+        ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'inicio')).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_origem').'</td>');
+        ShowHTML('        <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'protocolo').'\', \''.f($row,'protocolo').'\');">Selecionar</a>');
+      } 
+      ShowHTML('        </table></tr>');
+      ShowHTML('      </center>');
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+    } 
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+} 
 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -2581,8 +2972,6 @@ function Grava() {
         }
       }
 
-
-
       $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite'] || nvl(f($RS,'unidade_int_posse'),'')!=nvl($_REQUEST['w_unidade_posse'],'') || nvl(f($RS,'pessoa_ext_posse'),'')!=nvl($_REQUEST['w_pessoa_posse'],'')) {
         ScriptOpen('JavaScript');
@@ -2596,7 +2985,7 @@ function Grava() {
 			$p_numero       = substr($_REQUEST['w_protocolo'],6,6);
 			$p_ano          = substr($_REQUEST['w_protocolo'],13,4);
 			$RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', $p_chave, $p_chave_aux, 
-				$p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
+				$p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, null);
 			$w_existe = 0;
 			foreach($RS as $row) {
 			  if (f($row,'processo')=='S') {
@@ -2657,7 +3046,7 @@ function Grava() {
         $p_numero       = substr($_REQUEST['w_protocolo'],6,6);
         $p_ano          = substr($_REQUEST['w_protocolo'],13,4);
         $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', $p_chave, $p_chave_aux, 
-            $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
+            $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, null);
         $w_existe = 0;
         foreach($RS as $row) {
           if (f($row,'processo')=='S') {
@@ -2699,7 +3088,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null, 
-                $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2);
+                $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null);
       if (count($RS)>0) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já recebeu esta guia!\');');
@@ -2770,6 +3159,7 @@ function Main() {
     case 'BUSCAASSUNTO':        BuscaAssunto();                 break;
     case 'TRAMIT':              Tramitacao();                   break;
     case 'RECEB':               Recebimento();                  break;
+    case 'BUSCAPROTOCOLO':      BuscaProtocolo();               break;
     case 'GRAVA':               Grava();                        break;
     default:
       cabecalho();

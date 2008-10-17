@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getSolicData {
    function getInstanceOf($dbms, $l_chave, $l_restricao=null) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETSOLICDATA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicData';
      $params=array('p_chave'                     =>array($l_chave,            B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($l_restricao),   B_VARCHAR,        20),
                    'p_result'                    =>array(null,                B_CURSOR,         -1)

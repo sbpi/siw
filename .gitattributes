@@ -1072,6 +1072,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAnexa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoDesm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoInter.php -text
@@ -1487,6 +1488,7 @@ Fontes_PHP_SIW/funcoes/selecaoPrograma.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaIS.php -text
 Fontes_PHP_SIW/funcoes/selecaoProgramaPPA.php -text
 Fontes_PHP_SIW/funcoes/selecaoProjeto.php -text
+Fontes_PHP_SIW/funcoes/selecaoProtocolo.php -text
 Fontes_PHP_SIW/funcoes/selecaoRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoRegiao.php -text
 Fontes_PHP_SIW/funcoes/selecaoRestricao.php -text
@@ -1573,6 +1575,7 @@ Fontes_PHP_SIW/images/BallRed.png -text
 Fontes_PHP_SIW/images/BallRedoriginal.png -text
 Fontes_PHP_SIW/images/BallYellow.gif -text
 Fontes_PHP_SIW/images/BallYellow.png -text
+Fontes_PHP_SIW/images/Code/Thumbs.db -text
 Fontes_PHP_SIW/images/Code/vsource.gif -text
 Fontes_PHP_SIW/images/EditForm/Ball.GIF -text
 Fontes_PHP_SIW/images/EditForm/Botoes.asp -text
@@ -1584,6 +1587,7 @@ Fontes_PHP_SIW/images/EditForm/CampoMatriz.gif -text
 Fontes_PHP_SIW/images/EditForm/CampoRequerido.gif -text
 Fontes_PHP_SIW/images/EditForm/OrderAsc.gif -text
 Fontes_PHP_SIW/images/EditForm/OrderDes.gif -text
+Fontes_PHP_SIW/images/EditForm/Thumbs.db -text
 Fontes_PHP_SIW/images/EditForm/cmdAjudaWin.gif -text
 Fontes_PHP_SIW/images/EditForm/cmdAlterarWin.gif -text
 Fontes_PHP_SIW/images/EditForm/cmdAnteriorWin.gif -text
@@ -1701,6 +1705,7 @@ Fontes_PHP_SIW/images/Folder/Sheet.gif -text
 Fontes_PHP_SIW/images/Folder/SheetImg.gif -text
 Fontes_PHP_SIW/images/Folder/SheetLittle.gif -text
 Fontes_PHP_SIW/images/Folder/Space.gif -text
+Fontes_PHP_SIW/images/Folder/Thumbs.db -text
 Fontes_PHP_SIW/images/Folder/Txt_32.gif -text
 Fontes_PHP_SIW/images/Folder/User.gif -text
 Fontes_PHP_SIW/images/Folder/Waste.gif -text
@@ -1860,6 +1865,7 @@ Fontes_PHP_SIW/images/NavButton/ThumbnailsAndPageActive.gif -text
 Fontes_PHP_SIW/images/NavButton/ThumbnailsAndPageActivecolor.gif -text
 Fontes_PHP_SIW/images/NavButton/ThumbnailsAndPageDown.gif -text
 Fontes_PHP_SIW/images/NavButton/ThumbnailsAndPageInactive.gif -text
+Fontes_PHP_SIW/images/NavButton/Thumbs.db -text
 Fontes_PHP_SIW/images/NavButton/ToolBar.htm -text
 Fontes_PHP_SIW/images/NavButton/WisibleWidthCurrentPageInsideWindowActive.gif -text
 Fontes_PHP_SIW/images/NavButton/WisibleWidthCurrentPageInsideWindowActivecolor.gif -text
@@ -1884,6 +1890,7 @@ Fontes_PHP_SIW/images/NavButton/zoominactivecolor.gif -text
 Fontes_PHP_SIW/images/NavButton/zoomoutactivecolor.gif -text
 Fontes_PHP_SIW/images/NavButton/zoompage100activecolor.gif -text
 Fontes_PHP_SIW/images/TX.GIF -text
+Fontes_PHP_SIW/images/Thumbs.db -text
 Fontes_PHP_SIW/images/anteriora.gif -text
 Fontes_PHP_SIW/images/anteriori.gif -text
 Fontes_PHP_SIW/images/arrowb.gif -text
@@ -1921,6 +1928,7 @@ Fontes_PHP_SIW/images/icone/MN.GIF -text
 Fontes_PHP_SIW/images/icone/MailsTo.gif -text
 Fontes_PHP_SIW/images/icone/REQUIRED.GIF -text
 Fontes_PHP_SIW/images/icone/TX.GIF -text
+Fontes_PHP_SIW/images/icone/Thumbs.db -text
 Fontes_PHP_SIW/images/icone/TopOfPage.gif -text
 Fontes_PHP_SIW/images/icone/TriangleRight.gif -text
 Fontes_PHP_SIW/images/icone/alert_animated.gif -text
@@ -1967,7 +1975,9 @@ Fontes_PHP_SIW/images/line.gif -text
 Fontes_PHP_SIW/images/load.gif -text
 Fontes_PHP_SIW/images/logo_intra_gd.gif -text
 Fontes_PHP_SIW/images/mailto.gif -text
+Fontes_PHP_SIW/images/mais.jpg -text
 Fontes_PHP_SIW/images/man.gif -text
+Fontes_PHP_SIW/images/menos.jpg -text
 Fontes_PHP_SIW/images/mn.gif -text
 Fontes_PHP_SIW/images/novo.gif -text
 Fontes_PHP_SIW/images/pdf.gif -text
@@ -2002,6 +2012,7 @@ Fontes_PHP_SIW/js/modal/css/modal-message.css -text
 Fontes_PHP_SIW/js/modal/js/ajax-dynamic-content.js -text
 Fontes_PHP_SIW/js/modal/js/ajax.js -text
 Fontes_PHP_SIW/js/modal/js/modal-message.js -text
+Fontes_PHP_SIW/js/tooltip.js -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text
 Fontes_PHP_SIW/menu.php -text
@@ -4221,6 +4232,7 @@ SP_Oracle92/siw/sp_putCronograma.prc -text
 SP_Oracle92/siw/sp_putDocumentoAnexa.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
+SP_Oracle92/siw/sp_putDocumentoDesm.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text
 SP_Oracle92/siw/sp_putDocumentoInter.prc -text

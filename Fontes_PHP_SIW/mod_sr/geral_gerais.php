@@ -3,7 +3,6 @@
 // Rotina dos dados gerais para solicitações comuns
 // -------------------------------------------------------------------------
   global $w_Disabled;
-
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
@@ -33,6 +32,7 @@
     $w_tipo_recurso     = $_REQUEST['w_tipo_recurso'];
     $w_recurso          = $_REQUEST['w_recurso'];
     $w_solic_recurso    = $_REQUEST['w_solic_recurso'];
+    $w_envio            = $_REQUEST['w_envio'];
   } else {
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
       // Recupera os dados da solicitação
@@ -121,9 +121,18 @@
     if (f($RS_Menu,'justificativa')=='S') {
       Validate('w_justificativa','Justificativa','1',1,5,2000,'1','1');
     } 
-  } 
+    if ($w_envio_inclusao=='S') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','','6','30','1','1');
+      ShowHTML('  if (theForm.w_envio.value=="S" && theForm.w_assinatura.value=="") {');
+      ShowHTML('     alert("Para envio automático a assinatura eletrônica deve ser informada!");');
+      ShowHTML('     theForm.w_assinatura.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+    }
+  }
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
+  if ($w_envio_inclusao=='S')  ShowHTML('  theForm.btEnvio.disabled=true;');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -154,6 +163,7 @@
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_solic_recurso" value="'.$w_solic_recurso.'">');
@@ -161,6 +171,7 @@
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_solicitante" value="'.$_SESSION['SQ_PESSOA'].'">');
     ShowHTML('<INPUT type="hidden" name="w_cidade" value="'.$w_cidade.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan=2 align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -203,10 +214,16 @@
         ShowHTML('      <tr><td colspan=2 valign="top"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Justifique a necessidade de atendimento da solicitação.">'.$w_justificativa.'</TEXTAREA></td>');
       } 
     } 
+    if ($w_envio_inclusao=='S') ShowHTML('      <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica (obrigatório informar se desejar envio automático):<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="2">');
-    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+    if ($w_envio_inclusao=='N') {
+      ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+    } else {
+      ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar" onClick="document.Form.w_envio.value=\'N\';">');
+      ShowHTML('            <input class="STB" type="submit" name="btEnvio" value="Gravar e Enviar" onClick="document.Form.w_envio.value=\'S\'; confirm(\'Confirma gravação e envio automático da solicitação para a próxima fase?\nSe sim, a assinatura eletrônica deve ser informada.\');">');
+    }
     $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('          </td>');

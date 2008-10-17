@@ -430,6 +430,19 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
         $this->conHandle = $conHandle;
         $this->params = $params;
     }
+
+    /**
+    * Method OraDatabaseQueries::getResultArray()
+    *
+    * { Description :- 
+    *    This method returns the one row from the resultset
+    * }
+    */
+    
+    function getResultArray() { 
+      return ((is_array($this->resultData)) ? array_pop($this->resultData) : $this->resultData); 
+    }
+    
     
     /**
     * Method OraDatabaseQueries::executeQuery()
@@ -440,6 +453,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
     */    
     
     function executeQuery() {
+      
         $par = "";
         $cursor = false;
         foreach($this->params as $paramName=>$value) {
@@ -509,8 +523,8 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
               } else {
                 if (!oci_execute($this->result)) {
                   $this->error = oci_error($this->result);
-                }
-              }
+                } 
+              } 
            }
         } else {
            if (substr($this->query,0,8)=='FUNCTION') {
@@ -541,6 +555,7 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
                }
                return false; 
              } else {
+               $this->num_rows = oci_fetch_all($this->result, $this->resultData, 0, -1,OCI_ASSOC+OCI_FETCHSTATEMENT_BY_ROW);
                if ($log) {
                  // Registra no servidor syslog
                  $w_resultado = enviaSyslog('GV','ESCRITA','('.$_SESSION['SQ_PESSOA'].') '.$_SESSION['NOME_RESUMIDO'].' - '.$this->query);

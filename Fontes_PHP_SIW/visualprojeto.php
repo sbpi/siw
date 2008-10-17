@@ -52,7 +52,6 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   $w_ige           = f($RS,'ige');
   $w_idc           = f($RS,'idc');
   $w_igc           = f($RS,'igc');
-  
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
     // Se for usuário externo, tem visão resumida
@@ -89,8 +88,9 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
   if ($l_O=='L' || $l_O=='V' || $l_O=='T') {
     // Se for listagem dos dados
     $l_html .= chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
+    
     if($l_tipo!='WORD') {
-      if ($l_O != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações</a></td></tr>';
+      if ($l_O != 'T' && $w_tipo_visao!=2) $l_html .= chr(13).'       <td align="right"><b><A class="HL" HREF="projeto.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_volta=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto.">Exibir todas as informações</a></td></tr>';
     }
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';

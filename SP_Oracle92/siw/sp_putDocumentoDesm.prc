@@ -1,4 +1,4 @@
-create or replace procedure sp_putDocumentoJunta
+create or replace procedure sp_putDocumentoDesm
    (p_chave               in  number,
     p_usuario             in  number
    ) is
@@ -16,14 +16,14 @@ begin
    -- Atualiza a tabela de solicitações
    Update siw_solicitacao a
       set a.ultima_alteracao = sysdate,
-          a.sq_solic_pai     = w_chave_pai
+          a.sq_solic_pai     = null
     where a.sq_siw_solicitacao = p_chave;
       
    -- Atualiza a tabela de documentos
    Update pa_documento a
-      set a.data_juntada      = w_data_atual,
-          a.tipo_juntada      = 'P',
-          a.data_desapensacao = null
+      set a.sq_documento_pai  = null,
+          a.data_desapensacao = w_data_atual,
+          a.tipo_juntada      = 'N'
     where a.sq_siw_solicitacao = p_chave;
       
     -- Registra os dados da apensação
@@ -35,9 +35,9 @@ begin
     (Select 
          sq_siw_solic_log.nextval,  p_chave,            p_usuario,
          a.sq_siw_tramite,          sysdate,            'N',
-         'Apensação ao processo '||w_protocolo||'.'
+         'Desmembramento do processo '||w_protocolo||'.'
         from siw_solicitacao a
        where a.sq_siw_solicitacao = p_chave
     );
-end sp_putDocumentoJunta;
+end sp_putDocumentoDesm;
 /

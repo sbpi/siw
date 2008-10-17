@@ -770,7 +770,7 @@ function Geral() {
     $w_palavra_chave    = $_REQUEST['w_palavra_chave'];
     $w_sqcc             = $_REQUEST['w_sqcc'];
     $w_sq_menu_relac    = $_REQUEST['w_sq_menu_relac'];
-    $w_envio             = $_REQUEST['w_envio'];
+    $w_envio            = $_REQUEST['w_envio'];
     if(nvl($w_envio,'')=='S' && $O=='I') {
       $w_tramite          = $_REQUEST['w_tramite'];
       $w_destinatario     = $_REQUEST['w_destinatario'];

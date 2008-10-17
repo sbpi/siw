@@ -24,9 +24,13 @@
   FormataDataHora();
   FormataValor();
   ValidateOpen('Validacao');
-  Validate('w_fim','Data de conclusão','DATAHORA',1,17,17,'','0123456789/:, ');
-  CompData('w_fim','Data de conclusão','<=',date('d/m/Y, H:i:s'),'data e hora atual');
-  Validate('w_valor','Valor','VALOR','1',4,18,'','0123456789.,');
+  if ($SG=='SRSERVGER') {
+    Validate('w_fim','Data de conclusão','DATA',1,10,10,'','0123456789/:, ');
+  } else {
+    Validate('w_fim','Data de conclusão','DATAHORA',1,17,17,'','0123456789/:, ');
+    CompData('w_fim','Data de conclusão','<=',date('d/m/Y, H:i:s'),'data e hora atual');
+  }
+  Validate('w_valor','Valor','VALOR','',4,18,'','0123456789.,');
   Validate('w_executor','Responsável pelo atendimento','SELECT',1,1,18,'','0123456789');
   Validate('w_observacao','Observações','','','1','2000','1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -68,10 +72,18 @@
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
   ShowHTML('          <tr valign="top">');
-  ShowHTML('              <td valign="top"><b>Da<u>t</u>a de conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de término da solicitação."></td>');
-  ShowHTML('              <td valign="top"><b>Valo<u>r</u> (se houver):</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($w_valor,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o gasto com o atendimento da solicitação, ou zero se não for o caso."></td>');
+  if ($SG=='SRSERVGER') {
+    ShowHTML('              <td valign="top"><b>Da<u>t</u>a de conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de término da solicitação."></td>');
+  } else {
+    ShowHTML('              <td valign="top"><b>Da<u>t</u>a de conclusão:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Informe a data/hora de término da solicitação."></td>');
+  }
+  ShowHTML('              <td valign="top"><b>Valo<u>r</u> (se houver):</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o gasto com o atendimento da solicitação, ou zero se não for o caso."></td>');
   ShowHTML('          <tr valign="top">');
-  SelecaoPessoa('Respo<u>n</u>sável pelo atendimento:','N','Selecione o responsável pelo atendimento na relação.',$w_executor,null,'w_executor','USUARIOS');
+  if ($SG=='SRSERVGER') {
+    SelecaoPessoa('Respo<u>n</u>sável pelo atendimento:','N','Selecione o responsável pelo atendimento na relação.',$w_executor,$w_menu,'w_executor','SETOREXEC');
+  } else {
+    SelecaoPessoa('Respo<u>n</u>sável pelo atendimento:','N','Selecione o responsável pelo atendimento na relação.',$w_executor,$w_menu,'w_executor','USUARIOS');
+  }
   ShowHTML('          </table>');
   ShowHTML('      <tr><td valign="top"><b>Obs<u>e</u>rvações (transcreva as anotações do verso da OS):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="STI" ROWS=5 cols=75 title="Descreva o quanto a solicitação atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');

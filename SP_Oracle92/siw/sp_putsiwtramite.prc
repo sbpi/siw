@@ -53,6 +53,12 @@ begin
           destinatario     = p_destinatario
       where sq_siw_tramite = p_chave;
    Elsif p_operacao = 'E' Then
+      -- Remove vínculo com logs
+      delete siw_solic_log where sq_siw_tramite = p_chave;
+
+      -- Remove permissões de usuários
+      delete sg_tramite_pessoa where sq_siw_tramite = p_chave;
+
       -- Remove o fluxo do trâmite
       delete siw_tramite_fluxo where sq_siw_tramite_origem = p_chave or sq_siw_tramite_destino = p_chave;
 

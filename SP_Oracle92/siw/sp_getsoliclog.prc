@@ -454,6 +454,7 @@ begin
                                   when instr(upper(a.observacao),'RENUMERA플O')>0 then 'RENUMERA플O'
                                   when instr(upper(a.observacao),'ANEXA')>0       then 'ANEXA플O'
                                   when instr(upper(a.observacao),'APENSA')>0      then 'APENSA플O'
+                                  when instr(upper(a.observacao),'DESM')>0        then 'DESMEMBRAMENTO'
                                   else 'REGISTRO' 
                              end
                         else 'TRAMITE ORIGINAL' 
@@ -486,7 +487,14 @@ begin
                and p.cliente            = a1.sq_pessoa_pai
             UNION
             select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
-                   b1.nome as despacho,
+                   case when b.resumo is null
+                        then b1.nome
+                        else case b1.sq_tipo_despacho 
+                                  when b3.despacho_desmembrar 
+                                  then b1.nome||' PROTOCOLO(S): '||b.resumo 
+                                  else b1.nome||': '||b.resumo 
+                             end
+                   end as despacho,
                    b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
                    'TRAMITACAO' as origem,
                    e.sq_unidade as sq_registro, e.sigla as nm_registro, e.sq_unidade as sq_origem, e.sigla as nm_origem,
@@ -500,6 +508,7 @@ begin
               from pa_documento_log                   b
                    inner    join pa_tipo_despacho     b1 on (b.sq_tipo_despacho   = b1.sq_tipo_despacho)
                    inner    join co_pessoa            b2 on (b.cadastrador        = b2.sq_pessoa)
+                     inner  join pa_parametro         b3 on (b2.sq_pessoa_pai     = b3.cliente)
                    left     join co_pessoa            d  on (b.pessoa_destino     = d.sq_pessoa)
                    left     join eo_unidade           e  on (b.unidade_origem     = e.sq_unidade)
                    left     join eo_unidade           h  on (b.unidade_destino    = h.sq_unidade)

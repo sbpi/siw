@@ -21,12 +21,15 @@ begin
                 case a.provisorio when 'S' then 'Sim' else 'Não' end as nm_provisorio,
                 case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                 b.descricao ds_corrente_guarda, b.sigla sg_corrente_guarda,
+                case b.sigla when 'ANOS' then a.fase_corrente_anos||' '||b.descricao else b.descricao end as guarda_corrente,
                 c.descricao ds_intermed_guarda, c.sigla sg_intermed_guarda,
+                case c.sigla when 'ANOS' then a.fase_intermed_anos||' '||c.descricao else c.descricao end as guarda_intermed,
                 d.descricao ds_final_guarda, d.sigla sg_final_guarda,
+                case d.sigla when 'ANOS' then a.fase_final_anos   ||' '||d.descricao else d.descricao end as guarda_final,
                 e.descricao ds_destinacao_final, e.sigla sg_destinacao_final,
-                f.codigo as cd_assunto_pai, f.descricao as ds_assunto_pai,
-                g.codigo as cd_assunto_avo, g.descricao as ds_assunto_avo,
-                h.codigo as cd_assunto_bis, h.descricao as ds_assunto_bis
+                f.sq_assunto as sq_assunto_pai, f.codigo as cd_assunto_pai, f.descricao as ds_assunto_pai,
+                g.sq_assunto as sq_assunto_avo, g.codigo as cd_assunto_avo, g.descricao as ds_assunto_avo,
+                h.sq_assunto as sq_assunto_bis, h.codigo as cd_assunto_bis, h.descricao as ds_assunto_bis
            from pa_assunto                    a
                 inner     join pa_tipo_guarda b on (a.fase_corrente_guarda = b.sq_tipo_guarda)
                 inner     join pa_tipo_guarda c on (a.fase_intermed_guarda = c.sq_tipo_guarda)

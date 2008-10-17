@@ -335,6 +335,14 @@ function colapsar(chave,obj){
 		});
 	
 		$(obj).attr("src",src.replace("menos","mais"));
-
 	}
+}
+function replaceExtChars(text) {
+	text = text.replace(eval('/&/g'), '&amp;');
+	fromTo = new Array('&AElig;','Æ','&Aacute;','Á','&Acirc;','Â','&Agrave;','À','&Aring;','Å','&Atilde;', 'Ã','&Auml;','Ä','&Ccedil;','Ç','&ETH;','Ð','&Eacute;','É','&Ecirc;','Ê','&Egrave;','È ','&Euml;','Ë','&Iacute;','Í','&Icirc;','Î','&Igrave;','Ì','&Iuml;','Ï','&Ntilde;','Ñ', '&Oacute;','Ó','&Ocirc;','Ô','&Ograve;','Ò','&Oslash;','Ø','&Otilde;','Õ','&Ouml;','Ö','&THORN; ','Þ','&Uacute;','Ú','&Ucirc;','Û','&Ugrave;','Ù','&Uuml;','Ü','&Yacute;','Ý','&aacute;', 'á','&acirc;','â','&aelig;','æ','&agrave;','à','&aring;','å','&atilde;','ã','&auml;','ä ','&brvbar;','¦','&ccedil;','ç','&cent;','¢','&copy;','©','&deg;','°','&eacute;','é', '&ecirc;','ê','&egrave;','è','&eth;','ð','&euml;','ë','&frac12;','½','&frac14;','¼','&frac34; ','¾','&gt;','>','&gt','>','&iacute;','í','&icirc;','î','&iexcl;','¡','&igrave;','ì','&iquest;','¿','&iuml;','ï', '&laquo;','«','&lt;','<','&lt','<','&mdash;','—','&micro;','µ','&middot;','·','&ndash;','–','&not;','¬','&ntilde;','ñ', '&oacute;','ó','&ocirc;','ô','&ograve;','ò','&oslash;','ø','&otilde;','õ','&ouml;','ö','&para;','¶','&plusmn;','±','&pound;',' £','&quot;','\"','&raquo;','»','&reg;','®','&sect;','§','&shy;','*','&sup1;','¹','&sup2;','²', '&sup3;','³','&szlig;','ß','&thorn;','þ','&tilde;','˜','&trade;','™','&uacute;','ú','&ucirc; ','û','&ugrave;','ù','&uuml;','ü','&yacute;','ý','&yen;','¥','&yuml;','ÿ');
+	
+	for (i=0; i < fromTo.length; i=i+2)
+		//text = text.replace(fromTo[i+1]), fromTo[i]);
+		text = replaceAll(text,fromTo[i+1],fromTo[i]);
+	return (text);
 }

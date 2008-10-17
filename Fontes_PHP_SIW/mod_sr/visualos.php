@@ -65,8 +65,13 @@ function VisualOS($l_chave,$l_sg) {
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO ATENDIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   $l_html.=chr(13).'      <table border=0 width="100%" cellpadding=10>';
   $l_html.=chr(13).'        <tr valign="top">';
-  $l_html.=chr(13).'          <td><b>Data e hora de conclusão:</b><br><input type="text" size=30 name="data" readonly></td>';
-  $l_html.=chr(13).'          <td><b>Valor (se houver):</b><br><input type="text" size=30 name="valor" readonly></td>';
+  // Identificação da solicitação
+  if ($l_sg=='SRSERVGER') {
+    $l_html.=chr(13).'          <td><b>Data:</b><br><input type="text" size=20 name="data" readonly></td>';
+  } else {
+    $l_html.=chr(13).'          <td><b>Data e hora de conclusão:</b><br><input type="text" size=30 name="data" readonly></td>';
+    $l_html.=chr(13).'          <td><b>Valor (se houver):</b><br><input type="text" size=30 name="valor" readonly></td>';
+  }
   $l_html.=chr(13).'        <tr><td colspan="2"><b>Responsável pelo atendimento (nome e assinatura):</b><br><input type="text" size=80 name="responsável" readonly></td></tr>';
   $l_html.=chr(13).'        <tr><td colspan="2"><b>Recebedor (nome e assinatura):</b><br><input type="text" size=80 name="responsável" readonly></td></tr>';
   $l_html.=chr(13).'        <tr><td colspan="2" align="center"><br><font size="2"><b>ATENÇÃO: descreva abaixo observações e materiais eventualmente consumidos no atendimento.</b></font></td></tr>';

@@ -276,7 +276,7 @@ function Gerencial() {
         $RS1  = SortArray($RS1,'nm_unidade_posse','asc');
         break;
       case 'GRPAPRIO':
-        $w_TP = $TP.' - Por despacho';
+        $w_TP = $TP.' - Por último despacho';
         $RS1  = SortArray($RS1,'nm_tipo_despacho','asc');
         break;
       case 'GRPALOCAL':
@@ -293,7 +293,7 @@ function Gerencial() {
   if ($p_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    CabecalhoWord($w_cliente,$w_TP,$w_pag);
+    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
   }elseif($p_tipo == 'PDF'){
@@ -455,7 +455,7 @@ function Gerencial() {
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
         $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
-        AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Atividade',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
+        AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Protocolo',5,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_tipo" value="">');
         switch ($p_agrega) {
@@ -836,7 +836,7 @@ function Gerencial() {
     //if ($SG=='PROJETO') {
     //  if ($p_agrega=='GRPAETAPA')   ShowHTML('          <option value="GRPAETAPA" selected>Etapa de projeto');        else ShowHTML('          <option value="GRPAETAPA">Etapa de projeto');
     //} 
-    if ($p_agrega=='GRPAPRIO')      ShowHTML('          <option value="GRPAPRIO" selected>Despacho');                 else ShowHTML('          <option value="GRPAPRIO">Despacho');
+    if ($p_agrega=='GRPAPRIO')      ShowHTML('          <option value="GRPAPRIO" selected>Último despacho');                 else ShowHTML('          <option value="GRPAPRIO">Último despacho');
     //if ($p_agrega=='GRPARESPATU')   ShowHTML('          <option value="GRPARESPATU" selected>Executor');              else ShowHTML('          <option value="GRPARESPATU">Executor');
     if ($p_agrega=='GRPAPROP')      ShowHTML('          <option value="GRPAPROP" selected>Procedência externa');              else ShowHTML('          <option value="GRPAPROP">Procedência externa');
     //if ($SG=='PROJETO') {
@@ -850,7 +850,7 @@ function Gerencial() {
     //if ($p_agrega=='GRPALOCAL')     ShowHTML('          <option value="GRPALOCAL" selected>UF');                      else ShowHTML('          <option value="GRPALOCAL">UF');
     ShowHTML('          </select></td>');
     //MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
-    //MontaRadioSN('<b>Limita tamanho do detalhamento?</b>',$p_tamanho,'p_tamanho');
+    MontaRadioSN('<b>Limita tamanho do assunto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
     ShowHTML('         <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
@@ -961,16 +961,16 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case 'GRPAETAPA':   ShowHTML('          <td><b>Etapa</td>');                break;
-    case 'GRPAPROJ':    ShowHTML('          <td><b>Projeto</td>');              break;
-    case 'GRPAPROP':    ShowHTML('          <td><b>Origem externa</td>');  break;
-    case 'GRPARESP':    ShowHTML('          <td><b>Responsável</td>');          break;
-    case 'GRPARESPATU': ShowHTML('          <td><b>Executor</td>');             break;
-    case 'GRPACC':      ShowHTML('          <td><b>Classificação</td>');        break;
-    case 'GRPASETOR':   ShowHTML('          <td><b>Unidade de posse</td>');     break;
-    case 'GRPAPRIO':    ShowHTML('          <td><b>Despacho</td>');             break;
-    case 'GRPALOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
-    case 'GRPATIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
+    case 'GRPAETAPA':   ShowHTML('          <td><b>Etapa</td>');            break;
+    case 'GRPAPROJ':    ShowHTML('          <td><b>Projeto</td>');          break;
+    case 'GRPAPROP':    ShowHTML('          <td><b>Origem externa</td>');   break;
+    case 'GRPARESP':    ShowHTML('          <td><b>Responsável</td>');      break;
+    case 'GRPARESPATU': ShowHTML('          <td><b>Executor</td>');         break;
+    case 'GRPACC':      ShowHTML('          <td><b>Classificação</td>');    break;
+    case 'GRPASETOR':   ShowHTML('          <td><b>Unidade de posse</td>'); break;
+    case 'GRPAPRIO':    ShowHTML('          <td><b>Último despacho</td>');  break;
+    case 'GRPALOCAL':   ShowHTML('          <td><b>UF</td>');               break;
+    case 'GRPATIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');  break;
   } 
   ShowHTML('          <td><b>Protocolos</td>');
   ShowHTML('          <td><b>Processos</td>');

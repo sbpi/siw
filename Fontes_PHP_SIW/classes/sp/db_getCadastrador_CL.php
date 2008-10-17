@@ -20,7 +20,7 @@ class db_getCadastrador_CL {
      else {
        error_reporting($l_error_reporting); 
         if ($l_rs = $l_rs->getResultArray()) {
-          return $l_rs[0];
+          foreach($l_rs as $k => $v) return $v;
         } else {
           return 0;
         }

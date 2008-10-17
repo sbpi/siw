@@ -25,7 +25,7 @@ function barra_flash($datay, $tipo) {
 		$arrData[6][2] = (int)$datay["acima"];
 	}
 		
-     $titulo = $datay["nome"].' - Resumo';
+     $titulo = 'Resumo';
 	 $strXML = "<graph showLimits='0' baseFontSize='11'  caption='" .$titulo. "' xAxisName='' yAxisName='Quantidade' decimalPrecision='0' formatNumberScale='0'>";
 	 
 	foreach ($arrData as $arSubData){
@@ -57,7 +57,6 @@ function pizza_flash($datay, $tipo) {
   $arrData[4][2] = (int)$datay["atrasados"];
   $arrData[5][2] = (int)$datay["aviso"];
   $arrData[6][2] = (int)$datay["acima"];*/
-	
    
 	$normal = ($datay["execucao"] + $datay["cadastramento"]) - $datay["atrasados"] - $datay["aviso"];
 	
@@ -70,7 +69,7 @@ function pizza_flash($datay, $tipo) {
 	$arrData[2][3] = 'FF0000';
     
 	 
-     $titulo = 'Análise de '.$datay["nome"].' em Andamento';
+     $titulo = 'Análise '.(($datay["nome"]>"") ? 'de '.$datay["nome"] : 'das Solicitações').' em Andamento';
 	 $strXML = "<graph baseFontSize='12' caption='".$titulo."' decimalPrecision='0' showPercentageValues='1' showNames='1' showValues='1' showPercentageInLabel='1' pieYScale='60' pieBorderAlpha='40' pieFillAlpha='70' pieSliceDepth='25' animation='1' showShadow='1' pieRadius='100' showhovercap='1'>";
 	 
 	foreach ($arrData as $arSubData){

@@ -121,7 +121,8 @@ function Tramitacao() {
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 
-        $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2);
+        $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, 
+        $p_ini, $p_fim, 2, null);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
@@ -282,7 +283,7 @@ function Etiqueta() {
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 
-        $p_prefixo, $p_numero, $p_ano, null, null, null, null, null, null, 2);
+        $p_prefixo, $p_numero, $p_ano, null, null, null, null, null, null, 2, null);
     $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
   } 
   Cabecalho();

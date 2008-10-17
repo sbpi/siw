@@ -99,7 +99,7 @@ begin
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.acesso,
-                b3.nome nm_opiniao,
+                b3.ordem as or_opiniao, b3.nome nm_opiniao, b3.sigla as sg_opiniao,
                 b4.sq_veiculo,        b4.qtd_pessoas,                b4.carga, 
                 b4.hodometro_saida,   b4.hodometro_chegada,          b4.horario_saida,
                 b4.hodometro_chegada, b4.destino,                    b4.parcial,
@@ -112,7 +112,8 @@ begin
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 o.nome_resumido_ind nm_solic_ind,
-                p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind
+                p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind,
+                'S' as aviso_prox_conc, 1 as dias_aviso, trunc(b.fim)-1 as aviso
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -153,7 +154,7 @@ begin
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where a.sq_pessoa       = p_cliente
             and a.sq_menu         = case p_menu when 0 then a.sq_menu else p_menu end
-            and a1.sigla          = substr(p_restricao,1,2)
+            and a.ativo           = 'S'
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and f.sq_regiao          = p_regiao))
@@ -164,7 +165,7 @@ begin
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b3.sigla is not null and b3.sigla = p_prioridade))
-            and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
+            and ((p_fase           is null and b1.sigla <> 'CA') or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (trunc(b.fim)        between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (trunc(b.conclusao)  between p_fim_i and p_fim_f)))
@@ -179,7 +180,11 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
-                );
+                )
+             and ((p_restricao <> 'GRSRRESPATU') or
+                  ((p_restricao = 'GRSRRESPATU'  and b.opiniao                       is not null)
+                  )
+                 );
    End If;
 end sp_getSolicSR;
 /

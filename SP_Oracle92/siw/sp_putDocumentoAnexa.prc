@@ -21,8 +21,9 @@ begin
       
    -- Atualiza a tabela de documentos
    Update pa_documento a
-      set a.data_juntada = w_data_atual,
-          a.tipo_juntada = 'A'
+      set a.data_juntada      = w_data_atual,
+          a.tipo_juntada      = 'A',
+          a.data_desapensacao = null
     where a.sq_siw_solicitacao = p_chave;
       
     -- Registra os dados da Anexação

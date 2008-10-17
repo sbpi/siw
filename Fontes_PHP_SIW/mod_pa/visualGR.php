@@ -9,13 +9,21 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
 
   // Recupera os dados da guia
   $RS_Dados = db_getProtocolo::getInstanceOf($dbms, nvl($l_menu,$w_menu), $w_usuario, $SG, null, null, 
-      null, null, null, $l_unidade, null, $l_nu_guia, $l_ano_guia, null, null, 1);
+      null, null, null, $l_unidade, null, $l_nu_guia, $l_ano_guia, null, null, 1, null);
 
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
   $w_linha = 99;
   $w_pag   = 1;
+
   foreach ($RS_Dados as $row) {
     if (($w_linha > 30 && $l_formato=='WORD') || ($w_pag==1 && $l_formato!='WORD')) {
+      if (f($RS_Parametro,'despacho_desmembrar')==f($row,'sq_tipo_despacho'))  $w_preposicao = ' DE '; 
+      elseif (f($RS_Parametro,'despacho_anexar')==f($row,'sq_tipo_despacho'))  $w_preposicao = ' A ';  
+      elseif (f($RS_Parametro,'despacho_apensar')==f($row,'sq_tipo_despacho')) $w_preposicao = ' A ';
+      else $w_preposicao = '';  
+      
+      if (f($RS_Parametro,'despacho_desmembrar')==f($row,'sq_tipo_despacho')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';
+      
       if ($w_pag>1 && $l_formato=='WORD') {
         $l_html.=chr(13).'    </table>';
         $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
@@ -56,8 +64,12 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
         $l_html.=chr(13).'       <td>'.f($row,'unidade_externa').'</td></tr>';
       }
       $l_html.=chr(13).'   <tr><td width="30%"><b>Despacho:</b></td>';
-      $l_html.=chr(13).'       <td>'.f($row,'nm_despacho').((nvl(f($row,'protocolo_pai'),'')!='') ? ' A '.f($row,'protocolo_pai') : '').'</td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Detalhamento:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($row,'nm_despacho').((nvl(f($row,'protocolo_pai'),'')!='') ? $w_preposicao.f($row,'protocolo_pai') : '').'</td></tr>';
+      if ($w_desmembrar=='S') {
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Protocolo(s) a desmembrar:</b></td>';
+      } else {
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Detalhamento:</b></td>';
+      }
       $l_html.=chr(13).'       <td>'.f($row,'resumo').'</td></tr>';
 
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>DOCUMENTOS/PROCESSOS QUE INTEGRAM ESTA GUIA</b></td></tr>';

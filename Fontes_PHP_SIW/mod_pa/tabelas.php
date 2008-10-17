@@ -940,6 +940,7 @@ function Parametro() {
   $w_despacho_anexar       = f($RS,'despacho_anexar');
   $w_despacho_apensar      = f($RS,'despacho_apensar');
   $w_despacho_eliminar     = f($RS,'despacho_eliminar');
+  $w_despacho_desmembrar   = f($RS,'despacho_desmembrar');
   $w_arquivo_central       = f($RS,'arquivo_central');
   $w_limite_interessados   = f($RS,'limite_interessados');  
   $w_ano_corrente          = f($RS,'ano_corrente');
@@ -955,6 +956,7 @@ function Parametro() {
   Validate('w_despacho_autuar','Despacho para autuar','SELECT','1','1','18','','1');
   Validate('w_despacho_anexar','Despacho para anexar','SELECT','1','1','18','','1');
   Validate('w_despacho_apensar','Despacho para apensar','SELECT','1','1','18','','1');
+  Validate('w_despacho_desmembrar','Despacho para desmembrar','SELECT','1','1','18','','1');
   Validate('w_arquivo_central','Unidade do arquivo central','SELECT','1','1','18','','1');
   Validate('w_limite_interessados','Limite de interessados','1','1','1','18','','1');
   Validate('w_ano_corrente','Ano corrente','1','1','4','4','','1');
@@ -989,6 +991,8 @@ function Parametro() {
   ShowHTML('      <tr valign="top">');
   SelecaoTipoDespacho('Despacho para ane<U>x</U>ar:','X',null,$w_cliente,$w_despacho_anexar,null,'w_despacho_anexar',null,null);
   SelecaoTipoDespacho('Despacho para apen<U>s</U>ar:','S',null,$w_cliente,$w_despacho_apensar,null,'w_despacho_apensar',null,null);
+  ShowHTML('      <tr valign="top">');
+  SelecaoTipoDespacho('Despacho para <U>d</U>esmembrar:','D',null,$w_cliente,$w_despacho_desmembrar,null,'w_despacho_desmembrar',null,null);
   ShowHTML('      <tr valign="top"><td colspan="2"><table width="97%" border="0">');
   SelecaoUnidade('<U>A</U>rquivo central:','A',null,$w_arquivo_central,null,'w_arquivo_central','MOD_PA',null);
   ShowHTML('          </table>');
@@ -1305,6 +1309,90 @@ function AssuntoLinha($l_chave,$l_codigo,$l_descricao,$l_ds_corrente,$l_sg_corre
   $l_html=$l_html.chr(13).'      </tr>';
   return $l_html;
 } 
+
+// =========================================================================
+// Rotina de tela de exibição do recurso
+// -------------------------------------------------------------------------
+function TelaAssunto() {
+  extract($GLOBALS);
+  global $w_Disabled, $w_TP;
+
+  $w_chave = $_REQUEST['w_chave'];
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<TITLE>SIW - Protocolo - Assunto</TITLE>');
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpen('onLoad="this.focus();"');
+  $w_TP = 'Protocolo e Arquivo - Visualização de assunto';
+  Estrutura_Texto_Abre();
+
+  // Recupera os dados de um assunto
+  $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,'REGISTROS');
+  foreach($RS as $row) { $RS = $row; break; }
+  $l_html = '';
+  $l_html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
+  $l_html.=chr(13).'<tr><td align="center">';
+
+  $l_html.=chr(13).'    <table width="99%" border="0">';
+  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>['.f($RS,'codigo').'] '.f($RS,'descricao').'</font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Subordinação:</b></td>';
+    $l_html.=chr(13).'       <td align="justify">';
+    if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).ExibeAssunto('../',$w_cliente,f($RS,'ds_assunto_bis'),f($row,'sq_assunto_bis'),$TP).' &rarr; ';
+    if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).ExibeAssunto('../',$w_cliente,f($RS,'ds_assunto_avo'),f($row,'sq_assunto_avo'),$TP).' &rarr; ';
+    if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).ExibeAssunto('../',$w_cliente,f($RS,'ds_assunto_pai'),f($row,'sq_assunto_pai'),$TP);
+  }
+  $l_html.=chr(13).'       </td></tr>';
+  
+  $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento:</b></td>';
+  $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'detalhamento'),'---')).'</td></tr>';
+  $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
+  $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'observacao'),'---')).'</td></tr>';
+  $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
+  $l_html.=chr(13).'       <td align="justify"><table border=1>';
+  $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
+  $l_html.=chr(13).'         <tr valign="top">';
+  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+  $l_html.=chr(13).'         </table>';
+  $l_html.=chr(13).'    </table>';
+  
+  // Assuntos subordinados
+  $RS1 = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,'REGISTROS');
+  $RS1 = SortArray($RS1,'codigo','asc','descricao','asc');
+  if (count($RS1)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ASSUNTOS SUBORDINADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+    $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'       <tr valign="top">';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap align="center"><b>Código</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Descrição</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Corrente</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Intermediária</b></td>';
+    $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Final</b></td>';
+    $l_html.=chr(13).'       </tr>';
+    foreach($RS1 as $row) {
+      $l_html.=chr(13).'       <tr valign="top">';
+      $l_html.=chr(13).'           <td nowrap>&nbsp;'.ExibeAssunto('../',$w_cliente,f($row,'codigo'),f($row,'sq_assunto'),$TP).'</td>';
+      $l_html.=chr(13).'           <td>'.nvl(f($row,'descricao'),'---');
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_corrente').'</td>';
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_intermed').'</td>';
+      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($row,'guarda_final').'</td>';
+      $l_html.=chr(13).'      </tr>';
+    }
+    $l_html.=chr(13).'         </table></td></tr>';
+  } 
+  $l_html.=chr(13).'</table>';
+  ShowHTML($l_html);
+  Estrutura_Texto_Fecha();
+} 
+
 // =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
@@ -1324,7 +1412,7 @@ function Grava() {
         // Verifica se o protocolo atual existe
         $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
               Nvl(substr($_REQUEST['w_protocolo'],0,5),''), Nvl(substr($_REQUEST['w_protocolo'],6,6),''), 
-              Nvl(substr($_REQUEST['w_protocolo'],13,4),''), null, null, null, null, null, null, null);
+              Nvl(substr($_REQUEST['w_protocolo'],13,4),''), null, null, null, null, null, null, null, null);
         if (count($RS)==0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Protocolo atual não encontrado!\');');
@@ -1338,7 +1426,7 @@ function Grava() {
         // Verifica se o novo protocolo existe
         $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
               Nvl($_REQUEST['w_prefixo'],''), Nvl($_REQUEST['w_numero'],''), Nvl($_REQUEST['w_ano'],''), 
-              null, null, null, null, null, null, null);
+              null, null, null, null, null, null, null, null);
         if (count($RS)>0) {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Novo protocolo já está associado a um documento/processo existente!\');');
@@ -1352,7 +1440,7 @@ function Grava() {
         // Recupera o novo protocolo, com DV
         $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', null, null, 
               Nvl($_REQUEST['w_prefixo'],''), Nvl($_REQUEST['w_numero'],''), Nvl($_REQUEST['w_ano'],''), 
-              null, null, null, null, null, null, null);
+              null, null, null, null, null, null, null, null);
         foreach($RS as $row) { $RS = $row; break; }
 
         ScriptOpen('JavaScript');
@@ -1583,9 +1671,11 @@ function Grava() {
     case 'PAPARAM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putPAParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_despacho_arqcentral'],$_REQUEST['w_despacho_emprestimo'],$_REQUEST['w_despacho_devolucao'],
-            $_REQUEST['w_despacho_autuar'],$_REQUEST['w_despacho_arqsetorial'],$_REQUEST['w_despacho_anexar'],$_REQUEST['w_despacho_apensar'],$_REQUEST['w_despacho_eliminar'],
-            $_REQUEST['w_arquivo_central'],$_REQUEST['w_limite_interessados'],$_REQUEST['w_ano_corrente']);
+        dml_putPAParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_despacho_arqcentral'],$_REQUEST['w_despacho_emprestimo'],
+            $_REQUEST['w_despacho_devolucao'],$_REQUEST['w_despacho_autuar'],$_REQUEST['w_despacho_arqsetorial'],
+            $_REQUEST['w_despacho_anexar'],$_REQUEST['w_despacho_apensar'],$_REQUEST['w_despacho_eliminar'],
+            $_REQUEST['w_despacho_desmembrar'], $_REQUEST['w_arquivo_central'],$_REQUEST['w_limite_interessados'],
+            $_REQUEST['w_ano_corrente']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1667,6 +1757,7 @@ function Main() {
     case 'UNIDADE':            Unidade();           break;    
     case 'NATUREZADOC':        NaturezaDoc();       break;
     case 'TIPOGUARDA':         TipoGuarda();        break;
+    case 'TELAASSUNTO':        TelaAssunto();       break;
     case 'PARAMETRO':          Parametro();         break;
     case 'ASSUNTO':            Assunto();           break;
     case 'GRAVA':              Grava();             break;

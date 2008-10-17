@@ -6,12 +6,14 @@ create or replace procedure sp_putDocumentoReceb
    ) is
    cursor c_protocolo is
      select a.sq_documento_log, a.sq_siw_solicitacao, a.unidade_destino, a.unidade_origem, a.interno
-       from pa_documento_log a
-            inner join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-      where a.nu_guia          = p_nu_guia
-        and a.ano_guia         = p_ano_guia
-        and b.unidade_autuacao = p_unid_autua
-        and a.recebimento      is null;
+       from pa_documento_log          a
+            inner join   pa_unidade   a1 on (a.unidade_origem     = a1.sq_unidade)
+            inner   join pa_documento b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+              inner join pa_unidade   c  on (b.unidade_autuacao   = c.sq_unidade)
+      where p_nu_guia     = a.nu_guia
+        and p_ano_guia    = a.ano_guia
+        and coalesce(a1.sq_unidade_pai,a1.sq_unidade) = coalesce(c.sq_unidade_pai,c.sq_unidade)
+        and a.recebimento is null;
 begin
   for crec in c_protocolo loop
      -- Se tramitação interna, garante que a unidade de posse é a unidade recebedora

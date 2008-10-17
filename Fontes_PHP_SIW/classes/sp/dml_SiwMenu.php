@@ -14,7 +14,7 @@ class dml_SiwMenu {
          $vinculacao, $data_hora, $envia_dia_util, $descricao, $justificativa, $finalidade, $cliente, 
          $nome, $acesso_geral, $sq_modulo, $sq_unidade_exec, $tramite, $ultimo_nivel, $descentralizado, 
          $externo, $ativo, $ordem, $envio, $controla_ano, $libera_edicao, $numeracao, $numerador, 
-         $sequencial, $ano_corrente, $prefixo, $sufixo) {
+         $sequencial, $ano_corrente, $prefixo, $sufixo, $envio_inclusao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwMenu';
      $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
                    'chave'              =>array($chave,                 B_NUMERIC,     32),
@@ -57,7 +57,8 @@ class dml_SiwMenu {
                    'sequencial'         =>array(tvl($sequencial),       B_INTEGER,     32),
                    'ano_corrente'       =>array(tvl($ano_corrente),     B_INTEGER,     32),
                    'prefixo'            =>array(tvl($prefixo),          B_VARCHAR,     10),
-                   'sufixo'             =>array(tvl($sufixo),           B_VARCHAR,     10)
+                   'sufixo'             =>array(tvl($sufixo),           B_VARCHAR,     10),
+                   'envio_inclusao'     =>array($envio_inclusao,        B_VARCHAR,      1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

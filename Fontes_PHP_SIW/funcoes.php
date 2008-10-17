@@ -635,7 +635,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
     foreach ($_GET as $l_Item => $l_valor) {
       if ($l_Item!='par') {
         if (is_array($_GET[$l_Item])) {
-          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'[]" VALUE="'.explodeArray($_GET[$l_Item]).'">';
         } else {
           $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
         }
@@ -646,7 +646,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
     if (strpos($l_form,'NAME="'.$l_Item.'"')===false) {
       if ($l_Item!='w_troca' && $l_Item!='w_assinatura' && $l_Item!='Password' && $l_Item!='R' && $l_Item!='P1' && $l_Item!='P2' && $l_Item!='P3' && $l_Item!='P4' && $l_Item!='TP' && $l_Item!='O') {
         if (is_array($_POST[$l_Item])) {
-          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
+          $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'[]" VALUE="'.explodeArray($_POST[$l_Item]).'">';
         } else {
           $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.$l_valor.'">';
         }
@@ -1067,7 +1067,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída antes da data prevista.';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10 align="center"><td>Execução concluída na data prevista.';
     } elseif (substr($l_tipo,0,2)=='GD' || substr($l_tipo,0,2)=='SR' || substr($l_tipo,0,2)=='PJ') {
-      // Tarefas e demandas eventuais
+      // Tarefas, demandas eventuais e recursos logísticos
       $l_string .= '<tr valign="top">';
       $l_string .= '<td width="1%" nowrap><img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center"><td>Registro cancelado.';
       $l_string .= '<tr valign="top">';
@@ -2126,6 +2126,19 @@ function EncerraSessao() {
 }
 
 // =========================================================================
+// Montagem da URL com os dados de um assunto da tabela de temporalidade
+// -------------------------------------------------------------------------
+function ExibeAssunto($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
+  extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
+  if (Nvl($p_chave,'')=='') {
+    $l_string='---';
+  } else {
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pa/tabelas.php?par=TELAASSUNTO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaAssunto\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+  }
+  return $l_string;
+}
+
+// =========================================================================
 // Função que formata um texto para exibição em HTML
 // -------------------------------------------------------------------------
 function ExibeTexto($p_texto) { return str_replace('  ','&nbsp;&nbsp;',str_replace('\r\n','<br>',$p_texto)); }
@@ -2617,8 +2630,10 @@ function Rodape() {
     ShowHTML('</center>');
   }
   else { ShowHTML('<HR>'); }
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/tooltip.js"></script>');
   ShowHTML('</BODY>');
   ShowHTML('</HTML>');
+ 
 }
 
 // =========================================================================

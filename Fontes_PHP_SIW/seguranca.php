@@ -481,6 +481,7 @@ function Menu() {
         $w_sq_unidade_executora = f($RS,'sq_unid_executora');
         $w_vinculacao           = f($RS,'vinculacao');
         $w_envia_dia_util       = f($RS,'envia_dia_util');
+        $w_envio_inclusao       = f($RS,'envio_inclusao');
         $w_data_hora            = f($RS,'data_hora');
         $w_pede_descricao       = f($RS,'descricao');
         $w_pede_justificativa   = f($RS,'justificativa');
@@ -528,6 +529,7 @@ function Menu() {
         $w_vinculacao           = $_REQUEST['w_vinculacao'];
         $w_data_hora            = $_REQUEST['w_data_hora'];
         $w_envia_dia_util       = $_REQUEST['w_envia_dia_util'];
+        $w_envio_inclusao       = $_REQUEST['w_envio_inclusao'];
         $w_pede_descricao       = $_REQUEST['w_pede_descricao'];
         $w_pede_justificativa   = $_REQUEST['w_pede_justificativa'];
         $w_numeracao            = $_REQUEST['w_numeracao'];
@@ -624,6 +626,8 @@ function Menu() {
     ShowHTML('     document.Form.w_data_hora[4].checked=false;');
     ShowHTML('     document.Form.w_envia_dia_util[0].checked=false;');
     ShowHTML('     document.Form.w_envia_dia_util[1].checked=false;');
+    ShowHTML('     document.Form.w_envio_inclusao[0].checked=false;');
+    ShowHTML('     document.Form.w_envio_inclusao[1].checked=false;');
     ShowHTML('     document.Form.w_pede_descricao[0].checked=false;');
     ShowHTML('     document.Form.w_pede_descricao[1].checked=false;');
     ShowHTML('     document.Form.w_pede_justificativa[0].checked=false;');
@@ -651,6 +655,8 @@ function Menu() {
     ShowHTML('     document.Form.w_data_hora[4].disabled=true;');
     ShowHTML('     document.Form.w_envia_dia_util[0].disabled=true;');
     ShowHTML('     document.Form.w_envia_dia_util[1].disabled=true;');
+    ShowHTML('     document.Form.w_envio_inclusao[0].disabled=true;');
+    ShowHTML('     document.Form.w_envio_inclusao[1].disabled=true;');
     ShowHTML('     document.Form.w_pede_descricao[0].disabled=true;');
     ShowHTML('     document.Form.w_pede_descricao[1].disabled=true;');
     ShowHTML('     document.Form.w_pede_justificativa[0].disabled=true;');
@@ -689,6 +695,8 @@ function Menu() {
     ShowHTML('     document.Form.w_data_hora[4].disabled=false;');
     ShowHTML('     document.Form.w_envia_dia_util[0].disabled=false;');
     ShowHTML('     document.Form.w_envia_dia_util[1].disabled=false;');
+    ShowHTML('     document.Form.w_envio_inclusao[0].disabled=false;');
+    ShowHTML('     document.Form.w_envio_inclusao[1].disabled=false;');
     ShowHTML('     document.Form.w_pede_descricao[0].disabled=false;');
     ShowHTML('     document.Form.w_pede_descricao[1].disabled=false;');
     ShowHTML('     document.Form.w_pede_justificativa[0].disabled=false;');
@@ -705,6 +713,7 @@ function Menu() {
     ShowHTML('     document.Form.w_vinculacao[1].checked=true;');
     ShowHTML('     document.Form.w_data_hora[2].checked=true;');
     ShowHTML('     document.Form.w_envia_dia_util[0].checked=true;');
+    ShowHTML('     document.Form.w_envio_inclusao[0].checked=true;');
     ShowHTML('     document.Form.w_pede_descricao[0].checked=true;');
     ShowHTML('     document.Form.w_pede_justificativa[0].checked=true;');
     ShowHTML('     document.Form.w_como_funciona.value=\'\';');
@@ -1160,7 +1169,7 @@ function Menu() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio" value="N" > Não');
     } 
 
-    ShowHTML('          <tr><td colspan=3 title="Existem serviços que exigem um controle de solicitações por ano. Informe \'Sim\' se for o caso desta opção."><b>Controla solicitações por ano?</b><br>');
+    ShowHTML('          <tr><td title="Existem serviços que exigem um controle de solicitações por ano. Informe \'Sim\' se for o caso desta opção."><b>Controla solicitações por ano?</b><br>');
     if ($w_controla_ano=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="N"> Não');
     } elseif ($w_controla_ano=='N') {
@@ -1168,7 +1177,15 @@ function Menu() {
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="N" > Não');
     } 
-
+    ShowHTML('              <td title="Informe \'Sim\' se desejar que o usuário tenha a alternativa de enviar a solicitação durante a inclusão." colspan="2"><b>Permite envio da solicitação durante a inclusão?</b><br>');
+    if ($w_envio_inclusao=='S') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N"> Não');
+    } elseif ($w_envio_inclusao=='N') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N" checked> Não');
+    } else {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N" > Não');
+    } 
+    
     ShowHTML('          <tr align="left">');
     ShowHTML('              <td colspan=3 title="Informe se esta opção pede data limite de atendimento e, se pedir, como a data deve ser informada."><b>Pede data limite?</b><br>');
     if ($w_data_hora=="0") {
@@ -2516,7 +2533,7 @@ function Grava() {
             $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], 
             $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao'], $_REQUEST['w_numeracao'],
             $_REQUEST['w_numerador'], $_REQUEST['w_sequencial'], $_REQUEST['w_ano_corrente'], $_REQUEST['w_prefixo'], 
-            $_REQUEST['w_sufixo']);
+            $_REQUEST['w_sufixo'], $_REQUEST['w_envio_inclusao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&w_cliente='.$w_cliente.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
         ScriptClose();

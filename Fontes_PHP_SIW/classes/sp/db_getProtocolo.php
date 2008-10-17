@@ -9,8 +9,9 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class db_getProtocolo {
-   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_chave, $p_chave_aux, $p_prefixo, $p_numero, $p_ano,
-        $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, $p_tipo) {
+   function getInstanceOf($dbms, $p_menu, $p_pessoa, $p_restricao, $p_chave, $p_chave_aux, $p_prefixo, 
+        $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 
+        $p_tipo, $p_despacho) {
 
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getProtocolo';
      $params=array('p_menu'                 =>array($p_menu,                                    B_INTEGER,        32),
@@ -28,6 +29,7 @@ class db_getProtocolo {
                    'p_ini'                  =>array(tvl($p_ini),                                B_DATE,           32),
                    'p_fim'                  =>array(tvl($p_fim),                                B_DATE,           32),
                    'p_tipo'                 =>array($p_tipo,                                    B_INTEGER,        32),
+                   'p_despacho'             =>array($p_despacho,                                B_INTEGER,        32),
                    'p_result'               =>array(null,                                       B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -11,7 +11,7 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   } elseif(Nvl($restricao,'')=='NUMERADOR') {
     $RS = $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {
-    if (Nvl($chaveAux,'')>'') { $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'XVINC', $chaveAux, $modulo); }
+    if (Nvl($chaveAux,'')>'') $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'XVINC', $chaveAux, $modulo);
     else                      $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, 'X', $chaveAux, $modulo);
   }
   if (!isset($hint)) {

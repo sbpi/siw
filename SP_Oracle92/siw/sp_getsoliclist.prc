@@ -279,7 +279,9 @@ begin
                    left              join pj_etapa_demanda     i  on (b.sq_siw_solicitacao         = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa           = q.sq_projeto_etapa)
                    left              join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
-                                             from siw_solic_log x
+                                             from siw_solic_log              x
+                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.sq_menu = p_menu
                                            group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao         = j.sq_siw_solicitacao)
                       left           join (select x.sq_siw_solic_log, y.sq_pessoa, y.sq_unidade
@@ -488,9 +490,11 @@ begin
                                      group  by a.sq_siw_solicitacao
                                     )                          q5 on (b.sq_siw_solicitacao       = q5.sq_siw_solicitacao)
                    left        join eo_unidade                 c   on (a.sq_unid_executora       = c.sq_unidade)
-                   inner       join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                       from siw_solic_log
-                                     group by sq_siw_solicitacao
+                   inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                       from siw_solic_log              x
+                                            inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                      where y.sq_menu = p_menu
+                                     group by x.sq_siw_solicitacao
                                     )                          j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left      join pj_projeto_log             k  on (j.chave                    = k.sq_siw_solic_log)
                        left    join sg_autenticacao            l  on (k.destinatario             = l.sq_pessoa)
@@ -722,9 +726,11 @@ begin
                                           )                    h  on (b.sq_siw_solicitacao       = h.sq_siw_solicitacao)                               
                    left              join pj_etapa_contrato    i  on (b.sq_siw_solicitacao       = i.sq_siw_solicitacao)
                       left           join pj_projeto_etapa     q  on (i.sq_projeto_etapa         = q.sq_projeto_etapa)                   
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
+                   inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                             from siw_solic_log              x
+                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.sq_menu = p_menu
+                                           group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join ac_acordo_log        k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
@@ -925,9 +931,11 @@ begin
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
+                   inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                             from siw_solic_log              x
+                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.sq_menu = p_menu
+                                           group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
@@ -1077,9 +1085,11 @@ begin
                         inner join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                     left      join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                   left        join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                  inner       join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave
-                                      from siw_solic_log
-                                    group by sq_siw_solicitacao
+                  inner       join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                      from siw_solic_log              x
+                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where y.sq_menu = p_menu
+                                    group by x.sq_siw_solicitacao
                                    )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                     left      join gd_demanda_log       k  on (j.chave                    = k.sq_siw_solic_log)
                       left    join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
@@ -1096,6 +1106,7 @@ begin
                  left         join (select x.sq_siw_solicitacao, min(y.saida) as saida, max(y.chegada) as chegada
                                       from siw_solicitacao            x
                                            inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where x.sq_menu = p_menu
                                     group by x.sq_siw_solicitacao
                                    )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
@@ -1241,9 +1252,11 @@ begin
                                            group  by a.sq_siw_solicitacao
                                           )                    q4 on (b.sq_siw_solicitacao       = q4.sq_siw_solicitacao)
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
+                   inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                                             from siw_solic_log              x
+                                                  inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.sq_menu = p_menu
+                                           group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join pe_programa_log      k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
@@ -1355,9 +1368,10 @@ begin
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
-                case d.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo_protocolo,
+                case d.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo_protocolo,
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
+                case when d.pessoa_origem is null then b3.sigla else d2.nome_resumido end as nm_origem_resumido,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
                 d1.descricao as ds_natureza,                         d1.ativo as st_natureza,
                 d2.nome_resumido as nm_res_pessoa_origem,            d2.nome as nm_pessoa_origem,
@@ -1429,11 +1443,13 @@ begin
                         left         join sg_autenticacao          o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           left       join eo_unidade               o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa                p  on (b.executor                 = p.sq_pessoa)
-                   left              join (select sq_siw_solicitacao, max(sq_siw_solic_log) as chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
+                   left              join (select w.sq_siw_solicitacao, max(w.sq_documento_log) as chave 
+                                             from pa_documento_log           w
+                                                  inner join siw_solicitacao x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                            where x.sq_menu = p_menu
+                                           group by w.sq_siw_solicitacao
                                           )                        j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
-                     left            join pa_documento_log         k  on (j.chave                    = k.sq_siw_solic_log)
+                     left            join pa_documento_log         k  on (j.chave                    = k.sq_documento_log)
                        left          join sg_autenticacao          l  on (k.recebedor                = l.sq_pessoa)
                        left          join pa_tipo_despacho         k1 on (k.sq_tipo_despacho         = k1.sq_tipo_despacho)
           where a.sq_menu        = p_menu
@@ -1441,7 +1457,7 @@ begin
             and (p_pais           is null or (p_pais        is not null and d.prefixo            = p_pais))
             and (p_regiao         is null or (p_regiao      is not null and d.numero_documento   =  p_regiao))
             and (p_cidade         is null or (p_cidade      is not null and d.ano                = p_cidade))
-            and (p_uorg_resp      is null or (p_uorg_resp   is not null and q.sq_unidade         = p_uorg_resp))
+            and (p_uorg_resp      is null or (p_uorg_resp   is not null and d.unidade_int_posse  = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
             --and (p_atividade      is null or (p_atividade   is not null and i.sq_projeto_etapa = p_atividade))
@@ -1454,7 +1470,7 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and d7.sq_especie_documento = p_solicitante))
             and (p_proponente     is null or (p_proponente  is not null and (to_char(d.pessoa_origem) = p_proponente or d2.nome_indice like '%'||acentos(p_proponente)||'%' or d2.nome_resumido_ind like '%'||acentos(p_proponente)||'%')))
-            and (p_prioridade     is null or (p_prioridade  is not null and coalesce(k1.sq_tipo_despacho,0) = p_prioridade))
+            and (p_prioridade     is null or (p_prioridade  is not null and k.sq_tipo_despacho is not null and k.sq_tipo_despacho = p_prioridade))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)

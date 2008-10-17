@@ -3,7 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getFormaPagamento.php');
 // =========================================================================
 // Montagem da seleção da forma de pagamento
 // -------------------------------------------------------------------------
-function selecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoFormaPagamento($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$atributo=null,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getFormaPagamento::getInstanceOf($dbms, $w_cliente, null, $chave_aux, $restricao,'S',null);
   $RS = SortArray($RS,'nome','asc');
