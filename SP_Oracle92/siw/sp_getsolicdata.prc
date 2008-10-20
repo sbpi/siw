@@ -3,10 +3,12 @@ create or replace procedure SP_GetSolicData
     p_restricao in varchar2 default null,
     p_result    out sys_refcursor
    ) is
-   w_menu siw_menu.sq_menu%type;
+   w_menu siw_menu.sq_menu%type := 0;
 begin
-   -- Recupera o menu ao qual a solicitação está ligada
-   select sq_menu into w_menu from siw_solicitacao where sq_siw_solicitacao = p_chave;
+   If p_chave is not null Then
+      -- Recupera o menu ao qual a solicitação está ligada   
+      select sq_menu into w_menu from siw_solicitacao where sq_siw_solicitacao = p_chave;
+  End If;
    
    If p_restricao is null Then
       open p_result for select dados_solic(p_chave) as dados_solic from dual;
