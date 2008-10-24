@@ -3,17 +3,23 @@ create or replace procedure SP_GetLcModalidade
     p_cliente     in  number,
     p_nome        in  varchar2 default null,
     p_sigla       in  varchar2 default null,
-    p_ativo       in  varchar2 default null,    
-    p_restricao   in  varchar2 default null,
+    p_ativo       in  varchar2 default null,      
+   /* p_minimo_pesquisas         in  number,
+    p_minimo_participantes     in  number,
+    p_minimo_propostas_validas in  number,
+    p_certame                  in  varchar2, */     
+    p_restricao   in  varchar2 default null,    
     p_result      out sys_refcursor) is
 begin
    If p_restricao = 'EXISTE' Then
       -- Verifica se há outro registro com o mesmo nome ou sigla
       open p_result for 
       select a.sq_lcmodalidade chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao, a.sigla,
-             a.fundamentacao,
-             case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
-             case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao
+             a.fundamentacao,a.minimo_pesquisas,a.minimo_participantes,a.minimo_propostas_validas,a.certame,
+             a.enquadramento_inicial,a.enquadramento_final,
+             case a.certame when 'S' then 'Sim' else 'Não' end nm_certame,
+             case a.ativo   when 'S' then 'Sim' else 'Não' end nm_ativo,
+             case a.padrao  when 'S' then 'Sim' else 'Não' end nm_padrao
         from lc_modalidade a
        where a.cliente = p_cliente 
          and a.sq_lcmodalidade    <> coalesce(p_chave,0)
@@ -22,7 +28,9 @@ begin
    Else
      open p_result for 
       select a.sq_lcmodalidade chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao, a.sigla,
-             a.fundamentacao,
+             a.fundamentacao,a.minimo_pesquisas,a.minimo_participantes,a.minimo_propostas_validas,a.certame,
+             a.enquadramento_inicial,a.enquadramento_final,
+             case a.certame when 'S' then 'Sim' else 'Não' end nm_certame,
              case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao
         from lc_modalidade a
