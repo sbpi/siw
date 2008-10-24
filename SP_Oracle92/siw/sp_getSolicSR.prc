@@ -181,8 +181,9 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
-             and ((p_restricao <> 'GRSRRESPATU') or
-                  ((p_restricao = 'GRSRRESPATU'  and b.opiniao                       is not null)
+             and ((p_restricao <> 'GRSRRESPATU' and p_restricao <> 'GRSREXEC') or
+                  ((p_restricao = 'GRSRRESPATU'  and b.opiniao  is not null) or
+                   (p_restricao = 'GRSREXEC'     and b1.sigla='AT' and b.executor is not null)
                   )
                  );
    End If;

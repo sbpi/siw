@@ -253,9 +253,9 @@ function Gerencial() {
         $w_TP = $TP.' - Por UF';
         $RS1  = SortArray($RS1,'co_uf','asc');
         break;
-      case 'GRSRTIPDEM':
-        $w_TP = $TP.' - Por tipo de demanda';
-        $RS1  = SortArray($RS1,'nm_demanda_tipo','asc');
+      case 'GRSREXEC':
+        $w_TP = $TP.' - Por executor';
+        $RS1  = SortArray($RS1,'nm_exec','asc');
         break;
     } 
   } 
@@ -356,7 +356,7 @@ function Gerencial() {
           case 'GRSRSETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
           case 'GRSRPRIO':      ShowHTML('      document.Form.p_sq_menu.value=filtro;');        break;
           case 'GRSRLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
-          case 'GRSRTIPDEM':    ShowHTML('      document.Form.p_empenho.value=filtro;');        break;
+          case 'GRSREXEC':      ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
@@ -369,7 +369,7 @@ function Gerencial() {
           case 'GRSRSETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');       break;
           case 'GRSRPRIO':      ShowHTML('    else document.Form.p_sq_menu.value=\''.$_REQUEST['p_sq_menu'].'\';');           break;
           case 'GRSRLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
-          case 'GRSRTIPDEM':    ShowHTML('    else document.Form.p_empenho.value=\''.$_REQUEST['p_empenho'].'\';');           break;
+          case 'GRSREXEC':      ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
         } 
         if ($p_sq_menu>'') {
           $RS2 = db_getTramiteList::getInstanceOf($dbms,$p_sq_menu,null,null);
@@ -405,7 +405,7 @@ function Gerencial() {
           case 'GRSRSETOR':     if ($_REQUEST['p_uorg_resp']=='')   ShowHTML('<input type="Hidden" name="p_uorg_resp" value="">');    break;
           case 'GRSRPRIO':      if ($_REQUEST['p_sq_menu']=='')     ShowHTML('<input type="Hidden" name="p_sq_menu" value="">');      break;
           case 'GRSRLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
-          case 'GRSRTIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
+          case 'GRSREXEC':      if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -646,18 +646,17 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRSRTIPDEM':
-            if ($w_nm_quebra!=f($row,'nm_demanda_tipo')) {
+          case 'GRSREXEC':
+            if ($w_nm_quebra!=f($row,'nm_exec')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
                 $w_linha = $w_linha + 1;
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
-                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                //ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_demanda_tipo'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));
               } 
-              $w_nm_quebra  = f($row,'nm_demanda_tipo');
-              $w_chave      = f($row,'sq_demanda_tipo');
+              $w_nm_quebra  = f($row,'nm_exec');
+              $w_chave      = f($row,'executor');
               $w_qt_quebra  = 0;
               $t_solic      = 0;
               $t_cad        = 0;
@@ -697,7 +696,7 @@ function Gerencial() {
             case 'GRSRSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_exec'));   break;
             case 'GRSRPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nome'));              break;
             case 'GRSRLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
-            case 'GRSRTIPDEM':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_empenho'));        break;
+            case 'GRSREXEC':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));           break;
           } 
           $w_linha = $w_linha + 1;
         } 
@@ -769,6 +768,7 @@ function Gerencial() {
     if (f($RS_Menu,'solicita_cc')=='S') {
       if ($p_agrega=='GRSRCC')      ShowHTML('          <option value="GRSRCC" selected>Classificação');              else ShowHTML('          <option value="GRSRCC">Classificação');
     } 
+    if ($p_agrega=='GRSREXEC')      ShowHTML('          <option value="GRSREXEC" selected>Executor');                 else ShowHTML('          <option value="GRSREXEC">Executor');
     if ($p_agrega=='GRSRRESPATU')   ShowHTML('          <option value="GRSRRESPATU" selected>Opinião');               else ShowHTML('          <option value="GRSRRESPATU">Opinião');
     if ($p_agrega=='GRSRPRIO')      ShowHTML('          <option value="GRSRPRIO" selected>Serviço');                  else ShowHTML('          <option value="GRSRPRIO">Serviço');
     //if ($p_agrega=='GRSRPROP')      ShowHTML('          <option value="GRSRPROP" selected>Proponente');               else ShowHTML('          <option value="GRSRPROP">Proponente');
@@ -778,9 +778,6 @@ function Gerencial() {
     if ($p_agrega=='GRSRSETOR')     ShowHTML('          <option value="GRSRSETOR" selected>Setor executor');          else ShowHTML('          <option value="GRSRSETOR">Setor executor');
     if ($p_agrega=='GRSRUNID')      ShowHTML('          <option value="GRSRUNID" selected>Setor solicitante');        else ShowHTML('          <option value="GRSRUNID">Setor solicitante');
     if (Nvl($p_agrega,'GRSRRESP')=='GRSRRESP') ShowHTML('          <option value="GRSRRESP" selected>Solicitante');   else ShowHTML('          <option value="GRSRRESP">Solicitante');
-    if (substr(f($RS_Menu,'sigla'),0,3)=='GDT') {
-      if ($p_agrega=='GRSRTIPDEM')  ShowHTML('          <option value="GRSRTIPDEM" selected>Tipo da demanda');        else ShowHTML('          <option value="GRSRTIPDEM">Tipo da demanda');
-    }
     //if ($p_agrega=='GRSRLOCAL')     ShowHTML('          <option value="GRSRLOCAL" selected>UF');                      else ShowHTML('          <option value="GRSRLOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
@@ -791,8 +788,9 @@ function Gerencial() {
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     ShowHTML('      <tr valign="top">');
     selecaoServico('<U>S</U>erviço:', 'S', null, $p_sq_menu, null, 'SR', 'p_sq_menu', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu\'; document.Form.submit();"', null, null, null);
-    ShowHTML('      <tr valign="top">');
     ShowHTML('          <td valign="top"><b>Número <U>d</U>a solicitação:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    SelecaoPessoa('E<u>x</u>ecutor:','X','Selecione o executor na relação.',$p_usu_resp,null,'p_usu_resp','EXECUTORSR');
     SelecaoUnidade('<U>S</U>etor executor:','S','Selecione a unidade executora do serviço na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Usuário solicita<u>n</u>te:','N','Selecione o solicitante na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
@@ -855,7 +853,7 @@ function ImprimeCabecalho() {
     case 'GRSRSETOR':   ShowHTML('          <td><b>Setor executor</td>');       break;
     case 'GRSRPRIO':    ShowHTML('          <td><b>Serviço</td>');              break;
     case 'GRSRLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
-    case 'GRSRTIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
+    case 'GRSREXEC':    ShowHTML('          <td><b>Executor</td>');             break;
   } 
   ShowHTML('          <td><b>Total</td>');
   ShowHTML('          <td><b>Cad.</td>');

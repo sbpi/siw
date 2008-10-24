@@ -10,7 +10,11 @@ create or replace procedure sp_putCLParametro
     p_banco_ata_central        in  varchar2,    
     p_banco_preco_central      in  varchar2,    
     p_codificacao_central      in  varchar2,
-    p_pede_valor_pedido        in  varchar2
+    p_pede_valor_pedido        in  varchar2,
+    p_automatico               in  varchar2,
+    p_prefixo                  in  number    default null,
+    p_sequencial               in  number    default null,
+    p_sufixo                   in  number    default null
    ) is
    
    p_operacao varchar2(1);
@@ -31,11 +35,13 @@ begin
       insert into cl_parametro
          (cliente, ano_corrente, dias_validade_pesquisa, dias_aviso_pesquisa, 
           percentual_acrescimo, compra_central, pesquisa_central, contrato_central, 
-          banco_ata_central, banco_preco_central, codificacao_central, pede_valor_pedido)
+          banco_ata_central, banco_preco_central, codificacao_central, pede_valor_pedido,
+          codificacao_automatica, prefixo, sequencial, sufixo)
       values
          (p_cliente, p_ano_corrente, p_dias_validade_pesquisa, p_dias_aviso_pesquisa, 
           p_percentual_acrescimo, p_compra_central, p_pesquisa_central, p_contrato_central,
-          p_banco_ata_central, p_banco_preco_central, p_codificacao_central, p_pede_valor_pedido);
+          p_banco_ata_central, p_banco_preco_central, p_codificacao_central, p_pede_valor_pedido,
+          p_automatico, coalesce(p_prefixo,0), coalesce(p_sequencial,0), coalesce(p_sufixo,0));
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update cl_parametro
@@ -50,7 +56,11 @@ begin
             banco_ata_central       = p_banco_ata_central,
             banco_preco_central     = p_banco_preco_central,
             codificacao_central     = p_codificacao_central,
-            pede_valor_pedido       = p_pede_valor_pedido
+            pede_valor_pedido       = p_pede_valor_pedido,
+            codificacao_automatica  = p_automatico, 
+            prefixo                 = coalesce(p_prefixo,0), 
+            sequencial              = coalesce(p_sequencial,0), 
+            sufixo                  = coalesce(p_sufixo,0)
       where cliente = p_cliente;
       
       -- Atualiza as pesquisas de preço

@@ -22,7 +22,13 @@ create or replace procedure SP_PutCLDados
     p_dias_item             in number   default null
    ) is
 begin
-   If p_restricao = 'DADOS' Then
+   If p_restricao = 'PROT' Then
+      -- Atualiza a tabela da licitação com os dados da análise
+      Update cl_solicitacao set
+         sq_lcmodalidade          = p_sq_lcmodalidade,
+         processo                 = p_numero_processo
+      Where sq_siw_solicitacao = p_chave;
+   ElsIf p_restricao = 'DADOS' Then
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,

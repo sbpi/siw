@@ -158,6 +158,31 @@ begin
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))           
       order by a.nome_indice;
+   Elsif substr(p_restricao,1,8) = 'EXECUTOR' Then
+      -- Recupera os executores de um serviço
+      open p_result for 
+        select a.sq_pessoa, b.cpf, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+               c.username,
+               f.sigla sg_unidade, f.nome nm_unidade, g.nome nm_local
+          from co_pessoa                          a
+               left outer join  co_pessoa_fisica  b on (a.sq_pessoa       = b.sq_pessoa)
+               inner      join  sg_autenticacao   c on (a.sq_pessoa       = c.sq_pessoa)
+                 inner    join  eo_unidade        f on (c.sq_unidade      = f.sq_unidade)
+                 inner    join  eo_localizacao    g on (c.sq_localizacao  = g.sq_localizacao)
+               inner      join co_tipo_vinculo    d on (a.sq_tipo_vinculo = d.sq_tipo_vinculo)
+               inner      join co_tipo_pessoa     e on (a.sq_tipo_pessoa  = e.sq_tipo_pessoa)
+         where ((coalesce(p_chave,0) > 0 and f.sq_unidade =  (select sq_unid_executora from siw_menu where sq_menu = coalesce(p_chave,0))) or
+                (coalesce(p_chave,0) = 0 and f.sq_unidade in (select sq_unid_executora from siw_menu x inner join siw_modulo y on (x.sq_modulo = y.sq_modulo) where x.sq_unid_executora is not null and x.ativo = 'S' and y.sigla = substr(p_restricao,9,2)))
+               )
+           and c.ativo          = 'S'
+           and d.interno        = 'S'
+           and e.ativo          = 'S'
+           and e.nome           = 'Física'
+           and a.sq_pessoa_pai  = p_cliente 
+           and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
+                                                                   or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+           and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))           
+      order by a.nome_indice;
    Elsif p_restricao = 'INTERES' Then
       -- Recupera os usuários do sistema
       open p_result for 

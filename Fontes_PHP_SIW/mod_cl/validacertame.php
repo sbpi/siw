@@ -46,7 +46,12 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   }
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
   if (count($l_rs_tramite)>0) {
-    if(f($l_rs_tramite,'sigla')=='PP') {
+    if(f($l_rs_tramite,'sigla')=='AP') {
+      if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
+        $l_erro.='<li>Informe os dados da análise.';
+        $l_tipo=0;       
+      }
+    } elseif(f($l_rs_tramite,'sigla')=='PP') {
       // Verifica se cada item possui no minimo duas pesquisas de preço
       $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
       if(count($l_rs_pesquisa)>0) {
@@ -58,7 +63,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
         }
       }
     } elseif(f($l_rs_tramite,'sigla')=='EA') {
-      if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
+      if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')=='') {
         $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }

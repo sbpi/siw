@@ -634,6 +634,7 @@ function Inicial() {
 // Rotina dos dados gerais
 // -------------------------------------------------------------------------
 function Geral() {
+		
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave              = $_REQUEST['w_chave'];
@@ -642,6 +643,7 @@ function Geral() {
   $w_erro               = '';
   // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+  
   $w_segmento = f($RS,'segmento');
   
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -691,6 +693,7 @@ function Geral() {
     $w_per_fim              = $_REQUEST['w_per_fim'];
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
+
     if ($w_copia>'') $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
     else             $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
     if (count($RS)>0) {
@@ -738,7 +741,9 @@ function Geral() {
     } 
   }
   // Recupera dados do contrato
+ 
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'GCDCAD');
+
   $w_inicio = FormataDataEdicao(f($RS_Solic,'inicio'));
   $w_fim    = FormataDataEdicao(f($RS_Solic,'fim'));
   

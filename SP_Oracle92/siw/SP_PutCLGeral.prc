@@ -27,6 +27,7 @@ create or replace procedure SP_PutCLGeral
     p_arp                 in varchar2  default null,
     p_interno             in varchar2  default null,
     p_especie_documento   in number    default null,
+    p_observacao_log      in varchar2  default null,
     p_chave_nova          out number
    ) is
    w_arq         varchar2(4000) := ', ';
@@ -128,7 +129,7 @@ begin
       (select
           sq_siw_solic_log.nextval,  w_chave,            p_cadastrador,
           a.sq_siw_tramite,          w_data,             'N',
-          'Cadastramento inicial'
+          coalesce(p_observacao_log,'Cadastramento inicial')
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -236,7 +237,7 @@ begin
          (select
              sq_siw_solic_log.nextval,  a.sq_siw_solicitacao, p_cadastrador,
              a.sq_siw_tramite,          w_data,               'N',
-             'Cancelamento'
+             coalesce(p_observacao_log,'Cancelamento')
             from siw_solicitacao a
            where a.sq_siw_solicitacao = p_chave
          );

@@ -375,7 +375,7 @@ function Inicial() {
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Recebimento','data_recebimento').'</td>');
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Limite','fim').'</td>');
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      if ($P1!=3) ShowHTML('          <td rowspan=2><b>Operações</td>');
+      if ($P1==1) ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Espécie','nm_especie').'</td>');
@@ -452,41 +452,16 @@ function Inicial() {
         //ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data_recebimento')).'</td>');
         //ShowHTML('        <td align="center">'.nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>');
         //ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
-        if ($w_embed!='WORD' && $P1!=3){
+        if ($w_embed!='WORD' && $P1==1){
           ShowHTML('        <td align="top" nowrap>');
-          if ($P1!=3 && $P1!=5) {
-            // Se não for acompanhamento
-            if ($w_copia>'') {
-              // Se for listagem para cópia
-              $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
-            } elseif ($P1==1) {
-              // Se for cadastramento
-              ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'protocolo').MontaFiltro('GET').'" title="Altera as informações cadastrais do documento" TARGET="menu">AL</a>&nbsp;');
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do documento.">EX</A>&nbsp');
-            } elseif ($P1==2 || $P1==6) {
-              // Se for execução
-              if ($w_usuario==f($row,'executor')) {
-                // Coloca as operações dependendo do trâmite
-                if (f($row,'sg_tramite')=='EA') {
-                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">AN</A>&nbsp');
-                } elseif (f($row,'sg_tramite')=='EE') {
-                  ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a ação, sem enviá-la.">AN</A>&nbsp');
-                } 
-              } else {
-                ShowHTML('          ---&nbsp');
-              } 
-            } 
-          } else {
-            if (Nvl(f($row,'solicitante'),0) == $w_usuario || 
-                Nvl(f($row,'titular'),0)     == $w_usuario || 
-                Nvl(f($row,'substituto'),0)  == $w_usuario || 
-                Nvl(f($row,'tit_exec'),0)    == $w_usuario || 
-                Nvl(f($row,'subst_exec'),0)  == $w_usuario) {
-              // Se o usuário for responsável por uma ação, titular/substituto do setor responsável 
-              // ou titular/substituto da unidade executora,
-              // pode enviar.
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a ação para outro responsável.">EN</A>&nbsp');
-            } 
+          // Se não for acompanhamento
+          if ($w_copia>'') {
+            // Se for listagem para cópia
+            $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+          } elseif ($P1==1) {
+            // Se for cadastramento
+            ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.'&w_documento='.f($row,'protocolo').MontaFiltro('GET').'" title="Altera as informações cadastrais do documento" TARGET="menu">AL</a>&nbsp;');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do documento.">EX</A>&nbsp');
           } 
           ShowHTML('        </td>');
         }
@@ -1459,6 +1434,7 @@ function Encaminhamento() {
     CheckBranco();
     FormataData();
     SaltaCampo();
+    FormataProtocolo();
     ValidateOpen('Validacao');
     Validate('w_retorno_limite','Prazo de resposta','DATA','',10,10,'','0123456789/');
     CompData('w_retorno_limite','Prazo de resposta','>=',FormataDataEdicao(time()),'data atual');
@@ -2202,7 +2178,7 @@ function Tramitacao() {
   if ($O=='L') {
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('  ATENÇÃO:<ul>');
-    ShowHTML('  <li>PROTOCOLOS JUNTADOS SÓ PODEM SER ENVIADOS SE FOR APENSAÇÃO E O DESPACHO FOR <I>"DESMEMBRAR"</I>.');
+    ShowHTML('  <li>PROTOCOLOS JUNTADOS NÃO PODEM SER ENVIADOS.');
     ShowHTML('  <li>Se o trâmite for para pessoa jurídica, não se esqueça de informar para qual unidade dessa entidade você está enviando.');
     ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão <i>Gerar Guia de Tramitação</i>.');
     ShowHTML('  </ul></b></font></td>');

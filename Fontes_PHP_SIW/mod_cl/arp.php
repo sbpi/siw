@@ -3326,12 +3326,14 @@ function Grava() {
     case 'CLRPCAD':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putCLGeral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],Nvl($_REQUEST['w_sq_unidade'],$_SESSION['LOTACAO']),
-          Nvl($_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA']),$_SESSION['SQ_PESSOA'],null,$_REQUEST['w_plano'],
-          explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
-          $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
-          $_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
-          $_REQUEST['w_cidade'],'N',$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],&$w_chave_nova,$_REQUEST['w_copia']);
+        dml_putCLGeral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_menu'],Nvl($_REQUEST['w_sq_unidade'],
+          $_SESSION['LOTACAO']),Nvl($_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA']),$_SESSION['SQ_PESSOA'],null,
+          $_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],$_REQUEST['w_solic_pai'],
+          $_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],
+          $_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],
+          $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',$_REQUEST['w_numero_original'],
+          $_REQUEST['w_data_recebimento'],'N',$_REQUEST['w_interno'],$_REQUEST['w_especie_documento'],null,
+          &$w_chave_nova,$_REQUEST['w_copia']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

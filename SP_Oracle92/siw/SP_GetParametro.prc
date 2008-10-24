@@ -33,7 +33,7 @@ begin
             select a.cliente, a.ano_corrente,a.dias_validade_pesquisa, a.dias_aviso_pesquisa, 
                    a.percentual_acrescimo, a.compra_central, a.pesquisa_central, a.contrato_central, 
                    a.banco_ata_central, a.banco_preco_central, a.codificacao_central,
-                   a.pede_valor_pedido
+                   a.pede_valor_pedido, a.codificacao_automatica, a.prefixo, a.sequencial, a.sufixo
               from cl_parametro a
              where a.cliente = p_cliente;                         
       End If;

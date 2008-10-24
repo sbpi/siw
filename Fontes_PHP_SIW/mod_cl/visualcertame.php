@@ -16,6 +16,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_sigla          = f($RS,'sigla');
   $l_sg_tramite     = f($RS,'sg_tramite');
   $w_tramite_ativo  = f($RS,'ativo');
+  $w_certame        = f($RS,'certame');
 
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
@@ -92,8 +93,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
         $l_html.=chr(13).'        <td>'.f($RS,'processo').' </td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Número do certame: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'numero_certame').' </td></tr>';
+      if (f($RS,'certame')=='S') {
+        $l_html.=chr(13).'      <tr><td><b>Número do certame: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'numero_certame').' </td></tr>';
+      }
       if(nvl(f($RS,'numero_ata'),'')!='') {
         $l_html.=chr(13).'      <tr><td><b>Número da ata: </b></td>';
         $l_html.=chr(13).'        <td>'.f($RS,'numero_ata').' </td></tr>';
@@ -116,10 +119,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td><b>Especificação de despesa: </b></td>';
         $l_html.=chr(13).'        <td>'.f($RS,'cd_espec_despesa').' - '.f($RS,'nm_espec_despesa').' </td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_lcjulgamento').' </td></tr>';
+      if (f($RS,'certame')=='S') {
+        $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td>';
+        $l_html.=chr(13).'        <td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
+      }
       $l_html.=chr(13).'      <tr><td><b>Situação: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_lcsituacao').' </td></tr>';
+      $l_html.=chr(13).'        <td>'.nvl(f($RS,'nm_lcsituacao'),'---').' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Mínimo de dias de validade das propostas: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'dias_validade_proposta').' </td></tr>';
     }

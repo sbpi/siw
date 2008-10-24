@@ -5787,8 +5787,12 @@ function Grava() {
             $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
             $w_sg_tramite = f($RS,'sigla');
             if($w_sg_tramite=='CI') {
+			  global $P4;
+			  $w_p4 = $P4;
+			  $P4 = 1;
               $w_html = VisualProjeto($_REQUEST['w_chave'],'T',$w_usuario,'WORD');
               CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
+  			  $P4 = $w_p4;
             }
           }
           // Envia e-mail comunicando a tramitação

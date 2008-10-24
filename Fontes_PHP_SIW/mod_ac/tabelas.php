@@ -767,16 +767,16 @@ function Parametros() {
   ShowHTML('      <table width="100%" border="0">');
   ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><font size="1"><b>Parâmetros</td></td></tr>');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Parâmetros</td></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-  //ShowHTML '      <tr><td><font size=1>Falta definir a explicação.</font></td></tr>'
+  //ShowHTML '      <tr><td><font size=1>Falta definir a explicação.</td></tr>'
   //ShowHTML '      <tr><td align=''center'' height=''1'' bgcolor=''#000000''></td></tr>'
   ShowHTML('      </table>');
   ShowHTML('      <table width="100%" border="0">');
-  ShowHTML('      <tr><td><font size="1"><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
+  ShowHTML('      <tr><td><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
   ShowHTML('      <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
-  ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
-  ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+  ShowHTML('      <tr><td><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
+  ShowHTML('          <td><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
   ShowHTML('      </table>');
   ShowHTML('      <tr>');
   MontaRadioNS('<b>Numeração automática?</b>',$w_numeracao,'w_numeracao');
@@ -809,12 +809,18 @@ function Modalidades() {
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
   if ($w_troca > '' && $O!='E') {   
-    $w_nome                 = $_REQUEST['w_nome'];
-    $w_sigla                = $_REQUEST['w_sigla'];
-    $w_descricao            = $_REQUEST['w_descricao'];
-    $w_fundamentacao        = $_REQUEST['w_fundamentacao'];
-    $w_ativo                = $_REQUEST['w_ativo'];
-    $w_padrao               = $_REQUEST['w_padrao'];
+    $w_nome                   = $_REQUEST['w_nome'];
+    $w_sigla                  = $_REQUEST['w_sigla'];
+    $w_descricao              = $_REQUEST['w_descricao'];
+    $w_fundamentacao          = $_REQUEST['w_fundamentacao'];
+    $w_ativo                  = $_REQUEST['w_ativo'];
+    $w_padrao                 = $_REQUEST['w_padrao'];
+    $w_minimo_pesquisas       = $_REQUEST['w_minimo_pesquisas'];
+    $w_minimo_participantes   = $_REQUEST['w_minimo_participantes'];
+    $w_propostas_validas      = $_REQUEST['w_propostas_validas'];
+    $w_certame                = $_REQUEST['certame'];
+    $w_enquadramento_inicial  = $_REQUEST['enquadramento_inicial'];
+    $w_enquadramento_final    = $_REQUEST['enquadramento_final'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $RS = db_getLCModalidade::getInstanceOf($dbms, null, $w_cliente, null, null, null, null);
@@ -822,30 +828,43 @@ function Modalidades() {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1]);
     } else {
-      $RS = SortArray($RS,'nome','asc'); 
+      $RS = SortArray($RS,'certame','asc', 'enquadramento_inicial', 'asc', 'nome', 'asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
     //Recupera os dados do endereço informado
     $RS = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {
-      $w_nome                 = f($row,'nome');
-      $w_sigla                = f($row,'sigla');
-      $w_descricao            = f($row,'descricao');
-      $w_fundamentacao        = f($row,'fundamentacao');
-      $w_ativo                = f($row,'ativo');
-      $w_padrao               = f($row,'padrao');
+      $w_nome                   = f($row,'nome');
+      $w_sigla                  = f($row,'sigla');
+      $w_descricao              = f($row,'descricao');
+      $w_fundamentacao          = f($row,'fundamentacao');
+      $w_ativo                  = f($row,'ativo');
+      $w_padrao                 = f($row,'padrao');
+      $w_minimo_pesquisas       = f($row,'minimo_pesquisas');
+      $w_certame                = f($row,'certame');
+      $w_minimo_participantes   = f($row,'minimo_participantes');
+      $w_propostas_validas      = f($row,'minimo_propostas_validas');
+      $w_enquadramento_inicial  = formatNumber(f($row,'enquadramento_inicial'));
+      $w_enquadramento_final    = formatNumber(f($row,'enquadramento_final'));
     }
   }
   Cabecalho();
   ShowHTML( '<HEAD>' );
   If  (!(strpos('IAEP',$O)===false)) {
     ScriptOpen( 'JavaScript');
+    FormataValor();
     ValidateOpen( 'Validacao');
      if (!(strpos('IA',$O)===false)) {    
         Validate('w_nome','Nome','1','1','2','80','1','1');
         Validate('w_sigla','Sigla','1','1','2','3','1','1');
         Validate('w_descricao','Descrição', '1', '', '5', '1000', '1', '1');
         Validate('w_fundamentacao','Fundamentação', '1', '', '5', '250', '1', '1');
+        Validate('w_minimo_pesquisas','Mínimo de pesquisas','1','1','1','4','','0123456789');
+        Validate('w_minimo_participantes','Mínimo de participantes','1','1','1','4','','0123456789');
+        Validate('w_propostas_validas','Mínimo de propostas válidas','1','1','1','4','','0123456789');
+        Validate('w_enquadramento_inicial','Equadramento inicial','VALOR','1','4','18','','0123456789.,');
+        Validate('w_enquadramento_final','Enquadramento final','VALOR','1','4','18','','0123456789.,');
+        CompValor('w_enquadramento_inicial','Equadramento inicial','<=','w_enquadramento_final','Equadramento final');
         Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
      } elseif ($O=='E') {
         Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
@@ -869,36 +888,52 @@ function Modalidades() {
   } else {
     BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   If ($O=='L') {
     //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Sigla</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td rowspan="2"><b>Sigla</td>');
+    ShowHTML('          <td rowspan="2"><b>Nome</td>');
+    ShowHTML('          <td rowspan="2"><b>Min. pesquisas</td>');
+    ShowHTML('          <td colspan="3"><b>Certame</td>');
+    ShowHTML('          <td colspan="2"><b>Enquadramento</td>');
+    ShowHTML('          <td rowspan="2"><b>Ativo</td>');
+    ShowHTML('          <td rowspan="2"><b>Padrão</td>');
+    ShowHTML('          <td rowspan="2"><b>Operações</td>');
+    ShowHTML('        </tr>');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>Permite</td>');
+    ShowHTML('          <td><b>Mín. particip.</td>');
+    ShowHTML('          <td><b>Mín. prop. válidas</td>');
+    ShowHTML('          <td><b>De</td>');
+    ShowHTML('          <td><b>Até</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'sigla').'</td>');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'minimo_pesquisas').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_certame').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'minimo_participantes').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'minimo_propostas_validas').'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'enquadramento_inicial')).'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'enquadramento_final')).'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -918,15 +953,25 @@ function Modalidades() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('           <td><font size="1"><b><u>S</u>igla:</b><br><input '.$w_Disabled.'accesskey="S" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_sigla.'"></td>');
-    ShowHTML('        <tr><td colspan=2><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
-    ShowHTML('        <tr><td colspan=2><font size="1"><b><u>F</u>undamentação:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_fundamentacao" class="sti" ROWS="3" COLS="75">'.$w_fundamentacao.'</textarea></td>');
+    ShowHTML('           <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('           <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.'accesskey="S" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('        <tr><td colspan=2><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="d" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=2><b><u>F</u>undamentação:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_fundamentacao" class="sti" ROWS="3" COLS="75">'.$w_fundamentacao.'</textarea></td>');
+
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('           <td><b>Mínimo de pes<u>q</u>uisas:</b><br><input '.$w_Disabled.'accesskey="q" type="text" name="w_minimo_pesquisas" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_minimo_pesquisas.'"></td>');
+    MontaRadioSN( '<b>Exige certame?</b>', $w_certame , 'w_certame');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('           <td><b>Mínimo de <u>p</u>articipantes:</b><br><input '.$w_Disabled.' accesskey="p" type="text" name="w_minimo_participantes" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_minimo_participantes.'"></td>');    
+    ShowHTML('           <td><b>Mínimo de propostas <u>v</u>álidas:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_propostas_validas" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_propostas_validas.'"></td>');  
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('           <td><b>Enquadramento <u>i</u>nicial:</b><br><input '.$w_Disabled.' accesskey="i" type="text" name="w_enquadramento_inicial" class="sti" SIZE="18" MAXLENGTH="18" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"  VALUE="'.nvl($w_enquadramento_inicial,'0,00').'"></td>');  
+    ShowHTML('           <td><b>Enquadramento <u>f</u>inal:</b><br><input '.$w_Disabled.' accesskey="f" type="text" name="w_enquadramento_final" class="sti" SIZE="18" MAXLENGTH="18" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"  VALUE="'.nvl($w_enquadramento_final,'0,00').'"></td>');  
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
        ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1022,38 +1067,38 @@ function FonteRecurso() {
   } else {
     BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   If ($O=='L') {
     //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Código</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Orcamentário</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('          <td><b>Código</td>');
+    ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>Orcamentário</td>');
+    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
     // Se não foram selecionados registros, exibe mensagem
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'codigo').'</td>');
-        ShowHTML('        <td><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_padrao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_orcamentario').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="center">'.f($row,'codigo').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_padrao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_orcamentario').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('        </td>');
@@ -1075,13 +1120,13 @@ function FonteRecurso() {
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0>');
     ShowHTML('        <tr><td colspan=3><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.'accesskey="C" type="text" name="w_codigo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_codigo.'"></td>');
     ShowHTML('        <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
     ShowHTML('        <tr valign="top">');
     MontaRadioSN( '<b>Fonte Orçamentaria?</b>', $w_orcamentario, 'w_orcamentario');
     MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
     MontaRadioNS( '<b>Padrão?</b>',$w_padrao, 'w_padrao');
     ShowHTML('           </table>');
-    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
        ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
@@ -1523,7 +1568,7 @@ function PrestacaoContas() {
     ShowHTML('      <tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('        Orientação:<ul>');
     ShowHTML('        <li>Os números entre parênteses indicam a quantidade de projetos que já têm esse modelo de prestação de contas associado.');
-    ShowHTML('        </ul></b></font></td>');
+    ShowHTML('        </ul></b></td>');
     ShowHTML('      <tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('      <tr><td height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td><b>');
@@ -1657,8 +1702,8 @@ function PrestacaoContas() {
     } 
   } elseif (strpos('CIAEDT',$O)!==false) {
     if ($O == 'C' || $O=='I' || $O=='A') {
-      //ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de recurso a outro que já tenha recursos vinculados.</ul></b></font></td>');
-      if ($O=='C') ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b></font>.</td>');
+      //ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Não é permitido subordinar um tipo de recurso a outro que já tenha recursos vinculados.</ul></b></td>');
+      if ($O=='C') ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: Dados importados de outro registro. Altere os dados necessários antes de executar a inclusão.</b>.</td>');
     } 
     if ($O != 'C' && $O!='I' && $O!='A') $w_Disabled='disabled';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
@@ -1838,7 +1883,9 @@ function Grava() {
         }  
         dml_putLCModalidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
            $_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],
-           $_REQUEST['w_fundamentacao'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);       
+           $_REQUEST['w_fundamentacao'],$_REQUEST['w_ativo'],$_REQUEST['w_minimo_pesquisas'],
+           $_REQUEST['w_minimo_participantes'],$_REQUEST['w_propostas_validas'],
+           $_REQUEST['w_certame'],$_REQUEST['w_enquadramento_inicial'],$_REQUEST['w_enquadramento_final'],$_REQUEST['w_padrao']);       
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();        

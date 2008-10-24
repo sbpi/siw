@@ -19,7 +19,6 @@ create or replace procedure SP_PutSolicConc
    w_solic         siw_solicitacao%rowtype;
    w_pedido        cl_solicitacao%rowtype;
    w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
-   w_codigo        siw_solicitacao.codigo_interno%type;
    
    cursor c_vencedor is
        select x.*
@@ -157,7 +156,7 @@ begin
                     p_objetivo          => null,
                     p_sqcc              => w_solic.sq_cc,
                     p_solic_pai         => w_solic.sq_solic_pai,
-                    p_justificativa     => w_solic.justificativa,
+                    p_justificativa     => w_solic.codigo_interno||': '||w_solic.justificativa,
                     p_observacao        => w_solic.observacao,
                     p_inicio            => w_solic.inicio,
                     p_fim               => w_solic.fim,
@@ -173,6 +172,7 @@ begin
                     p_arp               => w_pedido.arp,
                     p_interno           => w_pedido.interno,
                     p_especie_documento => w_pedido.sq_especie_documento,
+                    p_observacao_log    => 'Geração automática. Origem: '||w_solic.codigo_interno,
                     p_chave_nova        => w_chave_nova);
      
       -- Recupera os dados da licitação criada

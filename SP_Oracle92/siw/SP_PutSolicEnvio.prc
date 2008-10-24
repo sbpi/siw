@@ -19,6 +19,9 @@ create or replace procedure SP_PutSolicEnvio
    w_menu          siw_menu%rowtype;
    w_cont          number(4);
    w_solic         siw_solicitacao%rowtype;
+   w_solic_cl      cl_solicitacao%rowtype;
+   w_sq_modal      lc_modalidade.sq_lcmodalidade%type;
+   w_min_pesq      lc_modalidade.minimo_pesquisas%type;
 
 begin
    -- Recupera os dados do serviço
@@ -36,18 +39,42 @@ begin
          select * into w_solic from siw_solicitacao where sq_siw_solicitacao = p_chave;
 
          -- Decide a tramitação em função do valor do pedido
-         If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' and w_or_tramite = 3 and w_solic.valor > 5000 Then
+         If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
+            -- Regra da ABDI: 
+            --   após chefia imediata, pedidos de compra até 5mil vão para GERAF, acima de 15mil vão para DIREX, outros vão para presidente ou diretor
+            --   após trâmite intermediario, vai para GERAF concluir.
+            If w_or_tramite = 3 Then
+               If w_solic.valor > 15000 Then
+                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                     from siw_tramite a
+                    where a.sq_menu = p_menu
+                      and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
+               Elsif w_solic.valor <= 5000 Then
+                  select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                     from siw_tramite a
+                    where a.sq_menu = p_menu
+                      and a.sigla   = 'EE';
+               End If;
+            Elsif w_or_tramite in (4,5) Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.sigla   = 'EE';
+            End If;
+         Elsif w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLLC' and w_sg_tramite = 'PP' Then
+            -- Regra da ABDI: 
+            --   Se a modalidade estiver indicada e não exigir pesquisas de preço, pula para o próximo trâmite
+            select count(*) into w_cont
+              from cl_solicitacao           a
+                   inner join lc_modalidade b on (a.sq_lcmodalidade = b.sq_lcmodalidade)
+             where a.sq_siw_solicitacao = p_chave
+               and b.minimo_pesquisas   = 0;
             
-            If w_solic.valor > 5000 and w_solic.valor <= 15000 Then
+            If w_cont > 0 Then
                select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                   from siw_tramite a
                  where a.sq_menu = p_menu
                    and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
-            Else
-               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
-                  from siw_tramite a
-                 where a.sq_menu = p_menu
-                   and a.ordem   = (select ordem+2 from siw_tramite where sq_siw_tramite = w_tramite);
             End If;
          Elsif w_sg_tramite = 'PP' and substr(w_menu.sigla,1,4)='CLRP' Then
             -- Se o trâmite for de pesquisa de preços de pedido de ARP e tiver o número necessário de pesquisas, pula para o próximo.

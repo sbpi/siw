@@ -133,6 +133,7 @@ function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
   // Abre o arquivo de log
   $l_arq = @fopen($l_arquivo, 'w');
   $l_html = str_replace("display:none","",$l_html);
+  $l_html = str_replace("mais.jpg","menos.jpg",$l_html);
   fwrite($l_arq,'<HTML>');
   fwrite($l_arq,'<HEAD>');
   fwrite($l_arq,'<TITLE>Visualização de '.$l_nome.'</TITLE>');
@@ -2133,7 +2134,7 @@ function ExibeAssunto($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pa/tabelas.php?par=TELAASSUNTO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaAssunto\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados deste recurso!">'.$p_nome.'</A>';
+    $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_pa/tabelas.php?par=TELAASSUNTO&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaAssunto\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;">'.$p_nome.'</A>';
   }
   return $l_string;
 }

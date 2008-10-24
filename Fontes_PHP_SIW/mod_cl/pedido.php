@@ -349,48 +349,23 @@ function Inicial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
-      ShowHTML('          <td colspan=2><b>Solicitante</td>');
-      if ($P1==1 || $P1==2) {
-        // Se for cadastramento ou mesa de trabalho
-        ShowHTML('          <td colspan=2><b>Datas</td>');
-      } else {
-        ShowHTML('          <td colspan=2><b>Execução</td>');
-        if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Valor','valor').'</td>');
-        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
-      } 
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Judicial','decisao_judicial').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Valor estimado','valor').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</td>');
-      ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Setor','nm_unidade_solic').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Inclusão','inicio').'</td>');
-      ShowHTML('          <td><b>'.LinkOrdena('Limite','fim').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>'.LinkOrdena('$ Estimado','valor').'</td>');
+      if ($P1!=1) ShowHTML('          <td><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
       ShowHTML('        </tr>');
       
     } else {
-      ShowHTML('          <td rowspan=2><b>Código</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinculação</td>');
-      ShowHTML('          <td rowspan=2><b>Solicitante</td>');
-      ShowHTML('          <td rowspan=2><b>Setor solicitante</td>');
-      if ($P1==1 || $P1==2) {
-        // Se for cadastramento ou mesa de trabalho
-        ShowHTML('          <td colspan=2><b>Execução</td>');
-      } else {
-        ShowHTML('          <td colspan=2><b>Execução</td>');
-        if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Valor</td>');
-        ShowHTML('          <td rowspan=2><b>Fase atual</td>');
-      } 
-      ShowHTML('          <td rowspan=2><b>Judicial</td>');
-      ShowHTML('          <td rowspan=2><b>Valor estimado</td>');
+      ShowHTML('          <td><b>Código</td>');
+      ShowHTML('          <td><b>Justificativa</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>Vinculação</td>');
+      ShowHTML('          <td><b>Solicitante</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>$ Estimado</td>');
+      if ($P1!=1) ShowHTML('          <td><b>Fase atual</td>');
       ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>De</td>');
-      ShowHTML('          <td><b>Até</td>');
-      ShowHTML('        </tr>');    
     }
     if (count($RS)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -400,25 +375,21 @@ function Inicial() {
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap>');
+        ShowHTML('        <td width="1%" nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+        ShowHTML('        <td>'.htmlspecialchars(f($row,'justificativa')).'</td>');
         if ($_SESSION['INTERNO']=='S') {
            if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
           else                                 ShowHTML('        <td>---</td>');
         } 
-        ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
-        ShowHTML('        <td>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'</td>');
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>');
-        if ($P1!=1 && $P1!=2) {
-          if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right">'.formatNumber(f($row,'valor'),4).'&nbsp;</td>');
-          $w_parcial += f($row,'valor');
-          ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
-        } 
-        ShowHTML('        <td align="center" nowrap>'.RetornaSimNao(f($row,'decisao_judicial')).'</td>');
-        ShowHTML('        <td align="right" nowrap>'.formatNumber(f($row,'valor')).'</td>');
-        ShowHTML('        <td align="top" nowrap>');
+        //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+        //ShowHTML('        <td width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
+        if ($_SESSION['INTERNO']=='S') ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'valor'),2).'&nbsp;</td>');
+        $w_parcial += f($row,'valor');
+        if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
+        ShowHTML('        <td width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
           // Se não for acompanhamento
           if ($w_copia>'') {
@@ -438,9 +409,7 @@ function Inicial() {
             ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Anexos&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Anexos'.'&SG='.substr($SG,0,4).'ANEXO').'\',\'Anexos\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Vincula arquivos ao pedido de compra.">Anexos</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do pedido">EN</A>&nbsp');
           } elseif ($P1==2) {
-            if (f($row,'sg_tramite')=='EE') {
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
-            } 
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
             if (f($row,'sg_tramite')=='EE') {
               ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Autorizar compra.">AT</A>&nbsp');
@@ -2222,7 +2191,8 @@ function Grava() {
           explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
           $_REQUEST['w_solic_pai'],$_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),
           $_REQUEST['w_fim'],$_REQUEST['w_valor'],$_REQUEST['w_codigo'],$_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
-          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',$_REQUEST['w_especie_documento'],&$w_chave_nova,$_REQUEST['w_copia']);
+          $_REQUEST['w_cidade'],$_REQUEST['w_decisao_judicial'],$_REQUEST['w_numero_original'],$_REQUEST['w_data_recebimento'],'N','N',
+          $_REQUEST['w_especie_documento'],null,&$w_chave_nova,$_REQUEST['w_copia']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

@@ -17,6 +17,12 @@ class db_getLCModalidade {
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,        60),
                    'p_sigla'                     =>array(tvl($p_sigla),                                    B_VARCHAR,        3),
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1),
+/*
+                   'p_minimo_pesquisas'          =>array(tvl($p_minimo_pesquisas),                         B_INTEGER,         32),
+                   'p_minimo_participantes'      =>array(tvl($p_minimo_participantes),                     B_INTEGER,         32),
+                   'p_minimo_propostas_validas'  =>array(tvl($p_minimo_propostas_validas),                 B_INTEGER,         32),
+                   'p_certame'                   =>array(tvl($p_certame),                                  B_VARCHAR,         1),
+*/
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        15),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

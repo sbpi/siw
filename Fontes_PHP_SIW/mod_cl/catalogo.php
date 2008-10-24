@@ -239,7 +239,7 @@ function Inicial() {
       ValidateOpen('Validacao');
       if (strpos('CIA',$O)!==false) {
         Validate('w_nome','Nome','1','1','3','110','1','1');
-        Validate('w_codigo_interno','Código interno','1','1','2','30','1','1');
+        if (f($RS_Parametro,'codificacao_automatica')=='N') Validate('w_codigo_interno','Código interno','1','1','2','30','1','1');
         Validate('w_tipo_material','Tipo do material ou serviço','SELECT','1','1','18','','1');
         Validate('w_unidade_medida','Unidade de alocação','SELECT','1','1','18','','1');
         Validate('w_descricao','Descricao','','',1,130,'1','1');
@@ -391,7 +391,12 @@ function Inicial() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="80" MAXLENGTH="110" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_interno" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');
+    if (f($RS_Parametro,'codificacao_automatica')=='N') {
+      ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_interno" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');
+    } else {
+      if ($O=='I') ShowHTML('          <td><b><u>C</u>ódigo:</b><br>Geração automática</td>');
+      else         ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input READONLY type="text" name="w_codigo_automatico" class="stih" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');         
+    }
     ShowHTML('      <tr valign="top">');
     selecaoTipoMatServ('T<U>i</U>po:','I',null,$w_tipo_material,null,'w_tipo_material','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_unidade_medida\'; document.Form.submit();"');
     selecaoUnidadeMedida('Unidade de f<U>o</U>rnecimento:','O','Selecione a unidade de fornecimento do material ou serviço',$w_unidade_medida,null,'w_unidade_medida','REGISTROS','S');
