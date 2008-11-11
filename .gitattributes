@@ -3759,6 +3759,7 @@ SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
 SP_Oracle92/siw/VerificaDataMovel.fnc -text
+SP_Oracle92/siw/\].prc -text
 SP_Oracle92/siw/ac_acordo.tab -text
 SP_Oracle92/siw/ac_acordo_log.tab -text
 SP_Oracle92/siw/ac_acordo_log_arq.tab -text
@@ -3990,6 +3991,7 @@ SP_Oracle92/siw/sp_getSolicObjetivo.prc -text
 SP_Oracle92/siw/sp_getSolicRecursos.prc -text
 SP_Oracle92/siw/sp_getSolicRestricao.prc -text
 SP_Oracle92/siw/sp_getSolicSR.prc -text
+SP_Oracle92/siw/sp_getSolic_Vinculo.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
 SP_Oracle92/siw/sp_getTipoMatServ.prc -text
@@ -4269,6 +4271,7 @@ SP_Oracle92/siw/sp_putSolicIndicador.prc -text
 SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
 SP_Oracle92/siw/sp_putSolicRecurso.prc -text
 SP_Oracle92/siw/sp_putSolicRestricao.prc -text
+SP_Oracle92/siw/sp_putSolic_Vinculo.prc -text
 SP_Oracle92/siw/sp_putTipoIndicador.prc -text
 SP_Oracle92/siw/sp_putTipoInteressado.prc -text
 SP_Oracle92/siw/sp_putTipoMatServ.prc -text
