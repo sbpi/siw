@@ -3759,7 +3759,6 @@ SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
 SP_Oracle92/siw/VerificaDataMovel.fnc -text
-SP_Oracle92/siw/\].prc -text
 SP_Oracle92/siw/ac_acordo.tab -text
 SP_Oracle92/siw/ac_acordo_log.tab -text
 SP_Oracle92/siw/ac_acordo_log_arq.tab -text
