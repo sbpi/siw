@@ -1049,7 +1049,7 @@ function prefixo() {
       Validate('w_localidade','Localidade','1','1','5','25','1','1');
       Validate('w_sigla','sigla','1','','4','4','1','1');
       Validate('w_uf','uf','1','','2','2','1','1');
-      Validate('w_ddd','ddd','1','','3','4','1','1');
+      Validate('w_ddd','ddd','1','','2','4','1','1');
       Validate('w_controle','controle','1','','12','16','1','1');
       Validate('w_degrau','degrau','1','','3','3','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');

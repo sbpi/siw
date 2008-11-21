@@ -552,7 +552,9 @@ function FormataValor() {
 		}
 
 	   $(campo).bind("keyup", function(e){
-			$(campo).val( mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
+	   var sinal = "";
+	   if(campo.value.indexOf('-') != -1) sinal = "-"; 
+			$(campo).val( sinal + mascaraGlobal('[###.]###' + decimal ,$(campo).val()) );
 		});        
     }
 <?php

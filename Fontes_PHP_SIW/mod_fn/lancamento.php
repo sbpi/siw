@@ -1146,7 +1146,7 @@ function OutraParte() {
     } else {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
-    Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
+    Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
     Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
     Validate('w_nr_fax','Fax','1','',7,25,'1','1');
     Validate('w_nr_celular','Celular','1','',7,25,'1','1');
@@ -2011,7 +2011,7 @@ function Itens() {
     foreach ($RS as $row) {$RS=$row; break;}
     $w_sq_projeto_rubrica   = f($RS,'sq_projeto_rubrica');
     $w_descricao            = f($RS,'descricao');
-    $w_quantidade           = formatNumber(f($RS,'quantidade'));
+    $w_quantidade           = f($RS,'quantidade');
     $w_valor_unitario       = number_format(f($RS,'valor_unitario'),2,',','.');
     $w_ordem                = f($RS,'ordem');
     $w_data_cotacao         = formataDataEdicao(f($RS,'data_cotacao'));
@@ -2034,12 +2034,12 @@ function Itens() {
       }
       Validate('w_descricao','Descrição', '1', '1', '1', '500', '1', '1');
       Validate('w_ordem','Ordem','1','1','1','18','','1');
-      Validate('w_quantidade','Quantidade','1','1','1','18','','1');
-      Validate('w_valor_unitario','Valor unitário do item', 'VALOR', '1', 4, 18, '', '0123456789.,');
+      Validate('w_quantidade','Quantidade','1','1','1','18','','0123456789');
       if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
         Validate('w_data_cotacao','Data da cotação', 'DATA', '1', 10, 10, '', '0123456789/');
         Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 4, 18, '', '0123456789.,');
       }
+      Validate('w_valor_unitario','Valor unitário do item', 'VALOR', '1', 4, 18, '', '0123456789.,-');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -2122,7 +2122,7 @@ function Itens() {
            if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('        <td align="left">'.nvl(f($row,'codigo_rubrica'),'---').'</td>');
         }
         ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
-        ShowHTML('        <td align="right">'.number_format(f($row,'quantidade'),2,',','.').'</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
         if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_cotacao')).'</td>');
           ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_cotacao')).'&nbsp;&nbsp;</td>');
@@ -2166,9 +2166,9 @@ function Itens() {
     }
     ShowHTML('      <tr><td colspan=5><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' '.$w_readonly.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Escreva um texto de descrição para este item do documento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>O</u>rdem:<br><input accesskey="Q" type="text" name="w_ordem" class="STI" SIZE="4" MAXLENGTH="18" VALUE="'.$w_ordem.'" '.$w_Disabled.' '.$w_readonly.'></td>');
-    ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.''.$w_readonly.' style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+    ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.''.$w_readonly.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
     if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
-      ShowHTML('          <td><b>Da<u>t</u>a da cotação:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_cotacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_cotacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+      ShowHTML('          <td><b>Da<u>t</u>a da cotação:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_cotacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_data_cotacao,formataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('          <td><b><u>V</u>alor cotação:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_cotacao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_cotacao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe a cotação da moeda na data de conversão."></td>');
       ShowHTML('<INPUT type="hidden" name="w_sq_projeto_rubrica" value="'.$w_sq_projeto_rubrica.'">');
     }
@@ -3026,7 +3026,7 @@ function Concluir() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif ($w_erro=='' || substr(Nvl($w_erro,'-'),0,1)!='0') {
+  } elseif ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
     BodyOpen('onLoad=\'document.Form.Botao.focus()\';');
   } else {
     BodyOpen('onLoad=\'document.focus()\';');

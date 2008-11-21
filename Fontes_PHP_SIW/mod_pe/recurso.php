@@ -121,8 +121,9 @@ exit;
 // =========================================================================
 // Rotina de dados gerais
 // -------------------------------------------------------------------------
-function Inicial() {
+function Inicial	() {
   extract($GLOBALS);
+
   Global $w_Disabled;
   $w_chave              = $_REQUEST['w_chave'];
   $w_copia              = $_REQUEST['w_copia'];

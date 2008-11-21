@@ -2845,8 +2845,8 @@ function AtualizaEtapa() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2><b>Etapa</td>');
-    ShowHTML('          <td rowspan=2><b>Título</td>');
+    ShowHTML('          <td rowspan=2><b>Etapa</td>'); 
+    ShowHTML('          <td rowspan=2><b>'.colapsar($w_chave).'Título</td>');
     ShowHTML('          <td rowspan=2><b>Responsável</td>');
     ShowHTML('          <td colspan=2><b>Execução Prevista</td>');
     ShowHTML('          <td colspan=2><b>Execução Real</td>');

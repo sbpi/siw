@@ -883,7 +883,7 @@ function Telefones() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_ddd','DDD','1','1','3','4','','0123456789');
+      Validate('w_ddd','DDD','1','1','2','4','','0123456789');
       Validate('w_numero','Número','1','1','1','25','','0123456789-');
       Validate('w_sq_tipo_telefone','Tipo','SELECT','1','1','10','','1');
       Validate('w_pais','Pais','SELECT','','1','10','','1');

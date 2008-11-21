@@ -1519,7 +1519,7 @@ function PesquisaPreco() {
       Validate('["w_embalagem[]"][ind]','Embalagem','1','',2,20,'1','1');
       ShowHTML('    }');
       ShowHTML('  }');
-      Validate('w_ddd','DDD','1','',3,4,'','0123456789');
+      Validate('w_ddd','DDD','1','',2,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');
       Validate('w_nr_celular','Celular','1','',7,25,'1','1');

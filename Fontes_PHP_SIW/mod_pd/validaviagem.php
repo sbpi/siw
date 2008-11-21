@@ -69,27 +69,34 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   //-----------------------------------------------------------------------------
 
   // Verifica se foi indicado o proposto e se seus dados estão completos
-      // Verifica se foi indicado o proposto
-      if ($l_existe_rs1==0) {
-        $l_erro .= '<li>O proposto não foi informado';
-        $l_tipo  = 0;
-      } else {
-        // Verifica se o proposto tem os dados bancários cadastrados
-        if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='') {
-          $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do proposto e clique no botão "Gravar"';
-          $l_tipo  = 0;
-        } 
-      } 
-
-      // Verifica se foram cadastrados pelo menos 2 deslocamentos
-      if ($l_existe_rs3<2) {
-        $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';
-        $l_tipo  = 0;
-      } 
-
-      if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
-        $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
-        $l_tipo = 2;
+      if (Nvl(f($l_rs_tramite,'ordem'),'---')=='1') {
+          // Verifica se foi indicado o proposto
+          if ($l_existe_rs1==0) {
+            $l_erro .= '<li>O proposto não foi informado';
+            $l_tipo  = 0;
+          } else {
+            // Verifica se o proposto tem os dados bancários cadastrados
+            if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='') {
+              $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do proposto e clique no botão "Gravar"';
+              $l_tipo  = 0;
+            } 
+          } 
+    
+          // Verifica se foram cadastrados pelo menos 2 deslocamentos
+          if ($l_existe_rs3<2) {
+            $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';
+            $l_tipo  = 0;
+          } 
+    
+          if (f($l_rs_solic,'fim_semana')=='S' and nvl(f($l_rs_solic,'justificativa_dia_util'),'')=='') {
+            $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
+            $l_tipo = 2;
+          }
+          
+          if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
+            $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
+            $l_tipo = 2;
+          }
       } 
 /**
 *       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
@@ -107,17 +114,23 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
         } 
         
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {
-          $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
-          foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
-          if (f($l_rs5,'existe')==0) {
-            $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam iguais a zero.';
-            $l_tipo  = 0;
+        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {
+          if (f($RS_Solic,'hospedagem')=='S') {
+            $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
+            foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
+            if (f($l_rs5,'existe')==0) {
+              $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam iguais a zero.';
+              $l_tipo  = 0;
+            }
           } 
-        } elseif (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {
-          if ((Nvl(f($l_rs_solic,'pta'),'')=='' && Nvl(f($l_rs_solic,'valor_passagem'),0)==0)) {
-            $l_erro .= '<li>É obrigatório informar os dados das passagens.';
-            $l_tipo  = 0;
+
+          if (f($RS_Solic,'passagem')=='S') {
+            $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null);
+            foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
+            if (f($l_rs5,'existe')==0) {
+              $l_erro .= '<li>É obrigatório informar as bilhetes.';
+              $l_tipo  = 0;
+            }
           } 
         } 
         $l_erro = $l_erro;

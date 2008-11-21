@@ -896,6 +896,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRubrica.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicSR.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicViagem.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolic_Vinculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateData.php -text
 Fontes_PHP_SIW/classes/sp/db_getStateList.php -text
 Fontes_PHP_SIW/classes/sp/db_getStoredProcedure.php -text
@@ -1051,6 +1052,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCoPesEnd.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesTel.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCodigoExterno.php -text
 Fontes_PHP_SIW/classes/sp/dml_putColuna.php -text
+Fontes_PHP_SIW/classes/sp/dml_putConfPD.php -text
 Fontes_PHP_SIW/classes/sp/dml_putContasCronograma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putContasRegistro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConvDadosBacario.php -text
@@ -1219,6 +1221,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicRecAlocacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolic_Vinculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure[!!-~].php -text
 Fontes_PHP_SIW/classes/sp/dml_putStoredProcedure.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTTCentral.php -text
@@ -2031,6 +2034,7 @@ Fontes_PHP_SIW/mod_ac/visualconvenio.php -text
 Fontes_PHP_SIW/mod_cl/arp.php -text
 Fontes_PHP_SIW/mod_cl/catalogo.php -text
 Fontes_PHP_SIW/mod_cl/certame.php -text
+Fontes_PHP_SIW/mod_cl/gr_pedido.php -text
 Fontes_PHP_SIW/mod_cl/pedido.php -text
 Fontes_PHP_SIW/mod_cl/relatorios.php -text
 Fontes_PHP_SIW/mod_cl/tabelas.php -text

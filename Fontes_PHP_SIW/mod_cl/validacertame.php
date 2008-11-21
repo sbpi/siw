@@ -56,7 +56,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
       $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOC');
       if(count($l_rs_pesquisa)>0) {
         foreach($l_rs_pesquisa as $row) {
-          if (f($row,'qtd')<2) {
+          if (f($row,'qtd')<f($l_rs_solic,'minimo_pesquisas')) {
             $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') '.((f($row,'qtd')>0) ? 'só tem '.f($row,'qtd').' pesquisa(s) de preço válida(s).' : 'não tem pesquisa de preço válida.');
             $l_tipo  = 0;
           }
@@ -90,7 +90,6 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
   // para ser usada com a tag <UL>.
   //-----------------------------------------------------------------------------------
-
   return $l_erro;
 }
 ?>

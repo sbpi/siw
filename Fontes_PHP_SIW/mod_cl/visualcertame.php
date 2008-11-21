@@ -91,7 +91,11 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td>'.f($RS,'nm_lcmodalidade').' </td></tr>';
       if(nvl(f($RS,'processo'),'')!='') {
         $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'processo').' </td></tr>';
+        if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
+          $l_html.=chr(13).'        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+        } else {
+          $l_html.=chr(13).'        <td>'.f($RS,'processo');
+        }
       }
       if (f($RS,'certame')=='S') {
         $l_html.=chr(13).'      <tr><td><b>Número do certame: </b></td>';

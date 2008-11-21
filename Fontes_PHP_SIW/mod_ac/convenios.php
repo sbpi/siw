@@ -1468,7 +1468,7 @@ function OutraParte() {
     } else {
       Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
     } 
-    Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
+    Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
     Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
     Validate('w_nr_fax','Fax','1','',7,25,'1','1');
     Validate('w_nr_celular','Celular','1','',7,25,'1','1');
@@ -1866,7 +1866,7 @@ function Representante() {
       Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');      
       Validate('w_rg_emissao','Data de emissão','DATA',1,10,10,'','0123456789/');
       ShowHTML('  }');
-      Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
+      Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
       Validate('w_nr_fax','Fax','1','',7,25,'1','1');
       Validate('w_nr_celular','Celular','1','',7,25,'1','1');

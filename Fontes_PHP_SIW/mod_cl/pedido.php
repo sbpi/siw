@@ -547,7 +547,8 @@ function Geral() {
 
   // Verifica se o cliente tem o módulo de planejamento estratégico
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
-  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+  if (count($RS)>0) $w_pe='S'; else $w_pe='N';
+  $w_pe = 'N'; // Trava para evitar exibição dos dados do módulo de planejamento estratégico. 
 
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -675,7 +676,7 @@ function Geral() {
     if(nvl(f($RS_Menu,'numeracao_automatica'),0)==0) {
       Validate('w_codigo','Código interno','','1',1,60,'1','1');
     }
-    // Trata as possíveis vinculações do projeto
+    // Trata as possíveis vinculações da solicitação
     if($w_pe=='S') {
       if(nvl($w_plano,'')!='') {
         Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
@@ -691,23 +692,33 @@ function Geral() {
       ShowHTML('      return false;');
       ShowHTML('    }');
       ShowHTML('  }');
-    }
-    if(nvl($w_sq_menu_relac,'')!='') {
-      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-      if ($w_sq_menu_relac=='CLASSIF') {
-        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-      } else {
-        Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+
+      if(nvl($w_sq_menu_relac,'')!='') {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
       }
-    }
-    if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
-      ShowHTML('    theForm.w_plano.focus();');
-      ShowHTML('    return false;');
-    } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
-      ShowHTML('    theForm.w_plano.focus();');
-      ShowHTML('    return false;');    
+      if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
+        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+        ShowHTML('    theForm.w_plano.focus();');
+        ShowHTML('    return false;');
+      } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
+        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+        ShowHTML('    theForm.w_plano.focus();');
+        ShowHTML('    return false;');    
+      }
+    } else {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if(nvl($w_sq_menu_relac,'')!='') {
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
+      }
     }
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     Validate('w_fim','Limite para atendimento','DATA',1,10,10,'','0123456789/');

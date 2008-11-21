@@ -52,6 +52,7 @@ include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
+include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
@@ -197,6 +198,15 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
 $RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row;}
 
+// Verifica se o cliente tem o módulo de planejamento estratégico
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+$w_pe = 'N'; // Trava para evitar exibição dos dados do módulo de planejamento estratégico. 
+
+// Verifica se o cliente tem o módulo de protocolo e arquivo
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_pa='S'; else $w_pa='N'; 
+
 Main();
 
 FechaSessao($dbms);
@@ -271,9 +281,9 @@ function Inicial() {
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     } else {
-      $RS = SortArray($RS,'ordem','asc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,'inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     }
   }
   if ($w_tipo=='WORD') {
@@ -583,11 +593,6 @@ function Geral() {
     } 
   }
 
-  // Verifica se o cliente tem o módulo de planejamento estratégico
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
-  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
-
-
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'' && $O!='E') {
@@ -698,7 +703,7 @@ function Geral() {
     if(nvl(f($RS_Menu,'numeracao_automatica'),0)==0) {
       Validate('w_codigo','Código interno','','1',1,60,'1','1');
     }
-    // Trata as possíveis vinculações do projeto
+    // Trata as possíveis vinculações da solicitação
     if($w_pe=='S') {
       if(nvl($w_plano,'')!='') {
         Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
@@ -714,23 +719,33 @@ function Geral() {
       ShowHTML('      return false;');
       ShowHTML('    }');
       ShowHTML('  }');
-    }
-    if(nvl($w_sq_menu_relac,'')!='') {
-      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-      if ($w_sq_menu_relac=='CLASSIF') {
-        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-      } else {
-        Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+
+      if(nvl($w_sq_menu_relac,'')!='') {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
       }
-    }
-    if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
-      ShowHTML('    theForm.w_plano.focus();');
-      ShowHTML('    return false;');
-    } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
-      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
-      ShowHTML('    theForm.w_plano.focus();');
-      ShowHTML('    return false;');    
+      if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
+        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+        ShowHTML('    theForm.w_plano.focus();');
+        ShowHTML('    return false;');
+      } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
+        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+        ShowHTML('    theForm.w_plano.focus();');
+        ShowHTML('    return false;');    
+      }
+    } else {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if(nvl($w_sq_menu_relac,'')!='') {
+        if ($w_sq_menu_relac=='CLASSIF') {
+          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+        } else {
+          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+        }
+      }
     }
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     Validate('w_fim','Limite para atendimento','DATA',1,10,10,'','0123456789/');
@@ -1755,14 +1770,14 @@ function PesquisaPreco() {
     $w_sq_pais              = $_REQUEST['w_sq_pais'];
     $w_pd_pais              = $_REQUEST['w_pd_pais'];    
     $marca                  = $_REQUEST['marca'];
-    $w_chave_aux            = explodeArray($_REQUEST['w_chave_aux[]']);
-    $w_inicio               = explodeArray($_REQUEST['w_inicio[]']);
-    $w_dias                 = explodeArray($_REQUEST['w_dias[]']);
-    $w_valor                = explodeArray($_REQUEST['w_valor[]']);
-    $w_fabricante           = explodeArray($_REQUEST['w_fabricante[]']);
-    $w_marca_modelo         = explodeArray($_REQUEST['w_marca_modelo[]']);
-    $w_embalagem            = explodeArray($_REQUEST['w_embalagem[]']);
-    $w_fator                = explodeArray($_REQUEST['w_fator[]']);
+    $w_chave_aux            = $_REQUEST['w_chave_aux'];
+    $w_inicio               = $_REQUEST['w_inicio'];
+    $w_dias                 = $_REQUEST['w_dias'];
+    $w_valor                = $_REQUEST['w_valor'];
+    $w_fabricante           = $_REQUEST['w_fabricante'];
+    $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
+    $w_embalagem            = $_REQUEST['w_embalagem'];
+    $w_fator                = $_REQUEST['w_fator'];
   } elseif ($O=='A' || $w_sq_pessoa>'' || $O=='I') {
     // Recupera os dados do fornecedor em co_pessoa
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl($w_sq_pessoa,0),null,$w_cpf,$w_cnpj,null,null,null,null,null,null,null,null,null);
@@ -1939,7 +1954,7 @@ function PesquisaPreco() {
         Validate('w_inscricao_estadual','Inscrição estadual','1','',2,20,'1','1');
       }
       if ($w_pesquisa=='S') {
-        Validate('w_ddd','DDD','1','',3,4,'','0123456789');
+        Validate('w_ddd','DDD','1','',2,4,'','0123456789');
         Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
         Validate('w_nr_fax','Fax','1','',7,25,'1','1');
         Validate('w_nr_celular','Celular','1','',7,25,'1','1');
@@ -1955,7 +1970,7 @@ function PesquisaPreco() {
           Validate('w_cep','CEP','1','',5,9,'','0123456789');
         }
       } else {
-        Validate('w_ddd','DDD','1','1',3,4,'','0123456789');
+        Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
         Validate('w_nr_telefone','Telefone','1','1',7,25,'1','1');
         Validate('w_nr_fax','Fax','1','',7,25,'1','1');
         Validate('w_nr_celular','Celular','1','',7,25,'1','1');
@@ -2025,7 +2040,6 @@ function PesquisaPreco() {
       }
       ShowHTML('    }');
       ShowHTML('  }');
-      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;'); 
     }
@@ -2057,7 +2071,7 @@ function PesquisaPreco() {
   ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
   ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_solic')).'</td>');
   ShowHTML('            <td>Setor solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_resp'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
-  ShowHTML('            <td>Julgamento:<b><br>'.f($RS_Solic,'nm_lcjulgamento').'</td>');
+  if (nvl(f($RS_Solic,'nm_lcjulgamento'),'nulo')!='nulo') ShowHTML('            <td>Julgamento:<b><br>'.f($RS_Solic,'nm_lcjulgamento').'</td>');
   ShowHTML('      </table>');
   ShowHTML('    </TABLE>');
   ShowHTML('</table>');
@@ -2349,7 +2363,6 @@ function PesquisaPreco() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -2448,8 +2461,8 @@ function DadosPrevios() {
   $w_chave          = $_REQUEST['w_chave'];
   $w_readonly       = '';
   $w_erro           = '';
-  
-    // Carrega o segmento do cliente
+
+  // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   $w_segmento    = f($RS,'segmento');
   $w_cliente_arp = f($RS,'ata_registro_preco');
@@ -2483,6 +2496,8 @@ function DadosPrevios() {
     $w_chave_aux          = $_REQUEST['w_chave_aux'];
     $w_ordem              = $_REQUEST['w_ordem'];
     $w_dias_item          = $_REQUEST['w_dias_item'];
+    $w_protocolo          = $_REQUEST['w_protocolo'];
+    $w_protocolo_nm       = $_REQUEST['w_protocolo_nm'];
   } else {
     $w_sq_lcmodalidade    = f($RS_Solic,'sq_lcmodalidade');
     $w_numero_processo    = f($RS_Solic,'processo');
@@ -2501,6 +2516,8 @@ function DadosPrevios() {
     $w_arp                = f($RS_Solic,'arp');
     $w_dias               = f($RS_Solic,'dias_validade_proposta');
     $w_dias_ant           = f($RS_Solic,'dias_validade_proposta');
+    $w_protocolo          = f($RS_Solic,'processo');
+    $w_protocolo_nm       = f($RS_Solic,'processo');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -2510,7 +2527,9 @@ function DadosPrevios() {
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
-  if($w_segmento=='Público') {
+  if ($w_pa=='S') {
+    Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+  } elseif($w_segmento=='Público') {
     Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
   }
   ValidateClose();
@@ -2552,7 +2571,9 @@ function DadosPrevios() {
   ShowHTML('  </ul></b></font></td>');
   ShowHTML('<tr valign="top">');
   SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
-  if($w_segmento=='Público') {
+  if ($w_pa=='S') {
+    SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+  } elseif($w_segmento=='Público') {
     ShowHTML('          <td><b>N<u>ú</u>mero do processo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
   }
   ShowHTML('      <tr><td align="center" colspan=3><hr>');
@@ -2618,6 +2639,8 @@ function DadosAnalise() {
     $w_chave_aux          = $_REQUEST['w_chave_aux'];
     $w_ordem              = $_REQUEST['w_ordem'];
     $w_dias_item          = $_REQUEST['w_dias_item'];
+    $w_protocolo          = $_REQUEST['w_protocolo'];
+    $w_protocolo_nm       = $_REQUEST['w_protocolo_nm'];
   } else {
     $w_sq_lcmodalidade    = f($RS_Solic,'sq_lcmodalidade');
     $w_numero_processo    = f($RS_Solic,'processo');
@@ -2636,6 +2659,8 @@ function DadosAnalise() {
     $w_arp                = f($RS_Solic,'arp');
     $w_dias               = f($RS_Solic,'dias_validade_proposta');
     $w_dias_ant           = f($RS_Solic,'dias_validade_proposta');
+    $w_protocolo          = f($RS_Solic,'processo');
+    $w_protocolo_nm       = f($RS_Solic,'processo');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -2657,7 +2682,9 @@ function DadosAnalise() {
   ShowHTML('}');
   ValidateOpen('Validacao');
   Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
-  if($w_segmento=='Público') {
+  if ($w_pa=='S') {
+    Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+  } elseif($w_segmento=='Público') {
     Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
   }
   if (f($RS_Solic,'certame')=='S') Validate('w_numero_certame','Número do certame','1','1',1,30,'1','1');
@@ -2727,7 +2754,9 @@ function DadosAnalise() {
   ShowHTML('    <table width="100%" border="0">');
   ShowHTML('<tr valign="top">');
   SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
-  if($w_segmento=='Público') {
+  if ($w_pa=='S') {
+    SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+  } elseif($w_segmento=='Público') {
     ShowHTML('          <td><b>N<u>ú</u>mero do processo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
   }
   if (f($RS_Solic,'certame')=='S') ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
@@ -3235,13 +3264,17 @@ function Concluir() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
-  //Recupera os dados da solicitacao de passagens e diárias
+  //Recupera os dados da solicitação
   $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,
           null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $w_tramite = f($RS,'sq_siw_tramite');
+
+  // Recupera os itens da solicitação
+  $RS_Itens = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
+  
   $w_erro = ValidaCertame($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -3257,9 +3290,26 @@ function Concluir() {
   SaltaCampo();
   ValidateOpen('Validacao');
   if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    Validate('w_homologacao','Data de homologação','DATA',1,10,10,'','0123456789/');
-    Validate('w_data_diario','Data de publicação no diário oficial','DATA',1,10,10,'','0123456789/');
-    Validate('w_pagina_diario','Página do diário oficial','1','1',1,4,'','1');
+    Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
+    Validate('w_data_diario','Data de publicação no diário oficial','DATA','',10,10,'','0123456789/');
+    Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
+    Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
+    ShowHTML('  var i; ');
+    ShowHTML('  var j; ');
+    ShowHTML('  var w_erro=true; ');
+    ShowHTML('  for (i=1; i <= '.count($RS_Itens).'; i++) {');
+    ShowHTML('    if (theForm["w_vencedor["+i+"]"].length!=undefined) {');
+    ShowHTML('       for (j=0; j < theForm["w_vencedor["+i+"]"].length; j++) {');
+    ShowHTML('         if (theForm["w_vencedor["+i+"]"][j].checked) w_erro=false;');
+    ShowHTML('       }');
+    ShowHTML('    } else {');
+    ShowHTML('       if (theForm["w_vencedor["+i+"]"].checked) w_erro=false;');
+    ShowHTML('    }');
+    ShowHTML('  }');
+    ShowHTML('  if (w_erro) {');
+    ShowHTML('    alert(\'Você deve indicar o vencedor de cada um dos itens!\'); ');
+    ShowHTML('    return false;');
+    ShowHTML('  }');  
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -3300,6 +3350,50 @@ function Concluir() {
     ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
     ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
     ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
+    ShowHTML('    <tr><td colspan="3"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+    ShowHTML('<tr><td colspan="3" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:');
+    ShowHTML('  <li>Indique abaixo o vencedor para cada item.');
+    ShowHTML('  </b></font></td>');
+    ShowHTML('<tr><td colspan=3><b>Ordenação dos itens da licitação:</b><br>');
+    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
+    $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
+    ShowHTML('<tr><td colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
+    ShowHTML('          <td><b>Ordem</td>');
+    ShowHTML('          <td><b>Item</td>');
+    ShowHTML('          <td><b>Qtd.</td>');
+    ShowHTML('          <td><b>Fornecedor</td>');
+    ShowHTML('          <td><b>Validade</td>');
+    ShowHTML('          <td><b>$ Unitário</td>');
+    ShowHTML('          <td><b>Vencedor</td>');
+    ShowHTML('        </tr>');
+    // Lista os registros selecionados para listagem
+    $w_atual    = 0;
+    $i          = 0;
+    $w_exibe    = false;
+    $w_item_lic = 0;
+    $w_cor      = $conTrAlternateBgColor;
+    foreach($RS1 as $row) { 
+      if ($w_atual!=f($row,'sq_material')) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>');
+        ShowHTML('        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
+        ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>');
+        $w_atual      = f($row,'sq_material');
+        $i += 1;
+      } else {
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+      }
+      ShowHTML('        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>');
+      ShowHTML('        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>');
+      ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_unidade'),4).'</td>');
+      ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="'.f($row,'chave').'">');
+      ShowHTML('        <td align="center" nowrap><INPUT class="str" type="radio" name="w_vencedor['.$i.']" value="'.f($row,'sq_item_fornecedor').'"></td>');
+    } 
+    ShowHTML('      </table>');
     ShowHTML('    <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=3><hr>');
     ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
@@ -3841,13 +3935,13 @@ function Grava() {
       dml_putCLDados::getInstanceOf($dbms,'DADOS',$_REQUEST['w_chave'],$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
         $_REQUEST['w_numero_certame'],$_REQUEST['w_numero_ata'],$_REQUEST['w_tipo_reajuste'],$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
         nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_sq_espec_despesa'],$_REQUEST['w_sq_lcjulgamento'],
-        $_REQUEST['w_sq_lcsituacao'],$_REQUEST['w_financeiro_unico'],null,null,null,null,$_REQUEST['w_dias'],null);
+        $_REQUEST['w_sq_lcsituacao'],$_REQUEST['w_financeiro_unico'],null,null,null,null,$_REQUEST['w_dias'],null,$_REQUEST['w_protocolo']);
       
       // Atualiza a ordem dos itens da solicitação
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
           dml_putCLDados::getInstanceOf($dbms,'ORDENACAO',$_REQUEST['w_chave_aux'][$i],null,null,
-            null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i],null,$_REQUEST['w_dias_item'][$i]);
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_ordem'][$i],null,$_REQUEST['w_dias_item'][$i],null);
         } 
       }
       $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,'COMPRA');
@@ -3855,7 +3949,7 @@ function Grava() {
       $w_cont = 1;
       foreach($RS as $row) {
         dml_putCLDados::getInstanceOf($dbms,'ORDENACAO',f($row,'chave'),null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_cont,null,null);
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_cont,null,null,null);
         $w_cont+=1;
       
       }
@@ -3874,7 +3968,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putCLDados::getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],$_REQUEST['w_sq_lcmodalidade'],$_REQUEST['w_numero_processo'],
-        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
@@ -3891,7 +3985,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putCLDados::getInstanceOf($dbms,'SITUACAO',$_REQUEST['w_chave'],null,null,
-        null,null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null,null,null);
+        null,null,null,null,null,null,null,null,null,$_REQUEST['w_sq_lcsituacao'],null,null,null,null,null,null,null,null);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -4074,10 +4168,9 @@ function Grava() {
     case 'CLLCCONC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,
-                null,null,null,null,null,null,null,null,null,null,
-                $_REQUEST['w_chave'],null,null,null,null,null,null,
-                null,null,null,null,null,null,null,null,null,null,null);
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,
+                null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+                null,null,null);
         foreach($RS as $row){$RS=$row; break;}
         if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
           ScriptOpen('JavaScript');
@@ -4085,10 +4178,20 @@ function Grava() {
           ScriptClose();
           exit();
         } else {
-          dml_putCLDados::getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,
-              null,null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],$_REQUEST['w_pagina_diario'],null,null,null);
-          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
-              null,null,null,null);
+          dml_putCLDados::getInstanceOf($dbms,'CONCLUSAO',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
+              null,null,null,null,null,null,$_REQUEST['w_homologacao'],$_REQUEST['w_data_diario'],
+              $_REQUEST['w_pagina_diario'],null,null,null,null);
+          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
+              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null);
+
+          // Registra o vencedor de cada item
+          for ($i=0; $i<=count($_POST['w_vencedor'])-1; $i=$i+1) {
+            if (Nvl($_REQUEST['w_vencedor'][$i],'')>'') {
+              dml_putCLDados::getInstanceOf($dbms,'VENCEDOR',$_REQUEST['w_vencedor'][$i],null,null,
+                null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+            } 
+          }
+
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');
