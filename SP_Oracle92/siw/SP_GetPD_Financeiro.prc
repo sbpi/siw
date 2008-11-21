@@ -21,7 +21,9 @@ begin
              case a.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
              case a.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
              case a.seguro     when 'S' then 'Sim' else 'Não' end as nm_seguro,
-             case a.bilhete    when 'S' then 'Sim' else 'Não' end as nm_bilhete
+             case a.bilhete    when 'S' then 'Sim' else 'Não' end as nm_bilhete,
+             e.codigo as cd_rubrica, e.nome as nm_rubrica, e.ativo as at_rubrica,
+             f.nome   as nm_lancamento, f.descricao as ds_lancamento, f.ativo as at_lancamento
         from pd_vinculo_financeiro             a
              inner     join siw_solicitacao    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner   join siw_menu           c on (b.sq_menu            = c.sq_menu)
@@ -45,14 +47,13 @@ begin
              sq_tipo_lancamento as sq_lancamento, nm_lancamento, 
              sg_moeda, nm_moeda, sb_moeda, 
              sum(valor) as valor
-        from (select 'BIL' as tp_despesa, b.valor_trecho as valor,
+        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_deslocamento       b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_financeiro    = c.sq_pdvinculo_financeiro)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_bilhete      = c.sq_pdvinculo_financeiro)
                          inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
                          inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
                      co_moeda                             d1
@@ -106,13 +107,12 @@ begin
       -- Recupera a previsão orçamentária da viagem
       open p_result for
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'BIL' as tp_despesa, b.valor_trecho as valor,
+        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_deslocamento       b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_financeiro    = c.sq_pdvinculo_financeiro)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_bilhete      = c.sq_pdvinculo_financeiro)
                          inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
                      co_moeda                             d1
                where a.sq_siw_solicitacao = p_solic
@@ -159,13 +159,12 @@ begin
       -- Recupera a previsão financeira da viagem
       open p_result for
       select sq_tipo_lancamento as sq_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'BIL' as tp_despesa, b.valor_trecho as valor,
+        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_deslocamento       b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_financeiro    = c.sq_pdvinculo_financeiro)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_bilhete      = c.sq_pdvinculo_financeiro)
                          inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
                      co_moeda                             d1
                where a.sq_siw_solicitacao = p_solic

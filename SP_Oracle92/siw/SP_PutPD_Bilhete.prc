@@ -71,5 +71,12 @@ begin
       -- Remove o registro na tabela de deslocamentos
       delete pd_bilhete where sq_bilhete = w_chave_aux;
    End If;
+   
+   update pd_missao a
+      set a.valor_passagem = nvl((select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
+                                    from pd_bilhete x
+                                   where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                                 ),0)
+   where a.sq_siw_solicitacao = p_chave;
 end SP_PutPD_Bilhete;
 /

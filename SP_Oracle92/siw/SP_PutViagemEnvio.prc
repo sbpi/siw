@@ -74,7 +74,8 @@ create or replace procedure SP_PutViagemEnvio
          and (x3.sq_siw_solicitacao is null or (x3.sq_siw_solicitacao is not null and x3.sq_tipo_lancamento = z.sq_lancamento));
 
    cursor c_financeiro_item is
-      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sq_diaria, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
+      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
+             case tp_despesa when 'DIA' then 'Diárias' when 'HSP' then 'Hospedagem' else 'Locação de veículos' end as nm_despesa
         from (select 'DIA' as tp_despesa, b.sq_diaria, (b.quantidade*b.valor) as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
@@ -111,7 +112,7 @@ create or replace procedure SP_PutViagemEnvio
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_chave
              )
-      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_diaria, sg_moeda, nm_moeda, sb_moeda;
+      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
    
 begin
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
@@ -287,7 +288,7 @@ begin
                                p_chave              => w_sq_doc,
                                p_chave_aux          => null,
                                p_sq_projeto_rubrica => drec.sq_rubrica,
-                               p_descricao          => 'Pagamento de adiantamento de diárias: '||drec.sg_moeda||' '||fValor(drec.valor,'T'),
+                               p_descricao          => drec.nm_despesa||': '||drec.sg_moeda||' '||fValor(drec.valor,'T'),
                                p_quantidade         => 1,
                                p_valor_unitario     => drec.valor,
                                p_ordem              => i

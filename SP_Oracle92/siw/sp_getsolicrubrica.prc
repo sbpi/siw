@@ -42,7 +42,6 @@ begin
             and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira))
             and (p_inicio               is null or (p_inicio               is not null and c.sq_projeto_rubrica   is not null));
-             
    Elsif p_restricao = 'PDFINANC' Then
       open p_result for 
          select a.sq_projeto_rubrica, a.sq_cc, a.codigo, a.nome, a.descricao, a.ativo,

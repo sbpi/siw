@@ -660,6 +660,7 @@ begin
                 d1.informacoes,
                 d1.valor_passagem,    d1.passagem,                   d1.diaria,
                 d1.hospedagem,        d1.veiculo,                    d1.valor_previsto_bilhetes,
+                d1.sq_pdvinculo_bilhete,
                 case d1.passagem   when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 case d1.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospem,
                 case d1.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
@@ -669,6 +670,8 @@ begin
                 d4.sexo,              d4.cpf,
                 d22.sq_forma_pagamento, d22.nome as nm_forma_pagamento, d22.sigla as sg_forma_pagamento,
                 d23.nome as pais_estrang,
+                d51.codigo as cd_rubrica,    d51.nome as nm_rubrica,
+                d52.nome   as nm_lancamento, d52.descricao as ds_lancamento,
                 d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
                 d7.sq_banco,          d7.codigo cd_banco,            d7.nome nm_banco,
                 d7.exige_operacao,
@@ -685,7 +688,8 @@ begin
                 coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec,
                 soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
-                case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia
+                case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia,
+                case trunc(fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana
            from siw_menu                                               a
                   inner                join pd_parametro              a11 on (a.sq_pessoa                = a11.cliente)
                   inner                join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)
@@ -710,6 +714,9 @@ begin
                             left       join gp_contrato_colaborador    d8 on (d4.cliente                 = d8.cliente      and
                                                                               d4.sq_pessoa               = d8.sq_pessoa    and
                                                                               d8.fim                     is null)
+                        left           join pd_vinculo_financeiro      d5 on (d1.sq_pdvinculo_bilhete    = d5.sq_pdvinculo_financeiro)
+                          left         join pj_rubrica                d51 on (d5.sq_projeto_rubrica      = d51.sq_projeto_rubrica)
+                          left         join fn_tipo_lancamento        d52 on (d5.sq_tipo_lancamento      = d52.sq_tipo_lancamento)
                         left           join co_forma_pagamento        d22 on (d1.sq_forma_pagamento      = d22.sq_forma_pagamento)
                         left           join co_pais                   d23 on (d1.sq_pais_estrang         = d23.sq_pais)
                         left           join co_agencia                 d6 on (d1.sq_agencia              = d6.sq_agencia)

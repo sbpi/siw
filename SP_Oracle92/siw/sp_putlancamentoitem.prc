@@ -10,6 +10,8 @@ create or replace procedure SP_PutLancamentoItem
     p_data_cotacao        in date     default null,
     p_valor_cotacao       in number   default null
    ) is
+   
+   w_sigla siw_menu.sigla%type;
 begin
    If p_operacao = 'I' Then -- Inclusão
       insert into fn_documento_item
@@ -34,6 +36,25 @@ begin
        where sq_documento_item = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_documento_item = p_chave_aux;
+   End If;
+   
+   -- Se for pagamento de diária, acumula valores no documento e na solicitação
+   select c.sigla into w_sigla
+     from fn_lancamento_doc            a
+          inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+            inner join siw_menu        c on (b.sq_menu            = c.sq_menu)
+    where a.sq_lancamento_doc = p_chave;
+    
+   If w_sigla = 'FNDVIA' Then
+      -- Atualiza o documento
+      update fn_lancamento_doc a
+         set a.valor = coalesce((select sum(x.valor_total) from fn_documento_item x where x.sq_lancamento_doc = a.sq_lancamento_doc),0)
+      where sq_lancamento_doc = p_chave;
+
+      -- Atualiza a solicitação
+      update siw_solicitacao a
+         set a.valor = coalesce((select sum(x.valor) from fn_lancamento_doc x where x.sq_siw_solicitacao = a.sq_siw_solicitacao),0)
+      where sq_siw_solicitacao = (select sq_siw_solicitacao from fn_lancamento_doc where sq_lancamento_doc = p_chave);
    End If;
 end SP_PutLancamentoItem;
 /

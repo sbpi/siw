@@ -1651,6 +1651,7 @@ begin
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
           where a.sq_menu        = p_restricao
+            and 0                = (select count(*) from siw_solic_vinculo where sq_menu = p_restricao)
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
                  (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
@@ -1667,6 +1668,63 @@ begin
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 )
+         UNION
+         select b.sq_siw_solicitacao, b.codigo_interno,
+                case when d.sq_siw_solicitacao is not null 
+                     then b.titulo
+                     else case when e.sq_siw_solicitacao is not null
+                               then e.titulo
+                               else case when f.sq_siw_solicitacao is not null
+                                         then f1.titulo
+                                         else case when h.sq_siw_solicitacao is not null
+                                                   then b.codigo_interno
+                                                   else case when i.sq_siw_solicitacao is not null
+                                                             then i.sq_siw_solicitacao||' - '||
+                                                                  case when length(i.assunto) > 50
+                                                                       then substr(replace(i.assunto,chr(13)||chr(10),' '),1,50)||'...'
+                                                                       else replace(i.assunto,chr(13)||chr(10),' ')
+                                                                  end
+                                                             else null
+                                                        end
+                                              end
+                                    end
+                          end
+                end as titulo,
+                coalesce(g.existe,0) as qtd_projeto
+           from siw_menu                     a
+                inner join siw_modulo        a1 on (a.sq_modulo          = a1.sq_modulo)
+                inner join siw_menu_relac    a2 on (a.sq_menu            = a2.servico_cliente and
+                                                    a2.servico_cliente   = p_restricao
+                                                   )
+                inner join siw_solic_vinculo a3 on (a3.sq_menu           = a2.servico_cliente)
+                inner join siw_solicitacao   b  on (a3.sq_siw_solicitacao= b.sq_siw_solicitacao)
+                inner   join siw_menu        b2 on (b.sq_menu            = b2.sq_menu)
+                  inner join siw_modulo      b3 on (b2.sq_modulo         = b3.sq_modulo)
+                left    join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                left    join (select x.sq_siw_solicitacao, y.codigo_interno, x.vincula_demanda, 
+                                     x.vincula_projeto, x.vincula_viagem,
+                                     case when y.titulo is not null
+                                          then y.titulo
+                                          else w.nome_resumido||' - '||case when z.sq_cc is not null then z.nome else k1.titulo end||' ('||to_char(y.inicio,'dd/mm/yyyy')||'-'||to_char(y.fim,'dd/mm/yyyy')||')' end as titulo
+                                from ac_acordo                     x
+                                     left join     co_pessoa       w  on x.outra_parte         = w.sq_pessoa
+                                     join          siw_solicitacao y  on x.sq_siw_solicitacao  = y.sq_siw_solicitacao
+                                       left   join ct_cc           z  on y.sq_cc               = z.sq_cc
+                                       left   join pj_projeto      k  on y.sq_solic_pai        = k.sq_siw_solicitacao
+                                         left join siw_solicitacao k1 on (k.sq_siw_solicitacao = k1.sq_siw_solicitacao)
+                             )               e  on (b.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                left    join pe_programa     f  on (b.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                  left  join siw_solicitacao f1 on (f.sq_siw_solicitacao = f1.sq_siw_solicitacao)
+                left    join (select x1.sq_solic_pai, count(*) as existe
+                                 from siw_solicitacao            x1
+                                      inner join siw_menu        y1 on (x1.sq_menu = y1.sq_menu and
+                                                                        y1.sigla   = 'PJCAD')
+                               group by x1.sq_solic_pai
+                              )              g on (b.sq_siw_solicitacao = g.sq_solic_pai)
+                left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
+                left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
+          where a.sq_menu        = p_restricao
+            and b.sq_menu        = coalesce(p_menu, b.sq_menu)
          order by titulo;
    End If;
 end SP_GetSolicList;

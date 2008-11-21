@@ -19,20 +19,28 @@ create or replace procedure SP_PutCLDados
     p_pagina_diario_oficial in number   default null,
     p_ordem                 in varchar2 default null,
     p_dias                  in number   default null,
-    p_dias_item             in number   default null
+    p_dias_item             in number   default null,
+    p_protocolo             in varchar2 default null
    ) is
 begin
    If p_restricao = 'PROT' Then
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
-         processo                 = p_numero_processo
+         processo                 = coalesce(p_numero_processo,p_protocolo)
       Where sq_siw_solicitacao = p_chave;
+      
+      If p_protocolo is not null Then
+         -- Grava a chave do protocolo na solicitação
+         update siw_solicitacao a
+           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
+         where sq_siw_solicitacao = p_chave;
+      End If;
    ElsIf p_restricao = 'DADOS' Then
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
-         processo                 = p_numero_processo,
+         processo                 = coalesce(p_numero_processo,p_protocolo),
          numero_certame           = p_numero_certame,
          numero_ata               = p_numero_ata,
          tipo_reajuste            = p_tipo_reajuste,
@@ -46,6 +54,13 @@ begin
          financeiro_unico         = p_financeiro_unico,
          dias_validade_proposta   = p_dias
       Where sq_siw_solicitacao = p_chave;
+
+      If p_protocolo is not null Then
+         -- Grava a chave do protocolo na solicitação
+         update siw_solicitacao a
+           set a.protocolo_siw = (select sq_siw_solicitacao from pa_documento where p_protocolo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2))
+         where sq_siw_solicitacao = p_chave;
+      End If;
    ElsIf p_restricao = 'CONCLUSAO' Then
       -- Atualiza a tabela da licitação com os dados da conclusão
       Update cl_solicitacao set
@@ -64,6 +79,11 @@ begin
          ordem                  = p_ordem,
          dias_validade_proposta = nvl(p_dias_item,dias_validade_proposta)
       Where sq_solicitacao_item = p_chave;
+   ElsIf p_restricao = 'VENCEDOR' Then
+      -- Registra os vencedores da licitação
+      Update cl_item_fornecedor set
+         vencedor = 'S'
+      Where sq_item_fornecedor = p_chave;
    End If;
 end SP_PutCLDados;
 /

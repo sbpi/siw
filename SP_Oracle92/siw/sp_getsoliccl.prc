@@ -67,7 +67,8 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
- if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or substr(p_restricao,1,2) = 'GC' Then
+ if substr(p_restricao,1,4) = 'CLPC' or substr(p_restricao,1,4) = 'CLLC' or substr(p_restricao,1,4) = 'CLRP' or 
+    substr(p_restricao,1,2) = 'GC'   or substr(p_restricao,1,4) = 'GRCL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -92,6 +93,7 @@ begin
                 coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
+                b.protocolo_siw,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null

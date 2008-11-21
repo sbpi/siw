@@ -8,13 +8,14 @@ begin
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.sq_bilhete,
+                a.aeroporto_origem, a.aeroporto_destino,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
                 d.sq_cidade cidade_dest, d.co_uf uf_dest, d.sq_pais pais_dest,
                 case c.padrao 
                     when 'S' 
-                    then b.nome||'-'||b.co_uf 
+                    then b.nome||'-'||b.co_uf
                     else b.nome||' ('||c.nome||')'
                     end nm_origem,
                 case e.padrao 
@@ -37,6 +38,7 @@ begin
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo,
                 a.compromisso, a.sq_bilhete,
+                a.aeroporto_origem, a.aeroporto_destino,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
@@ -101,6 +103,7 @@ begin
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.passagem, a.sq_bilhete,
+                a.aeroporto_origem, a.aeroporto_destino,
                 case a.passagem when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 a.compromisso, case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
@@ -126,6 +129,7 @@ begin
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.passagem, a.sq_bilhete,
+                a.aeroporto_origem, a.aeroporto_destino,
                 case a.passagem when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 a.compromisso, case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
@@ -137,10 +141,7 @@ begin
                 f.nome as nm_cia_transporte,
                 g.sq_meio_transporte, g.nome as nm_meio_transporte,
                 h.sq_bilhete, h.data as dt_bilhete, h.numero as nr_bilhete,
-                h1.nome as nm_cia_bilhete,
-                m.sq_pdvinculo_financeiro,
-                m1.sq_projeto_rubrica, m1.codigo as cd_rubrica, m1.nome as nm_rubrica, m1.descricao as ds_rubrica,
-                m2.sq_tipo_lancamento, m2.nome as nm_tipo_lancamento
+                h1.nome as nm_cia_bilhete
            from pd_deslocamento                    a
                 inner   join co_cidade             b  on (a.origem                  = b.sq_cidade)
                   inner join co_pais               c  on (b.sq_pais                 = c.sq_pais)
@@ -150,9 +151,6 @@ begin
                left     join pd_meio_transporte    g  on (a.sq_meio_transporte      = g.sq_meio_transporte)
                left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete)
                  left   join pd_cia_transporte     h1 on (h.sq_cia_transporte       = h1.sq_cia_transporte)
-               left     join pd_vinculo_financeiro m  on (a.sq_pdvinculo_financeiro = m.sq_pdvinculo_financeiro)
-                 left   join pj_rubrica            m1 on (m.sq_projeto_rubrica      = m1.sq_projeto_rubrica)
-                 left   join fn_tipo_lancamento    m2 on (m.sq_tipo_lancamento      = m2.sq_tipo_lancamento)
           where a.sq_siw_solicitacao = p_chave
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    End If;         

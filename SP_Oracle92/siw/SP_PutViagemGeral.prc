@@ -29,6 +29,9 @@ create or replace procedure SP_PutViagemGeral
     p_hospedagem          in varchar2  default null,
     p_veiculo             in varchar2  default null,
     p_proponente          in varchar2  default null,
+    p_financeiro          in number    default null,
+    p_rubrica             in number    default null,
+    p_lancamento          in number    default null,
     p_chave_nova          out number,
     p_copia               in number   default null,
     p_codigo_interno      in out varchar2
@@ -36,16 +39,32 @@ create or replace procedure SP_PutViagemGeral
    w_ano        number(4);
    w_sequencial number(18)     := 0;
    w_existe     number(4);
-   w_arq        varchar2(4000) := ', ';
    w_chave      number(18)     := Nvl(p_chave,0);
    w_log_sol    number(18);
    w_log_esp    number(18);
-   w_cont       number(4);
    w_reg        PD_parametro%rowtype;
-   
+   w_financeiro number(18) := p_financeiro;
    w_pessoa     number(18) := null;
    
 begin
+   -- Verifica se precisa gravar o tipo de vínculo financeiro
+   If instr('IA','I')>0 and p_financeiro is null and p_lancamento is not null Then
+      -- Verifica se há um vínculo único para as opções enviadas
+      select count(*) into w_existe
+        from pd_vinculo_financeiro
+       where sq_projeto_rubrica = p_rubrica
+         and sq_tipo_lancamento = p_lancamento
+         and bilhete            = 'S';
+      -- Prepara variável para gravação se encontrou um, e apenas um registro.
+      If w_existe = 1 Then
+         select sq_pdvinculo_financeiro into w_financeiro
+           from pd_vinculo_financeiro
+          where sq_projeto_rubrica = p_rubrica
+            and sq_tipo_lancamento = p_lancamento
+            and bilhete            = 'S';
+      End If;
+   End If;
+   
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_siw_solicitacao.nextval into w_Chave from dual;
@@ -121,12 +140,12 @@ begin
       
       -- Insere registro em PD_MISSAO
       insert into pd_missao
-        (sq_siw_solicitacao, cliente,   sq_pessoa,                     tipo,   justificativa_dia_util,
-         passagem,           diaria,    hospedagem,                    veiculo
+        (sq_siw_solicitacao, cliente,   sq_pessoa,                     tipo,      justificativa_dia_util,
+         passagem,           diaria,    hospedagem,                    veiculo,   sq_pdvinculo_bilhete
         )
       values
-        (w_chave,            p_cliente, Nvl(w_pessoa, p_solicitante),  p_tipo, p_justif_dia_util,
-         p_passagem,         p_diaria,  p_hospedagem,                  p_veiculo
+        (w_chave,            p_cliente, Nvl(w_pessoa, p_solicitante),  p_tipo,    p_justif_dia_util,
+         p_passagem,         p_diaria,  p_hospedagem,                  p_veiculo, w_financeiro
         );
 
       -- Insere log da solicitação
@@ -190,7 +209,8 @@ begin
           passagem               = p_passagem,
           diaria                 = p_diaria,
           hospedagem             = p_hospedagem,
-          veiculo                = p_veiculo
+          veiculo                = p_veiculo,
+          sq_pdvinculo_bilhete   = w_financeiro
       where sq_siw_solicitacao = p_chave;
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação

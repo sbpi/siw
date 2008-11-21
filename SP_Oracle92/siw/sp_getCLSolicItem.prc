@@ -397,8 +397,9 @@ begin
            from siw_solicitacao                    a
                 inner     join cl_solicitacao_item b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                   inner   join cl_material         c on (b.sq_material         = c.sq_material)
-                    left  join cl_item_fornecedor  d on (c.sq_material         = d.sq_material and
-                                                         'S'                   = d.pesquisa
+                  left    join cl_item_fornecedor  d on (b.sq_solicitacao_item = d.sq_solicitacao_item and
+                                                         'S'                   = d.pesquisa and
+                                                         d.fim                 >= trunc(sysdate)
                                                         )
           where a.sq_siw_solicitacao = p_solicitacao
          group by b.sq_material, c.nome, c.codigo_interno;
@@ -436,7 +437,7 @@ begin
                 d.nome as nm_unidade_medida, d.sigla as sg_unidade_medida,
                 f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
-                g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
+                g.sq_item_fornecedor, g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
                 h.nome_resumido nm_fornecedor,
                 i.qtd_proposta,
                 nvl(b.pesquisa_preco_medio,0)*nvl(f.percentual_acrescimo,0)/100 as variacao_valor

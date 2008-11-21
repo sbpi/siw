@@ -14,7 +14,7 @@ begin
       w_rubrica := substr(p_restricao,11,10);
       w_tipo    := coalesce(substr(p_restricao,21,1),'T');
    End If;
-   -- Recupera os tipos de contrato do cliente
+   -- Recupera os tipos de lançamento financeiro do cliente
    open p_result for 
       select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.receita, a.despesa, a.ativo,
              case a.receita when 'S' Then 'Sim' Else 'Não' end as nm_receita,
