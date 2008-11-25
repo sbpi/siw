@@ -9,6 +9,7 @@ begin
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.sq_bilhete,
                 a.aeroporto_origem, a.aeroporto_destino,
+                trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
@@ -32,13 +33,15 @@ begin
                     inner    join   co_pais   e on (d.sq_pais            = e.sq_pais)
                   left outer join   pd_diaria f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao and
                                                     a.destino            = f.sq_cidade)
-          where a.sq_siw_solicitacao = p_chave;            
+          where a.sq_siw_solicitacao = p_chave
+            and a.tipo               = 'S';
    Elsif p_restricao = 'PDDIARIA' Then
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo,
                 a.compromisso, a.sq_bilhete,
                 a.aeroporto_origem, a.aeroporto_destino,
+                trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
                 case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
@@ -92,7 +95,8 @@ begin
                   left     join co_moeda              h1 on (h.sq_moeda                   = h1.sq_moeda)
                 inner      join pd_valor_diaria       i  on (i.sq_valor_diaria            = recuperaValorDiaria(a1.cliente,a.destino,'V',a1.diaria))
                   inner    join co_moeda              i1 on (i.sq_moeda                   = i1.sq_moeda)
-          where a.sq_siw_solicitacao = p_chave;            
+          where a.sq_siw_solicitacao = p_chave
+            and a.tipo               = 'S';
    Elsif p_restricao = 'DF' Then
       open p_result for
          select count(*) existe
@@ -106,6 +110,7 @@ begin
                 a.aeroporto_origem, a.aeroporto_destino,
                 case a.passagem when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 a.compromisso, case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
+                trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais as pais_orig,
@@ -122,6 +127,7 @@ begin
                left     join pd_cia_transporte  f on (a.sq_cia_transporte  = f.sq_cia_transporte)
                inner    join pd_meio_transporte g on (a.sq_meio_transporte = g.sq_meio_transporte)
           where a.sq_siw_solicitacao = p_chave
+            and a.tipo               = 'S'
             and a.passagem           = 'S'
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    Else
@@ -132,6 +138,7 @@ begin
                 a.aeroporto_origem, a.aeroporto_destino,
                 case a.passagem when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 a.compromisso, case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
+                trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
                 to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
                 to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais as pais_orig,
@@ -152,6 +159,7 @@ begin
                left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete)
                  left   join pd_cia_transporte     h1 on (h.sq_cia_transporte       = h1.sq_cia_transporte)
           where a.sq_siw_solicitacao = p_chave
+            and a.tipo               = 'S'
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    End If;         
 End SP_GetPD_Deslocamento;

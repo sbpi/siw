@@ -135,6 +135,33 @@ begin
             Then w_salto := 1;
             Else w_salto := 2;
          End If;
+      Elsif w_sg_tramite = 'EA' Then
+         -- ABDI: Se análise pela DIREX, decide o salto se o usuário for da presidência ou do gabinete
+         select (x.qtd + y.qtd) into w_existe
+           from (select count(*) as qtd
+                   from pd_missao                    a
+                        inner   join sg_autenticacao b on (a.sq_pessoa          = b.sq_pessoa)
+                          inner join eo_unidade      c on (b.sq_unidade         = c.sq_unidade)
+                        inner   join siw_solicitacao d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                          inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
+                  where a.sq_siw_solicitacao = p_chave
+                    and e.sq_pessoa          = 10135
+                    and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
+                ) x,
+                (select count(*) as qtd
+                   from siw_solicitacao              d
+                        inner   join sg_autenticacao b on (d.solicitante        = b.sq_pessoa)
+                          inner join eo_unidade      c on (b.sq_unidade         = c.sq_unidade)
+                          inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
+                  where d.sq_siw_solicitacao = p_chave
+                    and e.sq_pessoa          = 10135
+                    and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
+                ) y;
+        
+         If w_existe > 0 
+            Then w_salto := 1;
+            Else w_salto := 2;
+         End If;
       Else
          w_salto := 1;
       End If;
@@ -204,7 +231,7 @@ begin
    End If;
    
    If p_devolucao = 'N' Then
-      If w_sg_tramite = 'EE' Then
+      If w_sg_tramite = 'PC' Then
          -- Verifica necessidade de gerar financeiro para o adiantamento de diárias
          select count(*) into w_existe
            from siw_solicitacao     a

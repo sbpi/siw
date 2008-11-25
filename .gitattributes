@@ -3667,6 +3667,7 @@ SP_Oracle92/siw/CalculaIGE.fnc -text
 SP_Oracle92/siw/GeraCodigoInterno.prc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text
+SP_Oracle92/siw/MontaNomeAlmoxLocal.fnc -text
 SP_Oracle92/siw/MontaNomeMenu.fnc -text
 SP_Oracle92/siw/MontaNomePrestacaoContas.fnc -text
 SP_Oracle92/siw/MontaNomeTipoAcordo.fnc -text
