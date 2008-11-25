@@ -3690,6 +3690,7 @@ SP_Oracle92/siw/SP_GetGPContrato.prc -text
 SP_Oracle92/siw/SP_GetGPModalidade.prc -text
 SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_GetMtSituacao.prc -text
 SP_Oracle92/siw/SP_GetOpiniao.prc -text
 SP_Oracle92/siw/SP_GetPDParametro.prc -text
 SP_Oracle92/siw/SP_GetPD_Bilhete.prc -text
@@ -3722,6 +3723,7 @@ SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text
 SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_PutMtSituacao.prc -text
 SP_Oracle92/siw/SP_PutPAParametro.prc -text
 SP_Oracle92/siw/SP_PutPDParametro.prc -text
 SP_Oracle92/siw/SP_PutPDUnidade.prc -text
