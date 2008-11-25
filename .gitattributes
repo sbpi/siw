@@ -3711,7 +3711,6 @@ SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.prc -text
-SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.sql -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCategoriaDiaria.prc -text
