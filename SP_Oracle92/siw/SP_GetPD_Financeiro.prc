@@ -9,6 +9,7 @@ create or replace procedure SP_GetPD_Financeiro
     p_veiculo         in  varchar2 default null,
     p_seguro          in  varchar2 default null,
     p_bilhete         in  varchar2 default null,
+    p_reembolso       in  varchar2 default null,
     p_restricao       in  varchar2 default null,
     p_result          out sys_refcursor) is
 begin
@@ -16,12 +17,13 @@ begin
       -- Recupera os vínculos financeiros
       open p_result for
       select a.sq_pdvinculo_financeiro as chave, a.cliente, a.sq_siw_solicitacao, a.sq_projeto_rubrica, 
-             a.sq_tipo_lancamento, a.diaria, a.hospedagem, a.veiculo, a.seguro, a.bilhete,
+             a.sq_tipo_lancamento, a.diaria, a.hospedagem, a.veiculo, a.seguro, a.bilhete, a.reembolso,
              case a.diaria     when 'S' then 'Sim' else 'Não' end as nm_diaria,
              case a.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
              case a.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
              case a.seguro     when 'S' then 'Sim' else 'Não' end as nm_seguro,
              case a.bilhete    when 'S' then 'Sim' else 'Não' end as nm_bilhete,
+             case a.reembolso  when 'S' then 'Sim' else 'Não' end as nm_reembolso,
              e.codigo as cd_rubrica, e.nome as nm_rubrica, e.ativo as at_rubrica,
              f.nome   as nm_lancamento, f.descricao as ds_lancamento, f.ativo as at_lancamento
         from pd_vinculo_financeiro             a
@@ -39,7 +41,8 @@ begin
          and (p_hospedagem is null or (p_hospedagem is not null and a.hospedagem              = p_hospedagem))
          and (p_veiculo    is null or (p_veiculo    is not null and a.veiculo                 = p_veiculo))
          and (p_seguro     is null or (p_seguro     is not null and a.seguro                  = p_seguro))
-         and (p_bilhete    is null or (p_bilhete    is not null and a.bilhete                 = p_bilhete));
+         and (p_bilhete    is null or (p_bilhete    is not null and a.bilhete                 = p_bilhete))
+         and (p_reembolso  is null or (p_reembolso  is not null and a.reembolso               = p_reembolso));
    Elsif p_restricao = 'PREV_ORCFIN' Then
       -- Recupera a previsão orçamentária e financeira da viagem
       open p_result for
@@ -47,7 +50,20 @@ begin
              sq_tipo_lancamento as sq_lancamento, nm_lancamento, 
              sg_moeda, nm_moeda, sb_moeda, 
              sum(valor) as valor
-        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
+        from (select 'RMB' as tp_despesa, a1.reembolso_valor as valor,
+                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                     c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
+                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                         inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla = 'BRL'
+              UNION
+              select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
@@ -107,7 +123,18 @@ begin
       -- Recupera a previsão orçamentária da viagem
       open p_result for
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
+        from (select 'RMB' as tp_despesa, a1.reembolso_valor as valor,
+                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
+                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla = 'BRL'
+              UNION
+              select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -159,7 +186,18 @@ begin
       -- Recupera a previsão financeira da viagem
       open p_result for
       select sq_tipo_lancamento as sq_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'BIL' as tp_despesa, a1.valor_passagem as valor,
+        from (select 'RMB' as tp_despesa, a1.reembolso_valor as valor,
+                     c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
+                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                from siw_solicitacao                      a
+                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
+                         inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento),
+                     co_moeda                             d1
+               where a.sq_siw_solicitacao = p_solic
+                 and d1.sigla = 'BRL'
+              UNION
+              select 'BIL' as tp_despesa, a1.valor_passagem as valor,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a

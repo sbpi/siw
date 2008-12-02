@@ -16,6 +16,7 @@ create or replace function pd_retornatrechos(p_chave in number) return varchar2 
            inner   join co_cidade d on (a.destino = d.sq_cidade)
              inner join co_pais   e on (d.sq_pais = e.sq_pais)
      where a.sq_siw_solicitacao = p_chave
+       and a.tipo               = 'S'
     order by a.saida, a.chegada;
 begin
   -- Concatena em w_texto cada cidade encontrada

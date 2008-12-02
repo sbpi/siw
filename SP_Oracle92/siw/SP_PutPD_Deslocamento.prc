@@ -15,7 +15,8 @@ create or replace procedure SP_PutPD_Deslocamento
     p_valor_trecho        in number    default null,
     p_compromisso         in varchar2  default null,
     p_aero_orig           in varchar2  default null,
-    p_aero_dest           in varchar2  default null
+    p_aero_dest           in varchar2  default null,
+    p_tipo                in varchar2  default null
    ) is
    w_existe     varchar2(1);
 begin
@@ -26,14 +27,14 @@ begin
          saida,                   chegada, 
          passagem,                sq_meio_transporte, valor_trecho,   sq_cia_transporte,
          codigo_voo,              compromisso,
-         aeroporto_origem,        aeroporto_destino)
+         aeroporto_origem,        aeroporto_destino,  tipo)
       values
         (sq_deslocamento.nextval, p_chave,            p_origem,       p_destino, 
          to_date(to_char(p_data_saida,'dd/mm/yyyy')||', '||p_hora_saida,'dd/mm/yyyy, hh24:mi'), 
          to_date(to_char(p_data_chegada,'dd/mm/yyyy')||', '||p_hora_chegada,'dd/mm/yyyy, hh24:mi'),
          p_passagem,              p_meio_transp,      p_valor_trecho, p_sq_cia_transporte,
          p_codigo_voo,            p_compromisso,
-         p_aero_orig,             p_aero_dest
+         p_aero_orig,             p_aero_dest,        p_tipo
         );
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de deslocamentos
@@ -49,7 +50,8 @@ begin
           codigo_voo              = p_codigo_voo,
           compromisso             = p_compromisso,
           aeroporto_origem        = p_aero_orig,
-          aeroporto_destino       = p_aero_dest
+          aeroporto_destino       = p_aero_dest,
+          tipo                    = p_tipo
        where sq_deslocamento = p_chave_aux;
    Elsif p_operacao = 'P' Then
        update pd_deslocamento

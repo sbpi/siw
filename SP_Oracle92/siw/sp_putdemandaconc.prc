@@ -14,7 +14,15 @@ create or replace procedure SP_PutDemandaConc
    ) is
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+   w_solic         siw_solicitacao%rowtype;
+   w_menu          siw_menu%rowtype;
+   w_modulo        siw_modulo%rowtype;
 begin
+  -- Recupera os dados da solicitação, do menu e do módulo
+  select * into w_solic  from siw_solicitacao where sq_siw_solicitacao = p_chave;
+  select * into w_menu   from siw_menu        where sq_menu            = w_solic.sq_menu;
+  select * into w_modulo from siw_modulo      where sq_modulo          = w_menu.sq_modulo;
+  
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
    
@@ -27,14 +35,14 @@ begin
    Values
       (w_chave_dem,               p_chave,            p_pessoa,
        p_tramite,                 sysdate,            'N',
-       'Conclusão da demanda');
+       'Conclusão');
        
    -- Atualiza o registro da demanda com os dados da conclusão.
    Update gd_demanda set
-      inicio_real     = p_inicio_real,
-      fim_real        = p_fim_real,
-      nota_conclusao  = p_nota_conclusao,
-      custo_real      = p_custo_real,
+      inicio_real     = coalesce(p_inicio_real,inicio_real),
+      fim_real        = coalesce(p_fim_real,fim_real),
+      nota_conclusao  = coalesce(p_nota_conclusao,nota_conclusao),
+      custo_real      = coalesce(p_custo_real,custo_real),
       concluida       = 'S',
       data_conclusao  = sysdate
    Where sq_siw_solicitacao = p_chave;

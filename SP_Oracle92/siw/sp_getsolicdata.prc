@@ -657,27 +657,33 @@ begin
                 d1.endereco_estrang,  d1.banco_estrang,              d1.agencia_estrang,
                 d1.cidade_estrang,    d1.informacoes,                d1.codigo_deposito,
                 d1.numero_conta,      d1.operacao_conta,             d1.cidade_estrang,
-                d1.informacoes,
+                d1.informacoes,       d1.sq_pdvinculo_bilhete,       d1.sq_pdvinculo_reembolso,
                 d1.valor_passagem,    d1.passagem,                   d1.diaria,
                 d1.hospedagem,        d1.veiculo,                    d1.valor_previsto_bilhetes,
-                d1.sq_pdvinculo_bilhete,
-                case d1.passagem   when 'S' then 'Sim' else 'Não' end as nm_passagem,
-                case d1.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospem,
-                case d1.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
+                d1.cumprimento,       d1.sq_relatorio_viagem, 
+                d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
+                case d1.passagem    when 'S' then 'Sim' else 'Não' end as nm_passagem,
+                case d1.hospedagem  when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
+                case d1.veiculo     when 'S' then 'Sim' else 'Não' end as nm_veiculo,
+                case d1.reembolso   when 'S' then 'Sim' else 'Não' end as nm_reembolso,
+                case d1.cumprimento when 'I' then 'Integral' when 'P' then 'Parcial' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
                 coalesce(d21.ativo,'N') st_prop,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
                 d22.sq_forma_pagamento, d22.nome as nm_forma_pagamento, d22.sigla as sg_forma_pagamento,
                 d23.nome as pais_estrang,
-                d51.codigo as cd_rubrica,    d51.nome as nm_rubrica,
-                d52.nome   as nm_lancamento, d52.descricao as ds_lancamento,
+                d51.sq_projeto_rubrica, d51.codigo as cd_rubrica,    d51.nome as nm_rubrica,
+                d52.sq_tipo_lancamento, d52.nome   as nm_lancamento, d52.descricao as ds_lancamento,
+                db1.sq_projeto_rubrica as sq_rubrica_reemb,   db1.codigo as cd_rubrica_reemb,    db1.nome as nm_rubrica_reemb,
+                db2.sq_tipo_lancamento as sq_lancamento_reemb, db2.nome   as nm_lancamento_reemb, db2.descricao as ds_lancamento_reemb,
                 d6.sq_agencia,        d6.codigo cd_agencia,          d6.nome nm_agencia,
                 d7.sq_banco,          d7.codigo cd_banco,            d7.nome nm_banco,
                 d7.exige_operacao,
                 d8.sq_posto_trabalho, d8.sq_posto_trabalho,          d8.sq_modalidade_contrato,
                 d8.matricula,
                 d9.nome as nm_diaria,
+                da.nome_original as nm_arquivo, da.descricao as ds_arquivo,   da.caminho as cm_arquivo,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
@@ -717,11 +723,15 @@ begin
                         left           join pd_vinculo_financeiro      d5 on (d1.sq_pdvinculo_bilhete    = d5.sq_pdvinculo_financeiro)
                           left         join pj_rubrica                d51 on (d5.sq_projeto_rubrica      = d51.sq_projeto_rubrica)
                           left         join fn_tipo_lancamento        d52 on (d5.sq_tipo_lancamento      = d52.sq_tipo_lancamento)
+                        left           join pd_vinculo_financeiro      db on (d1.sq_pdvinculo_reembolso  = db.sq_pdvinculo_financeiro)
+                          left         join pj_rubrica                db1 on (db.sq_projeto_rubrica      = db1.sq_projeto_rubrica)
+                          left         join fn_tipo_lancamento        db2 on (db.sq_tipo_lancamento      = db2.sq_tipo_lancamento)
                         left           join co_forma_pagamento        d22 on (d1.sq_forma_pagamento      = d22.sq_forma_pagamento)
                         left           join co_pais                   d23 on (d1.sq_pais_estrang         = d23.sq_pais)
                         left           join co_agencia                 d6 on (d1.sq_agencia              = d6.sq_agencia)
                           left         join co_banco                   d7 on (d6.sq_banco                = d7.sq_banco)
                         left           join pd_categoria_diaria        d9 on (d1.diaria                  = d9.sq_categoria_diaria)
+                        left           join siw_arquivo                da on (d1.sq_relatorio_viagem     = da.sq_siw_arquivo)
                       inner            join eo_unidade                 e  on (d.sq_unidade_resp          = e.sq_unidade)
                         left           join eo_unidade_resp            e1 on (e.sq_unidade               = e1.sq_unidade   and
                                                                               e1.tipo_respons            = 'T'             and

@@ -32,7 +32,8 @@ begin
                   inner      join   co_cidade d on (a.destino            = d.sq_cidade)
                     inner    join   co_pais   e on (d.sq_pais            = e.sq_pais)
                   left outer join   pd_diaria f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao and
-                                                    a.destino            = f.sq_cidade)
+                                                    a.destino            = f.sq_cidade and
+                                                    a.sq_deslocamento    = f.sq_deslocamento_saida)
           where a.sq_siw_solicitacao = p_chave
             and a.tipo               = 'S';
    Elsif p_restricao = 'PDDIARIA' Then
@@ -78,7 +79,8 @@ begin
                 inner      join co_cidade             d  on (a.destino                    = d.sq_cidade)
                   inner    join co_pais               e  on (d.sq_pais                    = e.sq_pais)
                 left       join pd_diaria             f  on (a.sq_siw_solicitacao         = f.sq_siw_solicitacao and
-                                                             a.destino                    = f.sq_cidade
+                                                             a.destino                    = f.sq_cidade and
+                                                             a.sq_deslocamento            = f.sq_deslocamento_saida
                                                             )
                   left     join pd_vinculo_financeiro m  on (f.sq_pdvinculo_diaria        = m.sq_pdvinculo_financeiro)
                   left     join pj_rubrica            m1 on (m.sq_projeto_rubrica         = m1.sq_projeto_rubrica)
@@ -100,8 +102,10 @@ begin
    Elsif p_restricao = 'DF' Then
       open p_result for
          select count(*) existe
-           from pd_diaria
-          where sq_siw_solicitacao = p_chave;
+           from pd_deslocamento a
+          where sq_siw_solicitacao = p_chave
+            and a.passagem         = 'S'
+            and sq_cia_transporte is null;
    Elsif p_restricao = 'COTPASS' Then
       -- Recupera trechos para cotação de bilhetes
       open p_result for
@@ -156,10 +160,12 @@ begin
                   inner join co_pais               e  on (d.sq_pais                 = e.sq_pais)
                left     join pd_cia_transporte     f  on (a.sq_cia_transporte       = f.sq_cia_transporte)
                left     join pd_meio_transporte    g  on (a.sq_meio_transporte      = g.sq_meio_transporte)
-               left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete)
+               left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete and 
+                                                          (p_restricao = 'PDCONTAS' or (p_restricao <> 'PDCONTAS' and h.tipo = 'S'))
+                                                         )
                  left   join pd_cia_transporte     h1 on (h.sq_cia_transporte       = h1.sq_cia_transporte)
           where a.sq_siw_solicitacao = p_chave
-            and a.tipo               = 'S'
+            and a.tipo = 'S'
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    End If;         
 End SP_GetPD_Deslocamento;

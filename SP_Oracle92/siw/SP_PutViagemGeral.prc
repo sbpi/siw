@@ -176,10 +176,11 @@ begin
          );
 
          -- Copia os deslocamentos da missão original
-         Insert Into pd_deslocamento (sq_deslocamento, sq_siw_solicitacao, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho)
-         (Select sq_deslocamento.nextval, w_chave, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho
+         Insert Into pd_deslocamento (sq_deslocamento, sq_siw_solicitacao, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho, tipo)
+         (Select sq_deslocamento.nextval,              w_chave,            origem, destino, null,              saida, chegada, null,                  0,            tipo
            from pd_deslocamento a
-          where a.sq_siw_solicitacao = p_copia
+          where a.tipo               = 'S'
+            and a.sq_siw_solicitacao = p_copia
          );
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
@@ -205,7 +206,7 @@ begin
       -- Atualiza a tabela de demandas
       Update pd_missao set
           tipo                   = p_tipo,
-          justificativa_dia_util = p_justif_dia_util,
+          justificativa_dia_util = nvl(p_justif_dia_util,justificativa_dia_util),
           passagem               = p_passagem,
           diaria                 = p_diaria,
           hospedagem             = p_hospedagem,

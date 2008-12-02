@@ -9,17 +9,20 @@ create or replace procedure SP_PutConfPD
     p_hospedagem               in varchar2 default null,
     p_veiculo                  in varchar2 default null,
     p_seguro                   in varchar2 default null,
-    p_bilhete                  in varchar2 default null
+    p_bilhete                  in varchar2 default null,
+    p_reembolso                in varchar2 default null
    ) is
 begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into pd_vinculo_financeiro
         (sq_pdvinculo_financeiro,         cliente,      sq_siw_solicitacao,   sq_projeto_rubrica,   sq_tipo_lancamento, 
-         diaria,                          hospedagem,   veiculo,              seguro,               bilhete)
+         diaria,                          hospedagem,   veiculo,              seguro,               bilhete,
+         reembolso)
       values
         (sq_pdvinculo_financeiro.nextval, p_cliente,    p_siw_solicitacao,    p_rubrica,            p_lancamento, 
-         p_diaria,                        p_hospedagem, p_veiculo,            p_seguro,             p_bilhete
+         p_diaria,                        p_hospedagem, p_veiculo,            p_seguro,             p_bilhete,
+         p_reembolso
         );
    Elsif p_operacao = 'A' Then
       -- Altera registro
@@ -30,7 +33,8 @@ begin
              hospedagem         = p_hospedagem,
              veiculo            = p_veiculo,
              seguro             = p_seguro,
-             bilhete            = p_bilhete
+             bilhete            = p_bilhete,
+             reembolso          = p_reembolso
        where sq_pdvinculo_financeiro = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

@@ -161,5 +161,6 @@ begin
        where sq_siw_solicitacao         = p_chave
          and sq_diaria                  = p_sq_diaria;
    End If;
+
 end SP_PutPdDiaria;
 /

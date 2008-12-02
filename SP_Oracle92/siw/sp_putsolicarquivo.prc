@@ -51,5 +51,5 @@ begin
       -- Remove da tabela de arquivos
       delete siw_arquivo where sq_siw_arquivo = p_chave_aux;
    End If;
-   end SP_PutSolicArquivo;
+end SP_PutSolicArquivo;
 /

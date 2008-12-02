@@ -3735,7 +3735,9 @@ SP_Oracle92/siw/SP_PutPDUnidade.prc -text
 SP_Oracle92/siw/SP_PutPDUsuario.prc -text
 SP_Oracle92/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle92/siw/SP_PutPD_Bilhete.prc -text
+SP_Oracle92/siw/SP_PutPD_Contas.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
+SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
@@ -3760,7 +3762,6 @@ SP_Oracle92/siw/TG_GP_CONTRATO_COLAB_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text
-SP_Oracle92/siw/TG_PD_DIARIA_IN_UP_EX.trg -text
 SP_Oracle92/siw/TG_PD_MISSAO_UP.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_EX.trg -text
 SP_Oracle92/siw/TG_PE_RECURSO_DISP_UP.trg -text

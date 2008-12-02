@@ -1,0 +1,43 @@
+create or replace procedure SP_PutPD_Reembolso
+   (p_cliente             in number,
+    p_chave               in number,
+    p_reembolso           in varchar2  default null,
+    p_valor               in number    default null,
+    p_observacao          in varchar2  default null,
+    p_financeiro          in number    default null,
+    p_rubrica             in number    default null,
+    p_lancamento          in number    default null
+   ) is
+
+   w_financeiro number(18) := p_financeiro;
+   w_existe     number(18);
+   
+begin
+   -- Verifica se precisa gravar o tipo de vínculo financeiro
+   If instr('IA','I')>0 and p_financeiro is null and p_lancamento is not null Then
+      -- Verifica se há um vínculo único para as opções enviadas
+      select count(*) into w_existe
+        from pd_vinculo_financeiro
+       where sq_projeto_rubrica = p_rubrica
+         and sq_tipo_lancamento = p_lancamento
+         and bilhete            = 'S';
+
+      -- Prepara variável para gravação se encontrou um, e apenas um registro.
+      If w_existe = 1 Then
+         select sq_pdvinculo_financeiro into w_financeiro
+           from pd_vinculo_financeiro
+          where sq_projeto_rubrica = p_rubrica
+            and sq_tipo_lancamento = p_lancamento
+            and bilhete            = 'S';
+      End If;
+   End If;
+   
+   -- Atualiza os dados da viagem
+   update pd_missao 
+      set reembolso              = p_reembolso,
+          reembolso_valor        = p_valor,
+          reembolso_observacao   = p_observacao,
+          sq_pdvinculo_reembolso = w_financeiro
+    where sq_siw_solicitacao = p_chave;
+end SP_PutPD_Reembolso;
+/

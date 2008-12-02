@@ -12,7 +12,9 @@ begin
       -- Recupera os bilhetes ligados a viagens
       open p_result for
          select a.sq_bilhete as chave, a.sq_siw_solicitacao, a.sq_cia_transporte, a.data, a.numero, a.trecho, a.valor_bilhete, a.valor_pta, 
-                a.valor_taxa_embarque, a.rloc, a.classe,
+                a.valor_taxa_embarque, a.rloc, a.classe, a.utilizado, a.faturado,
+                case a.utilizado when 'I' then 'Integral' when 'P' then 'Parcial' when 'C' then 'Não utilizado' else 'Não informado' end as nm_utilizado,
+                case a.faturado  when 'S' then 'Sim' else 'Não' end as nm_faturado,
                 f.nome as nm_cia_transporte
            from pd_bilhete                     a
                 inner   join pd_cia_transporte f on (a.sq_cia_transporte  = f.sq_cia_transporte)

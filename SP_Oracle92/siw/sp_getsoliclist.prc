@@ -174,7 +174,10 @@ begin
                     left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
                       inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
                         inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
-          where b1.ativo            = 'S'
+                  inner        join siw_solicitacao           c  on (b.sq_solic_pai        = c.sq_siw_solicitacao)
+                    inner      join siw_menu                  c1 on (c.sq_menu             = c1.sq_menu)
+                      inner    join siw_modulo                c2 on (c1.sq_modulo          = c2.sq_modulo)
+          where (c2.sigla = 'PD' or (c2.sigla <> 'PD' and b1.ativo = 'S'))
             and a1.sigla            <> 'GD'
             and substr(a.sigla,1,3) <> 'GDP'
             and b.sq_solic_pai      =  p_chave;
@@ -1000,6 +1003,7 @@ begin
                 a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
                 a2.vinculada as vinc_exec,a2.adm_central as adm_exec,
                 a3.sq_pessoa as tit_exec,a4.sq_pessoa as subst_exec,
+                a5.dias_prestacao_contas, 
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -1052,6 +1056,7 @@ begin
                                                                a4.tipo_respons            = 'S'           and
                                                                a4.fim                     is null)
                 inner         join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                inner         join pd_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner         join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                   inner       join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                   inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
@@ -1100,17 +1105,19 @@ begin
                                    )                    n1 on (b.sq_siw_solicitacao       = n1.sq_siw_solicitacao)
                  left         join (select x.sq_siw_solicitacao, sum(y.valor_trecho) as valor_trecho
                                       from siw_solicitacao              x
-                                           inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                           inner join pd_deslocamento   y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                     where y.tipo = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    q  on (b.sq_siw_solicitacao       = q.sq_siw_solicitacao)
                  left         join (select x.sq_siw_solicitacao, min(y.saida) as saida, max(y.chegada) as chegada
                                       from siw_solicitacao            x
                                            inner join pd_deslocamento y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                      where x.sq_menu = p_menu
+                                       and y.tipo    = 'S'
                                     group by x.sq_siw_solicitacao
                                    )                    r  on (b.sq_siw_solicitacao       = r.sq_siw_solicitacao)
           where a.sq_menu         = p_menu
-            and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
+            and (p_projeto        is null or (p_projeto     is not null and (b.sq_solic_pai = p_projeto or 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao))))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 join pj_etapa_demanda x3 on (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) where x2.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d11.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
@@ -1122,12 +1129,12 @@ begin
                 )
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d1.sq_pessoa         = p_sq_orprior))
             and (p_palavra        is null or (p_palavra     is not null and d4.cpf = p_palavra))
-            and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
-            and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
-            and (p_uf             is null or (p_uf          is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.destino = y.sq_cidade and y.co_uf = p_uf and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
-            and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.destino = p_cidade and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_pais           is null or (p_pais        is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.tipo = 'S' and x.destino = y.sq_cidade and y.sq_pais = p_pais and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.tipo = 'S' and x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_uf             is null or (p_uf          is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.tipo = 'S' and x.destino = y.sq_cidade and y.co_uf = p_uf and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.tipo = 'S' and x.destino = p_cidade and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_ativo          is null or (p_ativo       is not null and d1.tipo = p_ativo))            
-            and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
+            and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.tipo = 'S' and x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
                                                                              (b.fim              between p_ini_i  and p_ini_f) or
                                                                              (p_ini_i            between b.inicio and b.fim)   or
@@ -1136,7 +1143,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and cast(b.fim as date) + cast(1 as integer) - cast(sysdate as date)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and d.concluida = 'N' and cast(b.fim as date) + a5.dias_prestacao_contas + 1 - cast(sysdate as date)<0))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
