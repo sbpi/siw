@@ -3683,6 +3683,7 @@ SP_Oracle92/siw/SP_GetACParametro.prc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
 SP_Oracle92/siw/SP_GetAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_GetCLParametro.prc -text
+SP_Oracle92/siw/SP_GetCaixa.prc -text
 SP_Oracle92/siw/SP_GetCiaTrans.prc -text
 SP_Oracle92/siw/SP_GetCodigo.prc -text
 SP_Oracle92/siw/SP_GetDataEspecial.prc -text
@@ -3714,6 +3715,7 @@ SP_Oracle92/siw/SP_PutAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
+SP_Oracle92/siw/SP_PutCaixa.prc -text
 SP_Oracle92/siw/SP_PutCategoriaDiaria.prc -text
 SP_Oracle92/siw/SP_PutCiaTrans.prc -text
 SP_Oracle92/siw/SP_PutCoMoeda.prc -text
