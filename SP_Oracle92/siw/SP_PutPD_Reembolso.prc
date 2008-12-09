@@ -14,7 +14,7 @@ create or replace procedure SP_PutPD_Reembolso
    
 begin
    -- Verifica se precisa gravar o tipo de vínculo financeiro
-   If instr('IA','I')>0 and p_financeiro is null and p_lancamento is not null Then
+   If p_financeiro is null and p_lancamento is not null Then
       -- Verifica se há um vínculo único para as opções enviadas
       select count(*) into w_existe
         from pd_vinculo_financeiro
@@ -37,7 +37,7 @@ begin
       set reembolso              = p_reembolso,
           reembolso_valor        = p_valor,
           reembolso_observacao   = p_observacao,
-          sq_pdvinculo_reembolso = w_financeiro
+          sq_pdvinculo_reembolso = coalesce(w_financeiro,sq_pdvinculo_reembolso)
     where sq_siw_solicitacao = p_chave;
 end SP_PutPD_Reembolso;
 /

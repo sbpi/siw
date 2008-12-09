@@ -10,8 +10,12 @@ create or replace procedure SP_PutSolicConc
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
     p_tipo                in varchar2  default null,
-    p_nome_original       in varchar2  default null
+    p_nome_original       in varchar2  default null,
+    p_financeiro_menu     in number    default null,
+    p_financeiro_tramite  in number    default null,
+    p_financeiro_resp     in number    default null
    ) is
+   i               number(18);
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
    w_menu          siw_menu%rowtype;
@@ -19,6 +23,12 @@ create or replace procedure SP_PutSolicConc
    w_solic         siw_solicitacao%rowtype;
    w_pedido        cl_solicitacao%rowtype;
    w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
+   w_rubrica       number(18);
+   w_lancamento    number(18);
+   w_sq_financ     number(18)   := null;
+   w_cd_financ     varchar2(60) := null;
+   w_sq_doc        number(18)   := null;
+   w_operacao      varchar2(1);
    
    cursor c_vencedor is
        select x.*
@@ -46,7 +56,7 @@ create or replace procedure SP_PutSolicConc
            and x.sq_material         = y.sq_material
            and x.valor               = y.valor;
 
-  cursor c_itens is
+   cursor c_itens is
        select b.sq_solicitacao_item, b.sq_material, 
               coalesce(max(c.valor_unidade),0) as maximo, 
               coalesce(min(c.valor_unidade),0) as minimo, 
@@ -59,6 +69,70 @@ create or replace procedure SP_PutSolicConc
         where a.sq_siw_solicitacao = p_chave
        group by b.sq_solicitacao_item, b.sq_material
        order by 1,2,3;
+
+   cursor c_financeiro_geral is
+      select distinct x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, y.sq_unidade, 
+             x.justificativa as descricao, 
+             soma_dias(w.sq_pessoa,trunc(sysdate),x1.dias_validade_proposta,'C') as vencimento, 
+             w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
+             w3.sq_forma_pagamento,
+             w4.sq_tipo_documento,
+             'Registro gerado automaticamente pelo sistema de licitações' as observacao, z.sq_lancamento, 
+             trunc(x.inicio) as inicio, x.fim, 
+             x3.fornecedor, x3.valor, x3.sq_tipo_pessoa
+        from siw_menu                           w
+             inner   join siw_cliente           w1 on (w.sq_pessoa           = w1.sq_pessoa)
+               inner join siw_tramite           w2 on (w.sq_menu             = w2.sq_menu and
+                                                       w2.sq_siw_tramite     = p_financeiro_tramite
+                                                      )
+               inner join co_forma_pagamento    w3 on (w1.sq_pessoa          = w3.cliente and w3.sigla = 'CREDITO')
+               inner join fn_tipo_documento     w4 on (w1.sq_pessoa          = w4.cliente and w4.sigla = 'NF'),
+             siw_solicitacao                    x
+             inner     join siw_tramite         x5 on (x.sq_siw_tramite      = x5.sq_siw_tramite)
+             inner     join cl_solicitacao      x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao)
+             inner     join (select l.sq_siw_solicitacao, k.fornecedor, m.sq_tipo_pessoa, sum(k.valor_item) as valor
+                               from cl_item_fornecedor             k
+                                    inner join cl_solicitacao_item l on (k.sq_solicitacao_item = l.sq_solicitacao_item)
+                                    inner join co_pessoa           m on (k.fornecedor          = m.sq_pessoa)
+                              where k.pesquisa = 'N'
+                                and k.vencedor = 'S'
+                             group by l.sq_siw_solicitacao, k.fornecedor, m.sq_tipo_pessoa
+                            )                   x3 on (x.sq_siw_solicitacao  = x3.sq_siw_solicitacao)
+             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento
+                               from siw_solicitacao                a
+                                    inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
+                                    inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                            )                   x2 on (x.sq_siw_solicitacao  = x2.sq_solic_pai),
+             sg_autenticacao                    y,
+             (select c2.sq_tipo_lancamento as sq_lancamento, c2.nome as nm_lancamento
+                from siw_solicitacao                      a
+                     inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite)
+                     inner     join cl_solicitacao        a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                       inner   join cl_vinculo_financeiro c  on (a1.sq_financeiro             = c.sq_clvinculo_financeiro)
+                         inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
+               where a.sq_siw_solicitacao = p_chave
+             )                                  z
+       where w.sq_menu            = p_financeiro_menu
+         and x.sq_siw_solicitacao = p_chave
+         and y.sq_pessoa          = p_financeiro_resp
+         and x2.sq_financeiro     is null;
+
+   cursor c_financeiro_item (l_fornecedor in number) is
+      select a3.sq_solicitacao_item, a3.quantidade, a4.valor_unidade, a5.nome as nm_material, a5.descricao as ds_material,
+             c1.sq_projeto_rubrica as sq_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica
+        from siw_solicitacao                      a
+             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite)
+             inner     join cl_solicitacao        a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+               inner   join cl_vinculo_financeiro c  on (a1.sq_financeiro             = c.sq_clvinculo_financeiro)
+                 inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+               inner   join cl_solicitacao_item   a3 on (a1.sq_siw_solicitacao        = a3.sq_siw_solicitacao)
+                 inner join cl_item_fornecedor    a4 on (a3.sq_solicitacao_item       = a4.sq_solicitacao_item and
+                                                         a4.pesquisa                  = 'N' and
+                                                         a4.vencedor                  = 'S' and
+                                                         a4.fornecedor                = l_fornecedor
+                                                        )
+                 inner join cl_material           a5 on (a3.sq_material               = a5.sq_material)
+       where a.sq_siw_solicitacao = p_chave;
 begin
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
@@ -172,6 +246,7 @@ begin
                     p_arp               => w_pedido.arp,
                     p_interno           => w_pedido.interno,
                     p_especie_documento => w_pedido.sq_especie_documento,
+                    p_financeiro        => w_pedido.sq_financeiro,
                     p_observacao_log    => 'Geração automática. Origem: '||w_solic.codigo_interno,
                     p_chave_nova        => w_chave_nova);
      
@@ -204,6 +279,76 @@ begin
                        p_tamanho       => null,
                        p_tipo          => null,
                        p_nome_original => null);
+   Elsif p_financeiro_resp is not null Then
+      -- Cria/atualiza lançamento financeiro
+      for crec in c_financeiro_geral loop
+          sp_putfinanceirogeral(
+                             p_operacao           => 'I',
+                             p_cliente            => crec.cliente,
+                             p_chave              => null,
+                             p_menu               => crec.sq_menu,
+                             p_sq_unidade         => crec.sq_unidade,
+                             p_solicitante        => p_financeiro_resp,
+                             p_cadastrador        => p_financeiro_resp,
+                             p_descricao          => crec.descricao,
+                             p_vencimento         => crec.vencimento,
+                             p_valor              => crec.valor,
+                             p_data_hora          => 3,
+                             p_aviso              => 'S',
+                             p_dias               => '2',
+                             p_cidade             => crec.sq_cidade,
+                             p_projeto            => crec.sq_solic_pai,
+                             p_observacao         => crec.observacao,
+                             p_sq_tipo_lancamento => crec.sq_lancamento,
+                             p_sq_forma_pagamento => crec.sq_forma_pagamento,
+                             p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
+                             p_tipo_rubrica       => 5, -- despesas
+                             p_per_ini            => crec.inicio,
+                             p_per_fim            => crec.fim,
+                             p_chave_nova         => w_sq_financ,
+                             p_codigo_interno     => w_cd_financ
+                            );
+
+          -- Atualiza os dados do beneficiário
+          update fn_lancamento set pessoa = crec.fornecedor where sq_siw_solicitacao = w_sq_financ;
+
+          -- Cria os documentos
+          sp_putlancamentodoc(
+                             p_operacao           => 'I',
+                             p_chave              => w_sq_financ,
+                             p_chave_aux          => null,
+                             p_sq_tipo_documento  => crec.sq_tipo_documento,
+                             p_numero             => nvl(crec.cd_interno,w_cd_financ),
+                             p_data               => trunc(sysdate),
+                             p_serie              => null,
+                             p_valor              => crec.valor,
+                             p_patrimonio         => 'N',
+                             p_retencao           => 'N',
+                             p_tributo            => 'N',
+                             p_nota               => null,
+                             p_inicial            => 0,
+                             p_excedente          => 0,
+                             p_reajuste           => 0,
+                             p_chave_nova         => w_sq_doc
+                            );
+
+          -- Cria itens do lançamento
+          i := 0;
+          For drec in c_financeiro_item (crec.fornecedor) Loop
+               i := i + 1;
+               sp_putlancamentoitem(
+                             p_operacao           => 'I',
+                             p_chave              => w_sq_doc,
+                             p_chave_aux          => null,
+                             p_sq_projeto_rubrica => drec.sq_rubrica,
+                             p_solic_item         => drec.sq_solicitacao_item,
+                             p_descricao          => drec.ds_material,
+                             p_quantidade         => drec.quantidade,
+                             p_valor_unitario     => drec.valor_unidade,
+                             p_ordem              => i
+                            );
+          End Loop;
+      End Loop;
    End If;
 
 end SP_PutSolicConc;

@@ -695,7 +695,7 @@ begin
                 p.nome_resumido nm_exec,
                 soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
                 case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia,
-                case trunc(fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana
+                case trunc(b.fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana
            from siw_menu                                               a
                   inner                join pd_parametro              a11 on (a.sq_pessoa                = a11.cliente)
                   inner                join eo_unidade                 a2 on (a.sq_unid_executora        = a2.sq_unidade)

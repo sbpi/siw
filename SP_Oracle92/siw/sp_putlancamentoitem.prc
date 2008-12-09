@@ -8,21 +8,22 @@ create or replace procedure SP_PutLancamentoItem
     p_valor_unitario      in number   default null,
     p_ordem               in number   default null,
     p_data_cotacao        in date     default null,
-    p_valor_cotacao       in number   default null
+    p_valor_cotacao       in number   default null,
+    p_solic_item          in number   default null
    ) is
    
    w_sigla siw_menu.sigla%type;
 begin
    If p_operacao = 'I' Then -- Inclusão
       insert into fn_documento_item
-        (sq_documento_item,         sq_lancamento_doc,  sq_projeto_rubrica,   descricao,
-         quantidade,                valor_unitario,     ordem,                data_cotacao,
-         valor_cotacao
+        (sq_documento_item,           sq_lancamento_doc,  sq_projeto_rubrica,   descricao,
+         quantidade,                  valor_unitario,     ordem,                data_cotacao,
+         valor_cotacao,               sq_solicitacao_item
         )
       values
-        (sq_documento_item.nextval, p_chave,            p_sq_projeto_rubrica, p_descricao,
-         p_quantidade,              p_valor_unitario,   p_ordem,              p_data_cotacao,
-         coalesce(p_valor_cotacao,0)
+        (sq_documento_item.nextval,   p_chave,            p_sq_projeto_rubrica, p_descricao,
+         p_quantidade,                p_valor_unitario,   p_ordem,              p_data_cotacao,
+         coalesce(p_valor_cotacao,0), p_solic_item
         );
    Elsif p_operacao = 'A' Then -- Alteração
       update fn_documento_item
@@ -32,7 +33,8 @@ begin
              valor_unitario      = p_valor_unitario,
              ordem               = p_ordem,
              data_cotacao        = p_data_cotacao,
-             valor_cotacao       = coalesce(p_valor_cotacao,0)
+             valor_cotacao       = coalesce(p_valor_cotacao,0),
+             sq_solicitacao_item = p_solic_item
        where sq_documento_item = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_item where sq_documento_item = p_chave_aux;

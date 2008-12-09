@@ -16,10 +16,11 @@ begin
       open p_result for 
       select a.sq_lcmodalidade chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao, a.sigla,
              a.fundamentacao,a.minimo_pesquisas,a.minimo_participantes,a.minimo_propostas_validas,a.certame,
-             a.enquadramento_inicial,a.enquadramento_final,
-             case a.certame when 'S' then 'Sim' else 'Não' end nm_certame,
-             case a.ativo   when 'S' then 'Sim' else 'Não' end nm_ativo,
-             case a.padrao  when 'S' then 'Sim' else 'Não' end nm_padrao
+             a.enquadramento_inicial,a.enquadramento_final,a.gera_contrato,
+             case a.certame       when 'S' then 'Sim' else 'Não' end nm_certame,
+             case a.gera_contrato when 'S' then 'Sim' else 'Não' end nm_gera_contrato,
+             case a.ativo         when 'S' then 'Sim' else 'Não' end nm_ativo,
+             case a.padrao        when 'S' then 'Sim' else 'Não' end nm_padrao
         from lc_modalidade a
        where a.cliente = p_cliente 
          and a.sq_lcmodalidade    <> coalesce(p_chave,0)
@@ -29,10 +30,11 @@ begin
      open p_result for 
       select a.sq_lcmodalidade chave, a.cliente, a.nome, a.descricao, a.ativo, a.padrao, a.sigla,
              a.fundamentacao,a.minimo_pesquisas,a.minimo_participantes,a.minimo_propostas_validas,a.certame,
-             a.enquadramento_inicial,a.enquadramento_final,
-             case a.certame when 'S' then 'Sim' else 'Não' end nm_certame,
-             case a.ativo  when 'S' then 'Sim' else 'Não' end nm_ativo,
-             case a.padrao when 'S' then 'Sim' else 'Não' end nm_padrao
+             a.enquadramento_inicial,a.enquadramento_final,a.gera_contrato,
+             case a.certame       when 'S' then 'Sim' else 'Não' end nm_certame,
+             case a.gera_contrato when 'S' then 'Sim' else 'Não' end nm_gera_contrato,
+             case a.ativo         when 'S' then 'Sim' else 'Não' end nm_ativo,
+             case a.padrao        when 'S' then 'Sim' else 'Não' end nm_padrao
         from lc_modalidade a
        where a.cliente = p_cliente 
          and ((p_chave is null) or (p_chave is not null and a.sq_lcmodalidade = p_chave))

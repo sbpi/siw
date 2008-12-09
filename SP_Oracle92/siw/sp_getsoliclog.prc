@@ -449,6 +449,7 @@ begin
                    coalesce(m.nome,a.observacao) as despacho,
                    case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
+                   h.recebedor, h1.nome_resumido as nm_recebedor,
                    case when h.sq_documento_log is null 
                         then case when instr(upper(a.observacao),'AUTUA')>0       then 'AUTUAÇÃO DE PROCESSO'
                                   when instr(upper(a.observacao),'RENUMERAÇÃO')>0 then 'RENUMERAÇÃO'
@@ -457,7 +458,7 @@ begin
                                   when instr(upper(a.observacao),'DESM')>0        then 'DESMEMBRAMENTO'
                                   else 'REGISTRO' 
                              end
-                        else 'TRAMITE ORIGINAL' 
+                        else 'TRÂMITE ORIGINAL' 
                    end as origem,
                    c.sq_unidade as sq_registro, c.sigla nm_registro, l1.sq_unidade as sq_origem, l1.sigla as nm_origem,
                    case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
@@ -466,6 +467,7 @@ begin
                    e.nome as tramite,
                    f.nome as fase, f.descricao,
                    h.interno, h.pessoa_externa,h.unidade_externa,
+                   to_char(h.envio, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_envio, to_char(h.recebimento, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_receb,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                    a
@@ -475,6 +477,7 @@ begin
                      inner   join eo_unidade        c  on (g.sq_unidade         = c.sq_unidade)
                      inner   join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
                    left      join pa_documento_log  h  on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                     left    join co_pessoa         h1 on (h.recebedor          = h1.sq_pessoa)
                      left    join eo_unidade        l  on (h.unidade_destino    = l.sq_unidade)
                      left    join eo_unidade        l1 on (h.unidade_origem     = l1.sq_unidade)
                      left    join pa_tipo_despacho  m  on (h.sq_tipo_despacho   = m.sq_tipo_despacho)
@@ -496,19 +499,22 @@ begin
                              end
                    end as despacho,
                    b2.sq_pessoa as sq_pessoa_resp, b2.nome_resumido as nm_pessoa_resp,
-                   'TRAMITACAO' as origem,
+                   b.recebedor, b4.nome_resumido as nm_recebedor,
+                   'TRAMITAÇÃO' as origem,
                    e.sq_unidade as sq_registro, e.sigla as nm_registro, e.sq_unidade as sq_origem, e.sigla as nm_origem,
                    case when d.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when d.sq_pessoa is not null then d.sq_pessoa     else h.sq_unidade end as sq_destinatario,
                    case when d.sq_pessoa is not null then d.nome_resumido else h.sigla      end as nm_destinatario,
                    f.nome as tramite, f.nome as fase, f.descricao,
                    b.interno, b.pessoa_externa, b.unidade_externa,
+                   to_char(b.envio, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_envio, to_char(b.recebimento, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_receb,
                    null as sq_siw_arquivo, null as caminho, null as tipo, null as tamanho, 
                    to_char(coalesce(b.recebimento, b.envio), 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pa_documento_log                   b
                    inner    join pa_tipo_despacho     b1 on (b.sq_tipo_despacho   = b1.sq_tipo_despacho)
                    inner    join co_pessoa            b2 on (b.cadastrador        = b2.sq_pessoa)
                      inner  join pa_parametro         b3 on (b2.sq_pessoa_pai     = b3.cliente)
+                   left     join co_pessoa            b4 on (b.recebedor          = b4.sq_pessoa)
                    left     join co_pessoa            d  on (b.pessoa_destino     = d.sq_pessoa)
                    left     join eo_unidade           e  on (b.unidade_origem     = e.sq_unidade)
                    left     join eo_unidade           h  on (b.unidade_destino    = h.sq_unidade)

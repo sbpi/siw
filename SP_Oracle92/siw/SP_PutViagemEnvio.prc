@@ -9,6 +9,7 @@ create or replace procedure SP_PutViagemEnvio
     p_justificativa       in varchar2,
     p_justif_dia_util     in varchar2
    ) is
+   w_cliente       number(18);
    w_chave         number(18) := null;
    w_chave_dem     number(18) := null;
    w_tramite       number(18);
@@ -30,15 +31,16 @@ create or replace procedure SP_PutViagemEnvio
    cursor c_financeiro_geral is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
              case x5.sigla when 'EE' then 'Reembolso da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||'.' as descricao,
-             soma_dias(10135,trunc(sysdate),2,'U') as vencimento, 
+             soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
-             x1.sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
+             coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro,
              x2.sq_lancamento_doc  as sq_documento
-        from siw_menu                         w
-             inner join siw_cliente           w1 on (w.sq_pessoa           = w1.sq_pessoa),
-             siw_solicitacao                  x
+        from siw_menu                          w
+             inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
+               inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
+             siw_solicitacao                   x
              inner     join siw_tramite       x5 on (x.sq_siw_tramite      = x5.sq_siw_tramite)
              inner     join pd_missao         x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
@@ -57,15 +59,6 @@ create or replace procedure SP_PutViagemEnvio
                              inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
                              inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
                                inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_diaria        = c.sq_pdvinculo_financeiro)
-                                 inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
-                       where a.sq_siw_solicitacao = p_chave
-                      UNION
-                      select c2.sq_tipo_lancamento, c2.nome as nm_lancamento
-                        from siw_solicitacao                      a
-                             inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
-                             inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                             inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                               inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_hospedagem    = c.sq_pdvinculo_financeiro)
                                  inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
                        where a.sq_siw_solicitacao = p_chave
                       UNION
@@ -126,19 +119,6 @@ create or replace procedure SP_PutViagemEnvio
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_chave
               UNION
-              select 'HSP' as tp_despesa, b.sq_diaria, (b.hospedagem_qtd*b.hospedagem_valor) as valor,
-                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
-                from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
-                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_hospedagem    = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
-                       inner   join pd_valor_diaria       d  on (b.sq_valor_diaria_hospedagem = d.sq_valor_diaria)
-                         inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
-               where a.sq_siw_solicitacao = p_chave
-              UNION
               select 'VEI' as tp_despesa, b.sq_diaria, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
@@ -158,6 +138,8 @@ begin
    -- Recupera os dados da solicitação.
    select reembolso into w_reembolso from pd_missao where sq_siw_solicitacao = p_chave;
    
+   -- Recupera a chave do cliente
+   select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
 
    -- Recupera o trâmite para o qual está sendo enviada a solicitação
    If p_devolucao = 'N' Then
@@ -189,7 +171,7 @@ begin
                         inner   join siw_solicitacao d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
                           inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
                   where a.sq_siw_solicitacao = p_chave
-                    and e.sq_pessoa          = 10135
+                    and e.sq_pessoa          = w_cliente
                     and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
                 ) x,
                 (select count(*) as qtd
@@ -198,7 +180,7 @@ begin
                           inner join eo_unidade      c on (b.sq_unidade         = c.sq_unidade)
                           inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
                   where d.sq_siw_solicitacao = p_chave
-                    and e.sq_pessoa          = 10135
+                    and e.sq_pessoa          = w_cliente
                     and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
                 ) y;
         
@@ -210,7 +192,7 @@ begin
          -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.
          If w_reembolso = 'S'
             Then w_salto := 1;
-            Else w_salto := 2;
+            Else w_salto := 3;
          End If;
       Else
          w_salto := 1;

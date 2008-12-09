@@ -3682,6 +3682,7 @@ SP_Oracle92/siw/SF_Consulta.prc -text
 SP_Oracle92/siw/SP_GetACParametro.prc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
 SP_Oracle92/siw/SP_GetAlmoxarifado.prc -text
+SP_Oracle92/siw/SP_GetCLFinanceiro.prc -text
 SP_Oracle92/siw/SP_GetCLParametro.prc -text
 SP_Oracle92/siw/SP_GetCaixa.prc -text
 SP_Oracle92/siw/SP_GetCiaTrans.prc -text
@@ -4238,6 +4239,7 @@ SP_Oracle92/siw/sp_putAcordoFornecimento.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
 SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text
+SP_Oracle92/siw/sp_putConfCL.prc -text
 SP_Oracle92/siw/sp_putConfPD.prc -text
 SP_Oracle92/siw/sp_putContasRegistro.prc -text
 SP_Oracle92/siw/sp_putConvDadosBancario.prc -text

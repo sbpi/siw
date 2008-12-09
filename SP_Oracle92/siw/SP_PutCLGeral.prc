@@ -27,9 +27,14 @@ create or replace procedure SP_PutCLGeral
     p_arp                 in varchar2  default null,
     p_interno             in varchar2  default null,
     p_especie_documento   in number    default null,
+    p_financeiro          in number    default null,
+    p_rubrica             in number    default null,
+    p_lancamento          in number    default null,
     p_observacao_log      in varchar2  default null,
     p_chave_nova          out number
    ) is
+   w_financeiro  number(18) := p_financeiro;
+   w_existe      number(10);
    w_arq         varchar2(4000) := ', ';
    w_chave       number(18);
    w_log_sol     number(18);
@@ -57,6 +62,24 @@ begin
       w_dias := round((p_fim-w_data+1),0);
    Else
       w_dias := p_dias;
+   End If;
+   
+   -- Verifica se precisa gravar o tipo de vínculo financeiro
+   If instr('IA','I')>0 and p_financeiro is null and p_lancamento is not null Then
+      -- Verifica se há um vínculo único para as opções enviadas
+      select count(*) into w_existe
+        from cl_vinculo_financeiro a
+       where a.sq_siw_solicitacao = p_solic_pai
+         and a.sq_projeto_rubrica = p_rubrica
+         and a.sq_tipo_lancamento = p_lancamento;
+      -- Prepara variável para gravação se encontrou um, e apenas um registro.
+      If w_existe = 1 Then
+         select sq_clvinculo_financeiro into w_financeiro
+           from cl_vinculo_financeiro a
+          where a.sq_siw_solicitacao = p_solic_pai
+            and a.sq_projeto_rubrica = p_rubrica
+            and a.sq_tipo_lancamento = p_lancamento;
+      End If;
    End If;
    
    If p_operacao <> 'I' Then -- Inclusão
@@ -89,27 +112,27 @@ begin
       -- Insere registro em cl_solicitacao
       If w_unidade_pai is not null Then
          Insert into cl_solicitacao
-            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
-              data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp,                 interno,          sq_especie_documento 
+            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,     numero_original,
+              data_recebimento,    aviso_prox_conc,  dias_aviso,           sq_unidade,
+              arp,                 interno,          sq_especie_documento, sq_financeiro
             )
          (select
-              w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
-              p_data_recebimento,   p_aviso,         w_dias,             a.sq_unidade_pai,
-              p_arp,                p_interno,       p_especie_documento
+              w_chave,              p_prioridade,    p_decisao_judicial,   p_numero_original, 
+              p_data_recebimento,   p_aviso,         w_dias,               a.sq_unidade_pai,
+              p_arp,                p_interno,       p_especie_documento,  w_financeiro
            from cl_unidade a
           where a.sq_unidade = p_unidade
          );
       Else
          Insert into cl_solicitacao
-            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,  numero_original,
-              data_recebimento,    aviso_prox_conc,  dias_aviso,        sq_unidade,
-              arp,                 interno,          sq_especie_documento
+            ( sq_siw_solicitacao,  prioridade,       decisao_judicial,     numero_original,
+              data_recebimento,    aviso_prox_conc,  dias_aviso,           sq_unidade,
+              arp,                 interno,          sq_especie_documento, sq_financeiro
             )
          (select
-              w_chave,              p_prioridade,    p_decisao_judicial, p_numero_original, 
-              p_data_recebimento,   p_aviso,         w_dias,             p_unidade,
-              p_arp,                p_interno,       p_especie_documento
+              w_chave,              p_prioridade,    p_decisao_judicial,   p_numero_original, 
+              p_data_recebimento,   p_aviso,         w_dias,               p_unidade,
+              p_arp,                p_interno,       p_especie_documento,  w_financeiro
            from dual
          );
       
@@ -152,14 +175,14 @@ begin
                  data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
                  limite_variacao,       data_homologacao,         data_diario_oficial,
                  pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame,
-                 arp,                   interno
+                 arp,                   interno,                  sq_financeiro
                 ) = 
          (select sq_especie_documento,  sq_especificacao_despesa, sq_eoindicador, sq_lcfonte_recurso,
                  sq_lcmodalidade,       sq_lcjulgamento,          sq_lcsituacao,  numero_original, 
                  data_recebimento,      processo,                 indice_base,    tipo_reajuste, 
                  limite_variacao,       data_homologacao,         data_diario_oficial,
                  pagina_diario_oficial, financeiro_unico,         numero_ata,     numero_certame,
-                 arp,                   interno
+                 arp,                   interno,                  w_financeiro
             from cl_solicitacao
            where sq_siw_solicitacao = p_copia
          )
@@ -194,29 +217,29 @@ begin
             ( prioridade,       decisao_judicial,     numero_original,
               data_recebimento, aviso_prox_conc,      sq_unidade,
               arp,              interno,              sq_especie_documento,
-              dias_aviso
+              dias_aviso,       sq_financeiro
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            a.sq_unidade_pai,
               p_arp,              p_interno,          p_especie_documento,
-              p_dias
+              p_dias,             w_financeiro
            from cl_unidade a
           where a.sq_unidade = p_unidade
          )
          where sq_siw_solicitacao = p_chave;
       Else 
          Update cl_solicitacao set
-            ( prioridade,       decisao_judicial,     numero_original,
-              data_recebimento, aviso_prox_conc,      sq_unidade,
-              arp,              interno,              sq_especie_documento,
-              dias_aviso
+            ( prioridade,         decisao_judicial,   numero_original,
+              data_recebimento,   aviso_prox_conc,    sq_unidade,
+              arp,                interno,            sq_especie_documento,
+              dias_aviso,         sq_financeiro
             ) = 
          (select
               p_prioridade,       p_decisao_judicial, p_numero_original, 
               p_data_recebimento, p_aviso,            p_unidade,
               p_arp,              p_interno,          p_especie_documento,
-              p_dias
+              p_dias,             w_financeiro
            from dual
          )
          where sq_siw_solicitacao = p_chave;      
