@@ -14,10 +14,11 @@ begin
       -- Insere Registro na tabela de locais
    Elsif p_operacao = 'A' Then
       -- Altera registro
-      update mt_almoxarifado_local set
-         nome                     = trim(p_nome),
-         ativo                    = p_ativo
-      where sq_almoxarifado_local = p_local;
+      update mt_almoxarifado_local
+         set sq_local_pai = p_local_pai,
+             nome = p_nome,
+             ativo = p_ativo
+       where sq_almoxarifado_local = p_local;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
       delete mt_almoxarifado_local where sq_almoxarifado_local = p_local;
