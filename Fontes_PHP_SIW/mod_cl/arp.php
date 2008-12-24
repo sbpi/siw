@@ -529,7 +529,7 @@ function Inicial() {
       ShowHTML('   <tr valign="top">');
       ShowHTML('     <td><b>Número do <U>p</U>edido:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_codigo" size="20" maxlength="60" value="'.$p_codigo.'"></td>');
       ShowHTML('   <tr valign="top">');
-      SelecaoPessoa('<u>S</u>olicitante:','N','Selecione o solicitante do peiddo na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
+      SelecaoPessoa('<u>S</u>olicitante:','N','Selecione o solicitante do pedido na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,null,'p_unidade','CLCP',null);
       ShowHTML('   <tr>');
       ShowHTML('     <td><b><u>D</u>ata de recebimento e limite para atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
@@ -3655,7 +3655,7 @@ function Grava() {
           exit();
         } else {
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
-              null,null,null,null);
+              null,null,null,null,null,null,null);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave']);
           ScriptOpen('JavaScript');

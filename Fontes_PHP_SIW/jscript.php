@@ -5,6 +5,10 @@ function VerfHora() {
   print "   var numero = '0123456789:';"."\r\n";
   print "   var conta=0;"."\r\n";
   print "   var i=0;"."\r\n";
+  print "   alert(nHora+'-'+nMin);"."\r\n";
+  print "   var i=0;"."\r\n";
+  print "   return false"."\r\n";
+  
   print "   if (Datac.length==4){"."\r\n";
   print "     var nHora = parseFloat(Datac.substring(0,1));"."\r\n";
   print "     var nMin = parseFloat(Datac.substring(2,4));"."\r\n";
@@ -917,6 +921,33 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    }"."\r\n".
     "    if (err==1){"."\r\n".
     "       alert('Campo ".$DisplayName." inválido.');"."\r\n".
+    "       ".$Form.$VariableName.".focus();"."\r\n".
+    "       return (false);"."\r\n".
+    "    }"."\r\n";
+  } elseif (strtoupper($DataType)=="HORA") {
+    print
+    "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
+    "    var err=0;"."\r\n".
+    "    var psj=0;"."\r\n".
+    "    if (checkStr.length != 0) {"."\r\n".
+    "       if (!checkbranco(checkStr))"."\r\n".
+    "       {"."\r\n".
+    "           if (checkStr.length != 5) err=1"."\r\n".
+    "            hora = checkStr.substr(0, 2);"."\r\n".
+    "            minuto = checkStr.substr(3, 2);"."\r\n".
+    "            //verificações básicas"."\r\n".
+    "            if (hora<0 || hora>23) err = 2;"."\r\n".
+    "            if (minuto<0 || minuto>59) err = 3;"."\r\n".
+    "       }"."\r\n".
+    "       else"."\r\n".
+    "       {"."\r\n".
+    "           err=1;"."\r\n".
+    "       }"."\r\n".
+    "    }"."\r\n".
+    "    if (err>0){"."\r\n".
+    "       if (err==1) alert('Campo ".$DisplayName." inválido.');"."\r\n".
+    "       if (err==2) alert('Campo ".$DisplayName." inválido. Hora deve ser de 0 a 23');"."\r\n".
+    "       if (err==3) alert('Campo ".$DisplayName." inválido. Minuto deve ser de 0 a 59');"."\r\n".
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";

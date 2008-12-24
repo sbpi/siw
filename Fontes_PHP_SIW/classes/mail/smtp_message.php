@@ -342,7 +342,8 @@ class smtp_message_class extends email_message_class
 {/metadocument}
 */
   var $smtp_pop3_auth_host="";
-
+  var $pop3_auth_port=110;
+  
 /*
 {metadocument}
   <variable>
@@ -481,6 +482,7 @@ class smtp_message_class extends email_message_class
     $this->smtp->getmxrr=$this->smtp_getmxrr;
     $this->smtp->exclude_address=$this->smtp_exclude_address;
     $this->smtp->pop3_auth_host=$this->smtp_pop3_auth_host;
+    $this->smtp->pop3_auth_port=$this->pop3_auth_port;
     $this->smtp->user=$this->smtp_user;
     $this->smtp->realm=$this->smtp_realm;
     $this->smtp->workstation=$this->smtp_workstation;

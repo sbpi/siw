@@ -108,10 +108,25 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
   }
+
+  // Dados da execução, exceto para transporte
+  if (f($RS1,'or_tramite')>1 && Nvl(f($RS1,'sigla'),'')!='SRTRANSP') {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA EXECUCÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Previsão de término:</b></font></td><td>'.Nvl(FormataDataEdicao(f($RS1,'phpdt_fim')),'-').'</font></td></tr>';
+    if (nvl(f($RS1,'conclusao'),'')=='') {
+      if (nvl(f($RS1,'valor'),'')>'') {
+        $l_html.=chr(13).'   <tr><td width="20%"><b>Valor previsto:</b></font></td><td>'.formatNumber(f($RS1,'valor')).'</font></td></tr>';
+      }
+      if (nvl(f($RS1,'executor'),'')!='') {
+        $l_html.=chr(13).'   <tr><td><b>Executor:</b></font></td><td>'.f($RS1,'nm_exec').'</font></td></tr>';
+      }
+    } 
+  } 
+  
   // Dados da conclusão da solicitação, se ela estiver nessa situação
   if (nvl(f($RS1,'conclusao'),'')!='') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'   <tr valign="top"><td><b>Data de conclusão:</b></font></td><td>'.FormataDataEdicao(substr(f($RS1,'phpdt_conclusao'),0,-3),3).'</font></td></tr>';
+    $l_html.=chr(13).'   <tr valign="top"><td><b>Data de conclusão:</b></font></td><td>'.substr(formataDataEdicao(f($RS1,'phpdt_conclusao'),3),0,-3).'</font></td></tr>';
     if ($l_tipo=='WORD') {
       $l_html.=chr(13).'   <tr><td><b>Unidade executora:</b></font></td>';
       $l_html.=chr(13).'       <td>'.f($RS1,'nm_unidade_exec').'</font></td></tr>';

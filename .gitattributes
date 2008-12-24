@@ -656,7 +656,9 @@ Fontes_PHP_SIW/classes/sp/db_getAfastamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getAgree.php -text
 Fontes_PHP_SIW/classes/sp/db_getAgreeType.php -text
 Fontes_PHP_SIW/classes/sp/db_getAlerta.php -text
+Fontes_PHP_SIW/classes/sp/db_getAlmoxarifado.php -text
 Fontes_PHP_SIW/classes/sp/db_getArquivo.php -text
+Fontes_PHP_SIW/classes/sp/db_getArquivo_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getBankData.php -text
 Fontes_PHP_SIW/classes/sp/db_getBankHouseData.php -text
@@ -665,6 +667,7 @@ Fontes_PHP_SIW/classes/sp/db_getBankList.php -text
 Fontes_PHP_SIW/classes/sp/db_getBaseGeografica_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getBenef.php -text
 Fontes_PHP_SIW/classes/sp/db_getCCTreeVision.php -text
+Fontes_PHP_SIW/classes/sp/db_getCLFinanceiro.php -text
 Fontes_PHP_SIW/classes/sp/db_getCLParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getCLSolicItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getCTEspecificacao.php -text
@@ -676,6 +679,7 @@ Fontes_PHP_SIW/classes/sp/db_getCVList.php -text
 Fontes_PHP_SIW/classes/sp/db_getCV_Pessoa.php -text
 Fontes_PHP_SIW/classes/sp/db_getCadastrador_CL.php -text
 Fontes_PHP_SIW/classes/sp/db_getCadastrador_PD.php -text
+Fontes_PHP_SIW/classes/sp/db_getCaixa.php -text
 Fontes_PHP_SIW/classes/sp/db_getCall.php -text
 Fontes_PHP_SIW/classes/sp/db_getCargo.php -text
 Fontes_PHP_SIW/classes/sp/db_getCategoriaDiaria.php -text
@@ -805,6 +809,7 @@ Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
 Fontes_PHP_SIW/classes/sp/db_getModMaster.php -text
 Fontes_PHP_SIW/classes/sp/db_getMoeda.php -text
+Fontes_PHP_SIW/classes/sp/db_getMtSituacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getNatureza_PE.php -text
@@ -917,6 +922,7 @@ Fontes_PHP_SIW/classes/sp/db_getTipoIndice.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoInteressado.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoLancamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoMatServ.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoMovimentacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoPostoList.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoRestricao.php -text
@@ -1019,7 +1025,11 @@ Fontes_PHP_SIW/classes/sp/dml_putAcordoRep.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAcordoTermo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAfastamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAgreeType.php -text
+Fontes_PHP_SIW/classes/sp/dml_putAlmoxarifado.php -text
+Fontes_PHP_SIW/classes/sp/dml_putAlmoxarifadoLocal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putArquivo.php -text
+Fontes_PHP_SIW/classes/sp/dml_putArquivoLocal_PA.php -text
+Fontes_PHP_SIW/classes/sp/dml_putArquivo_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putArquivo_PE.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAssunto_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAtualizaEtapa.php -text
@@ -1044,6 +1054,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCVHist.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVIdent.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVIdioma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVProducao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCaixa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCargo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCategoriaDiaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCiaTrans.php -text
@@ -1052,6 +1063,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCoPesEnd.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCoPesTel.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCodigoExterno.php -text
 Fontes_PHP_SIW/classes/sp/dml_putColuna.php -text
+Fontes_PHP_SIW/classes/sp/dml_putConfCL.php -text
 Fontes_PHP_SIW/classes/sp/dml_putConfPD.php -text
 Fontes_PHP_SIW/classes/sp/dml_putContasCronograma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putContasRegistro.php -text
@@ -1133,6 +1145,7 @@ Fontes_PHP_SIW/classes/sp/dml_putMeioTrans.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMtSituacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNaturezaDoc_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putNatureza_PE.php -text
@@ -1151,9 +1164,11 @@ Fontes_PHP_SIW/classes/sp/dml_putPDUnidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Atividade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Bilhete.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlano_Menu.php -text
@@ -1214,6 +1229,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEtpRec.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicIndicador.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicInfGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicInfTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicOpiniao.php -text
@@ -1244,6 +1260,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTipoIndice.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoInteressado.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoLancamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoMatServ.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTipoMovimentacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoRecurso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoRestricao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoSP.php -text
@@ -1380,6 +1397,7 @@ Fontes_PHP_SIW/funcoes/exibeLog.php -text
 Fontes_PHP_SIW/funcoes/exibeTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/formataDataXML.php -text
 Fontes_PHP_SIW/funcoes/geragraficoflash.php -text
+Fontes_PHP_SIW/funcoes/geragraficoflash2.php -text
 Fontes_PHP_SIW/funcoes/montaRadioMes.php -text
 Fontes_PHP_SIW/funcoes/montaStringOpcao.php -text
 Fontes_PHP_SIW/funcoes/montaTipoIndicador.php -text
@@ -1398,6 +1416,7 @@ Fontes_PHP_SIW/funcoes/selecaoAditivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoAgencia.php -text
 Fontes_PHP_SIW/funcoes/selecaoAno.php -text
 Fontes_PHP_SIW/funcoes/selecaoArquivo.php -text
+Fontes_PHP_SIW/funcoes/selecaoArquivoLocalSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoAssunto.php -text
 Fontes_PHP_SIW/funcoes/selecaoAssuntoRadio.php -text
 Fontes_PHP_SIW/funcoes/selecaoAtividade.php -text
@@ -1407,6 +1426,7 @@ Fontes_PHP_SIW/funcoes/selecaoBaseGeografica_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoCC.php -text
 Fontes_PHP_SIW/funcoes/selecaoCCSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoCTEspecificacao.php -text
+Fontes_PHP_SIW/funcoes/selecaoCaixa.php -text
 Fontes_PHP_SIW/funcoes/selecaoCalculo.php -text
 Fontes_PHP_SIW/funcoes/selecaoCargo.php -text
 Fontes_PHP_SIW/funcoes/selecaoCategoriaDiaria.php -text
@@ -1454,6 +1474,7 @@ Fontes_PHP_SIW/funcoes/selecaoLCFonteRecurso.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCJulgamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCModalidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoLCSituacao.php -text
+Fontes_PHP_SIW/funcoes/selecaoLocalSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoLocalizador_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoMacroObjetivo.php -text
@@ -1464,6 +1485,7 @@ Fontes_PHP_SIW/funcoes/selecaoMes.php -text
 Fontes_PHP_SIW/funcoes/selecaoModalidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoModulo.php -text
 Fontes_PHP_SIW/funcoes/selecaoMoeda.php -text
+Fontes_PHP_SIW/funcoes/selecaoMtSituacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoNatureza.php -text
 Fontes_PHP_SIW/funcoes/selecaoNaturezaDocumento.php -text
 Fontes_PHP_SIW/funcoes/selecaoNatureza_IS.php -text
@@ -1519,6 +1541,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoAfastamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAutenticacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoConclusao.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoCumprimento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDado.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoData.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDemanda.php -text
@@ -1550,6 +1573,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoSP.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoSubordination.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoTabela.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoUnidade.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoUtilBilhete.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoVeiculo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoVisao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTrigger.php -text
@@ -2087,6 +2111,7 @@ Fontes_PHP_SIW/mod_is/tarefas.php -text
 Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text
 Fontes_PHP_SIW/mod_is/visualtarefa.php -text
+Fontes_PHP_SIW/mod_mt/tabelas.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_demandaeventual.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_projeto.php -text
 Fontes_PHP_SIW/mod_or_pub/or_tabelas.php -text

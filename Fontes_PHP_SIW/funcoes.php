@@ -100,13 +100,13 @@ function colapsar($w_chave){
 // Gera um link chamando o arquivo desejado
 // -------------------------------------------------------------------------
 function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
-
+	 extract($GLOBALS);	 
   // Monta a chamada para a página que retorna o arquivo
-  $l_link = 'file.php?force=false&cliente='.$p_cliente.'&id='.$p_arquivo;
+  $l_link = $conRootSIW.'file.php?force=false&cliente='.$p_cliente.'&id='.$p_arquivo;
 
   If (strtoupper(Nvl($p_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
      // Altera a chamada padrão, dispensando a sessão
-     $l_link = 'file.php?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
+     $l_link = $conRootSIW.'file.php?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
   } ElseIf (strtoupper(Nvl($p_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
      // Trata a possibilidade da chamada ter passado classe, target e hint
      If (Nvl($p_classe,'') > '') $l_classe = ' class="' . $p_classe . '" ';  Else $l_classe = '';
@@ -2262,7 +2262,6 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   $from_address             = f($RS_Cliente,'siw_email_conta');
   $reply_name               = $from_name;
   $reply_address            = $from_address;
-  $reply_address            = $from_address;
   $error_delivery_name      = $from_name;
   $error_delivery_address   = $from_address;
 
@@ -2270,21 +2269,24 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
 
   $email_message->localhost = $_SERVER['HOSTNAME'];
   $email_message->smtp_host = f($RS_Cliente,'smtp_server');
-  $email_message->smtp_port=25;
-  $email_message->smtp_ssl=0; /* Use SSL to connect to the SMTP server. Gmail requires SSL */
+  if (strpos($email_message->smtp_host,':')!==false) {
+    list($email_message->smtp_host, $email_message->smtp_port) = explode(':',$email_message->smtp_host);
+  }
+  $email_message->smtp_ssl=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 0 : 1); /* Use SSL to connect to the SMTP server. Gmail requires SSL */
   $email_message->smtp_direct_delivery=0; /* Deliver directly to the recipients destination SMTP server */
-  $email_message->smtp_user=''; /* authentication user name */
+  $email_message->smtp_user=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_conta')); /* authentication user name */
   $email_message->smtp_realm='';  /* authentication realm or Windows domain when using NTLM authentication */
   $email_message->smtp_workstation=''; /* authentication workstation name when using NTLM authentication */
-  $email_message->smtp_password=''; /* authentication password */
+  $email_message->smtp_password=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_senha')); /* authentication password */
   $email_message->smtp_debug=0; /* Output dialog with SMTP server */
   $email_message->smtp_html_debug=0; /* set this to 1 to make the debug output appear in HTML */
 
   /* if you need POP3 authetntication before SMTP delivery,
   * specify the host name here. The smtp_user and smtp_password above
   * should set to the POP3 user and password*/
-  $email_message->smtp_pop3_auth_host='';
-
+  $email_message->smtp_pop3_auth_host=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? '' : $email_message->smtp_host);
+  $email_message->pop3_auth_port=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 110: 995);
+  
   /* In directly deliver mode, the DNS may return the IP of a sub-domain of
    * the default domain for domains that do not exist. If that is your
    * case, set this variable with that sub-domain address. */
@@ -2383,8 +2385,8 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
     if (strcmp($error,'')) {
       // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
       if (strtoupper(PHP_OS)!='SUNOS') {
-        enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.f($RS_Cliente,'smtp_server').'] Porta ['.ini_get('smtp_port').'] Conta ['.f($RS_Cliente,'siw_email_conta').']');
-        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.f($RS_Cliente,'smtp_server').']\nPorta ['.ini_get('smtp_port').']\nConta ['.f($RS_Cliente,'siw_email_conta').']\n'.$error;
+        enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.$email_message->smtp_host.'] Porta ['.$email_message->smtp_port.'] Conta ['.$email_message->smtp_user.'/'.$email_message->smtp_password.']');
+        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.$email_message->smtp_host.']\nPorta ['.$email_message->smtp_port.']\nConta ['.$email_message->smtp_user.'/'.$email_message->smtp_password.']\n'.$error;
       } else {
         return null;
       }

@@ -75,7 +75,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'data_recebimento')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data limite para conclusão:</b></td>';
     $l_html.=chr(13).'       <td>'.nvl(formataDataEdicao(f($RS,'fim')),'---').'</td></tr>';
-    $l_html.=chr(13).'   <tr><td valign="top"><b>Assunto:</b></td>';
+    $l_html.=chr(13).'   <tr><td valign="top"><b>Classificação:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.f($RS,'cd_assunto').'-'.f($RS,'ds_assunto').'</td></tr>';
     $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento do assunto:</b></td>';
     $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'descricao'),'---')).'</td></tr>';
@@ -226,7 +226,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'         </table></td></tr>';
     } 
 
-    // Arquivos vinculados ao programa
+    // Arquivos vinculados ao registro
     $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0 && $l_anexo=='S') {
@@ -264,6 +264,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
           $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
           $l_html.=chr(13).'       <tr>';
           $l_html.=chr(13).'         <td colspan=3 bgColor="#f0f0f0" align="center"><b>Ocorrência</b></td>';
+          $l_html.=chr(13).'         <td colspan=2 bgColor="#f0f0f0" align="center"><b>Recebimento</b></td>';
           $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Procedência</b></td>';
           $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Destino</b></td>';
           $l_html.=chr(13).'         <td rowspan=2 bgColor="#f0f0f0" align="center"><b>Despacho / Descrição</b></td>';
@@ -272,18 +273,31 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
           $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Data</b></td>';
           $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Tipo</b></td>';
           $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Executor</b></td>';
+          $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Data</b></td>';
+          $l_html.=chr(13).'         <td bgColor="#f0f0f0" align="center"><b>Recebedor</b></td>';
           $l_html.=chr(13).'       </tr>';
           $i=1;
         }
         $l_html.=chr(13).'    <tr valign="top">';
-        $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
+        $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(nvl(f($row,'phpdt_envio'),f($row,'phpdt_data')),3).'</td>';
 
         $l_html.=chr(13).'        <td>'.f($row,'origem').'</td>';
         if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_resp'),$TP,f($row,'nm_pessoa_resp')).'</td>';
         else                    $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_resp').'</td>';
+
+        if (nvl(f($row,'recebedor'),'')!='') {
+          $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_receb'),3).'</td>';
+          if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'recebedor'),$TP,f($row,'nm_recebedor'));
+          else                    $l_html.=chr(13).'        <td>'.f($row,'nm_recebedor');
+        } elseif (f($row,'origem')=='TRÂMITE ORIGINAL' || f($row,'origem')=='TRAMITAÇÃO') {
+          $l_html.=chr(13).'      <td colspan=2 align="center">PENDENTE</td>';
+        } else {
+          $l_html.=chr(13).'      <td colspan=2>&nbsp;</td>';
+        }
+        
         if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibeUnidade('../',$w_cliente,f($row,'nm_origem'),f($row,'sq_origem'),$TP).'</td>';
         else                    $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_origem'),'---').'</td>';
-
+        
         if (nvl(f($row,'sq_destinatario'),'')!='') {
           if (f($row,'tipo_destinatario')=='PESSOA') {
             if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_destinatario'),$TP,f($row,'nm_destinatario'));

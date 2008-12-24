@@ -97,40 +97,40 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>'.f($RS,'processo');
         }
       }
-      if (f($RS,'certame')=='S') {
-        $l_html.=chr(13).'      <tr><td><b>Número do certame: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'numero_certame').' </td></tr>';
+      if (f($RS,'certame')=='S') $l_html.=chr(13).'      <tr><td><b>Número do certame: </b></td><td>'.f($RS,'numero_certame').' </td></tr>';
+      if(nvl(f($RS,'numero_ata'),'')!='') $l_html.=chr(13).'      <tr><td><b>Número da ata: </b></td><td>'.f($RS,'numero_ata').' </td></tr>';
+      if (f($RS,'gera_contrato')=='S') {
+        $l_html.=chr(13).'      <tr><td><b>Tipo reajuste: </b></td><td>'.f($RS,'nm_tipo_reajuste').' </td></tr>';
+        if(f($RS,'tipo_reajuste')==1) {
+          $l_html.=chr(13).'      <tr><td><b>Índice base: </b></td><td>'.f($RS,'indice_base').' </td></tr>';
+          $l_html.=chr(13).'      <tr><td><b>Indicador: </b></td><td>'.f($RS,'nm_eoindicador').' </td></tr>';  
+        }
+        $l_html.=chr(13).'      <tr><td><b>Limite de acréscimo/supressão (%): </b></td><td>'.formatNumber(f($RS,'limite_variacao')).' </td></tr>';
       }
-      if(nvl(f($RS,'numero_ata'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Número da ata: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'numero_ata').' </td></tr>';
-      }
-      $l_html.=chr(13).'      <tr><td><b>Tipo reajuste: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_reajuste').' </td></tr>';
-      if(f($RS,'tipo_reajuste')==1) {
-        $l_html.=chr(13).'      <tr><td><b>Índice base: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'indice_base').' </td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Indicador: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'nm_eoindicador').' </td></tr>';  
-      }
-      $l_html.=chr(13).'      <tr><td><b>Limite de acréscimo/supressão (%): </b></td>';
-      $l_html.=chr(13).'        <td>'.formatNumber(f($RS,'limite_variacao')).' </td></tr>';
       if (nvl(f($RS,'cd_lcfonterecurso'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Fonte de recurso: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'nm_lcfonterecurso').' ('.f($RS,'cd_lcfonterecurso').')</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Fonte de recurso: </b></td><td>'.f($RS,'nm_lcfonterecurso').' ('.f($RS,'cd_lcfonterecurso').')</td></tr>';
       }
       if (nvl(f($RS,'cd_espec_despesa'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Especificação de despesa: </b></td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'cd_espec_despesa').' - '.f($RS,'nm_espec_despesa').' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Especificação de despesa: </b></td><td>'.f($RS,'cd_espec_despesa').' - '.f($RS,'nm_espec_despesa').' </td></tr>';
       }
       if (f($RS,'certame')=='S') {
-        $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td>';
-        $l_html.=chr(13).'        <td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td><td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Situação: </b></td>';
-      $l_html.=chr(13).'        <td>'.nvl(f($RS,'nm_lcsituacao'),'---').' </td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Mínimo de dias de validade das propostas: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'dias_validade_proposta').' </td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Situação: </b></td><td>'.nvl(f($RS,'nm_lcsituacao'),'---').' </td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Mínimo de dias de validade das propostas: </b></td><td>'.f($RS,'dias_validade_proposta').' </td></tr>';
+    }
+    
+    if (nvl(f($RS,'sq_financeiro'),'')!='') {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      if (nvl(f($RS,'sq_projeto_rubrica'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Rubrica: </b></td><td>'.f($RS,'cd_rubrica').' - '.f($RS,'nm_rubrica').'</td></tr>';
+      if (nvl(f($RS,'sq_tipo_lancamento'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação financeira: </b></td><td>'.f($RS,'nm_lancamento').'</td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Classe(s) prevista(s): </b></td><td>';
+      $l_texto = '';
+      if (f($RS,'consumo')=='S') $l_texto = 'CONSUMO';
+      if (f($RS,'permanente')=='S') (($l_texto=='') ? $l_texto = 'PERMANENTE' : $l_texto.=', PERMANENTE');
+      if (f($RS,'servico')=='S')    (($l_texto=='') ? $l_texto = 'SERVIÇOS'   : $l_texto.=', SERVIÇOS');
+      if (f($RS,'outros')=='S')     (($l_texto=='') ? $l_texto = 'OUTROS'     : $l_texto.=', OUTROS');
+      $l_html.=$l_texto.'</td></tr>';
     }
     
     // Objetivos estratégicos

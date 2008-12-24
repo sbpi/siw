@@ -818,9 +818,10 @@ function Modalidades() {
     $w_minimo_pesquisas       = $_REQUEST['w_minimo_pesquisas'];
     $w_minimo_participantes   = $_REQUEST['w_minimo_participantes'];
     $w_propostas_validas      = $_REQUEST['w_propostas_validas'];
-    $w_certame                = $_REQUEST['certame'];
-    $w_enquadramento_inicial  = $_REQUEST['enquadramento_inicial'];
-    $w_enquadramento_final    = $_REQUEST['enquadramento_final'];
+    $w_certame                = $_REQUEST['w_certame'];
+    $w_enquadramento_inicial  = $_REQUEST['w_enquadramento_inicial'];
+    $w_enquadramento_final    = $_REQUEST['w_enquadramento_final'];
+    $w_contrato               = $_REQUEST['w_contrato'];
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $RS = db_getLCModalidade::getInstanceOf($dbms, null, $w_cliente, null, null, null, null);
@@ -831,7 +832,7 @@ function Modalidades() {
       $RS = SortArray($RS,'certame','asc', 'enquadramento_inicial', 'asc', 'nome', 'asc'); 
     }
   } elseif (!(strpos('AEV',$O)===false) || nvl($w_troca,'')!='') {
-    //Recupera os dados do endereço informado
+    //Recupera os dados da modalidade
     $RS = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
     foreach ($RS as $row) {
       $w_nome                   = f($row,'nome');
@@ -842,6 +843,7 @@ function Modalidades() {
       $w_padrao                 = f($row,'padrao');
       $w_minimo_pesquisas       = f($row,'minimo_pesquisas');
       $w_certame                = f($row,'certame');
+      $w_contrato               = f($row,'gera_contrato');
       $w_minimo_participantes   = f($row,'minimo_participantes');
       $w_propostas_validas      = f($row,'minimo_propostas_validas');
       $w_enquadramento_inicial  = formatNumber(f($row,'enquadramento_inicial'));
@@ -901,8 +903,9 @@ function Modalidades() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan="2"><b>Sigla</td>');
     ShowHTML('          <td rowspan="2"><b>Nome</td>');
-    ShowHTML('          <td rowspan="2"><b>Min. pesquisas</td>');
+    ShowHTML('          <td rowspan="2"><b>Mínimo pesquisas</td>');
     ShowHTML('          <td colspan="3"><b>Certame</td>');
+    ShowHTML('          <td rowspan="2"><b>Gera contrato</td>');
     ShowHTML('          <td colspan="2"><b>Enquadramento</td>');
     ShowHTML('          <td rowspan="2"><b>Ativo</td>');
     ShowHTML('          <td rowspan="2"><b>Padrão</td>');
@@ -929,6 +932,7 @@ function Modalidades() {
         ShowHTML('        <td align="center">'.f($row,'nm_certame').'</td>');
         ShowHTML('        <td align="center">'.f($row,'minimo_participantes').'</td>');
         ShowHTML('        <td align="center">'.f($row,'minimo_propostas_validas').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_gera_contrato').'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'enquadramento_inicial')).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'enquadramento_final')).'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
@@ -952,16 +956,17 @@ function Modalidades() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td><table border=0 width="100%"><tr valign="top">');
+    ShowHTML('           <td colspan=2><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
     ShowHTML('           <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.'accesskey="S" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_sigla.'"></td>');
-    ShowHTML('        <tr><td colspan=2><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="d" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
-    ShowHTML('        <tr><td colspan=2><b><u>F</u>undamentação:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_fundamentacao" class="sti" ROWS="3" COLS="75">'.$w_fundamentacao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="d" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr><td colspan=3><b><u>F</u>undamentação:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_fundamentacao" class="sti" ROWS="3" COLS="75">'.$w_fundamentacao.'</textarea></td>');
 
     ShowHTML('        <tr valign="top">');
     ShowHTML('           <td><b>Mínimo de pes<u>q</u>uisas:</b><br><input '.$w_Disabled.'accesskey="q" type="text" name="w_minimo_pesquisas" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_minimo_pesquisas.'"></td>');
-    MontaRadioSN( '<b>Exige certame?</b>', $w_certame , 'w_certame');
+    MontaRadioSN( '<b>Gera contrato?</b>', $w_contrato, 'w_contrato');
     ShowHTML('        <tr valign="top">');
+    MontaRadioSN( '<b>Exige certame?</b>', $w_certame , 'w_certame');
     ShowHTML('           <td><b>Mínimo de <u>p</u>articipantes:</b><br><input '.$w_Disabled.' accesskey="p" type="text" name="w_minimo_participantes" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_minimo_participantes.'"></td>');    
     ShowHTML('           <td><b>Mínimo de propostas <u>v</u>álidas:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_propostas_validas" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_propostas_validas.'"></td>');  
     ShowHTML('        <tr valign="top">');
@@ -1882,10 +1887,10 @@ function Grava() {
           } 
         }  
         dml_putLCModalidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
-           $_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],
-           $_REQUEST['w_fundamentacao'],$_REQUEST['w_ativo'],$_REQUEST['w_minimo_pesquisas'],
-           $_REQUEST['w_minimo_participantes'],$_REQUEST['w_propostas_validas'],
-           $_REQUEST['w_certame'],$_REQUEST['w_enquadramento_inicial'],$_REQUEST['w_enquadramento_final'],$_REQUEST['w_padrao']);       
+           $_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],$_REQUEST['w_fundamentacao'],
+           $_REQUEST['w_minimo_pesquisas'],$_REQUEST['w_minimo_participantes'],$_REQUEST['w_propostas_validas'],
+           $_REQUEST['w_certame'],$_REQUEST['w_enquadramento_inicial'],$_REQUEST['w_enquadramento_final'],
+           $_REQUEST['w_contrato'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);       
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
         ScriptClose();        

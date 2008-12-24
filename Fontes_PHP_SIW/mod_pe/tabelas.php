@@ -1806,6 +1806,7 @@ function TipoRecurso() {
     // Se for herança, atribui a chave da opção selecionada para w_chave
     if ($w_copia>'') $w_chave = $w_copia;
     $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    //print_r($RS);
     foreach ($RS as $row) { $RS = $row; break; }
     $w_chave_pai      = f($RS,'sq_tipo_pai');
     $w_nome           = f($RS,'nome');

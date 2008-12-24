@@ -55,15 +55,15 @@
             $w_fim              = FormataDataEdicao(f($RS,'fim'));
             break;
           case 2: 
-            $w_fim              = substr(f($RS,'phpdt_fim'),0,-3);
+            $w_fim              = substr(FormataDataEdicao(f($RS,'phpdt_fim'),3),0,-3);
             break;
           case 3: 
             $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
             $w_fim              = FormataDataEdicao(f($RS,'fim'));
             break;
         case 4:
-            $w_inicio           = substr(f($RS,'phpdt_inicio'),0,-3);
-            $w_fim              = substr(f($RS,'phpdt_fim'),0,-3);
+            $w_inicio           = substr(FormataDataEdicao(f($RS,'phpdt_inicio'),3),0,-3);
+            $w_fim              = substr(FormataDataEdicao(f($RS,'phpdt_fim'),3),0,-3);
             break;
         } 
         if ($w_exibe_recurso) {

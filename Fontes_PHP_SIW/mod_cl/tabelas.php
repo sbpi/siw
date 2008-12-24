@@ -400,7 +400,7 @@ function TipoMatServ() {
 function Criterio() {
   extract($GLOBALS);
   global $w_Disabled;
-
+  $w_sq_lcjulgamento = $_REQUEST['w_sq_lcjulgamento'];
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
   //Se for recarga da página
@@ -525,7 +525,7 @@ function Criterio() {
           ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
        }
     }
-    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+	ShowHTML('           <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1186,7 +1186,7 @@ function Grava() {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCCriterio::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
-          if (count($RS)>0) {
+          if (count($RS)>0 && ($O=='I' || ($O=='A' && f($RS,'w_nome')==$_REQUEST['w_nome']))) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe critério de julgamento com este nome!\');');
             ScriptClose(); 
@@ -1213,9 +1213,9 @@ function Grava() {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCSituacao::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
-          if (count($RS)>0) {
+          if (count($RS)>0 && ($O=='I' || ($O=='A' && f($RS,'w_nome')==$_REQUEST['w_nome']))) {
             ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Já existe critério de julgamento com este nome!\');');
+            ShowHTML('  alert(\'Já existe uma situação de certame com este nome!\');');
             ScriptClose(); 
             retornaFormulario('w_nome');
             break;

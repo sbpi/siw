@@ -69,7 +69,7 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
       }
     } elseif(f($l_rs_tramite,'sigla')=='EE')  {
       $l_exibe=false;
-      if(nvl(f($l_rs_solic,'tipo_julgamento'),'')=='N') {
+      if(nvl(f($l_rs_solic,'certame'),'')=='N') {
         $l_rs_pesquisa = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'VALIDACAOG');
         foreach($l_rs_pesquisa as $row) {
           if (f($row,'qt_propostas')==0) {

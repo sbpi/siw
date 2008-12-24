@@ -109,6 +109,7 @@ function Cidade() {
   $p_ativo      = strtoupper($_REQUEST['p_ativo']);
   $p_ordena     = strtolower($_REQUEST['p_ordena']);
 
+
   if ($O!='I' && $p_sq_pais.$p_co_uf.$p_nome=='') $O='P';
   if ($w_troca>'' && $O!='E')  {
     $w_sq_cidade    = $_REQUEST['w_sq_cidade'];
@@ -118,7 +119,9 @@ function Cidade() {
     $w_ddd          = $_REQUEST['w_ddd'];
     $w_codigo_ibge  = $_REQUEST['w_codigo_ibge'];
     $w_capital      = $_REQUEST['w_capital'];
+    $w_aeroportos   = $_REQUEST['w_aeroportos'];
   } elseif ($O=='L') {
+
     $RS = db_getCityList::getInstanceOf($dbms,$p_sq_pais,$p_co_uf,$p_nome,null);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,$p_ordena,'asc');
@@ -134,6 +137,7 @@ function Cidade() {
     $w_ddd          = f($RS,'ddd');
     $w_codigo_ibge  = f($RS,'codigo_ibge');
     $w_capital      = f($RS,'capital');
+	$w_aeroportos   = f($RS,'aeroportos');
   } 
 
   Cabecalho();
@@ -147,6 +151,7 @@ function Cidade() {
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_ddd','DDD','1','','2','4','','1');
       Validate('w_codigo_ibge','IBGE','1','','1','20','1','1');
+	  Validate('w_aeroportos','Aeroporto(s)','1','1','1','1','','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -203,12 +208,13 @@ function Cidade() {
     ShowHTML('          <td><b>DDD</td>');
     ShowHTML('          <td><b>IBGE</td>');
     ShowHTML('          <td><b>Capital</td>');
+	ShowHTML('          <td><b>Aeroportos</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
@@ -221,6 +227,7 @@ function Cidade() {
         ShowHTML('        <td align="center">'.f($row,'ddd').'</td>');
         ShowHTML('        <td align="center">'.f($row,'codigo_ibge').'</td>');
         ShowHTML('        <td align="center">'.f($row,'capital').'</td>');
+		ShowHTML('        <td align="center">'.f($row,'aeroportos').'</td>');
         if ($w_libera_edicao=='S') {
           ShowHTML('        <td align="top" nowrap>'); 
           ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_cidade='.f($row,'sq_cidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
@@ -251,6 +258,7 @@ function Cidade() {
     selecaoEstado('<u>U</u>F:','U','Selecione a UF na relação.',$w_co_uf,$w_sq_pais,null,'w_co_uf',null,null);
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="60" maxlength="60" value="'.$w_nome.'"></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b><U>A</U>eroporto(s):<br><INPUT ACCESSKEY="A" '.$w_Disabled.' class="STI" type="text" name="w_aeroportos" size="2" maxlength="1" value="'.$w_aeroportos.'"></td></tr>');
     ShowHTML('      <tr align="left"><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr><td>');
     ShowHTML('          <td valign="top"><b><U>D</U>DD:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_ddd" size="4" maxlength="4" value="'.$w_ddd.'"></td>');
     ShowHTML('          <td valign="top"><b>I<U>B</U>GE:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="STI" type="text" name="w_codigo_ibge" size="6" maxlength="6" value="'.$w_codigo_ibge.'"></td>');
@@ -1028,7 +1036,7 @@ function Grava() {
         } else {        
           dml_CoCidade::getInstanceOf($dbms, $O,
               $_REQUEST['w_sq_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_codigo_ibge'],$_REQUEST['w_sq_pais'],
-              $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital']);
+              $_REQUEST['w_sq_regiao'],$_REQUEST['w_co_uf'],$_REQUEST['w_nome'],$_REQUEST['w_capital'],$_REQUEST['w_aeroportos']);
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
           ScriptClose();

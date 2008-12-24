@@ -799,26 +799,31 @@ function Gerencial() {
       ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
       ShowHTML('          <td><b>Totais</td>');
       ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1);
+//      echo '=>  '.$t_totsolic.'  e '.$t_totcad.'  e '.$t_tottram.'  e '.$t_totconc.'  e '.$t_totatraso.'  e '.$t_totaviso.'  e '.$t_totvalor.'  e '.$t_totcusto.'  e '.$t_totacima;
     } 
     if ($w_embed != 'WORD') ShowHTML('      </FORM>');
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    //if (count($RS1)>0 && $p_graf=='N') {
-    //    if($w_embed != 'WORD'){
-    //	include_once($w_dir_volta.'funcoes/geragraficoflash.php');
-    //      // Coloca o gráfico somente se o usuário desejar
-    //      ShowHTML('<tr><td align="center" height=20>');
-    //      //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-    //      ShowHTML('<tr><td align="center" height=20>');
-    //	  barra_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "barra");
-    //      if (($t_totcad + $t_tottram)>0) {
-    //        //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-    //		pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
-    //      } 
-    //    }
-    //} 
+    if (count($RS1)>0 && $p_graf=='N') {
+      if($w_embed != 'WORD'){
+        include_once($w_dir_volta.'funcoes/geragraficoflash2.php');
+        // Coloca o gráfico somente se o usuário desejar
+        ShowHTML('<tr><td align="center" height=20>');
+        //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
+        ShowHTML('<tr><td align="center" height=20>');
+        barra_flash(array(genero => "M", 
+        "protocolos" =>  $t_totsolic, 
+        "processos" => $t_totcad, 
+        "documentos" => $t_tottram, 
+        "atraso" => $t_totatraso), "barra");
+        if (($t_totcad + $t_tottram)>0) {
+          //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
+          pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
+        } 
+      }
+    } 
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -849,7 +854,7 @@ function Gerencial() {
     //}
     //if ($p_agrega=='GRPALOCAL')     ShowHTML('          <option value="GRPALOCAL" selected>UF');                      else ShowHTML('          <option value="GRPALOCAL">UF');
     ShowHTML('          </select></td>');
-    //MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
+    MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
     MontaRadioSN('<b>Limita tamanho do assunto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
@@ -977,7 +982,7 @@ function ImprimeCabecalho() {
   ShowHTML('          <td><b>Documentos</td>');
   //ShowHTML('          <td><b>Conc.</td>');
   ShowHTML('          <td><b>Atraso</td>');
-  ShowHTML('          <td><b>Aviso</td>');
+  //ShowHTML('          <td><b>Aviso</td>');
   //if ($_SESSION['INTERNO']=='S') {
   //  ShowHTML('          <td><b>$ Prev.</td>');
   //  ShowHTML('          <td><b>$ Real</td>');
@@ -1000,7 +1005,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_tram,0).'</a>&nbsp;</td>');                        else ShowHTML('          <td align="center">'.formatNumber($l_tram,0).'&nbsp;</td>');
   //if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_conc,0).'</a>&nbsp;</td>');                         else ShowHTML('          <td align="center">'.formatNumber($l_conc,0).'&nbsp;</td>');
   if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</a>&nbsp;</td>'); else ShowHTML('          <td align="center"><b>'.$l_atraso.'&nbsp;</td>');
-  if ($l_aviso>0 && $w_embed != 'WORD')    ShowHTML('          <td align="center"><font color="red"><b>'.formatNumber($l_aviso,0).'&nbsp;</td>');                                                                                                                                                                                     else ShowHTML('          <td align="center"><b>'.$l_aviso.'&nbsp;</td>');
+  //if ($l_aviso>0 && $w_embed != 'WORD')    ShowHTML('          <td align="center"><font color="red"><b>'.formatNumber($l_aviso,0).'&nbsp;</td>');                                                                                                                                                                                     else ShowHTML('          <td align="center"><b>'.$l_aviso.'&nbsp;</td>');
   //if ($_SESSION['INTERNO']=='S') {
   //  ShowHTML('          <td align="right">'.formatNumber($l_valor,2).'&nbsp;</td>');
   //  ShowHTML('          <td align="right">'.formatNumber($l_custo,2).'&nbsp;</td>');

@@ -58,6 +58,10 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   $l_rs4 = db_getPD_Vinculacao::getInstanceOf($dbms,$v_chave,null,null);
   $l_existe_rs4 = count($l_rs4);
 
+  // Recupera as diárias da viagem
+  $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'PDDIARIA');
+  $l_existe_rs5 = count($l_rs5);
+
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
   // através do JavaScript por envolver mais de uma tela
@@ -86,16 +90,52 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if ($l_existe_rs3<2) {
             $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';
             $l_tipo  = 0;
-          } 
+          } else {
+            // Verifica o sequenciamento dos deslocamentos
+            $i = 0;
+            foreach ($l_rs3 as $row) {
+              if ($i==0) {
+                $w_data_atual   = f($row,'phpdt_chegada');
+                $w_cidade_atual = f($row,'cidade_dest');
+              } else {
+                if ($w_data_atual >= f($row,'phpdt_saida')) {
+                  $l_erro .= '<li>Não pode haver sobreposição de períodos entre diferentes deslocamentos - verifique a data de saída e de chegada de cada deslocamento.';
+                  $l_tipo  = 0;
+                  break;
+                } elseif($w_cidade_atual!=f($row,'cidade_orig')) {
+                  $l_erro .= '<li>A cidade de destino de um deslocamento deve ser a de origem do deslocamento seguinte.';
+                  $l_tipo  = 0;
+                  break;
+                }
+                $w_data_atual   = f($row,'phpdt_chegada');
+                $w_cidade_atual = f($row,'cidade_dest');                
+              }
+              //echo $i.'='.$w_data_atual.'-'.f($row,'phpdt_saida').'-'.$w_cidade_atual.'-'.f($row,'cidade_orig').'-'.f($row,'diaria').'<br>';
+              $i++;
+            }
+          }
     
+          if (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S') {
+            $w_cont = 0;
+            foreach ($l_rs5 as $row) {
+              if (nvl(f($row,'diaria'),'')!='') {
+                $w_cont++;
+              }
+            }
+            if ($w_cont!=count($l_rs5)-1) {
+              $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
+              $l_tipo = 0;
+            }
+          }
+            
           if (f($l_rs_solic,'fim_semana')=='S' and nvl(f($l_rs_solic,'justificativa_dia_util'),'')=='') {
             $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
-            $l_tipo = 2;
+            if ($l_tipo=='') $l_tipo = 2;
           }
           
           if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
             $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
-            $l_tipo = 2;
+            if ($l_tipo=='') $l_tipo = 2;
           }
       } 
 /**
@@ -113,31 +153,36 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         if (!(strpos('CH,DF,EA',Nvl(f($l_rs_tramite,'sigla'),'CH'))===false)) {
 
         } 
-        
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {
-          if (f($RS_Solic,'hospedagem')=='S') {
-            $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
-            foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
-            if (f($l_rs5,'existe')==0) {
-              $l_erro .= '<li>É obrigatório informar as diárias, mesmo que os valores sejam iguais a zero.';
-              $l_tipo  = 0;
-            }
-          } 
 
-          if (f($RS_Solic,'passagem')=='S') {
+        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {
+          $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
+          foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
+          if (f($l_rs5,'existe')>0) {
+            $l_erro .= '<li>É obrigatório informar a cotação de menor valor.';
+            $l_tipo  = 0;
+          }
+        }
+
+        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {
+          if (f($l_rs_solic,'passagem')=='S') {
             $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null);
-            foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
-            if (f($l_rs5,'existe')==0) {
-              $l_erro .= '<li>É obrigatório informar as bilhetes.';
+            if (count($l_rs5)==0) {
+              $l_erro .= '<li>É obrigatório informar os bilhetes.';
               $l_tipo  = 0;
             }
           } 
         } 
+
+        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='PC') {
+          if (f($l_rs_solic,'cumprimento')=='N') {
+            $l_erro .= '<li>É obrigatório informar se a viagem foi cumprida e, em caso positivo, os dados da prestação de contas.';
+            $l_tipo  = 0;
+          }
+        }
+
         $l_erro = $l_erro;
     } 
-
   $l_erro = $l_tipo.$l_erro;
-
   //-----------------------------------------------------------------------------------
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string
   // para ser usada com a tag <UL>.

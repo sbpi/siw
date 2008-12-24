@@ -37,6 +37,7 @@ include_once($w_dir_volta.'classes/sp/dml_putDocumentoAssunto.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoReceb.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
+include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
@@ -698,7 +699,7 @@ function Geral() {
     }
     Validate('w_fim','Data limite para conclusão','DATA','',10,10,'','0123456789/');
     CompData('w_fim','Data limite para conclusão','>=','w_data_documento','Data do documento');
-    Validate('w_assunto','Assunto principal','HIDDEN',1,1,18,'','0123456789');
+    Validate('w_assunto','Classificação','HIDDEN',1,1,18,'','0123456789');
     Validate('w_descricao','Detalhamento do assunto','1','1',1,2000,'1','1');
   } 
   ValidateClose();
@@ -777,7 +778,7 @@ function Geral() {
     selecaoNaturezaDocumento('<u>N</u>atureza:','N','Indique a natureza do documento.',$w_natureza_documento,null,'w_natureza_documento',null,null);
     ShowHTML('           <td title="OPCIONAL. Limite para término da tramitação do documento."><b>Data limite:</b><br><input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('      <tr><td colspan=4><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-    SelecaoAssuntoRadio('Assun<u>t</u>o:','T','Clique na lupa para selecionar o assunto do documento.',$w_assunto,null,'w_assunto','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:','L','Clique na lupa para selecionar a classificação do documento.',$w_assunto,null,'w_assunto','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"');
     ShowHTML('           </table>');
     if (nvl($w_assunto,'')!='') {
       $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
@@ -1404,7 +1405,7 @@ function Encaminhamento() {
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_aviso            = $_REQUEST['w_aviso'];
     $w_dias             = $_REQUEST['w_dias'];
-	$w_protocolo        = $_REQUEST['w_protocolo'];
+  	$w_protocolo        = $_REQUEST['w_protocolo'];
   }
 
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
@@ -1462,7 +1463,7 @@ function Encaminhamento() {
       Validate('w_protocolo','ao processo','1','1','20','20','','0123456789./-'); 
     }
 
-    Validate('w_despacho','Detalhamento do despacho','','1','1','2000','1','1');
+    Validate('w_despacho','Detalhamento do despacho','','','1','2000','1','1');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
       // Se não for encaminhamento e nem o sub-menu do cadastramento
@@ -2050,12 +2051,13 @@ function Tramitacao() {
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_autuar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_anexar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || 
-      $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') || 
-      $p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial') || 
+      $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') ||  
       $p_tipo_despacho==f($RS_Parametro,'despacho_eliminar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')
      ) $w_envia_protocolo = 'S'; else $w_envia_protocolo = 'N';  
-  
+
+  if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')) $w_interno = 'S';  
+     
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';  
   
      if ($O=='L') {
@@ -2125,12 +2127,17 @@ function Tramitacao() {
     ShowHTML('     theForm.w_dias.value = \'\';');
     ShowHTML('  }');
     if ($w_envia_protocolo=='N') {
-      Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
+      if ($p_tipo_despacho!=f($RS_Parametro,'despacho_arqsetorial')) Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
       if ($w_interno=='N') {
         Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
         Validate('w_unidade_externa','Unidade externa','','',2,60,'1','1');
       } else {
-        Validate('w_sq_unidade','Unidade de destino','SELECT',1,1,18,'','0123456789');
+        if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')) {
+          Validate('w_sq_unidade','Arquivo setorial','SELECT',1,1,18,'','0123456789');
+          Validate('w_caixa','Caixa para arquivamento','SELECT',1,1,18,'','0123456789');
+        } else {
+          Validate('w_sq_unidade','Unidade de destino','SELECT',1,1,18,'','0123456789');
+        }
       }
     }
     if ($p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $p_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
@@ -2260,13 +2267,22 @@ function Tramitacao() {
     } else {
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
-      selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+      if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')) {
+        ShowHTML('<INPUT type="hidden" name="w_interno" value="'.$w_interno.'">');
+      } else {
+        selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+      }
       if ($w_interno=='N') {
         SelecaoPessoaOrigem('<u>P</u>essoa de destino:','P','Clique na lupa para selecionar a pessoa de destino.',$w_pessoa_destino,null,'w_pessoa_destino',null,null,null,2);
         ShowHTML('    <tr><td><td colspan="2"><b>U<U>n</U>idade externa: (Informe apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="'.$w_unidade_externa.'"></td>');
       } else {
         ShowHTML('          <td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-        SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
+        if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')) {
+          SelecaoUnidade('Ar<U>q</U>uivo setorial:','Q','Selecione o arquivo setorial.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA_SET','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_caixa\'; document.Form.submit();"');
+          SelecaoCaixa('<u>C</u>aixa:','C',"Selecione a caixa para arquivamento.",$w_caixa,$w_cliente,nvl($w_sq_unidade,0),'w_caixa','TRAMITE',null);
+        } else {
+          SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
+        }
         ShowHTML('           </table>');
       }
     }
