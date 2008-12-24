@@ -791,6 +791,7 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
+                case when b1.sigla = 'AT' then b.valor else 0 end as custo_real,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b2.nome  nm_opiniao,
@@ -849,8 +850,8 @@ begin
                                                                   )
                   inner      join co_pessoa                 f  on (b.solicitante         = f.sq_pessoa)
                     left     join sg_autenticacao           f1 on (f.sq_pessoa           = f1.sq_pessoa)
-                    left     join co_pessoa                 i  on (b.executor            = i.sq_pessoa)
-                    left     join co_pessoa                 j  on (b.recebedor           = j.sq_pessoa)                  
+                  left       join co_pessoa                 i  on (b.executor            = i.sq_pessoa)
+                  left       join co_pessoa                 j  on (b.recebedor           = j.sq_pessoa)                  
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                     g  on (b.sq_cc               = g.sq_cc)
                 left         join eo_unidade                c  on (a.sq_unid_executora   = c.sq_unidade)

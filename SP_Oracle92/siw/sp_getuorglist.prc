@@ -11,7 +11,7 @@ begin
       p_restricao = 'CODIGO'       or p_restricao = 'CODIGONULL'       or p_restricao = 'MOD_PE' or 
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
       p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
-      p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'
+      p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -50,12 +50,13 @@ begin
                                                     (p_restricao = 'CODIGONULL'   and a.informal = 'N' and a.codigo <> '00') or 
                                                     (p_restricao = 'MOD_PE'       and g.sq_unidade is not null) or 
                                                     (p_restricao = 'MOD_PA'       and h.sq_unidade is not null) or 
-                                                    (p_restricao = 'MOD_PA_PAI'   and h.sq_unidade is not null and h.sq_unidade_pai is null) or 
-                                                    (p_restricao = 'MOD_CL_PAI'   and i.sq_unidade is not null and i.sq_unidade_pai is null) or 
-                                                    (p_restricao = 'MOD_PA_PROT'  and h.sq_unidade is not null and h.autua_processo = 'S') or 
-                                                    (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos = 'S') or 
-                                                    (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento    = 'S') or 
-                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao        = 'S')
+                                                    (p_restricao = 'MOD_PA_PAI'   and h.sq_unidade is not null and h.sq_unidade_pai   is null) or 
+                                                    (p_restricao = 'MOD_CL_PAI'   and i.sq_unidade is not null and i.sq_unidade_pai   is null) or 
+                                                    (p_restricao = 'MOD_PA_PROT'  and h.sq_unidade is not null and h.autua_processo   = 'S') or 
+                                                    (p_restricao = 'MOD_PA_SET'   and h.sq_unidade is not null and (h.sq_unidade_pai   is null or h.arquivo_setorial = 'S')) or 
+                                                    (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos  = 'S') or 
+                                                    (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento     = 'S') or 
+                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S')
                                                    )
                                                   )
                 )

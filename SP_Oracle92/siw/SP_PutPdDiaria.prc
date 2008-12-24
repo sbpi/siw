@@ -116,14 +116,14 @@ begin
               case p_veiculo when 'S' then coalesce(p_veiculo_valor,0) else 0 end,
               case p_diaria when 'S' then p_sq_valor_diaria else null end, p_diaria,           p_deslocamento_chegada, p_deslocamento_saida, 
               p_sq_diaria_hospedagem, p_sq_diaria_veiculo,
-              case p_diaria when 'N' then p_justificativa_diaria else null end,
+              p_justificativa_diaria,
               case p_veiculo when 'S' then p_justificativa_veiculo else null end,
               case p_diaria when 'S' then w_fin_dia else null end,
               case p_hospedagem when 'S' then w_fin_hsp else null end,
               case p_veiculo when 'S' then w_fin_vei else null end,
               case p_hospedagem when 'S' then p_hos_in else null end,
               case p_hospedagem when 'S' then p_hos_out else null end,
-              case p_hospedagem when 'S' then p_hos_observ else null end,
+              p_hos_observ,
               case p_veiculo when 'S' then p_vei_ret else null end,
               case p_veiculo when 'S' then p_vei_dev else null end
          from dual
@@ -148,14 +148,14 @@ begin
              sq_deslocamento_saida      = p_deslocamento_saida,
              sq_valor_diaria_hospedagem = p_sq_diaria_hospedagem,
              sq_valor_diaria_veiculo    = p_sq_diaria_veiculo,
-             justificativa_diaria       = case p_diaria when 'N' then p_justificativa_diaria else null end,
+             justificativa_diaria       = p_justificativa_diaria,
              justificativa_veiculo      = case p_veiculo when 'S' then p_justificativa_veiculo else null end,
              sq_pdvinculo_diaria        = case p_diaria when 'S' then w_fin_dia else null end,
              sq_pdvinculo_hospedagem    = case p_hospedagem when 'S' then w_fin_hsp else null end,
              sq_pdvinculo_veiculo       = case p_veiculo when 'S' then w_fin_vei else null end,
              hospedagem_checkin         = case p_hospedagem when 'S' then p_hos_in else null end,
              hospedagem_checkout        = case p_hospedagem when 'S' then p_hos_out else null end,
-             hospedagem_observacao      = case p_hospedagem when 'S' then p_hos_observ else null end,
+             hospedagem_observacao      = p_hos_observ,
              veiculo_retirada           = case p_veiculo when 'S' then p_vei_ret else null end,
              veiculo_devolucao          = case p_veiculo when 'S' then p_vei_dev else null end
        where sq_siw_solicitacao         = p_chave

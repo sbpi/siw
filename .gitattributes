@@ -3773,6 +3773,7 @@ SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicEnvio.prc -text
 SP_Oracle92/siw/SP_PutSolicGeral.prc -text
+SP_Oracle92/siw/SP_PutSolicInfGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text

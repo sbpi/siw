@@ -76,6 +76,14 @@ begin
                  where a.sq_menu = p_menu
                    and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
             End If;
+         Elsif w_menu.sq_pessoa = 10135 and w_menu.sigla='SRSERVGER' and w_sg_tramite = 'AA' and coalesce(w_solic.valor,0) = 0 Then
+            -- Regra da ABDI: 
+            --   Solicitações de serviço geral com valores maior que 0 devem ser autorizadas pela GERAF; 
+            --   caso contrário, passam direto para execução
+            select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+               from siw_tramite a
+              where a.sq_menu = p_menu
+                and a.ordem   = (select ordem+1 from siw_tramite where sq_siw_tramite = w_tramite);
          Elsif w_sg_tramite = 'PP' and substr(w_menu.sigla,1,4)='CLRP' Then
             -- Se o trâmite for de pesquisa de preços de pedido de ARP e tiver o número necessário de pesquisas, pula para o próximo.
             select count(*)
@@ -144,7 +152,7 @@ begin
       conclusao             = null,
       executor              = case coalesce(w_sg_tramite,'--') when 'CI' then null else executor end,
       observacao            = null,
-      valor                 = case substr(w_menu.sigla,1,2) when 'CL' then valor else null end,
+      valor                 = case substr(w_menu.sigla,1,2) when 'CL' then valor when 'SR' then valor else null end,
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;
 
