@@ -817,6 +817,7 @@ Fontes_PHP_SIW/classes/sp/db_getOrImport.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridadeList.php -text
 Fontes_PHP_SIW/classes/sp/db_getPDParametro.php -text
+Fontes_PHP_SIW/classes/sp/db_getPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Financeiro.php -text
@@ -1159,6 +1160,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPDTarefa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDUnidLimite.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDUnidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDUsuario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Atividade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text

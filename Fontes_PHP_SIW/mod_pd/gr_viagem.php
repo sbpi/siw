@@ -162,7 +162,7 @@ function Gerencial() {
       foreach($RS as $row) { $RS = $row; break; }
       $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
-    if ($p_codigo>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">PCD nº <td>[<b>'.$p_codigo.'</b>]'; }
+    if ($p_codigo>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Código da viagem <td>[<b>'.$p_codigo.'</b>]'; }
     if ($p_assunto>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Descrição <td>[<b>'.$p_assunto.'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
@@ -216,6 +216,7 @@ function Gerencial() {
       $w_filtro .= '</b>]';
     } 
     if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_fim_i.'</b>]'; }
+    if ($p_atraso=='S')   $w_filtro .= '<tr valign="top"><td align="right">Situação <td>[<b>Somente pendente de prestação de contas</b>]';
     if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     switch ($p_agrega) {
@@ -305,7 +306,7 @@ function Gerencial() {
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
-      Validate('p_codigo','Número da PCD','','','2','60','1','1');
+      Validate('p_codigo','Código da viagem','','','2','60','1','1');
       Validate('p_assunto','Assunto','','','2','90','1','1');
       Validate('p_proponente','Proposto','','','2','60','1','');
       Validate('p_palavra','CPF','CPF','','14','14','','0123456789-.');
@@ -411,7 +412,7 @@ function Gerencial() {
         $RS2 = db_getMenuData::getInstanceOf($dbms,$P2);
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Lista',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_dir.$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
-        ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
+        if ($_REQUEST['p_atraso']=='') ShowHTML('<input type="Hidden" name="p_atraso" value="N">');
         switch ($p_agrega) {
           case 'GRPDCIAVIAGEM': if ($_REQUEST['p_usu_resp']=='') ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');  break;
           case 'GRPDCIDADE':    if ($_REQUEST['p_cidade']=='')   ShowHTML('<input type="Hidden" name="p_cidade" value="">');    break;
@@ -733,8 +734,8 @@ function Gerencial() {
     ShowHTML('     <td><b><U>C</U>ódigo da viagem:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_codigo" size="20" maxlength="60" value="'.$p_codigo.'"></td>');
     ShowHTML('     <td><b><U>D</U>escrição:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
     ShowHTML('   <tr valign="top">');
-    SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela PCD na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
-    SelecaoUnidade('<U>U</U>nidade proponente:','U','Selecione a unidade proponente da PCD',$p_unidade,null,'p_unidade','VIAGEM',null);
+    SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela viagem na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
+    SelecaoUnidade('<U>U</U>nidade proponente:','U','Selecione a unidade proponente da viagem',$p_unidade,null,'p_unidade','VIAGEM',null);
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>P</U>roposto:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
     ShowHTML('     <td><b>CP<u>F</u> do proposto:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
@@ -748,7 +749,12 @@ function Gerencial() {
     SelecaoCiaTrans('Cia. Via<u>g</u>em','R','Selecione a companhia de transporte desejada.',$w_cliente,$p_usu_resp,null,'p_usu_resp','S',null);
     ShowHTML('     <td><b>Pri<u>m</u>eira saída e Último retorno:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td></td>');
+    ShowHTML('     <td><b>Somente pendentes de prestação de contas?</b><br>');
+    if ($p_atraso=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
+    } 
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('    </table>');
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -817,11 +823,11 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
     $w_embed = 'WORD';  
   }
 
-  if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe as pcds.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</td>');                else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</td>');
-  if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe as pcds.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                   else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
-  if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as pcds.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
-  if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as pcds.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
-  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as pcds.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
+  if ($w_embed != 'WORD')                  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</td>');                else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</td>');
+  if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                   else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
+  if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
+  if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
+  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
   if ($l_agrega=='GRPDCIAVIAGEM' || $l_agrega=='GRPDCIDADE' || $l_agrega=='GRPDDATA') {
     ShowHTML('          <td align="right">---&nbsp;</td>');
     ShowHTML('          <td align="right">---&nbsp;</td>');

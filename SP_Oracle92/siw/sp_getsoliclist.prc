@@ -1143,7 +1143,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and d.concluida = 'N' and cast(b.fim as date) + a5.dias_prestacao_contas + 1 - cast(sysdate as date)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

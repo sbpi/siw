@@ -400,6 +400,57 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
     }
 
+    // Alterações de viagem
+    $RS1 = db_getPD_Alteracao::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
+    $RS1 = SortArray($RS1,'autorizacao_data','asc', 'chave', 'asc');
+    if (count($RS1)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ALTERAÇÕES DE VIAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+      $l_html.=chr(13).'      <tr><td colspan="2">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $l_html.=chr(13).'          <td colspan=5><b>Diferenças</td>';
+      $l_html.=chr(13).'          <td colspan=3><b>Autorização</td>';
+      $l_html.=chr(13).'          <td rowspan=2><b>Justificativa</td>';
+      $l_html.=chr(13).'        </tr>';
+      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $l_html.=chr(13).'          <td><b>Tarifas</td>';
+      $l_html.=chr(13).'          <td><b>Taxas</td>';
+      $l_html.=chr(13).'          <td><b>Hospedagens</td>';
+      $l_html.=chr(13).'          <td><b>Diárias</td>';
+      $l_html.=chr(13).'          <td><b>Total</td>';
+      $l_html.=chr(13).'          <td><b>Nome</td>';
+      $l_html.=chr(13).'          <td><b>Cargo</td>';
+      $l_html.=chr(13).'          <td><b>Data</td>';
+      $l_html.=chr(13).'        </tr>';
+      $w_cor=$conTrBgColor;
+      $i             = 1;
+      $w_tot_alt     = 0;
+      foreach ($RS1 as $row) {
+        $w_tot_alt      = f($row,'diaria_valor')+f($row,'hospedagem_valor')+f($row,'bilhete_tarifa')+f($row,'bilhete_taxa');
+        $w_total       += $w_tot_alt;
+        $l_html.=chr(13).'        <tr valign="top">';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'bilhete_tarifa')).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'bilhete_taxa')).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'hospedagem_valor')).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'diaria_valor')).'</td>';
+        $l_html.=chr(13).'          <td align="right">'.formatNumber($w_tot_alt).'</td>';
+        $l_html.=chr(13).'          <td>'.f($row,'nm_autorizador').'</td>';
+        $l_html.=chr(13).'          <td>'.f($row,'autorizacao_cargo').'</td>';
+        $l_html.=chr(13).'          <td align="center">'.FormataDataEdicao(f($row,'autorizacao_data'),5).'</td>';
+        $l_html.=chr(13).'          <td>'.nvl(CRLF2BR(f($row,'justificativa')),'---');
+        if (nvl(f($row,'sq_siw_arquivo'),'')!='') {
+          $l_html.='<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nm_arquivo'),null).'</td>';
+        }
+        $l_html.=chr(13).'        </tr>';
+      } 
+      $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+      $l_html.=chr(13).'        <td align="right" colspan="4"><b>TOTAL</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="4">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
+      $l_html.=chr(13).'         </table></td></tr>';
+    } 
+  
     // Pagamento de diárias
     if($l_diaria=='S' && $w_or_tramite>4) {
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDDIARIA');
