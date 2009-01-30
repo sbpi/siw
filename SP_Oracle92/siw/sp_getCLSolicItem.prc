@@ -410,7 +410,7 @@ begin
            from (select count(*) as qtd from cl_solicitacao_item where sq_siw_solicitacao = p_solicitacao) a,
                 (select count(distinct(fornecedor)) as qtd from cl_solicitacao_item x join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item and y.pesquisa = 'N') where sq_siw_solicitacao = p_solicitacao) b,
                 (select count(y.sq_item_fornecedor) as qtd from cl_solicitacao_item x join cl_item_fornecedor y on (x.sq_solicitacao_item = y.sq_solicitacao_item and y.pesquisa = 'N') where sq_siw_solicitacao = p_solicitacao) c;
-   ElsIf p_restricao = 'PROPOSTA' or p_restricao = 'COTACAO' Then
+   ElsIf p_restricao = 'PROPOSTA' or p_restricao = 'COTACAO'  or p_restricao = 'VENCEDOR' Then
       -- Recuperas as propostas de um certame
       open p_result for 
          select a.sq_solicitacao_item as chave, a.sq_siw_solicitacao, a.quantidade, a.valor_unit_est,
@@ -438,6 +438,7 @@ begin
                 f.percentual_acrescimo,
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
                 g.sq_item_fornecedor, g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
+                g.vencedor,
                 h.nome_resumido nm_fornecedor,
                 i.qtd_proposta,
                 nvl(b.pesquisa_preco_medio,0)*nvl(f.percentual_acrescimo,0)/100 as variacao_valor
@@ -448,7 +449,8 @@ begin
                 inner     join cl_parametro             f  on (b.cliente             = f.cliente)
                 left      join cl_item_fornecedor       g  on (a.sq_solicitacao_item = g.sq_solicitacao_item and
                                                                ((p_restricao = 'COTACAO'  and 'S' = g.pesquisa) or 
-                                                                (p_restricao = 'PROPOSTA' and 'N' = g.pesquisa)
+                                                                (p_restricao = 'PROPOSTA' and 'N' = g.pesquisa) or 
+                                                                (p_restricao = 'VENCEDOR' and 'N' = g.pesquisa and 'S' = g.vencedor)
                                                                )
                                                               )
                   left    join co_pessoa                h on (g.fornecedor           = h.sq_pessoa)
@@ -457,7 +459,8 @@ begin
                                      inner   join cl_solicitacao_item y on (x.sq_siw_solicitacao  = y.sq_siw_solicitacao)
                                        left  join cl_item_fornecedor  z on (y.sq_solicitacao_item = z.sq_solicitacao_item and
                                                                             ((p_restricao = 'COTACAO'  and 'S' = z.pesquisa) or 
-                                                                             (p_restricao = 'PROPOSTA' and 'N' = z.pesquisa)
+                                                                             (p_restricao = 'PROPOSTA' and 'N' = z.pesquisa) or 
+                                                                             (p_restricao = 'VENCEDOR' and 'N' = z.pesquisa and 'S' = z.vencedor)
                                                                             )
                                                                            )                              
                               group by y.sq_solicitacao_item

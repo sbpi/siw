@@ -20,6 +20,7 @@ create or replace procedure SP_PutSolicConc
    w_chave_arq     number(18) := null;
    w_menu          siw_menu%rowtype;
    w_menu_lic      siw_menu%rowtype;
+   w_sg_modulo     siw_modulo.sigla%type;
    w_solic         siw_solicitacao%rowtype;
    w_pedido        cl_solicitacao%rowtype;
    w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
@@ -134,6 +135,13 @@ create or replace procedure SP_PutSolicConc
                  inner join cl_material           a5 on (a3.sq_material               = a5.sq_material)
        where a.sq_siw_solicitacao = p_chave;
 begin
+   -- Recupera o módulo da solicitação
+   select c.sigla into w_sg_modulo
+     from siw_solicitacao         a
+          inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
+            inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
+    where a.sq_siw_solicitacao = p_chave;
+    
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
    
@@ -153,7 +161,6 @@ begin
       conclusao      = coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate),
       executor       = p_executor,
       valor          = coalesce(p_valor,valor),
-      observacao     = p_nota_conclusao,
       sq_siw_tramite = (select sq_siw_tramite 
                           from siw_tramite 
                          where sq_menu=p_menu 
@@ -161,6 +168,11 @@ begin
                        )
    Where sq_siw_solicitacao = p_chave;
 
+   if w_sg_modulo = 'SL' 
+      then update cl_solicitacao  set nota_conclusao = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+      else update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+   end if;
+   
    for crec in c_vencedor loop
       -- Grava os itens de uma licitação, indicando o vencedor
        update cl_item_fornecedor 

@@ -204,6 +204,7 @@ function Gerencial() {
       $w_linha++;
       $w_filtro .= '<tr valign="top"><td align="right">Restrição<td>[<b>Apenas compras por decisão judicial</b>]';
     } 
+    if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Abertura de propostas <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
     if ($p_fim_i>'')  { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_fim_i.'</b>]'; }
     if ($w_filtro>'') { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
@@ -280,7 +281,6 @@ function Gerencial() {
         Validate('p_regiao','Sequencial do protocolo','','','1','10','','0123456789');
         Validate('p_cidade','Ano do protocolo','','','4','4','','0123456789');
       }
-      /*
       Validate('p_ini_i','Início do período','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Término do período','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
@@ -289,7 +289,6 @@ function Gerencial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_ini_i','Início do período','<=','p_ini_f','Término do período');
-      */
       ValidateClose();
       ScriptClose();
     } else {
@@ -720,8 +719,7 @@ function Gerencial() {
       MontaRadioNS('<b>Apenas decisão judicial?</b>',$p_ativo,'p_ativo');
     }
     ShowHTML('   <tr valign="top">');
-    //ShowHTML('     <td><b><u>P</u>eríodo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
-    ShowHTML('     <td>&nbsp;</td>');
+    ShowHTML('     <td><b>A<u>b</u>ertura de propostas entre:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('    </table>');
     ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -744,11 +742,8 @@ function Gerencial() {
 
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if($p_tipo == 'PDF'){
-
-    RodapePdf();
-  }
-  Rodape();
+  if($p_tipo == 'PDF')  RodapePdf();
+  else                  Rodape();
 }
 
 // =========================================================================

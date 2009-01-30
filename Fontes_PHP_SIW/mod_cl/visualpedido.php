@@ -47,42 +47,31 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     else                         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Decisão judicial: </b></td>';
-    $l_html.=chr(13).'        <td>'.RetornaSimNao(f($RS,'decisao_judicial')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td>';
-    $l_html.=chr(13).'        <td>'.f($RS,'nm_prioridade').' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td>';
-    $l_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td>';
-    $l_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td>';
-    $l_html.=chr(13).'      <td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
+    if (f($RS,'decisao_judicial')=='S') $l_html.=chr(13).'      <tr><td><b>Decisão judicial: </b></td><td>'.RetornaSimNao(f($RS,'decisao_judicial')).' </td></tr>';
+    //$l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
+    //$l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
     $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
     } else {
       $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
     }
-    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
+    if (!($l_P1==4 || $l_tipo=='WORD')){
       $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
     } else {
-      $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     }
     if(f($RS,'decisao_judicial')=='S') {
-      $l_html.=chr(13).'      <tr><td><b>Número original: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'numero_original').' </td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td>';
-      $l_html.=chr(13).'         <td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
-      $l_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td>';
-      $l_html.=chr(13).'         <td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
+      $l_html.=chr(13).'      <tr><td><b>Número original: </b></td><td>'.f($RS,'numero_original').' </td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td><td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 
+      $l_html.=chr(13).'      <tr><td><b>Espécie documental:</b></td><td>'.f($RS,'nm_especie_documento').' </td></tr>'; 
 
     }
-    $l_html.=chr(13).'          <tr><td><b>Justificativa:</b></td>';
-    $l_html.=chr(13).'            <td>'.f($RS,'justificativa').' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Observação:</b></td>';
-    $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $l_html.=chr(13).'          </table></td></tr>';    
     
     if (nvl(f($RS,'sq_financeiro'),'')!='') {

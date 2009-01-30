@@ -724,19 +724,15 @@ function consultaTelefone($p_cliente) {
 // -------------------------------------------------------------------------
 function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if ($_REQUEST['p_tipo'] == 'PDF'){
-    $w_embed = 'WORD';
+  if ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD'){
+    $l_embed = 'WORD';
   }  
   if (strpos($l_texto,'|@|')!==false) {
     $l_array = explode('|@|', $l_texto);
-    if (nvl($l_word,'')=='') {
-      $l_hint = $l_array[4];
-      if($w_embed != 'WORD'){
-        $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
-      }else{
-        $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
-      }
-    } else {
+    $l_hint = $l_array[4];
+    if(nvl($l_embed,'-')!= 'WORD') {
+      $l_string = '<A class="hl" HREF="'.$conRootSIW.$l_array[10].'&O=L&w_chave='.$l_chave.'&P1='.$l_array[6].'&P2='.$l_array[7].'&P3='.$l_array[8].'&P4='.$l_array[9].'&TP='.$TP.'&SG='.$l_array[5].'" target="_blank" title="'.$l_hint.'">'.$l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '').'</a>';
+    }else{
       $l_string = $l_array[1].(($l_exibe_titulo=='S') ? ' - '.$l_array[2] : '');
     }
   } elseif (nvl($l_chave,'')!='') {

@@ -656,7 +656,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
     } 
   
-    // Dados da conclusão da solicitação, se ela estiver nessa situação
+    // Dados da prestação de contas
     if (f($RS,'cumprimento')!='N') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PRESTAÇÃO DE CONTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
       $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';

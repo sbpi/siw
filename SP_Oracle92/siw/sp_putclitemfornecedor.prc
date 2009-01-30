@@ -38,6 +38,15 @@ begin
       -- Atualiza a tabela CL_MATERIAL
       If p_pesquisa = 'S' Then
          sp_ajustapesquisamaterial(p_cliente,w_material);
+      
+         -- Atualiza o valor da solicitação
+         update siw_solicitacao a
+            set a.valor = (select sum(x.quantidade * nvl(y.pesquisa_preco_medio,0))
+                             from cl_solicitacao_item           x
+                                  inner join cl_material        y on (x.sq_material = y.sq_material)
+                            where x.sq_siw_solicitacao = p_chave
+                          )
+         where a.sq_siw_solicitacao = p_chave;
       End If;
         
    Elsif p_operacao = 'E' Then

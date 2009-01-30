@@ -13,7 +13,7 @@ class dml_putCLItemFornecedor {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_chave_aux, $p_fornecedor, $p_inicio, $p_dias, 
                $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_ordem, $p_vencedor, $p_pesquisa) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql = $strschema.'SP_PUTCLITEMFORNECEDOR';
+     $sql = $strschema.'sp_putCLItemFornecedor';
      $params = array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                      'p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        18),
                      'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        18),

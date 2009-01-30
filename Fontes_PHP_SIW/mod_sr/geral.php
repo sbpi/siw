@@ -1852,7 +1852,8 @@ function Grava() {
               $w_file,$w_tamanho,$w_tipo,$w_nome,$_REQUEST['w_sq_veiculo'], $_REQUEST['w_hodometro_saida'], $_REQUEST['w_hodometro_chegada'], $_REQUEST['w_horario_saida'], $_REQUEST['w_horario_chegada'], $_REQUEST['w_parcial']);
         } else {
           include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
-          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_fim'],$_REQUEST['w_executor'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_valor'],'0,00'),
+          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+              $_REQUEST['w_fim'],$_REQUEST['w_executor'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_valor'],'0,00'),
               $w_file,$w_tamanho,$w_tipo,$w_nome,null,null,null);
         }
         // Envia e-mail comunicando a conclusão

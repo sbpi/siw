@@ -757,6 +757,7 @@ function Geral() {
       Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
       Validate('w_sq_unidade','Unidade solicitante','HIDDEN',1,1,18,'','0123456789');
     }
+    /*
     Validate('w_prioridade','Prioridade','SELECT',1,1,1,'','0123456789');
     Validate('w_fim','Limite para atendimento','DATA',1,10,10,'','0123456789/');
     if($w_decisao_judicial=='S') {
@@ -764,6 +765,7 @@ function Geral() {
     } else {
       CompData('w_fim','Limite para atendimento','>=','w_inicio','Data atual');
     }
+    */
     if ($w_pede_valor_pedido=='S') {
       Validate('w_valor','Valor estimado','VALOR',1,4,18,'','0123456789,.');
       CompValor('w_valor','Valor estimado','>',0,'zero');
@@ -779,6 +781,7 @@ function Geral() {
       Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','0123456789');
       Validate('w_lancamento','Tipo de lançamento','SELECT',1,1,18,'','0123456789');
     }
+    /*
     if($w_decisao_judicial=='N') {
       Validate('w_dias','Dias de alerta do pedido','1','',1,3,'','0123456789');
       ShowHTML('  if (theForm.w_aviso[0].checked) {');
@@ -792,6 +795,7 @@ function Geral() {
       ShowHTML('     theForm.w_dias.value = \'\';');
       ShowHTML('  }');
     }
+    */
   } 
   ValidateClose();
   ScriptClose();
@@ -883,8 +887,10 @@ function Geral() {
       }
     }
     ShowHTML('          <tr valign="top">');
-    SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
-    ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
+    //SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste projeto.',$w_prioridade,null,'w_prioridade',null,null);
+    //ShowHTML('            <td valign="top"><b><u>L</u>imite para atendimento:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para quem o atendimento do pedido seja atendido.">'.ExibeCalendario('Form','w_fim').'</td>');    
+    ShowHTML('<INPUT type="hidden" name="w_prioridade" value="'.$w_prioridade.'">');
+    ShowHTML('<INPUT type="hidden" name="w_fim" value="'.$w_fim.'">');
     if ($w_pede_valor_pedido=='S') ShowHTML('            <td valign="top"><b><u>V</u>alor estimado:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado para a solicitação."></td>');
     ShowHTML('      <tr><td valign="top" colspan=3><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -902,6 +908,7 @@ function Geral() {
         ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
       }
     }
+    /*
     if(nvl($w_decisao_judicial,'N')=='N') {
       ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -915,6 +922,8 @@ function Geral() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_aviso" value="S">');
     }
+    */
+    ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
 
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -1007,8 +1016,8 @@ function Itens() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.f($RS_Menu,'nome').' - Itens</TITLE>');
   Estrutura_CSS($w_cliente);
-  ShowHTML('<TITLE>'.$conSgSistema.' - Itens da solicitação</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('PLIA',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1112,7 +1121,7 @@ function Itens() {
   ShowHTML('      <tr><td><table border=0 width="100%">');
   ShowHTML('          <tr valign="top">');
   ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
-  ShowHTML('            <td>Decisão judicial?<b><br>'.RetornaSimNao(f($RS_Solic,'decisao_judicial')).'</td>');
+  ShowHTML('            <td>Data do pedido:<b><br>'.formataDataEdicao(f($RS_Solic,'inicio')).'</td>');
   ShowHTML('          <tr valign="top">');
   ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_solic')).'</td>');
   ShowHTML('            <td>Unidade solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_resp'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
@@ -1315,6 +1324,7 @@ function Anexos() {
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.f($RS_Menu,'nome').' - Anexos</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1352,7 +1362,7 @@ function Anexos() {
   ShowHTML('      <tr><td><table border=0 width="100%">');
   ShowHTML('          <tr valign="top">');
   ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
-  ShowHTML('            <td>Decisão judicial?<b><br>'.RetornaSimNao(f($RS_Solic,'decisao_judicial')).'</td>');
+  ShowHTML('            <td>Data do pedido:<b><br>'.formataDataEdicao(f($RS_Solic,'inicio')).'</td>');
   ShowHTML('          <tr valign="top">');
   ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_solic')).'</td>');
   ShowHTML('            <td>Unidade solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_resp'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
@@ -1814,6 +1824,7 @@ function Concluir() {
           $w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}  
+  $w_nota_conclusão = f($RS,'nota_conclusao');
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -1824,8 +1835,9 @@ function Concluir() {
 
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
-  CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
+  //CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
   ShowHTML('  }');
+  Validate('w_nota_conclusao','Nota de conclusão','1','','','500','1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1888,7 +1900,8 @@ function Concluir() {
     ShowHTML('        </tr>');
   }
   ShowHTML('    </table>');
-  ShowHTML('    <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td colspan=4><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
@@ -2474,8 +2487,8 @@ function Grava() {
           }
 
           // Conclui a solicitação
-          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,$_SESSION['SQ_PESSOA'],null,null,
-              null,null,null,null,null,null,null);
+          dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
+              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');

@@ -25,10 +25,10 @@ begin
                 case a.unidade_padrao       when 'S' then 'Sim' else 'Não' end as nm_padrao,
                 b.nome, b.sigla,
                 e.nome nm_unidade_pai, e.sigla sg_unidade_pai,
-                e.nome||coalesce(b.nome,'0') as ordena
+                e.nome||coalesce(b.nome,'0') as ordena,
+                case when d.sq_unidade_pai is null then b.sigla else e.sigla end as sg_unidade_pai
            from cl_unidade                      a
                 inner   join eo_unidade         b on (a.sq_unidade         = b.sq_unidade)
-                  inner join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
                 left    join cl_unidade         d on (a.sq_unidade_pai     = d.sq_unidade)
                   left  join eo_unidade         e on (d.sq_unidade         = e.sq_unidade)
           where a.cliente = p_cliente 
@@ -55,7 +55,6 @@ begin
                 b.nome, b.sigla
            from cl_unidade                      a
                 inner   join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
-                  inner join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
           where a.cliente        = p_cliente 
             and a.sq_unidade_pai is null
             and a.ativo          = 'S'

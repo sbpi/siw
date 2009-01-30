@@ -10,9 +10,10 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putCLGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_menu, $p_unidade, $p_solicitante,$p_cadastrador, $p_executor, 
-        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_valor, $p_codigo, 
-        $p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_decisao_judicial, $p_numero_original, $p_data_recebimento, 
-        $p_arp, $p_interno, $p_especie_documento,$p_financeiro, $p_rubrica, $p_lancamento, $p_observacao_log, $p_chave_nova, $p_copia) {
+        $p_plano, $p_objetivo, $p_sqcc, $p_solic_pai, $p_justificativa, $p_observacao,$p_inicio, $p_fim, $p_valor, 
+        $p_codigo,$p_prioridade, $p_aviso, $p_dias, $p_cidade, $p_decisao_judicial, $p_numero_original, 
+        $p_data_recebimento, $p_arp, $p_interno, $p_especie_documento,$p_financeiro, $p_rubrica, $p_lancamento, 
+        $p_observacao_log, $p_chave_nova, $p_copia) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'sp_putCLGeral';
      $params=array('p_operacao'             =>array($operacao,                    B_VARCHAR,         1),

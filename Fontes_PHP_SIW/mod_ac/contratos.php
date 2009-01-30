@@ -462,7 +462,7 @@ function Inicial() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {    
+    if ($w_embed!='WORD') {    
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
       if($w_segmento=='Público') {
@@ -481,7 +481,7 @@ function Inicial() {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</font></td>');
       } 
-      if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</font></td>');
+      if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ShowHTML('          <td rowspan=2><b>Operações</font></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</font></td>');
@@ -517,7 +517,7 @@ function Inicial() {
     } else {
       $w_parcial=0;
       $w_atual=0;
-      if($w_tipo!='WORD') {
+      if($w_embed!='WORD') {
         $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       } else   {
         $RS1=$RS;
@@ -527,12 +527,12 @@ function Inicial() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio'),f($row,'fim'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4=0&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'objeto').'">'.f($row,'codigo_interno').'&nbsp;</a>');
-        else                 ShowHTML('        '.f($row,'codigo_interno').'');
+        if ($w_embed!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4=0&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'objeto').'">'.f($row,'codigo_interno').'&nbsp;</a>');
+        else                  ShowHTML('        '.f($row,'codigo_interno').'');
         ShowHTML('        <td>'.f($row,'nm_acordo').'</td>');
         if($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
         if ($_SESSION['INTERNO']=='S') {
-          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_tipo).'</td>');
+          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_embed).'</td>');
           else                                 ShowHTML('        <td>---</td>');
         } 
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>');
@@ -557,7 +557,7 @@ function Inicial() {
           // Se não for cadastramento, mostra a fase atual
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
-        if ($_SESSION['INTERNO']=='S' && $w_tipo!='WORD') { 
+        if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') { 
           ShowHTML('        <td align="top" nowrap>');
           if ($P1!=3) {
             // Se não for acompanhamento

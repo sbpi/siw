@@ -224,7 +224,7 @@ function Gerencial() {
         $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
-            $p_atividade, $p_acao_ppa, $p_orprior);
+            $p_atividade, $p_codigo, $p_orprior);
         $w_TP .= ' - Por cia de viagem';
         $RS1 = SortArray($RS1,'nm_cia_viagem','asc');
         break;
@@ -232,7 +232,7 @@ function Gerencial() {
         $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
-            $p_atividade, $p_acao_ppa, $p_orprior);
+            $p_atividade, $p_codigo, $p_orprior);
         $w_TP .= ' - Por cidade de destino';
         $RS1 = SortArray($RS1,'nm_destino','asc');
         break;
@@ -241,7 +241,7 @@ function Gerencial() {
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
         $w_TP .= ' - Por unidade proponente';
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
@@ -249,7 +249,7 @@ function Gerencial() {
         $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
-            $p_atividade, $p_acao_ppa, $p_orprior);
+            $p_atividade, $p_codigo, $p_orprior);
         $w_TP .= ' - Por projeto';
         $RS1 = SortArray($RS1,'nm_projeto','asc');
         break;
@@ -257,7 +257,7 @@ function Gerencial() {
         $RS1 = db_getSolicViagem::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante, $p_unidade,null,$p_ativo,$p_proponente, $p_chave, $p_assunto, 
             $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
-            $p_atividade, $p_acao_ppa, $p_orprior);
+            $p_atividade, $p_codigo, $p_orprior);
         $w_TP .= ' - Por mês';
         $RS1 = SortArray($RS1,'nm_mes','desc');
         break;
@@ -266,7 +266,7 @@ function Gerencial() {
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
         $w_TP .= ' - Por proposto';
         $RS1 = SortArray($RS1,'nm_prop','asc');
         break;
@@ -275,7 +275,7 @@ function Gerencial() {
             $p_ini_i,$p_ini_f,null,null,$p_atraso,$p_solicitante,
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
         $w_TP .= ' - Por tipo';
         $RS1 = SortArray($RS1,'tp_missao','asc');
         break;

@@ -90,7 +90,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,                     b.palavra_chave,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                coalesce(b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
+                coalesce(d.numero_certame, b.codigo_interno, to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 b.codigo_externo,     b.titulo,                      acentos(b.titulo) as ac_titulo,
                 b.sq_plano,           b.sq_cc,                       b.observacao,
                 b.protocolo_siw,
@@ -104,7 +104,7 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.nome as nm_tramite,   b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
@@ -119,7 +119,7 @@ begin
                 d.numero_ata,         d.numero_certame,              d.arp,
                 d.prioridade,         d.aviso_prox_conc,             d.dias_aviso,
                 d.sq_especificacao_despesa, d.interno,               d.dias_validade_proposta,
-                d.sq_financeiro,
+                d.sq_financeiro,      d.nota_conclusao,              d.data_abertura,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
@@ -216,8 +216,8 @@ begin
             and (coalesce(p_ativo,'N') = 'N' or (p_ativo = 'S' and d.decisao_judicial = p_ativo))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and coalesce(b1.sigla,'-') <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.inicio between p_ini_i and p_ini_f)))
-            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.fim    between p_fim_i and p_fim_f)))
+            and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and d.data_abertura between p_ini_i and p_ini_f)))
+            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.fim           between p_fim_i and p_fim_f)))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and coalesce(b1.sigla,'-') <> 'AT' and b.fim+1-sysdate<0))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))

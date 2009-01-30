@@ -11,11 +11,9 @@ begin
              case a.contrata when 'S' then 'Sim' else 'Não' end nm_contrata,
              case a.ativo    when 'S' then 'Sim' else 'Não' end nm_ativo,
              case a.padrao   when 'S' then 'Sim' else 'Não' end nm_padrao
-        from lc_unidade a
-             left outer join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
-             left outer join co_pessoa_endereco c on (b.sq_pessoa_endereco = c.sq_pessoa_endereco)
-       where c.sq_pessoa = p_cliente 
+        from lc_unidade                    a
+             left  join eo_unidade         b on (a.sq_unidade = b.sq_unidade)
+       where b.sq_pessoa = p_cliente
          and ((p_chave is null) or (p_chave is not null and a.sq_unidade = p_chave));
 end SP_GetLcUnidade;
 /
-
