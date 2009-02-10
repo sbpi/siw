@@ -24,7 +24,7 @@ class dml_putSiwUsuario {
                    'p_tipo_pessoa'      =>array($p_tipo_pessoa,         B_VARCHAR,     15),
                    'p_unidade'          =>array($p_unidade,             B_NUMERIC,     32),
                    'p_localizacao'      =>array($p_localizacao,         B_NUMERIC,     32),
-                   'p_username'         =>array($p_username,            B_VARCHAR,     30),
+                   'p_username'         =>array($p_username,            B_VARCHAR,     60),
                    'p_email'            =>array($p_email,               B_VARCHAR,     60),
                    'p_gestor_seguranca' =>array($p_gestor_seguranca,    B_VARCHAR,     1),
                    'p_gestor_sistema'   =>array($p_gestor_sistema,      B_VARCHAR,     1),

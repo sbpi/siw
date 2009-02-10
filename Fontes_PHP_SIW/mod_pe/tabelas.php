@@ -112,12 +112,15 @@ Main();
 FechaSessao($dbms);
 exit;
 
+
+
 // =========================================================================
 // Rotina de planos estratégicos
 // -------------------------------------------------------------------------
 function Plano() {
   extract($GLOBALS);
   global $w_Disabled;
+
 
   $w_ImagemPadrao = 'images/Folder/SheetLittle.gif';
   $w_troca        = $_REQUEST['w_troca'];
@@ -2929,6 +2932,7 @@ function Grava() {
 // =========================================================================
 // Rotina principal
 // -------------------------------------------------------------------------
+
 function Main() {
   extract($GLOBALS);
   global $w_Disabled;

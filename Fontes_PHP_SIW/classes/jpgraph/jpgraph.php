@@ -613,12 +613,12 @@ class DateLocale {
 	    return TRUE;  // already cached nothing else to do!
 	}
 
-	$pLocale = setlocale(LC_TIME, 0); // get current locale for LC_TIME
-	$res = @setlocale(LC_TIME, $aLocale);
-	if ( ! $res ){
-	    JpGraphError::Raise("You are trying to use the locale ($aLocale) which your PHP installation does not support. Hint: Use '' to indicate the default locale for this geographic region.");
-	    return FALSE;
-	}
+	//$pLocale = setlocale(LC_TIME, 0); // get current locale for LC_TIME
+	//$res = @setlocale(LC_TIME, $aLocale);
+	//if ( ! $res ){
+	//    JpGraphError::Raise("You are trying to use the locale ($aLocale) which your PHP installation does not support. Hint: Use '' to indicate the default locale for this geographic region.");
+	//    return FALSE;
+	//}
  
 	$this->iLocale = $aLocale;
 

@@ -27,25 +27,25 @@ date_default_timezone_set('America/Sao_Paulo');
 // =========================================================================
 // Função garante que as chaves de um array estarão no caso indicado
 // -------------------------------------------------------------------------
-function array_key_case_change(&$array, $mode = 'CASE_LOWER') { 
-  // Make sure $array is really an array 
-   if (!is_array($array)) return false; 
-   
-   $temp = $array; 
-   while (list($key, $value) = each($temp)) { 
-       // First we unset the original so it's not lingering about 
-       
-       unset($array[$key]); 
-       // Then modify the $key 
-       switch($mode) { 
-           case 'CASE_UPPER': $value = array_change_key_case($value,CASE_UPPER); break; 
-           case 'CASE_LOWER': $value = array_change_key_case($value,CASE_LOWER); break; 
-       } 
+function array_key_case_change(&$array, $mode = 'CASE_LOWER') {
+  // Make sure $array is really an array
+   if (!is_array($array)) return false;
 
-       // Lastly read to the array using the new $key 
-       $array[$key] = $value; 
-   } 
-   return true; 
+   $temp = $array;
+   while (list($key, $value) = each($temp)) {
+       // First we unset the original so it's not lingering about
+
+       unset($array[$key]);
+       // Then modify the $key
+       switch($mode) {
+           case 'CASE_UPPER': $value = array_change_key_case($value,CASE_UPPER); break;
+           case 'CASE_LOWER': $value = array_change_key_case($value,CASE_LOWER); break;
+       }
+
+       // Lastly read to the array using the new $key
+       $array[$key] = $value;
+   }
+   return true;
 }
 
 // =========================================================================
@@ -90,17 +90,17 @@ function callback($buffer) {
 // Abre e fecha a arvore.
 // -------------------------------------------------------------------------
 function colapsar($w_chave){
-	$saida = "&nbsp;";
-	$saida .= "<img src='images/mais.jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$w_chave.",this)'/>";		
-	$saida .= "&nbsp;";
-	return $saida;
+  $saida = "&nbsp;";
+  $saida .= "<img src='images/mais.jpg' style='cursor:pointer' alt='Expandir' onclick='colapsar(".$w_chave.",this)'/>";
+  $saida .= "&nbsp;";
+  return $saida;
 }
 
 // =========================================================================
 // Gera um link chamando o arquivo desejado
 // -------------------------------------------------------------------------
 function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
-	 extract($GLOBALS);	 
+   extract($GLOBALS);
   // Monta a chamada para a página que retorna o arquivo
   $l_link = $conRootSIW.'file.php?force=false&cliente='.$p_cliente.'&id='.$p_arquivo;
 
@@ -116,7 +116,7 @@ function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_
      // Montagem da tag anchor
      $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$p_descricao.'</a>';
   }
-  
+
   // Retorno ao chamador
   return $l_link;
 }
@@ -156,7 +156,7 @@ function CriaBaseLine($l_chave,$l_html,$l_nome,$l_tramite) {
 // =========================================================================
 // Gera um link para JavaScript, em função do navegador
 // -------------------------------------------------------------------------
-function montaURL_JS ($p_dir, $p_link) { 
+function montaURL_JS ($p_dir, $p_link) {
   extract($GLOBALS);
   $l_link = str_replace($conRootSIW,'',$p_link);
   if (nvl($p_dir,'')!='') $l_link = str_replace($p_dir,'',$l_link);
@@ -166,7 +166,7 @@ function montaURL_JS ($p_dir, $p_link) {
 // =========================================================================
 // Gera código de barras para o valor informado
 // -------------------------------------------------------------------------
-function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') { 
+function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') {
   extract($GLOBALS);
   if (strtoUpper($l_formato)=='C39') {
     include_once($w_dir_volta.'classes/graph_barcode/C39Barcode_class.php');
@@ -251,8 +251,8 @@ function headerWord($p_orientation='LANDSCAPE') {
 // =========================================================================
 // Monta (+) e (-) na arvore de projeto
 // -------------------------------------------------------------------------
-function montaArvore($string){  
-    $string = str_replace(".","-",$string); 
+function montaArvore($string){
+    $string = str_replace(".","-",$string);
     $img = "<img src='images/mais.jpg' alt='Expandir' onclick='abreFecha(\"$string\")' id='img-$string' style='cursor:pointer'/>";
     return $img;
 }
@@ -265,19 +265,19 @@ function montaArvore($string){
 
 
 function headerPdf($titulo,$pag=null) {
-  extract($GLOBALS);  
-	header("Cache-Control: no-cache, must-revalidate",false);
-	header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");	
-	ob_end_clean(); 	
-  ob_start();      
-  Cabecalho();  
+  extract($GLOBALS);
+  header("Cache-Control: no-cache, must-revalidate",false);
+  header("Expires: Mon, 26 Jul 2008 05:00:00 GMT");
+  ob_end_clean();
+  ob_start();
+  Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$titulo.'</TITLE>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   CabecalhoWord($w_cliente, $titulo, $pag);
-  BodyOpenMail(null);       
+  BodyOpenMail(null);
 }
 
 // =========================================================================
@@ -408,7 +408,7 @@ function LinkOrdena($p_label,$p_campo) {
 // -------------------------------------------------------------------------
 function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
   extract($GLOBALS);
-    
+
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   if (f($RS_Logo,'logo')>'') {
@@ -425,7 +425,7 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
     $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
-    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');            
+    ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');
 
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
    // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
@@ -705,16 +705,16 @@ function ExibeVariaveis() {
 // -------------------------------------------------------------------------
 function consultaTelefone($p_cliente) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  
+
   // Verifica se o cliente tem o módulo de telefonia contratado
   include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
   $l_rs_ac = db_getSiwCliModLis::getInstanceOf($dbms, $p_cliente, null, 'TT');
   $l_mod_tt = false;
   $l_string = '';
-  foreach ($l_rs_ac as $row) { 
+  foreach ($l_rs_ac as $row) {
     $l_mod_tt = true;
     $l_string = '<a href="'.$conRootSIW.montaUrl('LIGACAO').'" target="telefone" title="Procurar na base de ligações telefônicas."><img src="'.$conRootSIW.'/images/icone/fone_1.gif" border=0></a>';
-    break; 
+    break;
   }
   return $l_string;
 }
@@ -726,7 +726,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD'){
     $l_embed = 'WORD';
-  }  
+  }
   if (strpos($l_texto,'|@|')!==false) {
     $l_array = explode('|@|', $l_texto);
     $l_hint = $l_array[4];
@@ -773,7 +773,7 @@ function ExibePessoaRel($p_dir,$p_cliente,$p_pessoa,$p_nome,$p_nome_resumido,$p_
   if (Nvl($p_nome,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<A class="hl" HREF="'.$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG=" title="'.$p_nome.'">'.$p_nome_resumido.'</a>';  
+    $l_string .= '<A class="hl" HREF="'.$conRootSIW.$p_dir.'relatorios.php?par=TELAUSUARIOREL&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&w_tipo='.$p_tipo.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG=" title="'.$p_nome.'">'.$p_nome_resumido.'</a>';
   }
   return $l_string;
 }
@@ -924,7 +924,7 @@ function ExibeIndicador($p_dir,$p_cliente,$p_nome,$p_dados,$p_tp) {
 function ExibeEtapa($O,$p_chave,$p_chave_aux,$p_tipo,$p_P1,$p_etapa,$p_tp,$p_sg) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if($p_tipo == 'PDF'){
-    $w_embed = 'WORD';  
+    $w_embed = 'WORD';
   }
 
   if (Nvl($p_etapa,'')=='') {
@@ -1002,7 +1002,7 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
     } elseif ($l_tipo=='IDC') {
       if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
       elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';  
+      else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     }
   }
   return $l_string;
@@ -1108,7 +1108,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1119,7 +1119,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1131,8 +1131,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='GC') {
       // Contratos e convênios
       if ($l_tramite!='AT' && $l_tramite!='CR') {
@@ -1149,7 +1149,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada.';
-          } 
+          }
         } elseif ($l_tramite=='ER') {
           $l_imagem = $conImgStAcima;
           $l_title  = 'Vigência encerrada, com restos a pagar.';
@@ -1163,7 +1163,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1175,8 +1175,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Vigência encerrada conforme previsão.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='GD') {
       // Tarefas, demandas eventuais e demandas de triagem
       if ($l_tramite!='AT') {
@@ -1193,7 +1193,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1204,7 +1204,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1216,8 +1216,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='FN') {
       // Tarefas e demandas eventuais
       if ($l_tramite!='AT') {
@@ -1234,7 +1234,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1245,7 +1245,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1257,8 +1257,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='SR') {
       // Tarefas
       if ($l_tramite!='AT') {
@@ -1275,7 +1275,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<time()) {
             $l_imagem = $conImgStAtraso;
@@ -1286,7 +1286,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1298,8 +1298,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='PJ') {
       // Projetos
       if ($l_tramite!='AT') {
@@ -1316,7 +1316,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1327,7 +1327,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1339,8 +1339,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='CL') {
       // Projetos
       if ($l_tramite!='AT') {
@@ -1357,7 +1357,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1368,7 +1368,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1380,8 +1380,8 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='PD') {
       // Viagens
       if ($l_tramite=='CA') {
@@ -1397,7 +1397,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkAcima;
           $l_title  = 'Missão pendente de prestação de contas.';
-        } 
+        }
       } elseif ($l_inicio>time()) {
         if ($l_dias_aviso<=time()) {
           $l_imagem = $conImgAviso;
@@ -1405,7 +1405,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgNormal;
           $l_title  = 'Missão não iniciada.';
-        } 
+        }
       } else {
         if ($l_tramite!='EE') {
           $l_imagem = $conImgOkAtraso;
@@ -1431,7 +1431,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgNormal;
             $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
@@ -1442,7 +1442,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           } else {
             $l_imagem = $conImgStNormal;
             $l_title  = 'Em execução. Prazo final dentro do previsto.';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1454,10 +1454,10 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } else {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Execução concluída na data prevista.';
-        } 
-      } 
+        }
+      }
     }
- 
+
     if ($l_imagem!='') {
       $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
     }
@@ -1483,7 +1483,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conIcoStAtraso;
@@ -1491,7 +1491,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1500,8 +1500,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='GC') {
       // Contratos e convênios
       if ($l_tramite!='AT' && $l_tramite!='CR') {
@@ -1514,7 +1514,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } elseif ($l_tramite=='ER') {
           $l_imagem = $conIcoStAcima;
         } else {
@@ -1524,7 +1524,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1533,8 +1533,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='GD') {
       // Tarefas, demandas eventuais e demandas de triagem
       if ($l_tramite!='AT') {
@@ -1547,7 +1547,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conIcoStAtraso;
@@ -1555,7 +1555,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1564,8 +1564,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='FN') {
       // Tarefas e demandas eventuais
       if ($l_tramite!='AT') {
@@ -1578,7 +1578,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conIcoStAtraso;
@@ -1586,7 +1586,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1595,8 +1595,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='SR') {
       // Tarefas
       if ($l_tramite!='AT') {
@@ -1609,7 +1609,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<time()) {
             $l_imagem = $conIcoStAtraso;
@@ -1617,7 +1617,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1626,8 +1626,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='PJ') {
       // Projetos
       if ($l_tramite!='AT') {
@@ -1640,7 +1640,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = 'project_yellow';
           } else {
             $l_imagem = 'project_green';
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = 'project_red';
@@ -1648,7 +1648,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = 'project_yellow';
           } else {
             $l_imagem = 'project_green';
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1657,8 +1657,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = 'project_yellow';
         } else {
           $l_imagem = 'project_green';
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='CL') {
       // Projetos
       if ($l_tramite!='AT') {
@@ -1671,7 +1671,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conIcoStAtraso;
@@ -1679,7 +1679,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1688,8 +1688,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
     } elseif (substr($l_tipo,0,2)=='PD') {
       // Viagens
       if ($l_tramite=='CA') {
@@ -1701,13 +1701,13 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAtraso;
         } else {
           $l_imagem = $conIcoOkAcima;
-        } 
+        }
       } elseif ($l_inicio>time()) {
         if ($l_dias_aviso<=time()) {
           $l_imagem = $conIcoAviso;
         } else {
           $l_imagem = $conIcoNormal;
-        } 
+        }
       } else {
         if ($l_tramite!='EE') {
           $l_imagem = $conIcoOkAtraso;
@@ -1727,7 +1727,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoAviso;
           } else {
             $l_imagem = $conIcoNormal;
-          } 
+          }
         } else {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conIcoStAtraso;
@@ -1735,7 +1735,7 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
             $l_imagem = $conIcoStAviso;
           } else {
             $l_imagem = $conIcoStNormal;
-          } 
+          }
         }
       } else {
         if ($l_fim<Nvl($l_fim_real,$l_fim)) {
@@ -1744,8 +1744,8 @@ function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_
           $l_imagem = $conIcoOkAcima;
         } else {
           $l_imagem = $conIcoOkNormal;
-        } 
-      } 
+        }
+      }
   }
 
   return $l_imagem;
@@ -1801,19 +1801,19 @@ function MontaOrdemEspec($l_chave) {
 // =========================================================================
 // Converte CFLF para <BR>
 // -------------------------------------------------------------------------
-function CRLF2BR($expressao) { 
+function CRLF2BR($expressao) {
   $result = '';
-  if (Nvl($expressao,'')=='') { 
-    return ''; 
-  } else { 
+  if (Nvl($expressao,'')=='') {
+    return '';
+  } else {
     $result = $expressao;
-    if (false!==strpos($result,chr(10).chr(13))) $result = str_replace(chr(10).chr(13),'<br>',$result); 
-    if (false!==strpos($result,chr(13).chr(10))) $result = str_replace(chr(13).chr(10),'<br>',$result); 
-    if (false!==strpos($result,chr(13)))         $result = str_replace(chr(13),'<br>',$result); 
-    if (false!==strpos($result,chr(10)))         $result = str_replace(chr(10),'<br>',$result); 
-    //return str_replace('<br><br>','<br>',htmlentities($result)); 
-    return str_replace('<br><br>','<br>',$result); 
-  } 
+    if (false!==strpos($result,chr(10).chr(13))) $result = str_replace(chr(10).chr(13),'<br>',$result);
+    if (false!==strpos($result,chr(13).chr(10))) $result = str_replace(chr(13).chr(10),'<br>',$result);
+    if (false!==strpos($result,chr(13)))         $result = str_replace(chr(13),'<br>',$result);
+    if (false!==strpos($result,chr(10)))         $result = str_replace(chr(10),'<br>',$result);
+    //return str_replace('<br><br>','<br>',htmlentities($result));
+    return str_replace('<br><br>','<br>',$result);
+  }
 }
 
 // =========================================================================
@@ -1833,25 +1833,25 @@ function Cvl($expressao) { if (!isset($expressao) || $expressao=='') { return 0;
 
 // =========================================================================
 // Informar os dados de uma variavel mostrando a linha do arquivo em que a função foi chamada.
-// 
+//
 function dbg($var=NULL, $morte=FALSE){
-	print "/*<center>-- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
-	print "<strong>DEBUG INICIO</strong>";
-	print " ----- ----- ----- ----- ----- ----- ----- ----- ----- --</center> \n ";
-	$array = debug_backtrace();
-	print("<center>linha '". $array[0]['line'] ."' do arquivo '".
-	$array[0]['file'] ."'</center> \n ");
-	print("<pre><font size='3'> \n ");
-	var_dump($var);
-	print("</font></pre> \n ");
-	print "<center>---- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
-	print "<strong>DEBUG FIM</strong>";
-	print " ----- ----- ----- ----- ----- ----- ----- ----- ----- ----</center> \n ";
+  print "/*<center>-- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
+  print "<strong>DEBUG INICIO</strong>";
+  print " ----- ----- ----- ----- ----- ----- ----- ----- ----- --</center> \n ";
+  $array = debug_backtrace();
+  print("<center>linha '". $array[0]['line'] ."' do arquivo '".
+  $array[0]['file'] ."'</center> \n ");
+  print("<pre><font size='3'> \n ");
+  var_dump($var);
+  print("</font></pre> \n ");
+  print "<center>---- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n ";
+  print "<strong>DEBUG FIM</strong>";
+  print " ----- ----- ----- ----- ----- ----- ----- ----- ----- ----</center> \n ";
 
-	if( $morte )
-	{
-		die("<center><font color='#ff0000'><strong>D I E</strong></font></center>  */ \n ");
-	}
+  if( $morte )
+  {
+    die("<center><font color='#ff0000'><strong>D I E</strong></font></center>  */ \n ");
+  }
 }
 
 // =========================================================================
@@ -1863,7 +1863,7 @@ function DiretorioCliente($p_cliente) {
 }
 
 // =========================================================================
-// Verifica se um arquivo ou diretório existe, se é possível a leitura 
+// Verifica se um arquivo ou diretório existe, se é possível a leitura
 // e se é possível a escrita
 // -------------------------------------------------------------------------
 function testFile($l_erro, $l_raiz, $l_leitura = false, $l_escrita = false) {
@@ -1917,7 +1917,7 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
   if (nvl($p_SG,'')!='') $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="SG" VALUE="'.$p_SG.'">';
   if (nvl($p_R,'')!='')  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="R"  VALUE="'.$p_R.'">';
   if (nvl($p_O,'')!='')  $l_html .= chr(13).'<INPUT TYPE="hidden" NAME="O"  VALUE="'.$p_O.'">';
-  
+
   if (nvl($p_retorno,'')=='') ShowHtml($l_html); else return $l_html;
 }
 
@@ -2095,7 +2095,7 @@ function RetornaMarcado($p_menu,$p_usuario,$p_endereco,$p_tramite) {
 }
 
 // =========================================================================
-// Função que retorna S/N indicando se o usuário informado é gestor do módulo 
+// Função que retorna S/N indicando se o usuário informado é gestor do módulo
 // a opção do menu pertence
 // -------------------------------------------------------------------------
 function RetornaModMaster($p_cliente, $p_usuario, $p_menu) {
@@ -2149,7 +2149,7 @@ function DataHora() { return diaSemana(date('l, d/m/Y, H:i:s')); }
 // Função que retorna um timestamp da string informada
 // date: string contendo a data no formato DD/MM/YYYY, HH24:MI:SS
 // -------------------------------------------------------------------------
-function toDate($date) { 
+function toDate($date) {
   if (strlen($date)!=20 && strlen($date)!=10) return nil;
   else {
     $l_date = $date;
@@ -2167,7 +2167,7 @@ function toDate($date) {
 // Função que retorna um timestamp da string informada para o formato SQL Server
 // date: string contendo a data no formato DD/MM/YYYY, HH24:MI:SS
 // -------------------------------------------------------------------------
-function toSQLDate($date) { 
+function toSQLDate($date) {
   if (nvl($date,'')=='') return '';
   if (strlen($date)==20) return substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2).' '.substr($l_date,12);
   else                   return substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2);
@@ -2177,14 +2177,14 @@ function toSQLDate($date) {
 // Função que retorna um valor da string informada
 // valor: string contendo o valor
 // -------------------------------------------------------------------------
-function toNumber($valor) { 
-  if ($_SESSION['DBMS']==2) return str_replace(',','.',str_replace('.','',$valor)); else return str_replace('.','',$valor); 
-} 
+function toNumber($valor) {
+  if ($_SESSION['DBMS']==2) return str_replace(',','.',str_replace('.','',$valor)); else return str_replace('.','',$valor);
+}
 
 // =========================================================================
 // Função que retorna uma data como string para manipulação em formulários
 // -------------------------------------------------------------------------
-function FormatDateTime($date) { 
+function FormatDateTime($date) {
   if (strlen($date)!=8 && strlen($date)!=10 && strlen($date)!=19) return null;
   else {
     if (strlen($date)==10) return $date;
@@ -2205,7 +2205,7 @@ function FormatDateTime($date) {
 // date: timestamp gerado a partir da funçao toDate()
 // inc:  inteiro precedido do sinal de adição ou subtração de dias (+1, -3 etc.)
 // -------------------------------------------------------------------------
-function addDays($date,$inc) { 
+function addDays($date,$inc) {
   return mktime(date(H,$date), date(i,$date), date(s,$date), date(m,$date), date(d,$date)+$inc, date(Y,$date));
 }
 
@@ -2213,7 +2213,7 @@ function addDays($date,$inc) {
 // Função que transforma um array numa lista separada por vírgulas
 // array: array de entrada
 // -------------------------------------------------------------------------
-function explodeArray($array) { 
+function explodeArray($array) {
   if (is_array($array)) {
     $lista = '';
     foreach ($array as $key => $val) $lista = $lista.','.trim($val);
@@ -2244,7 +2244,8 @@ function MascaraBeneficiario($cgccpf) {
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   extract($GLOBALS);
-  
+
+
   include_once($w_dir_volta.'classes/mail/email_message.php');
   include_once($w_dir_volta.'classes/mail/smtp_message.php');
   include_once($w_dir_volta.'classes/mail/smtp.php');
@@ -2252,6 +2253,14 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
 
   // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
+
+
+
+  if( trim(f($RS_Cliente,'siw_email_conta')) == 'false' ){
+    $from = f($RS_Cliente,'siw_email_nome');
+    EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments);
+    return null;
+  }
 
   $subject                  = $w_subject;
   $from_name                = f($RS_Cliente,'siw_email_nome');
@@ -2282,7 +2291,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   * should set to the POP3 user and password*/
   $email_message->smtp_pop3_auth_host=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? '' : $email_message->smtp_host);
   $email_message->pop3_auth_port=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 110: 995);
-  
+
   /* In directly deliver mode, the DNS may return the IP of a sub-domain of
    * the default domain for domains that do not exist. If that is your
    * case, set this variable with that sub-domain address. */
@@ -2299,7 +2308,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   if (strpos($w_recipients,';')===false) $w_recipients .= ';';
   $l_recipients = explode(';',$w_recipients);
   $l_cont = 0;
-  foreach($l_recipients as $k => $v) { 
+  foreach($l_recipients as $k => $v) {
     if (nvl($v,'')!='') {
       if (strpos($v,'|')!==false) {
         $rec = explode('|',$v);
@@ -2311,14 +2320,14 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
       }
       // Efvita a repetição de nomes
       if (count($l_dest[$rec_address])==0) {
-        $l_dest[$rec_address] = $rec_name; 
+        $l_dest[$rec_address] = $rec_name;
         $l_cont++;
       }
     }
   }
   $i = 0;
   if (is_array($l_dest)) {
-    foreach($l_dest as $k => $v) { 
+    foreach($l_dest as $k => $v) {
       if ($i==0) {
         // O primeiro destinatário será colocado como "To"
         $email_message->SetEncodedEmailHeader("To",$k,$v);
@@ -2392,19 +2401,117 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   }
 }
 
+function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments=null){
+    extract($GLOBALS);
+  date_default_timezone_set('America/Sao_Paulo');
+  include_once($w_dir_volta.'classes/mailAlternative/class.phpmailer.php');
+
+  $mail             = new PHPMailer();
+  $body             = $w_mensagem;
+
+  $mail->IsSMTP();
+  $mail->SMTPAuth   = true;                  // enable SMTP authentication
+  $mail->SMTPSecure = "ssl";                 // sets the prefix to the servier
+  $mail->Host       = "smtp.gmail.com";      // sets GMAIL as the SMTP server
+  $mail->Port       = 465;                   // set the SMTP port for the GMAIL server
+
+  $mail->Username   = "suporte@siw.com.br";      // GMAIL username
+  $mail->Password   = base64_decode("NDQ0QjE2"); // GMAIL password
+
+  $mail->From       = "suporte@siw.com.br";
+  $mail->FromName   = $from;
+  $mail->Subject    = $w_subject;
+
+
+  //$mail->Body       = "Hi,<br>This is the HTML BODY<br>";                      //HTML Body
+  //$mail->AltBody    = "To view the message, please use an HTML compatible email viewer!"; // optional, comment out and test
+  //$mail->WordWrap   = 50; // set word wrap
+  $mail->MsgHTML($body);
+
+  //Varios destinatarios separados por ';'
+
+  if (strpos($w_recipients,';')===false) $w_recipients .= ';';
+  $l_recipients = explode(';',$w_recipients);
+  $l_cont = 0;
+  foreach($l_recipients as $k => $v) {
+    if (nvl($v,'')!='') {
+      if (strpos($v,'|')!==false) {
+      $rec = explode('|',$v);
+      $rec_address = trim($rec[0]);
+      $rec_name    = trim($rec[1]);
+    } else {
+      $rec_address = trim($v);
+      $rec_name    = trim($v);
+    }
+    // Evita a repetição de nomes
+    if (count($l_dest[$rec_address])==0) {
+      $l_dest[$rec_address] = $rec_name;
+      $l_cont++;
+    }
+  }
+  }
+
+  $i = 0;
+  if (is_array($l_dest)) {
+    foreach($l_dest as $k => $v) {
+      if (nvl($k,'')!='' && nvl($v,'')!='') {
+        if ($i==0) {
+          // O primeiro destinatário será colocado como "To"
+          $mail->AddAddress($k, $v);
+          unset($l_dest[$k]);
+        } elseif ($i==1 && $l_cont==2) {
+          // Se só tiver mais um destinatário, coloca header único
+          $mail->AddCC($k, $v);
+          unset($l_dest[$k]);
+        }
+      }
+      $i++;
+    }
+  }
+
+  //Array de Anexos
+  if(!is_null($w_attachments)){
+    if(is_array($w_attachments)){
+      foreach($w_attachments as $row){
+        if (nvl($row,'')!='') $mail->AddAttachment($row);                           // attachment quando array
+      }
+    }else{
+      if (nvl($w_attachments,'')!='') $mail->AddAttachment($w_attachments);                    // attachment quando string
+    }
+  }
+
+  $mail->IsHTML(true); // send as HTML
+  //send your e-mail
+  if ($conEnviaMail) {
+    if (!$mail->Send()) {
+      // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
+      if (strtoupper(PHP_OS)!='SUNOS') {
+        enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.$mail->smtp_host.'] Porta ['.$mail->smtp_port.'] Conta ['.$mail->smtp_user.'/'.$mail->smtp_password.']');
+        return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.$mail->Host.']\nPorta ['.$mail->Port.']\nConta ['.$mail->Username.'/'.$mail->Password.']\n'.$mail->ErrorInfo;
+      } else {
+        return null;
+      }
+    } else {
+       return null;
+    }
+  }
+die();
+}
+
+
 // =========================================================================
 // Rotina de registro de mensagem em servidor syslog
 // -------------------------------------------------------------------------
 function enviaSyslog($tipo, $objeto, $mensagem) {
   if(function_exists('fsockopen')) {
     extract($GLOBALS);
-  
+
     include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
     include_once($w_dir_volta.'classes/syslog/syslog.php');
-  
+
     // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
     $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-  
+
     if (nvl(f($RS_Cliente,'syslog_server_name'),'')!='' &&
         (($tipo=='LV' && nvl(f($RS_Cliente,'syslog_level_pass_ok'),'')!='') ||
          ($tipo=='LI' && nvl(f($RS_Cliente,'syslog_level_pass_er'),'')!='') ||
@@ -2421,7 +2528,7 @@ function enviaSyslog($tipo, $objeto, $mensagem) {
       case 'RI': $severity = f($RS_Cliente,'syslog_level_res_er');   break;
       case 'GV': $severity = f($RS_Cliente,'syslog_level_write_ok'); break;
       case 'GI': $severity = f($RS_Cliente,'syslog_level_write_er'); break;
-      } 
+      }
       $syslog = new Syslog();
       $syslog->SetProtocol(f($RS_Cliente,'syslog_server_protocol'));
       $syslog->SetPort(f($RS_Cliente,'syslog_server_port'));
@@ -2632,7 +2739,7 @@ function Rodape() {
   ShowHTML('<script language="javascript" type="text/javascript" src="js/tooltip.js"></script>');
   ShowHTML('</BODY>');
   ShowHTML('</HTML>');
- 
+
 }
 
 // =========================================================================
@@ -2651,8 +2758,8 @@ function RodapePDF() {
     ShowHTML('  </DIV>');
     ShowHTML('</DIV>');
     ShowHTML('</center>');
-  } else { 
-    ShowHTML('<HR>'); 
+  } else {
+    ShowHTML('<HR>');
   }
   ShowHTML('</BODY>');
   ShowHTML('</HTML>');
@@ -2660,15 +2767,15 @@ function RodapePDF() {
   $shtml = ob_get_contents();
   ob_end_clean();
 
-//  $shtml = str_replace("msword",'', $shtml);	
+//  $shtml = str_replace("msword",'', $shtml);
   $shtml = str_replace("'",'"', $shtml);
-  $shtml = str_replace('"',"'", $shtml);   
-  
+  $shtml = str_replace('"',"'", $shtml);
+
   //echo $shtml;
   //exit();
-  
-  
-  list($usec, $sec) = explode(" ", microtime()); 
+
+
+  list($usec, $sec) = explode(" ", microtime());
   $w_microtime = ((float)$usec + (float)$sec);
 
   // Define o nome do arquivo
@@ -2676,25 +2783,25 @@ function RodapePDF() {
   // Verifica a necessidade de criação do diretório de arquivos temporários
   $l_dir = DiretorioCliente($w_cliente).'/'.tmp;
     if (!(file_exists($l_dir))) mkdir($l_dir);
-  
-  $handle = fopen($l_dir.'/'.$filename, 'a+');  
+
+  $handle = fopen($l_dir.'/'.$filename, 'a+');
   if (is_writable($l_dir.'/'.$filename)) {
-    fwrite($handle, $shtml);    
-  } 
+    fwrite($handle, $shtml);
+  }
   $w_protocolo = explode('/',$_SERVER["SERVER_PROTOCOL"]);
   $w_prot      = $w_protocolo[0];
 ?>
 <html>
-	<body>
-		<form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
-		<input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
+  <body>
+    <form name="formpdf" action="<?php echo $w_dir_volta . 'classes/pd4ml/pd4ml.php'; ?>" method="post">
+    <input type="hidden" value="<?php echo $w_prot.'://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT'].$conFileVirtual . $w_cliente . '/tmp/' . $filename; ?>" name="url">
     <input type="hidden" value="<?php echo $conFilePhysical . $w_cliente . '/tmp/' . $filename; ?>" name="filename">
-		<input type="hidden" value="<?php echo $p_orientation; ?>" name="orientation">
-		</form>
-		<?php echo('<script>document.formpdf.submit();</script>'); ?>
-	</body>
+    <input type="hidden" value="<?php echo $p_orientation; ?>" name="orientation">
+    </form>
+    <?php echo('<script>document.formpdf.submit();</script>'); ?>
+  </body>
 </html>
-<?php 
+<?php
 }
 
 // =========================================================================
@@ -2982,8 +3089,8 @@ function DesConectaBD() {
 // =========================================================================
 function f($rs, $fld) {
   if (is_array($rs)) {
-    $rs =  array_change_key_case($rs,CASE_LOWER); 	
-  }  
+    $rs =  array_change_key_case($rs,CASE_LOWER);
+  }
   if (isset($rs[Strtolower($fld)])) {
     if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
       return str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtolower($fld)]));
@@ -3028,7 +3135,7 @@ function VerificaAssinaturaEletronica($Usuario,$Senha) {
 // =========================================================================
 // Função que formata dias, horas, minutos e segundos a partir dos segundos
 // -------------------------------------------------------------------------
-function FormataDataEdicao($w_dt_grade, $w_formato=1) { 
+function FormataDataEdicao($w_dt_grade, $w_formato=1) {
   if (nvl($w_dt_grade,'')>'') {
     if (is_numeric($w_dt_grade)) {
       switch ($w_formato){
@@ -3038,7 +3145,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 4: return diaSemana(date('l, d/m/y, H:i:s',$w_dt_grade));    break;
         case 5: return date('d/m/y',$w_dt_grade);                         break;
         case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
-        case 7: return date('Y-m-d',$w_dt_grade);                         break;
+        case 7: return date('m/d/Y',$w_dt_grade);                         break;
         case 8: return date('Y-m-d H:i:s',$w_dt_grade);                   break;
       }
     } else {
@@ -3059,7 +3166,7 @@ function first_day($w_valor) {
   $l_mes    = substr($l_valor,3,2);
   $l_ano    = substr($l_valor,6,4);
   return mktime(0,0,0,$l_mes,1,$l_ano);
-} 
+}
 
 // =========================================================================
 // Função que retorna datetime com o último dia da data informada no formato datetime
@@ -3071,11 +3178,11 @@ function last_day($w_valor) {
   $l_dia    = substr($l_valor,0,2);
   $l_mes    = substr($l_valor,3,2);
   $l_ano    = substr($l_valor,6,4);
-  
+
   $l_result = mktime(0,0,0,($l_mes + 1),0,$l_ano);
 
   return $l_result;
-} 
+}
 
 // =========================================================================
 // Função que retorna data indicando o domingo de páscoa de um ano
@@ -3098,7 +3205,7 @@ function DomingoPascoa($p_ano) {
   $p = intval(($h+$l-(7*$m)+114)/31);
   $q = intval(($h+$l-(7*$m)+114)%31);
   return mktime(0,0,0,$p,$q+1,$p_ano);
-} 
+}
 
 // =========================================================================
 // Função que retorna data indicando a sexta-feira santa de um ano
@@ -3108,7 +3215,7 @@ function SextaSanta($p_ano) {
   extract($GLOBALS);
 
   return addDays(DomingoPascoa($p_ano),-2);
-} 
+}
 
 // =========================================================================
 // Função que retorna data de Corpus Christi de um ano
@@ -3118,7 +3225,7 @@ function CorpusChristi($p_ano) {
   extract($GLOBALS);
 
   return addDays(DomingoPascoa($p_ano),60);
-} 
+}
 
 // =========================================================================
 // Função que retorna data indicando a terça-feira de carnaval de um ano
@@ -3133,15 +3240,15 @@ function TercaCarnaval($p_ano) {
     return addDays($l_dia,(-1*date('w',addDays($l_dia,-2))));
   } else {
     return addDays($l_dia,(-1*date('w',addDays($l_dia,-4))));
-  } 
-} 
+  }
+}
 
 // =========================================================================
 // Função que traduz os dias da semana de inglês para português
 // -------------------------------------------------------------------------
 function diaSemana($l_data) {
   if (nvl($l_data,'')>'') {
-    $l_texto = substr($l_data,strpos($l_data,',')); 
+    $l_texto = substr($l_data,strpos($l_data,','));
     switch (strtoupper(substr($l_data,0,strpos($l_data,',')))) {
       case 'SUNDAY':    return 'Domingo'.$l_texto;       break;
       case 'MONDAY':    return 'Segunda-feira'.$l_texto; break;
@@ -3218,7 +3325,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
   // Recupera o mês e o ano desejado para montagem do calendário
   $l_mes = substr($p_mes,0,2);
   $l_ano = substr($p_mes,2,4);
-   
+
   // Define cor de fundo padrão para as células de sábado e domingo
   $l_cor_padrao = '#DAEABD';
 
@@ -3227,14 +3334,14 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
     $l_data   = FormataDataEdicao(f($row_ano,'data_formatada'));
     $x_datas[$l_data] = f($row_ano,'nome').' '.f($row_ano,'nm_expediente');
     $x_cores[$l_data] = $l_cor_padrao;
-  } 
+  }
 
   // Define em que dia da semana o mês inicia
   $l_inicio = date('w',toDate('01/'.$l_mes.'/'.$l_ano));
 
   // Trata o mês de fevereiro anos bissextos
   if (fMod($l_ano,4)==0) $l_qtd[2] = 29;
-   
+
   $l_html  = '<table border=0 cellspacing=1 cellpadding=1>'.$crlf;
   $l_html .= '  <tr><td colspan=7 align="center" bgcolor="'.$l_cor_padrao.'"><b>'.$l_meses[intVal($l_mes)].'/'.$l_ano.'</td></tr>'.$crlf;
   $l_html .= '  <tr align="center">'.$crlf;
@@ -3242,7 +3349,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
   // Monta a linha com a sigla para os dias das semanas
   for ($i = 1; $i <= 7; $i++) $l_html .= '    <td bgcolor="'.$l_cor_padrao.'"><b>'.$l_dias[$i].'</td>'.$crlf;
   $l_html .= '  </tr>'.$crlf;
-   
+
   // Carrega os dias do mês num array que será usado para montagem do calendário, colocando
   // o dia ou um espaço em branco, dependendo do início e do fim do mês
   for ($i = 1; $i <= ($l_inicio); $i++) $l_celulas[$i] = '&nbsp;';
@@ -3254,7 +3361,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
     $l_data = 'x';
     // Se a célula contiver um dia do mês, formata data para busca nos arrays
     if ($l_celulas[$i]!='&nbsp;') $l_data = substr(100+$l_celulas[$i],1,2).'/'.$l_mes.'/'.$l_ano;
-    
+
     // Trata a borda da célula para datas especiais
     $l_borda      = '';
     $l_ocorrencia = '';
@@ -3270,17 +3377,17 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
         $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
       }
     }
-          
+
     // Trata a cor de fundo da célula
     $l_cor = '';
-    if ($i==1 ||($l_celulas[$i]!='&nbsp;' && ((fMod($i,7)==0) || (fMod($i-1,7)==0)))) { 
+    if ($i==1 ||($l_celulas[$i]!='&nbsp;' && ((fMod($i,7)==0) || (fMod($i-1,7)==0)))) {
       // Verifica se a ocorrência deve prevalecer sobre sábados e domingos
       if ($p_cores[$l_data]['dia_util']=='N') {
         $l_cor = ' bgcolor="'.$p_cores[$l_data]['valor'].'"';
       } else {
         $l_cor = ' bgcolor="'.$l_cor_padrao.'"';
       }
-    } elseif ($l_celulas[$i]!='&nbsp;') { 
+    } elseif ($l_celulas[$i]!='&nbsp;') {
       if (isset($p_cores[$l_data]['valor'])) {
         if (isset($x_datas[$l_data])) {
          if ($p_cores[$l_data]['dia_util']=='N') $l_cor = ' bgcolor="'.$p_cores[$l_data]['valor'].'"';
@@ -3289,32 +3396,32 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
         }
       }
     }
-   
+
     // Trata a data de hoje
     if ($l_data==formataDataEdicao(time())) {
       if ($l_data==formataDataEdicao(time())) $l_ocorrencia = 'HOJE\r\n'.$l_ocorrencia;
       $l_borda = ' style="border: 2px solid rgb(0,0,0);"';
     }
-          
+
     if ($l_ocorrencia!='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_ocorrencia.'\')"';
 
     // Coloca uma célula do calendário
     $l_html .= '    <td'.$l_cor.$l_borda.$l_ocorrencia.'>'.$l_celulas[$i].'</td>'.$crlf;
-         
+
     // Trata a quebra de linha ao final de cada semana
     if (fMod($i,7)==0) {
       $l_html .= '  </tr>'.$crlf;
       // Interrompe a montagem do calendário na última linha que contém datas
       if ($i>$l_qtd[intVal($l_mes)] && $l_celulas[$i+1]=='&nbsp;') {
         break;
-      } else { 
+      } else {
         $l_html .= '  <tr align="center">'.$crlf;
       }
     }
-     
+
   }
   $l_html .= '</table>'.$crlf;
-   
+
   // Devolve o calendário montado
   return $l_html;
 }
@@ -3348,14 +3455,14 @@ function retornaArrayDias($p_inicio, $p_fim, $p_array, $p_valor, $p_dia_util=nul
     $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['valor']=$p_valor;
     $p_array[substr($i,6,2).'/'.substr($i,4,2).'/'.substr($i,0,4)]['dia_util']=$p_dia_util;
   }
-  
+
   return true;
 }
 
 // =========================================================================
 // Função para retornar array com o tipo do nome e o nome mais adequado para um período de datas
 // Recebe o início e o fim do período no formato data
-// Devolve array com dois índices: 
+// Devolve array com dois índices:
 //    [TIPO] pode valer ANO, MES_ANO, DIA, OUT
 //    [VALOR] tipo=ANO retorna o ano do início informado
 //            tipo=MES retorna o nome_mes/ano
@@ -3424,7 +3531,7 @@ function BodyOpen($cProperties) {
        $wProperties = 'required(); '.$wProperties;
      }
    }
-   
+
    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
    ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
@@ -3432,8 +3539,8 @@ function BodyOpen($cProperties) {
    ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
    ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
-   
-   
+
+
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
    else {
       ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
@@ -3446,12 +3553,12 @@ function BodyOpen($cProperties) {
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
    extract($GLOBALS);
-   
+
    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
    ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
    ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
    ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
-   
+
    ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
    ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
@@ -3478,7 +3585,7 @@ function BodyOpenClean($cProperties) {
   } else {
     $wProperties = ' onLoad=\'required();\' ';
   }
-  
+
   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
   ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');
   ShowHTML('<script type="text/javascript" src="js/modal/js/modal-message.js"></script> ');
@@ -3528,6 +3635,6 @@ function curPageURL() {
     $pageURL .= "localhost".$_SERVER["REQUEST_URI"];
   }
   return $pageURL;
-} 
+}
 
 ?>

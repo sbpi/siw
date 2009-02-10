@@ -67,6 +67,7 @@ begin
        where sq_deslocamento = p_chave_aux;       
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro na tabela de deslocamentos
+      delete pd_diaria       where sq_deslocamento_chegada = p_chave_aux or sq_deslocamento_saida = p_chave_aux;
       delete pd_deslocamento where sq_deslocamento = p_chave_aux;
    End If;
    

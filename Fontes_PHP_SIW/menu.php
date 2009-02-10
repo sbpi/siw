@@ -417,7 +417,7 @@ function TrocaSenha() {
     ScriptClose();
   }
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=\'document.Form.w_atual.focus();\'');
+  if ($w_tipo_autenticacao=='B') BodyOpen('onLoad=\'document.Form.w_atual.focus();\''); else BodyOpen('onLoad=\'document.focus();\''); 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();

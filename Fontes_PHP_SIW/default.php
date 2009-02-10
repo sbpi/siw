@@ -364,7 +364,7 @@ function LogOn() {
     Modulo();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('Login1','Nome de usuário','','1','2','30','1','1');
+    Validate('Login1','Nome de usuário','','1','2','60','1','1');
     ShowHTML('  if (theForm.par.value == \'Senha\') {');
     ShowHTML('     if (confirm(\'Este procedimento irá reinicializar sua senha de acesso e sua assinatura eletrônica, enviando os dados para seu e-mail.\\nConfirma?\')) {');
     ShowHTML('     } else {');
@@ -401,7 +401,7 @@ function LogOn() {
     ShowHTML('  <tr><td valign="middle" width="100%" height="100%">');
     ShowHTML('      <table width="100%" height="100%" border="0" cellpadding=0 cellspacing=0> ');
     ShowHTML('        <tr><td bgcolor="#003300" width="100%" height="100%" valign="middle"><font size="2" color="#FFFFFF">&nbsp;');
-    ShowHTML('            Usuário: <input class="cText" id="Login1" name="Login1" size="14" maxlength="30" value="'.$w_username.'">');
+    ShowHTML('            Usuário: <input class="cText" id="Login1" name="Login1" size="14" maxlength="60" value="'.$w_username.'">');
     ShowHTML('            Senha: <input class="cText" type="Password" name="Password1" size="19" onKeyUp="this.value=trim(this.value);" AUTOCOMPLETE="off">');
     ShowHTML('            <input class="cButton" type="submit" value="OK" name="Botao" onClick="document.Form.par.value=\'Log\';"> ');
     ShowHTML('            <input class="cButton" type="submit" value="Recriar senha" name="Botao" onClick="document.Form.par.value=\'Senha\';" title="Informe seu nome de usuário e clique aqui para receber por e-mail sua senha e assinatura eletrônica!"> ');

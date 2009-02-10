@@ -507,7 +507,7 @@ function Gera_Gantt1() {
       $w_cor = $conTrBgColor;
       foreach($RS1 as $row1) {
         if (f($row1,'sq_plano')==f($row,'sq_plano')) {
-          if($menorData > f($row1,'inicio')) $menorData = f($row1,'inicio');
+          if($menorData > nvl(f($row1,'inicio'),f($row1,'fim'))) $menorData = nvl(f($row1,'inicio'),f($row1,'fim'));
           if($maiorData < f($row1,'fim'))    $maiorData = f($row1,'fim');
           // Nível 2
           $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -516,7 +516,7 @@ function Gera_Gantt1() {
             $array = array($i,
                            ACTYPE_NORMAL,
                            str_repeat(' ',3).f($row1,'codigo_interno').' - '.f($row1,'titulo'),
-                           formataDataEdicao(f($row1,'inicio'),7),
+                           formataDataEdicao(nvl(f($row1,'inicio'),f($row1,'fim')),7),
                            formataDataEdicao(f($row1,'fim'),7),
                            ((nvl(f($row1,'ige'),-1) < 0) ? '': (int)f($row1,'ige').'%')
                           );
@@ -528,7 +528,7 @@ function Gera_Gantt1() {
             $array = array($i,
                            ACTYPE_GROUP,
                            str_repeat(' ',3).f($row1,'codigo_interno').' - '.f($row1,'titulo'),
-                           formataDataEdicao(f($row1,'inicio'),7),
+                           formataDataEdicao(nvl(f($row1,'inicio'),f($row1,'fim')),7),
                            formataDataEdicao(f($row1,'fim'),7),
                            ((nvl(f($row1,'ige'),-1) < 0) ? '': (int)f($row1,'ige').'%')
                           );
@@ -537,7 +537,7 @@ function Gera_Gantt1() {
             $array = '';
             $i++;
             foreach($RS2 as $row2) {
-              if($menorData > f($row2,'inicio')) $menorData = f($row2,'inicio');
+              if($menorData > nvl(f($row2,'inicio'),f($row2,'fim'))) $menorData = nvl(f($row2,'inicio'),f($row2,'fim'));
               if($maiorData < f($row2,'fim'))    $maiorData = f($row2,'fim');
               // Nível 3
               $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -546,7 +546,7 @@ function Gera_Gantt1() {
                 $array = array($i,
                                ACTYPE_NORMAL,
                                str_repeat(' ',6).f($row2,'codigo_interno').' - '.f($row2,'ac_titulo'),
-                               formataDataEdicao(f($row2,'inicio'),7),
+                               formataDataEdicao(nvl(f($row2,'inicio'),f($row2,'fim')),7),
                                formataDataEdicao(f($row2,'fim'),7),
                                ((nvl(f($row2,'ige'),-1) < 0) ? '': (int)f($row2,'ige').'%')
                               );
@@ -558,7 +558,7 @@ function Gera_Gantt1() {
                 $array = array($i,
                                ACTYPE_GROUP,
                                str_repeat(' ',6).f($row2,'codigo_interno').' - '.f($row2,'ac_titulo'),
-                               formataDataEdicao(f($row2,'inicio'),7),
+                               formataDataEdicao(nvl(f($row2,'inicio'),f($row2,'fim')),7),
                                formataDataEdicao(f($row2,'fim'),7),
                                ((nvl(f($row2,'ige'),-1) < 0) ? '': (int)f($row2,'ige').'%')
                               );
@@ -567,12 +567,12 @@ function Gera_Gantt1() {
                 $array = '';
                 $i++;
                 foreach($RS3 as $row3) {
-                  if($menorData > f($row3,'inicio')) $menorData = f($row3,'inicio');
+                  if($menorData > nvl(f($row3,'inicio'),f($row3,'fim'))) $menorData = nvl(f($row3,'inicio'),f($row3,'fim'));
                   if($maiorData < f($row3,'fim'))    $maiorData = f($row3,'fim');
                   $array = array($i,
                                  ACTYPE_NORMAL,
                                  str_repeat(' ',9).f($row3,'codigo_interno').' - '.f($row3,'ac_titulo'),
-                                 formataDataEdicao(f($row3,'inicio'),7),
+                                 formataDataEdicao(nvl(f($row3,'inicio'),f($row3,'fim')),7),
                                  formataDataEdicao(f($row3,'fim'),7),
                                  ((nvl(f($row3,'ige'),-1) < 0) ? '': (int)f($row3,'ige').'%')
                                 );
@@ -588,8 +588,6 @@ function Gera_Gantt1() {
       }
     }
   }
-
-
   $progress = $perc;
 
 // Create the basic graph

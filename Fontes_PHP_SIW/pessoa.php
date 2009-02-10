@@ -274,7 +274,7 @@ function Benef() {
             Validate('w_fax','Fax','1','',4,20,'1','1');
         } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') {
             Validate('w_username','Username','1',1,2,60,'1','1');
-            Validate('w_email','E-Mail','1','1',4,50,'1','1');
+            Validate('w_email','E-Mail','1','1',4,60,'1','1');
         }
         Validate('w_sq_unidade_lotacao','Unidade de lotação','HIDDEN',1,1,10,'','1');
         Validate('w_sq_localizacao','Localização','SELECT',1,1,10,'','1');
@@ -419,10 +419,10 @@ function Benef() {
             } elseif ($SG=='SGUSU' || $SG=='CLUSUARIO') {
                 ShowHTML('        <tr><td><font size=1><b><u>U</u>sername:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" NAME="w_username" VALUE="'.nvl($w_username,$w_cpf).'" SIZE="30" MaxLength="60" onBlur="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_email\'; document.Form.submit();">');
                 if ($w_Disabled==' DISABLED ') {
-                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email1" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
                     ShowHTML('                   <INPUT type="hidden" name="w_email" value="'.$w_email.'">');
                 } else {
-                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="50" VALUE="'.$w_email.'"></td>');
+                    ShowHTML('          <tr><td><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
                 }
             }
             ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -1062,7 +1062,7 @@ function Grava() {
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
         // Verifica se a Assinatura Eletrônica é válida
         if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-            if (strlen($_REQUEST['w_username'])<=14) $w_tipo='Física'; else $w_tipo='Jurídica';
+            if (strlen($_REQUEST['w_username'])<=14 || $SG=='SGUSU') $w_tipo='Física'; else $w_tipo='Jurídica';
             if (strpos('ED',$O)===false) {
               // Se não for exclusão nem desativação de usuários, verifica se o nome de usuário já existe
               $RS = db_getUserData::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_username']);

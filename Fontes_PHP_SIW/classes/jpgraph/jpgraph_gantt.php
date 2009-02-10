@@ -41,7 +41,7 @@ DEFINE("SECPERDAY",3600*24);
 // Locales. ONLY KEPT FOR BACKWARDS COMPATIBILITY
 // You should use the proper locale strings directly 
 // from now on. 
-DEFINE("LOCALE_EN","pt_BR");
+DEFINE("LOCALE_EN","en_UK");
 DEFINE("LOCALE_SV","sv_SE");
 
 // Layout of bars

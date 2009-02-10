@@ -21,7 +21,7 @@ class dml_putCLDados {
                    'p_sq_lcmodalidade'        =>array(tvl($p_sq_lcmodalidade),                    B_INTEGER,        32),                   
                    'p_numero_processo'        =>array(tvl($p_numero_processo),                    B_VARCHAR,        30),
                    'p_abertura'               =>array(tvl($p_abertura),                           B_DATE,           32),
-                   'p_numero_certame'         =>array(tvl($p_numero_certame),                     B_VARCHAR,        30),
+                   'p_numero_certame'         =>array(tvl($p_numero_certame),                     B_VARCHAR,        50),
                    'p_numero_ata'             =>array(tvl($p_numero_ata),                         B_VARCHAR,        30),
                    'p_tipo_reajuste'          =>array(tvl($p_tipo_reajuste),                      B_INTEGER,        32),
                    'p_indice_base'            =>array(tvl($p_indice_base),                        B_VARCHAR,         7),

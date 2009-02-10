@@ -138,7 +138,7 @@ begin
       -- Recupera os trechos da solicitação
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
-                a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.passagem, a.sq_bilhete,
+                a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.passagem, 
                 a.aeroporto_origem, a.aeroporto_destino,
                 case a.passagem when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 a.compromisso, case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
@@ -151,7 +151,7 @@ begin
                 case e.padrao when 'S' then d.nome||'-'||d.co_uf else d.nome||' ('||e.nome||')' end as nm_destino,
                 f.nome as nm_cia_transporte,
                 g.sq_meio_transporte, g.nome as nm_meio_transporte,
-                h.sq_bilhete, h.data as dt_bilhete, h.numero as nr_bilhete,
+                h.sq_bilhete, h.data as dt_bilhete, h.numero as nr_bilhete, h.observacao as obs_bilhete,
                 h1.nome as nm_cia_bilhete
            from pd_deslocamento                    a
                 inner   join co_cidade             b  on (a.origem                  = b.sq_cidade)
@@ -160,9 +160,7 @@ begin
                   inner join co_pais               e  on (d.sq_pais                 = e.sq_pais)
                left     join pd_cia_transporte     f  on (a.sq_cia_transporte       = f.sq_cia_transporte)
                left     join pd_meio_transporte    g  on (a.sq_meio_transporte      = g.sq_meio_transporte)
-               left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete and 
-                                                          (p_restricao = 'PDCONTAS' or (p_restricao <> 'PDCONTAS' and h.tipo = 'S'))
-                                                         )
+               left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete)
                  left   join pd_cia_transporte     h1 on (h.sq_cia_transporte       = h1.sq_cia_transporte)
           where a.sq_siw_solicitacao = p_chave
             and a.tipo = 'S'

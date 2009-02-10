@@ -632,10 +632,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $w_tot_pta     += f($row,'valor_pta');
           $w_tot_tax     += f($row,'valor_taxa_embarque');
           $w_total       += $w_tot_bilhete;
+          $w_rowspan     = ((nvl(f($row,'observacao'),'')=='') ? 1 : 2);
           $l_html.=chr(13).'        <tr valign="middle">';
-          $l_html.=chr(13).'           <td align="center">'.FormataDataEdicao(f($row,'data'),5).'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'nm_cia_transporte').'</td>';
-          $l_html.=chr(13).'           <td>'.f($row,'numero').'</td>';
+          $l_html.=chr(13).'           <td align="center" rowspan="'.$w_rowspan.'">'.FormataDataEdicao(f($row,'data'),5).'</td>';
+          $l_html.=chr(13).'           <td rowspan="'.$w_rowspan.'">'.f($row,'nm_cia_transporte').'</td>';
+          $l_html.=chr(13).'           <td rowspan="'.$w_rowspan.'">'.f($row,'numero').'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'trecho').'</td>';
           $l_html.=chr(13).'           <td>'.nvl(f($row,'rloc'),'&nbsp;').'</td>';
           $l_html.=chr(13).'           <td align="center">'.f($row,'classe').'</td>';
@@ -644,6 +645,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_pta')).'</td>';
           $l_html.=chr(13).'           <td align="right">'.formatNumber($w_tot_bilhete).'</td>';
           $l_html.=chr(13).'        </tr>';
+          if (nvl(f($row,'observacao'),'')!='') $l_html.=chr(13).'        <tr><td colspan=7>Observação: '.crlf2br(f($row,'observacao')).'</td></tr>';
         } 
         $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
         $l_html.=chr(13).'        <td align="right" colspan="6"><b>TOTAIS</b></td>';

@@ -629,6 +629,10 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,
+                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
+                to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
+                to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
+                to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'

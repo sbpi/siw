@@ -24,6 +24,7 @@ array_push($arrayFun,array('texto' => 'imagefilledrectangle' ,'param' => 'imagef
 array_push($arrayFun,array('texto' => 'ldap_delete' ,'param' => 'ldap_delete','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'oci_connect' ,'param' => 'oci_connect','funcao'=> true,'test'=> true));
 array_push($arrayFun,array('texto' => 'mb_language' ,'param' => 'mb_language','funcao'=> true,'test'=> true));
+array_push($arrayFun,array('texto' => 'openssl_pkcs7_sign' ,'param' => 'openssl_pkcs7_sign','funcao'=> true,'test'=> true));
 //array_push($arrayFun,array('texto' => 'mcrypt_module_open' ,'param' => 'mcrypt_module_open','funcao'=> true,'test'=> true));
       
 // Diretivas INI

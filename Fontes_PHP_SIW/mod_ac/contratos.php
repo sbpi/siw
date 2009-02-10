@@ -1576,7 +1576,7 @@ function DadosAdicionais() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCZ') Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
-    Validate('w_numero_certame','Numero do certame','1','1',1,30,'1','1');
+    Validate('w_numero_certame','Numero do certame','1','1',1,50,'1','1');
     if (substr($SG,0,3)!='GCZ') {
       Validate('w_numero_ata','Número da ata','1','',1,30,'1','1');
       Validate('w_tipo_reajuste','Tipo de reajuste','SELECT','1',1,18,'','0123456789');
@@ -1626,7 +1626,7 @@ function DadosAdicionais() {
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('<tr valign="top">');
     if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCZ') SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do contrato.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
-    ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório que originou o contrato."></td>');
+    ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório que originou o contrato."></td>');
     if (substr($SG,0,3)!='GCZ') {
       ShowHTML('          <td><b>N<u>ú</u>mero da ata:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata de registro de preços que originou o contrato."></td>');
       ShowHTML('<tr valign="top">');

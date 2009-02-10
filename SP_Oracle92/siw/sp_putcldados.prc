@@ -25,14 +25,23 @@ create or replace procedure SP_PutCLDados
     p_fim                   in date     default null,
     p_prioridade            in number   default null
    ) is
+   w_numero_certame cl_solicitacao.numero_certame%type;
 begin
    If p_restricao = 'PROT' Then
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
-         sq_lcmodalidade          = p_sq_lcmodalidade,
-         processo                 = coalesce(p_numero_processo,p_protocolo),
-         numero_certame           = p_numero_certame
+         sq_lcmodalidade = p_sq_lcmodalidade,
+         processo        = coalesce(p_numero_processo,p_protocolo)
       Where sq_siw_solicitacao = p_chave;
+      
+      select numero_certame into w_numero_certame from cl_solicitacao where sq_siw_solicitacao = p_chave;
+      If w_numero_certame is null Then
+        -- Recupera o número do certame
+        CL_CriaParametro(p_chave, w_numero_certame);
+
+        -- Atualiza a tabela da licitação com os dados da análise
+        Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
+      End If;
       
       If p_protocolo is not null Then
          -- Grava a chave do protocolo na solicitação

@@ -2589,7 +2589,7 @@ function DadosPrevios() {
   } elseif($w_segmento=='Público') {
     Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
   }
-  if ($w_certame=='S') Validate('w_numero_certame','Número do certame','1','1',1,30,'1','1');
+  //if ($w_certame=='S') Validate('w_numero_certame','Número do certame','1','1',1,30,'1','1');
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -2629,13 +2629,14 @@ function DadosPrevios() {
   ShowHTML('  <li>Informe também o protocolo do processo de compra.');
   ShowHTML('  </ul></b></font></td>');
   ShowHTML('<tr valign="top">');
-  SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_lcmodalidade\'; document.Form.submit();"');
+  //SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_lcmodalidade\'; document.Form.submit();"');
+  SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
   if ($w_pa=='S') {
-    SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+    SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
   } elseif($w_segmento=='Público') {
-    ShowHTML('          <td><b>N<u>ú</u>mero do processo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
+    ShowHTML('          <td><b>N<u>ú</u>mero do protocolo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
   }
-  if ($w_certame=='S') ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
+  //if ($w_certame=='S') ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
   ShowHTML('      <tr><td align="center" colspan=3><hr>');
   ShowHTML('      <tr><td align="center" colspan="3">');
   ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -2763,7 +2764,7 @@ function DadosAnalise() {
   }
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
   if (f($RS_Solic,'certame')=='S') {
-    Validate('w_numero_certame','Número do certame','1','1',1,30,'1','1');
+    Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
     Validate('w_abertura','Data de abertura','DATA','1',10,10,'','0123456789/');
     Validate('w_sq_lcjulgamento','Critério de julgamento','SELECT','1',1,18,'','0123456789');
   }
@@ -2837,14 +2838,14 @@ function DadosAnalise() {
 
   SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_lcmodalidade\'; document.Form.submit();"');
   if ($w_pa=='S') {
-    SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+    SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
   } elseif($w_segmento=='Público') {
-    ShowHTML('          <td><b>N<u>ú</u>mero do processo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
+    ShowHTML('          <td><b>N<u>ú</u>mero do protocolo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
   }
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
   if (f($RS_Solic,'certame')=='S') {
     ShowHTML('<tr valign="top">');
-    ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="30" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
+    ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
     ShowHTML('      <td><b><u>D</u>ata de abertura das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
     SelecaoLCJulgamento('<u>J</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
   }

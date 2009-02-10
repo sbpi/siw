@@ -1807,6 +1807,7 @@ function Bilhetes() {
     $w_tipo         = $_REQUEST['w_tipo'];
     $w_utilizado    = $_REQUEST['w_utilizado'];
     $w_faturado     = $_REQUEST['w_faturado'];
+    $w_observacao   = $_REQUEST['w_observacao'];
   } elseif ($O=='L') {
     $RS = db_getPD_Bilhete::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null);
     $RS = SortArray($RS,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
@@ -1825,6 +1826,7 @@ function Bilhetes() {
     $w_tipo         = f($RS,'tipo');
     $w_utilizado    = f($RS,'utilizado');
     $w_faturado     = f($RS,'faturado');
+    $w_observacao   = f($RS,'observacao');
   }
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -1853,6 +1855,7 @@ function Bilhetes() {
     CompValor('w_valor_tax','Valor da taxa de embarque','>=','0,00','zero');
     Validate('w_valor_pta','Valor da transmissão do pta','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_pta','Valor da transmissão do pta','>=','0,00','zero');
+    Validate('w_observacao','Observação','','','1','500','1','1');
     ShowHTML('  var i; ');
     ShowHTML('  var w_erro=true; ');
     ShowHTML('  if (theForm["w_sq_deslocamento[]"].value==undefined) {');
@@ -1891,8 +1894,8 @@ function Bilhetes() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS_Solic,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS_Solic,'fim')).' </b></td>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_fim')).' </b></td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS_Solic,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -1952,7 +1955,7 @@ function Bilhetes() {
         ShowHTML('        <td align="right">'.formatNumber($w_tot_bilhete).'</td>');
         ShowHTML('        <td nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera os dados do trecho.">AL</A>&nbsp');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do trecho." onClick="return(confirm(\'Confirma exclusão do trecho?\'));">EX</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do trecho." onClick="return(confirm(\'Confirma exclusão do trecho?\'));">EX</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
@@ -1990,7 +1993,8 @@ function Bilhetes() {
     ShowHTML('        <td><b>$ <u>B</u>ilhete:</b><br><input type="text" accesskey="V" name="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_bil.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_tax.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor_pta,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
-
+    ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    
     //Trechos contemlados no bilhete
     ShowHTML('      <tr><td colspan="5"><br><b>Trechos contemplados pelo bilhete:</b>');
     ShowHTML('      <tr><td colspan="5"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -2164,8 +2168,8 @@ function RegistroAlteracao() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS_Solic,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS_Solic,'fim')).' </b></td>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_fim')).' </b></td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS_Solic,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -2854,8 +2858,8 @@ function DadosFinanceiros() {
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-    ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-    ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+    ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+    ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
     $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
     foreach($RS1 as $row) { $RS1 = $row; break; }
     ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -3118,8 +3122,8 @@ function PagamentoDiaria() {
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-    ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-    ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+    ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+    ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
     $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
     foreach($RS1 as $row) { $RS1 = $row; break; }
     ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -3356,10 +3360,11 @@ function Diarias() {
     $w_hos_observ           = $w_trechos[45];
     $w_vei_ret              = $w_trechos[46];
     $w_vei_dev              = $w_trechos[47];
-    $w_max_diaria           = floor(($w_phpdt_saida-$w_phpdt_chegada)/86400);
-    $w_max_hosp             = floor(($w_hos_out-$w_hos_in)/86400);
-    $w_max_veiculo          = floor(($w_vei_dev-$w_vei_ret)/86400);
-
+    $w_max_diaria           = (toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400;
+    $w_max_hosp             = ($w_hos_out-$w_hos_in)/86400;
+    $w_max_veiculo          = ($w_vei_dev-$w_vei_ret)/86400;
+    
+    
     // Reconfigura o máximo de diárias para o primeiro trecho
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
     $RS = SortArray($RS,'phpdt_saida', 'asc');
@@ -3372,16 +3377,6 @@ function Diarias() {
         }
       }
       break;
-    }
-    
-    // Reconfigura o máximo de diárias para o último trecho
-    $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$SG);
-    $RS = SortArray($RS,'phpdt_chegada', 'desc');
-    if (count($RS)>2) {
-      foreach ($RS as $row) {
-        if (f($row,'sq_deslocamento')==$w_desloc_chegada) $w_max_diaria += 1;
-        break;
-      }
     }
     
     if ($w_meia_ida=='S')   $w_max_diaria -= 0.5; elseif ($w_compromisso_chegada=='N') $w_max_diaria -= 0.5;
@@ -3565,7 +3560,7 @@ function Diarias() {
         Validate('w_lan_dia','Tipo de lançamento para pagamento de diárias','SELECT','',1,18,'','1');
       }
       ShowHTML('  } else {');
-      Validate('w_justificativa_diaria','Observações e justificativa para não pagamento de diárias','','1',3,500,'1','1');
+      Validate('w_justificativa_diaria','Observações / Justificativa para não pagamento de diárias','','1',3,500,'1','1');
       ShowHTML('  }');
     }
     if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
@@ -3575,7 +3570,7 @@ function Diarias() {
       Validate('w_hos_out','Data de check out','DATA','1',10,10,'','0123456789/');
       CompData('w_hos_out','Data de check out','>=','w_hos_in','Data de check in');
       CompData('w_hos_in','Data de check out','<=','w_dt_saida','Saída da localidade');
-      Validate('w_hos_observ','Observações e justificativa para não pagamento de hospedagem','1',1,5,255,'1','1');
+      Validate('w_hos_observ','Observações / Justificativa para não pagamento de hospedagem','1',1,5,255,'1','1');
       ShowHTML('  var w_data, w_data1, w_data2;');
       ShowHTML('  w_data = theForm.w_hos_in.value;');
       ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');
@@ -3603,7 +3598,7 @@ function Diarias() {
         Validate('w_lan_hsp','Tipo de lançamento para pagamento de hospedagens','SELECT','',1,18,'','1');
       }
       ShowHTML('  } else {');
-      Validate('w_hos_observ','Observações e justificativa para não pagamento de hospedagem','1','1',3,500,'1','1');
+      Validate('w_hos_observ','Observações / Justificativa para não pagamento de hospedagem','1','1',3,500,'1','1');
       ShowHTML('  }');
     }
     if (nvl($w_sq_diaria_veiculo,'')!='' && f($RS_Solic,'veiculo')=='S') {
@@ -3837,7 +3832,7 @@ function Diarias() {
     if (nvl($w_sq_valor_diaria,'')!='' && nvl(f($RS_Solic,'diaria'),'')!='') {
       ShowHTML('          <tr valign="top">');
       MontaRadioSN('<b>Diárias?</b>',$w_diaria,'w_diaria','Informe Sim se desejar pagamento das diárias.',null,'onClick="marcaDiaria()"');
-      ShowHTML('            <td colspan="3" valign="top"><b>Observações e <u>j</u>ustificativa para o não pagamento de diárias:</b><br><textarea '.(($w_diaria=='N') ? 'class="STIO"' : 'class="STI"').' accesskey="J" name="w_justificativa_diaria" class="STI" ROWS=5 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de diárias, informe o motivo.">'.$w_justificativa_diaria.'</TEXTAREA></td>');
+      ShowHTML('            <td colspan="3" valign="top"><b>Observações / <u>J</u>ustificativa para o não pagamento de diárias:</b><br><textarea '.(($w_diaria=='N') ? 'class="STIO"' : 'class="STI"').' accesskey="J" name="w_justificativa_diaria" class="STI" ROWS=5 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de diárias, informe o motivo.">'.$w_justificativa_diaria.'</TEXTAREA></td>');
       ShowHTML('<INPUT type="hidden" name="w_vl_diaria" value="'.$w_vl_diaria.'">');
       ShowHTML('<INPUT type="hidden" name="w_quantidade" value="'.$w_quantidade.'">');
       ShowHTML('<INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
@@ -3859,7 +3854,7 @@ function Diarias() {
       MontaRadioNS('<b>Hospedagem?</b>',$w_hospedagem,'w_hospedagem','Informe Sim se desejar pagamento das hospedagens.',null,'onClick="marcaHospedagem()"');
       ShowHTML('          <td><b><u>C</u>heck in:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_in" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_hos_in).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
       ShowHTML('          <td><b><u>C</u>heck out:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_out" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_hos_out).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
-      ShowHTML('        <tr><td><td colspan="3" valign="top"><b><u>O</u>bservações e justificativa para o não pagamento de hospedagem:</b><br><textarea class="STIO" accesskey="O" name="w_hos_observ" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'class="STI"').' ROWS=3 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de hospedagens, informe o motivo.">'.$w_hos_observ.'</TEXTAREA></td>');
+      ShowHTML('        <tr><td><td colspan="3" valign="top"><b><u>O</u>bservações / Justificativa para o não pagamento de hospedagem:</b><br><textarea class="STIO" accesskey="O" name="w_hos_observ" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'class="STI"').' ROWS=3 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de hospedagens, informe o motivo.">'.$w_hos_observ.'</TEXTAREA></td>');
       ShowHTML('<INPUT type="hidden" name="w_vl_diaria_hospedagem" value="'.$w_vl_diaria_hospedagem.'">');
       ShowHTML('<INPUT type="hidden" name="w_hospedagem_qtd" value="'.$w_hospedagem_qtd.'">');
       ShowHTML('<INPUT type="hidden" name="w_hospedagem_valor" value="'.$w_hospedagem_valor.'">');
@@ -4044,6 +4039,7 @@ function Diarias_Solic() {
     $w_hos_observ           = $w_trechos[45];
     $w_vei_ret              = $w_trechos[46];
     $w_vei_dev              = $w_trechos[47];
+
     $w_max_diaria           = floor((toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400);
     $w_max_hosp             = ceil((toDate(formataDataEdicao($w_hos_out))-toDate(formataDataEdicao($w_hos_in)))/86400);
     $w_max_veiculo          = ceil((toDate(formataDataEdicao($w_vei_dev))-toDate(formataDataEdicao($w_vei_ret)))/86400);
@@ -4243,8 +4239,8 @@ function Diarias_Solic() {
     ShowHTML('        <tr><td valign="top" colspan="2">');
     ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('            <tr><td>Número:<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
-    ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS_Solic,'inicio')).' </b></td>');
-    ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS_Solic,'fim')).' </b></td></tr>');
+    ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_inicio')).' </b></td>');
+    ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_fim')).' </b></td>');
     $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS_Solic,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
     foreach($RS1 as $row) { $RS1 = $row; break; }
     ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -5090,8 +5086,8 @@ function InformarPassagens() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -5218,8 +5214,8 @@ function InformarCotacao() {
   ShowHTML('        <tr><td valign="top" colspan="2">');
   ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
@@ -5357,8 +5353,8 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'            <td>Proposto:<br><b>'.f($RSM,'nm_prop').'</b></td>';
     $w_html .= $crlf.'            <td>Unidade proponente:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
     $w_html .= $crlf.'          <tr valign="top">';
-    $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RSM,'inicio')).' </b></td>';
-    $w_html .= $crlf.'            <td>Último retorno:<br><b>'.FormataDataEdicao(f($RSM,'fim')).' </b></td>';
+    $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RSm,'phpdt_inicio')).' </b></td>';
+    $w_html .= $crlf.'            <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RSm,'phpdt_fim')).' </b></td>';
     $w_html .= $crlf.'          </table>';
     // Informações adicionais
     if (Nvl(f($RSM,'descricao'),'')>'') {
@@ -5822,8 +5818,8 @@ function PrestarContas() {
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').'</td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('          </TABLE></td></tr>');
   ShowHTML('      </table>');
@@ -6059,8 +6055,8 @@ function Reembolso() {
   ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').'</td>');
   $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
   foreach($RS1 as $row) { $RS1 = $row; break; }
-  ShowHTML('                <td>Primeira saída:<br><b>'.FormataDataEdicao(f($RS,'inicio')).' </b></td>');
-  ShowHTML('                <td>Último retorno:<br><b>'.FormataDataEdicao(f($RS,'fim')).' </b></td></tr>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
   ShowHTML('            <tr><td colspan="3">Proposto:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
   ShowHTML('          </TABLE></td></tr>');
   ShowHTML('      </table>');
@@ -6260,7 +6256,7 @@ function Grava() {
             $_REQUEST['w_cia_aerea'],$_REQUEST['w_data'],$_REQUEST['w_numero'],$_REQUEST['w_trecho'],
             $_REQUEST['w_rloc'],$_REQUEST['w_classe'],$_REQUEST['w_valor_bil'],$_REQUEST['w_valor_tax'],
             $_REQUEST['w_valor_pta'],explodeArray($_REQUEST['w_sq_deslocamento']),$_REQUEST['w_tipo'],
-            $_REQUEST['w_utilizado'],$_REQUEST['w_faturado']);
+            $_REQUEST['w_utilizado'],$_REQUEST['w_faturado'],$_REQUEST['w_observacao']);
         ScriptOpen('JavaScript');
         // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
