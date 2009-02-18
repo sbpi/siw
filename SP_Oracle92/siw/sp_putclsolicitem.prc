@@ -42,11 +42,11 @@ begin
       );
    Elsif p_operacao = 'A' Then
       -- Altera registro
-      update cl_solicitacao_item set 
-          quantidade          = p_quantidade,
-          cancelado           = coalesce(p_cancelado,'N'),
-          motivo_cancelamento = p_motivo_cancelamento
-    where sq_solicitacao_item = p_chave_aux;
+      update cl_solicitacao_item 
+         set quantidade          = p_quantidade,
+             cancelado           = coalesce(p_cancelado,'N'),
+             motivo_cancelamento = p_motivo_cancelamento
+       where sq_solicitacao_item = p_chave_aux;
    Elsif p_operacao = 'E' Then
       -- p_chave_aux2 é passado apenas pelo item da licitação
       if substr(w_menu.sigla,1,4) = 'CLLC' then

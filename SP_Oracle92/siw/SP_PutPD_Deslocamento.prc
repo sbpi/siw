@@ -71,6 +71,12 @@ begin
       delete pd_deslocamento where sq_deslocamento = p_chave_aux;
    End If;
    
+   If p_operacao in ('I','A','E') Then
+      -- Qualquer alteração nos trechos influencia o cálculo automático de diárias.
+      -- Por isso elas são removidas.
+      delete pd_diaria where sq_siw_solicitacao = p_chave;
+   End If;
+   
    -- Verifica se a missão envolve trechos nacionais
    select case count(a.sq_deslocamento) when 0 then 'N' else 'S' end
      into w_existe

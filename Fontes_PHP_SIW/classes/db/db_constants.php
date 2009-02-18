@@ -23,7 +23,7 @@ define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
 //define("ORA10_SERVER_NAME", "mercurio");
-define("ORA10_SERVER_NAME", "XE.localdomain");
+define("ORA10_SERVER_NAME", "XE");
 define("ORA10_DB_USERID", "SMSSP_DADOS");
 define("ORA10_DB_PASSWORD", "SMSSP_DADOS");
 define("ORA10_DATABASE_NAME", "smssp_dados");

@@ -21,7 +21,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_sg_tramite     = f($RS,'sg_tramite');
   $w_tramite_ativo  = f($RS,'ativo');
   $w_certame        = f($RS,'certame');
-
+  $w_gera_contrato  = f($RS,'gera_contrato');
+  
   // Recupera o tipo de visão do usuário
   if (Nvl(f($RS,'solicitante'),0)   == $l_usuario || 
       Nvl(f($RS,'executor'),0)      == $l_usuario || 
@@ -155,9 +156,13 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if (nvl(f($RS,'sg_tramite'),'')=='AT') {
       if (f($RS,'sigla')=='CLLCCAD') {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        $l_html.=chr(13).'   <tr valign="top"><td><b>Data de homologação:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_homologacao')),'---').'</font></td></tr>';
-        $l_html.=chr(13).'   <tr valign="top"><td><b>Data Diário Oficial:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_diario_oficial')),'---').'</font></td></tr>';
-        $l_html.=chr(13).'   <tr valign="top"><td><b>Página Diário Oficial:</b></font></td><td>'.nvl(f($RS,'pagina_diario_oficial'),'---').'</font></td></tr>';
+        if ($w_gera_contrato=='S') {
+          $l_html.=chr(13).'   <tr valign="top"><td><b>Data de homologação:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_homologacao')),'---').'</font></td></tr>';
+          $l_html.=chr(13).'   <tr valign="top"><td><b>Data Diário Oficial:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_diario_oficial')),'---').'</font></td></tr>';
+          $l_html.=chr(13).'   <tr valign="top"><td><b>Página Diário Oficial:</b></font></td><td>'.nvl(f($RS,'pagina_diario_oficial'),'---').'</font></td></tr>';
+        } else {
+          $l_html.=chr(13).'   <tr valign="top"><td><b>Data de autorização:</b></font></td><td>'.nvl(formataDataEdicao(f($RS,'data_homologacao')),'---').'</font></td></tr>';
+        }
         $l_html.=chr(13).'   <tr valign="top"><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
   
         $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');

@@ -26,16 +26,20 @@ create or replace procedure SP_PutCLDados
     p_prioridade            in number   default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
+   w_sq_modalidade  number(18);
+   w_certame        varchar2(1);
 begin
    If p_restricao = 'PROT' Then
+      -- Recupera a modalidade atual
+      select a.sq_lcmodalidade into w_sq_modalidade from cl_solicitacao a where sq_siw_solicitacao = p_chave;
+      
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade = p_sq_lcmodalidade,
          processo        = coalesce(p_numero_processo,p_protocolo)
       Where sq_siw_solicitacao = p_chave;
       
-      select numero_certame into w_numero_certame from cl_solicitacao where sq_siw_solicitacao = p_chave;
-      If w_numero_certame is null Then
+      If w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade) Then
         -- Recupera o número do certame
         CL_CriaParametro(p_chave, w_numero_certame);
 
@@ -50,12 +54,14 @@ begin
          where sq_siw_solicitacao = p_chave;
       End If;
    ElsIf p_restricao = 'DADOS' Then
+      -- Recupera a modalidade atual
+      select a.sq_lcmodalidade into w_sq_modalidade from cl_solicitacao a where sq_siw_solicitacao = p_chave;
+      
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
          processo                 = coalesce(p_numero_processo,p_protocolo),
          data_abertura            = p_abertura,
-         numero_certame           = p_numero_certame,
          numero_ata               = p_numero_ata,
          tipo_reajuste            = case when p_tipo_reajuste is not null then p_tipo_reajuste else tipo_reajuste end,
          indice_base              = p_indice_base,
@@ -74,6 +80,14 @@ begin
       update siw_solicitacao a
         set a.fim = p_fim
       where sq_siw_solicitacao = p_chave;
+
+      If w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade) Then
+         -- Recupera o número do certame
+         CL_CriaParametro(p_chave, w_numero_certame);
+
+        -- Atualiza a tabela da licitação com os dados da análise
+        Update cl_solicitacao set numero_certame  = w_numero_certame Where sq_siw_solicitacao = p_chave;
+      End If;
 
       If p_protocolo is not null Then
          -- Grava a chave do protocolo na solicitação

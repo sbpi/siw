@@ -3543,7 +3543,7 @@ function Diarias() {
     SaltaCampo();
     FormataValor();
     ValidateOpen('Validacao');
-    if (nvl($w_sq_valor_diaria,'')!='' && nvl(f($RS_Solic,'diaria'),'')!='') {
+    if (nvl(f($RS_Solic,'diaria'),'')!='') {
       ShowHTML('  if (theForm.w_diaria[0].checked) {');
       if (count($RS_Fin_Dia)>1) {
         ShowHTML('    if(theForm.w_rub_dia.selectedIndex==0) {');
@@ -3561,7 +3561,7 @@ function Diarias() {
       }
       ShowHTML('  } else {');
       Validate('w_justificativa_diaria','Observações / Justificativa para não pagamento de diárias','','1',3,500,'1','1');
-      ShowHTML('  }');
+      ShowHTML('  }');     
     }
     if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
       ShowHTML('  if (theForm.w_hospedagem[0].checked) {');
@@ -3854,7 +3854,7 @@ function Diarias() {
       MontaRadioNS('<b>Hospedagem?</b>',$w_hospedagem,'w_hospedagem','Informe Sim se desejar pagamento das hospedagens.',null,'onClick="marcaHospedagem()"');
       ShowHTML('          <td><b><u>C</u>heck in:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_in" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_hos_in).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
       ShowHTML('          <td><b><u>C</u>heck out:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_out" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_hos_out).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
-      ShowHTML('        <tr><td><td colspan="3" valign="top"><b><u>O</u>bservações / Justificativa para o não pagamento de hospedagem:</b><br><textarea class="STIO" accesskey="O" name="w_hos_observ" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'class="STI"').' ROWS=3 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de hospedagens, informe o motivo.">'.$w_hos_observ.'</TEXTAREA></td>');
+      ShowHTML('        <tr><td><td colspan="3" valign="top"><b><u>O</u>bservações / Justificativa para o não pagamento de hospedagem:</b><br><textarea class="STI" accesskey="O" name="w_hos_observ" ROWS=3 cols=75 title="Informe observações que julgar necessárias. Se não desejar pagamento de hospedagens, informe o motivo.">'.$w_hos_observ.'</TEXTAREA></td>');
       ShowHTML('<INPUT type="hidden" name="w_vl_diaria_hospedagem" value="'.$w_vl_diaria_hospedagem.'">');
       ShowHTML('<INPUT type="hidden" name="w_hospedagem_qtd" value="'.$w_hospedagem_qtd.'">');
       ShowHTML('<INPUT type="hidden" name="w_hospedagem_valor" value="'.$w_hospedagem_valor.'">');

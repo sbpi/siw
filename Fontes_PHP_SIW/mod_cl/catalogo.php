@@ -214,6 +214,7 @@ function Inicial() {
     $w_codigo_externo  = f($RS,'codigo_externo');
     $w_exibe_catalogo  = f($RS,'exibe_catalogo');
     $w_vida_util       = f($RS,'vida_util');
+    $w_classe          = f($RS,'classe');
     $w_ativo           = f($RS,'ativo');
   } 
 
@@ -687,9 +688,11 @@ function PesquisaPreco() {
       Validate('w_inicio','Pesq. preço','DATA',1,10,10,'','0123456789/');
       Validate('w_dias','Dias de Validade','',1,1,10,'','0123456789');
       Validate('w_valor','Valor da pesquisa de preço','VALOR','1',6,18,'','0123456789.,');
-      Validate('w_fabricante','Fabricante','1','',2,50,'1','1');
-      Validate('w_marca_modelo','Marca/Modelo','1','',2,50,'1','1');
-      Validate('w_embalagem','Embalagem','1','',2,20,'1','1');
+      if (f($RS_Item,'classe')!=5) {
+        Validate('w_fabricante','Fabricante','1','',2,50,'1','1');
+        Validate('w_marca_modelo','Marca/Modelo','1','',2,50,'1','1');
+        Validate('w_embalagem','Embalagem','1','',2,20,'1','1');
+      }
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       Validate('w_ddd','DDD','1','',2,4,'','0123456789');
       Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
@@ -928,15 +931,17 @@ function PesquisaPreco() {
       ShowHTML('        <td align="center"><input type="text" '.$w_Disabled.' name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
     }
     ShowHTML('        </tr>');
-    ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
-    ShowHTML('          <TABLE WIDTH="100%" border=0>');
-    ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante.'"></td>');
-    ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_marca_modelo.'"></td>');
-    ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.$w_embalagem.'"></td>');
+    if (f($RS_Item,'classe')!=5) {
+      ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
+      ShowHTML('          <TABLE WIDTH="100%" border=0>');
+      ShowHTML('            <tr valign="top">');
+      ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante.'"></td>');
+      ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_marca_modelo.'"></td>');
+      ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.$w_embalagem.'"></td>');
+      ShowHTML('        </table>');
+      ShowHTML('        </tr>');        
+    }
     ShowHTML('              <INPUT type="hidden" name="w_fator" value="'.f($row,'fator_embalagem').'">');
-    ShowHTML('        </table>');
-    ShowHTML('        </tr>');        
     ShowHTML('        </table></tr>');
     ShowHTML('      </center>');
     ShowHTML('    </table>');

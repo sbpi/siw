@@ -149,6 +149,9 @@ begin
         where sq_siw_tramite = p_tramite;
   
       If w_sg_tramite = 'CI' Then
+         -- Calcula as quantidades de diárias
+         SP_CalculaDiarias(p_chave,null);
+         
          -- Se cadastramento inicial
          select count(*) into w_existe
            from pd_deslocamento        a

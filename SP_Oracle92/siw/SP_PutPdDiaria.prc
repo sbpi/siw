@@ -94,9 +94,7 @@ begin
 
    End If;
 
-   If p_diaria = 'N' and p_hospedagem = 'N' and p_veiculo = 'N' Then
-      delete pd_diaria where sq_siw_solicitacao = p_chave and sq_diaria = p_sq_diaria;
-   Elsif p_operacao = 'I' Then
+   If p_operacao = 'I' Then
       -- Insere os registros em PD_DIARIA
       insert into pd_diaria
         (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
@@ -131,9 +129,7 @@ begin
    Elsif p_operacao = 'A' Then
       -- Atualiza os dados PD_DIARIA
       update pd_diaria
-         set sq_diaria                  = p_sq_diaria,
-             sq_siw_solicitacao         = p_chave,
-             sq_cidade                  = p_sq_cidade,
+         set sq_cidade                  = p_sq_cidade,
              quantidade                 = case p_diaria when 'S' then p_quantidade else 0 end,
              valor                      = case p_diaria when 'S' then p_valor else 0 end,
              hospedagem                 = p_hospedagem,

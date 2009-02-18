@@ -33,10 +33,10 @@ begin
             coalesce(g.complemento, g1.complemento) as complemento, 
             coalesce(g.bairro, g1.bairro) as bairro, 
             coalesce(g.cep, g1.cep) as cep, 
-            coalesce(h.sq_cidade, h1.sq_cidade) as sq_cidade, 
+            coalesce(h.sq_cidade, h1.sq_cidade,b1.sq_cidade,f1.sq_cidade,l1.sq_cidade) as sq_cidade, 
             coalesce(h.nome,h1.nome) as nm_cidade, 
-            coalesce(h.co_uf, h1.co_uf) as co_uf,
-            coalesce(h.sq_pais,h1.sq_pais) as sq_pais,
+            coalesce(h.co_uf, h1.co_uf, b1.co_uf,f1.co_uf,l1.co_uf) as co_uf,
+            coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais) as sq_pais,
             coalesce(m.padrao,m1.padrao) as pd_pais, 
             coalesce(m.nome,m1.nome) as nm_pais,
             i.email,
@@ -67,7 +67,7 @@ begin
                            and w.padrao             = 'S'
                            and x.ativo              = 'S'
                        )                        e on (a.sq_pessoa          = e.sq_pessoa)
-            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax, w.sq_cidade
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -76,7 +76,8 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        b on (a.sq_pessoa          = b.sq_pessoa)
-            left join  (select w.sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero nr_telefone
+            left join  co_cidade               b1 on (b.sq_cidade          = b1.sq_cidade)
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero nr_telefone,w.sq_cidade
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -85,7 +86,8 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        f on (a.sq_pessoa          = f.sq_pessoa)
-            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_celular, w.numero nr_celular
+            left join  co_cidade               f1 on (f.sq_cidade          = f1.sq_cidade)
+            left join  (select w.sq_pessoa, w.sq_pessoa_telefone sq_pessoa_celular, w.numero nr_celular,w.sq_cidade
                           from co_pessoa_telefone          w
                                inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -94,6 +96,7 @@ begin
                            and x.ativo              = 'S'
                            and w.padrao             = 'S'
                        )                        l on (a.sq_pessoa          = l.sq_pessoa)
+            left join  co_cidade               l1 on (f.sq_cidade          = l1.sq_cidade)
             left join  (select w.sq_pessoa, sq_pessoa_endereco, sq_cidade, logradouro, complemento,
                                bairro, cep
                           from co_pessoa_endereco          w

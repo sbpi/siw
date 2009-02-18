@@ -158,8 +158,18 @@ $p_sq_prop      = strtoupper($_REQUEST['p_sq_prop']);
 $p_ordena       = strtolower($_REQUEST['p_ordena']);
 $p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
 $p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
+if (strlen($p_ini_i)==7) {
+  if (nvl($p_ini_f,'')=='') $p_ini_f = date('d/m/Y', mktime(0, 0, 0, (substr($p_ini_i,5) + 1), 0, substr($p_ini_i,0,4)));;  
+  $p_ini_i = '01/'.substr($p_ini_i,5).'/'.substr($p_ini_i,0,4);
+}
+
 $p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
 $p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
+if (strlen($p_fim_i)==7) {
+  if (nvl($p_fim_f,'')=='') $p_fim_f = date('d/m/Y', mktime(0, 0, 0, (substr($p_fim_i,5) + 1), 0, substr($p_fim_i,0,4)));;  
+  $p_fim_i = '01/'.substr($p_fim_i,5).'/'.substr($p_fim_i,0,4);
+}
+
 $p_atraso       = strtoupper($_REQUEST['p_atraso']);
 $p_codigo       = strtoupper($_REQUEST['p_codigo']);
 $p_empenho      = strtoupper($_REQUEST['p_empenho']);
@@ -293,7 +303,7 @@ function Inicial() {
         $w_filtro .= '<tr valign="top"><td align="right">Unidade solicitante <td>[<b>'.f($RS,'nome').'</b>]';
       }
       if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Abertura de propostas <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
       if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
  
@@ -2764,7 +2774,7 @@ function DadosAnalise() {
   }
   Validate('w_sq_lcsituacao','Situação','SELECT','1',1,18,'','0123456789');
   if (f($RS_Solic,'certame')=='S') {
-    Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
+    //Validate('w_numero_certame','Número do certame','1','1',1,50,'1','1');
     Validate('w_abertura','Data de abertura','DATA','1',10,10,'','0123456789/');
     Validate('w_sq_lcjulgamento','Critério de julgamento','SELECT','1',1,18,'','0123456789');
   }
@@ -2845,9 +2855,9 @@ function DadosAnalise() {
   SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_sq_lcsituacao,null,'w_sq_lcsituacao',null,null);
   if (f($RS_Solic,'certame')=='S') {
     ShowHTML('<tr valign="top">');
-    ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
+    //ShowHTML('      <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório."></td>');
     ShowHTML('      <td><b><u>D</u>ata de abertura das propostas:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_abertura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_abertura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_abertura').'</td>');
-    SelecaoLCJulgamento('<u>J</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
+    SelecaoLCJulgamento('Critério de <u>j</u>ulgamento:','J','Selecione o critério de julgamento do certame.',$w_sq_lcjulgamento,null,'w_sq_lcjulgamento',null,null);
   }
   if($w_cliente_arp=='S') {
     ShowHTML('<tr valign="top">');
@@ -3382,7 +3392,8 @@ function Concluir() {
           null,null,null,null,null,null,null,null,null,null,$w_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
-  $w_tramite = f($RS,'sq_siw_tramite');
+  $w_tramite       = f($RS,'sq_siw_tramite');
+  $w_gera_contrato = f($RS,'gera_contrato');
 
   // Recupera os itens da solicitação
   $RS_Itens = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
@@ -3415,9 +3426,13 @@ function Concluir() {
   SaltaCampo();
   ValidateOpen('Validacao');
   if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
-    Validate('w_data_diario','Data de publicação no diário oficial','DATA','',10,10,'','0123456789/');
-    Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
+    if ($w_gera_contrato=='S') {
+      Validate('w_homologacao','Data de homologação','DATA','',10,10,'','0123456789/');
+      Validate('w_data_diario','Data de publicação no diário oficial','DATA','',10,10,'','0123456789/');
+      Validate('w_pagina_diario','Página do diário oficial','1','',1,4,'','1');
+    } else {
+      Validate('w_homologacao','Data de autorização','DATA','',10,10,'','0123456789/');
+    }
     Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
     if ($w_indica_usuario=='S') Validate('w_responsavel','Responsável pelo recebimento','HIDDEN',1,1,18,'','0123456789');
     ShowHTML('  var i; ');
@@ -3482,9 +3497,13 @@ function Concluir() {
     }
     ShowHTML('      </b></font></td>');
     ShowHTML('    <tr valign="top">');
-    ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
-    ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
-    ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
+    if ($w_gera_contrato=='S') {
+      ShowHTML('      <td><b><u>D</u>ata de homologação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+      ShowHTML('      <td><b>Da<u>t</u>a de publicação no diário oficial:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_diario" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_diario.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_diario').'</td>');
+      ShowHTML('      <td><b><U>P</U>ágina do diário oficial:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pagina_diario" size="4" maxlength="4" value="'.$w_pagina_diario.'"></td>');
+    } else {
+      ShowHTML('      <td><b><u>D</u>ata de autorização:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_homologacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_homologacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_homologacao').'</td>');
+    }
     ShowHTML('    <tr><td colspan="3"><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
     if ($w_indica_usuario=='S') {
       ShowHTML('    <tr>');

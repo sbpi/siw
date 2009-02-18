@@ -353,7 +353,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           
           $w_tot_local = $w_diarias + $w_hospedagens + $w_locacoes;
           
-          if ($w_tot_local!=0) {
+          if ($w_tot_local!=0 || $i!=count($w_trechos)) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             
             // Configura a quantidade de linhas do trecho

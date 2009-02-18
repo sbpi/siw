@@ -24,6 +24,7 @@ create or replace procedure SP_PutSolicConc
    w_solic         siw_solicitacao%rowtype;
    w_pedido        cl_solicitacao%rowtype;
    w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
+   w_valor         siw_solicitacao.valor%type;
    w_rubrica       number(18);
    w_lancamento    number(18);
    w_sq_financ     number(18)   := null;
@@ -278,6 +279,18 @@ begin
                             p_cancelado           => null,
                             p_motivo_cancelamento => null);
       end loop;
+      
+      -- Recupera o valor total dos itens
+      select sum(x.quantidade*coalesce(y.pesquisa_preco_medio,0))
+        into w_valor
+        from cl_solicitacao_item    x
+             inner join cl_material y on (x.sq_material = y.sq_material)
+       where x.sq_siw_solicitacao = w_chave_nova;
+      
+      -- Se os itens tiverem pesquisa, atribui a partir dele
+      If w_valor > 0 Then
+         update siw_solicitacao set valor = w_valor where sq_siw_solicitacao = w_chave_nova;
+      End If;
 
       -- Gera a solicitação
       sp_putsolicenvio(p_menu          => w_menu_lic.sq_menu,
