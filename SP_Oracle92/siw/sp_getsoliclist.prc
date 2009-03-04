@@ -151,7 +151,7 @@ begin
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
-                a1.nome as nm_modulo,    a1.sigla as sg_modulo,            a1.ordem as or_modulo,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.ordem as or_modulo,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,

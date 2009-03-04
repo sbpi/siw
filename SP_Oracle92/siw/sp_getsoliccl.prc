@@ -239,6 +239,35 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
+   Elsif p_restricao = 'CONTRATO' Then
+      -- Recupera as solicitações que o usuário pode ver
+      open p_result for 
+         select distinct a.sq_siw_solicitacao, a.codigo_interno, a.titulo, 
+                b.numero_certame, b.processo,
+                coalesce(b.numero_certame,a.codigo_interno) as cd_certame,
+                c.ordem,
+                c1.codigo_interno as cd_material, c1.nome as nm_material,
+                e.sq_pessoa, e.sq_tipo_pessoa, e.nome as nm_fornecedor,
+                coalesce(e1.cpf, e2.cnpj) as cd_fornecedor
+           from siw_solicitacao                           a
+                inner       join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
+                inner       join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite and
+                                                                 a2.sigla              = 'AT'
+                                                                )
+                inner       join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner     join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                    inner   join cl_material              c1 on (c.sq_material         = c1.sq_material)
+                    inner   join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
+                                                                 d.pesquisa            = 'N' and
+                                                                 d.vencedor            = 'S'
+                                                                )
+                      inner join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
+                      left  join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
+                      left  join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
+                  left      join siw_solicitacao_item_cl  f  on (c.sq_solicitacao_item = f.sq_solicitacao_item)
+          where a1.sq_menu           = p_menu
+            and f.sq_siw_solicitacao is null
+         order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver
       open p_result for 

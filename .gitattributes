@@ -535,8 +535,11 @@ Fontes_PHP_SIW/cl_ibict/logo_sistema.gif -text
 Fontes_PHP_SIW/cl_ibict/sgpa_logo.jpg -text
 Fontes_PHP_SIW/cl_ibict/topbg.jpg -text
 Fontes_PHP_SIW/cl_ibict/usuario.php -text
+Fontes_PHP_SIW/cl_pitce/calendario.gif -text
+Fontes_PHP_SIW/cl_pitce/download.gif -text
 Fontes_PHP_SIW/cl_pitce/exibeprojeto.php -text
 Fontes_PHP_SIW/cl_pitce/gr_projeto.php -text
+Fontes_PHP_SIW/cl_pitce/pdp.gif -text
 Fontes_PHP_SIW/cl_pitce/pe_exibeprograma.php -text
 Fontes_PHP_SIW/cl_pitce/pe_programa.php -text
 Fontes_PHP_SIW/cl_pitce/pe_relatorios.php -text
@@ -544,7 +547,9 @@ Fontes_PHP_SIW/cl_pitce/pe_visualprograma.php -text
 Fontes_PHP_SIW/cl_pitce/projeto.php -text
 Fontes_PHP_SIW/cl_pitce/projetoativ.php -text
 Fontes_PHP_SIW/cl_pitce/relatorios.php -text
+Fontes_PHP_SIW/cl_pitce/resultados.gif -text
 Fontes_PHP_SIW/cl_pitce/tabelas.php -text
+Fontes_PHP_SIW/cl_pitce/trabalho.php -text
 Fontes_PHP_SIW/cl_pitce/visualprojeto.php -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Area2D.swf -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Column2D.swf -text
@@ -2152,6 +2157,7 @@ Fontes_PHP_SIW/mod_is/visualacao.php -text
 Fontes_PHP_SIW/mod_is/visualprograma.php -text
 Fontes_PHP_SIW/mod_is/visualtarefa.php -text
 Fontes_PHP_SIW/mod_mt/tabelas.php -text
+Fontes_PHP_SIW/mod_mt/tabelas2.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_demandaeventual.php -text
 Fontes_PHP_SIW/mod_or_pub/gr_projeto.php -text
 Fontes_PHP_SIW/mod_or_pub/or_tabelas.php -text
@@ -2175,6 +2181,7 @@ Fontes_PHP_SIW/mod_pd/tabelas.php -text
 Fontes_PHP_SIW/mod_pd/validaviagem.php -text
 Fontes_PHP_SIW/mod_pd/viagem.php -text
 Fontes_PHP_SIW/mod_pd/visualviagem.php -text
+Fontes_PHP_SIW/mod_pd/visualviagem1.php -text
 Fontes_PHP_SIW/mod_pe/exibeprograma.php -text
 Fontes_PHP_SIW/mod_pe/graficos.php -text
 Fontes_PHP_SIW/mod_pe/indicador.php -text
