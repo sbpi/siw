@@ -3147,6 +3147,7 @@ function FormataDataEdicao($w_dt_grade, $w_formato=1) {
         case 6: return date('d/m/y, H:i:s',$w_dt_grade);                  break;
         case 7: return date('m/d/Y',$w_dt_grade);                         break;
         case 8: return date('Y-m-d H:i:s',$w_dt_grade);                   break;
+        case 9: return date('m/Y',$w_dt_grade);                           break;
       }
     } else {
       return $w_dt_grade;

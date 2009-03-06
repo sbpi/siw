@@ -154,26 +154,26 @@ function Rel_Progresso() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO',$w_pag);
       $w_embed = 'WORD';
       //CabecalhoWord($w_cliente,$w_TP,0);
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE PROGRESSO',$w_pag);
       $w_embed = 'EXCEL';
     } elseif($p_tipo=='PDF'){
-      headerPDF('RELATÓRIO DE PROGRESSO DO PROJETO',$w_pag);
+      headerPDF('RELATÓRIO DE PROGRESSO',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de progresso do projeto</TITLE>');
+      ShowHTML('<TITLE>Relatorio de progresso</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE PROGRESSO DO PROJETO',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE PROGRESSO',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -199,7 +199,7 @@ function Rel_Progresso() {
     }
     if ($p_projeto) {
       $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-      ShowHTML('     <tr valign="top"><td>PROJETO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+      ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
     }
     ShowHTML('     </table>');
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -214,9 +214,7 @@ function Rel_Progresso() {
       // Legendas
       if($p_legenda=='S') {
         ShowHTML('      <tr><td colspan="2"><table border=0>');
-        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de etapas:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true));
-        ShowHTML('        <tr valign="top"><td colspan=6><br>');
-        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true));
+        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true));
         ShowHTML('      </table>');
       }
       foreach ($RS as $row) {
@@ -234,7 +232,7 @@ function Rel_Progresso() {
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
           if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Programa: '.f($row,'nm_programa').'</font></div></td></tr>');
           if (nvl(f($row,'nm_cc'),'')!='')       ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Classificação: '.f($row,'nm_cc').'</font></div></td></tr>');
-          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Projeto: '.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Agenda de ação: '.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</b></div></td></tr>');
           //if ($p_tipo!='WORD') {
           if ($w_embed !='WORD') {
             ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
@@ -260,7 +258,7 @@ function Rel_Progresso() {
           
           // Indicadores
           if($p_indicador=='S') {
-            ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Indicadores de performance do projeto<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
+            ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>Indicadores de performance<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');
             ShowHTML('      <tr><td colspan="2"><table cellpadding=0 cellspacing=0>');
             //if ($p_tipo != 'WORD') {
             if ($w_embed != 'WORD') {
@@ -277,22 +275,6 @@ function Rel_Progresso() {
             }
             ShowHTML('       <td align="right">'.ExibeSmile('IDE',f($row,'ide')).'&nbsp;');
             ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'ide')).'%</b></td>');
-          /*
-            if ($p_tipo!='WORD') {
-              ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').' em '.date("d/m/Y").':</b>&nbsp;&nbsp;&nbsp;</td>');
-            } else  {
-              ShowHTML('   <tr><td><b>IGC em '.date("d/m/Y").':&nbsp;&nbsp;&nbsp;</b></td>');
-            }
-            ShowHTML('       <td><td align="right"><b>'.formatNumber(f($row,'IGC')).'%</b></td></tr>');
-            if ($p_tipo!='WORD') {
-              ShowHTML('   <tr><td><b>'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').' em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
-            } else  { 
-              ShowHTML('   <tr><td><b>IDC em '.FormataDataEdicao($p_fim).':&nbsp;&nbsp;&nbsp;</b></td>');
-            }
-            ShowHTML('       <td align="right">'.ExibeSmile('IDC',f($row,'IDC')).'&nbsp;');
-            ShowHTML('       <td align="right"><b>'.formatNumber(f($row,'IDC')).'%</b></td>');
-          */
-
             ShowHTML('          </table>');
           }
 
@@ -315,19 +297,17 @@ function Rel_Progresso() {
                   ShowHTML('          <tr><td colspan="11" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
                 } else {
                   ShowHTML('          <tr>');
-                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>');
-                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>');
-                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>');
-                  ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>');
-                  ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>');
-                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Item</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Agenda de ação</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Entidade executora</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável pela atualização</b></div></td>');
+                  ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>');
+                  ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>');
                   ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Situação atual</b></div></td>');
                   ShowHTML('          </tr>');
                   ShowHTML('          <tr>');
-                  ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>de</b></div></td>');
-                  ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>até</b></div></td>');
                   ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>de</b></div></td>');
                   ShowHTML('            <td bgColor="#f0f0f0"><div align="center"><b>até</b></div></td>');
                   ShowHTML('          </tr>');
@@ -356,10 +336,10 @@ function Rel_Progresso() {
                       } else {
                         ShowHTML('        <td>'.f($row1,'nm_resp_etapa').'</b>');
                       }  
-                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_previsto'),5),'---').'</td>');
-                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_previsto'),5),'---').'</td>');
-                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_real_etapa'),5),'---').'</td>');
-                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_real_etapa'),5),'---').'</td>');
+                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_previsto'),9),'---').'</td>');
+                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_previsto'),9),'---').'</td>');
+                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'inicio_real_etapa'),9),'---').'</td>');
+                      ShowHTML('        <td align="center" nowrap>'.nvl(formataDataEdicao(f($row1,'fim_real_etapa'),9),'---').'</td>');
                       ShowHTML('        <td nowrap align="right">'.f($row1,'perc_conclusao').' %</td>');
                       ShowHTML('        <td nowrap align="center">'.f($row1,'peso').'</td>');
                       ShowHTML('        <td nowrap align="center">'.f($row1,'qt_anexo').'</td>');
@@ -385,10 +365,10 @@ function Rel_Progresso() {
                       } else {
                         ShowHTML('     <td>'.f($row1,'nm_resp_tarefa').'</td>');
                       }
-                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'inicio'),5),'-').'</td>');
-                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'fim'),5),'-').'</td>');
-                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'inicio_real'),5),'---').'</td>');
-                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'fim_real'),5),'---').'</td>');
+                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'inicio'),9),'-').'</td>');
+                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'fim'),9),'-').'</td>');
+                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'inicio_real'),9),'---').'</td>');
+                      ShowHTML('     <td align="center">'.Nvl(FormataDataEdicao(f($row1,'fim_real'),9),'---').'</td>');
                       ShowHTML('     <td colspan=3 nowrap>'.f($row1,'nm_tramite').'</td>');
                     } 
                     $w_sq_projeto_etapa = f($row1,'sq_projeto_etapa');
@@ -450,7 +430,7 @@ function Rel_Progresso() {
                   $w_rubrica_real     = 0;
                   foreach ($RS_Cronograma as $row2) {
                     $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-                    ShowHTML('        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row2,'inicio'),5).' a '.FormataDataEdicao(f($row2,'fim'),5).'</td>');
+                    ShowHTML('        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row2,'inicio'),9).' a '.FormataDataEdicao(f($row2,'fim'),9).'</td>');
                     ShowHTML('        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row2,'valor_previsto')).'</td>');
                     ShowHTML('        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row2,'valor_real')).'</td>');
                     $w_perc = 0;
@@ -475,7 +455,7 @@ function Rel_Progresso() {
                 $w_total_real     += f($row1,'total_real');
               } 
               ShowHTML('      <tr>');
-              ShowHTML('          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>');
+              ShowHTML('          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais&nbsp;</td>');
               ShowHTML('          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>');
               ShowHTML('          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>');
               $w_perc = 0;
@@ -533,7 +513,7 @@ function Rel_Progresso() {
   
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
+    ShowHTML('<TITLE>Relatório de progresso</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -559,7 +539,7 @@ function Rel_Progresso() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('p_projeto','Projeto','SELECT','','1','18','1','1');
+    Validate('p_projeto','Agenda de ação','SELECT','','1','18','1','1');
     Validate('p_inicio','Data inicial do período de reporte','DATA',1,10,10,'','0123456789/');
     Validate('p_fim','Data final do período de reporte','DATA',1,10,10,'','0123456789/');
     CompData('p_inicio','Data inicial do período de reporte','<=','p_fim','Data final do período de reporte');
@@ -596,7 +576,7 @@ function Rel_Progresso() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td colspan=2><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
@@ -604,7 +584,7 @@ function Rel_Progresso() {
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');
     if ($p_legenda)     ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');                             else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
-    if ($p_indicador)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');               else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance do projeto </td>');
+    if ($p_indicador)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance</td>');               else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> Indicadores de performance</td>');
     if ($p_prevista)    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');          else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_prevista" value="S"> Entregas previstas para o período de reporte</td>');
     if ($p_realizada)   ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_realizada" value="S"> Entregas realizadas no período de reporte</td>');            else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_realizada" value="S"> Entregas realizadas no período de reporte</td>');
     if ($p_pendente)    ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_pendente" value="S"> Entregas pendentes</td>');                                    else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_pendente" value="S"> Entregas pendentes</td>');
@@ -658,25 +638,25 @@ function Rel_Projeto() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='PDF') {
-      headerPdf('RELATÓRIO DETALHADO DE PROJETOS',$w_pag)     ;
+      headerPdf('RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag)     ;
       $w_embed = 'WORD';
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio detalhado do projeto</TITLE>');
+      ShowHTML('<TITLE>Relatório detalhado de agendas de ação</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DETALHADO DE PROJETOS',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -702,7 +682,7 @@ function Rel_Projeto() {
       }
       if ($p_projeto) {
         $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-        ShowHTML('     <tr valign="top"><td>PROJETO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
     }
@@ -733,7 +713,7 @@ function Rel_Projeto() {
 
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de agendas de ação</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -808,7 +788,7 @@ function Rel_Projeto() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('p_projeto','Projeto','SELECT','','1','18','1','1');
+    Validate('p_projeto','Agenda de ação','SELECT','','1','18','1','1');
     /*
     Validate('p_inicio','Data inicial do período de reporte','DATA',1,10,10,'','0123456789/');
     Validate('p_fim','Data final do período de reporte','DATA',1,10,10,'','0123456789/');
@@ -848,7 +828,7 @@ function Rel_Projeto() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     /*
     ShowHTML('      <tr valign="top">');
@@ -966,25 +946,25 @@ function Rel_Atualizacao() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
       $w_embed = 'WORD';
     } elseif($p_tipo=='PDF'){
-      headerPdf('RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',$w_pag);
+      headerPdf('RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de atualização dos dados dos projetos</TITLE>');
+      ShowHTML('<TITLE>Relatorio de atualização dos dados das agendas de ação</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROJETOS',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -1010,7 +990,7 @@ function Rel_Atualizacao() {
       }
       if ($p_projeto) {
         $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-        ShowHTML('     <tr valign="top"><td>PROJETO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
     }
@@ -1025,7 +1005,7 @@ function Rel_Atualizacao() {
     } else {
       ShowHTML('   <tr><td colspan="2"><table width="100%" border=0 cellspacing=0>');
       ShowHTML('     <tr valign="top">');
-      ShowHTML('       <td align="center"><b>Projeto</b></td>');
+      ShowHTML('       <td align="center"><b>Agendas de ação</b></td>');
       ShowHTML('       <td><b>Bloco</b></td>');
       ShowHTML('       <td align="center"><b>Última atualização</b></td>');
       ShowHTML('       <td align="center"><b>Usuário</b></td>');
@@ -1080,7 +1060,7 @@ function Rel_Atualizacao() {
 
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de agendas de ação</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -1136,7 +1116,7 @@ function Rel_Atualizacao() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');
@@ -1276,16 +1256,13 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
     if (count($RS_Pacote)>0) {
       $l_pacote .= chr(13).'    <tr bgColor="#f0f0f0" align="center">';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Pacotes<br>impactados</b></td>';
-      $l_pacote .= chr(13).'      <td rowspan=2><b>Título</b></td>';
-      $l_pacote .= chr(13).'      <td colspan=2><b>Execução prevista</b></td>';
-      $l_pacote .= chr(13).'      <td colspan=2><b>Execução real</b></td>';
+      $l_pacote .= chr(13).'      <td rowspan=2><b>Titulo</b></td>';
+      $l_pacote .= chr(13).'      <td colspan=2><b>Execução</b></td>';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Conc</b></td>';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Peso</b></td>';
       $l_pacote .= chr(13).'      <td rowspan=2><b>Situação atual</b></td>';
       $l_pacote .= chr(13).'    </tr>';
       $l_pacote .= chr(13).'    <tr bgColor="#f0f0f0" align="center" valign="top">';
-      $l_pacote .= chr(13).'      <td><b>de</b></td>';
-      $l_pacote .= chr(13).'      <td><b>até</b></td>';
       $l_pacote .= chr(13).'      <td><b>de</b></td>';
       $l_pacote .= chr(13).'      <td><b>até</b></td>';
       $l_pacote .= chr(13).'    </tr>';
@@ -1300,10 +1277,8 @@ function QuestoesLinhaAtiv($l_siw_solicitacao, $l_chave, $l_chave_aux, $l_risco,
             $l_pacote .= chr(13).'  '.f($row,'sq_siw_solicitacao').'</td>';
           }
           $l_pacote .= chr(13).'        <td>'.f($row,'titulo').'</a>';
-          $l_pacote .= chr(13).'        <td align="center">'.formataDataEdicao(f($row,'inicio_previsto'),5).'</td>';
-          $l_pacote .= chr(13).'        <td align="center">'.formataDataEdicao(f($row,'fim_previsto'),5).'</td>';
-          $l_pacote .= chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_real'),5),'---').'</td>';
-          $l_pacote .= chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'fim_real'),5),'---').'</td>';
+          $l_pacote .= chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_real'),9),'---').'</td>';
+          $l_pacote .= chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'fim_real'),9),'---').'</td>';
           $l_pacote .= chr(13).'        <td align="right" nowrap>'.f($row,'perc_conclusao').' %</td>';
           $l_pacote .= chr(13).'        <td align="center" nowrap>'.f($row,'peso').'</td>';
           $l_pacote .= chr(13).'        <td>'.nvl(CRLF2BR(f($row,'situacao_atual')),'---').'</td>';

@@ -404,8 +404,8 @@ function Inicial() {
             else                 ShowHTML('        <td>'.f($row,'nm_exec').'</td>');
           } else                                    ShowHTML('        <td>---</td>');
         } 
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),5).'</td>');
-        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'inicio'),9).'</td>');
+        ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row,'fim'),9).'</td>');
         if (!($P1==1 || $P1==2)) {
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
@@ -1673,7 +1673,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_apuracao,$l_indice,$l
   if (Nvl($l_word,0)==1) $l_html.=chr(13).'        <td>'.$l_destaque.$l_titulo.'</b>';
   else                   $l_html.=chr(13).'<A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,'programa.php?par=AtualizaIndicador&O=V&w_chave='.f($RS,'sq_siw_solicitacao').'&w_chave_aux='.$l_chave_aux.'&w_tipo=Volta&P1=10&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Indicador\',\'width=600, height=350, top=50, left=50, toolbar=no, scrollbars=yes, resizable=yes, status=no\'); return false;" title="Clique para exibir os dados!">'.$l_destaque.$l_titulo.'</A>';
   $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.$l_loa.'</td>';
-  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.Nvl(formataDataEdicao($l_apuracao),'---').'</td>';
+  $l_html.=chr(13).'        <td align="center" '.$l_row.'>'.Nvl(formataDataEdicao($l_apuracao,9),'---').'</td>';
   $l_html.=chr(13).'        <td nowrap align="right" '.$l_row.'>'.Nvl($l_indice,'---').' %</td>';
   if ($l_oper=='S') {
     $l_html.=chr(13).'        <td align="top" nowrap '.$l_row.'>';

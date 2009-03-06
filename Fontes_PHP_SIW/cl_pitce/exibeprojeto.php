@@ -1,6 +1,6 @@
 <?
 // =========================================================================
-// Rotina de exibição detalhada do do projeto
+// Rotina de exibição detalhada do projeto
 // -------------------------------------------------------------------------
 function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   extract($GLOBALS);
@@ -83,7 +83,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0">Ação: '.f($RS1,'cd_unidade').'.'.f($RS1,'cd_programa').'.'.f($RS1,'cd_acao').' - '.f($RS1,'nm_ppa').'</td>';
     }
   }
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2"><b>PROJETO: '.f($RS,'titulo').' ('.nvl(f($RS,'codigo_interno'),f($RS,'sq_siw_solicitacao')).')</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2"><b>AGENDA DE AÇÃO: '.f($RS,'titulo').' ('.nvl(f($RS,'codigo_interno'),f($RS,'sq_siw_solicitacao')).')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
      
   // Identificação do projeto
@@ -114,36 +114,9 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   $l_html .= chr(13).'      <td>'.nvl(f($RS,'palavra_chave'),'---').' </td></tr>';
   */
   $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
-  $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
+  $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'inicio'),9).' </td></tr>';
   $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
-  $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
-  /*
-  $l_html .= chr(13).'      <tr><td><b>Prioridade:</b></td>';
-  $l_html .= chr(13).'        <td>'.RetornaPrioridade(f($RS,'prioridade')).' </td></tr>';
-
-  // Informações adicionais
-  if ($w_acordo == 'S' || $w_viagem=='S') {
-    $l_html.=chr(13).'    <tr><td colspan=3><br><font size="2"><b>INFORMAÇÕES ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    if ($w_acordo=='S') {
-      if (f($RS,'vincula_contrato')=='S') {
-        $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
-        $l_html .= chr(13).'  <td>Sim</td></tr>';
-      } else {
-        $l_html .= chr(13).'<tr><td><b>Permite a vinculação de contratos:</b></td>';
-        $l_html .= chr(13).'  <td>Não</td></tr>';
-      }
-    }
-    if ($w_viagem=='S') {
-      if (f($RS,'vincula_viagem')=='S') { 
-        $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
-        $l_html .= chr(13).'  <td>Sim</td></tr>';
-      } else {
-        $l_html .= chr(13).'<tr><td><b>Permite a vinculação de viagens:</b></td>';
-        $l_html .= chr(13).'  <td>Não</td></tr>';
-      }
-    }
-  } 
-  */
+  $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS,'fim'),9).' </td></tr>';
     
   if(nvl($_REQUEST['p_qualit'],'')!='') {
     // Programação qualitativa
@@ -197,231 +170,6 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $l_html .= chr(13).'         </table></td></tr>';
   }
 
-  // Rubricas do projeto
-  if(nvl($_REQUEST['p_rubrica'],'')!='') {
-    $RS = db_getSolicRubrica::getInstanceOf($dbms,$l_chave,null,'S',null,null,null,null,null,null);
-    $RS = SortArray($RS,'codigo','asc');
-    if (count($RS)>0 && $l_nome_menu['RUBRICA']!='' && $w_financeiro=='S' && $w_cliente!='10135') {
-      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Código</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nome</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Valor Inicial</td>';
-      $l_html .= chr(13).'            <td colspan="3" bgcolor="'.$conTrBgColorLightBlue1.'" align="center"><b>Entrada</td>';
-      $l_html .= chr(13).'            <td colspan="3" bgcolor="'.$conTrBgColorLightRed1.'" align="center"><b>Saída</td>';
-      $l_html .= chr(13).'          </tr>';
-      $l_html .= chr(13).'          <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Prevista</td>';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Real</td>';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightBlue1.'"><b>Pendente</td>';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Prevista</td>';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Real</td>';
-      $l_html .= chr(13).'            <td bgcolor="'.$conTrBgColorLightRed1.'"><b>Pendente</td>';
-      $l_html .= chr(13).'          </tr>';      
-      $w_cor=$conTrBgColor;
-      $w_valor_inicial    = 0;
-      $w_entrada_prevista = 0;
-      $w_entrada_real     = 0;
-      $w_entrada_pendente = 0;
-      $w_saida_prevista   = 0;
-      $w_saida_real       = 0;
-      $w_saida_pendente   = 0;
-      foreach ($RS as $row) {
-        if ($w_cor==$conTrBgColor || $w_cor=='')  {
-          $w_cor      = $conTrAlternateBgColor;
-          $w_cor_blue = $conTrBgColorLightBlue1;
-          $w_cor_red  = $conTrBgColorLightRed1;
-        } else {
-          $w_cor      = $conTrBgColor;
-          $w_cor_blue = $conTrBgColorLightBlue2;
-          $w_cor_red  = $conTrBgColorLightRed2;
-        }
-        $l_html .= chr(13).'      <tr>';
-        if ($l_tipo=='WORD') {
-          $l_html .= chr(13).'          <td>'.f($row,'codigo').'&nbsp';
-        } else {
-          $l_html .= chr(13).'          <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo').'</A>&nbsp';
-        }
-        $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
-        $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'valor_inicial')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.formatNumber(f($row,'entrada_prevista')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.formatNumber(f($row,'entrada_real')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_blue.'">'.formatNumber(f($row,'entrada_pendente')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.formatNumber(f($row,'saida_prevista')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.formatNumber(f($row,'saida_real')).' </td>';
-        $l_html .= chr(13).'          <td align="right" bgcolor="'.$w_cor_red.'">'.formatNumber(f($row,'saida_pendente')).' </td>';
-        $l_html .= chr(13).'      </tr>';
-        $w_valor_inicial    += f($row,'valor_inicial');
-        $w_entrada_prevista += f($row,'entrada_prevista');
-        $w_entrada_real     += f($row,'entrada_real');
-        $w_entrada_pendente += f($row,'entrada_pendente');
-        $w_saida_prevista   += f($row,'saida_prevista');
-        $w_saida_real       += f($row,'saida_real');
-        $w_saida_pendente   += f($row,'saida_pendente');
-      }
-      $l_html .= chr(13).'      <tr>';
-      $l_html .= chr(13).'          <td align="right" colspan="2"><b>Totais:&nbsp;</td>';
-      $l_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_valor_inicial).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.formatNumber($w_entrada_prevista).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.formatNumber($w_entrada_real).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightBlue1.'"><b>'.formatNumber($w_entrada_pendente).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.formatNumber($w_saida_prevista).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.formatNumber($w_saida_real).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgcolor="'.$conTrBgColorLightRed1.'"><b>'.formatNumber($w_saida_pendente).' </b></td>';
-      $l_html .= chr(13).'      </tr>';
-      $l_html .= chr(13).'         </table></td></tr>';
-    } else {
-      // Descritivo das rubricas
-      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['RUBRICA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td colspan="2"><b>Detalhamento das rubricas</b></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Nome</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>Descrição</td>';
-      $l_html .= chr(13).'            <td colspan="2" bgColor="#f0f0f0"  align="center"><b>Orçamento</td>';
-      $l_html .= chr(13).'            <td rowspan="2" bgColor="#f0f0f0"><b>% Realização</td>';
-      $l_html .= chr(13).'          </tr>';
-      $l_html .= chr(13).'          <tr align="center" >';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
-      $l_html .= chr(13).'          </tr>';      
-      $w_cor=$conTrBgColor;
-      $w_total_previsto  = 0;
-      $w_total_real = 0;
-      foreach ($RS as $row) {
-        $l_html .= chr(13).'      <tr valign="top">';
-        $l_html .= chr(13).'          <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
-        $l_html .= chr(13).'          <td>'.f($row,'nome').' </td>';
-        $l_html .= chr(13).'          <td>'.f($row,'descricao').' </td>';
-        $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')).' </td>';
-        $l_html .= chr(13).'          <td align="right">'.formatNumber(f($row,'total_real')).' </td>';
-        $w_perc = 0;
-        if (f($row,'total_previsto') > 0) $w_perc = (f($row,'total_real')/f($row,'total_previsto')*100);
-        $l_html .= chr(13).'        <td align="right"><b>'.formatNumber($w_perc).' %</td>';
-        $l_html .= chr(13).'      </tr>';
-        $w_total_previsto += f($row,'total_previsto');
-        $w_total_real     += f($row,'total_real');
-      } 
-      $l_html .= chr(13).'      <tr>';
-      $l_html .= chr(13).'          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
-      $w_perc = 0;
-      if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
-      $l_html .= chr(13).'        <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
-      $l_html .= chr(13).'      </tr>';
-      $l_html .= chr(13).'         </table></td></tr>';
-
-      // Cronograma desembolso
-      $l_html .= chr(13).'      <tr><td colspan="2"><b>Cronogramas desembolso</b></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0" width="1%" nowrap><b>Código</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Nome</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Período</td>';
-      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><b>Orçamento</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>% Realização</td>';
-      $l_html .= chr(13).'          </tr>';      
-      $l_html .= chr(13).'          <tr align="center">';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Previsto</td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><b>Realizado</td>';
-      $l_html .= chr(13).'          </tr>';      
-      $w_cor=$conTrBgColor;
-      foreach ($RS as $row) {
-        $RS_Cronograma = db_getCronograma::getInstanceOf($dbms,f($row,'sq_projeto_rubrica'),null,null,null);
-        $RS_Cronograma = SortArray($RS_Cronograma,'inicio', 'asc', 'fim', 'asc');
-        if (count($RS_Cronograma)>0) $w_rowspan = 'rowspan="'.(count($RS_Cronograma)+1).'"'; else $w_rowspan = '';
-        $l_html .= chr(13).'      <tr valign="top">';
-        $l_html .= chr(13).'        <td '.$w_rowspan.'><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'cl_pitce/projeto.php?par=Cronograma&w_edita=N&O=L&w_chave='.f($row,'sq_projeto_rubrica').'&w_chave_pai='.$l_chave.'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG=PJCRONOGRAMA'.MontaFiltro('GET')).'\',\'Ficha3\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações desta rubrica.">'.f($row,'codigo').'</A>&nbsp';
-        $l_html .= chr(13).'        <td '.$w_rowspan.'>'.f($row,'nome').' </td>';
-        if (count($RS_Cronograma)>0) {
-          $w_rubrica_previsto = 0;
-          $w_rubrica_real     = 0;
-          foreach ($RS_Cronograma as $row1) {
-            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            $l_html .= chr(13).'        <td align="center" bgcolor="'.$w_cor.'">'.FormataDataEdicao(f($row1,'inicio'),5).' a '.FormataDataEdicao(f($row1,'fim'),5).'</td>';
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row1,'valor_previsto')).'</td>';
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber(f($row1,'valor_real')).'</td>';
-            $w_perc = 0;
-            if (f($row1,'valor_previsto') > 0) $w_perc = (f($row1,'valor_real')/f($row1,'valor_previsto')*100);
-            $l_html .= chr(13).'        <td align="right" bgcolor="'.$w_cor.'">'.formatNumber($w_perc).' %</td>';
-            $l_html .= chr(13).'      </tr>';
-            $w_rubrica_previsto += f($row1,'valor_previsto');
-            $w_rubrica_real     += f($row1,'valor_real');
-          } 
-          $l_html .= chr(13).'      <tr>';
-          $l_html .= chr(13).'          <td align="right"><b>Totais da rubrica&nbsp;</td>';
-          $l_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_rubrica_previsto).' </b></td>';
-          $l_html .= chr(13).'          <td align="right"><b>'.formatNumber($w_rubrica_real).' </b></td>';
-          $w_perc = 0;
-          if ($w_rubrica_previsto > 0) $w_perc = ($w_rubrica_real/$w_rubrica_previsto*100);
-          $l_html .= chr(13).'        <td align="right"><b>'.formatNumber($w_perc).' %</td>';
-          $l_html .= chr(13).'      </tr>';
-        } else {
-          $l_html .= chr(13).'        <td colspan=4>*** Cronograma desembolso da rubrica não informado';
-        }
-      } 
-      $l_html .= chr(13).'      <tr>';
-      $l_html .= chr(13).'          <td align="right" colspan="3" bgColor="#f0f0f0"><b>Totais do projeto&nbsp;</td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_previsto).' </b></td>';
-      $l_html .= chr(13).'          <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_total_real).' </b></td>';
-      $w_perc = 0;
-      if ($w_total_previsto > 0) $w_perc = ($w_total_real/$w_total_previsto*100);
-      $l_html .= chr(13).'        <td align="right" bgColor="#f0f0f0"><b>'.formatNumber($w_perc).' %</td>';
-      $l_html .= chr(13).'      </tr>';
-      $l_html .= chr(13).'         </table></td></tr>';
-    }  
-  } 
-
-  //Lista das tarefas que não são ligadas a nenhuma etapa
-  if(nvl($_REQUEST['p_tarefa'],'')!='') {
-    $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],'GDPCAD');
-    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$l_usuario,'GDPCADET',4,
-           null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-           null,null,null,null,null,null,null,null,$l_chave,null,null,null);
-    if (count($RS)>0) {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS SEM VINCULAÇÃO COM '.$l_nome_menu['ETAPA'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'            <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Nº</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Detalhamento</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Setor</td>';
-      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Fase atual</td>';
-      $l_html .= chr(13).'          </tr>';
-      $l_html .= chr(13).'          <tr>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</td>';
-      $l_html .= chr(13).'          </tr>';
-      foreach ($RS as $row) {
-        $l_html .= chr(13).'      <tr><td>';
-        if ($_REQUEST['p_sinal']) $l_html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-        if ($l_tipo=='WORD') {
-          $l_html .= chr(13).'  '.f($row,'sq_siw_solicitacao');
-        } else {
-          $l_html .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=ProjetoAtiv.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
-        }
-        $l_html .= chr(13).'     <td>'.Nvl(f($row,'assunto'),'-');
-        if ($l_tipo=='WORD') {
-          $l_html .= chr(13).'     <td>'.f($row,'nm_resp').'</td>';
-        } else {
-          $l_html .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
-        }
-        $l_html .= chr(13).'     <td>'.f($row,'sg_unidade_resp').'</td>';
-        $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'inicio')),'-').'</td>';
-        $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row,'fim')),'-').'</td>';
-        $l_html .= chr(13).'     <td colspan=2 nowrap>'.f($row,'nm_tramite').'</td>';
-      } 
-      $l_html .= chr(13).'      </td></tr></table>';
-    } 
-  } 
-
   if(nvl($_REQUEST['p_etapa'],'')!='') {
     // Etapas do projeto
     $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,null,'LISTA',null);
@@ -442,27 +190,24 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      <tr><td colspan=2><br><font size="2"><b>'.$l_nome_menu['ETAPA'].'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></td>';
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>'.colapsar($l_chave).'Título</b></td>';
+      $l_html .= chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Item</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>'.colapsar($l_chave).'Agenda de ação</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Entidade executora</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></td>';
-      //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Setor</b></td>';
-      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></td>';
-      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></td>';
+      $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</b></td>';
       //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orçamento</b></td>';
+      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></td>';
       /*
-      $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></td>';
       $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></td>';
       if(f($RS1,'vincula_contrato')=='S') 
         $l_html .= chr(13).'          <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Contr.</b></td>';
       */
       $l_html .= chr(13).'          </tr>';
       $l_html .= chr(13).'          <tr>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</b></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</b></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></td>';
+      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Início</b></td>';
+      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Fim</b></td>';
       $l_html .= chr(13).'          </tr>';
       //Se for visualização normal, irá visualizar somente as etapas
       //print_r(array($l_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),'',null,'PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo')));
@@ -479,13 +224,9 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
       $l_html .= chr(13).'      </form>';
       $l_html .= chr(13).'      </center>';
       $l_html .= chr(13).'         </table></td></tr>';
-      $l_html .= chr(13).'<tr><td colspan=2><b>Observação: Pacotes de trabalho destacados em negrito.';
       if ($_REQUEST['p_legenda']) {
         $l_html .= chr(13).'<tr><td colspan=2><table border=0>';
-        $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores da EAP:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
-        if ($operacao=='T'){
-          $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores das tarefas:</b>'.ExibeImagemSolic('GD',null,null,null,null,null,null,null, null,true);
-        }
+        $l_html .= chr(13).'  <tr valign="top"><td colspan=3><b>Legenda dos sinalizadores:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
         $l_html .= chr(13).'  </table>';
       }
     }
@@ -631,7 +372,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
             } elseif ($p_array['TIPO']=='ANO') {
               $l_cron .= chr(13).'        '.$p_array['VALOR'];
             } else {
-              $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio')).' a '.formataDataEdicao(f($row1,'fim'));
+              $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio'),9).' a '.formataDataEdicao(f($row1,'fim'),9);
             }
             $l_cron .= chr(13).'        </td>';
             $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
@@ -823,11 +564,11 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
                 $l_html .= chr(13).'     <td colspan=2>'.ExibePessoa(null,$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_resp_tarefa')).'</td>';
               }
               if (nvl($_REQUEST['p_cf'],'')!='') {
-                $l_html .= chr(13).'     <td align="center" colspan=2>'.Nvl(FormataDataEdicao(f($row2,'inicio'),5),'-').'</td>';
-                $l_html .= chr(13).'     <td align="center" colspan=2>'.Nvl(FormataDataEdicao(  f($row2,'fim'),5),'-').'</td>';
+                $l_html .= chr(13).'     <td align="center" colspan=2>'.Nvl(FormataDataEdicao(f($row2,'inicio'),9),'-').'</td>';
+                $l_html .= chr(13).'     <td align="center" colspan=2>'.Nvl(FormataDataEdicao(  f($row2,'fim'),9),'-').'</td>';
               } else {
-                $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row2,'inicio'),5),'-').'</td>';
-                $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(  f($row2,'fim'),5),'-').'</td>';              
+                $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(f($row2,'inicio'),9),'-').'</td>';
+                $l_html .= chr(13).'     <td align="center">'.Nvl(FormataDataEdicao(  f($row2,'fim'),9),'-').'</td>';              
               }
               $l_html .= chr(13).'     <td colspan=4 nowrap>'.f($row2,'nm_tramite').'</td>';
             } 
@@ -1005,22 +746,19 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
           if ($w_cont > 0) {
             $RS_Etapa = SortArray($RS_Etapa,'cd_ordem','asc');
             $l_html .= chr(13).'          <tr><td rowspan='.($w_cont+2).'><div align="center"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Etapa</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Setor</b></div></td>';
-            $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>';
-            $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução real</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orçamento</b></div></td>';
-            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
+            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Item</b></div></td>';
+            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Agenda de ação</b></div></td>';
+            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Entidade executora</b></div></td>';
+            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Responsável pela atualização</b></div></td>';
+            $l_html .= chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</b></div></td>';
+            //$l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orçamento</b></div></td>';
             $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
+            $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
             $l_html .= chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
             $l_html .= chr(13).'          </tr>';
             $l_html .= chr(13).'          <tr>';
-            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>';
-            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>';
-            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>De</b></div></td>';
-            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>';
+            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Início</b></div></td>';
+            $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Fim</b></div></td>';
             $l_html .= chr(13).'          </tr>';
             //Se for visualização normal, irá visualizar somente as etapas
             foreach($RS_Etapa as $row1) {
@@ -1173,110 +911,22 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
     $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }//if ($_REQUEST['p_tipo']=='WORD') {
   if ($w_embed == 'WORD') {
-    $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
-  } else {
-    $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-  }
-  /*
-  if ($_REQUEST['p_tipo']=='WORD') {
     $l_html .= chr(13).'        <td>'.$l_setor.'</b>';
   } else {
     $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,$l_setor,$l_sq_setor,$TP).'</b>';
   }
-  */
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_inicio,5).'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_fim,5).'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,5),'---').'</td>';
+  if ($w_embed == 'WORD') {
+    $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
+  } else {
+    $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
+  }
+  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,9),'---').'</td>';
+  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,9),'---').'</td>';
   //if (nvl($l_valor,'')!='') $l_html .= chr(13).'        <td width="1%" nowrap align="right">'.formatNumber($l_valor).'</td>';
+  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
   $l_html .= chr(13).'        <td width="1%" nowrap align="right" >'.formatNumber($l_perc).' %</td>';
   if($l_arquivo>0) $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
   else             $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_arquivo.'</td>';
-  /*
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
-  $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.$l_ativ1.'</td>';
-  if ($l_vincula_contrato=='S') {
-    $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.count($RS_Contr).'</td>';
-  }
-  //Listagem dos contratos da etapa 
-  if (count($RS_Contr)>0) {
-    foreach ($RS_Contr as $row) {
-      $l_contr1 .= chr(13).'<tr valign="top">';
-      $l_contr1 .= chr(13).'  <td>';
-      if ($_REQUEST['p_sinal']) ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-      if ($_REQUEST['p_tipo']=='WORD') {
-        $l_contr1 = $l_contr1.chr(13).'  '.f($row,'sq_siw_solicitacao');
-      } else {
-        $l_contr1 = $l_contr1.chr(13).'  <A class="HL" HREF="'.$conRootSIW.'mod_ac/contratos.php?par=Visual&R=contratos.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.f($row,'p1').'&P2='.f($row,'p2').'&P3='.f($row,'p3').'&P4='.f($row,'p4').'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
-      }
-      $l_contr1 = $l_contr1.chr(13).' - '.Nvl(f($row,'titulo'),'-');
-      if ($_REQUEST['p_tipo']=='WORD') {
-        $l_contr1 .= chr(13).'     <td>'.f($row,'nm_resp').'</td>';
-      } else {
-        $l_contr1 .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
-      }
-      if ($_REQUEST['p_tipo']=='WORD') {
-        $l_contr1 .= chr(13).'     <td>'.f($row,'sg_unidade_resp').'</td>';
-      } else {
-        $l_contr1 .= chr(13).'     <td>'.ExibeUnidade(null,$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</td>';
-      }
-      $l_contr1 .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'inicio'),5),'-').'</td>';
-      $l_contr1 .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'fim'),5),'-').'</td>';
-      if (nvl($l_valor,'')!='') $l_contr1 .= chr(13).'        <td width="1%" nowrap align="right">'.formatNumber($l_valor).'</td>';
-      if (nvl($l_valor,'')!='') {
-         $l_contr1 .= chr(13).'     <td colspan=6 nowrap>'.f($row,'nm_tramite').'</td>';
-      } else {
-         $l_contr1 .= chr(13).'     <td colspan=5 nowrap>'.f($row,'nm_tramite').'</td>';
-      }
-    }
-    $l_contr1    = $l_contr1.chr(13).'            </td></tr>';
-  }   
-  */
-  //Listagem das tarefas da etapa  
-  if (count($RS_Ativ)>0) {
-    foreach ($RS_Ativ as $row) {
-      if ($l_tipo=='WORD') {
-        $l_contr1 .= chr(13).'<tr valign="top" bgcolor="'.$w_cor.'">';
-      } else {
-        $l_contr1 .= chr(13).'<tr id="tr-'.$l_chave.'_'.str_replace(".","-",$grupo).'-'.f($row,'sq_siw_solicitacao').'" class="arvore" valign="top" style="display:none" bgcolor="'.$w_cor.'">';
-      }
-      $l_contr1 .= chr(13).'  <td bgcolor="'.$w_cor.'"></td>';
-      
-      if ($_REQUEST['p_sinal']) $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      //if ($_REQUEST['p_tipo']=='WORD') {
-      if ($w_embed == 'WORD') {      
-        $l_ativ .= chr(13).'  '.f($row,'sq_siw_solicitacao');
-      } else {
-        $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
-      }
-      if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
-      else       
-      $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
-        //if ($_REQUEST['p_tipo']=='WORD') {
-      if ($w_embed == 'WORD') {
-        $l_ativ .= chr(13).'     <td>'.f($row,'nm_resp').'</td>';
-      } else {
-        $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
-      }
-      //if ($_REQUEST['p_tipo']=='WORD') {
-      if ($w_embed == 'WORD') {
-        $l_ativ .= chr(13).'     <td>'.f($row,'sg_unidade_resp').'</td>';
-      } else {
-        $l_ativ .= chr(13).'     <td>'.ExibeUnidade(null,$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</td>';
-      }
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'inicio'),5),'-').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'fim'),5),'-').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'inicio_real'),5),'-').'</td>';
-      $l_ativ .= chr(13).'     <td align="center">'.Nvl(formataDataEdicao(f($row,'fim_real'),5),'-').'</td>';
-      $l_ativ .= chr(13).'     <td colspan=4 nowrap>'.f($row,'nm_tramite').'</td>';
-    }
-  } 
-  if ($l_ativ1 > '') {
-    $l_recurso = $l_recurso.chr(13).'      </tr></td>';
-    $l_ativ    = $l_ativ.chr(13).'            </td></tr>';
-  } elseif ($l_recurso > '') {
-    $l_recurso = $l_recurso.chr(13).'      </tr></td></table></td></tr>';
-  } 
   $l_html = $l_html.chr(13).'      </tr>';
   if ($l_recurso > '') $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_recurso);
   if ($l_ativ>'')      $l_html = $l_html.chr(13).str_replace('w_cor',$w_cor,$l_ativ);
@@ -1342,28 +992,21 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
   }
   if ($w_embed == 'WORD') {
-    $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
-  } else {
-    $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
-  }
-  /*
-  if ($_REQUEST['p_tipo']=='WORD') {
     $l_html .= chr(13).'        <td>'.$l_setor.'</b>';
   } else {
     $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,$l_setor,$l_sq_setor,$TP).'</b>';
   }
-  */
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_inicio,5).'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.formataDataEdicao($l_fim,5).'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,5),'---').'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,5),'---').'</td>';
+  
+  if ($w_embed == 'WORD') {
+    $l_html .= chr(13).'        <td>'.$l_resp.'</b>';
+  } else {
+    $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
+  }
+  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_inicio_real,9),'---').'</td>';
+  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,9),'---').'</td>';
   //if (nvl($l_valor,'')!='') $l_html .= chr(13).'        <td nowrap align="right" width="1%" nowrap>'.formatNumber($l_valor).'</td>';
-  $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
-  /*
   $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
-  $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_ativ.'</td>';
-  if($l_vincula_contrato=='S')$l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_contr.'</td>';    
-  */
+  $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
   if($l_arquivo>0) {
     if ($w_embed != 'WORD') {
         $l_html .= chr(13).'        <td width="1%" nowrap align="center" >'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';

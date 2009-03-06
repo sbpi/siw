@@ -1224,7 +1224,7 @@ function Telaplano(){
           } elseif ($p_array['TIPO']=='ANO') {
             $l_cron .= chr(13).'        '.$p_array['VALOR'];
           } else {
-            $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio'),5).' a '.formataDataEdicao(f($row1,'fim'),5);
+            $l_cron .= chr(13).'        '.formataDataEdicao(f($row1,'inicio'),9).' a '.formataDataEdicao(f($row1,'fim'),9);
           }
           $l_cron .= chr(13).'        </td>';
           $l_cron .= chr(13).'        <td align="right">'.formatNumber(f($row1,'valor_previsto'),4).'</td>';
@@ -1322,7 +1322,7 @@ function Telaplano(){
     ShowHTML('         </td>');
     foreach ($RS as $row) {
       $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
-      $RS1 = SortArray($RS1,'codigo_interno','asc');
+      $RS1 = SortArray($RS1,'titulo','asc');
       if (count($RS1)>0) {
         ShowHTML('<tr><td align="center" colspan=3>');
         ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1333,8 +1333,8 @@ function Telaplano(){
             if ($i==0) {
               ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
               ShowHTML('          <td rowspan=2><b>Código</td>');
-              ShowHTML('          <td rowspan=2><b>Título</td>');
-              ShowHTML('          <td rowspan=2><b>Responsável</td>');
+              ShowHTML('          <td rowspan=2><b>Programa/Agenda de Ação</td>');
+              ShowHTML('          <td rowspan=2><b>Gestor</td>');
               ShowHTML('          <td colspan=2><b>Execução</td>');
               ShowHTML('        </tr>');
               ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -1352,11 +1352,11 @@ function Telaplano(){
             else                                      $w_titulo=Nvl(f($row1,'titulo'),'-');
             ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row1,'titulo')))).'">'.$w_titulo.'</td>');
             ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</A></td>');
-            ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'inicio'),5).'</td>');
-            ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),5).'</td>');
+            ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'inicio'),9).'</td>');
+            ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row1,'fim'),9).'</td>');
             // Recupera os documentos vinculados
             $RS2 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row1,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-            $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','titulo','asc');
+            $RS2 = SortArray($RS2,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
             foreach($RS2 as $row2) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -1368,11 +1368,11 @@ function Telaplano(){
               $w_titulo = str_repeat('&nbsp;',3).$w_titulo;
               ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row2,'titulo')))).'">'.$w_titulo.'</td>');
               ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row2,'solicitante'),$TP,f($row2,'nm_solic')).'</A></td>');
-              ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'inicio'),5).'</td>');
-              ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'fim'),5).'</td>');
+              ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'inicio'),9).'</td>');
+              ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row2,'fim'),9).'</td>');
               // Recupera os documentos vinculados
               $RS3 = db_getSolicList::getInstanceOf($dbms, null, $w_usuario, 'FILHOS', null, null, null, null, null, null, null, null, null, null, null, f($row2,'sq_siw_solicitacao'), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-              $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','titulo','asc');
+              $RS3 = SortArray($RS3,'or_modulo','asc','or_servico','asc','ac_titulo','asc');
               foreach($RS3 as $row3) {
                 $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
                 ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -1384,8 +1384,8 @@ function Telaplano(){
                 $w_titulo = str_repeat('&nbsp;',6).$w_titulo;
                 ShowHTML('        <td title="'.str_replace('\r\n','\n',str_replace('""','\\\'',str_replace('\'','\\\'',f($row3,'titulo')))).'">'.$w_titulo.'</td>');
                 ShowHTML('        <td>'.ExibePessoa('../',$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</A></td>');
-                ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'inicio'),5).'</td>');
-                ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'fim'),5).'</td>');
+                ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'inicio'),9).'</td>');
+                ShowHTML('        <td align="center">&nbsp;'.FormataDataEdicao(f($row3,'fim'),9).'</td>');
               }
             }
           } 

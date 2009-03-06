@@ -69,7 +69,8 @@ begin
    
    If p_restricao = 'ESTRUTURA' Then
       open p_result for
-         select a.sq_menu,            a.sq_modulo,                   a.nome,
+         select montaNomeSolic(b.sq_siw_solicitacao) as ordena,
+                a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
@@ -99,6 +100,9 @@ begin
                 coalesce(c.custo_real,      d.custo_real)      as custo_real,
                 cast(b.fim as date)-cast(coalesce(c.dias_aviso,d.dias_aviso) as integer) as aviso,
                 d2.orc_previsto as orc_previsto, d2.orc_real as orc_real, 
+                coalesce(c.sq_unidade_resp,d.sq_unidade_resp) as sq_unidade_resp,
+                coalesce(c1.nome, d1.nome) as nm_unidade_resp,
+                coalesce(c1.sigla, d1.sigla) as sg_unidade_resp,
                 o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind, 
                 (select count(x.sq_siw_solicitacao) 
                    from siw_solicitacao x
@@ -114,11 +118,15 @@ begin
                 inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
                   inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
-                    left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
-                      inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
-                        inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
+                  left         join siw_solicitacao           b2 on (b.sq_solic_pai        = b2.sq_siw_solicitacao)
+                    left       join siw_solicitacao           b3 on (b2.sq_solic_pai       = b3.sq_siw_solicitacao)
+                  left         join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
+                    left       join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
+                      left     join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
                   left         join pe_programa               c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                    left       join eo_unidade                c1 on (c.sq_unidade_resp     = c1.sq_unidade)
                   left         join pj_projeto                d  on (b.sq_siw_solicitacao  = d.sq_siw_solicitacao)
+                    left       join eo_unidade                d1 on (d.sq_unidade_resp     = c1.sq_unidade)
                     left       join (select y.sq_siw_solicitacao, sum(x.valor_previsto) as orc_previsto, sum(x.valor_real) as orc_real
                                              from pj_rubrica_cronograma x
                                                   inner join pj_rubrica y on (x.sq_projeto_rubrica = y.sq_projeto_rubrica)
@@ -129,7 +137,7 @@ begin
             and 'GD'           <> a1.sigla
             and 'GDP'          <> substr(a.sigla,1,3)
             and (p_tipo        <> 7    or (p_tipo = 7 and a1.sigla in ('PE','PR')))
-            and (p_sq_orprior  is null or (p_sq_orprior is not null and (b.sq_plano = p_sq_orprior)))
+            and (p_sq_orprior  is null or (p_sq_orprior is not null and (b.sq_plano = p_sq_orprior or b2.sq_plano = p_sq_orprior or b3.sq_plano = p_sq_orprior)))
             and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and (0         < (select count(y.sq_siw_solicitacao)
                                                                                          from siw_solicitacao_objetivo y
                                                                                         where y.sq_siw_solicitacao = b.sq_siw_solicitacao
@@ -140,7 +148,8 @@ begin
                 )
             and 0 < acesso(b.sq_siw_solicitacao, p_pessoa)
          connect by prior b.sq_siw_solicitacao = b.sq_solic_pai
-         start with b.sq_solic_pai =  p_chave;
+         start with b.sq_solic_pai =  p_chave
+         order by 1;
    Elsif p_restricao = 'FILHOS' Then
       open p_result for
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -1189,7 +1198,8 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
-                b2.sq_plano,          b2.sq_plano_pai,               b2.titulo as nm_plano,
+                coalesce(b2.sq_plano,b5.sq_plano,b6.sq_plano,b7.sq_plano) as sq_plano,
+                b2.sq_plano_pai,               b2.titulo as nm_plano,
                 b2.missao,            b2.valores,                    b2.visao_presente,
                 b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
                 b2.ativo as st_plano,
@@ -1229,6 +1239,9 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
                                           )                    b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
+                      left           join siw_solicitacao      b5 on (b.sq_solic_pai             = b5.sq_siw_solicitacao)
+                        left         join siw_solicitacao      b6 on (b5.sq_solic_pai            = b6.sq_siw_solicitacao)
+                          left       join siw_solicitacao      b7 on (b6.sq_solic_pai            = b7.sq_siw_solicitacao)
                       inner          join pe_programa          d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join pe_horizonte         d1 on (d.sq_pehorizonte           = d1.sq_pehorizonte)
                         inner        join pe_natureza          d7 on (d.sq_penatureza            = d7.sq_penatureza)
@@ -1287,12 +1300,9 @@ begin
                                            )
                 )
             and (p_sq_orprior     is null or (p_sq_orprior is not null and (b2.sq_plano          = p_sq_orprior or 
-                                                                            0                    < (select count(*)
-                                                                                                      from siw_solicitacao
-                                                                                                     where sq_plano = p_sq_orprior
-                                                                                                    connect by prior sq_solic_pai = sq_siw_solicitacao
-                                                                                                    start with sq_siw_solicitacao = b.sq_siw_solicitacao
-                                                                                                   )
+                                                                            b5.sq_plano          = p_sq_orprior or 
+                                                                            b6.sq_plano          = p_sq_orprior or 
+                                                                            b7.sq_plano          = p_sq_orprior
                                                                            )
                                              )
                 )

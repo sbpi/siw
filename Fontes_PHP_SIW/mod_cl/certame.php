@@ -675,16 +675,15 @@ function Geral() {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
       if ($w_copia>'') {
-      $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
-
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
+            null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null);
       } else {
-      $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
+            null,null,null,null,null,null,null,null,null,null,
+            $w_chave,null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null);
       }
       if (count($RS)>0) {
         foreach($RS as $row){$RS=$row; break;}

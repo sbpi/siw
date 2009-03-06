@@ -26,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
@@ -70,6 +71,7 @@ include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
+include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
@@ -168,7 +170,31 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
+// Verifica se o cliente tem o módulo de compras e licitações contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'CO');
+if (count($RS)>0) $w_compras='S'; else $w_compras='N';
+
+// Verifica se o cliente tem o módulo de protocolo contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
+
+// Verifica se o cliente tem o módulo de acordos contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
+
+// Verifica se o cliente tem o módulo viagens contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
+
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
+
+// Verifica se o cliente tem o módulo de planejamento estratégico
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+  
 $w_copia         = $_REQUEST['w_copia'];
+$w_herda         = $_REQUEST['w_herda'];
 $p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
 $p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
 $p_atividade     = strtoupper($_REQUEST['p_atividade']);
@@ -347,7 +373,7 @@ function Inicial() {
     SaltaCampo();
     ValidateOpen('Validacao');
     if (strpos('CP',$O)!==false) {
-      if ($P1!=1 || $O=='C') {
+      if ($P1!=1 || strpos('C',$O)!==false) {
         if(nvl($p_sq_menu_relac,'')>'') {
           if ($p_sq_menu_relac=='CLASSIF') {
             ShowHTML('  if (theForm.p_sqcc.selectedIndex==0) {');
@@ -426,17 +452,18 @@ function Inicial() {
     if ($P1==1 && $w_copia=='') {
       if ($w_tipo!='WORD') {
         // Se for cadastramento e não for resultado de busca para cópia
+        ShowHTML('<tr><td>');
         if ($w_submenu>'') {
           $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
           foreach($RS1 as $row) {
-            ShowHTML('<tr><td>');
             ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
-            ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>C</u>opiar</a>');
             break;
           }
         } else {
-          ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+          ShowHTML('    <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         } 
+        ShowHTML('    <a accesskey="C" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Inclui um novo contrato a partir dos dados de outro, já existente."><u>C</u>opiar</a>');
+        if ($w_compras=='S') ShowHTML('    <a accesskey="H" class="ss" href="'.$w_dir.$w_pagina.'BuscaCompra&R='.$w_pagina.$par.'&O=H&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Inclui um novo contrato a partir de uma compra/licitação."><u>H</u>erdar</a>');
       }
     } 
     if ((strpos(strtoupper($R),'GR_')===false) && (strpos(strtoupper($R),'ACORDO')===false) && $P1!=6) {
@@ -565,7 +592,7 @@ function Inicial() {
               // Se for listagem para cópia
               $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
               foreach($RS1 as $row1) {
-                ShowHTML('          <a accesskey="I" class="hl" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
+                ShowHTML('          <a class="hl" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
                 break;
               }
             } elseif ($P1==1) {
@@ -675,7 +702,7 @@ function Inicial() {
     if ($O=='C') {
       // Se for cópia, cria parâmetro para facilitar a recuperação dos registros
       ShowHTML('<INPUT type="hidden" name="w_copia" value="OK">');
-    } 
+    }
     ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
     selecaoServico('<U>R</U>estringir a:', 'S', null, $p_sq_menu_relac, $P2, null, 'p_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
     if(Nvl($p_sq_menu_relac,'')!='') {
@@ -778,6 +805,103 @@ function Inicial() {
 } 
 
 // =========================================================================
+// Rotina de busca de compras e licitações para geração de contrato
+// -------------------------------------------------------------------------
+function BuscaCompra() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  // Recupera chave do menu de licitações
+  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLLCCAD');
+
+  // Recupera certames passíveis de contratação
+  $RS = db_getSolicCL::getInstanceOf($dbms,f($RS,'sq_menu'),$_SESSION['SQ_PESSOA'],'CONTRATO',3,
+      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+      null,null,null,null,null,null,null,null,null,null,null);
+      
+  Cabecalho();
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<TITLE>Seleção de compra/licitação</TITLE>');
+  ShowHTML('<HEAD>');
+  Estrutura_CSS($w_cliente);
+  ShowHTML('</HEAD>');
+  BodyOpen('onLoad=this.focus();');
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <table width="100%" border="0">');
+
+  ShowHTML('<tr><td>Selecione o certame/fornecedor desejado para geração do contrato, clicando na operação "Selecionar".');
+  ShowHTML('<tr><td colspan=6>');
+  ShowHTML('    <TABLE WIDTH="100%" border=0>');
+  if (count($RS)<=0) {
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+  } else {
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('        <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('            <td width="1%" nowrap><b>Compra/Lic.</td>');
+    if ($w_mod_pa=='S') ShowHTML('            <td width="1%" nowrap><b>Protocolo</td>');
+    ShowHTML('            <td colspan=2><b>Fornecedor</td>');
+    ShowHTML('            <td><b>Itens</td>');
+    ShowHTML('            <td><b>Operações</td>');
+    ShowHTML('          </tr>');
+    $w_certame    = '';
+    $w_fornecedor = '';
+    $w_exibe      = false;
+    $i            = 0;
+    // Recupera a sigla do serviço
+    $RS1 = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
+    foreach($RS1 as $row1) { $w_sg_menu = f($row1,'sigla'); break; }
+    
+    foreach($RS as $row) {
+      if ($w_certame!=f($row,'cd_certame')) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr><td colspan=6 height=1 bgcolor="black">');
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'cd_certame').'&nbsp;</td>');
+        if ($w_mod_pa=='S') ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'processo').'&nbsp;</td>');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($row,'cd_fornecedor').'&nbsp;</td>');
+        ShowHTML('        <td>'.f($row,'nm_fornecedor').'</td>');
+        $w_certame    = f($row,'cd_certame');
+        $w_fornecedor = f($row,'nm_fornecedor');
+        $w_exibe      = true;
+      } elseif ($w_fornecedor!=f($row,'nm_fornecedor')) {
+        ShowHTML('      <tr><td height=1></td><td height=1></td><td colspan=4 height=1 bgcolor="black">');
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td></td><td></td>');
+        ShowHTML('        <td width="1%" nowrap align="center">&nbsp;'.f($row,'cd_fornecedor').'&nbsp;</td>');
+        ShowHTML('        <td>'.f($row,'nm_fornecedor').'</td>');
+        $w_fornecedor = f($row,'nm_fornecedor');
+        $w_exibe      = true;
+      } else {
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td></td><td></td><td></td><td></td>');
+      }
+      ShowHTML('        <td>'.f($row,'ordem').' - '.f($row,'nm_material').'</td>');
+      if ($w_exibe) {
+        ShowHTML('        <td><a class="hl" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$w_sg_menu.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_herda='.f($row,'sq_siw_solicitacao').'|'.f($row,'sq_pessoa').MontaFiltro('GET').'">Copiar</a>&nbsp;');
+      } else {
+        ShowHTML('        <td></td>');
+      }
+      $w_exibe = false;
+    }
+    ShowHTML('        </table></tr>');
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
 // Rotina dos dados gerais
 // -------------------------------------------------------------------------
 function Geral() {
@@ -789,21 +913,6 @@ function Geral() {
   $w_readonly       = '';
   $w_erro           = '';
   
-  // Verifica se o cliente tem o módulo de acordos contratado
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
-  if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
-
-  // Verifica se o cliente tem o módulo viagens contratado
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
-  if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
-
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
-  if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
-
-  // Verifica se o cliente tem o módulo de planejamento estratégico
-  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
-  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
-    
   // Verifica se a geração do código será automática ou não
   if (f($RS_Menu,'numeracao_automatica')==0) $w_numeracao_automatica = 'N'; else $w_numeracao_automatica = 'S'; 
 
@@ -864,16 +973,24 @@ function Geral() {
     $w_titulo               = $_REQUEST['w_titulo'];
     $w_numero_empenho       = $_REQUEST['w_numero_empenho'];
     $w_numero_processo      = $_REQUEST['w_numero_processo'];
+    $w_protocolo            = $_REQUEST['w_protocolo'];
+    $w_protocolo_nm         = $_REQUEST['w_protocolo_nm'];
     $w_data_assinatura      = $_REQUEST['w_data_assinatura'];
     $w_data_publicacao      = $_REQUEST['w_data_publicacao'];
     $w_sq_lcmodalidade      = $_REQUEST['w_sq_lcmodalidade'];
     $w_aditivo              = $_REQUEST['w_aditivo'];
     $w_sq_menu_relac        = $_REQUEST['w_sq_menu_relac'];
   } else {
-    if ((strpos('AEV',$O)!==false || nvl($w_copia,'')!='') && $w_troca=='') {
-      // Recupera os dados do contrato
+    if ((strpos('AEV',$O)!==false || nvl($w_copia,'')!='' || nvl($w_herda,'')!='') && $w_troca=='') {
       if (nvl($w_copia,'')!='') {
+        // Recupera os dados do contrato
         $RS = db_getSolicData::getInstanceOf($dbms,$w_copia,$SG);
+      } elseif (nvl($w_herda,'')!='') {
+        // Recupera os dados do contrato
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
+            null,null,null,null,null,null,null,null,null,null,substr($w_herda,0,strpos($w_herda,'|')),null,null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null);
+        if (count($RS)>0) $RS = $RS[0];
       } else {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
       } 
@@ -921,6 +1038,8 @@ function Geral() {
         $w_palavra_chave        = f($RS,'palavra_chave');
         $w_numero_empenho       = f($RS,'empenho');
         $w_numero_processo      = f($RS,'processo');
+        $w_protocolo            = f($RS,'processo');
+        $w_protocolo_nm         = f($RS,'processo');
         $w_opiniao              = f($RS,'opiniao');
         $w_data_assinatura      = FormataDataEdicao(f($RS,'assinatura'));
         $w_data_publicacao      = FormataDataEdicao(f($RS,'publicacao'));
@@ -958,7 +1077,9 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     if($w_numeracao_automatica=='N') Validate('w_codigo_interno','Código interno','1',1,1,60,'1','1');
-    if($w_segmento=='Público') {
+    if ($w_mod_pa=='S') {
+      Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+    } elseif($w_segmento=='Público') {
       if (substr($SG,0,3)=='GCB') Validate('w_numero_processo','Número do empenho (modalidade/nível/mensalidade)','1','1',1,30,'1','1');
       else                        Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
     }
@@ -1096,7 +1217,9 @@ function Geral() {
     if($w_numeracao_automatica=='N') {
       BodyOpenClean('onLoad=\'document.Form.w_codigo_interno.focus()\';');
     } else {
-      if($w_segmento=='Público') {
+      if ($w_mod_pa=='S') {
+        BodyOpenClean('onLoad=\'document.Form.w_protocolo_nm.focus()\';');
+      } elseif($w_segmento=='Público') {
         BodyOpenClean('onLoad=\'document.Form.w_numero_processo.focus()\';');
       } else {
         BodyOpenClean('onLoad=\'document.Form.w_titulo.focus()\';');
@@ -1117,6 +1240,7 @@ function Geral() {
     ShowHTML(MontaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
+    ShowHTML('<INPUT type="hidden" name="w_herda" value="'.$w_herda.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
@@ -1135,7 +1259,9 @@ function Geral() {
     if($w_numeracao_automatica=='N') {
       ShowHTML('          <td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
     }
-    if($w_segmento=='Público') {
+    if ($w_mod_pa=='S') {
+      SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+    } elseif($w_segmento=='Público') {
       if (substr($SG,0,3)=='GCB') ShowHTML('          <td><b>N<U>ú</U>mero do empenho (modalidade/nível/mensalidade)<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>'); 
       else                        ShowHTML('          <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'"></td>');
     }
@@ -1232,7 +1358,8 @@ function Geral() {
         if(f($RS_Relac,'sg_modulo')=='PR') {
           SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_etapa\'; document.Form.submit();"');
           ShowHTML('      <tr>');
-          SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_chave_pai,null,'w_etapa','CONTRATO',null);
+          if (substr(f($RS_Menu,'sigla'),2)=='B') SelecaoEtapa('<u>T</u>ema e modalidade:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_chave_pai,null,'w_etapa','CONTRATO',null);
+          else SelecaoEtapa('E<u>t</u>apa:','T','Se necessário, indique a etapa desejada para a vinculação.',$w_etapa,$w_chave_pai,null,'w_etapa','CONTRATO',null);
           ShowHTML('      </tr>');
         } else {
           SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),null);
@@ -1317,7 +1444,7 @@ function Geral() {
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     if ($O=='I') {
       $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&w_herda='.$w_herda.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     } 
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -4807,7 +4934,24 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');
-  if (strpos($SG,'GERAL')!==false) {
+  if (substr($SG,3,3)=='CAD') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      exibevariaveis();
+      dml_geraContrato::getInstanceOf($dbms,$_REQUEST['w_solic'],$_REQUEST['w_pessoa']);
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("Geração concluída com sucesso!");');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit();
+    }
+  } elseif (strpos($SG,'GERAL')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
@@ -5401,6 +5545,7 @@ function Main() {
   case 'ADITIVOS':          Aditivos();         break;
   case 'NOTAS':             Notas();            break;
   case 'NOTACANCEL':        NotaCancel();       break;
+  case 'BUSCACOMPRA':       BuscaCompra();      break;
   case 'GRAVA':             Grava();            break;
   default:
     Cabecalho();
