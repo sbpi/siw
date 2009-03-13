@@ -10,10 +10,11 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getPD_Deslocamento {
-   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_GETPD_DESLOCAMENTO';
+   function getInstanceOf($dbms, $p_chave, $p_chave_aux, $p_tipo, $p_restricao) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getPD_Deslocamento';
      $params=array('p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
+                   'p_tipo'                      =>array($p_tipo,                                          B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        20),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );

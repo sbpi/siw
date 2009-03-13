@@ -308,7 +308,8 @@ function Arquivos() {
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
           ShowHTML('          <td width="20%"><b>Título</td>');
-          ShowHTML('          <td width="50%"><b>Descrição</td>');
+          ShowHTML('          <td width="50%"><b>Resumo</td>');
+          ShowHTML('          <td width="10%"><b>Data</td>');
           ShowHTML('          <td width="20%"><b>Tipo</td>');
           ShowHTML('          <td width="10%"><b>Tamanho</td>');
           ShowHTML('        </tr>');
@@ -318,6 +319,7 @@ function Arquivos() {
             ShowHTML('    <tr bgColor="'.$w_cor.'">');
             ShowHTML('     <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
             ShowHTML('     <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+            ShowHTML('     <td>'.formataDataEdicao(f($row,'inclusao')).'</td>');
             ShowHTML('     <td>'.f($row,'tipo').'</td>');
             ShowHTML('     <td align="right">'.round(f($row,'tamanho')/1024,1).' KB&nbsp;</td>');
           } 

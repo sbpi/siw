@@ -15,7 +15,7 @@ class dml_putPD_Diaria {
             $p_deslocamento_chegada, $p_deslocamento_saida, $p_sq_valor_diaria, $p_sq_diaria_hospedagem, 
             $p_sq_diaria_veiculo, $p_justificativa_diaria, $p_justificativa_veiculo, 
             $p_rub_dia, $p_lan_dia, $p_fin_dia, $p_rub_hsp, $p_lan_hsp, $p_fin_hsp, $p_rub_vei, $p_lan_vei, $p_fin_vei,
-            $p_hos_in, $p_hos_out, $p_hos_observ, $p_vei_ret, $p_vei_dev) {
+            $p_hos_in, $p_hos_out, $p_hos_observ, $p_vei_ret, $p_vei_dev, $p_tipo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPDDiaria';
      $params=array('p_operacao'               =>array($operacao,                            B_VARCHAR,         1),
                    'p_chave'                  =>array($p_chave,                             B_INTEGER,        32),
@@ -51,7 +51,8 @@ class dml_putPD_Diaria {
                    'p_hos_out'                =>array(tvl($p_hos_out),                      B_DATE,           32),
                    'p_hos_observ'             =>array(tvl($p_hos_observ),                   B_VARCHAR,       255),
                    'p_vei_ret'                =>array(tvl($p_vei_ret),                      B_DATE,           32),
-                   'p_vei_dev'                =>array(tvl($p_vei_dev),                      B_DATE,           32)
+                   'p_vei_dev'                =>array(tvl($p_vei_dev),                      B_DATE,           32),
+                   'p_tipo'                   =>array(nvl($p_tipo,'S'),                     B_VARCHAR,         1)
      );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

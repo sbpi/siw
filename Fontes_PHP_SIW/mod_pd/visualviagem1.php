@@ -212,7 +212,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   } 
 
   // Deslocamentos
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDGERAL');
+  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDGERAL');
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {
     $l_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Deslocamentos</td>';
@@ -272,7 +272,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   //Diárias
   $l_html.=chr(13).'        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Dados da viagem/cálculo das diárias</td>';
 
-  $RSQuery = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'PDDIARIA');
+  $RSQuery = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
   $RSQuery = SortArray($RSQuery,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   
   if (count($RSQuery)>0) {
@@ -448,7 +448,7 @@ function VisualViagem($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   } 
 
   // Bilhete de passagem
-  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,$SG);
+  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S',$SG);
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {
     $i=0;

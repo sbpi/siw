@@ -34,7 +34,9 @@ begin
                     inner    join   co_pais   e on (d.sq_pais            = e.sq_pais)
                   left outer join   pd_diaria f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao and
                                                     a.destino            = f.sq_cidade and
-                                                    a.sq_deslocamento    = f.sq_deslocamento_saida)
+                                                    a.sq_deslocamento    = f.sq_deslocamento_saida and
+                                                    f.tipo               = p_tipo
+                                                   )
           where a.sq_siw_solicitacao = p_chave
             and a.tipo               = p_tipo;
    Elsif p_restricao = 'PDDIARIA' Then
@@ -53,12 +55,14 @@ begin
                     when 'S' 
                     then b.nome||'-'||b.co_uf 
                     else b.nome||' ('||c.nome||')'
-                    end nm_origem,
+                end as nm_origem,
                 case e.padrao 
                     when 'S'
                     then d.nome||'-'||d.co_uf
                     else d.nome||' ('||e.nome||')'
-                    end nm_destino,
+                end as nm_destino,
+                c.padrao as origem_nacional,
+                e.padrao as destino_nacional,
                 f.sq_diaria, f.justificativa_diaria, f.justificativa_veiculo,
                 f.diaria, f.quantidade, f.valor, g1.sigla as sg_moeda_diaria, g.valor as vl_diaria, g.sq_valor_diaria as sq_valor_diaria,
                 f.hospedagem, f.hospedagem_qtd, f.hospedagem_valor, h1.sigla as sg_moeda_hospedagem, h.valor as vl_diaria_hospedagem, h.sq_valor_diaria as sq_diaria_hospedagem,
@@ -81,7 +85,8 @@ begin
                   inner    join co_pais               e  on (d.sq_pais                    = e.sq_pais)
                 left       join pd_diaria             f  on (a.sq_siw_solicitacao         = f.sq_siw_solicitacao and
                                                              a.destino                    = f.sq_cidade and
-                                                             a.sq_deslocamento            = f.sq_deslocamento_saida
+                                                             a.sq_deslocamento            = f.sq_deslocamento_saida and
+                                                             f.tipo                       = p_tipo
                                                             )
                   left     join pd_vinculo_financeiro m  on (f.sq_pdvinculo_diaria        = m.sq_pdvinculo_financeiro)
                   left     join pj_rubrica            m1 on (m.sq_projeto_rubrica         = m1.sq_projeto_rubrica)

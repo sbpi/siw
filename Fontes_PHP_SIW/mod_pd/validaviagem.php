@@ -51,16 +51,20 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   $l_existe_rs2 = count($l_rs2);
 
   // Recupera os deslocamentos da viagem
-  $l_rs3 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, $v_sg2);
+  $l_rs3 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', $v_sg2);
   $l_existe_rs3 = count($l_rs3);
 
   // Recupera as vinculações da viagem
   $l_rs4 = db_getPD_Vinculacao::getInstanceOf($dbms,$v_chave,null,null);
   $l_existe_rs4 = count($l_rs4);
 
-  // Recupera as diárias da viagem
-  $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'PDDIARIA');
+  // Recupera as diárias da solicitação de viagem
+  $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', 'PDDIARIA');
   $l_existe_rs5 = count($l_rs5);
+
+  // Recupera as diárias da prestação de contas de viagem
+  $l_rs6 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
+  $l_existe_rs6 = count($l_rs6);
 
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
@@ -155,7 +159,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         } 
 
         if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {
-          $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,f($l_rs_tramite,'sigla'));
+          $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,'S',f($l_rs_tramite,'sigla'));
           foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
           if (f($l_rs5,'existe')>0) {
             $l_erro .= '<li>É obrigatório informar a cotação de menor valor.';
@@ -177,6 +181,19 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if (f($l_rs_solic,'cumprimento')=='N') {
             $l_erro .= '<li>É obrigatório informar se a viagem foi cumprida e, em caso positivo, os dados da prestação de contas.';
             $l_tipo  = 0;
+          }
+
+          if (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S') {
+            $w_cont = 0;
+            foreach ($l_rs6 as $row) {
+              if (nvl(f($row,'diaria'),'')!='') {
+                $w_cont++;
+              }
+            }
+            if ($w_cont!=count($l_rs6)-1) {
+              $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
+              $l_tipo = 0;
+            }
           }
         }
 

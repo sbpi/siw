@@ -5289,7 +5289,7 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
-      dml_putProjetoDescritivo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
+      dml_putProjetoDescritivo::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,$_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
           $_REQUEST['w_exclusoes'],$_REQUEST['w_premissas'], $_REQUEST['w_restricoes'],$_REQUEST['w_justificativa']);
      // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
      $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
