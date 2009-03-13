@@ -12,7 +12,7 @@ begin
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
              c.email, c.ativo,
              d.sigla lotacao,
-             '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado,
+             '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado, null as sg_tipo_interessado,
              1 ordena
         from gd_demanda_interes           a
              inner   join co_pessoa       b on (a.sq_pessoa  = b.sq_pessoa)
@@ -26,7 +26,7 @@ begin
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
              c.email, c.ativo,
              d.sigla lotacao,
-             '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado,
+             '*** ALTERAR ***' nm_tipo_interessado, 0 or_tipo_interessado, null as sg_tipo_interessado,
              1 ordena
         from pj_projeto_interes           a
              inner   join co_pessoa       b on (a.sq_pessoa  = b.sq_pessoa)
@@ -40,7 +40,7 @@ begin
              b.nome, b.nome_resumido, b.nome_indice, b.nome_resumido_ind,
              c.email, c.ativo,
              d.sigla lotacao,
-             e.nome nm_tipo_interessado, e.ordem or_tipo_interessado,
+             e.nome as nm_tipo_interessado, e.ordem as or_tipo_interessado, e.sigla as sg_tipo_interessado,
              0 ordena
         from siw_solicitacao_interessado       a
              inner   join co_pessoa            b on (a.sq_pessoa           = b.sq_pessoa)

@@ -1,6 +1,7 @@
 create or replace procedure SP_GetPD_Deslocamento
    (p_chave     in number,
     p_chave_aux in number   default null,
+    p_tipo      in varchar2,
     p_restricao in varchar2,
     p_result    out sys_refcursor) is
 begin
@@ -35,7 +36,7 @@ begin
                                                     a.destino            = f.sq_cidade and
                                                     a.sq_deslocamento    = f.sq_deslocamento_saida)
           where a.sq_siw_solicitacao = p_chave
-            and a.tipo               = 'S';
+            and a.tipo               = p_tipo;
    Elsif p_restricao = 'PDDIARIA' Then
       open p_result for
          select a.sq_deslocamento, a.sq_siw_solicitacao, a.origem, a.destino, a.sq_cia_transporte, 
@@ -98,13 +99,14 @@ begin
                 inner      join pd_valor_diaria       i  on (i.sq_valor_diaria            = recuperaValorDiaria(a1.cliente,a.destino,'V',a1.diaria))
                   inner    join co_moeda              i1 on (i.sq_moeda                   = i1.sq_moeda)
           where a.sq_siw_solicitacao = p_chave
-            and a.tipo               = 'S';
+            and a.tipo               = p_tipo;
    Elsif p_restricao = 'DF' Then
       open p_result for
          select count(*) existe
            from pd_deslocamento a
           where sq_siw_solicitacao = p_chave
             and a.passagem         = 'S'
+            and a.tipo             = p_tipo
             and sq_cia_transporte is null;
    Elsif p_restricao = 'COTPASS' Then
       -- Recupera trechos para cotação de bilhetes
@@ -131,7 +133,7 @@ begin
                left     join pd_cia_transporte  f on (a.sq_cia_transporte  = f.sq_cia_transporte)
                inner    join pd_meio_transporte g on (a.sq_meio_transporte = g.sq_meio_transporte)
           where a.sq_siw_solicitacao = p_chave
-            and a.tipo               = 'S'
+            and a.tipo               = p_tipo
             and a.passagem           = 'S'
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    Else
@@ -163,7 +165,7 @@ begin
                left     join pd_bilhete            h  on (a.sq_bilhete              = h.sq_bilhete)
                  left   join pd_cia_transporte     h1 on (h.sq_cia_transporte       = h1.sq_cia_transporte)
           where a.sq_siw_solicitacao = p_chave
-            and a.tipo = 'S'
+            and a.tipo               = p_tipo
             and (p_chave_aux         is null or (p_chave_aux is not null and a.sq_deslocamento = p_chave_aux));   
    End If;         
 End SP_GetPD_Deslocamento;

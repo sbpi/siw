@@ -34,8 +34,8 @@ begin
    
    -- Atualiza os dados da viagem
    update pd_missao 
-      set reembolso              = p_reembolso,
-          reembolso_valor        = p_valor,
+      set reembolso              = coalesce(p_reembolso,'N'),
+          reembolso_valor        = coalesce(p_valor,0),
           reembolso_observacao   = p_observacao,
           sq_pdvinculo_reembolso = coalesce(w_financeiro,sq_pdvinculo_reembolso)
     where sq_siw_solicitacao = p_chave;

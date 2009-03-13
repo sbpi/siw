@@ -14,9 +14,55 @@ create or replace procedure SP_PutPD_Contas
    ) is
    
    w_arquivo siw_arquivo.sq_siw_arquivo%type;
+   w_cont    number(10);
 begin
    -- Atualiza os dados da viagem
    update pd_missao set cumprimento = p_cumprimento where sq_siw_solicitacao = p_chave;
+   
+   If p_cumprimento = 'I' or p_cumprimento = 'P' Then
+      select count(*) into w_cont from pd_deslocamento a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
+      If w_cont = 0 Then
+         -- Se cumprimento integral, copia os deslocamentos da solicitação para a prestação de contas
+         insert into pd_deslocamento
+           (sq_deslocamento,           sq_siw_solicitacao,   origem,         destino,             saida,         chegada, 
+            passagem,                  sq_meio_transporte,   valor_trecho,   sq_cia_transporte,   codigo_voo,    compromisso,
+            aeroporto_origem,          aeroporto_destino,    tipo)
+         (select 
+            sq_deslocamento.nextval,   a.sq_siw_solicitacao, a.origem,       a.destino,           a.saida,       a.chegada, 
+            a.passagem,                a.sq_meio_transporte, a.valor_trecho, a.sq_cia_transporte, a.codigo_voo,  a.compromisso,
+            a.aeroporto_origem,        a.aeroporto_destino,  'P'
+            from pd_deslocamento a 
+           where a.tipo              = 'S' 
+            and a.sq_siw_solicitacao = p_chave
+         );
+      End If;
+
+      select count(*) into w_cont from pd_diaria a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
+      If w_cont = 0 Then
+         -- Se cumprimento integral, copia as diárias da solicitação para a prestação de contas
+         insert into pd_diaria
+           (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo)
+         (select sq_diaria.nextval,      sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      'P'
+            from pd_diaria a 
+           where a.tipo              = 'S' 
+            and a.sq_siw_solicitacao = p_chave
+         );
+      End If;
+   Else
+      -- Se viagem cancelada, remove os deslocamentos e as diárias
+      delete pd_diaria a       where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
+      delete pd_deslocamento a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
+   End If;
    
    -- Grava motivo de cancelamento/cumprimento parcial ou anula o conteúdo se cumprimento integral
    update gd_demanda set nota_conclusao = p_nota_conclusao where sq_siw_solicitacao = p_chave;

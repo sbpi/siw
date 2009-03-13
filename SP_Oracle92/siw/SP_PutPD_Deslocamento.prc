@@ -74,7 +74,7 @@ begin
    If p_operacao in ('I','A','E') Then
       -- Qualquer alteração nos trechos influencia o cálculo automático de diárias.
       -- Por isso elas são removidas.
-      delete pd_diaria where sq_siw_solicitacao = p_chave;
+      delete pd_diaria where sq_siw_solicitacao = p_chave and tipo = p_tipo;
    End If;
    
    -- Verifica se a missão envolve trechos nacionais
