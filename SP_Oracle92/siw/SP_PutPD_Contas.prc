@@ -3,6 +3,7 @@ create or replace procedure SP_PutPD_Contas
     p_chave               in number,
     p_cumprimento         in varchar2  default null,
     p_nota_conclusao      in varchar2  default null,
+    p_relatorio           in varchar2  default null,
     p_sq_relatorio        in number    default null,
     p_exclui_arquivo      in varchar2  default null,
     p_nome                in varchar2  default null,
@@ -37,7 +38,7 @@ begin
    select cumprimento into w_cumprimento from pd_missao where sq_siw_solicitacao = p_chave;
    
    -- Atualiza os dados da viagem
-   update pd_missao set cumprimento = p_cumprimento where sq_siw_solicitacao = p_chave;
+   update pd_missao set cumprimento = p_cumprimento, relatorio = p_relatorio where sq_siw_solicitacao = p_chave;
    
    If w_cumprimento <> p_cumprimento Then
       -- Se foi informado outro tipo de cumprimento

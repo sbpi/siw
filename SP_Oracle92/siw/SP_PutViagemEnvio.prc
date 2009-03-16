@@ -148,7 +148,7 @@ begin
          from siw_tramite a
         where sq_siw_tramite = p_tramite;
   
-      If w_sg_tramite = 'CI' Then
+      If w_sg_tramite in ('CI','PC') Then
          -- Calcula as quantidades de diárias
          SP_CalculaDiarias(p_chave,null);
          
@@ -157,7 +157,8 @@ begin
            from pd_deslocamento        a
                 inner   join co_cidade b on (a.destino = b.sq_cidade)
                   inner join co_pais   c on (b.sq_pais = c.sq_pais and c.padrao = 'N')
-          where a.sq_siw_solicitacao = p_chave;
+          where a.sq_siw_solicitacao = p_chave
+            and a.tipo               = case w_sg_tramite when 'CI' then 'S' else 'P' end;
         
          -- Se viagem para exterior, vai para a cotação de preços; senão vai para aprovação
          If w_existe > 0 

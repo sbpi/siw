@@ -2,6 +2,7 @@ create or replace procedure SP_PutPD_Reembolso
    (p_cliente             in number,
     p_chave               in number,
     p_reembolso           in varchar2  default null,
+    p_deposito            in varchar2  default null,
     p_valor               in number    default null,
     p_observacao          in varchar2  default null,
     p_financeiro          in number    default null,
@@ -37,7 +38,8 @@ begin
       set reembolso              = coalesce(p_reembolso,'N'),
           reembolso_valor        = coalesce(p_valor,0),
           reembolso_observacao   = p_observacao,
-          sq_pdvinculo_reembolso = coalesce(w_financeiro,sq_pdvinculo_reembolso)
+          sq_pdvinculo_reembolso = coalesce(w_financeiro,sq_pdvinculo_reembolso),
+          deposito_identificado  = p_deposito
     where sq_siw_solicitacao = p_chave;
 end SP_PutPD_Reembolso;
 /
