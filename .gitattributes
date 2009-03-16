@@ -548,6 +548,7 @@ Fontes_PHP_SIW/cl_pitce/projeto.php -text
 Fontes_PHP_SIW/cl_pitce/projetoativ.php -text
 Fontes_PHP_SIW/cl_pitce/relatorios.php -text
 Fontes_PHP_SIW/cl_pitce/resultados.gif -text
+Fontes_PHP_SIW/cl_pitce/resultados.php -text
 Fontes_PHP_SIW/cl_pitce/tabelas.php -text
 Fontes_PHP_SIW/cl_pitce/trabalho.php -text
 Fontes_PHP_SIW/cl_pitce/visualprojeto.php -text
@@ -948,6 +949,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicRecursos.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRestricao.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicResultado.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRubrica.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicSR.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicViagem.php -text

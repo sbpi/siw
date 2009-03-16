@@ -337,6 +337,7 @@ function Inicial() {
     $w_embed = 'HTML';
     cabecalho();
     ShowHTML('<HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');    
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de Viagens</TITLE>');
     ScriptOpen('Javascript');
@@ -507,6 +508,7 @@ function Inicial() {
                 ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PrestarContas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação de contas&SG=PDCONTAS').'\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados da prestação de contas.">Prestar contas</A>&nbsp');
               } elseif (f($row,'sg_tramite')=='VP') {
                 ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Bilhetes&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Bilhetes&SG=INFBIL').'\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">Bilhetes</A>&nbsp');
+                ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Diarias_Solic&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados financeiros da viagem.">Diárias</A>&nbsp');
                 ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Reembolso&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Reembolso&SG=PDREEMB').'\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os dados do reembolso, se necessário.">Reembolso</A>&nbsp');
               } elseif (f($row,'sg_tramite')=='PD') {
                 //ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'PagDiaria&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Diarias&SG=PDDIARIA').'\',\'Diarias\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar o pagamento de diárias.">Informar</A>&nbsp');
@@ -3943,11 +3945,11 @@ function Diarias_Solic() {
   $w_chave  = $_REQUEST['w_chave'];
   $w_menu   = $_REQUEST['w_menu'];
 
-  if ($P1==1) $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
-  
   // Recupera os dados da solicitação
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
 
+  if (f($RS_Solic,'sg_tramite')!='VP') $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
+  
   // Verifica se a misão permite registro de diárias, hospedagens ou locações de veículos
   if (nvl(f($RS_Solic,'diaria'),'')=='' && f($RS_Solic,'hospedagem')=='N' && f($RS_Solic,'veiculo')=='N') {
     Cabecalho();
@@ -4067,7 +4069,8 @@ function Diarias_Solic() {
     $w_hos_observ           = $w_trechos[45];
     $w_vei_ret              = $w_trechos[46];
     $w_vei_dev              = $w_trechos[47];
-
+    $w_destino_nacional     = $w_trechos[48];
+    
     $w_max_diaria           = floor((toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400);
     $w_max_hosp             = ceil((toDate(formataDataEdicao($w_hos_out))-toDate(formataDataEdicao($w_hos_in)))/86400);
     $w_max_veiculo          = ceil((toDate(formataDataEdicao($w_vei_dev))-toDate(formataDataEdicao($w_vei_ret)))/86400);
@@ -4332,6 +4335,7 @@ function Diarias_Solic() {
         $w_trechos[$i][45] = f($row,'hospedagem_observacao');
         $w_trechos[$i][46] = f($row,'veiculo_retirada');
         $w_trechos[$i][47] = f($row,'veiculo_devolucao');
+        $w_trechos[$i][48] = f($row,'destino_nacional');
         // Cria array para guardar o valor total por moeda
         if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
         if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -4508,35 +4512,37 @@ function Diarias_Solic() {
     }
     ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
     ShowHTML('<INPUT type="hidden" name="w_hospedagem" value="'.$w_hospedagem.'">');
-    ShowHTML('          <tr valign="top">');
-    ShowHTML('            <td><b>Hospedagem:</b></td>');
-    if ($w_hospedagem=='S') {
-      ShowHTML('            <td>Check in:<br><b>'.formataDataEdicao($w_hos_in).'</td>');
-      ShowHTML('            <td>Check out:<br><b>'.formataDataEdicao($w_hos_out).'</td>');
-      If (nvl($w_hos_observ,'')!='') ShowHTML('          <tr><td><td colspan="3">Observações:<br><b>'.$w_hos_observ.'</td>');
-      ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
-      ShowHTML('          <tr valign="top"><td>');
-      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria_hospedagem.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
-      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_hospedagem_qtd" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hospedagem_qtd.'" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
-      ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_hospedagem_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_hospedagem_valor.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
-      ShowHTML('<INPUT type="hidden" name="w_hos_in" value="'.formataDataEdicao($w_hos_in).'">');
-      ShowHTML('<INPUT type="hidden" name="w_hos_out" value="'.formataDataEdicao($w_hos_out).'">');
-      ShowHTML('<INPUT type="hidden" name="w_hos_observ" value="'.$w_hos_observ.'">');
-      if (count($RS_Fin_Hsp)>1) {
-        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
-        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
-        ShowHTML('          <tr><td>');
-        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_hsp,f($RS_Solic,'sq_solic_pai'),'D','w_rub_hsp','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
-        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
-      } elseif (count($RS_Fin_Hsp)==1) {
-        foreach($RS_Fin_Hsp as $row) { $RS_Fin_Hsp = $row; break; }
-        ShowHTML('<INPUT type="hidden" name="w_fin_hsp" value="'.f($RS_Fin_Hsp,'chave').'">');
-      }
-    } else {
-      ShowHTML('            <td colspan="4"><b>Beneficiário indicou que não deseja hospedagem na localidade. Justificativa: <b>'.$w_hos_observ.'</b></td></td></tr>');
+    if ($w_destino_nacional=='S') {
+	    ShowHTML('          <tr valign="top">');
+	    ShowHTML('            <td><b>Hospedagem:</b></td>');
+	    if ($w_hospedagem=='S' && $w_destino_nacional=='S') {
+	      ShowHTML('            <td>Check in:<br><b>'.formataDataEdicao($w_hos_in).'</td>');
+	      ShowHTML('            <td>Check out:<br><b>'.formataDataEdicao($w_hos_out).'</td>');
+	      If (nvl($w_hos_observ,'')!='') ShowHTML('          <tr><td><td colspan="3">Observações:<br><b>'.$w_hos_observ.'</td>');
+	      ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
+	      ShowHTML('          <tr valign="top"><td>');
+	      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria_hospedagem.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
+	      ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_hospedagem_qtd" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hospedagem_qtd.'" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
+	      ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? '' : 'READONLY').' name="w_hospedagem_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_hospedagem_valor.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
+	      ShowHTML('<INPUT type="hidden" name="w_hos_in" value="'.formataDataEdicao($w_hos_in).'">');
+	      ShowHTML('<INPUT type="hidden" name="w_hos_out" value="'.formataDataEdicao($w_hos_out).'">');
+	      ShowHTML('<INPUT type="hidden" name="w_hos_observ" value="'.$w_hos_observ.'">');
+	      if (count($RS_Fin_Hsp)>1) {
+	        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
+	        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+	        ShowHTML('          <tr><td>');
+	        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_hsp,f($RS_Solic,'sq_solic_pai'),'D','w_rub_hsp','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
+	        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
+	        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+	      } elseif (count($RS_Fin_Hsp)==1) {
+	        foreach($RS_Fin_Hsp as $row) { $RS_Fin_Hsp = $row; break; }
+	        ShowHTML('<INPUT type="hidden" name="w_fin_hsp" value="'.f($RS_Fin_Hsp,'chave').'">');
+	      }
+	    } else {
+	      ShowHTML('            <td colspan="4"><b>Beneficiário indicou que não deseja hospedagem na localidade. Justificativa: <b>'.$w_hos_observ.'</b></td></td></tr>');
+	    }
+	    ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
     }
-    ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
     ShowHTML('<INPUT type="hidden" name="w_veiculo" value="'.$w_veiculo.'">');
     ShowHTML('          <tr valign="top">');
     ShowHTML('            <td><b>Veículo:</b></td>');
@@ -5802,6 +5808,8 @@ function PrestarContas() {
     $w_reembolso        = $_REQUEST['w_reembolso'];
     $w_valor            = $_REQUEST['w_valor'];
     $w_observacao       = $_REQUEST['w_observacao'];
+    $w_relatorio        = $_REQUEST['w_relatorio'];
+    $w_deposito         = $_REQUEST['w_deposito'];
   } else {
     $w_cumprimento      = f($RS,'cumprimento');
     $w_nota_conclusao   = f($RS,'nota_conclusao');
@@ -5809,6 +5817,8 @@ function PrestarContas() {
     $w_reembolso        = f($RS,'reembolso');
     $w_valor            = formatNumber(f($RS,'reembolso_valor'));
     $w_observacao       = f($RS,'reembolso_observacao');
+    $w_relatorio        = f($RS,'relatorio');
+    $w_deposito         = f($RS,'deposito_identificado');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -5824,11 +5834,19 @@ function PrestarContas() {
     Validate('w_nota_conclusao','Motivo','','1',1,2000,'1','1');
     //if ($w_cumprimento=='P') Validate('["w_tipo[]"]','Utilização','SELECT','1',1,1,'1','1');
   }
-  if ($w_reembolso=='S' && $w_cumprimento!='C') {
-    Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
-    CompValor('w_valor','Valor do reembolso','>','0,00','zero');
-    Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
-  }
+  if ($w_cumprimento!='C') Validate('w_relatorio','Relatório de viagem','','1',1,4000,'1','1');
+  if ($w_cumprimento!='C') {
+    if ($w_reembolso=='C') {
+	    Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
+	    Validate('w_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
+	    CompValor('w_valor','Valor do ressarcimento','>','0,00','zero');
+	    Validate('w_observacao','Observação sobre o ressarcimento','','',1,2000,'1','1');
+	  } elseif ($w_reembolso=='S') {
+	    Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
+	    CompValor('w_valor','Valor do reembolso','>','0,00','zero');
+	    Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
+	  }
+	}
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -5883,7 +5901,9 @@ function PrestarContas() {
     }
     
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('<tr><td><br><b>Relatório de viagem (o tamanho máximo aceito para o arquivo é de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('<tr><td><br><b>Relatório de viagem:<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('      <tr valign="top"><td><textarea '.$w_Disabled.' name="w_relatorio" class="STI" ROWS=5 cols=75>'.$w_relatorio.'</TEXTAREA></td>');
+    ShowHTML('<tr><td><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('<tr><td><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
     if (nvl($w_atual,'')!='') {
@@ -5891,9 +5911,16 @@ function PrestarContas() {
       ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
     }
 
-    ShowHTML('      <tr valign="top">');
-    MontaRadioNS('<b>Há reembolso ao beneficiário?</b>',$w_reembolso,'w_reembolso',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"');
-    if ($w_reembolso=='S') {
+    ShowHTML('    <tr><td colspan="2"><b>Há reembolso ou ressarcimento?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Reembolso ao beneficiário');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="C" '.(($w_reembolso=='C') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Ressarcimento');
+    if ($w_reembolso=='C') {
+      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
+      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    } elseif ($w_reembolso=='S') {
       ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
       ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -6141,6 +6168,7 @@ function Reembolso() {
     $w_financeiro       = $_REQUEST['w_financeiro'];
     $w_rubrica          = $_REQUEST['w_rubrica'];
     $w_lancamento       = $_REQUEST['w_lancamento'];
+    $w_deposito         = $_REQUEST['w_deposito'];
   } else {
     $w_reembolso        = f($RS,'reembolso');
     $w_valor            = formatNumber(f($RS,'reembolso_valor'));
@@ -6148,6 +6176,7 @@ function Reembolso() {
     $w_financeiro       = f($RS,'sq_pdvinculo_reembolso');
     $w_rubrica          = f($RS,'sq_rubrica_reemb');
     $w_lancamento       = f($RS,'sq_lancamento_reemb');
+    $w_deposito         = f($RS,'deposito_identificado');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -6158,7 +6187,12 @@ function Reembolso() {
   ScriptOpen('JavaScript');
   FormataValor();
   ValidateOpen('Validacao');
-  if ($w_reembolso=='S') {
+  if ($w_reembolso=='C') {
+    Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
+    Validate('w_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
+    CompValor('w_valor','Valor do ressarcimento','>','0,00','zero');
+    Validate('w_observacao','Observação sobre o ressarcimento','','',1,2000,'1','1');
+  } elseif ($w_reembolso=='S') {
     Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
     CompValor('w_valor','Valor do reembolso','>','0,00','zero');
     Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
@@ -6209,9 +6243,16 @@ function Reembolso() {
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
-  ShowHTML('    <tr valign="top">');
-  MontaRadioNS('<b>Há reembolso ao beneficiário?</b>',$w_reembolso,'w_reembolso',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"');
-  if ($w_reembolso=='S') {
+  ShowHTML('    <tr><td colspan="2"><b>Há reembolso ou ressarcimento?</b><br>');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Reembolso ao beneficiário');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="C" '.(($w_reembolso=='C') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Ressarcimento');
+  if ($w_reembolso=='C') {
+    ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+    ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
+    ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+  } elseif ($w_reembolso=='S') {
     ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
     ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
     ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -6616,13 +6657,15 @@ function Grava() {
           
           // Grava dados da missão
           dml_putPD_Contas::getInstanceOf($dbms,
-              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_cumprimento'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_atual'],
-              $_REQUEST['w_exclui_arquivo'],'Relatório de viagem','Arquivo contendo o relatório de viagem ('.$_REQUEST['w_chave'].')',
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_cumprimento'],$_REQUEST['w_nota_conclusao'],$_REQUEST['w_relatorio'],
+              $_REQUEST['w_atual'],$_REQUEST['w_exclui_arquivo'],'Relatório de viagem',
+              'Anexo do relatório de viagem ('.$_REQUEST['w_chave'].')',
               $w_file,$w_tamanho,$w_tipo,$w_nome);
           
           // Grava dados do reembolso
           dml_putPD_Reembolso::getInstanceOf($dbms,
-              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],
+              $_REQUEST['w_valor'],$_REQUEST['w_observacao'],
               $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento']);
           
           /*
@@ -6732,7 +6775,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Grava dados do reembolso
         dml_putPD_Reembolso::getInstanceOf($dbms,
-            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
+            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
             $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento']);
 
         ScriptOpen('JavaScript');

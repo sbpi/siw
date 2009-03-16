@@ -189,7 +189,7 @@ function Mesa() {
       }
     }
     ShowHTML('<div id="menu_superior">');
-    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial"><div id="resultados"></div></a>');
+    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Resultados&SG='.$SG.'"><div id="resultados"></div></a>');
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&O=P&TP='.$TP.' - Calendário&SG='.$SG.'"><div id="calendario"></div></a>');
     ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'governanca.pdf',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
     ShowHTML('</div>');
@@ -349,6 +349,123 @@ function Calendario() {
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('<tr><td colspan=2><hr>');
+  if($O == 'L'){ 
+  ShowHTML(' <fieldset><table width="100%">');
+  ShowHTML('   <tr>');
+  ShowHTML('     <th align="left" colspan="3" scope="col"><input type="checkbox" checked name="w_agenda" value="0" accesskey="a" tabindex="0" id="w_agenda" />');
+  ShowHTML('     <label for="checkbox">Agenda de A&ccedil;&atilde;o </label>');
+  ShowHTML('     <label>');
+  ShowHTML('     <input name="w_evento" type="checkbox" checked id="w_evento" accesskey="E" tabindex="1" value="1" />');
+  ShowHTML('     Evento ');
+  ShowHTML('     <input name="w_reuniao" type="checkbox" checked id="w_reuniao" accesskey="R" tabindex="2" value="2" />');
+  ShowHTML('     Reunião PDP</label></th>');
+  ShowHTML('   </tr>');
+  ShowHTML('   <tr>');
+  ShowHTML('     <td>&nbsp;</td>');
+  ShowHTML('     <td>&nbsp;</td>');
+  ShowHTML('     <td>&nbsp;</td>');
+  ShowHTML('   </tr>');
+  ShowHTML('   <tr>');
+  ShowHTML('     <td colspan="3">');
+  ShowHTML('       <input name="w_busca" type="submit" id="w_busca" tabindex="6" value="BUSCAR" />');
+  ShowHTML(' 	  <spacer>&nbsp;&nbsp;</spacer>');
+  ShowHTML('     <input name="w_inserir" type="submit" id="w_inserir" accesskey="I" tabindex="7" value="INSERIR" />    </td>');
+  ShowHTML('   </tr>');
+  ShowHTML(' </table></fieldset>');
+  } else if($O != 'I'){
+  ?>
+	<fieldset>
+	<table width="50%">
+	  <tr>
+		<th align="left"colspan="6" scope="col"><input name="w_enviar" type="submit" id="w_enviar" accesskey="S" tabindex="0" value="ENVIAR" /></th>
+	  </tr>
+	  <tr>
+		<td colspan="6"><p>
+			<label>
+			<input type="radio" name="w_tipo" value="0" />
+			Reuni&atilde;o PDP</label>
+			<spacer>&nbsp;&nbsp;</spacer>
+			<label>
+			<input type="radio" name="w_tipo" value="1" />
+			Evento</label>
+		  </p></td>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<th colspan="2" align="left" nowrap="nowrap"><label> Agenda de A&ccedil;&atilde;o </label></th>
+		<td colspan="4">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<th colspan="2" align="left"  nowrap="nowrap"><label> Org&atilde;o Respons&aacute;vel </label></th>
+		<td colspan="4">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<th colspan="2" align="left"  nowrap="nowrap"><label>Respons&aacute;vel </label></th>
+		<td colspan="4">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<th width="15%" align="left" nowrap="nowrap" scope="col"> <label>Para </label></th>
+		<th colspan="5" align="left" nowrap="nowrap" scope="col"><input name="w_evento" type="checkbox" id="w_evento" accesskey="E" tabindex="1" value="1" />
+		  Secretaria Executiva
+		  <input name="w_reuniao" type="checkbox" id="w_reuniao" accesskey="R" tabindex="2" value="2" checked />
+		  Coordena&ccedil;&atilde;o
+		  <input name="w_reuniao2" type="checkbox" id="w_reuniao2" accesskey="R" tabindex="2" value="2" />
+		  Comit&ecirc; Executivo
+		  <label></label></th>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<th colspan="2" align="left"  nowrap="nowrap">Assunto</th>
+		<td colspan="4"><input name="textfield" type="text" size="50" maxlength="50" /></td>
+	  </tr>
+	  <tr>
+		<th colspan="2" align="left"  nowrap="nowrap">Local</th>
+		<td><input name="textfield2" type="text" size="50" maxlength="50" /></td>
+		<th align="left"  width="7%" nowrap="nowrap">Arquivo</th>
+		<td width="26%"><input name="w_arquivo" type="file" id="w_arquivo" size="20" /></td>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td colspan="2">In&iacute;cio</td>
+		<td colspan="4"><input name="w_inicio" type="text" id="w_inicio" size="15" />
+		  <spacer>&nbsp;&nbsp;</spacer>
+		  <input name="textfield3" type="text" size="10" /></td>
+	  </tr>
+	  <tr>
+		<td colspan="2">T&eacute;rmino</td>
+		<td colspan="4"><input name="w_termino" type="text" id="w_termino" size="15" />
+		  <spacer>&nbsp;&nbsp;</spacer>
+		  <input name="textfield32" type="text" size="10" /></td>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td colspan="6"><textarea name="w_mensagem" cols="80" rows="10" id="w_mensagem"></textarea></td>
+	  </tr>
+	  <tr>
+		<td colspan="6">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td align="right" colspan="6"><input name="w_reenviar" type="submit" id="w_reenviar" tabindex="6" value="RE-ENVIAR" />
+		  <spacer>&nbsp;&nbsp;</spacer>
+		  <input name="w_cancelar" type="reset" id="w_cancelar" accesskey="I" tabindex="7" value="CANCELAR" />
+		</td>
+	  </tr>
+	</table>
+	</fieldset>
+<?php
+  }
+  
   // Exibe o calendário da organização
   include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
   for ($i=$w_ano1;$i<=$w_ano3;$i++) {

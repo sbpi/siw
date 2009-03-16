@@ -1928,11 +1928,8 @@ function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
   extract($GLOBALS);
   ShowHTML('          <td'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
-  if ($chave=='S') {
-     ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" checked '.$atributo.'> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.$atributo.'> Não');
-  } else {
-     ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.$atributo.'> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" checked '.$atributo.'> Não');
-  }
+  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave=='S') ? 'checked' : '').' '.$atributo.'> Sim');
+  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave!='S') ? 'checked' : '').' '.$atributo.'> Não');
 }
 
 // =========================================================================
@@ -1942,11 +1939,8 @@ function MontaRadioSN($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
   extract($GLOBALS);
   ShowHTML('          <td'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
-  if ($chave=='N') {
-     ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.$atributo.'> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" checked '.$atributo.'> Não');
-  } else {
-     ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" checked '.$atributo.'> Sim <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.$atributo.'> Não');
-  }
+  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave!='N') ? 'checked' : '').' '.$atributo.'> Sim');
+  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave=='N') ? 'checked' : '').' '.$atributo.'> Não');
 }
 
 // =========================================================================
