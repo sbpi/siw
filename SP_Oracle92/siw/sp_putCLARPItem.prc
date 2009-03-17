@@ -1,19 +1,20 @@
 create or replace procedure SP_PutCLARPItem
-   (p_operacao                 in  varchar2,
-    p_cliente                  in  number,
-    p_usuario                  in number    default null,
-    p_solic                    in  number,
-    p_item                     in  number   default null,
-    p_ordem                    in  varchar2 default null,
-    p_codigo                   in  varchar2 default null,
-    p_fabricante               in  varchar2 default null,
-    p_marca_modelo             in  varchar2 default null,
-    p_embalagem                in  varchar2 default null,
-    p_fator                    in  number   default null,
-    p_quantidade               in  number   default null,
-    p_valor                    in  number   default null,
-    p_cancelado                in  varchar2 default null,
-    p_motivo                   in  varchar2 default null
+   (p_operacao                 in varchar2,
+    p_cliente                  in number,
+    p_usuario                  in number   default null,
+    p_solic                    in number,
+    p_item                     in number   default null,
+    p_ordem                    in varchar2 default null,
+    p_codigo                   in varchar2 default null,
+    p_fabricante               in varchar2 default null,
+    p_marca_modelo             in varchar2 default null,
+    p_embalagem                in varchar2 default null,
+    p_fator                    in number   default null,
+    p_quantidade               in number   default null,
+    p_valor                    in number   default null,
+    p_cancelado                in varchar2 default null,
+    p_motivo                   in varchar2 default null,
+    p_origem                   in number   default null
    ) is
    w_item_solic    number(18)  := p_item;
    w_valor         number(18,4);
@@ -55,13 +56,15 @@ begin
       -- Insere registro em 
       insert into cl_solicitacao_item
         (sq_solicitacao_item, sq_siw_solicitacao, ordem,       sq_material,           quantidade,   cancelado,   motivo_cancelamento,
-         valor_unit_est,      preco_menor,        preco_maior, preco_medio,           quantidade_autorizada,     dias_validade_proposta, 
-         sq_unidade_medida
+         valor_unit_est,      sq_unidade_medida,  quantidade_autorizada,              dias_validade_proposta,
+         preco_menor,                             preco_maior,                        preco_medio
         )
       (select 
          w_item_solic,        p_solic,            p_ordem,     w_material,            p_quantidade, p_cancelado, p_motivo,
-         p_valor,             p_valor,            p_valor,     p_valor,               p_quantidade,              (w_acordo.fim - w_acordo.inicio),
-         a.sq_unidade_medida
+         p_valor,             a.sq_unidade_medida,p_quantidade,                       (w_acordo.fim - w_acordo.inicio),
+         coalesce(a.pesquisa_preco_menor,p_valor),
+         coalesce(a.pesquisa_preco_maior,p_valor),
+         coalesce(a.pesquisa_preco_medio,p_valor)
        from cl_material a
        where sq_material = w_material
       );
@@ -77,6 +80,10 @@ begin
          p_marca_modelo,             p_embalagem,            (w_acordo.fim - w_acordo.inicio),  'PF',            p_fator
         );
 
+      If p_origem is not null Then
+         -- Se o item foi herdado, grava o vínculo
+         insert into cl_solicitacao_item_vinc (item_licitacao, item_pedido) values (p_origem, w_item_solic);
+      End If;
    Elsif p_operacao = 'A' Then
       
       -- Se for alteração de item na fase de execução, registra o log

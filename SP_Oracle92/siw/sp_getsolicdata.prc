@@ -287,7 +287,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.protocolo_siw,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'

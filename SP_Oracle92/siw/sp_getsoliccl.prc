@@ -264,9 +264,11 @@ begin
                       inner join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
                       left  join co_pessoa_fisica         e1 on (e.sq_pessoa           = e1.sq_pessoa)
                       left  join co_pessoa_juridica       e2 on (e.sq_pessoa           = e2.sq_pessoa)
-                  left      join siw_solicitacao_item_cl  f  on (c.sq_solicitacao_item = f.sq_solicitacao_item)
+                  left      join cl_solicitacao_item_vinc f  on (c.sq_solicitacao_item = f.item_licitacao)
+                    left    join cl_solicitacao_item      g  on (f.item_pedido         = g.sq_solicitacao_item)
+                      left  join ac_acordo                h  on (g.sq_siw_solicitacao  = h.sq_siw_solicitacao)
           where a1.sq_menu           = p_menu
-            and f.sq_siw_solicitacao is null
+            and h.sq_siw_solicitacao is null
          order by b.numero_certame, e.nome, lpad(c.ordem,4);
    Else -- Trata a vinculação entre serviços
       -- Recupera as solicitações que o usuário pode ver

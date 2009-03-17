@@ -50,7 +50,7 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
 
 begin
   -- Verifica se a solicitacao existe
-  select count(sq_siw_solicitacao) into w_existe from pd_diaria where sq_siw_solicitacao = coalesce(p_chave,0);
+  select count(a.sq_siw_solicitacao) into w_existe from pd_diaria a join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao) where b.cumprimento in ('I','P') and a.sq_siw_solicitacao = coalesce(p_chave,0);
   If w_existe = 0 and coalesce(p_todos,'nulo') <> 'TODOS' Then
      return;
   Elsif coalesce(p_todos,'nulo') = 'TODOS' Then
@@ -149,7 +149,7 @@ begin
   end loop;
   
   for j in diarias.FIRST..diarias.LAST loop
-     update pd_diaria a set a.quantidade = diarias(j) where sq_diaria = j;
+     update pd_diaria a set a.quantidade = coalesce(diarias(j),0) where sq_diaria = j;
   end loop;
 end sp_calculaDiarias;
 /

@@ -24,6 +24,7 @@ create or replace procedure SP_PutViagemEnvio
    w_ee            number(18);
    w_salto         number(4);
    w_reembolso     pd_missao.reembolso%type;
+   w_cumprimento   pd_missao.cumprimento%type;
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
@@ -152,18 +153,22 @@ begin
          -- Calcula as quantidades de diárias
          SP_CalculaDiarias(p_chave,null);
          
-         -- Se cadastramento inicial
-         select count(*) into w_existe
-           from pd_deslocamento        a
-                inner   join co_cidade b on (a.destino = b.sq_cidade)
-                  inner join co_pais   c on (b.sq_pais = c.sq_pais and c.padrao = 'N')
-          where a.sq_siw_solicitacao = p_chave
-            and a.tipo               = case w_sg_tramite when 'CI' then 'S' else 'P' end;
-        
-         -- Se viagem para exterior, vai para a cotação de preços; senão vai para aprovação
-         If w_existe > 0 
-            Then w_salto := 1;
-            Else w_salto := 2;
+         If w_sg_tramite = 'CI' Then
+            -- Se cadastramento inicial
+            select count(*) into w_existe
+              from pd_deslocamento        a
+                   inner   join co_cidade b on (a.destino = b.sq_cidade)
+                     inner join co_pais   c on (b.sq_pais = c.sq_pais and c.padrao = 'N')
+             where a.sq_siw_solicitacao = p_chave
+               and a.tipo               = case w_sg_tramite when 'CI' then 'S' else 'P' end;
+           
+            -- Se viagem para exterior, vai para a cotação de preços; senão vai para aprovação
+            If w_existe > 0 
+               Then w_salto := 1;
+               Else w_salto := 2;
+            End If;
+         Else
+            w_salto := 1;
          End If;
       Elsif w_sg_tramite = 'EA' Then
          -- ABDI: Se análise pela DIREX, decide o salto se o usuário for da presidência ou do gabinete

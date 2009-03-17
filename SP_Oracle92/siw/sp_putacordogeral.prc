@@ -3,45 +3,46 @@ create or replace procedure SP_PutAcordoGeral
     p_cliente             in  number   default null,
     p_chave               in  number   default null,
     p_copia               in  number   default null,
-    p_menu                in number,
-    p_unid_resp           in number    default null,
-    p_solicitante         in number    default null,
-    p_cadastrador         in number    default null,
-    p_sqcc                in number    default null,
-    p_descricao           in varchar2  default null,
-    p_justificativa       in varchar2  default null,
-    p_inicio              in date      default null,
-    p_fim                 in date      default null,
-    p_valor               in number    default null,
-    p_data_hora           in varchar2  default null,
-    p_aviso               in varchar2  default null,
-    p_dias                in number    default null,
-    p_cidade              in number    default null,
-    p_projeto             in number    default null,
-    p_sq_tipo_acordo      in number    default null,
-    p_objeto              in varchar2  default null,
-    p_sq_tipo_pessoa      in number    default null,
-    p_sq_forma_pagamento  in number    default null,
-    p_forma_atual         in number    default null,
-    p_inicio_atual        in date      default null,
-    p_etapa               in number    default null,    
-    p_codigo              in varchar2  default null,
-    p_titulo              in varchar2  default null,
-    p_numero_empenho      in varchar2  default null,
-    p_numero_processo     in varchar2  default null,
-    p_assinatura          in date      default null,
-    p_publicacao          in date      default null,
+    p_herda               in  varchar2 default null,
+    p_menu                in  number,
+    p_unid_resp           in  number    default null,
+    p_solicitante         in  number    default null,
+    p_cadastrador         in  number    default null,
+    p_sqcc                in  number    default null,
+    p_descricao           in  varchar2  default null,
+    p_justificativa       in  varchar2  default null,
+    p_inicio              in  date      default null,
+    p_fim                 in  date      default null,
+    p_valor               in  number    default null,
+    p_data_hora           in  varchar2  default null,
+    p_aviso               in  varchar2  default null,
+    p_dias                in  number    default null,
+    p_cidade              in  number    default null,
+    p_projeto             in  number    default null,
+    p_sq_tipo_acordo      in  number    default null,
+    p_objeto              in  varchar2  default null,
+    p_sq_tipo_pessoa      in  number    default null,
+    p_sq_forma_pagamento  in  number    default null,
+    p_forma_atual         in  number    default null,
+    p_inicio_atual        in  date      default null,
+    p_etapa               in  number    default null,    
+    p_codigo              in  varchar2  default null,
+    p_titulo              in  varchar2  default null,
+    p_numero_empenho      in  varchar2  default null,
+    p_numero_processo     in  varchar2  default null,
+    p_assinatura          in  date      default null,
+    p_publicacao          in  date      default null,
     p_chave_nova          out number,
     p_codigo_interno      in out varchar2
    ) is
    w_ano        number(4);
+   w_cont       number(18) := 0;
    w_sequencial number(18) := 0;
    w_existe     number(4);
    w_arq        varchar2(4000) := ', ';
    w_chave      number(18) := Nvl(p_chave,0);
    w_log_sol    number(18);
    w_log_esp    number(18);
-   w_cont       number(4);
    w_reg        ac_parametro%rowtype;
    
    w_meses_vigencia_renovacao  number(4);
@@ -55,6 +56,9 @@ create or replace procedure SP_PutAcordoGeral
    w_sigla                     varchar2(20);
    w_vincula_projeto           varchar2(1) := 'N';
    w_outra_parte               number(18);
+   w_compra                    number(18);
+   w_protocolo_siw             number(18);
+   w_protocolo_numero          varchar2(50);
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
@@ -65,7 +69,46 @@ create or replace procedure SP_PutAcordoGeral
    cursor c_outra_parte is
       select distinct outra_parte, tipo from ac_acordo_outra_parte where sq_siw_solicitacao = p_copia;
    
+   cursor c_compra (l_solicitacao in number, l_fornecedor in number) is
+      select a.sq_siw_solicitacao, a.solicitante, a.cadastrador, a.executor, a.descricao, a.justificativa, a.inicio, a.fim, a.valor, 
+             a.sq_cc, a.palavra_chave, a.sq_cidade_origem, a.ano, a.observacao, a.codigo_interno, a.protocolo_siw,
+             b.sq_especie_documento, b.sq_especificacao_despesa, b.sq_eoindicador, b.sq_lcfonte_recurso, b.sq_lcmodalidade, b.sq_lcjulgamento, 
+             b.sq_lcsituacao, b.sq_unidade, b.numero_original, b.data_recebimento, b.processo, b.indice_base, b.tipo_reajuste, b.limite_variacao, 
+             b.data_homologacao, b.data_diario_oficial, b.pagina_diario_oficial, b.financeiro_unico, b.decisao_judicial, b.numero_ata, 
+             b.numero_certame, b.arp, b.prioridade, b.aviso_prox_conc, b.dias_aviso, b.interno, b.sq_financeiro, 
+             b.nota_conclusao, b.data_abertura,
+             c.sq_solicitacao_item, c.sq_material, c.quantidade, c.valor_unit_est, c.preco_menor, c.preco_maior, c.preco_medio, c.quantidade_autorizada, 
+             c.cancelado, c.motivo_cancelamento, c.ordem, c.dias_validade_proposta, c.sq_unidade_medida, c.prazo_garantia, c.vistoria_previa, c.catalogo, 
+             c.prazo_manutencao,
+             d.valor_unidade, d.fabricante, d.marca_modelo, d.embalagem, d.fator_embalagem,
+             e.sq_pessoa, e.sq_tipo_pessoa,
+             f.codigo_interno as codigo_item
+        from siw_solicitacao                           a
+             inner       join siw_menu                 a1 on (a.sq_menu             = a1.sq_menu)
+             inner       join siw_tramite              a2 on (a.sq_siw_tramite      = a2.sq_siw_tramite)
+             inner       join cl_solicitacao           b  on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+               inner     join cl_solicitacao_item      c  on (b.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+                 inner   join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
+                                                              d.pesquisa            = 'N' and
+                                                              d.vencedor            = 'S'
+                                                             )
+                   inner join co_pessoa                e  on (d.fornecedor          = e.sq_pessoa)
+                 inner   join cl_material              f  on (c.sq_material         = f.sq_material)
+       where a.sq_siw_solicitacao = l_solicitacao
+         and d.fornecedor         = l_fornecedor
+      order by b.numero_certame, e.nome, lpad(c.ordem,4);
 begin
+   If p_operacao in ('I','A') and p_numero_processo is not null Then
+      -- Recupera a chave do protocolo
+      select sq_siw_solicitacao into w_protocolo_siw 
+        from pa_documento 
+       where p_numero_processo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2);
+       
+      -- Grava a chave do protocolo na solicitação
+      update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = p_chave;
+      update ac_acordo a       set a.protocolo     = w_protocolo_siw where sq_siw_solicitacao = p_chave;
+   End If;
+
    If p_operacao = 'I' Then -- Inclusão
       -- Recupera a próxima chave
       select sq_siw_solicitacao.nextval into w_Chave from dual;
@@ -76,13 +119,13 @@ begin
          cadastrador,        descricao,     justificativa,       inicio,
          fim,                inclusao,      ultima_alteracao,    valor,
          data_hora,          sq_unidade,    sq_cc,               sq_cidade_origem,
-         sq_solic_pai,       titulo,        codigo_interno)
+         sq_solic_pai,       titulo,        codigo_interno,      protocolo_siw)
       (select 
          w_Chave,            p_menu,        a.sq_siw_tramite,    p_solicitante,
          p_cadastrador,      p_descricao,   p_justificativa,     p_inicio,
          p_fim,              sysdate,       sysdate,             p_valor,
          p_data_hora,        p_unid_resp,   p_sqcc,              p_cidade,
-         p_projeto,          p_titulo,      p_codigo
+         p_projeto,          p_titulo,      p_codigo,            w_protocolo_siw
          from siw_tramite a
         where a.sq_menu = p_menu
           and a.sigla   = 'CI'
@@ -97,13 +140,13 @@ begin
          ( sq_siw_solicitacao,  cliente,           sq_tipo_acordo,       inicio,
            fim,                 valor_inicial,     objeto,               aviso_prox_conc,     
            dias_aviso,          sq_tipo_pessoa,    sq_forma_pagamento,   empenho,
-           processo,            vincula_projeto
+           processo,            vincula_projeto,   protocolo
          )
       (select
            w_chave,             p_cliente,         p_sq_tipo_acordo,     p_inicio,
            p_fim,               p_valor,           p_objeto,             p_aviso,
            p_dias,              p_sq_tipo_pessoa,  p_sq_forma_pagamento, p_numero_empenho,
-           p_numero_processo,   w_vincula_projeto
+           p_numero_processo,   w_vincula_projeto, w_protocolo_siw
         from dual
       );
 
@@ -237,6 +280,52 @@ begin
                End If;
             end loop;
          End If;
+      Elsif p_herda is not null Then
+         w_compra      := substr(p_herda,1,instr(p_herda,'|')-1);
+         w_outra_parte := substr(p_herda,instr(p_herda,'|')+1);
+         w_cont        := 1;
+         
+         for crec in c_compra (w_compra, w_outra_parte) loop
+            If w_cont = 1 Then
+               update ac_acordo a
+                  set a.outra_parte              = w_outra_parte,
+                      a.financeiro_unico         = crec.financeiro_unico,
+                      a.sq_especificacao_despesa = crec.sq_especificacao_despesa,
+                      a.sq_eoindicador           = crec.sq_eoindicador,
+                      a.sq_lcfonte_recurso       = crec.sq_lcfonte_recurso,
+                      a.sq_lcmodalidade          = crec.sq_lcmodalidade,
+                      a.indice_base              = crec.indice_base,
+                      a.tipo_reajuste            = crec.tipo_reajuste,
+                      a.limite_variacao          = crec.limite_variacao,
+                      a.numero_certame           = crec.numero_certame,
+                      a.numero_ata               = crec.numero_ata,
+                      a.data_diario_oficial      = crec.data_diario_oficial,
+                      a.pagina_diario_oficial    = crec.pagina_diario_oficial,
+                      a.sq_solic_compra          = crec.sq_siw_solicitacao
+                where a.sq_siw_solicitacao = w_chave;
+
+               -- Indica a tabela de outras partes
+               insert into ac_acordo_outra_parte (sq_acordo_outra_parte, sq_siw_solicitacao, outra_parte, tipo)
+               values (sq_acordo_outra_parte.nextval, w_chave, w_outra_parte, 3);
+            End If;
+            sp_putclarpitem(p_operacao     => 'I',
+                            p_cliente      => p_cliente,
+                            p_usuario      => p_cadastrador,
+                            p_solic        => w_chave,
+                            p_item         => null,
+                            p_ordem        => w_cont*10,
+                            p_codigo       => crec.codigo_item,
+                            p_fabricante   => crec.fabricante,
+                            p_marca_modelo => crec.marca_modelo,
+                            p_embalagem    => crec.embalagem,
+                            p_fator        => crec.fator_embalagem,
+                            p_quantidade   => crec.quantidade,
+                            p_valor        => crec.valor_unidade,
+                            p_cancelado    => crec.cancelado,
+                            p_motivo       => crec.motivo_cancelamento,
+                            p_origem       => crec.sq_solicitacao_item);
+            w_cont := w_cont + 1;
+         end loop;
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
@@ -254,7 +343,8 @@ begin
          sq_cc            = p_sqcc,
          sq_cidade_origem = p_cidade,
          titulo           = p_titulo,
-         sq_solic_pai     = p_projeto
+         sq_solic_pai     = p_projeto,
+         protocolo_siw    = w_protocolo_siw
       where sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela de demandas
@@ -270,7 +360,8 @@ begin
           dias_aviso         = p_dias,
           sq_forma_pagamento = p_sq_forma_pagamento ,
           empenho            = p_numero_empenho,
-          processo           = p_numero_processo
+          processo           = p_numero_processo,
+          protocolo          = w_protocolo_siw
       where sq_siw_solicitacao = p_chave;
       
       If p_codigo is not null Then
