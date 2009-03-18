@@ -3781,6 +3781,7 @@ SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle92/siw/SP_GetParametro.prc -text
 SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
 SP_Oracle92/siw/SP_GetSIWCoordenada.prc -text
+SP_Oracle92/siw/SP_GetSolicResultado.prc -text
 SP_Oracle92/siw/SP_GetTipoMovimentacao.prc -text
 SP_Oracle92/siw/SP_GetTramiteResp.prc -text
 SP_Oracle92/siw/SP_GetTramiteSolic.prc -text
