@@ -28,6 +28,10 @@ $conTrBgColorLightBlue1		= '#BBBBFF';
 $conTrBgColorLightRed1		= '#FF9999';
 $conTrBgColorLightBlue2		= '#AADDFF';
 $conTrBgColorLightRed2		= '#FFCCCC';
+$conTrBgColorLightYellow1	= '#FFFFCC';
+$conTrBgColorLightYellow2	= '#FFFF99';
+$conTrBgColorLightGreen1	= '#98FB98';
+$conTrBgColorLightGreen2	= '#00FF7F';
 
 //---------------------------Definições de fontes
 $conFontSize		= '2';

@@ -1233,6 +1233,7 @@ Fontes_PHP_SIW/classes/sp/dml_putProgramaConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProgramaQualit.php -text
+Fontes_PHP_SIW/classes/sp/dml_putProjetoAnalise.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoAreas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putProjetoDescritivo.php -text
@@ -4463,7 +4464,6 @@ SP_Oracle92/siw/sp_putgrupoveiculo.prc -text
 SP_Oracle92/siw/sp_puthorizonte_pe.prc -text
 SP_Oracle92/siw/sp_putimposto.prc -text
 SP_Oracle92/siw/sp_putindice.prc -text
-SP_Oracle92/siw/sp_putinformar.prc -text
 SP_Oracle92/siw/sp_putlancamentodoc.prc -text
 SP_Oracle92/siw/sp_putlancamentoenvio.prc -text
 SP_Oracle92/siw/sp_putlancamentoitem.prc -text

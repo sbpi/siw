@@ -109,9 +109,10 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
   $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_composicao')),'---').'</td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_secretaria')),'---').'</td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_coordenador')),'---').'</td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_gestor')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Análise da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
   if(nvl($_REQUEST['p_qualit'],'')!='') {
     $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
     if(nvl($_REQUEST['p_ob'],'')!='') $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
@@ -191,7 +192,8 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'ordem','asc','titulo','asc');
     if (count($RS)>0 && $l_nome_menu['METASOLIC']!='') {
-      $l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'_M.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['METASOLIC'].'</a> ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      //$l_html .= chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html .= chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html .= chr(13).'          <tr align="center" bgColor="#f0f0f0">';
@@ -304,7 +306,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
     $RS = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null,'VISUAL');
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
     if (count($RS)>0 && $l_nome_menu['INDSOLIC']!='') { 
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['INDSOLIC'].' DO SETOR</a> ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'_I.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['INDSOLIC'].' DO SETOR</a> ('.count($RS).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html .= chr(13).'      <tr><td valign="top" colspan="2">A tabela abaixo, apresenta somente indicadores não ligados a metas.';
       $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';

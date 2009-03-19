@@ -151,10 +151,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_secretaria')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_coordenador')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_gestor')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise_abdi')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
     $l_html.=chr(13).'    <tr valign="top"><td colspan="2"><b>Estratégias:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
@@ -303,7 +303,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $RSQuery = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$l_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     $RSQuery = SortArray($RSQuery,'ordem','asc','titulo','asc');
     if (count($RSQuery)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      //$l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.$l_nome_menu['METASOLIC'].' ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'_M.pdf'),'arquivo','Clique para exibir arquivo descritivo das metas',null,'EMBED').'">'.$l_nome_menu['METASOLIC'].'</a> ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';     
       $l_html.=chr(13).'          <tr align="center" bgColor="#f0f0f0">';
@@ -414,7 +415,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $RSQuery = db_getSolicIndicador::getInstanceOf($dbms,$l_chave,null,null,null,'VISUAL');
     $RSQuery = SortArray($RSQuery,'nm_tipo_indicador','asc','nome','asc');
     if (count($RSQuery)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['INDSOLIC'].' DO SETOR</a> ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b><a target="indicador" href="'.LinkArquivo("HL",$w_cliente,str_replace(' ','_',$w_codigo.'_I.pdf'),'arquivo','Clique para exibir arquivo descritivo dos indicadores do setor',null,'EMBED').'">'.$l_nome_menu['INDSOLIC'].' DO SETOR</a> ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr align="center">';

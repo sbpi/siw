@@ -98,15 +98,16 @@ begin
             and (p_unidade     is null or (p_unidade     is not null and a.sq_unidade         = p_unidade))
             and (p_solicitante is null or (p_solicitante is not null and a.sq_pessoa          = p_solicitante))
             and (p_inicio      is null or (p_inicio      is not null and (a.inicio_previsto between p_inicio and p_fim or
-                                                                            a.fim_previsto    between p_inicio and p_fim or
-                                                                            a.inicio_real     between p_inicio and p_fim or
-                                                                            a.fim_real        between p_inicio and p_fim
-                                                                           )
+                                                                          a.fim_previsto    between p_inicio and p_fim or
+                                                                          a.inicio_real     between p_inicio and p_fim or
+                                                                          a.fim_real        between p_inicio and p_fim
+                                                                         )
                                            )
                 )
-            and (p_texto       is null or (p_texto       is not null and (acentos(a.titulo) like '%'||acentos(p_texto)||'%' or
-                                                                            acentos(a.descricao) like '%'||acentos(p_texto)||'%'
-                                                                           )
+            and (p_texto       is null or (p_texto       is not null and (acentos(a.titulo)    like '%'||acentos(p_texto)||'%' or
+                                                                          acentos(a.descricao) like '%'||acentos(p_texto)||'%' or
+                                                                          (a.perc_conclusao=100 and acentos(a.situacao_atual) like '%'||acentos(p_texto)||'%')
+                                                                         )
                                            )
                 );         
               Else

@@ -64,6 +64,13 @@
   $SG = strtoupper($_REQUEST['SG']);
   $R = $_REQUEST['R'];
   $O = strtoupper($_REQUEST['O']);
+  
+  $p_programa    = $_REQUEST['p_programa'];
+  $p_projeto     = $_REQUEST['p_projeto'];
+  $p_solicitante = strtoupper($_REQUEST['p_solicitante']);
+  $p_unidade     = strtoupper($_REQUEST['p_unidade']);
+  $p_texto       = $_REQUEST['p_texto'];
+  $p_ordena      = strtolower($_REQUEST['p_ordena']);
 
   $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
   $w_pagina = 'resultados.php?par=';
@@ -319,23 +326,35 @@
   // Exibe Resultados da PDP
   // -------------------------------------------------------------------------
   function Inicial() {
- 
-    extract($GLOBALS);
-    $p_programa = $_REQUEST['p_programa'];
-    $p_projeto = $_REQUEST['p_projeto'];
-    $p_solicitante = strtoupper($_REQUEST['p_solicitante']);
-    $p_unidade = strtoupper($_REQUEST['p_unidade']);
-   
-    print_r($_REQUEST);
-   
+  
+  extract($GLOBALS);
+  
+  $w_tipo=$_REQUEST['w_tipo'];
+  
+	if ($w_tipo=='PDF') {
+    headerpdf('Visualização de resultados',$w_pag);
+    $w_embed = 'WORD';
+	} elseif ($w_tipo=='WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de resultados',0);
+    $w_embed = 'WORD';
+	} else {
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . ';">');
+    ScriptOpen('Javascript');
+    ValidateOpen('Validacao');
+    Validate('p_texto','Texto','','',3,50,'1','1');
+    ValidateClose();
+    ScriptClose();
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="' . $conRootSIW . '">');
     BodyOpen('onLoad=this.focus();');
+    //if ($w_tipo!='WORD') CabecalhoRelatorio($w_cliente,'Visualização de '.f($RS_Menu,'nome'),4,$w_chave);
+    $w_embed="HTML";
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
     ShowHTML('<table border="0" width="97%">');
     ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>' . $w_TP . '</font></b>');
     ShowHTML('<tr><td><hr>');
@@ -358,12 +377,20 @@
     SelecaoPessoa('Respo<u>n</u>sável:', 'N', 'Selecione o responsável pelo projeto na relação.', $p_solicitante, null, 'p_solicitante', 'USUARIOS');
     ShowHTML('     </td>');
     ShowHTML('   </tr>');
+    ShowHTML(' <tr valign="top">');
+    ShowHTML('  <td>');
+    ShowHTML('  <td><strong>');
+    ShowHTML('    <label>Pesquisa por Texto:<br>');
+    ShowHTML('    </label>');
+    ShowHTML('    </strong>');
+    ShowHTML('      <input class="STI" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
+    ShowHTML('  <td>');
+    ShowHTML('  <td colspan="1" title="Selecione o respons&aacute;vel pelo projeto na rela&ccedil;&atilde;o.">&nbsp;</td>');
+    ShowHTML(' </tr>');
     ShowHTML('   <tr valign="top">');
     ShowHTML('      <td align="center" colspan="4"><hr/>');
-    ShowHTML('        <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'; javascript:document.Form.O.value="L";\'>');
+    ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
     ShowHTML('      </tr>');
-    ShowHTML('       <tr><td align="center">&nbsp;</td>');
-    ShowHTML('       </tr>');
     ShowHTML(' </table>');
     ShowHTML('</FORM>');
     // Exibe o calendário da organização
@@ -430,7 +457,6 @@
         $width = "100%";
     }
 
-    ShowHTML('      <tr><td colspan=3><p>&nbsp;</p>');
     ShowHTML('        <table width="100%" border="0" align="center" CELLSPACING=0 CELLPADDING=0 BorderColorDark=' . $conTableBorderColorDark . ' BorderColorLight=' . $conTableBorderColorLight . '><tr valign="top">');
 
     // Exibe calendário e suas ocorrências ==============
@@ -481,43 +507,61 @@
     ShowHTML('          </table>');
     // Final da exibição do calendário e suas ocorrências ==============
     ShowHTML('</table>');
-
-    $RS_Etapa = db_getSolicResultado :: getInstanceOf($dbms, null, $programa, 'LISTA', $projeto,null);
-    ShowHTML('<tr><td align="right" colspan="2"><b>' . strtoupper(f($row, 'titulo')) . 'Registros encontrados: ' . count($RS) . ' </b>');
-    ShowHTML('<tr><td align="center" colspan=2>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
-    ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-    ShowHTML('          <td width="10%"><b>Mês/Ano</td>');
-    ShowHTML('          <td width="30%"><b>Programa</td>');
-    ShowHTML('          <td width="50%"><b>Agendação de Ação</td>');
-    ShowHTML('          <td width="20%"><b>Resultado</td>');
-    ShowHTML('          <td width="10%"><b>Download</td>');
-    ShowHTML('        </tr>');
-    foreach ($RS_Etapa as $row) {
-      // Se tiver anexos, exibe
-      if (f($row, 'qt_anexo') > 0) {
-        // Exibe arquivos vinculados
-        $RS = db_getEtapaAnexo :: getInstanceOf($dbms, f($row, 'sq_projeto_etapa'), null, $w_cliente);
-        $RS = SortArray($RS, 'nome', 'asc');
-        if (count($RS) > 0) {
-
-          $w_cor = $conTrBgColor;
-          foreach ($RS as $row) {
-            $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
-            ShowHTML('    <tr bgColor="' . $w_cor . '">');
-            ShowHTML('     <td>' . LinkArquivo('HL', $w_cliente, f($row, 'chave_aux'), '_blank', 'Clique para exibir o arquivo em outra janela.', f($row, 'nome'), null) . '</td>');
-            ShowHTML('     <td>' . Nvl(f($row, 'descricao'), '---') . '</td>');
-            ShowHTML('     <td>' . formataDataEdicao(f($row, 'inclusao')) . '</td>');
-            ShowHTML('     <td>' . f($row, 'tipo') . '</td>');
-            ShowHTML('     <td align="right">' . round(f($row, 'tamanho') / 1024, 1) . ' KB&nbsp;</td>');
+    
+  }
+    if($_REQUEST['p_pesquisa'] == 'S' && ($_REQUEST['p_programa'] > '' or $_REQUEST['p_projeto'] > '' or $_REQUEST['p_unidade'] > '' or $_REQUEST['p_solicitante'] > '' or $_REQUEST['p_texto'] > '')){
+      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),'LISTA');
+	    if ($p_ordena>'') { 
+			  $lista = explode(',',str_replace(' ',',',$p_ordena));
+			  $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+			} else {
+			  $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+			}
+    ShowHTML('<table width="100%">');
+	  ShowHTML('<tr><td align="right" colspan="2"><br/><br/>');      
+    if ($w_embed!='WORD') {
+      CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
+    }
+      ShowHTML('<tr><td align="right" colspan="2"><b>Resultados: ' . count($RS_Resultado) . ' </b></td></tr>');
+      ShowHTML('<tr><td align="center" colspan=2>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+      ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
+      if($w_embed != 'WORD'){
+        ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Mês/Ano','mes_ano').'&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Programa','cd_programa').'&nbsp;</td>');
+        ShowHTML('          <td><b>&nbsp;'.linkOrdena('Agenda de Ação','cd_projeto').'&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Resultado','titulo').'&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;Ação&nbsp;</td>');
+      }else{
+        ShowHTML('          <td nowrap><b>&nbsp;Mês/Ano&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;Agenda de Ação&nbsp;</td>');
+        ShowHTML('          <td nowrap><b>&nbsp;Resultado&nbsp;</td>');
+      }      
+      ShowHTML('        </tr>');
+      $w_cor = $conTrBgColor;
+      if (count($RS_Resultado) == 0) {
+        ShowHTML('    <tr align="center"><td colspan="5">Nenhum resultado encontrado para os critérios informados.</td>');
+      } else {
+        foreach ($RS_Resultado as $row) {
+          $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+          ShowHTML('    <tr valign="top" bgColor="' . $w_cor . '">');
+          ShowHTML('      <td align="center" width="1%" nowrap>' . Date('d/m/Y', Nvl(f($row, 'mes_ano'), '---')) . '</td>');
+          ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_programa').'" nowrap>' . Nvl(f($row, 'cd_programa'), '---') . '</td>');
+          ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_projeto').'" nowrap>' . Nvl(f($row, 'cd_projeto'), '---') . '</td>');
+          ShowHTML('      <td title="'.f($row, 'descricao').'">'.f($row, 'titulo').' </td>');
+          if($w_embed != 'WORD'){
+            ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe dados do item">Exibir</A></td>');
           }
-          ShowHTML('  </table>');
-          ShowHTML('<tr><td>&nbsp;</td></tr>');
+          ShowHTML('    </tr>');
         }
+		ShowHTML('  </table>');
+		ShowHTML('<tr><td>&nbsp;</td></tr>');        
       }
     }
     ShowHTML('</center>');
-    Rodape();
+    if     ($w_tipo=='PDF')  RodapePDF();
+    else if ($w_tipo!='WORD') Rodape();
   }
 
   // =========================================================================
