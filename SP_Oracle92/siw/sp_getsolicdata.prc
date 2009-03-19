@@ -340,6 +340,7 @@ begin
                 d12.aditivo,
                 d13.aditivo aditivo_excedente,
                 d14.aditivo aditivo_prorrogacao,
+                dc.sq_siw_solicitacao as sq_compra, coalesce(dd.numero_certame,dc.codigo_interno) as cd_compra,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
@@ -400,6 +401,8 @@ begin
                                            and x.prorrogacao = 'S'
                                         group by x.sq_siw_solicitacao
                                        )                    d14 on (d.sq_siw_solicitacao       = d14.sq_siw_solicitacao)
+                     left         join siw_solicitacao      dc on (d.sq_solic_compra          = dc.sq_siw_solicitacao)
+                       left       join cl_solicitacao       dd on (dc.sq_siw_solicitacao      = dd.sq_siw_solicitacao)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

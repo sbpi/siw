@@ -45,7 +45,13 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    if ($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) { 
+    if ($w_mod_pa=='S') {
+      if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a><td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+      } else {
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
+      }
+    } elseif ($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCA' || substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) { 
       if (substr($w_sigla,0,3)=='GCA') $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').' ACT: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
       else                        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
     } else {
@@ -60,6 +66,12 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
     if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
     else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+    
+    if (nvl(f($RS,'sq_compra'),'')!='') {
+      $l_html.=chr(13).'      <tr><td valign="top"><b>Compra/licitação: </b></td>';
+      if($l_tipo!='WORD') $l_html.=chr(13).'        <td><A class="HL" HREF="mod_cl/certame.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'sq_compra').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=CLLCCAD'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="compra">'.f($RS,'cd_compra').'&nbsp;</a></td></tr>';
+      else                $l_html.=chr(13).'        <td>'.f($RS,'cd_compra').'</td></tr>';
+    }
 
     if (nvl(f($RS,'nm_etapa'),'')>'') {
       if (substr($w_sigla,0,3)=='GCB') {   
@@ -209,176 +221,182 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if($w_segmento=='Público' && substr($w_sigla,0,3)=='GCD') {
       $RS1 = db_getAcordoNota::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','desc', 'cd_aditivo','desc');
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td rowspan=2><b>Aditivo</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Número</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Outra parte</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Data</td>';
-      $l_html.=chr(13).'          <td colspan=5><b>Valores</td>';
-      $l_html.=chr(13).'          <td colspan=2><b>Saldos</td>';
-      $l_html.=chr(13).'        </tr>';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Emissão</td>';
-      $l_html.=chr(13).'          <td><b>Canc.</td>';
-      $l_html.=chr(13).'          <td><b>Total</td>';
-      $l_html.=chr(13).'          <td><b>Liquidado</td>';
-      $l_html.=chr(13).'          <td><b>Pago</td>';
-      $l_html.=chr(13).'          <td><b>A liquidar</td>';
-      $l_html.=chr(13).'          <td><b>A pagar</td>';
-      $l_html.=chr(13).'        </tr>';
-      if (count($RS)<=0) {
-        // Se não foram selecionados registros, exibe mensagem 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
-      } else {
-        // Lista os registros selecionados para listagem 
-        $w_total  = 0;
-        $w_liq    = 0;
-        $w_pago   = 0;
-        $w_aliq   = 0;
-        $w_apag   = 0;
-        $w_cancel = 0;
-        $w_nota   = 0;
-        foreach($RS1 as $row) {
-          $l_html.=chr(13).'      <tr valign="top">';
-          $l_html.=chr(13).'        <td nowrap>'.nvl(f($row,'cd_aditivo'),'---').'</td>';
-          $l_html.=chr(13).'        <td nowrap>'.f($row,'sg_tipo_documento').' '.f($row,'numero').'&nbsp;';
-          if (f($row,'abrange_inicial')=='S')   { $l_html.= '('.f($row,'sg_inicial').')';   $w_legenda_ini = ' ('.f($row,'sg_inicial').') Valor inicial'; }
-          if (f($row,'abrange_acrescimo')=='S') { $l_html.= '('.f($row,'sg_acrescimo').')'; $w_legenda_acr = ' ('.f($row,'sg_acrescimo').') Acréscimo/Supressão'; }
-          if (f($row,'abrange_reajuste')=='S')  { $l_html.= '('.f($row,'sg_reajuste').')';  $w_legenda_rea = ' ('.f($row,'sg_reajuste').') Reajuste'; }
-          $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_outra_parte'),'---').'</td>';
-          $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data'),5),'---').'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_cancelamento'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_liquidado'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_pago'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_liquidado'),0)).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_pago'),0)).'</td>';
-          $l_html.=chr(13).'      </tr>';
-          $w_total  += (nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0));
-          $w_nota   += nvl(f($row,'valor'),0);
-          $w_cancel += nvl(f($row,'vl_cancelamento'),0);
-          $w_liq    += nvl(f($row,'vl_liquidado'),0);
-          $w_pago   += nvl(f($row,'vl_pago'),0);
-          $w_aliq   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_liquidado'),0));
-          $w_apag   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_pago'),0));
-        } 
-        $l_html.=chr(13).'      <trvalign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan=4>Totais</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_nota),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_cancel),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_total),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_liq),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_pago),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_aliq),0).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_apag),0).'</td>';
-      } 
-      $l_html.=chr(13).'    </table>';
-      $w_legenda = $w_legenda_ini.$w_legenda_acr.$w_legenda_rea;
-      if (nvl($w_legenda,'')!='') $l_html.=chr(13).'      <tr><td colspan="2">Legenda: '.$w_legenda.'</td></tr>';
-      $l_html.=chr(13).'  </td>';
-      $l_html.=chr(13).'</tr>';
+      if (count($RS1)>0) {
+	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>NOTAS DE EMPENHO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+	      $l_html.=chr(13).'      <tr><td colspan="2">';
+	      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+	      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Aditivo</td>';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Número</td>';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Outra parte</td>';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Data</td>';
+	      $l_html.=chr(13).'          <td colspan=5><b>Valores</td>';
+	      $l_html.=chr(13).'          <td colspan=2><b>Saldos</td>';
+	      $l_html.=chr(13).'        </tr>';
+	      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+	      $l_html.=chr(13).'          <td><b>Emissão</td>';
+	      $l_html.=chr(13).'          <td><b>Canc.</td>';
+	      $l_html.=chr(13).'          <td><b>Total</td>';
+	      $l_html.=chr(13).'          <td><b>Liquidado</td>';
+	      $l_html.=chr(13).'          <td><b>Pago</td>';
+	      $l_html.=chr(13).'          <td><b>A liquidar</td>';
+	      $l_html.=chr(13).'          <td><b>A pagar</td>';
+	      $l_html.=chr(13).'        </tr>';
+	      if (count($RS1)<=0) {
+	        // Se não foram selecionados registros, exibe mensagem 
+	        $l_html.=chr(13).'      <tr><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+	      } else {
+	        // Lista os registros selecionados para listagem 
+	        $w_total  = 0;
+	        $w_liq    = 0;
+	        $w_pago   = 0;
+	        $w_aliq   = 0;
+	        $w_apag   = 0;
+	        $w_cancel = 0;
+	        $w_nota   = 0;
+	        foreach($RS1 as $row) {
+	          $l_html.=chr(13).'      <tr valign="top">';
+	          $l_html.=chr(13).'        <td nowrap>'.nvl(f($row,'cd_aditivo'),'---').'</td>';
+	          $l_html.=chr(13).'        <td nowrap>'.f($row,'sg_tipo_documento').' '.f($row,'numero').'&nbsp;';
+	          if (f($row,'abrange_inicial')=='S')   { $l_html.= '('.f($row,'sg_inicial').')';   $w_legenda_ini = ' ('.f($row,'sg_inicial').') Valor inicial'; }
+	          if (f($row,'abrange_acrescimo')=='S') { $l_html.= '('.f($row,'sg_acrescimo').')'; $w_legenda_acr = ' ('.f($row,'sg_acrescimo').') Acréscimo/Supressão'; }
+	          if (f($row,'abrange_reajuste')=='S')  { $l_html.= '('.f($row,'sg_reajuste').')';  $w_legenda_rea = ' ('.f($row,'sg_reajuste').') Reajuste'; }
+	          $l_html.=chr(13).'        <td>'.nvl(f($row,'nm_outra_parte'),'---').'</td>';
+	          $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'data'),5),'---').'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_cancelamento'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_liquidado'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'vl_pago'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_liquidado'),0)).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor'),0) - Nvl(f($row,'vl_cancelamento'),0) - Nvl(f($row,'vl_pago'),0)).'</td>';
+	          $l_html.=chr(13).'      </tr>';
+	          $w_total  += (nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0));
+	          $w_nota   += nvl(f($row,'valor'),0);
+	          $w_cancel += nvl(f($row,'vl_cancelamento'),0);
+	          $w_liq    += nvl(f($row,'vl_liquidado'),0);
+	          $w_pago   += nvl(f($row,'vl_pago'),0);
+	          $w_aliq   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_liquidado'),0));
+	          $w_apag   += ((nvl(f($row,'valor'),0) - nvl(f($row,'vl_cancelamento'),0)) - nvl(f($row,'vl_pago'),0));
+	        } 
+	        $l_html.=chr(13).'      <trvalign="top">';
+	        $l_html.=chr(13).'        <td align="right" colspan=4>Totais</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_nota),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_cancel),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_total),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_liq),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_pago),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_aliq),0).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.Nvl(formatNumber($w_apag),0).'</td>';
+	      } 
+	      $l_html.=chr(13).'    </table>';
+	      $w_legenda = $w_legenda_ini.$w_legenda_acr.$w_legenda_rea;
+	      if (nvl($w_legenda,'')!='') $l_html.=chr(13).'      <tr><td colspan="2">Legenda: '.$w_legenda.'</td></tr>';
+	      $l_html.=chr(13).'  </td>';
+	      $l_html.=chr(13).'</tr>';
+      }
     }
     // Aditivos
     if(substr($w_sigla,0,3)=='GCR' || substr($w_sigla,0,3)=='GCD') {
       $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td rowspan=2><b>Código</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Período</td>';
-      $l_html.=chr(13).'          <td rowspan=2><b>Objeto</td>';
-      $l_html.=chr(13).'          <td colspan=4><b>Totais do aditivo</td>';
-      $l_html.=chr(13).'          <td colspan=4><b>Parcelas do aditivo</td>';
-      $l_html.=chr(13).'        </tr>';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Inicial</td>';
-      $l_html.=chr(13).'          <td><b>Reajuste</td>';
-      $l_html.=chr(13).'          <td><b>Acr./Supr.</td>';
-      $l_html.=chr(13).'          <td><b>Total</td>';
-      $l_html.=chr(13).'          <td><b>Inicial</td>';
-      $l_html.=chr(13).'          <td><b>Reajuste</td>';
-      $l_html.=chr(13).'          <td><b>Acr./Supr.</td>';
-      $l_html.=chr(13).'          <td><b>Total</td>';
-      $l_html.=chr(13).'        </tr>';
-      if (count($RS1)==0) {
-        // Se não foram selecionados registros, exibe mensagem 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
-      } else {
-        // Lista os registros selecionados para listagem 
-        $w_tot_in = 0;
-        $w_tot_rj = 0;
-        $w_tot_ac = 0;
-        $w_tot_ad = 0;
-        foreach($RS1 as $row) {
-          $l_html.=chr(13).'      <tr valign="top" align="center">';
-          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
-          $l_html.=chr(13).'        <td>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
-          $l_html.=chr(13).'        <td align="left">'.f($row,'objeto').'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_acrescimo')).'</td>';
-          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber(f($row,'valor_aditivo')).'</b></td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_inicial')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_reajustada')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_acrescida')).'</td>';
-          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber(f($row,'parcela_aditivo')).'</b></td>';
-          $l_html.=chr(13).'      </tr>';
-          $w_tot_in += f($row,'valor_inicial');
-          $w_tot_rj += f($row,'valor_reajuste');
-          $w_tot_ac += f($row,'valor_acrescimo');
-          $w_tot_ad += f($row,'valor_aditivo');
-        } 
-        $l_html.=chr(13).'      <tr valign="top" align="center">';
-        $l_html.=chr(13).'        <td colspan=3 align="right"><b>Totais</b></td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_in).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_rj).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_ac).'</td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_ad).'</b></td>';
-        $l_html.=chr(13).'        <td colspan=4>&nbsp;</td>';
-      } 
-      $l_html.=chr(13).'      </center>';
-      $l_html.=chr(13).'    </table>';
-      $l_html.=chr(13).'  </td>';
-      $l_html.=chr(13).'</tr>';
+      if (count($RS1)>0) {
+	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+	      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+	      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+	      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Código</td>';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Período</td>';
+	      $l_html.=chr(13).'          <td rowspan=2><b>Objeto</td>';
+	      $l_html.=chr(13).'          <td colspan=4><b>Totais do aditivo</td>';
+	      $l_html.=chr(13).'          <td colspan=4><b>Parcelas do aditivo</td>';
+	      $l_html.=chr(13).'        </tr>';
+	      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+	      $l_html.=chr(13).'          <td><b>Inicial</td>';
+	      $l_html.=chr(13).'          <td><b>Reajuste</td>';
+	      $l_html.=chr(13).'          <td><b>Acr./Supr.</td>';
+	      $l_html.=chr(13).'          <td><b>Total</td>';
+	      $l_html.=chr(13).'          <td><b>Inicial</td>';
+	      $l_html.=chr(13).'          <td><b>Reajuste</td>';
+	      $l_html.=chr(13).'          <td><b>Acr./Supr.</td>';
+	      $l_html.=chr(13).'          <td><b>Total</td>';
+	      $l_html.=chr(13).'        </tr>';
+	      if (count($RS1)==0) {
+	        // Se não foram selecionados registros, exibe mensagem 
+	        $l_html.=chr(13).'      <tr><td colspan=11 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+	      } else {
+	        // Lista os registros selecionados para listagem 
+	        $w_tot_in = 0;
+	        $w_tot_rj = 0;
+	        $w_tot_ac = 0;
+	        $w_tot_ad = 0;
+	        foreach($RS1 as $row) {
+	          $l_html.=chr(13).'      <tr valign="top" align="center">';
+	          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
+	          $l_html.=chr(13).'        <td>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
+	          $l_html.=chr(13).'        <td align="left">'.f($row,'objeto').'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_acrescimo')).'</td>';
+	          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber(f($row,'valor_aditivo')).'</b></td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_inicial')).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_reajustada')).'</td>';
+	          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'parcela_acrescida')).'</td>';
+	          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber(f($row,'parcela_aditivo')).'</b></td>';
+	          $l_html.=chr(13).'      </tr>';
+	          $w_tot_in += f($row,'valor_inicial');
+	          $w_tot_rj += f($row,'valor_reajuste');
+	          $w_tot_ac += f($row,'valor_acrescimo');
+	          $w_tot_ad += f($row,'valor_aditivo');
+	        } 
+	        $l_html.=chr(13).'      <tr valign="top" align="center">';
+	        $l_html.=chr(13).'        <td colspan=3 align="right"><b>Totais</b></td>';
+	        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_in).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_rj).'</td>';
+	        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_tot_ac).'</td>';
+	        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_ad).'</b></td>';
+	        $l_html.=chr(13).'        <td colspan=4>&nbsp;</td>';
+	      } 
+	      $l_html.=chr(13).'      </center>';
+	      $l_html.=chr(13).'    </table>';
+	      $l_html.=chr(13).'  </td>';
+	      $l_html.=chr(13).'</tr>';
+      }
     } elseif(substr($w_sigla,0,3)=='GCZ') {
       $RS1 = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'codigo','desc');
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-      $l_html.=chr(13).'          <td><b>Código</td>';
-      $l_html.=chr(13).'          <td><b>Período</td>';
-      $l_html.=chr(13).'          <td><b>Objeto</td>';
-      $l_html.=chr(13).'          <td><b>Documento</td>';
-      $l_html.=chr(13).'          <td><b>Data</td>';
-      $l_html.=chr(13).'          <td><b>Observação</td>';
-      $l_html.=chr(13).'        </tr>';
-      if (count($RS1)==0) {
-        // Se não foram selecionados registros, exibe mensagem 
-        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
-      } else {
-        // Lista os registros selecionados para listagem 
-        foreach($RS1 as $row) {
-          $l_html.=chr(13).'      <tr valign="top" align="center">';
-          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
-          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
-          $l_html.=chr(13).'        <td align="left">'.f($row,'objeto').'</td>';
-          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.nvl(f($row,'documento_origem'),'---').'</td>';
-          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'documento_data'),5),'---').'</td>';
-          $l_html.=chr(13).'        <td align="left">'.nvl(f($row,'observacao'),'---').'</td>';
-          $l_html.=chr(13).'      </tr>';
-        } 
-      } 
-      $l_html.=chr(13).'    </table>';
-      $l_html.=chr(13).'  </td>';
-      $l_html.=chr(13).'</tr>';
+      if (count($RS1)>0) {
+	      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ADITIVOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+	      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+	      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+	      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+	      $l_html.=chr(13).'          <td><b>Código</td>';
+	      $l_html.=chr(13).'          <td><b>Período</td>';
+	      $l_html.=chr(13).'          <td><b>Objeto</td>';
+	      $l_html.=chr(13).'          <td><b>Documento</td>';
+	      $l_html.=chr(13).'          <td><b>Data</td>';
+	      $l_html.=chr(13).'          <td><b>Observação</td>';
+	      $l_html.=chr(13).'        </tr>';
+	      if (count($RS1)==0) {
+	        // Se não foram selecionados registros, exibe mensagem 
+	        $l_html.=chr(13).'      <tr><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+	      } else {
+	        // Lista os registros selecionados para listagem 
+	        foreach($RS1 as $row) {
+	          $l_html.=chr(13).'      <tr valign="top" align="center">';
+	          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.f($row,'codigo').'</td>';
+	          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'---').' a '.Nvl(FormataDataEdicao(f($row,'fim'),5),'---').'</td>';
+	          $l_html.=chr(13).'        <td align="left">'.f($row,'objeto').'</td>';
+	          $l_html.=chr(13).'        <td align="left" width="1%" nowrap>'.nvl(f($row,'documento_origem'),'---').'</td>';
+	          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(FormataDataEdicao(f($row,'documento_data'),5),'---').'</td>';
+	          $l_html.=chr(13).'        <td align="left">'.nvl(f($row,'observacao'),'---').'</td>';
+	          $l_html.=chr(13).'      </tr>';
+	        } 
+	      } 
+	      $l_html.=chr(13).'    </table>';
+	      $l_html.=chr(13).'  </td>';
+	      $l_html.=chr(13).'</tr>';
+      }
     }
 
     // Exibe ficha completa
@@ -820,9 +838,18 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
         $l_html.=chr(13).'      </tr>';
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+        if ($w_cliente==9614) {
+          $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+        } else {
+          $l_html.=chr(13).'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+        }
         $l_html.=chr(13).'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
-        $l_html.=chr(13).'        <td>$ Mensal<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+        if ($w_cliente==9614) {
+          $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+        } else {
+          $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+        }
+        
         $l_html.=chr(13).'      </tr>';
         if (f($row,'cancelado')=='S') {
           $l_html.=chr(13).'      <tr>';

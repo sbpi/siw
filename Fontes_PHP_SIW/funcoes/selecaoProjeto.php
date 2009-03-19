@@ -4,7 +4,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de projetos
 // -------------------------------------------------------------------------
-function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$chaveAux3,$chaveAux4,$chaveAux5,$campo,$restricao,$atributo,$formato=1) {
+function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$chaveAux3,$chaveAux4,$chaveAux5,$campo,$restricao,$atributo,$formato=1,$colspan=1) {
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
@@ -17,9 +17,9 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cha
     $RS = SortArray($RS,'titulo','asc');
 
     if (!isset($hint)) {
-      ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     } else {
-      ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+      ShowHTML('          <td title="'.$hint.'" colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     }
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {

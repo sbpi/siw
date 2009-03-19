@@ -606,7 +606,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,      b.sq_plano,
+                b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
                 round(months_between(b.fim,b.inicio)) as meses_contrato,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -714,6 +714,7 @@ begin
                         left         join lc_fonte_recurso     d9 on (d.sq_lcfonte_recurso       = d9.sq_lcfonte_recurso)
                         left         join ct_especificacao_despesa da on (d.sq_especificacao_despesa = da.sq_especificacao_despesa)
                         left         join eo_indicador             db on (d.sq_eoindicador       = db.sq_eoindicador)
+                        left         join siw_solicitacao      dc  on (d.sq_solic_compra         = dc.sq_siw_solicitacao)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and

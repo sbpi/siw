@@ -270,7 +270,7 @@ function Vinculacao() {
     $w_embed = 'HTML';
     cabecalho();
     ShowHTML('<HEAD>');
-    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de projetos</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();

@@ -39,7 +39,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   // Recupera o trâmite atual da solicitação
   $l_rs_tramite = db_getTramiteData::getInstanceOf($dbms,f($l_rs_solic,'sq_siw_tramite'));
 
-  // Recupera os dados do proposto
+  // Recupera os dados do beneficiário
   $l_rs1 = db_getBenef::getInstanceOf($dbms,$v_cliente,Nvl(f($l_rs_solic,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
   $l_existe_rs1 = count($l_rs1);
   if ($l_existe_rs1>0) {
@@ -66,6 +66,10 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   $l_rs6 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
   $l_existe_rs6 = count($l_rs6);
 
+  // Recupera os deslocamentos da viagem vinculados a bilhetes
+  $l_rs7 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, (($P1==1) ? 'S' : 'P'), null);
+  $l_existe_rs7 = count($l_rs7);
+
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
   // através do JavaScript por envolver mais de uma tela
@@ -76,16 +80,16 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   // um encaminhamento.
   //-----------------------------------------------------------------------------
 
-  // Verifica se foi indicado o proposto e se seus dados estão completos
+  // Verifica se foi indicado o beneficiário e se seus dados estão completos
       if (Nvl(f($l_rs_tramite,'ordem'),'---')=='1') {
-          // Verifica se foi indicado o proposto
+          // Verifica se foi indicado o beneficiário
           if ($l_existe_rs1==0) {
-            $l_erro .= '<li>O proposto não foi informado';
+            $l_erro .= '<li>O beneficiário não foi informado';
             $l_tipo  = 0;
           } else {
-            // Verifica se o proposto tem os dados bancários cadastrados
+            // Verifica se o beneficiário tem os dados bancários cadastrados
             if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='') {
-              $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do proposto e clique no botão "Gravar"';
+              $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
               $l_tipo  = 0;
             } 
           } 
@@ -167,11 +171,20 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           }
         }
 
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE') {
+        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE' || Nvl(f($l_rs_tramite,'sigla'),'---')=='VP') {
           if (f($l_rs_solic,'passagem')=='S') {
             $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null);
             if (count($l_rs5)==0) {
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
+              $l_tipo  = 0;
+            }
+					  // Verifica se há algum todos os deslocamentos estão vinculados a bilhetes
+					  $l_teste = false;
+					  foreach ($l_rs7 as $row) {
+					    if (nvl(f($row,'sq_bilhete'),'')=='') $l_teste = true;
+					  }
+            if ($l_teste) {
+              $l_erro .= '<li>É obrigatório vincular os deslocamentos aos bilhetes. Clique na operação "AL" de cada bilhete e verifique os deslocamentos a ele associados.';
               $l_tipo  = 0;
             }
           } 
@@ -183,7 +196,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             $l_tipo  = 0;
           }
 
-          if (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S') {
+          if (f($l_rs_solic,'cumprimento')=='P' && (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S')) {
             $w_cont = 0;
             foreach ($l_rs6 as $row) {
               if (nvl(f($row,'diaria'),'')!='') {

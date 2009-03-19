@@ -174,12 +174,12 @@ function Gerencial() {
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
       $w_filtro .= '<tr valign="top"><td align="right">Unidade proponente <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.$p_proponente.'</b>]'; }
-    if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">CPF proposto <td>[<b>'.$p_palavra.'</b>]'; }
+    if ($p_proponente>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">Beneficiário<td>[<b>'.$p_proponente.'</b>]'; }
+    if ($p_palavra>'') { $w_linha++; $w_filtro .= '<tr valign="top"><td align="right">CPF Beneficiário <td>[<b>'.$p_palavra.'</b>]'; }
     if ($p_sq_prop>'') {
       $w_linha++;
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_sq_prop,null,null);
-      $w_filtro .= '<tr valign="top"><td align="right">Proposto<td>[<b>'.f($RS,'nome_resumido').'</b>]';
+      $w_filtro .= '<tr valign="top"><td align="right">Beneficiário<td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_pais>'') {
       $w_linha++;
@@ -267,7 +267,7 @@ function Gerencial() {
             $p_unidade,null,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
-        $w_TP .= ' - Por proposto';
+        $w_TP .= ' - Por beneficiário';
         $RS1 = SortArray($RS1,'nm_prop','asc');
         break;
       case 'GRPDTIPO':
@@ -308,7 +308,7 @@ function Gerencial() {
       ValidateOpen('Validacao');
       Validate('p_codigo','Código da viagem','','','2','60','1','1');
       Validate('p_assunto','Assunto','','','2','90','1','1');
-      Validate('p_proponente','Proposto','','','2','60','1','');
+      Validate('p_proponente','Beneficiário','','','2','60','1','');
       Validate('p_palavra','CPF','CPF','','14','14','','0123456789-.');
       Validate('p_ini_i','Primeira saída','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Último retorno','DATA','','10','10','','0123456789/');
@@ -714,7 +714,7 @@ function Gerencial() {
     if ($p_agrega=='' || $p_agrega=='GRPDUNIDADE')  ShowHTML(' <option value="GRPDUNIDADE" selected>Unidade proponente'); else ShowHTML(' <option value="GRPDUNIDADE">Unidade proponente');
     if ($p_agrega=='GRPDPROJ')      ShowHTML(' <option value="GRPDPROJ" selected>Projeto');          else ShowHTML(' <option value="GRPDPROJ">Projeto');
     if ($p_agrega=='GRPDDATA')      ShowHTML(' <option value="GRPDDATA" selected>Mês');              else ShowHTML(' <option value="GRPDDATA">Mês');
-    if ($p_agrega=='GRPDPROPOSTO')  ShowHTML(' <option value="GRPDPROPOSTO" selected>Proposto');     else ShowHTML(' <option value="GRPDPROPOSTO">Proposto');
+    if ($p_agrega=='GRPDPROPOSTO')  ShowHTML(' <option value="GRPDPROPOSTO" selected>Beneficiário');     else ShowHTML(' <option value="GRPDPROPOSTO">Beneficiário');
     if ($p_agrega=='GRPDTIPO')      ShowHTML(' <option value="GRPDTIPO" selected>Tipo');             else ShowHTML(' <option value="GRPDTIPO">Tipo');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
@@ -737,8 +737,8 @@ function Gerencial() {
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela viagem na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
     SelecaoUnidade('<U>U</U>nidade proponente:','U','Selecione a unidade proponente da viagem',$p_unidade,null,'p_unidade','VIAGEM',null);
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b><U>P</U>roposto:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
-    ShowHTML('     <td><b>CP<u>F</u> do proposto:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+    ShowHTML('     <td><b><U>B</U>eneficiário:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="60" value="'.$p_proponente.'"></td>');
+    ShowHTML('     <td><b>CP<u>F</u> do beneficiário:<br><INPUT ACCESSKEY="F" TYPE="text" class="sti" NAME="p_palavra" VALUE="'.$p_palavra.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
     ShowHTML('   <tr valign="top">');
     SelecaoPais('Pa<u>í</u>s destino:','I',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
     SelecaoRegiao('<u>R</u>egião destino:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
@@ -799,7 +799,7 @@ function ImprimeCabecalho() {
     case 'GRPDUNIDADE':     ShowHTML('          <td><b>Unidade proponente</td>'); break;
     case 'GRPDPROJ':        ShowHTML('          <td><b>Projeto</td>');            break;
     case 'GRPDDATA':        ShowHTML('          <td><b>Mês</td>');                break;
-    case 'GRPDPROPOSTO':    ShowHTML('          <td><b>Proposto</td>');           break;
+    case 'GRPDPROPOSTO':    ShowHTML('          <td><b>Beneficiário</td>');           break;
     case 'GRPDTIPO':        ShowHTML('          <td><b>Tipo</td>');               break;
   } 
   ShowHTML('          <td><b>Total</td>');

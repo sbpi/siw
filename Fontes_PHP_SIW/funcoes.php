@@ -406,19 +406,23 @@ function LinkOrdena($p_label,$p_campo) {
 // =========================================================================
 // Montagem do cabeçalho de relatórios
 // -------------------------------------------------------------------------
-function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
+function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S') {
   extract($GLOBALS);
 
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-  $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  if (f($RS_Logo,'logo')>'') {
-    $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
+  if($titulo == 'S'){
+    $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+    if (f($RS_Logo,'logo')>'') {
+      $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
+    }
+    ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo);
+    ShowHTML('</FONT></TR><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
+    ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');  
   }
-  ShowHTML('<TABLE WIDTH="100%" BORDER=0><TR><TD ROWSPAN='.$p_rowspan.'><IMG ALIGN="LEFT" SRC="'.LinkArquivo(null,$p_cliente,$p_logo,null,null,null,'EMBED').'"><TD ALIGN="RIGHT"><B><FONT SIZE=4 COLOR="#000000">'.$p_titulo);
-  ShowHTML('</FONT></TR><TR><TD ALIGN="RIGHT"><B><FONT COLOR="#000000">'.DataHora().'</B></TD></TR>');
-  ShowHTML('<TR><TD ALIGN="RIGHT"><B><font COLOR="#000000">Usuário: '.$_SESSION['NOME_RESUMIDO'].'</B></TD></TR>');
   if (($p_tipo!='WORD' && $w_tipo!='WORD')) {
-    ShowHTML('<TR><TD ALIGN="RIGHT">');
+    if($titulo == 'S'){
+      ShowHTML('<TR><TD ALIGN="RIGHT">');
+    }
     if(nvl($l_chave,'')>'') {
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
@@ -434,7 +438,9 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null) {
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
   }
-  ShowHTML('</TABLE>');
+  if($titulo == 'S'){
+    ShowHTML('</TABLE>');
+  }
   ShowHTML('<form name="temp">');
   ShowHTML('<input type="hidden" name="word" id="word" value="'.$word_par.'">');
   ShowHTML('<input type="hidden" name="pdf" id="pdf" value="'.$pdf_par.'">');

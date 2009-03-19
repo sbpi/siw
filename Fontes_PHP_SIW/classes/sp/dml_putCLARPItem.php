@@ -11,8 +11,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putCLARPItem {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_usuario, $p_solic, $p_item, $p_ordem, $p_codigo, 
-          $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_quantidade, $p_valor, 
-          $p_cancelado, $p_motivo) {
+          $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_quantidade, $p_valor, $p_cancelado, 
+          $p_motivo, $p_origem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCLARPItem';
      $params=array('p_operacao'             =>array($operacao,                          B_VARCHAR,         1),
                    'p_cliente'              =>array($p_cliente,                         B_INTEGER,        32),
@@ -28,7 +28,8 @@ class dml_putCLARPItem {
                    'p_quantidade'           =>array(tonumber(tvl($p_quantidade)),       B_NUMERIC,      18,2),
                    'p_valor'                =>array(tonumber(tvl($p_valor)),            B_NUMERIC,      18,4),
                    'p_cancelado'            =>array(tvl($p_cancelado),                  B_VARCHAR,         1),
-                   'p_motivo'               =>array(tvl($p_motivo),                     B_VARCHAR,       500)
+                   'p_motivo'               =>array(tvl($p_motivo),                     B_VARCHAR,       500),
+                   'p_origem'               =>array(tvl($p_origem),                     B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

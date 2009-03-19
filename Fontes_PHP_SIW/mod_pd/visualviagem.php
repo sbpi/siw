@@ -636,61 +636,6 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Roteiro realizado
-    if($l_deslocamento=='S') {
-      if (f($RS,'cumprimento')!='C' && f($RS,'cumprimento')!='N') {
-        $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDGERAL');
-        $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ROTEIRO REALIZADO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-        $l_html.=chr(13).'      <tr><td colspan="2">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Origem</td>';
-        $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-        $l_html.=chr(13).'          <td><b>Destino</td>';
-        $l_html.=chr(13).'          <td><b>Aeroporto</td>';
-        $l_html.=chr(13).'          <td><b>Saída</td>';
-        $l_html.=chr(13).'          <td><b>Chegada</td>';
-        $l_html.=chr(13).'          <td><b>Agenda no<br>dia viagem</td>';
-        $l_html.=chr(13).'          <td><b>Transp.</td>';
-        $l_html.=chr(13).'          <td><b>Emite<br>bilhete</td>';
-        //$l_html.=chr(13).'          <td><b>Valor</td>';
-        //$l_html.=chr(13).'          <td><b>Cia.</td>';
-        //$l_html.=chr(13).'          <td><b>Vôo</td>';
-        $l_html.=chr(13).'        </tr>';
-        if (count($RS1)==0) {
-          // Se não foram selecionados registros, exibe mensagem 
-          $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
-        } else {
-          // Lista os registros selecionados para listagem 
-          $w_tot_bilhete  = 0;
-          foreach($RS1 as $row) {
-            $l_html.=chr(13).'      <tr valign="top">';
-            $l_html.=chr(13).'        <td>'.f($row,'nm_origem').'</td>';
-            $l_html.=chr(13).'        <td>'.nvl(f($row,'aeroporto_origem'),'&nbsp;').'</td>';
-            $l_html.=chr(13).'        <td>'.f($row,'nm_destino').'</td>';
-            $l_html.=chr(13).'        <td>'.nvl(f($row,'aeroporto_destino'),'&nbsp;').'</td>';
-            $l_html.=chr(13).'        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),6),0,-3).'</td>';
-            $l_html.=chr(13).'        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),6),0,-3).'</td>';
-            $l_html.=chr(13).'        <td align="center">'.f($row,'nm_compromisso').'</td>';
-            $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'nm_meio_transporte'),'---').'</td>';
-            $l_html.=chr(13).'        <td align="center">'.f($row,'nm_passagem').'</td>';
-            //$l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_trecho')).'</td>';
-            //$l_html.=chr(13).'        <td>'.nvl(f($row,'nm_cia_transporte'),'&nbsp;').'</td>';
-            //$l_html.=chr(13).'        <td align="center">'.nvl(f($row,'codigo_voo'),'&nbsp;').'</td>';
-            $l_html.=chr(13).'      </tr>';
-            $w_tot_bilhete  += nvl(f($row,'valor_trecho'),0);
-          } 
-          //$l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
-          //$l_html.=chr(13).'        <td align="right" colspan=7><b>TOTAL</b></td>';
-          //$l_html.=chr(13).'        <td align="right"><b>'.Nvl(formatNumber($w_tot_bilhete),0).'</b></td>';
-          //$l_html.=chr(13).'        <td colspan=2>&nbsp;</td>';
-        } 
-        $l_html.=chr(13).'    </table>';
-        $l_html.=chr(13).'  </td>';
-        $l_html.=chr(13).'</tr>';
-      }
-    }
-
     // Alterações de viagem
     $RS1 = db_getPD_Alteracao::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'autorizacao_data','asc', 'chave', 'asc');

@@ -28,7 +28,7 @@ create or replace procedure SP_PutPD_Contas
    cursor c_desloc is
      select a.sq_deslocamento,   a.sq_siw_solicitacao, a.origem,       a.destino,           a.saida,       a.chegada, 
             a.passagem,          a.sq_meio_transporte, a.valor_trecho, a.sq_cia_transporte, a.codigo_voo,  a.compromisso,
-            a.aeroporto_origem,  a.aeroporto_destino,  'P' as tipo,    sq_deslocamento.nextval as chave_nova
+            a.aeroporto_origem,  a.aeroporto_destino,  'P' as tipo,    a.sq_bilhete,        sq_deslocamento.nextval as chave_nova
        from pd_deslocamento a 
       where a.tipo              = 'S' 
        and a.sq_siw_solicitacao = p_chave;
@@ -54,11 +54,11 @@ begin
             insert into pd_deslocamento
               (sq_deslocamento,        sq_siw_solicitacao,       origem,            destino,                saida,            chegada, 
                passagem,               sq_meio_transporte,       valor_trecho,      sq_cia_transporte,      codigo_voo,       compromisso,
-               aeroporto_origem,       aeroporto_destino,        tipo)
+               aeroporto_origem,       aeroporto_destino,        sq_bilhete,        tipo)
             values (
                crec.chave_nova,        crec.sq_siw_solicitacao,  crec.origem,       crec.destino,           crec.saida,       crec.chegada, 
                crec.passagem,          crec.sq_meio_transporte,  crec.valor_trecho, crec.sq_cia_transporte, crec.codigo_voo,  crec.compromisso,
-               crec.aeroporto_origem,  crec.aeroporto_destino,   crec.tipo
+               crec.aeroporto_origem,  crec.aeroporto_destino,   crec.sq_bilhete,   crec.tipo
             );
             -- Guarda a vinculação
             w_cont := w_cont + 1;
@@ -67,34 +67,32 @@ begin
          end loop;
       End If;
 
-      If p_cumprimento = 'I' Then
-         -- Se cumprimento integral, copia as diárias da solicitação para a prestação de contas
-         select count(*) into w_cont from pd_diaria a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
-         If w_cont = 0 Then
-            insert into pd_diaria
-              (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
-               hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
-               veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
-               sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
-               sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
-               hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo)
-            (select sq_diaria.nextval,      sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
-               hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
-               veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
-               sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
-               sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
-               hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      'P'
-               from pd_diaria a 
-              where a.tipo              = 'S' 
-               and a.sq_siw_solicitacao = p_chave
-            );
-
-            -- Acerta o vínculo entre os registros
-            for i in 1 .. w_desloc.Count loop
-               update pd_diaria a set a.sq_deslocamento_chegada = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_chegada = w_desloc(i).sq_chave_origem;
-               update pd_diaria a set a.sq_deslocamento_saida   = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_saida   = w_desloc(i).sq_chave_origem;
-            end loop;
-         End If;
+      -- Copia as diárias da solicitação para a prestação de contas
+      select count(*) into w_cont from pd_diaria a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
+      If w_cont = 0 Then
+         insert into pd_diaria
+           (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo)
+         (select sq_diaria.nextval,      sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      'P'
+            from pd_diaria a 
+           where a.tipo              = 'S' 
+            and a.sq_siw_solicitacao = p_chave
+         );
+ 
+         -- Acerta o vínculo entre os registros
+         for i in 1 .. w_desloc.Count loop
+            update pd_diaria a set a.sq_deslocamento_chegada = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_chegada = w_desloc(i).sq_chave_origem;
+            update pd_diaria a set a.sq_deslocamento_saida   = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_saida   = w_desloc(i).sq_chave_origem;
+         end loop;
       End If;
    End If;
    

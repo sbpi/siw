@@ -14,12 +14,13 @@ class dml_putAcordoGeral {
         $p_descricao, $p_justificativa, $p_inicio, $p_fim, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, 
         $p_sq_tipo_acordo, $p_objeto, $p_sq_tipo_pessoa, $p_sq_forma_pagamento, $p_forma_atual, $p_inicio_atual, $p_etapa,
         $p_codigo, $p_titulo, $p_numero_empenho, $p_numero_processo, $p_data_assinatura,  $p_data_publicacao,
-        $p_chave_nova, $p_copia, $p_codigo_interno) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTACORDOGERAL';
+        $p_chave_nova, $p_copia, $p_herda, $p_codigo_interno) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoGeral';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_copia'                     =>array(tvl($p_copia),                                    B_INTEGER,        32),
+                   'p_herda'                     =>array(tvl($p_herda),                                    B_VARCHAR,        40),
                    'p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_unid_resp'                 =>array(tvl($p_unid_resp),                                B_INTEGER,        32),
                    'p_solicitante'               =>array(tvl($p_solicitante),                              B_INTEGER,        32),

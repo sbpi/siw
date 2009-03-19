@@ -439,7 +439,7 @@ function Rel_Limite() {
             ShowHTML('   <tr><td colspan="7">');
             ShowHTML('     <table width=100%  border="1" bordercolor="#00000">');
             ShowHTML('       <tr bgcolor="'.$conTrAlternateBgColor.'"><td align="center"><b>PCD</b></td>');
-            ShowHTML('           <td align="center"><b>Proposto</b></td>');
+            ShowHTML('           <td align="center"><b>Beneficiário</b></td>');
             ShowHTML('           <td align="center"><b>Utilizado passagem</b></td>');
             ShowHTML('           <td align="center"><b>Utilizado diária</b></td></tr>');
             $w_linha += 4;

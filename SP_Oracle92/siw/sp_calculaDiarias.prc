@@ -1,4 +1,4 @@
-create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varchar2 default null) is
+create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varchar2 default null, p_tipo in varchar2 default null) is
   i           number(18);
   w_cont      number(18) := 0;
   w_existe    number(18);
@@ -45,12 +45,20 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
                                                        )
      where a.sq_siw_solicitacao = w_chave
        and (w_data              = trunc(a.saida) or w_data = trunc(a.chegada))
-       and a.tipo               = case a3.sigla when 'CI' then 'S' else 'P' end
+       and a.tipo               = coalesce(p_tipo,case a3.sigla when 'CI' then 'S' else 'P' end)
    order by a.saida, a.chegada;
 
 begin
   -- Verifica se a solicitacao existe
-  select count(a.sq_siw_solicitacao) into w_existe from pd_diaria a join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao) where b.cumprimento in ('I','P') and a.sq_siw_solicitacao = coalesce(p_chave,0);
+  select count(a.sq_siw_solicitacao) into w_existe 
+    from pd_diaria                      a 
+         inner     join pd_missao       b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+           inner   join siw_solicitacao c on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
+             inner join siw_tramite     d on (c.sq_siw_tramite     = d.sq_siw_tramite)
+   where b.cumprimento        in ('N','I','P') 
+     and a.sq_siw_solicitacao = coalesce(p_chave,0)
+     and a.tipo               = coalesce(p_tipo,case d.sigla when 'CI' then 'S' else 'P' end);
+     
   If w_existe = 0 and coalesce(p_todos,'nulo') <> 'TODOS' Then
      return;
   Elsif coalesce(p_todos,'nulo') = 'TODOS' Then
@@ -61,16 +69,23 @@ begin
   End If;
   
   -- Recupera o início e o fim da viagem
-  select trunc(inicio), trunc(fim) into w_inicio, w_fim from siw_solicitacao where sq_siw_solicitacao = p_chave;
+  select min(trunc(a.saida)), max(trunc(a.chegada)) into w_inicio, w_fim 
+    from pd_deslocamento        a
+         join   siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao 
+           join siw_tramite     c on b.sq_siw_tramite     = c.sq_siw_tramite 
+   where a.sq_siw_solicitacao = p_chave 
+     and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
   
   -- Recupera o último delocamento
   for crec in c_deslocamentos (p_chave, w_fim) loop w_ultimo := crec.sq_deslocamento; end loop;
   
   -- Zera as quantidades de diárias da solicitação
-  update pd_diaria set quantidade = 0 where sq_siw_solicitacao = p_chave;
+  update pd_diaria 
+     set quantidade = 0 
+    where sq_diaria in (select sq_diaria from pd_diaria a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end));
   
   -- Inicializa o array de diárias
-  for crec in (select sq_diaria from pd_diaria a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and a.tipo = case c.sigla when 'CI' then 'S' else 'P' end) loop diarias(crec.sq_diaria) := 0; end loop;
+  for crec in (select sq_diaria from pd_diaria a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end)) loop diarias(crec.sq_diaria) := 0; end loop;
    
   w_atual := w_inicio;
   for w_cont in 1..(w_fim-w_inicio+1) loop
@@ -112,8 +127,7 @@ begin
                End If;
             End If;
          Else
-            If crec.destino_nacional = 'S' and
-               (trunc(crec.saida) = trunc(crec.chegada) or 
+            If (trunc(crec.saida) = trunc(crec.chegada) or 
                 (trunc(crec.saida) <> trunc(crec.chegada) and ((crec.origem_nacional = crec.destino_nacional or (crec.destino_nacional = 'N' and w_atual = trunc(crec.saida))) or
                                                                (crec.origem_nacional  = 'N' and w_atual = trunc(crec.chegada))
                                                               )
@@ -126,13 +140,17 @@ begin
               --    Se há alteração de cidade na data:
               --       Para destino internacional, conta 1 diária na cidade de destino, não importando horários;
               --       Para destino nacional, conta 1/2 diária na cidade de origem e 1/2 diária na cidade de destino, não importando horários
-              select count(*) into w_existe from pd_deslocamento a where a.sq_siw_solicitacao = p_chave and w_atual = trunc(a.saida) and a.tipo = 'S';
-              If w_existe = 1 or w_existe = i Then
-                 If crec.diaria_inicio = 'S' Then 
-                    diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; 
-                    If crec.diaria_fim is null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; End If;
+              select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_atual = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
+              If w_existe <= 1 or w_existe = i Then
+                 If crec.destino_nacional = 'N' Then
+                    If crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; End If;
+                 Else
+                    If crec.diaria_inicio = 'S' Then 
+                       diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; 
+                       If crec.diaria_fim is null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; End If;
+                    End If;
+                    If crec.diaria_fim = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; End If;
                  End If;
-                 If crec.diaria_fim = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; End If;
               End If;
             Else
               If w_diaria = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; End If;

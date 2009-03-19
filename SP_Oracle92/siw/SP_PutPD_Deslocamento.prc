@@ -20,6 +20,12 @@ create or replace procedure SP_PutPD_Deslocamento
    ) is
    w_existe     varchar2(1);
 begin
+   If p_operacao in ('A','E') Then
+      -- Qualquer alteração ou exclusão nos trechos influencia o cálculo automático de diárias.
+      -- Por isso elas são removidas.
+      delete pd_diaria where sq_deslocamento_chegada = p_chave_aux or sq_deslocamento_saida = p_chave_aux;
+   End If;
+   
    If p_operacao = 'I' Then -- Inclusão
       -- Insere registro na tabela de deslocamentos
       insert into pd_deslocamento
@@ -67,14 +73,7 @@ begin
        where sq_deslocamento = p_chave_aux;       
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Remove o registro na tabela de deslocamentos
-      delete pd_diaria       where sq_deslocamento_chegada = p_chave_aux or sq_deslocamento_saida = p_chave_aux;
       delete pd_deslocamento where sq_deslocamento = p_chave_aux;
-   End If;
-   
-   If p_operacao in ('I','A','E') Then
-      -- Qualquer alteração nos trechos influencia o cálculo automático de diárias.
-      -- Por isso elas são removidas.
-      delete pd_diaria where sq_siw_solicitacao = p_chave and tipo = p_tipo;
    End If;
    
    -- Verifica se a missão envolve trechos nacionais

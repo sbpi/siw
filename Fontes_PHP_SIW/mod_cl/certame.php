@@ -1191,6 +1191,7 @@ function Itens() {
   ShowHTML('</tr>');
   ShowHTML('</table>');
   ShowHTML('</center>');
+  rodape();
 } 
 
 // =========================================================================
@@ -1254,7 +1255,12 @@ function ItensContrato() {
     }
   } elseif (strpos('L',$O)!==false) {
     $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
-    $RS = SortArray($RS,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nm_tipo_material','asc','nome','asc'); 
+    } else {
+      $RS = SortArray($RS,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
+    }
   } elseif (strpos('AEV',$O)!==false) {
     $RS = db_getCLSolicItem::getInstanceOf($dbms,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
     foreach ($RS as $row) {$RS = $row; break;}
@@ -1334,8 +1340,13 @@ function ItensContrato() {
       Validate('w_fator','Fator de embalagem','1','1',2,20,'1','1');
       Validate('w_valor','Valor unitário','1','1','1','18','','1');
       CompValor('w_valor','Valor unitário','>',0,'0,00');  
-      Validate('w_quantidade','CMM','1','1','1','18','','1');
-      CompValor('w_quantidade','CMM','>',0,'1');  
+      if ($w_cliente==9614) {
+        Validate('w_quantidade','CMM','1','1','1','18','','1');
+        CompValor('w_quantidade','CMM','>',0,'1');  
+      } else {
+        Validate('w_quantidade','Quantidade','1','1','1','18','','1');
+        CompValor('w_quantidade','Quantidade','>',0,'1');  
+      }
       Validate('w_motivo','Motivo indisponibilidade','1','',2,500,'1','1');
       ShowHTML('  if (theForm.w_cancelado[0].checked && theForm.w_motivo.value=="") {');
       ShowHTML('    alert(\'Informe o motivo da indisponibilidade!\'); ');
@@ -1405,7 +1416,7 @@ function ItensContrato() {
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Indisponível','cancelado').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('$ Unit','valor_unit_est').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('CMM','quantidade').'</td>');
+    if ($w_cliente==9614) ShowHTML('          <td><b>'.LinkOrdena('CMM','quantidade').'</td>'); else ShowHTML('          <td><b>'.LinkOrdena('Quantidade','quantidade').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1457,7 +1468,7 @@ function ItensContrato() {
     ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
-    ShowHTML('          <td><b>CMM</td>');
+    if ($w_cliente==9614) ShowHTML('          <td><b>'.LinkOrdena('CMM','quantidade').'</td>'); else ShowHTML('          <td><b>'.LinkOrdena('Quantidade','quantidade').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1525,7 +1536,11 @@ function ItensContrato() {
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
-    ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
+    if ($w_cliente==9614) {
+      ShowHTML('          <td><b><u>C</u>MM:<br><input accesskey="C" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
+    } else {
+      ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
+    }
     ShowHTML('          <td title="Informe o múltiplo de unidades a ser solicitado."><b><b>Fa<u>t</u>or de embalagem:</b><br></b><input '.$w_Disabled.' accesskey="T" type="text" name="w_fator" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fator.'"></td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr valign="top">');
@@ -1581,6 +1596,7 @@ function ItensContrato() {
   ShowHTML('</tr>');
   ShowHTML('</table>');
   ShowHTML('</center>');
+  rodape();
 } 
 
 // ------------------------------------------------------------------------- 
@@ -3699,17 +3715,16 @@ function SolicMail($p_solic,$p_tipo) {
         //Dados da viagem
         $w_html .= $crlf.'        <tr><td colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Dados da viagem/cálculo das diárias</td>';
 
-          if ($j==1) {
-            $w_html .= $crlf.'        </tr>';
-            $w_html .= $crlf.'        </table></td></tr>';
-            $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
-            $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-            $w_html .= $crlf.'        <tr><td><b>Nº do PTA/Ticket: </b>'.f($RS1,'PTA').'</td>';
-            $w_html .= $crlf.'            <td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS1,'emissao_bilhete')).'</td>';
-            $w_html .= $crlf.'      </table>';
-            $w_html .= $crlf.'    </td>';
-          }
-        } 
+        if ($j==1) {
+          $w_html .= $crlf.'        </tr>';
+          $w_html .= $crlf.'        </table></td></tr>';
+          $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
+          $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+          $w_html .= $crlf.'        <tr><td><b>Nº do PTA/Ticket: </b>'.f($RS1,'PTA').'</td>';
+          $w_html .= $crlf.'            <td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS1,'emissao_bilhete')).'</td>';
+          $w_html .= $crlf.'      </table>';
+          $w_html .= $crlf.'    </td>';
+        }
       } else {
         $w_html .= $crlf.'      <tr><td colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
         $w_html .= $crlf.'      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>';
@@ -3875,7 +3890,7 @@ function Grava() {
       
       dml_putCLARPItem::getInstanceOf($dbms,$O,$w_cliente, $w_usuario, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_ordem'],
           $_REQUEST['w_codigo'], $_REQUEST['w_fabricante'], $_REQUEST['w_marca_modelo'], $_REQUEST['w_embalagem'], $_REQUEST['w_fator'],
-          $_REQUEST['w_quantidade'], $_REQUEST['w_valor'], $_REQUEST['w_cancelado'], $_REQUEST['w_motivo']);
+          $_REQUEST['w_quantidade'], $_REQUEST['w_valor'], $_REQUEST['w_cancelado'], $_REQUEST['w_motivo'], $_REQUEST['w_origem']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
