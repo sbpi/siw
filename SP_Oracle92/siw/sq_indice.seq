@@ -1,7 +1,0 @@
-create sequence SQ_INDICE
-minvalue 1
-maxvalue 999999999999999999999999999
-start with 14426
-increment by 1
-cache 20;
-

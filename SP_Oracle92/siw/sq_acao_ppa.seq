@@ -1,7 +1,0 @@
-create sequence SQ_ACAO_PPA
-minvalue 1
-maxvalue 999999999999999999999999999
-start with 561
-increment by 1
-cache 20;
-

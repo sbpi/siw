@@ -1,7 +1,0 @@
-create sequence SQ_AREA_ATUACAO
-minvalue 1
-maxvalue 999999999999999999999999999
-start with 201
-increment by 1
-cache 20;
-

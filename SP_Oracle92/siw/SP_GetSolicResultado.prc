@@ -1,6 +1,5 @@
 create or replace procedure SP_GetSolicResultado
-   (
-    p_cliente     in number,
+   (p_cliente     in number,
     p_programa    in number   default null,
     p_projeto     in number   default null,
     p_unidade     in number   default null,
@@ -9,7 +8,8 @@ create or replace procedure SP_GetSolicResultado
     p_inicio      in date     default null,
     p_fim         in date     default null,
     p_restricao   in varchar2 default null,
-    p_result      out sys_refcursor) is
+    p_result      out sys_refcursor
+   ) is
 begin
    If p_restricao = 'LISTA' Then
       -- Recupera todas as etapas de um projeto
@@ -110,16 +110,6 @@ begin
                                                                          )
                                            )
                 );         
-              Else
-      -- Recupera os dados da etapa pelo nome
-      open p_result for 
-         select a.sq_projeto_etapa, a.sq_siw_solicitacao, a.sq_etapa_pai, a.ordem, a.titulo, a.descricao, a.inicio_previsto, a.fim_previsto, 
-                a.inicio_real, a.fim_real, a.perc_conclusao, a.orcamento, a.sq_unidade, a.sq_pessoa, a.vincula_atividade, a.sq_pessoa_atualizacao, 
-                a.ultima_atualizacao, a.situacao_atual, a.unidade_medida, a.quantidade, a.cumulativa, a.programada, a.exequivel, 
-                a.justificativa_inexequivel, a.outras_medidas, a.vincula_contrato, a.pacote_trabalho, a.peso
-           from pj_projeto_etapa   a;
---          where a.sq_siw_solicitacao = p_chave
---            and acentos(a.titulo,1)  = p_restricao;
    End If;
-End SP_GetSolicResultado             ;
+End SP_GetSolicResultado;
 /

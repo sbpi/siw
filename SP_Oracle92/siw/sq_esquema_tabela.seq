@@ -1,7 +1,0 @@
-create sequence SQ_ESQUEMA_TABELA
-minvalue 1
-maxvalue 999999999999999999999999999
-start with 81
-increment by 1
-cache 20;
-

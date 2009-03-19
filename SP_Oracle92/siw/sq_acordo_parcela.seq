@@ -1,7 +1,0 @@
-create sequence SQ_ACORDO_PARCELA
-minvalue 1
-maxvalue 999999999999999999999999999
-start with 2221
-increment by 1
-cache 20;
-
