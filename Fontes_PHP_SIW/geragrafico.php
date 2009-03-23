@@ -1,9 +1,9 @@
 <?php
- $w_dir_volta='classes/';
- include ($w_dir_volta.'jpgraph/jpgraph.php');
- include ($w_dir_volta.'jpgraph/jpgraph_bar.php');
- include ($w_dir_volta.'jpgraph/jpgraph_pie.php'); 
- include ($w_dir_volta.'jpgraph/jpgraph_pie3d.php');
+ $w_dir_volta='';
+ include ('classes/jpgraph/jpgraph.php');
+ include ('classes/jpgraph/jpgraph_bar.php');
+ include ('classes/jpgraph/jpgraph_pie.php'); 
+ include ('classes/jpgraph/jpgraph_pie3d.php');
 
  main();
 

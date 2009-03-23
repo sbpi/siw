@@ -93,14 +93,14 @@ begin
                                      group by x.sq_projeto_etapa, y.sq_menu
                                 )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
           where (j.sq_pessoa = p_cliente) 
-            and (p_programa    is null or (p_programa    is not null and i.sq_solic_pai       = p_programa))
+            and (p_programa    is null or (p_programa    is not null and (i.sq_solic_pai      = p_programa or i3.sq_solic_pai = p_programa)))
             and (p_projeto     is null or (p_projeto     is not null and i.sq_siw_solicitacao = p_projeto))
             and (p_unidade     is null or (p_unidade     is not null and a.sq_unidade         = p_unidade))
             and (p_solicitante is null or (p_solicitante is not null and a.sq_pessoa          = p_solicitante))
-            and (p_inicio      is null or (p_inicio      is not null and (a.inicio_previsto between p_inicio and p_fim or
-                                                                          a.fim_previsto    between p_inicio and p_fim or
-                                                                          a.inicio_real     between p_inicio and p_fim or
-                                                                          a.fim_real        between p_inicio and p_fim
+            and (p_inicio      is null or (p_inicio      is not null and (a.inicio_previsto   between p_inicio and p_fim or
+                                                                          a.fim_previsto      between p_inicio and p_fim or
+                                                                          a.inicio_real       between p_inicio and p_fim or
+                                                                          a.fim_real          between p_inicio and p_fim
                                                                          )
                                            )
                 )

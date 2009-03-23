@@ -537,6 +537,7 @@ Fontes_PHP_SIW/cl_ibict/topbg.jpg -text
 Fontes_PHP_SIW/cl_ibict/usuario.php -text
 Fontes_PHP_SIW/cl_pitce/calendario.gif -text
 Fontes_PHP_SIW/cl_pitce/download.gif -text
+Fontes_PHP_SIW/cl_pitce/evento.php -text
 Fontes_PHP_SIW/cl_pitce/exibeprojeto.php -text
 Fontes_PHP_SIW/cl_pitce/gr_projeto.php -text
 Fontes_PHP_SIW/cl_pitce/pdp.gif -text
@@ -551,6 +552,8 @@ Fontes_PHP_SIW/cl_pitce/resultados.gif -text
 Fontes_PHP_SIW/cl_pitce/resultados.php -text
 Fontes_PHP_SIW/cl_pitce/tabelas.php -text
 Fontes_PHP_SIW/cl_pitce/trabalho.php -text
+Fontes_PHP_SIW/cl_pitce/validaevento.php -text
+Fontes_PHP_SIW/cl_pitce/visualevento.php -text
 Fontes_PHP_SIW/cl_pitce/visualprojeto.php -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Area2D.swf -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Column2D.swf -text
@@ -574,6 +577,7 @@ Fontes_PHP_SIW/classes/db/db_getPersonData.php -text
 Fontes_PHP_SIW/classes/db/db_getSiwCliModLis.php -text
 Fontes_PHP_SIW/classes/file/File.php -text
 Fontes_PHP_SIW/classes/gantt/gantt.class.php -text
+Fontes_PHP_SIW/classes/googlegraph/GoogleGraph.php -text
 Fontes_PHP_SIW/classes/googlemaps/license.txt -text
 Fontes_PHP_SIW/classes/googlemaps/nxgooglemapsapi.php -text
 Fontes_PHP_SIW/classes/graph_barcode/BaseBarcode_class.php -text
@@ -930,6 +934,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicAreas.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicCL.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicData_IS.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicEV.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtapa.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtpRec.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGR.php -text
@@ -1452,6 +1457,7 @@ Fontes_PHP_SIW/funcoes/exibeTipoArquivo.php -text
 Fontes_PHP_SIW/funcoes/formataDataXML.php -text
 Fontes_PHP_SIW/funcoes/geragraficoflash.php -text
 Fontes_PHP_SIW/funcoes/geragraficoflash2.php -text
+Fontes_PHP_SIW/funcoes/geragraficogoogle.php -text
 Fontes_PHP_SIW/funcoes/montaRadioMes.php -text
 Fontes_PHP_SIW/funcoes/montaStringOpcao.php -text
 Fontes_PHP_SIW/funcoes/montaTipoIndicador.php -text
@@ -3924,6 +3930,7 @@ SP_Oracle92/siw/sp_getRecurso.prc -text
 SP_Oracle92/siw/sp_getRecurso_Disp.prc -text
 SP_Oracle92/siw/sp_getRecurso_Indisp.prc -text
 SP_Oracle92/siw/sp_getRestricaoEtapa.prc -text
+SP_Oracle92/siw/sp_getSolicEV.prc -text
 SP_Oracle92/siw/sp_getSolicIndicador.prc -text
 SP_Oracle92/siw/sp_getSolicMeta.prc -text
 SP_Oracle92/siw/sp_getSolicObjetivo.prc -text

@@ -4,7 +4,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de Programas
 // -------------------------------------------------------------------------
-function selecaoPrograma($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$formato=1,$colspan=1) {
+function selecaoPrograma($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$formato=1,$colspan=1,$separador='<br />') {
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
@@ -13,11 +13,7 @@ function selecaoPrograma($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$ca
    $RS1 = array(0);
   }
   if (count($RS1)>0) {
-    if (!isset($hint)) {
-      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-    } else {
-      ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-    }
+    ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
 
     $rs_menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');

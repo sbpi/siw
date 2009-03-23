@@ -12,7 +12,7 @@
 require_once('jpg-config.inc');
 
 // Arquivo de constantes
-include_once('../constants.inc');
+include_once('constants.inc');
 
 // Version info
 DEFINE('JPG_VERSION','1.19dev');

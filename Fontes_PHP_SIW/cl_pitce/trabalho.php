@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -77,10 +77,12 @@ $w_pagina       = 'trabalho.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_pitce/';
 
-$w_cliente  = RetornaCliente();
-$w_usuario  = RetornaUsuario();
-$w_ano      = 2008;//RetornaAno();
-$w_mes      = $_REQUEST['w_mes'];
+$w_cliente       = RetornaCliente();
+$w_usuario       = RetornaUsuario();
+$w_ano           = RetornaAno();
+$w_troca      = $_REQUEST['w_troca'];
+$w_mes           = $_REQUEST['w_mes'];
+
 
 // Configura variáveis para montagem do calendário
 if (nvl($w_mes,'')=='') $w_mes = date('m',time());
@@ -354,17 +356,70 @@ function Arquivos() {
 // -------------------------------------------------------------------------
 function Calendario() {
   extract($GLOBALS);
+
+  if ($w_troca>'' && $O!='E') {
+    $w_acontecimento = $_REQUEST['w_acontecimento'];
+    $w_programa      = $_REQUEST['w_programa'];
+    $w_projeto       = $_REQUEST['w_projeto'];
+    $w_secretaria    = $_REQUEST['w_secretaria'];
+    $w_coordenacao   = $_REQUEST['w_coordenacao'];
+    $w_comite        = $_REQUEST['w_comite'];
+    $w_cc            = $_REQUEST['w_cc'];
+    $w_asunto        = $_REQUEST['w_asunto'];
+    $w_local         = $_REQUEST['w_local'];
+    $w_data_inicio   = $_REQUEST['w_data_inicio'];
+    $w_data_termino  = $_REQUEST['w_data_termino'];
+    $w_hora_inicio   = $_REQUEST['w_hora_inicio'];
+    $w_hora_termino  = $_REQUEST['w_hora_termino'];
+    $w_mensagem      = $_REQUEST['w_mensagem'];
+  }  
+
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('<link href="xPandMenu.css" rel="stylesheet" type="text/css">');
-  ScriptOpen('Javascript');
+  ScriptOpen('JavaScript');
+  modulo();
+  CheckBranco();
+  FormataDataMA();
+  FormataData();
+  FormataHora();
+  SaltaCampo();
   ValidateOpen('Validacao');
-  Validate('p_programa','Programa','SELECT',1,1,18,'','0123456789');
-  Validate('p_texto','Local','','',3,50,'1','1');
-  ShowHTML('  theForm.p_pesquisa.value="OK";');
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
+  if($O=='L'){
+    ShowHTML('  if (!(theForm.p_agenda.checked || theForm.p_evento.checked || theForm.p_reuniao.checked)) {');
+    ShowHTML('     alert(\'Indique pesquisa por agendas de ação, reuniões e/ou eventos.\');');
+    ShowHTML('     return false;');
+    ShowHTML('  }'); 
+    Validate('p_programa','Programa','SELECT',1,1,18,'','0123456789');
+    ShowHTML('  theForm.p_pesquisa.value="OK";');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ShowHTML('  theForm.Botao[2].disabled=true;');
+  } elseif($O=='I') {
+    Validate('w_programa','Programa','SELECT',1,1,18,'','0123456789');
+    Validate('w_projeto','Projeto','SELECT',1,1,18,'','0123456789');
+    ShowHTML('  if (theForm.w_secretaria.checked || theForm.w_coordenacao.checked || theForm.w_comite.checked) {');
+    ShowHTML('  } else {');
+    ShowHTML('     alert(\'Pelo menos um interessado deve ser selecionado.\');');
+    ShowHTML('     return false;');
+    ShowHTML('  }'); 
+    Validate('w_assunto','Assunto','',1,1,80,'1','1');  
+    Validate('w_local','Local','',1,1,80,'1','1');  
+    Validate('w_mensagem','Descrição','',1,3,500,'1','1');
+    Validate('w_data_inicio','Data de início','DATA','1',10,10,'','0123456789/');
+    Validate('w_data_termino','Data de término','DATA','1',10,10,'','0123456789/');
+    Validate('w_hora_inicio','Hora de início','HORA','1',5,5,'','0123456789:');
+    Validate('w_hora_termino','Hora de término','HORA','1',5,5,'','0123456789:');
+    CompData('w_data_termino','Data de término','>=','w_data_inicio','Data de início');
+    ShowHTML('  if (theForm.w_data_termino.value == theForm.w_data_inicio.value) {');
+    CompHora('w_hora_termino','Hora de término','>','w_hora_inicio','Hora de início');
+    ShowHTML('  }');
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ShowHTML('  theForm.Botao[2].disabled=true;');  
+  }  
+  
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -372,12 +427,13 @@ function Calendario() {
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  ShowHTML('<tr><td colspan=5><hr>');
-  if($O == 'L'){ 
+  ShowHTML('<tr><td><hr>');
+  if($O == 'L'){
+    ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
     ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
-    ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
     ShowHTML('   <tr><td><b>');
     ShowHTML('     <input type="checkbox" '.((nvl($p_agenda,'')!='') ? 'checked' : '').' name="p_agenda" value="0" /> Agenda de Ação');
     ShowHTML('     <input type="checkbox" '.((nvl($p_evento,'')!='') ? 'checked' : '').' name="p_evento" value="1" />Evento ');
@@ -386,15 +442,17 @@ function Calendario() {
     ShowHTML('   <tr>');
     SelecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null /*'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"'*/);
     ShowHTML('   <tr>');
-    SelecaoUnidade('Orgão Responsável:', null, null, $p_unidade, null, 'p_unidade', null, null);
+    SelecaoUnidade('<u>Ó</u>rgão responsável:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
     ShowHTML('   <tr><td><b><u>L</u>ocal:<br><input class="STI" accesskey="L" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr valign="top"><td colspan="3">');
     ShowHTML('     <input class="STB" type="submit" name="Botao" value="BUSCAR">');
     ShowHTML('     <input class="STB" type="button" name="Botao" value="INSERIR" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'I\'; document.Form.submit();">');
+    $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
+    ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
     ShowHTML('   </tr>');
-    ShowHTML(' </table></fieldset>');
     ShowHTML('          </form>');
+    ShowHTML(' </table></fieldset>');
     
 	  // Exibe o calendário da organização
 	  include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
@@ -415,21 +473,19 @@ function Calendario() {
         $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
       }
       $RS_ResultCal = SortArray($RS_Resultado,'mes_ano','asc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
-      
-	    // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-	    foreach($RS_ResultCal as $row) {
-	      $w_saida   = f($row,'mes_ano');
-	      $w_chegada = f($row,'mes_ano');
-	      //retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, f($row,'titulo'), 'N');
-	      $w_datas[formataDataEdicao($w_saida)]['valor']= str_replace('agenda',f($row,'titulo'),$w_datas[formataDataEdicao($w_saida)]['valor']);
-	      $w_datas[formataDataEdicao($w_chegada)]['valor']= str_replace('agenda',f($row,'titulo'),$w_datas[formataDataEdicao($w_chegada)]['valor']);
-	    }
-	    reset($RS_ResultCal);
-	    foreach($RS_ResultCal as $row) {
-	      $w_saida   = f($row,'mes_ano');
-	      $w_chegada = f($row,'mes_ano');
-	      retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, $conTrBgColorLightYellow2, 'N');
-	    }
+  	  
+  		// Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+  		foreach($RS_ResultCal as $row) {
+  		  $w_saida   = f($row,'mes_ano');
+  		  $w_chegada = f($row,'mes_ano');
+  		  retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, 'Início/fim de item de agenda de ação.', 'N');
+  		}
+  		reset($RS_ResultCal);
+  		foreach($RS_ResultCal as $row) {
+  		  $w_saida   = f($row,'mes_ano');
+  		  $w_chegada = f($row,'mes_ano');
+  		  retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, $conTrBgColorLightYellow2, 'N');
+  		}
 	  }
 	
 	  // Verifica a quantidade de colunas a serem exibidas
@@ -492,8 +548,8 @@ function Calendario() {
 	  ShowHTML('          </table>');
     ShowHTML('  </table>');
     if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-	    ShowHTML('<table width="100%">');
-	    ShowHTML('<tr><td align="right" colspan="2">');      
+      ShowHTML('<table width="100%">');
+	    ShowHTML('<tr><td align="right" colspan="2"><hr>');      
 	    if ($w_embed!='WORD') {
 	      CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
 	    }
@@ -523,7 +579,7 @@ function Calendario() {
 	    ShowHTML('        </tr>');
 	    $w_cor = $conTrBgColor;
 	    if (count($RS_Resultado) == 0) {
-	      ShowHTML('    <tr align="center"><td colspan="5">Nenhum resultado encontrado para os critérios informados.</td>');
+	      ShowHTML('    <tr align="center"><td colspan="8">Nenhum resultado encontrado para os critérios informados.</td>');
 	    } else {
 	      foreach ($RS_Resultado as $row) {
 	        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
@@ -553,99 +609,53 @@ function Calendario() {
 	    }
 	    ShowHTML('</center>');
     }
-  } elseif ($O=='I') {
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled = ' DISABLED ';
+    ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'" align="center">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4"><p>');
-    ShowHTML('         <label>');
-    ShowHTML('         <input name="w_tipo" type="radio" class="STR" value="0" />');
-    ShowHTML('         Reuni&atilde;o PDP</label>');
-    ShowHTML('         <spacer>&nbsp;&nbsp;</spacer>');
-    ShowHTML('         <label>');
-    ShowHTML('         <input name="w_tipo" type="radio" class="STR" value="1" />');
-    ShowHTML('         Evento</label>');
-    ShowHTML('       </p></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    SelecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,4);
+    SelecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $w_programa, $w_plano, $w_objetivo, 'w_programa', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_projeto\'; document.Form.submit();"',1,1,'<td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:', 'O', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,4);
-  	// Recupera os dados do projeto
-    $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-    // var_dump($RS);
+    SelecaoProjeto('Agenda de açã<u>o</u>:', 'O', 'Selecione um item na relação.', $w_projeto, $w_usuario, f($RS, 'sq_menu'), nvl($w_programa,0), $w_objetivo, $w_plano, 'w_projeto', 'PJLIST', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_projeto\'; document.Form.submit();"',1,1,'<td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr><td nowrap width="30%"><b>Órgão responsável: </b></td><td>'.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td>');
-    ShowHTML('   <tr><td width="30%"><b>Responsável: </b></td><td nowrap> '.nvl(f($RS,'proponente'),'---'). '</td>');
+    if (nvl($w_projeto,'')!='') {
+      // Recupera os dados do projeto
+      $RS = db_getSolicData::getInstanceOf($dbms,$w_projeto,f($RS,'sigla'));
+      ShowHTML('   <tr><td><b>Órgão responsável: </b></td><td>'.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>');
+      ShowHTML('   <tr><td><b>Coordenador: </b></td><td> '.nvl(f($RS,'proponente'),'---'). '</td></tr>');
+    }
+    ShowHTML('   <tr><td>&nbsp;</td></tr>');
+    ShowHTML('   <tr><td width="30%"><b>Tipo</b><td>');
+    ShowHTML('       <input '.$w_Disabled.' name="w_acontecimento" type="radio" class="STR" value="0" '.((nvl($w_acontecimento,'nulo')!=1) ? 'checked' : '').' /> Reunião PDP');
+    ShowHTML('       <input '.$w_Disabled.' name="w_acontecimento" type="radio" class="STR" value="1" '.((nvl($w_acontecimento,'nulo')!=0) ? 'checked' : '').' /> Evento');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    //SelecaoPessoa('Respo<u>n</u>sável:', 'N', 'Selecione o responsável pelo projeto na relação.', $p_solicitante, null, 'p_solicitante', 'USUARIOS');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4">&nbsp;</td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4"><b>Envolvidos:<br>');
-    ShowHTML('       <input name="w_secretaria" type="checkbox" class="STC" id="w_secretaria" accesskey="E" tabindex="1" value="0" checked />');
-    ShowHTML('       Secretaria Executiva');
-    ShowHTML('       <input name="w_coordenacao" type="checkbox" class="STC" id="w_coordenacao" accesskey="R" tabindex="2" value="1" checked />');
-    ShowHTML('       Coordena&ccedil;&atilde;o');
-    ShowHTML('       <input name="w_comite" type="checkbox" class="STC" id="w_comite" accesskey="R" tabindex="2" value="2" checked />');
-    ShowHTML('       Comit&ecirc; Executivo');
+    ShowHTML('   <tr><td><b>Interessados:<td>');
+    ShowHTML('       <input '.$w_Disabled.' name="w_secretaria" type="checkbox" class="STC" value="0" '.((nvl($w_secretaria,'')!='') ? 'checked' : '').' /> Secretaria Executiva');
+    ShowHTML('       <input '.$w_Disabled.' name="w_coordenacao" type="checkbox" class="STC" value="1" '.((nvl($w_coordenacao,'')!='') ? 'checked' : '').' /> Coordenação');
+    ShowHTML('       <input '.$w_Disabled.' name="w_comite" type="checkbox" class="STC" value="2" '.((nvl($w_comite,'')!='') ? 'checked' : '').' /> Comitê Executivo');
     ShowHTML('       <label></label></td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4">&nbsp;</td>');
+    ShowHTML('   <tr><td><b>E<u>n</u>caminhar para:</b><td><input '.$w_Disabled.' name="w_cc" accesskey="N" type="text" class="STI" size="80" maxlength="80" value="'.$w_cc.'" /></td></tr>');
+    ShowHTML('   <tr><td>&nbsp;</td></tr>');
+    ShowHTML('   <tr><td><b>Assunto</b><td><input '.$w_Disabled.' name="w_assunto" type="text" class="STI" size="80" maxlength="80" value="'.$w_assunto.'" /></td></tr>');
+    ShowHTML('   <tr><td><b>Local</b><td><input '.$w_Disabled.' name="w_local" type="text" class="STI" size="80" maxlength="80" value="'.$w_local.'" /></td></tr>');
+    ShowHTML('   <tr><td><b>Anexo</b><td><input '.$w_Disabled.' name="w_arquivo" type="file" class="STI" size="65" /></td></tr>');
+    ShowHTML('   <tr><td>&nbsp;</td></tr>');
+    ShowHTML('   <tr><td><b>Data</b><td>');
+    ShowHTML('       <input '.$w_Disabled.' name="w_data_inicio" type="text" class="STI" size="10" maxlength="10" value="'.$w_data_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" />');
+    ShowHTML('       &nbsp;&nbsp;a&nbsp;&nbsp;<input '.$w_Disabled.' name="w_data_termino" type="text" class="STI" maxlength="10"  size="10" value="'.$w_data_termino.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" /></td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4" align="left"  nowrap="nowrap"><strong>Assunto<br/>');
-    ShowHTML('       </strong>');
-    ShowHTML('       <input name="textfield" type="text" class="STI" size="80" maxlength="80" /></td>');
+    ShowHTML('   <tr><td><b>Horário</b><td>');
+    ShowHTML('       <input '.$w_Disabled.' name="w_hora_inicio" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_inicio.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" />');
+    ShowHTML('       &nbsp;&nbsp;a&nbsp;&nbsp;<input '.$w_Disabled.' name="w_hora_termino" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_termino.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" /></td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="2" align="left"  nowrap="nowrap"><label><strong>Local<br>');
-    ShowHTML('       </strong></label>');
-    ShowHTML('       <input name="textfield2" type="text" class="STI" size="80" maxlength="80" /></td>');
-    ShowHTML('     <td  width="50%" align="left" nowrap="nowrap"><strong>');
-    ShowHTML('       <label>Arquivo<br>');
-    ShowHTML('       </label>');
-    ShowHTML('       </strong>');
-    ShowHTML('       <input name="w_arquivo" type="file" class="STI" size="20" /></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4">&nbsp;</td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4"><label><strong>In&iacute;cio</strong></label>');
-    ShowHTML('       <br>');
-    ShowHTML('       <input name="w_data_inicio" type="text" class="STI" size="15" />');
-    ShowHTML('       <spacer>&nbsp;&nbsp;</spacer>');
-    ShowHTML('       <input name="textfield3" type="text" class="STI" size="10" /></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4"><strong>');
-    ShowHTML('       <label>T&eacute;rmino</label>');
-    ShowHTML('       <br>');
-    ShowHTML('       </strong>');
-    ShowHTML('       <input name="w_data_termino" type="text" class="STI"  size="15" />');
-    ShowHTML('       <spacer>&nbsp;&nbsp;</spacer>');
-    ShowHTML('       <input name="textfield32" type="text" class="STI" size="10" /></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4"><b>Descrição:</b><br><textarea class="STI" name="w_mensagem" cols="80" rows="10" id="w_mensagem"></textarea></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td colspan="4">&nbsp;</td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    ShowHTML('     <td align="right" colspan="4"><input name="w_enviar" type="submit" class="STB" id="w_enviar" accesskey="S" tabindex="0" value="ENVIAR" />');
-    ShowHTML('       <spacer>&nbsp;&nbsp;</spacer>');
-    ShowHTML('       <input name="w_reenviar" type="submit" class="STB" id="w_reenviar" tabindex="6" value="RE-ENVIAR" />');
-    ShowHTML('       <spacer>&nbsp;&nbsp;</spacer>');
-    ShowHTML('       <input name="w_excluir" type="reset" class="STB" id="w_cancelar" accesskey="I" tabindex="7" value="EXCLUIR" />');
+    ShowHTML('   <tr valign="top"><td><b>Descrição:</b><td><textarea '.$w_Disabled.' class="STI" name="w_mensagem" cols="80" rows="10" >'.$w_mensagem.'</textarea></td></tr>');
+    ShowHTML('   <tr><td><td>');
+    ShowHTML('       <input name="Botao" type="submit" class="STB" accesskey="S" tabindex="0" value="GRAVAR" />&nbsp;');
+    ShowHTML('       <input name="Botao" type="button" class="STB" value="VOLTAR" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'L\'; document.Form.submit();">');
     ShowHTML('     </td>');
     ShowHTML('   </tr>');
     ShowHTML(' </table>');

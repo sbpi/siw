@@ -2766,7 +2766,9 @@ function RodapePDF() {
 
   $shtml = ob_get_contents();
   ob_end_clean();
-
+  
+  
+  
 //  $shtml = str_replace("msword",'', $shtml);
   $shtml = str_replace("'",'"', $shtml);
   $shtml = str_replace('"',"'", $shtml);

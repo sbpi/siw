@@ -532,31 +532,25 @@ function VisualDados() {
       $RS = SortArray($RS,'base_geografica','asc','nm_base_geografica','asc','phpdt_afericao','desc');
     }
   
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan=2>'.linkOrdena('Base','nm_base_geografica').'</td>');
-    ShowHTML('          <td rowspan=2>'.linkOrdena('Referência','phpdt_fim').'</td>');
-    ShowHTML('          <td rowspan=2>'.linkOrdena('Data da aferição','phpdt_afericao').'</td>');
-    ShowHTML('          <td rowspan=2>'.linkOrdena('Valor aferido','valor').'</td>');
-    ShowHTML('          <td width="1%" nowrap rowspan=2><b>U.M.</b></td>');
-    ShowHTML('          <td rowspan=2><b>Fonte</b></td>');
-    ShowHTML('          <td colspan=2><b>Dados da aferição</td>');
-    ShowHTML('        </tr>');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td>'.linkOrdena('Responsável','nm_cadastrador').'</td>');
-    ShowHTML('          <td align="center">'.linkOrdena('Data','inclusao').'</td>');
-    ShowHTML('        </tr>');
-    if (count($RS)<=0) {
-      // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-    } else {
+    if (count($RS)>1) {
       $p_cont = 0;
+      $i      = 0;
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      $w_encoding = '';
       foreach($RS1 as $row){ 
+        if ($i==0) {
+          // Se tiver mais de uma aferição, mostra gráfico de linha
+          ShowHTML('<tr><td><table border=0 width="100%"><tr valign="top">');
+          ShowHTML('<td width="50%"><table border=0 width="50%" align="center">');
+          ShowHTML('  <tr><td><td align="right"><b>Registros: '.count($RS));
+          ShowHTML('  <tr><td align="center" colspan=3>');
+          ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+          ShowHTML('          <td>'.linkOrdena('Referência','phpdt_fim').'</td>');
+          ShowHTML('          <td>'.linkOrdena('Valor aferido','valor').' ('.f($row,'sg_unidade_medida').')</td>');
+          ShowHTML('        </tr>');
+        }
         // Tratamento para aferições com alguma observação
         if (nvl(f($row,'observacao'),'nulo')!='nulo') {
           $p_exibe  = true;
@@ -566,39 +560,123 @@ function VisualDados() {
           $p_exibe  = false;
         }
         $p_cor = ($p_cor==$conTrBgColor || $p_cor=='') ? $p_cor=$conTrAlternateBgColor : $p_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$p_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'nm_base_geografica').'</td>');
+        ShowHTML('      <tr bgcolor="'.$p_cor.'" valign="top" title="BASE: '.f($row,'nm_base_geografica').' DATA DA AFERIÇÃO: '.nvl(date(d.'/'.m.'/'.y,f($row,'phpdt_afericao')),'---').' FONTE: '.f($row,'fonte').'">');
         $p_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
         ShowHTML('        <td align="center">');
         if ($p_array['TIPO']=='DIA') {
-          ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
+          $w_referencia = date(d.'/'.m.'/'.y,$p_array['VALOR']);
         } elseif ($p_array['TIPO']=='MES') {
-          ShowHTML('        '.$p_array['VALOR']);
+          $w_referencia = $p_array['VALOR'];
         } elseif ($p_array['TIPO']=='ANO') {
-          ShowHTML('        '.$p_array['VALOR']);
+          $w_referencia = $p_array['VALOR'];
         } else {
-          ShowHTML('        '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---'));
+          $w_referencia = nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
         }
-        ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,f($row,'phpdt_afericao')),'---').'</td>');
+        ShowHTML('        '.$w_referencia);
         ShowHTML('        <td align="right">'.((f($row,'previsao')=='S') ? '* ' : '').(($p_exibe) ? '<sup>('.$p_cont.')</sup> ' : '').nvl(formatNumber(f($row,'valor'),4),'---').'</td>');
-        ShowHTML('        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('        <td>'.f($row,'fonte').'</td>');
-        ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'cadastrador'),$TP,f($row,'nm_cadastrador')).'</td>');
-        ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,nvl(f($row,'phpdt_alteracao'),f($row,'phpdt_inclusao'))),'---').'</td>');
         ShowHTML('      </tr>');
+        if ($i<=5) {
+          // mostra somente as 5 primeiras ocorrências no gráfico
+          $w_legenda[$i] = $w_referencia;
+          $w_valor[$i]   = f($row,'valor');
+        }
+        $i++;
       } 
-    } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
-    ShowHTML('  </td>');
-    ShowHTML('</tr>');
-    ShowHTML('<tr><td colspan=3><table border=0>');
-    ShowHTML('  <tr><td align="right">(U.M.)<td>Unidade de medida');
-    ShowHTML('  <tr><td align="right">(*)<td>Projeção');
-    if ($p_cont>0) {
-      for ($i=1;$i<=$p_cont;$i++) ShowHTML('  <tr valign="top"><td align="right">('.$i.')<td>'.$p_observacao[$i]);
+      ShowHTML('      </center>');
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+      ShowHTML('<tr><td colspan=3><table border=0>');
+      ShowHTML('  <tr><td align="right">U.M.<td>Unidade de medida');
+      ShowHTML('  <tr><td align="right">*<td>Projeção');
+      if ($p_cont>0) {
+        for ($i=1;$i<=$p_cont;$i++) ShowHTML('  <tr valign="top"><td align="right">('.$i.')<td>'.$p_observacao[$i]);
+      }
+      ShowHTML('  </table>');
+      ShowHTML('</table>');
+      ShowHTML('<td width="50%"><table border=0 align="center">');
+      include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      ShowHTML('<tr><td align="center">');
+      krsort($w_valor);
+      krsort($w_legenda);
+      ShowHTML(geraGraficoGoogle('Evolução no período',$SG,'line',
+                                 $w_valor,
+                                 $w_legenda,
+                                 $w_encoding
+                                )
+              );
+      ShowHTML('</table>');
+    } else {
+      ShowHTML('<tr><td><td align="right"><b>Registros existentes: '.count($RS));
+      ShowHTML('<tr><td align="center" colspan=3>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td rowspan=2>'.linkOrdena('Base','nm_base_geografica').'</td>');
+      ShowHTML('          <td rowspan=2>'.linkOrdena('Referência','phpdt_fim').'</td>');
+      ShowHTML('          <td rowspan=2>'.linkOrdena('Data da aferição','phpdt_afericao').'</td>');
+      ShowHTML('          <td rowspan=2>'.linkOrdena('Valor aferido','valor').'</td>');
+      ShowHTML('          <td width="1%" nowrap rowspan=2><b>U.M.</b></td>');
+      ShowHTML('          <td rowspan=2><b>Fonte</b></td>');
+      ShowHTML('          <td colspan=2><b>Dados da aferição</td>');
+      ShowHTML('        </tr>');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td>'.linkOrdena('Responsável','nm_cadastrador').'</td>');
+      ShowHTML('          <td align="center">'.linkOrdena('Data','inclusao').'</td>');
+      ShowHTML('        </tr>');
+      if (count($RS)<=0) {
+        // Se não foram selecionados registros, exibe mensagem
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      } else {
+        $p_cont = 0;
+        $i      = 0;
+        // Lista os registros selecionados para listagem
+        $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+        foreach($RS1 as $row){ 
+          // Tratamento para aferições com alguma observação
+          if (nvl(f($row,'observacao'),'nulo')!='nulo') {
+            $p_exibe  = true;
+            $p_cont  +=1;
+            $p_observacao[$p_cont] = f($row,'observacao');
+          } else {
+            $p_exibe  = false;
+          }
+          $p_cor = ($p_cor==$conTrBgColor || $p_cor=='') ? $p_cor=$conTrAlternateBgColor : $p_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$p_cor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'nm_base_geografica').'</td>');
+          $p_array = retornaNomePeriodo(f($row,'referencia_inicio'), f($row,'referencia_fim'));
+          ShowHTML('        <td align="center">');
+          if ($p_array['TIPO']=='DIA') {
+            $w_referencia = date(d.'/'.m.'/'.y,$p_array['VALOR']);
+          } elseif ($p_array['TIPO']=='MES') {
+            $w_referencia = $p_array['VALOR'];
+          } elseif ($p_array['TIPO']=='ANO') {
+            $w_referencia = $p_array['VALOR'];
+          } else {
+            $w_referencia = nvl(date(d.'/'.m.'/'.y,f($row,'referencia_inicio')),'---').' a '.nvl(date(d.'/'.m.'/'.y,f($row,'referencia_fim')),'---');
+          }
+          ShowHTML('        '.$w_referencia);
+          ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,f($row,'phpdt_afericao')),'---').'</td>');
+          ShowHTML('        <td align="right">'.((f($row,'previsao')=='S') ? '* ' : '').(($p_exibe) ? '<sup>('.$p_cont.')</sup> ' : '').nvl(formatNumber(f($row,'valor'),4),'---').'</td>');
+          ShowHTML('        <td nowrap align="center">'.f($row,'sg_unidade_medida').'</td>');
+          ShowHTML('        <td>'.f($row,'fonte').'</td>');
+          ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'cadastrador'),$TP,f($row,'nm_cadastrador')).'</td>');
+          ShowHTML('        <td align="center">'.nvl(date(d.'/'.m.'/'.y,nvl(f($row,'phpdt_alteracao'),f($row,'phpdt_inclusao'))),'---').'</td>');
+          ShowHTML('      </tr>');
+        } 
+      } 
+      ShowHTML('      </center>');
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+      ShowHTML('<tr><td colspan=3><table border=0>');
+      ShowHTML('  <tr><td align="right">(U.M.)<td>Unidade de medida');
+      ShowHTML('  <tr><td align="right">(*)<td>Projeção');
+      if ($p_cont>0) {
+        for ($i=1;$i<=$p_cont;$i++) ShowHTML('  <tr valign="top"><td align="right">('.$i.')<td>'.$p_observacao[$i]);
+      }
+      ShowHTML('  </table>');
     }
-    ShowHTML('  </table>');
+    
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($R>'') {
       MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&p_chave='.$p_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
