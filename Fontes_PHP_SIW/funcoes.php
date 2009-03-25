@@ -1,4 +1,4 @@
-<?
+<?php
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
 date_default_timezone_set('America/Sao_Paulo');

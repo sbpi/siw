@@ -2,15 +2,20 @@
 // =========================================================================
 // Rotina de visualização da solicitação
 // -------------------------------------------------------------------------
-function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
+function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  //$RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $RS1 = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+      $l_sg,5,null,null,null,null,null,null,null,null,null,null,$l_chave, null, 
+      null, null, null, null, null,null, null, null, null, null, null, null, null, null);
+  $RS1 = $RS1[0];
+  
   $w_tramite_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b> '.f($RS1,'titulo').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
 
   // Exibe a vinculação
@@ -19,12 +24,54 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS1,'sq_solic_pai'),f($RS1,'dados_pai'),'S').'</td></tr>';
   }
 
-  // Se a classificação foi informada, exibe.
-  if (Nvl(f($RS1,'sq_cc'),'')>'') {
-    $l_html .= chr(13).'      <tr><td width="20%"><b>Classificação:<b></td>';
-    $l_html .= chr(13).'        <td>'.f($RS1,'cc_nome').' </td></tr>';
+  
+  if (Nvl(f($RS1,'sg_unidade_resp'),'')>'') {
+    $l_html .= chr(13).'      <tr><td width="20%"><b>Orgão responsável:<b></td>';
+    if ($l_tipo=='WORD') {
+      $l_html.=chr(13).'       <td>'.f($RS1,'sg_unidade_resp').'</font></td></tr>';
+    }else{
+      $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_resp'),f($RS1,'sq_unidade_resp'),$TP).'</font></td></tr>';    
+    }
   }
-
+  
+  //var_dump($RS1);
+  if (Nvl(f($RS1,'solicitante'),'')>'') {
+    $l_html .= chr(13).'      <tr><td width="20%"><b>Gestor:<b></td>';
+    if ($l_tipo=='WORD') {
+      $l_html .= chr(13).'        <td>'.f($RS1,'nm_solic').' </td></tr>';
+    }else{
+      $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_solic')).' </td></tr>';
+    }
+  }
+  
+  
+    $l_html .= chr(13).'      <tr><td width="20%"><b>Interessados:<b></td>';  
+    $l_html .= chr(13).'        <td>'.(f($RS1,'indicador1') == 'S'? "Secretaria Executiva, " : "").
+                                      (f($RS1,'indicador2') == 'S'? " Coordenação, " : "").
+                                      (f($RS1,'indicador3') == 'S'? "Comitê Executivo, " : "");
+    $l_html = substr($l_html,0,-2);
+    $l_html .='</td></tr>';
+    
+  
+  
+  if (Nvl(f($RS1,'nm_tipo_evento'),'')>'') {
+    $l_html .= chr(13).'      <tr><td width="20%"><b>Tipo de evento:<b></td>';
+    $l_html .= chr(13).'        <td>'.f($RS1,'nm_tipo_evento').' </td></tr>';
+  }
+  
+  if (Nvl(f($RS1,'observacao'),'')>'') {
+    $l_html .= chr(13).'      <tr><td width="30%"><b>Encaminhar também para:<b></td>';
+    $l_html .= chr(13).'        <td>'.f($RS1,'observacao').' </td></tr>';
+  }
+  
+  if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top"><td><b>Local:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
+  }
+  
+  if (nvl(f($RS1,'nm_cidade'),'')!='') {
+    $l_html.=chr(13).'   <tr valign="top"><td><b>Cidade:</b></font></td><td>'.crlf2br(nvl(f($RS1,'nm_cidade'),'---')).'</font></td></tr>';
+  }
+  
   if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
     $l_html.=chr(13).'   <tr><td width="20%"><b>Procedimento:</b></td>';
     $l_html.=chr(13).'       <td><b>'.f($RS1,'nm_procedimento').'</b></font></tr>';
@@ -52,38 +99,22 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
       break;
     case 4 :
       $l_html.=chr(13).'   <tr><td width="20%"><b>Início:</b></font></td>';
-      $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),0,-3),3),'-').'</font></td></tr>';
+      $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),3),0,-3),'-').'</font></td></tr>';
       $l_html.=chr(13).'   <tr><td width="20%"><b>Término:</b></font></td>';
       $l_html.=chr(13).'       <td>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</font></td></tr>';
       break;
     }
-    if ($l_tipo=='WORD') {
-      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-      $l_html.=chr(13).'       <td>'.f($RS1,'nm_sol').' ('.f($RS1,'sg_unidade_solic').')</font></td></tr>';
-    } else {
-      $l_html.=chr(13).'   <tr><td><b>Solicitante:</b></font></td>';
-      $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_sol')).' ('.ExibeUnidade('../',$w_cliente,f($RS1,'sg_unidade_solic'),f($RS1,'sq_unidade'),$TP).')</font></td></tr>';
-    }
   }
-
-  // Verifica se é necessário mostrar o recurso
-  $RS_Recursos = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_menu,null,null,null,null,null,'SERVICO');
-  if (count($RS_Recursos)) $w_exibe_recurso = true; else $w_exibe_recurso = false;
-  if ($w_exibe_recurso) {
-    $RS_Recurso = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
-    foreach ($RS_Recurso as $row) {$RS_Recurso = $row; break;}
+  
+  if (Nvl(f($RS1,'justificativa'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
-    $l_html.=chr(13).'       <td width="20%"><b>Recurso:</b></font></td>';
-    if (count($RS_Recurso)) {
-      $l_html.=chr(13).'       <td>'.ExibeRecurso($w_dir_volta,$w_cliente,f($RS_Recurso,'nm_recurso'),f($RS_Recurso,'sq_recurso'),$TP,null).'<br>'.f($RS_Recurso,'ds_recurso').'</font></td></tr>';
-    } else {
-      $l_html.=chr(13).'       <td>Não informado</font></td></tr>';
-    }
+    $l_html.=chr(13).'       <td width="20%"><b>Relevância para a PDP:</b></font></td>';
+    $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'justificativa'),'-').'</font></td></tr>';
   }
-
+  
   if (Nvl(f($RS1,'descricao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top">';
-    $l_html.=chr(13).'       <td width="20%"><b>Detalhamento:</b></font></td>';
+    $l_html.=chr(13).'       <td width="20%"><b>Descrição:</b></font></td>';
     $l_html.=chr(13).'       <td>'.crlf2br(Nvl(f($RS1,'descricao'),'-')).'</font></td></tr>';
   }
   if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
@@ -97,18 +128,11 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     $l_html.=chr(13).'       <td width="20%"><b>Carga:</b></td>';
     $l_html.=chr(13).'       <td>'.RetornaSimNao(Nvl(f($RS1,'carga'),'-')).'</td></tr>';
   }  
-  if (Nvl(f($RS1,'justificativa'),'')!='') {
-    $l_html.=chr(13).'   <tr valign="top">';
-    $l_html.=chr(13).'       <td width="20%"><b>Justificativa:</b></font></td>';
-    $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'justificativa'),'-').'</font></td></tr>';
-  }
+  
   if (nvl(f($RS1,'nm_opiniao'),'')!='') {
     $l_html.=chr(13).'   <tr valign="top"><td><b>Opinião:</b></font></td><td>'.nvl(f($RS1,'nm_opiniao'),'---').'</font></td></tr>';
   }
-  if (nvl(f($RS1,'motivo_insatisfacao'),'')!='') {
-    $l_html.=chr(13).'   <tr valign="top"><td><b>Motivo(s) da insatisfação:</b></font></td><td>'.crlf2br(nvl(f($RS1,'motivo_insatisfacao'),'---')).'</font></td></tr>';
-  }
-
+  
   // Dados da execução, exceto para transporte
   if (f($RS1,'or_tramite')>1 && Nvl(f($RS1,'sigla'),'')!='SRTRANSP') {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA EXECUCÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';

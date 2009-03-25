@@ -69,6 +69,9 @@ $p_solicitante = strtoupper($_REQUEST['p_solicitante']);
 $p_unidade     = strtoupper($_REQUEST['p_unidade']);
 $p_texto       = $_REQUEST['p_texto'];
 $p_ordena      = strtolower($_REQUEST['p_ordena']);
+$p_atrasado    = $_REQUEST['p_atrasado'];
+$p_adiantado   = $_REQUEST['p_adiantado'];
+$p_concluido   = $_REQUEST['p_concluido'];
 
 $w_assinatura = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina = 'resultados.php?par=';
@@ -138,10 +141,6 @@ function Inicial() {
     ScriptOpen('Javascript');
     ValidateOpen('Validacao');
     Validate('p_texto','Texto','','',3,50,'1','1');
-    ShowHTML('  if (theForm.p_programa.selectedIndex==0 && theForm.p_projeto.selectedIndex==0 && theForm.p_unidade.selectedIndex==0 && theForm.p_solicitante.selectedIndex==0 && theForm.p_texto.value=="") {');
-    ShowHTML('    alert("Informe pelo menos um critário de busca!");');
-    ShowHTML('    return false;');
-    ShowHTML('  }');
     ValidateClose();
     ScriptClose();
     ShowHTML('</HEAD>');
@@ -157,21 +156,35 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
     ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
-    ShowHTML('   <tr valign="top">');
-    selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+    ShowHTML('   <tr>');
+    selecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,null,'<td>');
+    ShowHTML('   </tr>');
+    ShowHTML('   <tr>');
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:', 'O', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null);
+    SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, null, null, '<td>');
     ShowHTML('   </tr>');
     //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
-    ShowHTML('   <tr valign="top">');
-    SelecaoUnidade('<u>S</u>etor responsável:', 'S', null, $p_unidade, null, 'p_unidade', null, null);
-    SelecaoPessoa('Respo<u>n</u>sável:', 'N', 'Selecione o responsável pelo projeto na relação.', $p_solicitante, null, 'p_solicitante', 'USUARIOS');
-    ShowHTML('   <tr><td colspan="2"><b>Pesquisa por <u>t</u>exto:<br><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_texto" value="'. $p_texto .'"></td></tr>');
-    ShowHTML('   <tr><td colspan="2">');
+    ShowHTML('   <tr>');
+    SelecaoUnidade('<u>E</u>ntidade executora', 'E', null, $p_unidade, null, 'p_unidade', null, null, null, '<td>');
+    ShowHTML('   </tr>');
+    ShowHTML('   <tr>');
+    SelecaoPessoa('Res<u>p</u>onsável', 'D', 'Selecione o responsável pela atualização do item na relação.', $p_solicitante, null, 'p_solicitante', 'USUARIOS',null,null,'<td>');
+    ShowHTML('   </tr>');
+    ShowHTML('   <tr><td><b>Pesquisa por <u>t</u>exto</b></td>');
+    ShowHTML('   <td><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_texto" value="'. $p_texto .'"></td>');
+    ShowHTML('   </tr>');
+    ShowHTML('   <tr><td><b>Recuperar apenas</b></td>');
+    ShowHTML('       <td>');
+    ShowHTML('     <input type="checkbox" '.((nvl($p_atrasado,'')!='') ? 'checked' : '').'  name="p_atrasado"  value="1" />Atrasados');
+    ShowHTML('     <input type="checkbox" '.((nvl($p_adiantado,'')!='') ? 'checked' : '').' name="p_adiantado" value="1" />Concluídos antes do prazo ');
+    ShowHTML('     <input type="checkbox" '.((nvl($p_concluido,'')!='') ? 'checked' : '').' name="p_concluido" value="1" /> Concluídos no prazo');
+    ShowHTML('   </td></tr>');
+    ShowHTML('   <tr><td>&nbsp;</td>');
+    ShowHTML('       <td>');
     ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
     $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
     ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
-    ShowHTML('   </tr>');
+    ShowHTML('   </td></tr>');
     ShowHTML('</FORM>');
     ShowHTML(' </table></fieldset>');
     // Exibe o calendário da organização
@@ -281,16 +294,16 @@ function Inicial() {
     ShowHTML('</table>');
     
   }
-  if($_REQUEST['p_pesquisa'] == 'S' && ($_REQUEST['p_programa'] > '' or $_REQUEST['p_projeto'] > '' or $_REQUEST['p_unidade'] > '' or $_REQUEST['p_solicitante'] > '' or $_REQUEST['p_texto'] > '')){
-    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),'LISTA');
+  if($_REQUEST['p_pesquisa'] == 'S'){
+    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim), $p_atrasado, $p_adiantado, $p_concluido,null,null,'LISTA');
     if ($p_ordena>'') { 
-		  $lista = explode(',',str_replace(' ',',',$p_ordena));
-		  $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
-		} else {
-		  $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
-		}
+  $lista = explode(',',str_replace(' ',',',$p_ordena));
+  $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+} else {
+  $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+}
     ShowHTML('<table width="100%">');
-    ShowHTML('<tr><td align="right" colspan="2"><br/><br/>');      
+    ShowHTML('<tr><td align="right" colspan="2">');      
     if ($w_embed!='WORD') {
       CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
     }
@@ -299,19 +312,20 @@ function Inicial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if($w_embed != 'WORD'){
-      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Mês/Ano','mes_ano').'&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Programa','cd_programa').'&nbsp;</td>');
-      ShowHTML('          <td><b>&nbsp;'.linkOrdena('Agenda de Ação','cd_projeto').'&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Resultado','titulo').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Data','mes_ano').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Macro-<br>programa','cd_programa').'&nbsp;</td>');
+      ShowHTML('          <td><b>&nbsp;'.linkOrdena('Programa','cd_projeto').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Situação atual','titulo').'&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Ação&nbsp;</td>');
     }else{
-      ShowHTML('          <td nowrap><b>&nbsp;Mês/Ano&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Data&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Macro-<br>programa&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;Agenda de Ação&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;Resultado&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Situação atual&nbsp;</td>');  
     }      
     ShowHTML('        </tr>');
     $w_cor = $conTrBgColor;
+  
     if (count($RS_Resultado) == 0) {
       ShowHTML('    <tr align="center"><td colspan="5">Nenhum resultado encontrado para os critérios informados.</td>');
     } else {
@@ -321,14 +335,18 @@ function Inicial() {
         ShowHTML('      <td align="center" width="1%" nowrap>'.Date('d/m/Y', Nvl(f($row,'mes_ano'), '---')).'</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row,'nm_programa').'" nowrap>'.Nvl(f($row,'cd_programa'), '---').'</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row,'nm_projeto').'" nowrap>'.Nvl(f($row,'cd_projeto'), '---').'</td>');
-        ShowHTML('      <td title="'.f($row,'descricao').'">'.f($row,'titulo').' </td>');
         if($w_embed != 'WORD'){
+          ShowHTML('      <td title="'.f($row,'descricao').'">'.ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;'.f($row,'titulo').'</td>');
           ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_aux='.f($row,'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe dados do item">Exibir</A></td>');
+          ShowHTML('    </tr>');
+        }else{
+          ShowHTML('      <td title="'.f($row,'descricao').'">'.ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;'.f($row,'titulo').'<br/><b>Situação:</b><br/>'.f($row,'descricao').' </td>');
+          ShowHTML('    </tr>');          
         }
-        ShowHTML('    </tr>');
       }
-    	ShowHTML('  </table>');
-    	ShowHTML('<tr><td>&nbsp;</td></tr>');        
+
+    ShowHTML('  </table>');
+    ShowHTML('<tr><td>&nbsp;</td></tr>');        
     }
   }
   ShowHTML('</center>');

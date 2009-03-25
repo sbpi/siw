@@ -133,17 +133,17 @@ function Rel_Executivo() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E AGENDAS DE AÇÃO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO EXECUTIVO DE MACROPROGRAMAS',$w_pag);
       $w_embed = 'WORD';
       //CabecalhoWord($w_cliente,$w_TP,0);
     }elseif($p_tipo=='PDF'){
-        headerpdf('RELATÓRIO EXECUTIVO DE PROGRAMAS E AGENDAS DE AÇÃO',$w_pag);
+        headerpdf('RELATÓRIO EXECUTIVO DE MACROPROGRAMAS',$w_pag);
         $w_embed = 'WORD';
     } else {
       Cabecalho();
-      $w_embed = 'EMBED';
+      $w_embed = 'HTML';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório executivo de programas e agendas de ação</TITLE>');
+      ShowHTML('<TITLE>Relatório executivo de macroprogramas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       if (nvl($w_troca,'')!='') {
@@ -152,7 +152,7 @@ function Rel_Executivo() {
         BodyOpenClean('onLoad=\'this.focus()\'; ');
       }
       ShowHTML('<center>');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO EXECUTIVO DE PROGRAMAS E AGENDAS DE AÇÃO',4,$p_plano);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO EXECUTIVO DE MACROPROGRAMAS',4,$p_plano);
     }
     ShowHTML('');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -168,7 +168,7 @@ function Rel_Executivo() {
       // Legendas
       if($p_legenda=='S') {
         ShowHTML('      <tr><td colspan="2"><table border=0>');
-        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de agendas de ação:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
+        ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores de Programas:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
         ShowHTML('        <tr valign="top"><td colspan=6><br>');
         ShowHTML('        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores do IDE:</b>'.ExibeSmile('IDE',null,true));
         /*
@@ -198,11 +198,15 @@ function Rel_Executivo() {
           $w_proj = 0;
           foreach($RS1 as $row1) {
             if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
+              if($w_embed != 'WORD'){
               //Programas
-              ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</b></td></tr>');
+              }else{
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.f($row1,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row1,'nm_solic').'</b></td></tr>');
+              }
               ShowHTML('          <tr align="center">');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
-              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Programa/Agenda de ação</b></td>');
+              ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Programas</b></td>');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Gestor</b></td>');
               ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução</b></td>');
               if ($w_embed != 'WORD') {
@@ -224,7 +228,7 @@ function Rel_Executivo() {
                   $p_uorg_resp, $p_internas, $p_prazo, $p_fase, $p_sqcc, f($row1,'sq_siw_solicitacao'), $p_atividade, 
                   null, null, $p_empenho, $p_processo);
               if (count($RS3)==0) {
-                if ($p_projeto=='S') ShowHTML('          <tr><td colspan="10" align="center"><b>Nenhuma agenda de ação cadastrada neste programa</b></td></tr>');
+                if ($p_projeto=='S') ShowHTML('          <tr><td colspan="10" align="center"><b>Nenhum programa cadastrado neste programa</b></td></tr>');
               } else {
                 $l_previsto[$w_proj] = 0;
                 foreach($RS3 as $row3) {
@@ -232,7 +236,11 @@ function Rel_Executivo() {
                     if (f($row3,'sigla')=='PEPROCAD') {
                       ShowHTML('          <tr valign="top">');
                       //ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'SUBPROGRAMA: '.f($row3,'titulo').'</td>');
-                      ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</b></td></tr>');
+                      if ($w_embed !='WORD'){
+                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</b></td></tr>');
+                      } else {
+                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.f($row3,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row3,'nm_solic').'</b></td></tr>');                      
+                      }
                     } else {
                       ShowHTML('          <tr valign="top">');
                       ShowHTML('            <td nowrap>');
@@ -349,7 +357,7 @@ function Rel_Executivo() {
 
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório executivo de programas</TITLE>');
+    ShowHTML('<TITLE>Relatório executivo de macroprogramas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -384,9 +392,9 @@ function Rel_Executivo() {
     ShowHTML('      <tr>');
     selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano que deseja listar.', $p_plano, $w_chave, 'p_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
+    selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o macroprograma está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
+    selecaoPrograma('Macrop<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
     ShowHTML('      <tr><td><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');
     if ($p_legenda)     ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S" checked> Legenda dos sinalizadores </td>'); else ShowHTML('          <tr><td><INPUT type="CHECKBOX" name="p_legenda" value="S"> Legenda dos sinalizadores </td>');
@@ -410,8 +418,10 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  // if     ($w_tipo=='PDF')  RodapePDF();
+  // elseif ($w_tipo!='WORD') Rodape();
+	if ($w_embed =='WORD') RodapePdf();
+  if ($p_tipo!='WORD') Rodape();
   
   
 } 
@@ -434,20 +444,20 @@ function Rel_Programas() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE DETALHAMENTO DE MACROPROGRAMAS',$w_pag);
       $w_embed = 'WORD';      
     }elseif($p_tipo=='PDF'){
-        headerpdf('RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',$w_pag);
+        headerpdf('RELATÓRIO DE DETALHAMENTO DE MACROPROGRAMAS',$w_pag);
         $w_embed = 'WORD';
     }else{
       Cabecalho();
-      $w_embed = 'EMBED';
+      $w_embed = 'HTML';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
+      ShowHTML('<TITLE>Relatório de detalhamento de macroprogramas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE DETALHAMENTO DE PROGRAMAS',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE DETALHAMENTO DE MACROPROGRAMAS',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -471,7 +481,7 @@ function Rel_Programas() {
       }
       if ($p_programa) {
         $RS_Programa = db_getSolicData::getInstanceOf($dbms,$p_programa,'PEPRGERAL');
-        ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>MACROPROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
     }
@@ -480,7 +490,7 @@ function Rel_Programas() {
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>LEGENDAS</b></td></tr>');
       ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>');
       ShowHTML('      <tr><td colspan="2"><table border=0>');
-      ShowHTML('        <tr valign="top"><td colspan=6><b>Agendas de ação:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
+      ShowHTML('        <tr valign="top"><td colspan=6><b>Programas:</b>'.ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true));
       ShowHTML('        <tr valign="top"><td colspan=6><br>');
       ShowHTML('        <tr valign="top"><td colspan=6><b>IDE:</b>'.ExibeSmile('IDE',null,true));
       /*
@@ -618,7 +628,7 @@ function Rel_Programas() {
     ShowHTML('      <tr>');
     selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
     ShowHTML('      <tr>');
-    selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
+    selecaoPrograma('Macrop<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');    

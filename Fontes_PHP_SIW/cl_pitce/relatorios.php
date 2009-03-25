@@ -199,7 +199,7 @@ function Rel_Progresso() {
     }
     if ($p_projeto) {
       $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-      ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+      ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
     }
     ShowHTML('     </table>');
     ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -232,7 +232,7 @@ function Rel_Progresso() {
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
           if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Programa: '.f($row,'nm_programa').'</font></div></td></tr>');
           if (nvl(f($row,'nm_cc'),'')!='')       ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Classificação: '.f($row,'nm_cc').'</font></div></td></tr>');
-          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Agenda de ação: '.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>Programa: '.nvl(f($row,'codigo_interno'),f($row,'sq_projeto')).' - '.f($row,'nm_projeto').'</b></div></td></tr>');
           //if ($p_tipo!='WORD') {
           if ($w_embed !='WORD') {
             ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
@@ -539,7 +539,7 @@ function Rel_Progresso() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('p_projeto','Agenda de ação','SELECT','','1','18','1','1');
+    Validate('p_projeto','Programa','SELECT','','1','18','1','1');
     Validate('p_inicio','Data inicial do período de reporte','DATA',1,10,10,'','0123456789/');
     Validate('p_fim','Data final do período de reporte','DATA',1,10,10,'','0123456789/');
     CompData('p_inicio','Data inicial do período de reporte','<=','p_fim','Data final do período de reporte');
@@ -571,12 +571,12 @@ function Rel_Progresso() {
       ShowHTML('      <tr>');
       selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
       ShowHTML('      <tr>');
-      selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+      selecaoPrograma('Macrop<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Program<u>a</u>:','A','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td colspan=2><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
@@ -638,25 +638,25 @@ function Rel_Projeto() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROGRAMA',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DETALHADO DE PROGRAMA',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='PDF') {
-      headerPdf('RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',$w_pag)     ;
+      headerPdf('RELATÓRIO DETALHADO DE PROGRAMA',$w_pag)     ;
       $w_embed = 'WORD';
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatório detalhado de agendas de ação</TITLE>');
+      ShowHTML('<TITLE>Relatório detalhado de programa</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DETALHADO DE AGENDAS DE AÇÃO',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DETALHADO DE PROGRAMA',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -678,11 +678,11 @@ function Rel_Projeto() {
       }
       if ($p_programa) {
         $RS_Programa = db_getSolicData::getInstanceOf($dbms,$p_programa,'PEPRGERAL');
-        ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>MACROPROGRAMA:<td>'.f($RS_Programa,'cd_programa').' - '.f($RS_Programa,'titulo').'</td></tr>');
       }
       if ($p_projeto) {
         $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-        ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
     }
@@ -713,7 +713,7 @@ function Rel_Projeto() {
 
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de agendas de ação</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -788,7 +788,7 @@ function Rel_Projeto() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('p_projeto','Agenda de ação','SELECT','','1','18','1','1');
+    Validate('p_projeto','programa','SELECT','','1','18','1','1');
     /*
     Validate('p_inicio','Data inicial do período de reporte','DATA',1,10,10,'','0123456789/');
     Validate('p_fim','Data final do período de reporte','DATA',1,10,10,'','0123456789/');
@@ -823,12 +823,12 @@ function Rel_Projeto() {
       ShowHTML('      <tr>');
       selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
       ShowHTML('      <tr>');
-      selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+      selecaoPrograma('Macrop<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Program<u>a</u>:','A','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     /*
     ShowHTML('      <tr valign="top">');
@@ -944,25 +944,25 @@ function Rel_Atualizacao() {
     if ($p_tipo=='WORD') {
       HeaderWord($_REQUEST['orientacao']);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
     } elseif ($p_tipo=='EXCEL') {
       HeaderExcel(null);
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
+      CabecalhoWord($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
     } elseif($p_tipo=='PDF'){
-      headerPdf('RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',$w_pag);
+      headerPdf('RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROGRAMAS',$w_pag);
       $w_embed = 'WORD';
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
       ShowHTML('<HEAD>');
-      ShowHTML('<TITLE>Relatorio de atualização dos dados das agendas de ação</TITLE>');
+      ShowHTML('<TITLE>Relatorio de atualização dos dados dos programas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpenClean('onLoad=\'this.focus()\'; ');
-      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DAS AGENDAS DE AÇÃO',4);
+      CabecalhoRelatorio($w_cliente,'RELATÓRIO DE ATUALIZAÇÃO DOS DADOS DOS PROGRAMAS',4);
     }
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
@@ -988,7 +988,7 @@ function Rel_Atualizacao() {
       }
       if ($p_projeto) {
         $RS_Projeto = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
-        ShowHTML('     <tr valign="top"><td>AGENDA DE AÇÃO:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
+        ShowHTML('     <tr valign="top"><td>PROGRAMA:<td>'.nvl(f($RS_Projeto,'codigo_interno'),f($RS_Projeto,'sq_siw_solicitacao')).' - '.f($RS_Projeto,'titulo').'</td></tr>');
       }
       ShowHTML('     </table>');
     }
@@ -1058,7 +1058,7 @@ function Rel_Atualizacao() {
 
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>Relatório de detalhamento de agendas de ação</TITLE>');
+    ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
     ShowHTML('    for (var i=0;i < document.Form.elements.length;i++) { ');
@@ -1109,12 +1109,12 @@ function Rel_Atualizacao() {
       ShowHTML('      <tr>');
       selecaoObjetivoEstrategico('<u>O</u>bjetivo estratégico:', 'O', 'Selecione o objetivo estratégico ao qual o programa está vinculado.', $p_objetivo, $p_plano, 'p_objetivo', 'ULTIMO',  'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"');
       ShowHTML('      <tr>');
-      selecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+      selecaoPrograma('Macrop<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
       ShowHTML('      </table>');
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:','O','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Program<u>a</u>:','A','Selecione um item na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');

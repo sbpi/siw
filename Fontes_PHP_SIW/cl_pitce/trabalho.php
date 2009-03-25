@@ -24,6 +24,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoEventoCheck.php');
 include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  trabalho.php
@@ -64,12 +65,11 @@ $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
 
 $p_agenda      = $_REQUEST['p_agenda'];
-$p_evento      = $_REQUEST['p_evento'];
-$p_reuniao     = $_REQUEST['p_reuniao'];
 $p_programa    = $_REQUEST['p_programa'];
 $p_unidade     = $_REQUEST['p_unidade'];
 $p_projeto     = $_REQUEST['p_projeto'];
 $p_texto       = $_REQUEST['p_texto'];
+$p_tipo_evento = explodeArray($_REQUEST['p_tipo_evento']);
 $p_ordena      = strtolower($_REQUEST['p_ordena']);
 
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
@@ -132,21 +132,21 @@ function Mesa() {
   ShowHTML(' }');
   ShowHTML('#calendario{');
   ShowHTML('  cursor:pointer;');
-  ShowHTML('  width: 128px;');
-  ShowHTML('  height: 128px;');
+  ShowHTML('  width: 130px;');
+  ShowHTML('  height: 136px;');
   ShowHTML('  background:url('.$w_dir.'calendario.gif) no-repeat;');
   ShowHTML('}');
   ShowHTML('#resultados{');
   ShowHTML('  cursor:pointer;');
-  ShowHTML('  width: 128px;');
-  ShowHTML('  height: 128px;');
-  ShowHTML('  background-image:url('.$w_dir.'resultados.gif);');
+  ShowHTML('  width: 130px;');
+  ShowHTML('  height: 136px;');
+  ShowHTML('  background:url('.$w_dir.'resultados.gif) no-repeat;');
   ShowHTML('}');
   ShowHTML('#download{');
   ShowHTML('  cursor:pointer;');
-  ShowHTML('  width: 128px;');
-  ShowHTML('  height: 128px;');
-  ShowHTML('  background-image:url('.$w_dir.'download.gif);');
+  ShowHTML('  width: 130px;');
+  ShowHTML('  height: 136px;');
+  ShowHTML('  background:url('.$w_dir.'download.gif) no-repeat;');
   ShowHTML('}');
   
   ShowHTML('</style>');
@@ -194,19 +194,63 @@ function Mesa() {
     $w_pne2  = 0;
     $w_pne3  = 0;
     $w_todos = 0;
-    $SQL = "select b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano, count(a.sq_siw_solicitacao) as qtd from siw_solicitacao a join siw_solicitacao b on (a.sq_solic_pai = b.sq_siw_solicitacao) inner join siw_menu c on (b.sq_menu = c.sq_menu and c.sigla = 'PEPROCAD' and c.sq_pessoa = ".$w_cliente.") group by b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano";
+    $SQL = "select a.sq_plano ".$crlf. 
+           "  from siw_solicitacao        a ".$crlf. 
+           "       inner join siw_tramite d on (a.sq_siw_tramite = d.sq_siw_tramite and ".$crlf. 
+           "                                    d.ativo          = 'S'".$crlf. 
+           "                                   ) ".$crlf. 
+           "  where a.codigo_interno='PDE' ";
+    $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
+    foreach($RS as $row) { $RS = $row; break; }
+    $w_plano = f($RS,'sq_plano');
+    
+    $SQL = "select b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano, ".$crlf. 
+           "       count(a.sq_siw_solicitacao) as qtd  ".$crlf. 
+           "  from siw_solicitacao              a ".$crlf. 
+           "       inner   join siw_menu       a1 on (a.sq_menu            = a1.sq_menu and ".$crlf. 
+           "                                          a1.sigla             = 'PJCAD' and ".$crlf. 
+           "                                          a1.sq_pessoa         = ".$w_cliente.$crlf. 
+           "                                         )".$crlf. 
+           "       inner   join siw_tramite    a2 on (a.sq_siw_tramite     = a2.sq_siw_tramite and ".$crlf. 
+           "                                          a2.ativo             = 'S'".$crlf. 
+           "                                         ) ".$crlf. 
+           "       inner   join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao,".$w_usuario.") as acesso".$crlf.
+           "                       from siw_solicitacao x ".$crlf. 
+           "                     group by x.sq_siw_solicitacao ".$crlf. 
+           "                    )              a3 on (a.sq_siw_solicitacao = a3.sq_siw_solicitacao) ".$crlf. 
+           "       inner   join siw_solicitacao b on (a.sq_solic_pai       = b.sq_siw_solicitacao) ".$crlf. 
+           "         inner join siw_menu        c on (b.sq_menu            = c.sq_menu and ".$crlf. 
+           "                                          c.sigla              = 'PEPROCAD' and ".$crlf. 
+           "                                          c.sq_pessoa          = ".$w_cliente.$crlf. 
+           "                                         )".$crlf. 
+           "         inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite and ".$crlf. 
+           "                                          d.ativo              = 'S'".$crlf. 
+           "                                         ) ".$crlf. 
+           "       left    join siw_solicitacao e on (b.sq_solic_pai       = e.sq_siw_solicitacao) ".$crlf. 
+           "         left  join siw_menu        f on (e.sq_menu            = f.sq_menu and ".$crlf. 
+           "                                          f.sigla              = 'PEPROCAD' and ".$crlf. 
+           "                                          f.sq_pessoa          = ".$w_cliente.$crlf. 
+           "                                         )".$crlf. 
+           "         left  join siw_tramite     g on (e.sq_siw_tramite     = g.sq_siw_tramite and ".$crlf. 
+           "                                          g.ativo              = 'S'".$crlf. 
+           "                                         ) ".$crlf. 
+           "  where 0 < a3.acesso ".$crlf. 
+           "    and (b.sq_plano = ".nvl($w_plano,0)." or e.sq_plano = ".nvl($w_plano,0).") ".$crlf. 
+    "group by b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano";
     $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
     foreach($RS as $row) { 
       switch (f($row,'codigo_interno')) {
-      case 'PDE':  $w_plano = f($row,'sq_plano'); $c_pde  = f($row,'sq_siw_solicitacao'); $w_pde  = f($row,'qtd'); $w_todos += f($row,'qtd'); break;
-      case 'PNS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns  = f($row,'qtd'); $w_todos += f($row,'qtd'); break;
-      case 'PNE1': $c_pne = f($row,'sq_solic_pai'); $c_pne1 = f($row,'sq_siw_solicitacao'); $w_pne1 = f($row,'qtd'); $w_pne += f($row,'qtd'); $w_todos += f($row,'qtd'); break;
-      case 'PNE2': $c_pne = f($row,'sq_solic_pai'); $c_pne2 = f($row,'sq_siw_solicitacao'); $w_pne2 = f($row,'qtd'); $w_pne += f($row,'qtd'); $w_todos += f($row,'qtd'); break;
-      case 'PNE3': $c_pne = f($row,'sq_solic_pai'); $c_pne3 = f($row,'sq_siw_solicitacao'); $w_pne3 = f($row,'qtd'); $w_pne += f($row,'qtd'); $w_todos += f($row,'qtd'); break;
+        case 'PDE':  $c_pde  = f($row,'sq_siw_solicitacao'); $w_pde = f($row,'qtd'); break;
+        case 'PNS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns = f($row,'qtd'); break;
+        case 'PNE1': $c_pne = f($row,'sq_solic_pai'); $c_pne1 = f($row,'sq_siw_solicitacao'); $w_pne1 = f($row,'qtd'); break;
+        case 'PNE2': $c_pne = f($row,'sq_solic_pai'); $c_pne2 = f($row,'sq_siw_solicitacao'); $w_pne2 = f($row,'qtd'); break;
+        case 'PNE3': $c_pne = f($row,'sq_solic_pai'); $c_pne3 = f($row,'sq_siw_solicitacao'); $w_pne3 = f($row,'qtd'); break;
       }
     }
+    $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
+    $w_todos = $w_pns + $w_pde + $w_pne1 + $w_pne2 + $w_pne3; 
     ShowHTML('<div id="menu_superior">');
-    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Resultados&SG='.$SG.'" title="Consulta aos resultados da PDP."><div id="resultados"></div></a>');
+    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&SG='.$SG.'" title="Consulta de agendas de ação, eventos e reuniões da PDP."><div id="calendario"></div></a>');
     ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'governanca.pdf',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
     ShowHTML('</div>');
@@ -218,7 +262,7 @@ function Mesa() {
     ShowHTML('<area shape="poly" coords="372,293,373,288,376,284,380,281,386,281,473,281,479,281,483,284,486,288,487,293,487,338,486,343,483,347,479,350,473,351,386,351,380,350,376,347,373,343,372,338,372,293,372,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne3.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne3.'" />');
     ShowHTML('<area shape="poly" coords="251,293,252,288,254,284,259,281,265,281,351,281,357,281,362,284,364,288,366,293,366,338,364,343,362,347,357,350,351,351,265,351,259,350,254,347,252,343,251,338,251,293,251,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne1.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne1.'" />');
     ShowHTML('<area shape="poly" coords="127,292,128,287,131,283,135,280,141,279,228,279,234,280,238,283,241,287,242,292,242,336,241,341,238,345,234,348,228,349,141,349,135,348,131,345,128,341,127,336,127,292,127,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pde.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pde.'" />');
-    ShowHTML('<area shape="poly" coords="1,292,2,287,5,283,9,280,15,279,102,279,108,280,112,283,115,287,116,292,116,336,115,341,112,345,108,348,102,349,15,349,9,348,5,345,2,341,1,336,1,292,1,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_programa='.$c_pns.'&O=L&p_sinal=S&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PNS" title="Agendas de ação: '.$w_pns.'" />');
+    ShowHTML('<area shape="poly" coords="1,292,2,287,5,283,9,280,15,279,102,279,108,280,112,283,115,287,116,292,116,336,115,341,112,345,108,348,102,349,15,349,9,348,5,345,2,341,1,336,1,292,1,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pns.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pns.'" />');
     ShowHTML('<area shape="poly" coords="233,84,234,79,237,75,242,72,247,71,369,71,374,72,379,75,382,79,383,84,383,105,382,110,379,114,374,117,369,118,247,118,242,117,237,114,234,110,233,105,233,84,233,84" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=MDIC-PDP - Docs&TP='.$TP.' - Documentos do MDIC" title="Documentos do MDIC" />');
     ShowHTML('<area shape="poly" coords="233,154,234,149,237,145,242,142,247,141,369,141,374,142,379,145,382,149,383,154,383,175,382,180,379,184,374,187,369,188,247,188,242,187,237,184,234,180,233,175,233,154,233,154" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=SE-PDP - Docs&TP='.$TP.' - Documentos da Secretaria Executiva" title="Documentos da Secretaria Executiva da PDP" />');
     ShowHTML('<area shape="poly" coords="233,14,234,9,237,5,242,2,247,1,369,1,374,2,379,5,382,9,383,14,383,35,382,40,379,44,374,47,369,48,247,48,242,47,237,44,234,40,233,35,233,14,233,14" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CNDI-PDP - Docs&TP='.$TP.' - Documentos do CNDI" title="Documentos do CNDI" />');
@@ -304,7 +348,7 @@ function Arquivos() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   ShowHTML('<table border="0" width="100%">');
-  ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+  if (nvl($TP,'')!='') ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('<tr><td colspan=2><hr>');
   
   if (!is_array($RS_Solic)) {
@@ -320,15 +364,15 @@ function Arquivos() {
         $RS = db_getEtapaAnexo::getInstanceOf($dbms,f($row,'sq_projeto_etapa'),null,$w_cliente);
         $RS = SortArray($RS,'nome','asc');
         if (count($RS) > 0) {
-          ShowHTML('<tr><td colspan="2"><b>'.strtoupper(f($row,'titulo')).' ('.count($RS).')</b>');
+          ShowHTML('<tr><td colspan="2"><b>'.strtoupper(f($row,'titulo')).'</b>');
           ShowHTML('<tr><td align="center" colspan=2>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
           ShowHTML('          <td width="20%"><b>Título</td>');
-          ShowHTML('          <td width="50%"><b>Resumo</td>');
+          ShowHTML('          <td width="40%"><b>Resumo</td>');
           ShowHTML('          <td width="10%"><b>Data</td>');
           ShowHTML('          <td width="20%"><b>Tipo</td>');
-          ShowHTML('          <td width="10%"><b>Tamanho</td>');
+          ShowHTML('          <td width="20%"><b>Tamanho</td>');
           ShowHTML('        </tr>');
           $w_cor=$conTrBgColor;
           foreach ($RS as $row) {
@@ -373,99 +417,89 @@ function Calendario() {
     $w_hora_termino  = $_REQUEST['w_hora_termino'];
     $w_mensagem      = $_REQUEST['w_mensagem'];
   }  
-
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
-  ShowHTML('<link href="xPandMenu.css" rel="stylesheet" type="text/css">');
-  ScriptOpen('JavaScript');
-  modulo();
-  CheckBranco();
-  FormataDataMA();
-  FormataData();
-  FormataHora();
-  SaltaCampo();
-  ValidateOpen('Validacao');
-  if($O=='L'){
-    ShowHTML('  if (!(theForm.p_agenda.checked || theForm.p_evento.checked || theForm.p_reuniao.checked)) {');
-    ShowHTML('     alert(\'Indique pesquisa por agendas de ação, reuniões e/ou eventos.\');');
-    ShowHTML('     return false;');
-    ShowHTML('  }'); 
-    Validate('p_programa','Programa','SELECT',1,1,18,'','0123456789');
-    ShowHTML('  theForm.p_pesquisa.value="OK";');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
-    ShowHTML('  theForm.Botao[2].disabled=true;');
-  } elseif($O=='I') {
-    Validate('w_programa','Programa','SELECT',1,1,18,'','0123456789');
-    Validate('w_projeto','Projeto','SELECT',1,1,18,'','0123456789');
-    ShowHTML('  if (theForm.w_secretaria.checked || theForm.w_coordenacao.checked || theForm.w_comite.checked) {');
-    ShowHTML('  } else {');
-    ShowHTML('     alert(\'Pelo menos um interessado deve ser selecionado.\');');
-    ShowHTML('     return false;');
-    ShowHTML('  }'); 
-    Validate('w_assunto','Assunto','',1,1,80,'1','1');  
-    Validate('w_local','Local','',1,1,80,'1','1');  
-    Validate('w_mensagem','Descrição','',1,3,500,'1','1');
-    Validate('w_data_inicio','Data de início','DATA','1',10,10,'','0123456789/');
-    Validate('w_data_termino','Data de término','DATA','1',10,10,'','0123456789/');
-    Validate('w_hora_inicio','Hora de início','HORA','1',5,5,'','0123456789:');
-    Validate('w_hora_termino','Hora de término','HORA','1',5,5,'','0123456789:');
-    CompData('w_data_termino','Data de término','>=','w_data_inicio','Data de início');
-    ShowHTML('  if (theForm.w_data_termino.value == theForm.w_data_inicio.value) {');
-    CompHora('w_hora_termino','Hora de término','>','w_hora_inicio','Hora de início');
-    ShowHTML('  }');
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
-    ShowHTML('  theForm.Botao[2].disabled=true;');  
-  }  
   
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=this.focus();');
-  ShowHTML('<table border="0" width="100%">');
-  ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  ShowHTML('<tr><td><hr>');
-  if($O == 'L'){
+  $w_tipo=$_REQUEST['w_tipo'];  
+  if ($w_tipo=='PDF') {
+    headerpdf('Visualização de Calendário',$w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo=='WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente,'Visualização de Calendário',0);
+    $w_embed = 'WORD';
+  } else {
+    Cabecalho();
+    ShowHTML('<HEAD>');
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
+    ShowHTML('<link href="xPandMenu.css" rel="stylesheet" type="text/css">');
+    ScriptOpen('JavaScript');
+    modulo();
+    CheckBranco();
+    FormataDataMA();
+    FormataData();
+    FormataHora();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    if($O=='L'){
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  if (theForm.p_agenda.checked) w_erro=false;');
+      ShowHTML('  for (i=0; i < theForm["p_tipo_evento[]"].length; i++) {');
+      ShowHTML('    if (theForm["p_tipo_evento[]"][i].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos um tipo de evento!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      Validate('p_programa','Programa','SELECT',null,1,18,'','0123456789');
+      ShowHTML('  theForm.p_pesquisa.value="OK";');
+      ShowHTML('  theForm.Botao[0].disabled=true;');
+      ShowHTML('  theForm.Botao[1].disabled=true;');
+    }  
+    
+    ValidateClose();
+    ScriptClose();
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+    BodyOpen('onLoad=this.focus();');
+    ShowHTML('<table border="0" width="100%">');
+    ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+    ShowHTML('<tr><td><hr>');
     ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
     ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
-    ShowHTML('   <tr><td><b>');
-    ShowHTML('     <input type="checkbox" '.((nvl($p_agenda,'')!='') ? 'checked' : '').' name="p_agenda" value="0" /> Agenda de Ação');
-    ShowHTML('     <input type="checkbox" '.((nvl($p_evento,'')!='') ? 'checked' : '').' name="p_evento" value="1" />Evento ');
-    ShowHTML('     <input type="checkbox" '.((nvl($p_reuniao,'')!='') ? 'checked' : '').' name="p_reuniao" value="2" />Reunião PDP');
+    ShowHTML('   <tr>');
+    ShowHTML('     <td><b>Recuperar</b><td>');
+    ShowHTML('          <input type="CHECKBOX" name="p_agenda" value="S" '.((nvl($p_agenda,'')!='') ? 'checked': '').'> Agenda de ação');
+    $RS_Projeto = db_getLinkData::getInstanceOf($dbms,$w_cliente,'EVCAD');
+    SelecaoTipoEventoCheck(null,null,null,$p_tipo_evento,f($RS_Projeto,'sq_menu'),'p_tipo_evento[]',null,null,null,'&nbsp;');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
-    SelecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null /*'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"'*/);
+    SelecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null, 1, null, '<td>');
     ShowHTML('   <tr>');
-    SelecaoUnidade('<u>Ó</u>rgão responsável:', 'O', null, $p_unidade, null, 'p_unidade', null, null);
-    ShowHTML('   <tr><td><b><u>L</u>ocal:<br><input class="STI" accesskey="L" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
+    SelecaoUnidade('<u>Ó</u>rgão responsável', 'O', null, $p_unidade, null, 'p_unidade', null, null,null,'<td>');
+    ShowHTML('   <tr><td><b><u>L</u>ocal<td><input class="STI" accesskey="L" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr valign="top"><td colspan="3">');
+    ShowHTML('   <tr><td><td colspan="2">');
     ShowHTML('     <input class="STB" type="submit" name="Botao" value="BUSCAR">');
-    ShowHTML('     <input class="STB" type="button" name="Botao" value="INSERIR" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'I\'; document.Form.submit();">');
     $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
     ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
     ShowHTML('   </tr>');
     ShowHTML('          </form>');
     ShowHTML(' </table></fieldset>');
     
-	  // Exibe o calendário da organização
-	  include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-	  for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-	    $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
-	    $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
-	  }
-	
-	  // Recupera os dados da unidade de lotação do usuário
-	  include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-	  $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
-	  if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),'LISTA');
+    // Exibe o calendário da organização
+    include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
+    for ($i=$w_ano1;$i<=$w_ano3;$i++) {
+      $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
+      $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
+    }
+
+    // Recupera os dados da unidade de lotação do usuário
+    include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
+    $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
+    if (nvl($_REQUEST['p_pesquisa'],'')!='') {
+      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
       if ($p_ordena>'') { 
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -473,194 +507,148 @@ function Calendario() {
         $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
       }
       $RS_ResultCal = SortArray($RS_Resultado,'mes_ano','asc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
-  	  
-  		// Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-  		foreach($RS_ResultCal as $row) {
-  		  $w_saida   = f($row,'mes_ano');
-  		  $w_chegada = f($row,'mes_ano');
-  		  retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, 'Início/fim de item de agenda de ação.', 'N');
-  		}
-  		reset($RS_ResultCal);
-  		foreach($RS_ResultCal as $row) {
-  		  $w_saida   = f($row,'mes_ano');
-  		  $w_chegada = f($row,'mes_ano');
-  		  retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, $conTrBgColorLightYellow2, 'N');
-  		}
-	  }
-	
-	  // Verifica a quantidade de colunas a serem exibidas
-	  $w_colunas = 1;
-	
-	  // Configura a largura das colunas
-	  switch ($w_colunas) {
-	  case 1:  $width = "100%";  break;
-	  case 2:  $width = "50%";  break;
-	  case 3:  $width = "33%";  break;
-	  case 4:  $width = "25%";  break;
-	  default: $width = "100%";
-	  }
-	  ShowHTML('        <table width="100%" border="0" align="center" CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'><tr valign="top">');
-	  // Exibe calendário e suas ocorrências ==============
-	  ShowHTML('          <td width="'.$width.'" align="center"><table border="1" cellpadding=0 cellspacing=0>');
-	  ShowHTML('            <tr><td colspan=3 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
-	  ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
-	  ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente,'nome_resumido').' ('.f($RS_Unidade,'nm_cidade').')</td>');
-	  ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
-	  ShowHTML('              </table>');
-	  // Variáveis para controle de exibição do cabeçalho das datas especiais
-	  $w_detalhe1 = false;
-	  $w_detalhe2 = false;
-	  $w_detalhe3 = false;
-	  ShowHTML('            <tr valign="top">');
-	  ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-	  ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
-	  ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
-	
-	  if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
-	    ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
-	    ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
-	  }
-	
-	  // Exibe informações complementares sobre o calendário
-	  ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-	  ShowHTML('              <td colspan=3 align="center">');
-	  if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
-	    ShowHTML('                <table width="100%" border="0" cellspacing=1>');
-	    if (count($RS_Ano)==0) {
-	      ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
-	    } else {
-	      ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
-	      reset($RS_Ano);
-	      for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-	        $RS_Ano_Atual = $RS_Ano[$i];
-	        foreach($RS_Ano_Atual as $row_ano) {
-	          // Exibe apenas as ocorrências do trimestre selecionado
-	          if (f($row_ano,'data_formatada') >= $w_inicio && f($row_ano,'data_formatada') <= $w_fim) {
-	            ShowHTML('                  <tr valign="top">');
-	            ShowHTML('                    <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
-	            ShowHTML('                    <td>'.f($row_ano,'nome'));
-	          }
-	        }
-	      }
-	      ShowHTML('              </table>');
-	    }
-	  }
-	  ShowHTML('          </table>');
+      
+      // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
+      foreach($RS_ResultCal as $row) {
+        $w_saida   = f($row,'mes_ano');
+        $w_chegada = f($row,'mes_ano');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? 'Início/fim de item da agenda de ação.' : 'Início/fim de evento'), 'N');
+      }
+      reset($RS_ResultCal);
+      foreach($RS_ResultCal as $row) {
+        $w_saida   = f($row,'mes_ano');
+        $w_chegada = f($row,'mes_ano');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? $conTrBgColorLightYellow2 : $conTrBgColorLightGreen2), 'N');
+      }
+    }
+
+    // Verifica a quantidade de colunas a serem exibidas
+    $w_colunas = 1;
+
+    // Configura a largura das colunas
+    switch ($w_colunas) {
+    case 1:  $width = "100%";  break;
+    case 2:  $width = "50%";  break;
+    case 3:  $width = "33%";  break;
+    case 4:  $width = "25%";  break;
+    default: $width = "100%";
+    }
+    ShowHTML('        <table width="100%" border="0" align="center" CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'><tr valign="top">');
+    // Exibe calendário e suas ocorrências ==============
+    ShowHTML('          <td width="'.$width.'" align="center"><table border="1" cellpadding=0 cellspacing=0>');
+    ShowHTML('            <tr><td colspan=3 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
+    ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
+    ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente,'nome_resumido').' ('.f($RS_Unidade,'nm_cidade').')</td>');
+    ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
+    ShowHTML('              </table>');
+    // Variáveis para controle de exibição do cabeçalho das datas especiais
+    $w_detalhe1 = false;
+    $w_detalhe2 = false;
+    $w_detalhe3 = false;
+    ShowHTML('            <tr valign="top">');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
+
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+      ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
+      ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
+    }
+
+    // Exibe informações complementares sobre o calendário
+    ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
+    ShowHTML('              <td colspan=3 align="center">');
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+      ShowHTML('                <table width="100%" border="0" cellspacing=1>');
+      if (count($RS_Ano)==0) {
+        ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
+      } else {
+        ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
+        reset($RS_Ano);
+        for ($i=$w_ano1;$i<=$w_ano3;$i++) {
+          $RS_Ano_Atual = $RS_Ano[$i];
+          foreach($RS_Ano_Atual as $row_ano) {
+            // Exibe apenas as ocorrências do trimestre selecionado
+            if (f($row_ano,'data_formatada') >= $w_inicio && f($row_ano,'data_formatada') <= $w_fim) {
+              ShowHTML('                  <tr valign="top">');
+              ShowHTML('                    <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
+              ShowHTML('                    <td>'.f($row_ano,'nome'));
+            }
+          }
+        }
+        ShowHTML('              </table>');
+      }
+    }
+    ShowHTML('          </table>');
     ShowHTML('  </table>');
-    if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-      ShowHTML('<table width="100%">');
-	    ShowHTML('<tr><td align="right" colspan="2"><hr>');      
-	    if ($w_embed!='WORD') {
-	      CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
-	    }
-		  // Final da exibição do calendário e suas ocorrências ==============
-	    ShowHTML('<tr><td align="right" colspan="2"><b>Resultados: ' . count($RS_Resultado) . ' </b></td></tr>');
-	    ShowHTML('<tr><td align="center" colspan=2>');
-	    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
-	    ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
-	    if($w_embed != 'WORD'){
-	      ShowHTML('          <td width="10">&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Data','mes_ano').'&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Programa','cd_programa').'&nbsp;</td>');
-	      ShowHTML('          <td><b>&nbsp;'.linkOrdena('Agenda de Ação','cd_projeto').'&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Assunto/Resultado','titulo').'&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Realizador','sg_setor').'&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Local','local').'&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Ação&nbsp;</td>');
-	    } else {
-	      ShowHTML('          <td width="10">&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Data&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Agenda de Ação&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Assunto/Resultado&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Realizador&nbsp;</td>');
-	      ShowHTML('          <td nowrap><b>&nbsp;Local&nbsp;</td>');
-	    }      
-	    ShowHTML('        </tr>');
-	    $w_cor = $conTrBgColor;
-	    if (count($RS_Resultado) == 0) {
-	      ShowHTML('    <tr align="center"><td colspan="8">Nenhum resultado encontrado para os critérios informados.</td>');
-	    } else {
-	      foreach ($RS_Resultado as $row) {
-	        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
-	        ShowHTML('    <tr valign="top" bgColor="' . $w_cor . '">');
-	        if (nvl(f($row, 'sq_projeto_etapa'),'')!='') {
-	          ShowHTML('      <td bgcolor="'.$conTrBgColorLightYellow2.'">&nbsp;</td>');
-	        } else {
-	          ShowHTML('      <td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;</td>');
-	        }
-	        ShowHTML('      <td align="center" width="1%" nowrap>' . Date('d/m/Y', Nvl(f($row, 'mes_ano'), '---')) . '</td>');
-	        ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_programa').'" nowrap>' . Nvl(f($row, 'cd_programa'), '---') . '</td>');
-	        ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_projeto').'" nowrap>' . Nvl(f($row, 'cd_projeto'), '---') . '</td>');
-	        ShowHTML('      <td title="'.f($row, 'descricao').'">'.f($row, 'titulo').' </td>');
-	        ShowHTML('      <td>'.ExibeUnidade(null,$w_cliente,f($row,'sg_setor'),f($row,'sq_unidade'),$TP).' </td>');
-	        ShowHTML('      <td>'.nvl(f($row, 'local'),'---').' </td>');
-	        if($w_embed != 'WORD'){
-	          if (nvl(f($row, 'sq_projeto_etapa'),'')!='') {
-	            ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe dados do item">Exibir</A></td>');
-	          } else {
-	            ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe dados do item">Exibir evento</A></td>');
-	          }
-	        }
-	        ShowHTML('    </tr>');
-	      }
-	      ShowHTML('  </table>');
-	      ShowHTML('<tr><td>&nbsp;</td></tr>');
-	    }
-	    ShowHTML('</center>');
+  }
+// Final da exibição do calendário e suas ocorrências ==============
+  if (nvl($_REQUEST['p_pesquisa'],'')!='') {
+    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+    ShowHTML('<table width="100%">');
+    ShowHTML('<tr><td align="right" colspan="2"><hr>');      
+    if ($w_embed!='WORD') {
+      CabecalhoRelatorio($w_cliente,'Visualização de Calendário',4,$w_chave,null);
     }
-  } elseif (strpos('IAEV',$O)!==false) {
-    if (strpos('EV',$O)!==false) $w_Disabled = ' DISABLED ';
-    ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'" align="center">');
-    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('   <tr>');
-    SelecaoPrograma('P<u>r</u>ograma:', 'R', 'Se desejar, selecione um dos programas.', $w_programa, $w_plano, $w_objetivo, 'w_programa', null, 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_projeto\'; document.Form.submit();"',1,1,'<td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr>');
-    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    SelecaoProjeto('Agenda de açã<u>o</u>:', 'O', 'Selecione um item na relação.', $w_projeto, $w_usuario, f($RS, 'sq_menu'), nvl($w_programa,0), $w_objetivo, $w_plano, 'w_projeto', 'PJLIST', 'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_projeto\'; document.Form.submit();"',1,1,'<td>');
-    ShowHTML('   </tr>');
-    if (nvl($w_projeto,'')!='') {
-      // Recupera os dados do projeto
-      $RS = db_getSolicData::getInstanceOf($dbms,$w_projeto,f($RS,'sigla'));
-      ShowHTML('   <tr><td><b>Órgão responsável: </b></td><td>'.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</td></tr>');
-      ShowHTML('   <tr><td><b>Coordenador: </b></td><td> '.nvl(f($RS,'proponente'),'---'). '</td></tr>');
+    
+    ShowHTML('<tr><td align="right" colspan="2"><b>Resultados: ' . count($RS_Resultado) . ' </b></td></tr>');
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
+    if($w_embed != 'WORD'){    
+      ShowHTML('          <td width="10">&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Data','mes_ano').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Macro-<br>programa','cd_programa').'&nbsp;</td>');
+      ShowHTML('          <td><b>&nbsp;'.linkOrdena('Programa','cd_projeto').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Assunto/Resultado','titulo').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Realizador','sg_setor').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Local','local').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Ação&nbsp;</td>');
+    } else {
+      ShowHTML('          <td width="10">&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Data&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Macro-<br>programa&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Assunto/Resultado&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Realizador&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Local&nbsp;</td>');
+    }      
+    ShowHTML('        </tr>');
+    $w_cor = $conTrBgColor;
+    if (count($RS_Resultado) == 0) {
+      ShowHTML('    <tr align="center"><td colspan="8">Nenhum resultado encontrado para os critérios informados.</td>');
+    } else {
+      foreach ($RS_Resultado as $row) {
+        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        ShowHTML('    <tr valign="top" bgColor="' . $w_cor . '">');
+        if (nvl(f($row, 'sq_projeto_etapa'),'')!='') {
+          ShowHTML('      <td bgcolor="'.$conTrBgColorLightYellow2.'">&nbsp;</td>');
+        } else {
+          ShowHTML('      <td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;</td>');
+        }
+        ShowHTML('      <td align="center" width="1%" nowrap>' . Date('d/m/Y', Nvl(f($row, 'mes_ano'), '---')) . '</td>');
+        ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_programa').'" nowrap>' . Nvl(f($row, 'cd_programa'), '---') . '</td>');
+        ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_projeto').'" nowrap>' . Nvl(f($row, 'cd_projeto'), '---') . '</td>');
+        ShowHTML('      <td title="'.f($row, 'descricao').'">'.((nvl(f($row,'sq_projeto_etapa'),'')!='') ? ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;' : '').f($row, 'titulo').' </td>');
+        if($w_embed != 'WORD'){    
+          ShowHTML('      <td align="center">'.ExibeUnidade(null,$w_cliente,f($row,'sg_setor'),f($row,'sq_unidade'),$TP).' </td>');
+        }else{
+          ShowHTML('      <td align="center">'.f($row,'sg_setor').' </td>');
+        }
+        ShowHTML('      <td>'.nvl(f($row, 'motivo_insatisfacao'),'---').' </td>');
+        if ($w_embed != 'WORD') {
+          if (nvl(f($row, 'sq_projeto_etapa'),'')!='') {
+            ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe dados do item">Exibir</A></td>');
+          } else {
+            ShowHTML('      <td nowrap><A target="item" class="HL" href="cl_pitce/evento.php?par=visual&R='.$w_pagina.$par.'&O=L&w_tipo=Fecha&w_chave='.f($row, 'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=EVCAD" title="Exibe dados do evento">Exibir</A></td>');
+          }
+        }
+        ShowHTML('    </tr>');
+      }
+      ShowHTML('  </table>');
+      ShowHTML('<tr><td>&nbsp;</td></tr>');
     }
-    ShowHTML('   <tr><td>&nbsp;</td></tr>');
-    ShowHTML('   <tr><td width="30%"><b>Tipo</b><td>');
-    ShowHTML('       <input '.$w_Disabled.' name="w_acontecimento" type="radio" class="STR" value="0" '.((nvl($w_acontecimento,'nulo')!=1) ? 'checked' : '').' /> Reunião PDP');
-    ShowHTML('       <input '.$w_Disabled.' name="w_acontecimento" type="radio" class="STR" value="1" '.((nvl($w_acontecimento,'nulo')!=0) ? 'checked' : '').' /> Evento');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr><td><b>Interessados:<td>');
-    ShowHTML('       <input '.$w_Disabled.' name="w_secretaria" type="checkbox" class="STC" value="0" '.((nvl($w_secretaria,'')!='') ? 'checked' : '').' /> Secretaria Executiva');
-    ShowHTML('       <input '.$w_Disabled.' name="w_coordenacao" type="checkbox" class="STC" value="1" '.((nvl($w_coordenacao,'')!='') ? 'checked' : '').' /> Coordenação');
-    ShowHTML('       <input '.$w_Disabled.' name="w_comite" type="checkbox" class="STC" value="2" '.((nvl($w_comite,'')!='') ? 'checked' : '').' /> Comitê Executivo');
-    ShowHTML('       <label></label></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr><td><b>E<u>n</u>caminhar para:</b><td><input '.$w_Disabled.' name="w_cc" accesskey="N" type="text" class="STI" size="80" maxlength="80" value="'.$w_cc.'" /></td></tr>');
-    ShowHTML('   <tr><td>&nbsp;</td></tr>');
-    ShowHTML('   <tr><td><b>Assunto</b><td><input '.$w_Disabled.' name="w_assunto" type="text" class="STI" size="80" maxlength="80" value="'.$w_assunto.'" /></td></tr>');
-    ShowHTML('   <tr><td><b>Local</b><td><input '.$w_Disabled.' name="w_local" type="text" class="STI" size="80" maxlength="80" value="'.$w_local.'" /></td></tr>');
-    ShowHTML('   <tr><td><b>Anexo</b><td><input '.$w_Disabled.' name="w_arquivo" type="file" class="STI" size="65" /></td></tr>');
-    ShowHTML('   <tr><td>&nbsp;</td></tr>');
-    ShowHTML('   <tr><td><b>Data</b><td>');
-    ShowHTML('       <input '.$w_Disabled.' name="w_data_inicio" type="text" class="STI" size="10" maxlength="10" value="'.$w_data_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" />');
-    ShowHTML('       &nbsp;&nbsp;a&nbsp;&nbsp;<input '.$w_Disabled.' name="w_data_termino" type="text" class="STI" maxlength="10"  size="10" value="'.$w_data_termino.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" /></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr><td><b>Horário</b><td>');
-    ShowHTML('       <input '.$w_Disabled.' name="w_hora_inicio" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_inicio.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" />');
-    ShowHTML('       &nbsp;&nbsp;a&nbsp;&nbsp;<input '.$w_Disabled.' name="w_hora_termino" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_termino.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" /></td>');
-    ShowHTML('   </tr>');
-    ShowHTML('   <tr valign="top"><td><b>Descrição:</b><td><textarea '.$w_Disabled.' class="STI" name="w_mensagem" cols="80" rows="10" >'.$w_mensagem.'</textarea></td></tr>');
-    ShowHTML('   <tr><td><td>');
-    ShowHTML('       <input name="Botao" type="submit" class="STB" accesskey="S" tabindex="0" value="GRAVAR" />&nbsp;');
-    ShowHTML('       <input name="Botao" type="button" class="STB" value="VOLTAR" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\'L\'; document.Form.submit();">');
-    ShowHTML('     </td>');
-    ShowHTML('   </tr>');
-    ShowHTML(' </table>');
-    ShowHTML(' </fieldset>');
-    ShowHTML(' </form>');
+    ShowHTML('</center>');
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
@@ -695,4 +683,3 @@ function Main() {
   }
 }
 ?>
-

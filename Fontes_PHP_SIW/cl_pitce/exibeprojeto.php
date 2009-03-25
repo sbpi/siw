@@ -100,7 +100,7 @@ function ExibeProjeto($l_chave,$operacao,$l_usuario,$l_tipo) {
           } 
           $l_html.=chr(13).'         <td nowrap>'.f($row,'lotacao').'</td>';
         }
-        if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome')).'</td>';
+        if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).'</td>';
         else       $l_html.=chr(13).'           <td>'.f($row,'nome').'</td>';
       }    
     }

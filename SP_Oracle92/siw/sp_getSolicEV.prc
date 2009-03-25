@@ -111,7 +111,7 @@ begin
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla sg_unidade_resp,
-                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                e1.sq_pessoa titular, e2.sq_pessoa substituto,       e.sq_unidade sq_unidade_resp,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
@@ -135,14 +135,14 @@ begin
                    inner     join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
                                      from siw_solicitacao
                                   )                         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                   left      join siw_solicitacao           b3 on (b.sq_solic_pai             = b3.sq_siw_solicitacao)
                    inner     join siw_tipo_evento           b4 on (b.sq_tipo_evento           = b4.sq_tipo_evento)
                    inner     join co_cidade                 b5 on (b.sq_cidade_origem         = b5.sq_cidade)
-                   inner     join eo_unidade                e  on (b.sq_unidade               = e.sq_unidade)
-                     left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
+                   inner     join siw_solicitacao           b3 on (b.sq_solic_pai             = b3.sq_siw_solicitacao)
+                     inner   join eo_unidade                e  on (b3.sq_unidade              = e.sq_unidade)
+                       left  join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and
                                                                    e1.fim                     is null)
-                     left  join eo_unidade_resp             e2 on (e.sq_unidade               = e2.sq_unidade and
+                       left  join eo_unidade_resp           e2 on (e.sq_unidade               = e2.sq_unidade and
                                                                    e2.tipo_respons            = 'S'           and
                                                                    e2.fim                     is null)
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)

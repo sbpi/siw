@@ -166,7 +166,7 @@ function Benef() {
     } else {
         if ($O=='I' && $w_sq_pessoa=='' && $w_cpf>'' && $SG=='SGUSU') {
             $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
-            if (count($RS)) {
+            if (count($RS)>0) {
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'CPF já associado a outro usuário!\');');
                 ShowHTML('  history.back(1);');

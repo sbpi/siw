@@ -13,6 +13,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoRestricao.php');
+include_once($w_dir_volta.'classes/sp/db_getTipoEvento.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRestricao.php'); 
 include_once($w_dir_volta.'classes/sp/db_getContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
@@ -21,6 +22,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolic_Vinculo.php');
 include_once($w_dir_volta.'classes/sp/db_getCLFinanceiro.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Financeiro.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoRestricao.php');
+include_once($w_dir_volta.'classes/sp/dml_putTipoEvento.php');
 include_once($w_dir_volta.'classes/sp/dml_putContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolic_Vinculo.php');
 include_once($w_dir_volta.'classes/sp/dml_putConfPD.php');
@@ -901,6 +903,182 @@ function ConfiguraCompra() {
 } 
 
 // =========================================================================
+// Manter Tabela básica Tipo de Evento
+// -------------------------------------------------------------------------
+function TipoEvento() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave           = $_REQUEST['w_chave'];
+
+  if ($w_troca>'' && $O!='E') {
+    $w_servico         = $_REQUEST['w_servico'];
+    $w_nome            = $_REQUEST['w_nome'];
+    $w_ordem           = $_REQUEST['w_ordem']; 
+    $w_sigla           = $_REQUEST['w_sigla'];
+    $w_descricao       = $_REQUEST['w_descricao'];
+    $w_ativo           = $_REQUEST['w_ativo']; 
+  } elseif ($O=='L') {
+    $RS = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,$w_servico,null,null,null,null, 'REGISTROS');
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    } else {
+      $RS = SortArray($RS,'nm_servico','asc','ordem','asc','nome','asc'); 
+    }
+  } elseif (!(strpos('AEV',$O)===false)) {
+    $RS = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,$w_servico,$w_chave,null,null,null,'REGISTROS');
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_servico          = f($RS,'sq_menu');
+    $w_chave            = f($RS,'chave');
+    $w_nome             = f($RS,'nome');
+    $w_ordem            = f($RS,'ordem');
+    $w_sigla            = f($RS,'sigla');
+    $w_descricao        = f($RS,'descricao');
+    $w_ativo            = f($RS,'ativo');
+  } 
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de evento</TITLE>');
+  Estrutura_CSS($w_cliente);
+  if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    modulo();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_servico','Serviço','SELECT','1','1','10','','1');
+      Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
+      Validate('w_sigla','Sigla','1','1','2','15','1','1');
+      Validate('w_nome','Nome','1','1','3','60','1','1');
+      Validate('w_descricao','Descricao','','1',1,2000,'1','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_servico.focus();"');
+  } elseif ($O=='L'){
+    BodyOpen('onLoad="this.focus();"');
+  } else {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>Serviço</td>');
+    ShowHTML('          <td><b>Ordem</td>');
+    ShowHTML('          <td><b>Sigla</td>');
+    ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Descrição</td>');
+    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      $w_atual='';
+      foreach($RS1 as $row){ 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        if ($w_atual=='' || $w_atual !=f($row,'nm_servico')) {
+          ShowHTML('        <td>'.f($row,'nm_servico').'</td>');
+        } else {
+          ShowHTML('        <td></td>');
+        }
+        ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td>'.f($row,'descricao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'" Title="Exclui deste registro.">EX </A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+        $w_atual = f($row,'nm_servico');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    selecaoServico('<u>S</u>erviço:', 'I', 'Selecione a que serviço o tipo de evento refere-se.', $w_servico, $w_chave, null, 'w_servico', 'X', null,null,null,null);
+    ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="60" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td><b><u>O</u>rdem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_ordem" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
+    ShowHTML('          <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td colspan=3><b><U>D</U>escrição:<br><TEXTAREA ACCESSKEY="D" class="sti" name="w_descricao" rows=5 cols=80." '.$w_Disabled.'>'.$w_descricao.'</textarea></td>');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+}
+// =========================================================================
 // Manter Tabela básica Tipo de Restrição
 // -------------------------------------------------------------------------
 function TipoRestricao() {
@@ -1245,6 +1423,51 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
+    case 'PRTIPEVENT':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          // Testa a existência do nome
+          $RS = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe tipo de evento com este nome!\');');
+            ScriptClose(); 
+            retornaFormulario('w_nome');
+            break;
+          } 
+
+          // Testa a existência do sigla
+          $RS = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_sigla'],''),null,'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe tipo de evento com esta sigla!\');');
+            ScriptClose(); 
+            retornaFormulario('w_sigla');
+            break;
+          } 
+        } elseif ($O=='E') {
+          $RS = db_getTipoEvento::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),null,null,null,'VINCULADO');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Não é possível excluir este tipo. Ele está ligado a algum interessado de programa!\');');
+            ScriptClose();
+            retornaFormulario('w_assinatura');
+            break;
+          } 
+        } 
+        dml_putTipoEvento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_nome'],
+                $_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+        } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
     case 'PRTIPOREST':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1417,10 +1640,10 @@ function Main() {
     case 'VINCULACAO':         Vinculacao();        break;
     case 'PLANO':              Plano();             break;
     case 'NATUREZA':           Natureza();          break;
+    case 'TIPOEVENTO':         TipoEvento();        break;
     case 'TIPORESTRICAO':      TipoRestricao();     break;
     case 'OBJETIVO':           Objetivo();          break;
     case 'ARQUIVO':            Arquivo();           break;
-    case 'TIPOINTER':          TipoInter();         break;
     case 'TIPORECURSO':        TipoRecurso();       break;
     case 'TIPOINDICADOR':      TipoIndicador();     break;
     case 'UNIDMED':            UnidadeMedida();     break;

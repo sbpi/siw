@@ -973,6 +973,7 @@ Fontes_PHP_SIW/classes/sp/db_getTipoDado.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDespacho_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDocumento.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoEvento.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoGuarda_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoIndicador.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoIndice.php -text
@@ -1286,6 +1287,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicConc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicConcTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicEtpRec.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicEvento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicIndicador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicInfGeral.php -text
@@ -1313,6 +1315,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTipoDado.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDespacho_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDocumento.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTipoEvento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoGuarda_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoIndicador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoIndice.php -text
@@ -1609,6 +1612,8 @@ Fontes_PHP_SIW/funcoes/selecaoTipoDespacho.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDiaria.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoDocumento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoEndereco.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoEvento.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoEventoCheck.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoFone.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoGuarda.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoIndicador.php -text

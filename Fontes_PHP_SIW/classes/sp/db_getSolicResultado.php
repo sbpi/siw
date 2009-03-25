@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); 
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -10,18 +10,24 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class db_getSolicResultado {
-   function getInstanceOf($dbms, $p_cliente, $p_programa, $p_projeto, $p_unidade, $p_solicitante, $p_texto, $p_inicio, $p_fim, $p_restricao) {
+   function getInstanceOf($dbms, $p_cliente, $p_programa, $p_projeto, $p_unidade, $p_solicitante, $p_texto,
+       $p_inicio, $p_fim, $p_atrasado, $p_adiantado, $p_concluido, $p_agenda, $p_tipo_evento, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getSolicResultado';
-     $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
-				   'p_programa'                  =>array(tvl($p_programa),                                 B_INTEGER,        32),
-                   'p_projeto'                   =>array(tvl($p_projeto),                                  B_INTEGER,        32),
-                   'p_unidade'                   =>array(tvl($p_unidade),                                  B_INTEGER,        32),                   
-                   'p_solicitante'               =>array(tvl($p_solicitante),                              B_INTEGER,        32),                   
-                   'p_texto'                     =>array($p_texto,                                         B_VARCHAR,       100),
-                   'p_inicio'                    =>array(tvl($p_inicio),                                   B_DATE,           32),
-                   'p_fim'                       =>array(tvl($p_fim),                                      B_DATE,           32),
-                   'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,       200),
-                   'p_result'                    =>array(null,                                             B_CURSOR,         -1)
+     $params=array('p_cliente'            =>array(tvl($p_cliente),                B_INTEGER,        32),
+                   'p_programa'           =>array(tvl($p_programa),               B_INTEGER,        32),
+                   'p_projeto'            =>array(tvl($p_projeto),                B_INTEGER,        32),
+                   'p_unidade'            =>array(tvl($p_unidade),                B_INTEGER,        32),                   
+                   'p_solicitante'        =>array(tvl($p_solicitante),            B_INTEGER,        32),                   
+                   'p_texto'              =>array($p_texto,                       B_VARCHAR,       100),
+                   'p_inicio'             =>array(tvl($p_inicio),                 B_DATE,           32),
+                   'p_fim'                =>array(tvl($p_fim),                    B_DATE,           32),
+                   'p_atrasado'           =>array(tvl($p_atrasado),               B_INTEGER,        32),                   
+                   'p_adiantado'          =>array(tvl($p_adiantado),              B_INTEGER,        32),                                      
+                   'p_concluido'          =>array(tvl($p_concluido),              B_INTEGER,        32),                              
+                   'p_agenda'             =>array(tvl($p_agenda),                 B_VARCHAR,         1),                              
+                   'p_tipo_evento'        =>array(tvl($p_tipo_evento),            B_VARCHAR,       200),
+                   'p_restricao'          =>array($p_restricao,                   B_VARCHAR,       200),
+                   'p_result'             =>array(null,                           B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

@@ -251,7 +251,7 @@ function Inicial() {
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas agendas de ação com vinculação</b>]';
       } elseif (nvl($p_chave,'')!='') {
         $RS = db_getSolicData::getInstanceOf($dbms,$p_chave,'PJGERAL');
-        $w_filtro.='<tr valign="top"><td align="right">Agenda de ação <td>[<b>'.f($RS,'titulo').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Programa <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_atividade>'') {
         $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_projeto,$p_atividade,'REGISTRO',null);
@@ -329,13 +329,13 @@ function Inicial() {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de agendas de ação</TITLE>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de programas</TITLE>');
     ShowHTML('</HEAD>');
   } else {
     cabecalho();
     ShowHTML('<HEAD>');
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de agendas de ação</TITLE>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de programas</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
     FormataData();
@@ -441,7 +441,7 @@ function Inicial() {
 
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Agenda de ação','titulo').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','titulo').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td colspan=2><b>Responsável</td>');
       if ($P1==1 || $P1==2) {
@@ -462,7 +462,7 @@ function Inicial() {
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Código</td>');
-      ShowHTML('          <td rowspan=2><b>Agenda de ação</td>');
+      ShowHTML('          <td rowspan=2><b>Programa</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinculação</td>');
       ShowHTML('          <td colspan=2><b>Responsável</td>');
       if ($P1==1 || $P1==2) {
@@ -547,48 +547,48 @@ function Inicial() {
               ShowHTML('          <a class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($RS1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
             } elseif ($P1==1) {
               // Se for cadastramento
-              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.'&w_documento='.nvl(f($row,'codigo_interno'),'Nr. '.f($row,'sq_siw_solicitacao')).MontaFiltro('GET').'" title="Altera as informações cadastrais da agenda de ação" TARGET="menu">AL</a>&nbsp;');
-              else               ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da agenda de ação">AL</A>&nbsp');
-              ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da agenda de ação.">EX</A>&nbsp');
+              if ($w_submenu>'') ShowHTML('          <A class="HL" HREF="menu.php?par=ExibeDocs&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.'&w_documento='.nvl(f($row,'codigo_interno'),'Nr. '.f($row,'sq_siw_solicitacao')).MontaFiltro('GET').'" title="Altera as informações cadastrais do programa" TARGET="menu">AL</a>&nbsp;');
+              else               ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais do programa">AL</A>&nbsp');
+              ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão do programa.">EX</A>&nbsp');
             } elseif ($P1==2 || $P1==6) {
               // Se for execução ou consulta de usuário externo
               if ($w_usuario == f($row,'executor')) {
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza os itens da agenda de ação." target="Etapas">EA</A>&nbsp');
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza os itens do programa." target="Etapas">EA</A>&nbsp');
                 if ($P1==2 && f($RS_Cliente,'georeferencia')=='S') {
                   ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS(null,$conRootSIW.'mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=PROJETO&w_auth=true&w_volta=fecha&w_chave='.f($row,'sq_siw_solicitacao').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
                 }
                 // Permite a visualização ou manutenção de riscos e problemas
-                ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos da agenda de ação." target="Restricao">RS</A>&nbsp');
-                ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas da agenda de ação." target="Restricao">PB</A>&nbsp');
+                ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos do programa." target="Restricao">RS</A>&nbsp');
+                ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas do programa." target="Restricao">PB</A>&nbsp');
                 /*
                 if($w_financeiro=='N' || $w_cliente=='10135') {
                   ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaRubrica&R='.$w_pagina.'AtualizaRubrica&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_chave_pai='.$w_chave.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJCRONOGRAMA'.MontaFiltro('GET').'" title="Atualizar o cronograma desembolso." target="Cronograma desembolso">CD</A>&nbsp');
                 }
                 */
-                if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas da agenda de ação." target="Meta">MT</A>&nbsp');
+                if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do programa." target="Meta">MT</A>&nbsp');
                 // Coloca as operações dependendo do trâmite
                 if (f($row,'sg_tramite')=='EA' || f($row,'sg_tramite')=='EE') {
-                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a agenda de ação, sem enviá-la.">AN</A>&nbsp');
+                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para o programa, sem enviá-la.">AN</A>&nbsp');
                 } 
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJANALISE'.MontaFiltro('GET').'" title="Informar a análise da agenda de ação.">IN</A>&nbsp');
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a agenda de ação para outro responsável.">EN</A>&nbsp');
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Informar&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PJANALISE'.MontaFiltro('GET').'" title="Informar a análise do programa.">IN</A>&nbsp');
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o programa para outro responsável.">EN</A>&nbsp');
                 if (f($row,'sg_tramite')=='EE') {
                   $RS2 = db_getContasCronograma::getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null,null,null,null,null);
-                  if(count($RS2)>0) ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'PrestacaoContas&R='.$w_pagina.'PrestacaoContas'.'&O=P&w_siw_solicitacao='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação contas&SG=PJPREST'.MontaFiltro('GET').'" title="Inseri a prestação de contas da agenda de ação." target="Prestacao">PC</A>&nbsp');
-                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução da agenda de ação.">CO</A>&nbsp');
+                  if(count($RS2)>0) ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'PrestacaoContas&R='.$w_pagina.'PrestacaoContas'.'&O=P&w_siw_solicitacao='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Prestação contas&SG=PJPREST'.MontaFiltro('GET').'" title="Inseri a prestação de contas do programa." target="Prestacao">PC</A>&nbsp');
+                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Conclui a execução do programa.">CO</A>&nbsp');
                 } 
               } else {
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Consulta os itens da agenda de ação." target="Etapas">EA</A>&nbsp');
-                if (f($row,'resp_risco')>0)    ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os riscos da agenda de ação." target="Restricao">RS</A>&nbsp');
-                if (f($row,'resp_problema')>0) ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os problemas da agenda de ação." target="Restricao">PB</A>&nbsp');
-                if (f($row,'resp_meta')>0)     ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas da agenda de ação." target="Meta">MT</A>&nbsp');
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Consulta os itens do programa." target="Etapas">EA</A>&nbsp');
+                if (f($row,'resp_risco')>0)    ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os riscos do programa." target="Restricao">RS</A>&nbsp');
+                if (f($row,'resp_problema')>0) ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Consulta os problemas do programa." target="Restricao">PB</A>&nbsp');
+                if (f($row,'resp_meta')>0)     ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do programa." target="Meta">MT</A>&nbsp');
                 if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
-                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a agenda de ação para outro responsável.">EN</A>&nbsp');
+                  ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o programa para outro responsável.">EN</A>&nbsp');
                 }
               } 
             } 
           } else {
-            ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza os itens da agenda de ação." target="Etapas">EA</A>&nbsp');
+            ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'AtualizaEtapa&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Atualiza os itens do programa." target="Etapas">EA</A>&nbsp');
             if (Nvl(f($row,'solicitante'),0)== $w_usuario || 
                 Nvl(f($row,'titular'),0)    == $w_usuario || 
                 Nvl(f($row,'substituto'),0) == $w_usuario || 
@@ -601,11 +601,11 @@ function Inicial() {
                   Nvl(f($row,'substituto'),0)   == $w_usuario || 
                   RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                 if (f($row,'sg_tramite')!='AT') { 
-                  if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas da agenda de ação." target="Meta">MT</A>&nbsp');
-                  ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos da agenda de ação." target="Restricao">RS</A>&nbsp');
-                  ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas da agenda de ação." target="Restricao">PB</A>&nbsp');
+                  if (f($row,'qtd_meta')>0) ShowHTML('          <A class="HL" HREF="mod_pe/indicador.php?par=Meta&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Metas&SG=METASOLIC'.MontaFiltro('GET').'" title="Metas do programa." target="Meta">MT</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Riscos&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Riscos do programa." target="Restricao">RS</A>&nbsp');
+                  ShowHTML('          <A class="HL" HREF="mod_pr/restricao.php?par=Restricao&w_chave='.f($row,'sq_siw_solicitacao').'&R='.$w_pagina.$par.'&w_problema=S&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Problema&SG=RESTSOLIC'.MontaFiltro('GET').'" title="Problemas do programa." target="Restricao">PB</A>&nbsp');
                 }
-                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a agenda de ação para outro responsável.">EN</A>&nbsp');
+                ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o programa para outro responsável.">EN</A>&nbsp');
               } 
             } 
           } 
@@ -655,7 +655,7 @@ function Inicial() {
   } elseif (strpos('CP',$O)!==false) {
     if ($P1!=1) ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     elseif ($O == 'C') // Se for cópia 
-      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar a agenda de ação que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar o programa que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
@@ -675,11 +675,11 @@ function Inicial() {
       ShowHTML('          <td valign="top"><b>C<u>h</u>ave:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
       ShowHTML('          <td valign="top"><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
       ShowHTML('      <tr valign="top">');
-      SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela agenda de ação na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
+      SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pelo programa na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
       ShowHTML('      <tr valign="top">');
-      SelecaoPessoa('Responsável atua<u>l</u>:','L','Selecione o responsável atual pela agenda de ação na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
-      SelecaoUnidade('<U>S</U>etor atual:','S','Selecione a unidade onde a agenda de ação se encontra na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
+      SelecaoPessoa('Responsável atua<u>l</u>:','L','Selecione o responsável atual pelo programa na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
+      SelecaoUnidade('<U>S</U>etor atual:','S','Selecione a unidade onde o programa se encontra na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
       ShowHTML('      <tr>');
       SelecaoPais('<u>P</u>aís:','P',null,$p_pais,null,'p_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_regiao\'; document.Form.submit();"');
       SelecaoRegiao('<u>R</u>egião:','R',null,$p_regiao,$p_pais,'p_regiao',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_uf\'; document.Form.submit();"');
@@ -687,7 +687,7 @@ function Inicial() {
       SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
       SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
       ShowHTML('      <tr>');
-      SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta agenda de ação.',$p_prioridade,null,'p_prioridade',null,null);
+      SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste programa.',$p_prioridade,null,'p_prioridade',null,null);
       ShowHTML('          <td valign="top"><b><U>C</U>oordenador:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
       ShowHTML('      <tr>');
       ShowHTML('          <td valign="top"><b><U>T</U>ítulo:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_assunto" size="25" maxlength="90" value="'.$p_assunto.'"></td>');
@@ -697,7 +697,7 @@ function Inicial() {
       ShowHTML('          <td valign="top"><b><u>T</u>érmino entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       if ($O!='C') { // Se não for cópia
         ShowHTML('      <tr>');
-        ShowHTML('          <td valign="top"><b>Exibe somente agendas de ação em atraso?</b><br>');
+        ShowHTML('          <td valign="top"><b>Exibe somente programas em atraso?</b><br>');
         if ($p_atraso=='S') ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
         else                ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
         SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
@@ -959,7 +959,7 @@ function Geral() {
     Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
     Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
     Validate('w_cidade','Cidade','SELECT',1,1,18,'','0123456789');
-    Validate('w_dias','Dias de alerta da agenda de ação','1','',1,3,'','0123456789');
+    Validate('w_dias','Dias de alerta do programa','1','',1,3,'','0123456789');
     ShowHTML('  if (theForm.w_aviso[0].checked) {');
     ShowHTML('     if (theForm.w_dias.value == \'\') {');
     ShowHTML('        alert(\'Informe a partir de quantos dias antes da data limite você deseja ser avisado de sua proximidade!\');');
@@ -1021,10 +1021,10 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação da agenda de ação, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do programa, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_interno" size="18" maxlength="60" value="'.$w_codigo_interno.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para a agenda de ação."></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>T</u>ítulo:</b><br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="90" maxlength="100" value="'.$w_titulo.'" title="Informe um título para o programa."></td>');
     // Verifica a que objetos o projeto pode ser vinculado
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
     //if ($w_pe=='S') {
@@ -1046,34 +1046,34 @@ function Geral() {
     }
     $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
     if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas da agenda de ação.">Prestação de contas</a>&nbsp');
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');
     } else {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas da agenda de ação.">Prestação de contas</a>&nbsp');    
+      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');    
     }
     ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
-    SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pela agenda de ação na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
-    SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pela execução da agenda de ação',$w_sq_unidade_resp,null,'w_sq_unidade_resp',null,null);
-    SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade desta agenda de ação.',$w_prioridade,null,'w_prioridade',null,null);
+    SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pelo programa na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
+    SelecaoUnidade('<U>S</U>etor responsável:','S','Selecione o setor responsável pela execução do programa',$w_sq_unidade_resp,null,'w_sq_unidade_resp',null,null);
+    SelecaoPrioridade('<u>P</u>rioridade:','P','Informe a prioridade deste programa.',$w_prioridade,null,'w_prioridade',null,null);
     ShowHTML('          <tr valign="top">');
     switch (f($RS_Menu,'data_hora')) {
-      case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da agenda de ação esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
-      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da agenda de ação esteja concluído."></td>'); break;
+      case 1: ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução do programa esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
+      case 2: ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução do programa esteja concluído."></td>'); break;
       case 3: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_inicio,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início da solicitação.">'.ExibeCalendario('Form','w_inicio').'</td>');
-              ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da agenda de ação esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
-      case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início da agenda de ação."></td>');
-              ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da agenda de ação esteja concluído."></td>'); break;
+              ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução do programa esteja concluído.">'.ExibeCalendario('Form','w_fim').'</td>'); break;
+      case 4: ShowHTML('              <td valign="top"><b>Iní<u>c</u>io:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início do programa."></td>');
+              ShowHTML('              <td valign="top"><b><u>T</u>érmino:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução do programa esteja concluído."></td>'); break;
     } 
-    //ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da agenda de ação, ou zero se não for o caso."></td>');
+    //ShowHTML('              <td><b>O<u>r</u>çamento disponível:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução do programa, ou zero se não for o caso."></td>');
     ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
     ShowHTML('          </table>');
-    ShowHTML('      <tr><td><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação desta agenda de ação."></td>');
-    ShowHTML('      <tr><td><b><U>C</U>oordenador:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Gestor da agenda de ação. Preencha apenas se houver."></td>');
+    ShowHTML('      <tr><td><b>Pa<u>l</u>avras-chave:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="w_palavra_chave" size="90" maxlength="90" value="'.$w_palavra_chave.'" title="Se desejar, informe palavras-chave adicionais aos campos informados e que permitam a identificação deste programa."></td>');
+    ShowHTML('      <tr><td><b><U>C</U>oordenador:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_proponente" size="90" maxlength="90" value="'.$w_proponente.'" title="Gestor do programa. Preencha apenas se houver."></td>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Local da execução</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde a agenda de ação será executado, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco identificam o local onde o programa será executado, sendo utilizados para consultas gerenciais por distribuição geográfica.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
     ShowHTML('      <tr valign="top">');
@@ -1092,7 +1092,7 @@ function Geral() {
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Informações adicionais</td></td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-      ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores da agenda de ação.</td></tr>');
+      ShowHTML('      <tr><td>Os dados deste bloco visam orientar os executores do programa.</td></tr>');
       ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0><tr valign="top">');
       if ($w_acordo=='S') MontaRadioNS('<b>Permite a vinculação de contratos?</b>',Nvl($w_vincula_contrato,'N'),'w_vincula_contrato');
@@ -1103,23 +1103,23 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término prevista para a agenda de ação.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término prevista para o programa.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr valign="top">');
     MontaRadioNS('<b>Emite alerta?</b>',$w_aviso,'w_aviso');
-    ShowHTML('              <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data Término da agenda de ação."></td>');
+    ShowHTML('              <td><b>Quantos <U>d</U>ias antes da data limite?<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="STI" type="text" name="w_dias" size="3" maxlength="3" value="'.$w_dias.'" title="Número de dias para emissão do alerta de proximidade da data Término do programa."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta para Pacotes de Trabalho</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data prevista para término dos pacotes de trabalho desta agenda de ação.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data prevista para término dos pacotes de trabalho deste programa.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr valign="top">');
     MontaRadioNS('<b>Emite alerta para pacotes de trabalho?</b>',$w_aviso_pacote,'w_aviso_pacote');
-    ShowHTML('              <td><b><U>P</U>ercentual desejado de dias?<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_dias_pacote" size="3" maxlength="3" value="'.$w_dias_pacote.'" title="Número de dias para emissão do alerta de proximidade da data prevista para término dos pacotes de trabalho desta agenda de ação."></td>');
+    ShowHTML('              <td><b><U>P</U>ercentual desejado de dias?<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_dias_pacote" size="3" maxlength="3" value="'.$w_dias_pacote.'" title="Número de dias para emissão do alerta de proximidade da data prevista para término dos pacotes de trabalho deste o programa."></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
 
@@ -1215,7 +1215,7 @@ function Descritivo() {
     Validate('w_descricao','Objetivos estratégicos','1','',5,2000,'1','1');
     Validate('w_exclusoes','Desafios','1','',5,2000,'1','1');
     Validate('w_premissas','Prioridades','1','',5,2000,'1','1');
-     Validate('w_instancia_articulacao','Instância de articulação público-privada','1','',5,500,'1','1');
+    Validate('w_instancia_articulacao','Instância de articulação público-privada','1','',5,500,'1','1');
     Validate('w_composicao_instancia','Composição da instância','1','',5,500,'1','1');
     Validate('w_estudos','Estudos','1','',5,500,'1','1');
   
@@ -1250,15 +1250,15 @@ function Descritivo() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Descritivos</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b><u>I</u>nstância de articulação público-privada:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_instancia_articulacao" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da agenda de ação.">'.$w_instancia_articulacao.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b><u>C</u>omposição da instância:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_composicao_instancia" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da agenda de ação.">'.$w_composicao_instancia.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b>Es<u>t</u>udos:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_estudos" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da agenda de ação.">'.$w_estudos.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b><u>S</u>ituação inicial:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução da agenda de ação.">'.$w_justificativa.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>E</u>stratégias:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_restricoes" class="STI" ROWS=5 cols=75 title="Descreva as estratégias a serem aplicadas na execução da agenda de ação.">'.$w_restricoes.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>O</u>bjetivo superior:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objetivo_superior" class="STI" ROWS=5 cols=75 title="Descreva o objetivo superior da agenda de ação.">'.$w_objetivo_superior.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Objetivos <u>e</u>stratégicos:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos específicos esperados após a execução da agenda de ação.">'.$w_descricao.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>D</u>esafios:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_exclusoes" class="STI" ROWS=5 cols=75 title="Descreva os desafios a serem superados pela agenda de ação.">'.$w_exclusoes.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>P</u>rioridades:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_premissas" class="STI" ROWS=5 cols=75 title="Descreva as prioridades da agenda de ação.">'.$w_premissas.'</TEXTAREA></td>'); 
+    ShowHTML('      <tr><td><b><u>I</u>nstância de articulação público-privada:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_instancia_articulacao" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_instancia_articulacao.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td><b><u>C</u>omposição da instância:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_composicao_instancia" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_composicao_instancia.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td><b>Es<u>t</u>udos:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_estudos" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_estudos.'</TEXTAREA></td>');
+  ShowHTML('      <tr><td><b><u>S</u>ituação inicial:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_justificativa.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>E</u>stratégias:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_restricoes" class="STI" ROWS=5 cols=75 title="Descreva as estratégias a serem aplicadas na execução do programa.">'.$w_restricoes.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>O</u>bjetivo superior:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objetivo_superior" class="STI" ROWS=5 cols=75 title="Descreva o objetivo superior do programa.">'.$w_objetivo_superior.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>Objetivos <u>e</u>stratégicos:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos específicos esperados após a execução do programa.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>D</u>esafios:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_exclusoes" class="STI" ROWS=5 cols=75 title="Descreva os desafios a serem superados pelo programa.">'.$w_exclusoes.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>P</u>rioridades:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_premissas" class="STI" ROWS=5 cols=75 title="Descreva as prioridades do programa.">'.$w_premissas.'</TEXTAREA></td>'); 
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1341,7 +1341,7 @@ function Informar() {
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
-  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>AGENDA DE AÇÃO: '.$w_cabecalho.'</b></font></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROGRAMA: '.$w_cabecalho.'</b></font></div></td></tr>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IAEV',$O)!==false) {
@@ -1597,7 +1597,7 @@ function AnexosEtapas() {
   ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   ShowHTML('        <tr valign="top">');
-  ShowHTML('          <td colspan=3>Agenda de ação: <b>'.f($RS_Solic,'titulo').' ('.$w_chave.')</td>');
+  ShowHTML('          <td colspan=3>Programa: <b>'.f($RS_Solic,'titulo').' ('.$w_chave.')</td>');
   ShowHTML('        <tr valign="top">');
   $RS_Etp = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_etapa,'REGISTRO',null);
   foreach ($RS_Etp as $row) {
@@ -2462,8 +2462,8 @@ function AtualizaEtapa() {
       } else {
         ShowHTML('      <tr valign="top">');
         ShowHTML('        <td><b>Percentual de co<u>n</u>clusão:<br><INPUT ACCESSKEY="N" TYPE="TEXT" CLASS="STI" NAME="w_perc_conclusao" SIZE=3 MAXLENGTH=3 VALUE="'.nvl($w_perc_conclusao,0).'" '.$w_Disabled.' title="Indique o percentual de conclusão já atingido por essa etapa."></td>');
-        ShowHTML('        <td><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de início da agenda de ação.">'.ExibeCalendario('Form','w_inicio_real').'</td>');
-        ShowHTML('        <td><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto da agenda de ação.">'.ExibeCalendario('Form','w_fim_real').'</td>');
+        ShowHTML('        <td><b>Iní<u>c</u>io real:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data/hora de início do programa.">'.ExibeCalendario('Form','w_inicio_real').'</td>');
+        ShowHTML('        <td><b><u>T</u>érmino real:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim_real" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim_real.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de término previsto do programa.">'.ExibeCalendario('Form','w_fim_real').'</td>');
       }
       ShowHTML('      <tr><td colspan=3><b><u>S</u>ituação atual do item:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_situacao_atual" class="STI" ROWS=5 cols=75 title="Descreva a situação em a etapa encontra-se.">'.$w_situacao_atual.'</TEXTAREA></td>');
     } 
@@ -2848,7 +2848,7 @@ function Recursos() {
     ShowHTML('      <tr><td valign="top"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva, se necessário, características deste recurso (conhecimentos, habilidades, perfil, capacidade etc).">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td valign="top"><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_finalidade" class="STI" ROWS=5 cols=75 title="Descreva, se necessário, a finalidade deste recurso para a agenda de ação (funções desempenhadas, papel, objetivos etc).">'.$w_finalidade.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_finalidade" class="STI" ROWS=5 cols=75 title="Descreva, se necessário, a finalidade deste recurso para o programa (funções desempenhadas, papel, objetivos etc).">'.$w_finalidade.'</TEXTAREA></td>');
     ShowHTML('      <tr>');
     ShowHTML('      <tr><td align="center" colspan=4><hr>');
     if ($O=='E') {
@@ -2919,7 +2919,7 @@ function EtapaRecursos() {
   ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
   ShowHTML('<INPUT type="hidden" name="w_sg" value="'.$_REQUEST['w_sg'].'">');
   ShowHTML('<INPUT type="hidden" name="w_recurso" value="">');
-  ShowHTML('<tr><td><ul><b>Informações:</b><li>Indique abaixo quais recursos estarão alocados a esta etapa da agenda de ação.<li>A princípio, uma etapa não tem nenhum recurso alocado.<li>Para remover um recurso, desmarque o quadrado ao seu lado.</ul>');
+  ShowHTML('<tr><td><ul><b>Informações:</b><li>Indique abaixo quais recursos estarão alocados a esta etapa do programa.<li>A princípio, uma etapa não tem nenhum recurso alocado.<li>Para remover um recurso, desmarque o quadrado ao seu lado.</ul>');
   ShowHTML('<tr><td align="center" colspan=3>');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -3061,7 +3061,7 @@ function Interessados() {
       ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
       ShowHTML('      <tr><td valign="top"><b>Pessoa:</b><br>'.$w_nome.'</td>');
     } 
-    SelecaoTipoVisao('<u>T</u>ipo de visão:','T','Selecione o tipo de visão que o interessado terá desta agenda de ação.',$w_tipo_visao,null,'w_tipo_visao',null,null);
+    SelecaoTipoVisao('<u>T</u>ipo de visão:','T','Selecione o tipo de visão que o interessado terá deste programa.',$w_tipo_visao,null,'w_tipo_visao',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Envia e-mail ao interessado quando houver encaminhamento?</b>',$w_envia_email,'w_envia_email');
@@ -3203,7 +3203,7 @@ function Areas() {
     SelecaoInteresse('<U>I</U>nteresse:','I','Selecione de interesse.',$w_interesse,'w_interesse',null,null);
     ShowHTML('      <tr valign="top">');
     SelecaoInfluencia('In<U>f</U>luência:','F','Selecione de influência.',$w_influencia,'w_influencia',null,null);
-    ShowHTML('      <tr><td valign="top"><b><u>P</u>apel desempenhado:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_papel" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da agenda de ação.">'.$w_papel.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>P</u>apel desempenhado:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_papel" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução do programa.">'.$w_papel.'</TEXTAREA></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan=4><hr>');
     if ($O=='E') {
@@ -3275,7 +3275,7 @@ function Pacote() {
     ShowHTML('<div align=center><center>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
-    ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="1"><b>AGENDA DE AÇÃO: '.$w_cabecalho.'</b></font></div></td></tr>');
+    ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="1"><b>PROGRAMA: '.$w_cabecalho.'</b></font></div></td></tr>');
     ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><hr NOSHADE color=#000000 size=1></td></tr>');
     ShowHTML('<tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="1">');
     ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');

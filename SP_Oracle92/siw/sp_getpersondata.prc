@@ -46,7 +46,7 @@ begin
                              )                  i on (a.sq_pessoa          = i.sq_pessoa)
             left outer join co_pessoa_fisica    j on (a.sq_pessoa          = j.sq_pessoa)
             left outer join co_pessoa_juridica  k on (a.sq_pessoa          = k.sq_pessoa)
-      where (a.sq_pessoa_pai is null or a.sq_pessoa_pai = 1 or a.sq_pessoa_pai = p_cliente)
+      where (a.sq_pessoa_pai is null or (a.sq_pessoa_pai = 1 and p_cliente = 1) or a.sq_pessoa_pai = p_cliente)
         and (p_sq_pessoa    is null or (p_sq_pessoa  is not null and a.sq_pessoa  = p_sq_pessoa))
         and (p_cpf          is null or (p_cpf        is not null and (j.cpf       = p_cpf or b.username = p_cpf)))
         and (p_cnpj         is null or (p_cnpj       is not null and k.cnpj       = p_cnpj));

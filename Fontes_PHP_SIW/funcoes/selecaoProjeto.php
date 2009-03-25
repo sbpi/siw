@@ -1,10 +1,10 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
 // Montagem da seleção de projetos
 // -------------------------------------------------------------------------
-function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$chaveAux3,$chaveAux4,$chaveAux5,$campo,$restricao,$atributo,$formato=1,$colspan=1,$separador='<br />') {
+function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$chaveAux3,$chaveAux4,$chaveAux5,$campo,$restricao,$atributo,$formato=1,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
 
   if (is_numeric($restricao)) {
@@ -16,7 +16,7 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cha
     $RS = db_getSolicList::getInstanceOf($dbms, $chaveAux2, $chaveAux, $restricao, 4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $chaveAux3, null, $chaveAux4, $chaveAux5);
     $RS = SortArray($RS,'titulo','asc');
 
-    ShowHTML('          <td colspan="'.$colspan.'" '.((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0)) {

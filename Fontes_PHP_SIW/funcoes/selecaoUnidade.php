@@ -2,7 +2,7 @@
 // =========================================================================
 // Montagem da seleção das unidades organizacionais
 // -------------------------------------------------------------------------
-function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
   include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
@@ -10,11 +10,7 @@ function selecaoUnidade($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restric
   if (count($RS)<=100) {
     $RS = SortArray($RS,'nome','asc');
     $atributo = str_replace('onBlur','onChange',$atributo);
-    if (!isset($hint)) {
-      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-    } else {
-       ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-    }
+    ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'sq_unidade'),0)==nvl($chave,0)) {

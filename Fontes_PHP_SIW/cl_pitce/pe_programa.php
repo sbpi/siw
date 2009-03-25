@@ -327,7 +327,7 @@ function Inicial() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','cd_programa').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Programa','titulo').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Macroprograma','titulo').'</td>');
       ShowHTML ('         <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Responsável','nm_solic').'</td>');
       if ($P1!=2) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Usuário atual','cd_exec').'</td>');
@@ -343,7 +343,7 @@ function Inicial() {
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Código</td>');
-      ShowHTML ('         <td rowspan=2><b>Programa</td>');
+      ShowHTML ('         <td rowspan=2><b>Macroprograma</td>');
       ShowHTML ('         <td rowspan=2><b>Vinculação</td>');
       ShowHTML('          <td rowspan=2><b>Responsável</td>');
       if ($P1!=2) ShowHTML('          <td rowspan=2><b>Usuário atual</td>');
@@ -715,7 +715,7 @@ function Geral() {
       ShowHTML('    return false;');    
     }
     Validate('w_codigo','Código do programa','1',1,1,20,'1','1');
-    Validate('w_titulo','Programa','1',1,5,100,'1','1');
+    Validate('w_titulo','Macroprograma','1',1,5,100,'1','1');
     Validate('w_sq_unidade','Unidade executora','SELECT',1,1,18,'','0123456789');
     Validate('w_solicitante','Responsável','SELECT',1,1,18,'','0123456789');
     Validate('w_unid_resp','Área monitoramento','SELECT',1,1,18,'','0123456789');
@@ -786,7 +786,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Identificação</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do programa, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do macroprograma, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr>');
     selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_codigo\'; document.Form.submit();"');
@@ -806,7 +806,7 @@ function Geral() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Código:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_codigo" size="20" maxlength="20" value="'.$w_codigo.'" ></td>');
-    ShowHTML('          <td colspan=2><b>Programa:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="70" maxlength="100" value="'.$w_titulo.'" ></td>');
+    ShowHTML('          <td colspan=2><b>Macroprograma:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_titulo" size="70" maxlength="100" value="'.$w_titulo.'" ></td>');
     ShowHTML('        <tr valign="top">');
     SelecaoUnidade('<U>U</U>nidade executora:','U','Selecione a unidade administratriva responsável pela execução do programa.',$w_sq_unidade,null,'w_sq_unidade','EXECUCAO',null);
     ShowHTML('      <tr valign="top">');
@@ -826,7 +826,7 @@ function Geral() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Alerta de proximidade da data de término</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término do programa.</td></tr>');
+    ShowHTML('      <tr><td>Os dados abaixo indicam como deve ser tratada a proximidade da data de término do macroprograma.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('          <tr valign="top">');
