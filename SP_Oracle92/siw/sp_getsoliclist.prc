@@ -136,6 +136,7 @@ begin
           where 'S'            = b1.ativo
             and 'GD'           <> a1.sigla
             and 'GDP'          <> substr(a.sigla,1,3)
+            and b.sq_tipo_evento is null
             and (p_tipo        <> 7    or (p_tipo = 7 and a1.sigla in ('PE','PR')))
             and (p_sq_orprior  is null or (p_sq_orprior is not null and (b.sq_plano = p_sq_orprior or b2.sq_plano = p_sq_orprior or b3.sq_plano = p_sq_orprior)))
             and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and (0         < (select count(y.sq_siw_solicitacao)
@@ -189,6 +190,7 @@ begin
           where (c2.sigla = 'PD' or (c2.sigla <> 'PD' and b1.ativo = 'S'))
             and a1.sigla            <> 'GD'
             and substr(a.sigla,1,3) <> 'GDP'
+            and b.sq_tipo_evento    is null
             and b.sq_solic_pai      =  p_chave;
    Elsif substr(p_restricao,1,2) = 'GD'   or 
       substr(p_restricao,1,4) = 'GRDM' or p_restricao = 'ORPCAD'            or 

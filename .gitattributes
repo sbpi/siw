@@ -3834,6 +3834,7 @@ SP_Oracle92/siw/SP_PutProjetoDescritivo.prc -text
 SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text
 SP_Oracle92/siw/SP_PutSolicEnvio.prc -text
+SP_Oracle92/siw/SP_PutSolicEvento.prc -text
 SP_Oracle92/siw/SP_PutSolicGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
@@ -3938,6 +3939,7 @@ SP_Oracle92/siw/sp_getSolicRecursos.prc -text
 SP_Oracle92/siw/sp_getSolicRestricao.prc -text
 SP_Oracle92/siw/sp_getSolicSR.prc -text
 SP_Oracle92/siw/sp_getSolic_Vinculo.prc -text
+SP_Oracle92/siw/sp_getTipoEvento.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
 SP_Oracle92/siw/sp_getTipoMatServ.prc -text

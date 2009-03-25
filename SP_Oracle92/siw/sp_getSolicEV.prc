@@ -88,21 +88,25 @@ begin
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.valor,              b.opiniao,
+                b.valor,              b.opiniao,                     b.observacao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.titulo,                      b.motivo_insatisfacao,
+                b.indicador1,         b.indicador2,                  b.indicador3,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
                 to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
                 to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
                 to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
                 to_char(coalesce(b.inicio,b.fim),'dd/mm/yyyy, hh24:mi:ss') phpdt_programada,
+                case when b.sq_solic_pai is not null 
+                     then dados_solic(b.sq_solic_pai) 
+                end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,
                 b2.acesso,
-                b3.ordem as or_opiniao, b3.nome nm_opiniao, b3.sigla as sg_opiniao,
-                b4.sq_veiculo,        b4.qtd_pessoas,                b4.carga, 
-                b4.hodometro_saida,   b4.hodometro_chegada,          b4.horario_saida,
-                b4.hodometro_chegada, b4.destino,                    b4.parcial,
+                b3.sq_solic_pai as sq_solic_avo, b3.sq_plano as sq_plano_avo, b3.sq_menu as sq_menu_avo,
+                b4.sq_tipo_evento,    b4.nome as nm_tipo_evento,     b4.sigla as sg_tipo_evento,
+                b5.sq_pais,           b5.sq_regiao,                  b5.co_uf,
+                b5.nome as nm_cidade,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -115,45 +119,44 @@ begin
                 p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind,
                 'S' as aviso_prox_conc, 1 as dias_aviso, trunc(b.fim)-1 as aviso
            from siw_menu                                       a 
-                   inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
-                     left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
-                                                                      a3.tipo_respons            = 'T'           and
-                                                                      a3.fim                     is null
-                                                                     )
-                     left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
-                                                                     a4.tipo_respons            = 'S'           and
-                                                                     a4.fim                     is null
-                                                                     )
-                   inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo and
-                                                                      a1.sigla                   = 'SR'
-                                                                     )
-                   left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
-                   inner        join siw_solicitacao           b  on (a.sq_menu                  = b.sq_menu)
-                      inner     join siw_tramite               b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
-                      left      join siw_opiniao               b3 on (b.opiniao                  = b3.sq_siw_opiniao)
-                      inner     join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
-                                        from siw_solicitacao
-                                     )                         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      left      join sr_solicitacao_transporte b4 on (b.sq_siw_solicitacao  = b4.sq_siw_solicitacao)
-                      inner     join eo_unidade                e  on (b.sq_unidade          = e.sq_unidade)
-                        left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
-                                                                      e1.tipo_respons            = 'T'           and
-                                                                      e1.fim                     is null)
-                        left  join eo_unidade_resp             e2 on (e.sq_unidade               = e2.sq_unidade and
-                                                                      e2.tipo_respons            = 'S'           and
-                                                                      e2.fim                     is null)
-                      inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
-                      left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
-                      inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
-                        inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
-                          inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
-                      left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                   inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
-                                             from siw_solic_log
-                                           group by sq_siw_solicitacao
-                                          )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
+                inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
+                  left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
+                                                                   a3.tipo_respons            = 'T'           and
+                                                                   a3.fim                     is null
+                                                                  )
+                  left       join eo_unidade_resp           a4 on (a2.sq_unidade              = a4.sq_unidade and
+                                                                  a4.tipo_respons             = 'S'           and
+                                                                  a4.fim                      is null
+                                                                  )
+                inner        join siw_modulo                a1 on (a.sq_modulo                = a1.sq_modulo)
+                left         join eo_unidade                c  on (a.sq_unid_executora        = c.sq_unidade)
+                inner        join siw_solicitacao           b  on (a.sq_menu                  = b.sq_menu)
+                   inner     join siw_tramite               b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
+                   inner     join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
+                                     from siw_solicitacao
+                                  )                         b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                   left      join siw_solicitacao           b3 on (b.sq_solic_pai             = b3.sq_siw_solicitacao)
+                   inner     join siw_tipo_evento           b4 on (b.sq_tipo_evento           = b4.sq_tipo_evento)
+                   inner     join co_cidade                 b5 on (b.sq_cidade_origem         = b5.sq_cidade)
+                   inner     join eo_unidade                e  on (b.sq_unidade               = e.sq_unidade)
+                     left    join eo_unidade_resp           e1 on (e.sq_unidade               = e1.sq_unidade and
+                                                                   e1.tipo_respons            = 'T'           and
+                                                                   e1.fim                     is null)
+                     left  join eo_unidade_resp             e2 on (e.sq_unidade               = e2.sq_unidade and
+                                                                   e2.tipo_respons            = 'S'           and
+                                                                   e2.fim                     is null)
+                   inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
+                   left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
+                   inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
+                     inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
+                       inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
+                   left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                inner             join (select sq_siw_solicitacao, max(sq_siw_solic_log) chave 
+                                          from siw_solic_log
+                                        group by sq_siw_solicitacao
+                                       )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
           where a.sq_pessoa       = p_cliente
-            and a.sq_menu         = case p_menu when 0 then a.sq_menu else p_menu end
+            and a.sq_menu         = p_menu
             and a.ativo           = 'S'
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
             and (p_pais           is null or (p_pais        is not null and f.sq_pais            = p_pais))
@@ -164,7 +167,7 @@ begin
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and a.sq_unid_executora  = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
-            and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b3.sigla is not null and b3.sigla = p_prioridade))
+            --and (p_prioridade     is null or (p_prioridade  is not null and b.conclusao          is not null and b3.sigla is not null and b3.sigla = p_prioridade))
             and ((p_fase           is null and b1.sigla <> 'CA') or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (trunc(b.fim)        between p_ini_i and p_ini_f)))
