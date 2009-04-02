@@ -4,7 +4,6 @@
 // -------------------------------------------------------------------------
 function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   extract($GLOBALS);
-
   include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
@@ -47,8 +46,48 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PJGERAL');
   $w_ige = f($RS,'ige');
   $w_codigo = f($RS,'codigo_interno');
-  // Recupera o tipo de visão do usuário
+  $w_solic_pai = f($RS,'sq_solic_pai');
 
+  // Define visualizações disponíveis para o usuário
+  $RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+  
+  $w_exibe1 = false; // Análise e observações da Secretaria Executiva
+  $w_exibe2 = false; // Análise e observações do Coordenador
+  $w_exibe3 = false; // Análise e observações do Gestor
+  $w_exibe4 = false; // Análise e observações da ABDI
+  
+  // Vínculo da ABDI vê todas as análises
+  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
+    $w_exibe1 = true;
+    $w_exibe2 = true;
+    $w_exibe3 = true;
+    $w_exibe4 = true;
+  }
+
+  // Vínculo da Secretaria executiva só não vê a análise da ABDI
+  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+    $w_exibe1 = true;
+    $w_exibe2 = true;
+    $w_exibe3 = true;
+  }
+
+  // Coordenador do macroprograma vê análise do coordenador e do gestor
+  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,$w_usuario,'LISTA');
+  if (count($RS1)>0) {
+    foreach($RS1 as $row) {$RS1 = $row; break; }
+    if (f($RS1,'sg_tipo_interessado')=='MPGCO') {
+      $w_exibe2 = true;
+      $w_exibe3 = true;
+    }
+  }
+  
+  // Membro do comitê executivo, de qualquer tipo, vê a análise do gestor
+  $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,$w_usuario,'LISTA');
+  if (count($RS1)>0) {
+    $w_exibe3 = true;;
+  }
+  
+  // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
     // Se for usuário externo, tem visão resumida
     $w_tipo_visao=2;
@@ -95,7 +134,20 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   $l_html.=chr(13).'        <td colspan="2" width="50%" align="center"><b>COORDENAÇÃO:';
   if($l_tipo!='WORD') $l_html.=chr(13).'        '.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
   else       $l_html.=chr(13).'        '.f($RS,'sg_unidade_resp').'</b></td>';
-  $l_html.=chr(13).'          <td colspan="2" width="50%"><b>'.nvl(f($RS,'proponente'),'&nbsp;').'</b></td>';
+  
+  // Recupera coordenadores do macroprograma
+  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,null,'LISTA');
+  $RS1 = SortArray($RS1,'or_tipo_interessado','asc','nome','asc');
+    if (count($RS1)>0) {
+    $l_coord = '';
+    foreach($RS1 as $row) {
+      if (f($row,'sg_tipo_interessado')=='MPGCO') {
+        $l_coord.=ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).', ';
+      }
+    }
+    $l_coord = substr($l_coord,0,-2);
+  }
+  $l_html.=chr(13).'          <td colspan="2" width="50%"><b>'.nvl($l_coord,'&nbsp;').'</b></td>';
   
   // Direção
   $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
@@ -151,17 +203,17 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
+    if ($w_exibe1) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
+    if ($w_exibe2) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
+    if ($w_exibe3) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
+    if ($w_exibe4) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
     $l_html.=chr(13).'    <tr valign="top"><td colspan="2"><b>Estratégias:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo superior:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo estratégicos:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
     $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Desafios:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
-    $l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
+    //$l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
     $l_html.=chr(13).'         </table></div></td></tr>';
   } 
   $l_html.=chr(13).'    </table>';

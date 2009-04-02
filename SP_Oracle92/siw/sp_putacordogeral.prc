@@ -326,6 +326,8 @@ begin
                             p_origem       => crec.sq_solicitacao_item);
             w_cont := w_cont + 1;
          end loop;
+         -- Ajusta o valor inicial do acordo
+         update ac_acordo set valor_inicial = (select valor from siw_solicitacao where sq_siw_solicitacao = w_chave) where sq_siw_solicitacao = w_chave;
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações

@@ -46,6 +46,7 @@ include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEvento.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
 include_once('visualevento.php');
 include_once('validaevento.php');
 
@@ -171,6 +172,7 @@ exit;
 // Rotina de visualização resumida dos registros
 // -------------------------------------------------------------------------
 function Inicial() {
+
   extract($GLOBALS);
 
   $w_tipo=$_REQUEST['w_tipo'];
@@ -456,6 +458,7 @@ function Inicial() {
               } 
               ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da solicitação.">EX</A>&nbsp');
               ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'ANEXO&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_menu='.$w_menu.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=EVANEXO" title="Atribui anexos ao item.">Arquivos</A>&nbsp');
             } elseif ($P1==2 || $P1==6) {
               if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S' || f($row,'acesso')>15) {
                 // Se for execução
@@ -531,6 +534,7 @@ function Inicial() {
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     } 
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
+
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     if ($O=='C') {
@@ -861,7 +865,11 @@ function Geral() {
     ShowHTML('       <input '.$w_Disabled.' name="w_hora_inicio" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_inicio.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" />');
     ShowHTML('       &nbsp;&nbsp;a&nbsp;&nbsp;<input '.$w_Disabled.' name="w_hora_termino" type="text" class="STI" size="5" maxlength="5" value="'.$w_hora_termino.'" onKeyDown="FormataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,5,event);" /></td>');
     ShowHTML('   </tr>');
-    ShowHTML('   <tr valign="top"><td><b>Relevância para a PDP:</b><td colspan="3"><textarea '.$w_Disabled.' class="STI" name="w_justificativa" cols="80" rows="2" >'.$w_justificativa.'</textarea></td></tr>');
+    if(nvl($w_justificativa,'') != ''){
+      ShowHTML('   <tr valign="top"><td><b>Relevância para a PDP:</b><td colspan="3"><textarea '.$w_Disabled.' class="STI" name="w_justificativa" cols="80" rows="2" >'.$w_justificativa.'</textarea></td></tr>');    
+    }else{
+      ShowHTML('   <tr valign="top"><td><b>Relevância para a PDP:</b><td colspan="3"><textarea '.$w_Disabled.' class="STI" name="w_justificativa" cols="80" rows="2" >descrever a justificativa para vinculação com a PDP</textarea></td></tr>');        
+    }    
     ShowHTML('   <tr valign="top"><td><b>Descrição:</b><td colspan="3"><textarea '.$w_Disabled.' class="STI" name="w_descricao" cols="80" rows="5" >'.$w_descricao.'</textarea></td></tr>');
     if ($w_envio_inclusao=='S') ShowHTML('      <tr valign="top"><td><b><U>A</U>ssinatura Eletrônica:</b><br>(apenas para envio automático)<td colspan="3"><INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="4" height="1" bgcolor="#000000"></TD></TR>');
@@ -1394,6 +1402,180 @@ function Concluir() {
   }
 } 
 
+function Anexos() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página 
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_descricao = $_REQUEST['w_descricao'];
+    $w_caminho   = $_REQUEST['w_caminho'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem 
+    $RS = db_getSolicAnexo::getInstanceOf($dbms,$w_chave,null,$w_cliente);
+    $RS = SortArray($RS,'nome','asc');
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado 
+    $RS = db_getSolicAnexo::getInstanceOf($dbms,$w_chave,$w_chave_aux,$w_cliente);
+    foreach ($RS as $row) {
+      $w_nome      = f($row,'nome');
+      $w_descricao = f($row,'descricao');
+      $w_caminho   = f($row,'chave_aux');
+    }
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (strpos('IAEP',$O)!==false) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      Validate('w_nome','Título','1','1','1','255','1','1');
+      Validate('w_descricao','Descrição','1','1','1','1000','1','1');
+      if ($O=='I') {
+        Validate('w_caminho','Arquivo','','1','5','255','1','1');
+      } 
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I') {
+    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  } elseif ($O=='A') {
+    BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    //Recupera os dados do endereço para exibição no cabeçalho
+    //$RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJCAD');
+    $RS_Evento = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+      'EVCAD',5,null,null,null,null,null,null,null,null,null,null,$w_chave, null, 
+      null, null, null, null, null,null, null, null, null, null, null, null, null, null);
+    foreach($RS_Evento as $row){$RS_Evento = $row; break;}
+  
+    $w_cabecalho.='<table border=1 width="100%"><tr><td bgcolor="#FAEBD7">';
+    $w_cabecalho.='    <TABLE WIDTH="90%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
+    $w_cabecalho.='        <tr valign="top">';
+    $w_cabecalho.='          <td><font size="1">Data/Período:<br/><font size=1 class="hl">'.f($RS_Evento,'codigo_interno').'</font></b>';
+    if (FormataDataEdicao(f($row,'phpdt_inicio'))==FormataDataEdicao(f($RS_Evento,'phpdt_fim'))) { 
+      $w_cabecalho.='          <b>'.FormataDataEdicao(f($RS_Evento,'phpdt_inicio'),5).'</b></td>';
+    } else {
+      $w_cabecalho.='          <b>'.FormataDataEdicao(f($RS_Evento,'phpdt_inicio'),5).' a '.FormataDataEdicao(f($RS_Evento,'phpdt_fim'),5).'</b></td>';
+    }
+    $w_cabecalho.='          <td><font size="1">Horário:<br><b><font size=1 class="hl">';
+    $w_cabecalho.='          <b>'.date('H:i',f($RS_Evento,'phpdt_inicio')).'-'.date('H:i',f($RS_Evento,'phpdt_fim')).'</b></td>';
+    //$w_cabecalho.='        <tr valign="top">';
+    $w_cabecalho.='          <td><font size="1">Tipo:<br>';
+    $w_cabecalho.='          <b>'.f($RS_Evento,'nm_tipo_evento').'</b></td>';
+    $w_cabecalho.='          <td><font size="1">Assunto/Tema:<br><b><font size=1 class="hl">'.f($RS_Evento,'descricao').'</font></b></td>';
+    $w_cabecalho.='    </TABLE>';
+    $w_cabecalho.='</TABLE><BR>';
+    echo $w_cabecalho;
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
+  //ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');  
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'inicial&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=EVCAD"><u>V</u>oltar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>Título</td>');
+    ShowHTML('          <td><b>Descrição</td>');
+    ShowHTML('          <td><b>Tipo</td>');
+    ShowHTML('          <td><b>KB</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem 
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem 
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+        ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'tipo').'</td>');
+        ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
+    ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG='.$SG.'&O='.$O.'" name="Form" onSubmit="return(Validacao(this)); alert(\'!\');" enctype="multipart/form-data" method="POST">');
+    ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+    ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+    ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+    ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+    ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+    ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_caminho.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    if ($O=='I' || $O=='A') {
+      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
+      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    }  
+    ShowHTML('      <tr><td><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
+    ShowHTML('      <tr><td><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="OBRIGATÓRIO. Descreva a finalidade do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
+    if ($w_caminho>'') {
+      ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
+    } 
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&O=L&SG='.$SG.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);' 
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+
 // =========================================================================
 // Rotina de preparação para envio de e-mail
 // Finalidade: preparar os dados necessários ao envio automático de e-mail
@@ -1619,6 +1801,8 @@ function SolicMail($p_solic,$p_tipo) {
 function Grava() {
   extract($GLOBALS);
 
+
+  
   $w_file    = '';
   $w_tamanho = '';
   $w_tipo    = '';
@@ -1626,8 +1810,72 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpenClean('onLoad=this.focus();');
-  if (strpos('IAE',$O)!==false) {
+  BodyOpenClean('onLoad=this.focus();'); 
+  
+  if($SG=='EVANEXO') {
+      if (UPLOAD_ERR_OK==0) {
+        $w_maximo = $_REQUEST['w_upload_maximo'];
+        foreach ($_FILES as $Chv => $Field) {
+          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_observacao');
+            exit();
+          }
+          if ($Field['size'] > 0) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            if ($Field['size'] > $w_maximo) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            } 
+            // Se já há um nome para o arquivo, mantém 
+            if ($_REQUEST['w_atual']>'') {
+              $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+              foreach ($RS as $row) {
+                if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                if (strpos(f($row,'caminho'),'.')!==false) {
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                } else {
+                  $w_file = basename(f($row,'caminho'));
+                }
+              }
+            } else {
+              $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+              if (strpos($Field['name'],'.')!==false) {
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+              }
+            } 
+            $w_tamanho = $Field['size'];
+            $w_tipo    = $Field['type'];
+            $w_nome    = $Field['name'];
+            if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+          } 
+        } 
+        // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+        if ($O=='E' && $_REQUEST['w_atual']>'') {
+          $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+          foreach ($RS as $row) {
+            if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+          }
+        } 
+        dml_putSolicArquivo::getInstanceOf($dbms,$O,
+          $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
+          $w_file,$w_tamanho,$w_tipo,$w_nome);
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+        ScriptClose();
+        exit();
+      } 
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.$R.'&R='.$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ScriptClose();
+  }elseif (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
@@ -1648,7 +1896,7 @@ function Grava() {
       }
       if(nvl($_REQUEST['w_data_termino'],'') != ''){
         $w_fim    = $_REQUEST['w_data_termino'].', '.$_REQUEST['w_hora_termino'];
-      }      
+      }
       dml_putSolicEvento::getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_solic_pai'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],
             $_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_tipo_evento'],
@@ -1656,8 +1904,15 @@ function Grava() {
             $_REQUEST['w_observacao'],$_REQUEST['w_titulo'],$_REQUEST['w_motivo'],
             $_REQUEST['w_justificativa'],$_REQUEST['w_descricao'],$w_inicio,$w_fim,
             $_REQUEST['w_data_hora'], $_REQUEST['w_cidade'], $w_copia, &$w_chave_nova);
-
-      if (nvl($_REQUEST['w_envio'],'N')=='S') {
+      // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+      if ($O=='E') {
+        $RS = db_getSolicAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],$w_cliente);
+        foreach ($RS as $row) {
+          if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+        }
+      }
+            
+            if (nvl($_REQUEST['w_envio'],'N')=='S') {
         dml_putSolicEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$_REQUEST['w_tramite'],null,
           'N',null,null,null,null,null);
       }
@@ -1910,7 +2165,7 @@ function Grava() {
 // -------------------------------------------------------------------------
 function Main() {
   extract($GLOBALS);
-  if ($P1==1 && nvl(f($RS_Menu,'sq_unid_executora'),'')=='') {
+  if ($P1==1 && nvl(f($RS_Menu,'sq_unid_executora'),'')=='' && $par == 'INICIAL') {
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpen('onLoad=this.focus();');
@@ -1931,6 +2186,7 @@ function Main() {
   case 'GERAL':         Geral();          break;
   case 'VISUAL':        Visual();         break;
   case 'EXCLUIR':       Excluir();        break;
+  case 'ANEXO':         Anexos();         break;
   case 'OPINIAO':       Opiniao();        break;
   case 'DADOSEXECUCAO': DadosExecucao();  break;
   case 'ENVIO':         Encaminhamento(); break;

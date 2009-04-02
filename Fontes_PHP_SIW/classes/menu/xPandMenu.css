@@ -1,3 +1,4 @@
+
 #container
 {
 
@@ -23,6 +24,31 @@
     PADDING-LEFT: 25px;
     MARGIN-LEFT: 3px;
     BORDER-LEFT: #aaa 1px dotted
+}
+.Xnode1
+{
+    MARGIN-TOP: 3px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 95%;
+    BACKGROUND-IMAGE: none;
+    MARGIN-BOTTOM: 3px;
+    CURSOR: pointer;
+    COLOR: black;
+    BACKGROUND-REPEAT: repeat;
+    FONT-FAMILY: verdana;
+    BACKGROUND-COLOR: transparent
+}
+.Xleaf1
+{
+    MARGIN-TOP: 2px;
+    FONT-WEIGHT: bold;
+    FONT-SIZE: 95%;
+    BACKGROUND-IMAGE: none;
+    MARGIN-BOTTOM: 2px;
+    COLOR: black;
+    BACKGROUND-REPEAT: repeat;
+    FONT-FAMILY: verdana;
+    BACKGROUND-COLOR: transparent
 }
 .Xnode
 {
@@ -241,3 +267,88 @@ table ul li{
     BORDER-BOTTOM: black 1px solid;
     BACKGROUND-COLOR: #efefef
 }
+
+/*Propriedades dos checkbox*/
+
+/**************** atrasados ******************/
+/* checkbox : unchecked (default/base) state */
+.atrasados {
+  font: 12px Tahoma, Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  outline: none;
+  background: url(atrasados.gif) no-repeat
+    ;
+  height: 16px;
+  width: 40px;
+  display: block;
+  float: left;
+  padding: 1px 0px 0px 20px;
+  color: #666666;
+}
+
+/* checkbox : hover state */
+.atrasados:hover {
+  color: #0066FF;
+  text-decoration: underline;
+}
+
+/* checkbox : checked state */
+.atrasados_checked {
+  background-position: left -25px;
+}
+
+/**************** adiantados *****************/
+/* checkbox : unchecked (default/base) state */
+.adiantados {
+  font: 12px Tahoma, Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  outline: none;
+  background: url(adiantados.gif) no-repeat
+    ;
+  height: 16px;
+  width: 40px;
+  display: block;
+  float: left;
+  padding: 1px 0px 0px 20px;
+  color: #666666;
+}
+
+/* checkbox : hover state */
+.adiantados:hover {
+  color: #0066FF;
+  text-decoration: underline;
+}
+
+/* checkbox : checked state */
+.adiantados_checked {
+  background-position: left -25px;
+}
+
+/***************** concluidos *****************/
+/* checkbox : unchecked (default/base) state */
+.concluidos {
+  font: 12px Tahoma, Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  outline: none;
+  background: url(adiantados.gif) no-repeat
+    ;
+  height: 16px;
+  width: 40px;
+  display: block;
+  float: left;
+  padding: 1px 0px 0px 20px;
+  color: #666666;
+}
+
+/* checkbox : hover state */
+.concluidos:hover {
+  color: #0066FF;
+  text-decoration: underline;
+}
+
+/* checkbox : checked state */
+.concluidos_checked {
+  background-position: left -25px;
+}
+
+/***************************/

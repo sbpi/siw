@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados do acordo
 // -------------------------------------------------------------------------
@@ -124,7 +124,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr valign="top">';
       $l_html.=chr(13).'              <td><b>Assinatura do contrato:</b></td>';
       $l_html.=chr(13).'              <td>'.Nvl(FormataDataEdicao(f($RS,'assinatura')),'---').'</td></tr>';
-      if (substr($w_sigla,0,3)!='GCB') { 
+      if ($w_segmento=='Público' && substr($w_sigla,0,3)!='GCB') { 
         $l_html.=chr(13).'          <tr valign="top">';
         $l_html.=chr(13).'              <td><b>Publicação D.O.:</b></td>';
         $l_html.=chr(13).'              <td>'.Nvl(FormataDataEdicao(f($RS,'publicacao')),'---').'</td></tr>';
@@ -151,9 +151,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     if ($w_tipo_visao==0 || $w_tipo_visao==1) {
       // Dados Adicionais
-      if($w_segmento=='Público' && (substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) {
+      if(($w_segmento=='Público' || $w_segmento=='Agência') && (substr($w_sigla,0,3)=='GCD' || substr($w_sigla,0,3)=='GCZ')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS ADICIONAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        if (substr($w_sigla,0,3)!='GCZ') {
+        if ($w_segmento=='Público' && substr($w_sigla,0,3)!='GCZ') {
           $l_html.=chr(13).'      <tr><td><b>Fonte de recurso:</b></td>';
           $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_lcfonte_recurso')),'---').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Especificação de despesa:</b></td>';

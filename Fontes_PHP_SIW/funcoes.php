@@ -99,22 +99,22 @@ function colapsar($w_chave){
 // =========================================================================
 // Gera um link chamando o arquivo desejado
 // -------------------------------------------------------------------------
-function LinkArquivo ($p_classe, $p_cliente, $p_arquivo, $p_target, $p_hint, $p_descricao, $p_retorno) {
+function LinkArquivo ($v_classe, $v_cliente, $v_arquivo, $v_target, $v_hint, $v_descricao, $v_retorno) {
    extract($GLOBALS);
   // Monta a chamada para a página que retorna o arquivo
-  $l_link = $conRootSIW.'file.php?force=false&cliente='.$p_cliente.'&id='.$p_arquivo;
+  $l_link = $conRootSIW.'file.php?force=false&cliente='.$v_cliente.'&id='.$v_arquivo;
 
-  If (strtoupper(Nvl($p_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
+  If (strtoupper(Nvl($v_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
      // Altera a chamada padrão, dispensando a sessão
-     $l_link = $conRootSIW.'file.php?force=false&sessao=false&cliente=' & $p_cliente & '&id=' & $p_arquivo;
-  } ElseIf (strtoupper(Nvl($p_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
+     $l_link = $conRootSIW.'file.php?force=false&sessao=false&cliente=' & $v_cliente & '&id=' & $v_arquivo;
+  } ElseIf (strtoupper(Nvl($v_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
      // Trata a possibilidade da chamada ter passado classe, target e hint
-     If (Nvl($p_classe,'') > '') $l_classe = ' class="' . $p_classe . '" ';  Else $l_classe = '';
-     If (Nvl($p_target,'') > '') $l_target = ' target="' . $p_target . '" '; Else $l_target = '';
-     If (Nvl($p_hint,'')   > '') $l_hint   = ' title="' . $p_hint . '" ';    Else $l_hint   = '';
+     If (Nvl($v_classe,'') > '') $l_classe = ' class="' . $v_classe . '" ';  Else $l_classe = '';
+     If (Nvl($v_target,'') > '') $l_target = ' target="' . $v_target . '" '; Else $l_target = '';
+     If (Nvl($v_hint,'')   > '') $l_hint   = ' title="' . $v_hint . '" ';    Else $l_hint   = '';
 
      // Montagem da tag anchor
-     $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$p_descricao.'</a>';
+     $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$v_descricao.'</a>';
   }
 
   // Retorno ao chamador
@@ -408,7 +408,6 @@ function LinkOrdena($p_label,$p_campo) {
 // -------------------------------------------------------------------------
 function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$titulo='S') {
   extract($GLOBALS);
-
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   if($titulo == 'S'){
     $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -427,13 +426,13 @@ function CabecalhoRelatorio($p_cliente,$p_titulo,$p_rowspan=2,$l_chave=null,$tit
       if(RetornaGestor($l_chave,$w_usuario)=='S') ShowHTML('&nbsp;<A  class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TelaAcessoUsuarios&w_chave='.$l_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG=').'\',\'Usuarios\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;"><IMG border=0 ALIGN="CENTER" TITLE="Usuários com acesso a este documento" SRC="images/Folder/User.gif"></a>');
     }
     ShowHTML('&nbsp;<IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.gif" onClick="window.print();">');
-    $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
-    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
+    $word_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
+    //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_sq_pessoa='.$l_chave.'&w_ano='.$w_ano.'w_mes='.$w_mes.'&&p_tipo=WORD&w_tipo=WORD&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.jpg"></a>');
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="W"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar Word" SRC="images/word.jpg" />');
 
     //ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=L&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=EXCEL&w_tipo=EXCEL&w_tipo_rel=EXCEL&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar Excel" SRC="images/excel.jpg"></a>');
    // ShowHTML('&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="_blank"><IMG border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png"></a>');
-    $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'));
+    $pdf_par = montaurl_js($w_dir,$conRootSIW.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_chave='.$l_chave.'&w_acordo='.$l_chave.'&p_plano='.$l_chave.'&w_ano='.$w_ano.'&w_mes='.$w_mes.'&p_tipo=PDF&w_tipo=PDF&w_tipo_rel=WORD&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4=1&SG='.$SG.MontaFiltro('GET'));
    // echo $parametros;
     ShowHtml('<img  style="cursor:pointer" onclick=\' document.temp.opcao.value="P"; displayMessage(310,140,"funcoes/orientacao.php");\' border=0 ALIGN="CENTER" TITLE="Gerar PDF" SRC="images/pdf.png" />');
     ShowHTML('</TD></TR>');
@@ -1818,7 +1817,7 @@ function CRLF2BR($expressao) {
     if (false!==strpos($result,chr(13)))         $result = str_replace(chr(13),'<br>',$result);
     if (false!==strpos($result,chr(10)))         $result = str_replace(chr(10),'<br>',$result);
     //return str_replace('<br><br>','<br>',htmlentities($result));
-    return str_replace('<br><br>','<br>',$result);
+    return str_replace('  ','&nbsp;&nbsp;',str_replace('<br><br>','<br>',$result));
   }
 }
 
@@ -2134,11 +2133,6 @@ function ExibeAssunto($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp) {
   }
   return $l_string;
 }
-
-// =========================================================================
-// Função que formata um texto para exibição em HTML
-// -------------------------------------------------------------------------
-function ExibeTexto($p_texto) { return str_replace('  ','&nbsp;&nbsp;',str_replace('\r\n','<br>',$p_texto)); }
 
 // =========================================================================
 // Função que retorna a data/hora do banco

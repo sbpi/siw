@@ -1243,7 +1243,7 @@ function Descritivo() {
     ShowHTML('<INPUT type="hidden" name="w_copia" value="'.$w_copia.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
-    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
+    ShowHTML('<INPUT type="hidden" name="w_data_hora" value="'.f($RS_Menu,'data_hora').'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1251,14 +1251,15 @@ function Descritivo() {
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Descritivos</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td><b><u>I</u>nstância de articulação público-privada:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_instancia_articulacao" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_instancia_articulacao.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b><u>C</u>omposição da instância:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_composicao_instancia" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_composicao_instancia.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b>Es<u>t</u>udos:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_estudos" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_estudos.'</TEXTAREA></td>');
-  ShowHTML('      <tr><td><b><u>S</u>ituação inicial:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_justificativa.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>C</u>omposição da instância:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_composicao_instancia" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_composicao_instancia.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>Es<u>t</u>udos:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_estudos" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_estudos.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b><u>S</u>ituação inicial:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>E</u>stratégias:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_restricoes" class="STI" ROWS=5 cols=75 title="Descreva as estratégias a serem aplicadas na execução do programa.">'.$w_restricoes.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>O</u>bjetivo superior:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_objetivo_superior" class="STI" ROWS=5 cols=75 title="Descreva o objetivo superior do programa.">'.$w_objetivo_superior.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b>Objetivos <u>e</u>stratégicos:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos específicos esperados após a execução do programa.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>D</u>esafios:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_exclusoes" class="STI" ROWS=5 cols=75 title="Descreva os desafios a serem superados pelo programa.">'.$w_exclusoes.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b><u>P</u>rioridades:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_premissas" class="STI" ROWS=5 cols=75 title="Descreva as prioridades do programa.">'.$w_premissas.'</TEXTAREA></td>'); 
+    //ShowHTML('      <tr><td><b><u>P</u>rioridades:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_premissas" class="STI" ROWS=5 cols=75 title="Descreva as prioridades do programa.">'.$w_premissas.'</TEXTAREA></td>'); 
+    ShowHTML('<INPUT type="hidden" name="w_premissas" value="'.$w_premissas.'">');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -1293,6 +1294,46 @@ function Informar() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';
   $w_ige        = f($RS,'ige');
+  $w_solic_pai  = f($RS,'sq_solic_pai');
+
+  // Define visualizações disponíveis para o usuário
+  $RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+  
+  $w_exibe1 = true; // Análise e observações da Secretaria Executiva
+  $w_exibe2 = true; // Análise e observações do Coordenador
+  $w_exibe3 = true; // Análise e observações do Gestor
+  $w_exibe4 = true; // Análise e observações da ABDI
+  
+  // Vínculo da ABDI vê todas as análises
+  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
+    $w_exibe1 = true;
+    $w_exibe2 = true;
+    $w_exibe3 = true;
+    $w_exibe4 = true;
+  }
+
+  // Vínculo da Secretaria executiva só não vê a análise da ABDI
+  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+    $w_exibe1 = true;
+    $w_exibe2 = true;
+    $w_exibe3 = true;
+  }
+
+  // Coordenador do macroprograma vê análise do coordenador e do gestor
+  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,$w_usuario,'LISTA');
+  if (count($RS1)>0) {
+    foreach($RS1 as $row) {$RS1 = $row; break; }
+    if (f($RS1,'sg_tipo_interessado')=='MPGCO') {
+      $w_exibe2 = true;
+      $w_exibe3 = true;
+    }
+  }
+  
+  // Membro do comitê executivo, de qualquer tipo, vê a análise do gestor
+  $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_chave,$w_usuario,'LISTA');
+  if (count($RS1)>0) {
+    $w_exibe3 = true;;
+  }
   
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -1326,18 +1367,20 @@ function Informar() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_analise1','Análise da Secretaria Executiva','1','',5,2000,'1','1');  
-    Validate('w_analise2','Análise do Coordenador','1','',5,2000,'1','1');          
-    Validate('w_analise3','Análise do Gestor','1','',5,2000,'1','1');
-    Validate('w_analise4','Análise da ABDI','1','',5,2000,'1','1');
+    if ($w_exibe1) Validate('w_analise1','Análise da Secretaria Executiva','1','',5,2000,'1','1');  
+    if ($w_exibe2) Validate('w_analise2','Análise do Coordenador','1','',5,2000,'1','1');          
+    if ($w_exibe3) Validate('w_analise3','Análise do Gestor','1','',5,2000,'1','1');
+    if ($w_exibe4) Validate('w_analise4','Análise da ABDI','1','',5,2000,'1','1');
   } 
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca > '') BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif (strpos('EV',$O)!==false)BodyOpenClean('onLoad=\'this.focus()\';');
-  else  BodyOpenClean('onLoad=\'document.Form.w_analise1.focus()\';'); 
+  if ($w_troca > '') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\';');
+  }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
   ShowHTML('<HR>');
   ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -1358,10 +1401,26 @@ function Informar() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Análises</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b>A<u>n</u>álise da Secretaria Executiva:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_analise1" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise1.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Aná<u>l</u>ise do Coordenador:</b><br><textarea '.$w_Disabled.' accesskey="L" name="w_analise2" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise2.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Anál<u>i</u>se do Gestor:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_analise3" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise3.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Análi<u>s</u>e da ABDI:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_analise4" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise4.'</TEXTAREA></td>');
+    if ($w_exibe1) {
+      ShowHTML('      <tr><td><b>A<u>n</u>álise e observações da Secretaria Executiva:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_analise1" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise1.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_analise1" value="'.$w_analise1.'">');
+    }
+    if ($w_exibe2) {
+      ShowHTML('      <tr><td><b>Aná<u>l</u>ise e observações do Coordenador:</b><br><textarea '.$w_Disabled.' accesskey="L" name="w_analise2" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise2.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_analise2" value="'.$w_analise2.'">');
+    }
+    if ($w_exibe3) {
+      ShowHTML('      <tr><td><b>Anál<u>i</u>se e observações do Gestor:</b><br><textarea '.$w_Disabled.' accesskey="I" name="w_analise3" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise3.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_analise3" value="'.$w_analise3.'">');
+    }
+    if ($w_exibe4) {
+      ShowHTML('      <tr><td><b>Análi<u>s</u>e e observações da ABDI:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_analise4" class="STI" rows=10 cols=75 title="Informe a análise feita pela Secretaria Executiva.">'.$w_analise4.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_analise4" value="'.$w_analise4.'">');
+    }
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');

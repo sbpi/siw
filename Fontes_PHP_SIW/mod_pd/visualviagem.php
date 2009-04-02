@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados da viagem
 // -------------------------------------------------------------------------
@@ -833,13 +833,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>4) {
+    if($l_diaria=='S' && $w_or_tramite>9) {
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
         $i = 1;
         foreach($RS1 as $row) {
-          //if (nvl(f($row,'sq_diaria'),0)>0) {
+          if (nvl(f($row,'sq_diaria'),0)>0) {
             $w_trechos[$i][1]  = f($row,'sq_diaria');
             $w_trechos[$i][2]  = f($row,'sq_deslocamento');
             $w_trechos[$i][3]  = f($row,'sq_deslocamento');
@@ -893,7 +893,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               $w_trechos[$i-1][31] = f($row,'compromisso');
             }
             $i += 1;
-          //}
+          }
         } 
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTO REALIZADO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
@@ -1001,7 +1001,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
       
     // Acerto de contas da viagem
-    if($l_diaria=='S' && $w_or_tramite>4 && is_array($w_tot_diaria_P)) {
+    if($l_diaria=='S' && $w_or_tramite>9 && is_array($w_tot_diaria_P)) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ACERTO DE CONTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
       $l_html.=chr(13).'      <tr><td colspan="2">';
       $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';

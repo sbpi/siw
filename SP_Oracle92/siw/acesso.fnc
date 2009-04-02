@@ -43,6 +43,7 @@ create or replace function Acesso
 *    15 - se for cadastrador, solicitante, chefe da unidade e gestor
 *    16 a 31 - se o usuário deve cumprir o trâmite em que a solicitação está
 ***********************************************************************************/
+  w_cliente                siw_cliente.sq_pessoa%type;
   w_interno                co_tipo_vinculo.interno%type;
   w_sq_servico             siw_menu.sq_menu%type;
   w_acesso_geral           siw_menu.acesso_geral%type;
@@ -62,6 +63,7 @@ create or replace function Acesso
   w_sq_siw_tramite         siw_solicitacao.sq_siw_tramite%type;
   w_cadastrador            siw_solicitacao.cadastrador%type;
   w_unidade_solicitante    siw_solicitacao.sq_unidade%type;
+  w_solic_pai              siw_solicitacao.sq_solic_pai%type;
   w_sq_pessoa_executor     siw_solicitacao.executor%type;
   w_opiniao_solicitante    siw_solicitacao.opiniao%type;
   w_ordem                  siw_tramite.ordem%type;
@@ -73,6 +75,7 @@ create or replace function Acesso
   w_sq_pessoa_titular      eo_unidade_resp.sq_pessoa%type;         -- Titular da unidade solicitante
   w_sq_pessoa_substituto   eo_unidade_resp.sq_pessoa%type;         -- Substituto da unidade solicitante
   w_sq_endereco_unidade    eo_unidade.sq_pessoa_endereco%type;
+  w_nm_vinculo             co_tipo_vinculo.nome%type;
   w_solicitante            number(18);                             -- Solicitante
   w_unidade_beneficiario   number(18);
   w_existe                 number(18);
@@ -119,11 +122,12 @@ begin
  End If;
  
  -- Recupera as informações da opção à qual a solicitação pertence
- select a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, e.destinatario,
+ select a.sq_pessoa, a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, e.destinatario,
         a1.sigla,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
+        b2.nome,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
-        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, 
+        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         case when d.sq_cc is not null 
              then d.sq_cc
              else case when i.sq_cc is not null
@@ -135,16 +139,20 @@ begin
         coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
         coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
-   into w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
+   into w_cliente, w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
+        w_nm_vinculo,
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
-        w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, w_opiniao_solicitante, w_sq_cc,
+        w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, 
+        w_opiniao_solicitante, w_solic_pai, w_sq_cc,
         w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,
         w_sq_endereco_unidade, w_executor,
         w_unidade_resp
-   from sg_autenticacao                     b,
+   from sg_autenticacao                     b
+        inner   join co_pessoa              b1 on (b.sq_pessoa              = b1.sq_pessoa)
+          inner join co_tipo_vinculo        b2 on (b1.sq_tipo_vinculo       = b2.sq_tipo_vinculo),
         siw_solicitacao                     d
         inner   join siw_menu               a  on (a.sq_menu                = d.sq_menu)
           inner join siw_modulo             a1 on (a.sq_modulo              = a1.sq_modulo)
@@ -184,6 +192,7 @@ begin
    -- Se não estiver, retorna 0
    Return(result);
  End If;
+
  -- Verifica se o usuário é o cadastrador
  If p_usuario = w_cadastrador Then Result := 1; End If;
  
@@ -200,6 +209,22 @@ begin
  -- Verifica se o usuário é representante de acordo
  select count(*) into w_existe from ac_acordo_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
  If w_existe > 0 Then Result := 1; End If;
+ 
+ -- Verifica se o usuário é coordenador de macroprograma da pdp
+ If w_solic_pai is not null Then
+   select count(*) into w_existe 
+     from siw_solicitacao a
+          inner   join siw_menu                    d on (a.sq_menu             = d.sq_menu             and d.sigla = 'PEPROCAD')
+          inner   join siw_solicitacao_interessado b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao  and b.sq_pessoa = p_usuario)
+            inner join siw_tipo_interessado        c on (b.sq_tipo_interessado = c.sq_tipo_interessado and c.sigla = 'MPGCO')
+    where a.sq_siw_solicitacao = w_solic_pai;
+   If w_existe > 0 Then Result := 1; End If;
+ End If;
+ 
+ -- Se usuário é do tipo de vínculo ABDI ou SECRETARIA EXECUTIVA e o ambiente for PDP, concede acesso de consulta
+ If w_cliente in (14014,11134) and upper(w_nm_vinculo) in ('ABDI','SECRETARIA EXECUTIVA') Then
+    Result := 1;
+ End If;
  
  -- Verifica se o usuário é o solicitante
  If w_solicitante = p_usuario Then 

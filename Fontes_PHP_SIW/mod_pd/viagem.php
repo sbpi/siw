@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -1782,12 +1782,12 @@ function Bilhetes() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
-  if ($P1==1) $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
-  
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-
+  
+  if (f($RS_Solic,'sg_tramite')=='AE') $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
+  
   // Trechos da solicitação
   $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,null);
   $RS_Trecho = SortArray($RS_Trecho,'phpdt_saida','asc', 'phpdt_chegada', 'asc');

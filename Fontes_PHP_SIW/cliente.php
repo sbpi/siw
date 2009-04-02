@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -1781,7 +1781,7 @@ function Grava() {
   BodyOpen('onLoad=this.focus();');
 
   switch ($SG) {
-    case 'CLGERAL':
+    case 'CLCAD':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //exibevariaveis();
@@ -1791,7 +1791,8 @@ function Grava() {
             $_REQUEST['w_cidade'],$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],$_REQUEST['w_maximo_tentativas'],$_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_segmento'],
             $_REQUEST['w_mail_tramite'],$_REQUEST['w_mail_alerta'],$_REQUEST['w_georeferencia'],$_REQUEST['w_googlemaps_key'],$_REQUEST['w_arp']);
-            ScriptOpen('JavaScript');
+        
+        ScriptOpen('JavaScript');
         if ($O=='I') {
           ShowHTML('  parent.menu.location=\'menu.php?par=ExibeDocs&O=A&w_cgccpf='.$_REQUEST['w_cgccpf'].'&w_documento='.$_REQUEST['w_nome_resumido'].'&R='.$w_pagina.'INICIAL&SG=CLIENTE&TP='.RemoveTP($TP).MontaFiltro('GET').'\';');
         } else {

@@ -2,8 +2,8 @@ create or replace procedure SP_PutCOSegmento
    (p_operacao         in  varchar2,
     p_chave            in  number default null,
     p_nome             in  varchar2,
-    p_ativo            in  varchar2,
-    p_padrao           in  varchar2
+    p_padrao           in  varchar2,
+    p_ativo            in  varchar2
    ) is
 begin
    If p_operacao = 'I' Then
@@ -27,4 +27,3 @@ begin
    End If;
 end SP_PutCOSegmento;
 /
-

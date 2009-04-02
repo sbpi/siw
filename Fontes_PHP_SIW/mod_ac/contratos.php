@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -136,7 +136,6 @@ $SG         = strtoupper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = strtoupper($_REQUEST['O']);
 
-
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'contratos.php?par=';
 $w_Disabled     = 'ENABLED';
@@ -193,6 +192,10 @@ if (count($RS)>0) $w_acao='S'; else $w_acao='N';
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
 if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
   
+// Carrega o segmento do cliente
+$RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$w_segmento = f($RS,'segmento');
+
 $w_copia         = $_REQUEST['w_copia'];
 $w_herda         = $_REQUEST['w_herda'];
 $p_sq_menu_relac = strtoupper($_REQUEST['p_sq_menu_relac']);
@@ -256,9 +259,6 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_tipo=$_REQUEST['w_tipo'];
-  // Carrega o segmento do cliente
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  $w_segmento = f($RS,'segmento');
 
   if ($O=='L') {
     if (strpos(strtoupper($R),'GR_')!==false || strpos(strtoupper($R),'PROJETO')!==false || $w_tipo=='WORD') {
@@ -492,7 +492,7 @@ function Inicial() {
     if ($w_embed!='WORD') {    
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</font></td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Título','nm_acordo').'</font></td>');
-      if($w_segmento=='Público' || $w_mod_pa=='S') {
+      if ($w_segmento=='Público' || $w_mod_pa=='S') {
         if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>');
         else                        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Processo','processo').'</font></td>');
       }
@@ -517,7 +517,7 @@ function Inicial() {
     } else {
       ShowHTML('          <td rowspan=2><b>Código</font></td>');
       ShowHTML('          <td rowspan=2><b>Título</font></td>');
-      if($w_segmento=='Público' || $w_mod_pa=='S') {
+      if ($w_segmento=='Público' || $w_mod_pa=='S') {
          if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>Empenho</font></td>');
          else                        ShowHTML('          <td rowspan=2><b>Processo</font></td>');
       }
@@ -563,7 +563,7 @@ function Inicial() {
 	        } else {
 	          ShowHTML('        <td>'.f($row,'processo'));
 	        }
-        } elseif($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
+        } elseif ($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
         if ($_SESSION['INTERNO']=='S') {
           if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_embed).'</td>');
           else                                 ShowHTML('        <td>---</td>');
@@ -612,7 +612,7 @@ function Inicial() {
             } elseif ($P1==2 || $P1==6) {
               // Se for execução
               if ($w_usuario==f($row,'executor')) {
-                if($w_segmento=='Público' && substr($SG,0,3)=='GCD') {
+                if ($w_segmento=='Público' && substr($SG,0,3)=='GCD') {
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'- Notas de empenho'.'&SG=GCDNOTA'.MontaFiltro('GET').'" target="Notas" title="Registra as notas de empenho do contrato.">NE</A>&nbsp;');
                 }
                 if(f($row,'qtd_item')>0) {
@@ -925,7 +925,6 @@ function Geral() {
   // Carrega os valores padrão para país, estado e cidade 
   // Carrega o segmento do cliente
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
-  $w_segmento = f($RS,'segmento');
   if ($w_pais=='') {
     $w_pais   = f($RS,'sq_pais');
     $w_uf     = f($RS,'co_uf');
@@ -1718,11 +1717,13 @@ function DadosAdicionais() {
         Validate('w_sq_eoindicador','Índice de reajuste','SELECT','1',1,18,'','0123456789');
       }
       Validate('w_limite_variacao','Limite de acréscimo/supressão','VALOR','1',4,18,'','0123456789.,');
-      Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
-      Validate('w_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
+      if ($w_segmento=='Público') {
+        Validate('w_sq_lcfonte_recurso','Fonte de recurso','SELECT','1',1,18,'','0123456789');
+        Validate('w_espec_despesa','Especificação de despesa','SELECT','1',1,18,'','0123456789');
+      }
     }
     Validate('w_data_assinatura','Data Assinatura','DATA',1,10,10,'','0123456789/');
-    if (substr($SG,0,3)!='GCB') {
+    if ($w_segmento=='Público' && substr($SG,0,3)!='GCB') {
       Validate('w_data_publicacao','Data Publicação','DATA',1,10,10,'','0123456789/'); 
       Validate('w_pagina_diario','Número da página do D.O.','1','',1,4,'','0123456789');
     }
@@ -1769,9 +1770,11 @@ function DadosAdicionais() {
         selecaoIndicador('<U>I</U>ndicador:','I','Selecione o indicador',$w_sq_eoindicador,null,$w_usuario,null,'w_sq_eoindicador',null,null);
       }
       ShowHTML('      <tr><td><b><u>L</u>imite de acréscimo/supressão (%):</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_variacao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_limite_variacao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Percentual para indicar o limite de acréscimo ou supressão no valor original."></td>');
-      ShowHTML('<tr valign="top">');
-      selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione o a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
-      selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
+      if ($w_segmento=='Público') {
+        ShowHTML('<tr valign="top">');
+        selecaoLCFonteRecurso('<U>F</U>onte de recurso:','F','Selecione o a fonte de recurso',$w_sq_lcfonte_recurso,null,'w_sq_lcfonte_recurso',null,null);
+        selecaoCTEspecificacao('<u>E</u>specificação de despesa:','E','Selecione a especificação de despesa.',$w_espec_despesa,$w_espec_despesa,$w_sq_cc,$_SESSION['ANO'],'w_espec_despesa','S',null,null);
+      }
       ShowHTML('<tr valign="top">');
     } else {
       // ARP tem variação de 200%
@@ -1781,7 +1784,7 @@ function DadosAdicionais() {
     }
     ShowHTML('<tr valign="top">');
     ShowHTML('          <td><b><u>A</u>ssinatura do contrato:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_data_assinatura" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_assinatura.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_assinatura').'</td>');
-    if (substr($SG,0,3)!='GCB') {
+    if ($w_segmento=='Público' && substr($SG,0,3)!='GCB') {
       ShowHTML('          <td><b><u>P</u>ublicação D.O.:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_data_publicacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_publicacao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_data_publicacao').'</td>');
       ShowHTML('          <td><b>Nú<u>m</u>ero da página do D.O.:</b><br><INPUT ACCESSKEY="M" '.$w_Disabled.' class="sti" type="text" name="w_pagina_diario" size="20" maxlength="20" value="'.$w_pagina_diario.'" title="Número da página do D.O."></td>');
     }
@@ -2715,10 +2718,6 @@ function Parcelas() {
   $w_chave_aux         = $_REQUEST['w_chave_aux'];
   $w_sq_acordo_aditivo = $_REQUEST['w_sq_acordo_aditivo'];
 
-  // Carrega o segmento do cliente
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  $w_segmento = f($RS,'segmento');  
-
   // Recupera dados do contrato
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   $w_inicio           = f($RS_Solic,'inicio');
@@ -2847,7 +2846,7 @@ function Parcelas() {
     if (strpos('IA',$O)!==false) {
       Validate('w_ordem','Número de ordem da parcela','1','1','1','4','','0123456789');
       Validate('w_data','Data de vencimento da parcela','DATA','1','10','10','','0123456789/');
-      if($w_segmento=='Público') {
+      if($w_segmento=='Público' || $w_segmento=='Agência') {
         CompData('w_data','Data de vencimento','>=','w_inicio','Data de início de vigência');
         CompData('w_data','Data de vencimento','<=','w_fim','Data de término de vigência');
       }
@@ -2859,12 +2858,12 @@ function Parcelas() {
         if(f($RS_Adit,'revisao')=='S')     Validate('w_valor_reajuste','Valor reajuste','VALOR','1',4,18,'','0123456789.,-');
       }
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
-      if($w_segmento=='Público') {
+      if($w_segmento=='Público' || $w_segmento=='Agência') {
         CompData('w_per_ini','Início do período de realização','>=','w_inicio','Data de início de vigência');
         CompData('w_per_ini','Início do período de realização','<=','w_fim','Data de término de vigência');
       }
       Validate('w_per_fim','Fim do período de realização','DATA','1','10','10','','0123456789/');
-      if($w_segmento=='Público') {
+      if($w_segmento=='Público' || $w_segmento=='Agência') {
         CompData('w_per_fim','Fim do período de realização','>=','w_inicio','Data de início de vigência');
         CompData('w_per_fim','Fim do período de realização','<=','w_fim','Data de término de vigência');
       }

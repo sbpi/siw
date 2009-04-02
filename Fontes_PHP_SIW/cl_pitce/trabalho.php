@@ -71,6 +71,8 @@ $p_projeto     = $_REQUEST['p_projeto'];
 $p_texto       = $_REQUEST['p_texto'];
 $p_tipo_evento = explodeArray($_REQUEST['p_tipo_evento']);
 $p_ordena      = strtolower($_REQUEST['p_ordena']);
+$p_descricao   = $_REQUEST['p_descricao'];
+$p_situacao    = $_REQUEST['p_situacao'];
 
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'trabalho.php?par=';
@@ -238,31 +240,38 @@ function Mesa() {
            "    and (b.sq_plano = ".nvl($w_plano,0)." or e.sq_plano = ".nvl($w_plano,0).") ".$crlf. 
     "group by b.sq_solic_pai, b.sq_siw_solicitacao, b.codigo_interno, b.sq_plano";
     $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
+    $c_pde = 0;
+    $c_pns = 0;
+    $c_pne = 0;
+    $c_pne1 = 0;
+    $c_pne2 = 0;
+    $c_pne3 = 0;
+    
     foreach($RS as $row) { 
       switch (f($row,'codigo_interno')) {
         case 'PDE':  $c_pde  = f($row,'sq_siw_solicitacao'); $w_pde = f($row,'qtd'); break;
-        case 'PNS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns = f($row,'qtd'); break;
-        case 'PNE1': $c_pne = f($row,'sq_solic_pai'); $c_pne1 = f($row,'sq_siw_solicitacao'); $w_pne1 = f($row,'qtd'); break;
-        case 'PNE2': $c_pne = f($row,'sq_solic_pai'); $c_pne2 = f($row,'sq_siw_solicitacao'); $w_pne2 = f($row,'qtd'); break;
-        case 'PNE3': $c_pne = f($row,'sq_solic_pai'); $c_pne3 = f($row,'sq_siw_solicitacao'); $w_pne3 = f($row,'qtd'); break;
+        case 'PAS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns = f($row,'qtd'); break;
+        case 'PMAE': $c_pne = f($row,'sq_solic_pai'); $c_pne1 = f($row,'sq_siw_solicitacao'); $w_pne1 = f($row,'qtd'); break;
+        case 'PCE': $c_pne = f($row,'sq_solic_pai'); $c_pne2 = f($row,'sq_siw_solicitacao'); $w_pne2 = f($row,'qtd'); break;
+        case 'PFC': $c_pne = f($row,'sq_solic_pai'); $c_pne3 = f($row,'sq_siw_solicitacao'); $w_pne3 = f($row,'qtd'); break;
       }
     }
     $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
     $w_todos = $w_pns + $w_pde + $w_pne1 + $w_pne2 + $w_pne3; 
     ShowHTML('<div id="menu_superior">');
     ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
-    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&SG='.$SG.'" title="Consulta de agendas de ação, eventos e reuniões da PDP."><div id="calendario"></div></a>');
-    ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'governanca.pdf',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
+    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
+    ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'Contatos_PDP.xls',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
     ShowHTML('</div>');
     ShowHTML('<img name="pdp" src="'.$w_dir.'pdp.gif" width="611" height="402" border="0" id="pdp" usemap="#m_pdp" alt="" /><map name="m_pdp" id="m_pdp">');
-    ShowHTML('<area shape="poly" coords="376,374,608,374,608,402,376,402,376,374" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&O=L&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PRG"" title="Agendas de ação: '.$w_todos.'" />');
-    ShowHTML('<area shape="poly" coords="258,248,261,240,269,237,593,237,600,240,603,248,603,253,600,260,593,263,269,263,261,260,258,253,258,248,258,248" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_programa='.$c_pne.'&O=L&p_sinal=S&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne.'" />');
+    ShowHTML('<area shape="poly" coords="376,374,608,374,608,402,376,402,376,374" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&O=L&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PRG"" title="Programas: '.$w_todos.'" />');
+    //ShowHTML('<area shape="poly" coords="258,248,261,240,269,237,593,237,600,240,603,248,603,253,600,260,593,263,269,263,261,260,258,253,258,248,258,248" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_programa='.$c_pne.'&O=L&p_sinal=S&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne.'" />');
     ShowHTML('<area shape="poly" coords="409,79,410,76,412,73,421,71,597,71,606,73,608,76,609,79,609,110,608,113,606,116,597,118,421,118,412,116,410,113,409,110,409,79,409,79" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CG-PDP - Docs&TP='.$TP.' - Documentos do Conselho Gestor da PDP" title="Documentos do Conselho Gestor da PDP" />');
-    ShowHTML('<area shape="poly" coords="495,292,496,287,499,283,503,280,509,279,596,279,602,280,606,283,609,287,610,292,610,336,609,341,606,345,602,348,596,349,509,349,503,348,499,345,496,341,495,336,495,292,495,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne2.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne2.'" />');
-    ShowHTML('<area shape="poly" coords="372,293,373,288,376,284,380,281,386,281,473,281,479,281,483,284,486,288,487,293,487,338,486,343,483,347,479,350,473,351,386,351,380,350,376,347,373,343,372,338,372,293,372,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne3.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne3.'" />');
-    ShowHTML('<area shape="poly" coords="251,293,252,288,254,284,259,281,265,281,351,281,357,281,362,284,364,288,366,293,366,338,364,343,362,347,357,350,351,351,265,351,259,350,254,347,252,343,251,338,251,293,251,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne1.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pne1.'" />');
-    ShowHTML('<area shape="poly" coords="127,292,128,287,131,283,135,280,141,279,228,279,234,280,238,283,241,287,242,292,242,336,241,341,238,345,234,348,228,349,141,349,135,348,131,345,128,341,127,336,127,292,127,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pde.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pde.'" />');
-    ShowHTML('<area shape="poly" coords="1,292,2,287,5,283,9,280,15,279,102,279,108,280,112,283,115,287,116,292,116,336,115,341,112,345,108,348,102,349,15,349,9,348,5,345,2,341,1,336,1,292,1,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pns.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Agendas de ação: '.$w_pns.'" />');
+    ShowHTML('<area shape="poly" coords="495,292,496,287,499,283,503,280,509,279,596,279,602,280,606,283,609,287,610,292,610,336,609,341,606,345,602,348,596,349,509,349,503,348,499,345,496,341,495,336,495,292,495,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne2.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne2.'" />');
+    ShowHTML('<area shape="poly" coords="372,293,373,288,376,284,380,281,386,281,473,281,479,281,483,284,486,288,487,293,487,338,486,343,483,347,479,350,473,351,386,351,380,350,376,347,373,343,372,338,372,293,372,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne3.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne3.'" />');
+    ShowHTML('<area shape="poly" coords="251,293,252,288,254,284,259,281,265,281,351,281,357,281,362,284,364,288,366,293,366,338,364,343,362,347,357,350,351,351,265,351,259,350,254,347,252,343,251,338,251,293,251,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne1.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne1.'" />');
+    ShowHTML('<area shape="poly" coords="127,292,128,287,131,283,135,280,141,279,228,279,234,280,238,283,241,287,242,292,242,336,241,341,238,345,234,348,228,349,141,349,135,348,131,345,128,341,127,336,127,292,127,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pde.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pde.'" />');
+    ShowHTML('<area shape="poly" coords="1,292,2,287,5,283,9,280,15,279,102,279,108,280,112,283,115,287,116,292,116,336,115,341,112,345,108,348,102,349,15,349,9,348,5,345,2,341,1,336,1,292,1,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pns.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pns.'" />');
     ShowHTML('<area shape="poly" coords="233,84,234,79,237,75,242,72,247,71,369,71,374,72,379,75,382,79,383,84,383,105,382,110,379,114,374,117,369,118,247,118,242,117,237,114,234,110,233,105,233,84,233,84" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=MDIC-PDP - Docs&TP='.$TP.' - Documentos do MDIC" title="Documentos do MDIC" />');
     ShowHTML('<area shape="poly" coords="233,154,234,149,237,145,242,142,247,141,369,141,374,142,379,145,382,149,383,154,383,175,382,180,379,184,374,187,369,188,247,188,242,187,237,184,234,180,233,175,233,154,233,154" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=SE-PDP - Docs&TP='.$TP.' - Documentos da Secretaria Executiva" title="Documentos da Secretaria Executiva da PDP" />');
     ShowHTML('<area shape="poly" coords="233,14,234,9,237,5,242,2,247,1,369,1,374,2,379,5,382,9,383,14,383,35,382,40,379,44,374,47,369,48,247,48,242,47,237,44,234,40,233,35,233,14,233,14" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CNDI-PDP - Docs&TP='.$TP.' - Documentos do CNDI" title="Documentos do CNDI" />');
@@ -375,14 +384,14 @@ function Arquivos() {
           ShowHTML('          <td width="20%"><b>Tamanho</td>');
           ShowHTML('        </tr>');
           $w_cor=$conTrBgColor;
-          foreach ($RS as $row) {
+          foreach ($RS as $row1) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('    <tr bgColor="'.$w_cor.'">');
-            ShowHTML('     <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
-            ShowHTML('     <td>'.Nvl(f($row,'descricao'),'---').'</td>');
-            ShowHTML('     <td>'.formataDataEdicao(f($row,'inclusao')).'</td>');
-            ShowHTML('     <td>'.f($row,'tipo').'</td>');
-            ShowHTML('     <td align="right">'.round(f($row,'tamanho')/1024,1).' KB&nbsp;</td>');
+            ShowHTML('     <td>'.LinkArquivo('HL',$w_cliente,f($row1,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row1,'nome'),null).'</td>');
+            ShowHTML('     <td>'.Nvl(f($row1,'descricao'),'---').'</td>');
+            ShowHTML('     <td>'.formataDataEdicao(f($row1,'inclusao')).'</td>');
+            ShowHTML('     <td>'.f($row1,'tipo').'</td>');
+            ShowHTML('     <td align="right">'.round(f($row1,'tamanho')/1024,1).' KB&nbsp;</td>');
           } 
           ShowHTML('  </table>');
           ShowHTML('<tr><td>&nbsp;</td></tr>');
@@ -430,6 +439,10 @@ function Calendario() {
     Cabecalho();
     ShowHTML('<HEAD>');
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
+    ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
+    ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');
+    ShowHTML('  <!-- JS FILE for my tree-view menu -->');
+    ShowHTML('  <script src="'.$w_dir_volta.'classes/menu/xPandMenu.js"></script>');
     ShowHTML('<link href="xPandMenu.css" rel="stylesheet" type="text/css">');
     ScriptOpen('JavaScript');
     modulo();
@@ -480,6 +493,11 @@ function Calendario() {
     SelecaoUnidade('<u>Ó</u>rgão responsável', 'O', null, $p_unidade, null, 'p_unidade', null, null,null,'<td>');
     ShowHTML('   <tr><td><b><u>L</u>ocal<td><input class="STI" accesskey="L" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
     ShowHTML('   </tr>');
+    ShowHTML('   <tr><td><b>Exibir</b></td>');
+    ShowHTML('       <td>');
+    ShowHTML('     <input type="checkbox" '.((nvl($p_descricao,'')!='') ? 'checked' : '').'  name="p_descricao"  value="1" />Detalhamento do item');
+    ShowHTML('     <input type="checkbox" '.((nvl($p_situacao,'')!='') ? 'checked' : '').' name="p_situacao" value="1" />Situação atual do item');
+    ShowHTML('   </td></tr>');
     ShowHTML('   <tr><td><td colspan="2">');
     ShowHTML('     <input class="STB" type="submit" name="Botao" value="BUSCAR">');
     $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
@@ -584,6 +602,28 @@ function Calendario() {
   }
 // Final da exibição do calendário e suas ocorrências ==============
   if (nvl($_REQUEST['p_pesquisa'],'')!='') {
+    $w_legenda='    <table id="legenda">';
+    $w_legenda.='      <tr><td colspan="2"><table border=0>';
+    $w_legenda.='        <tr valign="top"><td colspan=6>'.(($w_embed=='WORD') ? 'Legenda para itens de agenda de ação: ' : '').ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true);
+    $w_legenda.='      </table>';
+    $w_legenda.='    </table>';
+  
+    if ($w_embed!='WORD') {
+      // Inclusão do arquivo da classe
+      include_once($w_dir_volta.'classes/menu/xPandMenu.php');
+      
+      $root = new XMenu();
+      $node1 = &$root->addItem(new XNode('Legenda para itens de agenda de ação',false,$conRootSIW.'images/Folder/LineBeginPlus.gif',$conRootSIW.'images/Folder/LineBeginMinus.gif'));
+      $node11 = &$node1->addItem(new XNode($w_legenda,false,'',''));
+    
+      // Quando for concluída a montagem dos nós, chame a função generateTree(), usando o objeto raiz, para gerar o código HTML.
+      // Essa função não possui argumentos.
+      // No código da função pode ser verificado que há um parâmetro opcional, usado internamente para chamadas recursivas, necessárias à montagem de toda a árvore.
+      ShowHTML(str_replace('Xnode','Xnode1',str_replace('Xleaf','Xleaf1',$root->generateTree())));
+    } else {
+      ShowHTML($w_legenda);
+    }
+    
     $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
     ShowHTML('<table width="100%">');
     ShowHTML('<tr><td align="right" colspan="2"><hr>');      
@@ -600,7 +640,7 @@ function Calendario() {
       ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Data','mes_ano').'&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Macro-<br>programa','cd_programa').'&nbsp;</td>');
       ShowHTML('          <td><b>&nbsp;'.linkOrdena('Programa','cd_projeto').'&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Assunto/Resultado','titulo').'&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Item/Evento','titulo').'&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Realizador','sg_setor').'&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;'.linkOrdena('Local','local').'&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Ação&nbsp;</td>');
@@ -609,7 +649,7 @@ function Calendario() {
       ShowHTML('          <td nowrap><b>&nbsp;Data&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Macro-<br>programa&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
-      ShowHTML('          <td nowrap><b>&nbsp;Assunto/Resultado&nbsp;</td>');
+      ShowHTML('          <td nowrap><b>&nbsp;Item/Evento&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Realizador&nbsp;</td>');
       ShowHTML('          <td nowrap><b>&nbsp;Local&nbsp;</td>');
     }      
@@ -629,7 +669,14 @@ function Calendario() {
         ShowHTML('      <td align="center" width="1%" nowrap>' . Date('d/m/Y', Nvl(f($row, 'mes_ano'), '---')) . '</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_programa').'" nowrap>' . Nvl(f($row, 'cd_programa'), '---') . '</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_projeto').'" nowrap>' . Nvl(f($row, 'cd_projeto'), '---') . '</td>');
-        ShowHTML('      <td title="'.f($row, 'descricao').'">'.((nvl(f($row,'sq_projeto_etapa'),'')!='') ? ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;' : '').f($row, 'titulo').' </td>');
+        ShowHTML('      <td>'.((nvl(f($row,'sq_projeto_etapa'),'')!='') ? ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;' : '').f($row, 'titulo'));
+        if(nvl($p_descricao,'') != ''){
+          ShowHTML('      <br/><b>Descrição:</b><br/>'.crlf2br(nvl(f($row,'descricao'),'---')));                
+        }
+        if(nvl($p_situacao,'') != '' && nvl(f($row, 'sq_projeto_etapa'),'')!=''){
+          ShowHTML('      <br/><b>Situação atual:</b><br/>'.crlf2br(nvl(f($row,'situacao_atual'),'---')));                
+        }
+        
         if($w_embed != 'WORD'){    
           ShowHTML('      <td align="center">'.ExibeUnidade(null,$w_cliente,f($row,'sg_setor'),f($row,'sq_unidade'),$TP).' </td>');
         }else{

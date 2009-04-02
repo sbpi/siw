@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 include_once("constants.inc");
 include_once("jscript.php");
@@ -142,9 +142,9 @@ function Help() {
         $w_cont3 = 0;
         $w_cont4 = 0;
         ShowHTML('         <DL><DT><b>'.$w_cont1.'. '.f($row,'nome').'</b>');
-        ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row,'finalidade')));
+        ShowHTML('             <DD>Finalidade: '.crlf2br(f($row,'finalidade')));
 
-        if (f($row,'tramite')=='S') ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row,'como_funciona')));
+        if (f($row,'tramite')=='S') ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row,'como_funciona')));
         if (f($row,'Filho')>0) {
           $RS1 = db_getLinkdataHelp::getInstanceOf($dbms, $w_cliente,$w_modulo,0,f($row,'sq_menu'));
           foreach ($RS1 as $row1) {
@@ -158,9 +158,9 @@ function Help() {
             $w_cont4 = 0;
             ShowHTML('             </DT>');
             ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'. '.f($row1,'nome').'</b>');
-            ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row1,'finalidade')));
+            ShowHTML('             <DD>Finalidade: '.crlf2br(f($row1,'finalidade')));
             if (f($row1,'tramite')=='S') {
-              ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row1,'como_funciona')));
+              ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row1,'como_funciona')));
 
               // Verifica se têm trâmites e exibe
               $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'), null, null);
@@ -202,9 +202,9 @@ function Help() {
                   ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'.'.$w_cont3.'. '.f($row2,'nome').'</b>');
                 } 
   
-                ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row2,'finalidade')));
+                ShowHTML('             <DD>Finalidade: '.crlf2br(f($row2,'finalidade')));
                 if (f($row2,'tramite')=='S') {
-                  ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row2,'como_funciona')));
+                  ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row2,'como_funciona')));
   
                   // Verifica se têm trâmites e exibe
                   $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null, null);
@@ -240,10 +240,10 @@ function Help() {
                     } 
                     $w_cont4 = $w_cont4+1;
                     ShowHTML('             <DT><BR><b>'.$w_cont1.'.'.$w_cont2.'.'.$w_cont3.'.'.$w_cont4.'. '.f($row3,'nome').'</b>');
-                    ShowHTML('             <DD>Finalidade: '.ExibeTexto(f($row3,'finalidade')));
+                    ShowHTML('             <DD>Finalidade: '.crlf2br(f($row3,'finalidade')));
 
                     if (f($row3,'tramite') == 'S') {
-                      ShowHTML('        <DD><BR>Como funciona: '.ExibeTexto(f($row3,'como_funciona')));
+                      ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row3,'como_funciona')));
 
                       // Verifica se têm trâmites e exibe
                       $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null, null);
@@ -348,7 +348,7 @@ function Pagina() {
   ShowHTML('      <tr valign="top"><td colspan=2>');
   ShowHTML('         <font face="Arial" size="3"><b>'.strtoupper(f($RS_Menu,'nome')).'</font></b><hr>');
   ShowHTML('         <font size="2"><DL><DT><b>Finalidade:</b><DD>'.f($RS_Menu,'finalidade').'</DD></DT>');
-  if (f($RS_Menu,'tramite')=='S') ShowHTML('        <DT><br><b>Como funciona:</b><DD>'.ExibeTexto(f($RS_Menu,'como_funciona')));
+  if (f($RS_Menu,'tramite')=='S') ShowHTML('        <DT><br><b>Como funciona:</b><DD>'.crlf2br(f($RS_Menu,'como_funciona')));
   ShowHTML('      </td></tr>');
   ShowHTML('      <tr><td colspan="2"><br></td></tr>');
   
@@ -360,7 +360,7 @@ function Pagina() {
     $w_cont1 = 0;
     foreach ($RS as $row) {
       $w_cont1++;
-      ShowHTML('          <DT><B>'.$w_cont1.'. '.f($row,'nome').'</B><DD>'.ExibeTexto(f($row,'finalidade')));
+      ShowHTML('          <DT><B>'.$w_cont1.'. '.f($row,'nome').'</B><DD>'.crlf2br(f($row,'finalidade')));
     }
     ShowHTML('        </DL>');
   }

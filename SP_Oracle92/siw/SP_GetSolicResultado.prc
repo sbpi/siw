@@ -51,8 +51,7 @@ begin
                         c.sq_pessoa substituto, c1.nome nm_sub_resp, c2.ativo st_sub_resp, c2.email em_sub_resp,
                         k.sq_pessoa tit_exec, l.sq_pessoa sub_exec,
                         d.nome_resumido||' ('||f.sigla||')' nm_resp, g.sigla sg_setor, g.nome as nm_setor,
-                        coalesce(h.qt_ativ,0) qt_ativ, h.sq_menu p2,
-                        m.vincula_contrato pj_vincula_contrato, coalesce(n.qt_contr,0) , n.sq_menu p3,
+                        m.vincula_contrato pj_vincula_contrato, 
                         SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                         e.email, e.ativo st_resp,
                         i.codigo_interno as cd_projeto, i.titulo as nm_projeto, i.executor,
@@ -60,6 +59,9 @@ begin
                         i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa
                    from pj_projeto_etapa                    a
                         inner          join siw_solicitacao i  on (a.sq_siw_solicitacao  = i.sq_siw_solicitacao)
+                            inner      join siw_tramite     i5 on (i.sq_siw_tramite      = i5.sq_siw_tramite and
+                                                                   i5.sigla             <> 'CA'
+                                                                  )
                             inner      join siw_solicitacao i3 on (i.sq_solic_pai        = i3.sq_siw_solicitacao)
                               inner    join pe_programa     i4 on (i3.sq_siw_solicitacao = i4.sq_siw_solicitacao)
                             left       join eo_unidade_resp i1 on (i.sq_unidade          = i1.sq_unidade and
@@ -96,22 +98,6 @@ begin
                           inner        join sg_autenticacao e  on (d.sq_pessoa           = e.sq_pessoa)
                             inner      join eo_unidade      f  on (e.sq_unidade          = f.sq_unidade)
                         inner          join eo_unidade      g  on (a.sq_unidade          = g.sq_unidade)
-                        left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_ativ
-                                               from pj_etapa_demanda             x
-                                                    inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                      inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                       coalesce(z.sigla,'-')     <> 'CA'
-                                                                                      )
-                                             group by x.sq_projeto_etapa, y.sq_menu
-                                        )                   h  on (h.sq_projeto_etapa = a.sq_projeto_etapa)
-                        left           join (select x.sq_projeto_etapa, y.sq_menu, count(*) qt_contr
-                                               from pj_etapa_contrato            x
-                                                    inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                                      inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
-                                                                                       coalesce(z.sigla,'-')     <> 'CA'
-                                                                                      )
-                                             group by x.sq_projeto_etapa, y.sq_menu
-                                        )                   n  on (n.sq_projeto_etapa = a.sq_projeto_etapa)
                   where (j.sq_pessoa = p_cliente) 
                     and (p_programa    is null or (p_programa    is not null and (i.sq_solic_pai      = p_programa or i3.sq_solic_pai = p_programa)))
                     and (p_projeto     is null or (p_projeto     is not null and i.sq_siw_solicitacao = p_projeto))
@@ -156,8 +142,14 @@ begin
                 i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa
            from pj_projeto_etapa                    a
                 inner          join siw_solicitacao i  on (a.sq_siw_solicitacao  = i.sq_siw_solicitacao)
+                    inner      join siw_tramite     i1 on (i.sq_siw_tramite      = i1.sq_siw_tramite and
+                                                           i1.sigla             <> 'CA'
+                                                          )
                     inner      join siw_solicitacao i3 on (i.sq_solic_pai        = i3.sq_siw_solicitacao)
                       inner    join pe_programa     i4 on (i3.sq_siw_solicitacao = i4.sq_siw_solicitacao)
+                      inner    join siw_tramite     i5 on (i3.sq_siw_tramite     = i5.sq_siw_tramite and
+                                                           i5.sigla             <> 'CA'
+                                                          )
                   inner        join pj_projeto      m  on (a.sq_siw_solicitacao  = m.sq_siw_solicitacao)
                   inner        join siw_menu        j  on (i.sq_menu             = j.sq_menu)
                   inner        join eo_unidade      g  on (a.sq_unidade          = g.sq_unidade)
@@ -194,9 +186,18 @@ begin
                 i3.codigo_interno as cd_projeto, i3.titulo as nm_projeto, i3.executor, i3.motivo_insatisfacao,
                 i4.sq_siw_solicitacao as sq_programa, i4.codigo_interno as cd_programa, i4.titulo as nm_programa
            from siw_solicitacao                   i
+                inner        join siw_tramite     i1 on (i.sq_siw_tramite      = i1.sq_siw_tramite and
+                                                         i1.sigla             <> 'CA'
+                                                        )
                 inner        join siw_solicitacao i3 on (i.sq_solic_pai        = i3.sq_siw_solicitacao)
+                  inner      join siw_tramite     i6 on (i3.sq_siw_tramite     = i6.sq_siw_tramite and
+                                                         i6.sigla             <> 'CA'
+                                                        )
                   inner      join siw_solicitacao i4 on (i3.sq_solic_pai       = i4.sq_siw_solicitacao)
                     inner    join pe_programa     i5 on (i4.sq_siw_solicitacao = i5.sq_siw_solicitacao)
+                    inner    join siw_tramite     i7 on (i4.sq_siw_tramite     = i7.sq_siw_tramite and
+                                                         i7.sigla             <> 'CA'
+                                                        )
                 inner        join siw_menu        j  on (i.sq_menu             = j.sq_menu)
                 inner        join siw_tipo_evento k  on (i.sq_tipo_evento      = k.sq_tipo_evento)
                   inner      join eo_unidade      g  on (i.sq_unidade          = g.sq_unidade)

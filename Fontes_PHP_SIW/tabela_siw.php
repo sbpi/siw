@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -100,10 +100,6 @@ function SegmentoVinc() {
   $p_nome                   = trim(strtoupper($_REQUEST['p_nome']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_segmento            = $_REQUEST['w_sq_segmento'];
-  $w_interno                = $_REQUEST['w_interno'];
-  $w_contratado             = $_REQUEST['w_contratado'];
-  $w_ordem                  = $_REQUEST['w_ordem'];
-  $w_sq_tipo_pessoa         = $_REQUEST['w_sq_tipo_pessoa'];
   $w_sq_segmento_vinculo    = $_REQUEST['w_sq_segmento_vinculo'];
 
   if ($O=='') $O='L';
@@ -111,8 +107,15 @@ function SegmentoVinc() {
   $RS = db_getSegName::getInstanceOf($dbms,$w_sq_segmento);
   $w_nome_segmento = f($RS,'nome');
 
-  if (!(strpos('LP',$O)===false)) {
-
+  if (nvl($w_troca,'')!='') {
+    $w_nome               = $_REQUEST['w_nome'];
+    $w_padrao             = $_REQUEST['w_padrao'];
+    $w_ativo              = $_REQUEST['w_ativo'];
+    $w_interno            = $_REQUEST['w_interno'];
+    $w_contratado         = $_REQUEST['w_contratado'];
+    $w_ordem              = $_REQUEST['w_ordem'];
+    $w_sq_tipo_pessoa     = $_REQUEST['w_sq_tipo_pessoa'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
     $RS = SortArray($RS,'nm_tipo_pessoa','asc','ordem','asc');
   } elseif (($O=='A' || $O=='E')) {
@@ -153,7 +156,9 @@ function SegmentoVinc() {
   } 
   ShowHTML('<TITLE>'.$conSgSistema.' - Módulos por segmento</TITLE>');
   ShowHTML('</HEAD>');
-  if ($O=='I' || $O=='A') {
+  if (nvl($w_troca,'')!='') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I' || $O=='A') {
     BodyOpen('onLoad=\'document.Form.w_sq_tipo_pessoa.focus()\';');
   } elseif ($O=='E') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
@@ -372,9 +377,9 @@ function SegmentoMenu() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.ExibeTexto(f($row,'nome')).'</td>');
+        ShowHTML('        <td>'.crlf2br(f($row,'nome')).'</td>');
         ShowHTML('        <td>'.f($row,'nm_modulo').'</td>');
-        ShowHTML('        <td>'.ExibeTexto(f($row,'objetivo')).'</td>');
+        ShowHTML('        <td>'.crlf2br(f($row,'objetivo')).'</td>');
         ShowHTML('        <td align="center" title="padrao">'.f($row,'comercializar').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -408,7 +413,7 @@ function SegmentoMenu() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_modulo" value="'.$w_sq_modulo.'">');
       ShowHTML('      <tr><td valign="top">Módulo: <b>'.$w_nome_modulo.'</td></tr>');
-      ShowHTML('      <tr><td valign="top">Objetivo geral:<br><b>'.ExibeTexto($w_objetivo_geral).'</td></tr>');
+      ShowHTML('      <tr><td valign="top">Objetivo geral:<br><b>'.crlf2br($w_objetivo_geral).'</td></tr>');
       ShowHTML('      <tr><td valign="top"><hr></td></tr>');
     } 
     ShowHTML('      <tr><td valign="top"><b><U>O</U>bjetivos específicos: (um em cada linha, sem marcadores ou numeradores)<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_nome" rows=5 cols=75>'.$w_nome.'</TEXTAREA></td></tr>');
@@ -478,7 +483,13 @@ function SegmentoModulo() {
   $RS = db_getSegName::getInstanceOf($dbms,$w_sq_segmento);
   $w_nome_segmento = f($RS,'nome');
 
-  if (!(strpos('LP',$O)===false)) {
+  if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_nome_modulo          = $_REQUEST['w_nome_modulo'];
+    $w_comercializar        = $_REQUEST['w_comercializar'];
+    $w_ativo                = $_REQUEST['w_ativo'];
+    $w_objetivo_geral       = $_REQUEST['w_objetivo_geral'];
+    $w_objetivo_especifico  = $_REQUEST['w_objetivo_especifico'];    
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getSegVincData::getInstanceOf($dbms,$par,$w_sq_segmento,null,null);
     $RS = SortArray($RS,'nm_modulo','asc');
   } elseif (($O=='A' || $O=='E')) {
@@ -517,7 +528,9 @@ function SegmentoModulo() {
   } 
   ShowHTML('<TITLE>'.$conSgSistema.' - Módulos por segmento</TITLE>');
   ShowHTML('</HEAD>');
-  if ($O=='I') {
+  if (nvl($w_troca,'')!='') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I') {
     BodyOpen('onLoad=\'document.Form.w_sq_modulo.focus()\';');
   } elseif ($O=='A') {
     BodyOpen('onLoad=\'document.Form.w_objetivo_especifico.focus()\';');
@@ -553,7 +566,7 @@ function SegmentoModulo() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nm_modulo').'</td>');
-        ShowHTML('        <td>'.ExibeTexto(f($row,'objetivo_especif')).'</td>');
+        ShowHTML('        <td>'.crlf2br(f($row,'objetivo_especif')).'</td>');
         if (f($row,'comercializar')=='S') {
           ShowHTML('        <td align="center" title="Comercializar">Sim</td>');
         } else {
@@ -589,7 +602,7 @@ function SegmentoModulo() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_modulo" value="'.$w_sq_modulo.'">');
       ShowHTML('      <tr><td valign="top">Módulo: <b>'.$w_nome_modulo.'</td></tr>');
-      ShowHTML('      <tr><td valign="top">Objetivo geral:<br><b>'.ExibeTexto($w_objetivo_geral).'</td></tr>');
+      ShowHTML('      <tr><td valign="top">Objetivo geral:<br><b>'.crlf2br($w_objetivo_geral).'</td></tr>');
       ShowHTML('      <tr><td valign="top"><hr></td></tr>');
     } 
     ShowHTML('      <tr><td valign="top"><b><U>O</U>bjetivos específicos: (um em cada linha, sem marcadores ou numeradores)<br><TEXTAREA ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="w_objetivo_especifico" rows=5 cols=75>'.$w_objetivo_especifico.'</TEXTAREA></td></tr>');
@@ -808,7 +821,11 @@ function Segmento() {
 
   if ($O=='') $O='L';
 
-  if (!(strpos('LP',$O)===false)) {
+  if (nvl($w_troca,'')!='' && $O!='E') {
+    $w_nome     = $_REQUEST['w_nome'];
+    $w_ativo    = $_REQUEST['w_ativo'];
+    $w_padrao   = $_REQUEST['w_padrao'];
+  } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getSegList::getInstanceOf($dbms, null);
     $RS = SortArray($RS,'padrao','desc','nome','asc');
   } elseif (($O=='A' || $O=='E')) {
@@ -841,7 +858,9 @@ function Segmento() {
     ScriptClose();
   } 
   ShowHTML('</HEAD>');
-  if (!(strpos('IAE',$O)===false)) {
+  if (nvl($w_troca,'')!='') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IAE',$O)===false)) {
     if ($O=='E') {
       BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
     } else {
@@ -987,8 +1006,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'SEGMOD':
@@ -1003,8 +1022,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
     case 'COTPMODULO':
@@ -1018,8 +1037,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       }  
       break;
     case 'COTPSEG':
@@ -1033,8 +1052,8 @@ function Grava() {
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        RetornaFormulario('w_assinatura');
       } 
       break;
   } 
