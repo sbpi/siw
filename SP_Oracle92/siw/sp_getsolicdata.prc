@@ -281,6 +281,7 @@ begin
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
                 a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                a5.dias_pagamento,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -365,6 +366,7 @@ begin
                                                                    a4.fim                     is null
                                                                   )
                 inner             join siw_modulo           a1 on (a.sq_modulo                = a1.sq_modulo)
+                inner             join ac_parametro         a5 on (a.sq_pessoa                = a5.cliente)
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                    left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
