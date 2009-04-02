@@ -4,7 +4,8 @@ create or replace procedure SP_PutACParametro
     p_ano_corrente             in  number,
     p_prefixo                  in  varchar2,
     p_sufixo                   in  varchar2,
-    p_numeracao                in  varchar2
+    p_numeracao                in  varchar2,
+    p_pagamento                in  number
    ) is
    
    p_operacao     varchar2(1);
@@ -24,9 +25,9 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into ac_parametro
-         (cliente,   sequencial,   ano_corrente,   prefixo,   sufixo,   numeracao_automatica)
+         (cliente,   sequencial,   ano_corrente,   prefixo,   sufixo,   numeracao_automatica, dias_pagamento)
       values
-         (p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_sufixo, p_numeracao);
+         (p_cliente, p_sequencial, p_ano_corrente, p_prefixo, p_sufixo, p_numeracao,          p_pagamento);
    Elsif p_operacao = 'A' Then
       -- Verifica o valor atual no banco
       select sequencial into w_sequencial from ac_parametro where cliente = p_cliente;
@@ -37,7 +38,8 @@ begin
              ano_corrente          = p_ano_corrente,
              prefixo               = p_prefixo,
              sufixo                = p_sufixo,
-             numeracao_automatica  = p_numeracao
+             numeracao_automatica  = p_numeracao,
+             dias_pagamento        = p_pagamento
        where cliente = p_cliente;
    End If;
 end SP_PutACParametro;
