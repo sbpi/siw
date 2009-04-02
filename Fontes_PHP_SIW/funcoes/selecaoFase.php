@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 // =========================================================================
 // Montagem da seleção da fase de uma solicitação

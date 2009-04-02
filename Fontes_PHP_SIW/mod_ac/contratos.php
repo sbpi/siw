@@ -886,7 +886,7 @@ function BuscaCompra() {
       }
       ShowHTML('        <td>'.f($row,'ordem').' - '.f($row,'nm_material').'</td>');
       if ($w_exibe) {
-        ShowHTML('        <td><a class="hl" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$w_sg_menu.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_herda='.f($row,'sq_siw_solicitacao').'|'.f($row,'sq_pessoa').MontaFiltro('GET').'">Copiar</a>&nbsp;');
+        ShowHTML('        <td><a class="hl" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.$w_sg_menu.'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_herda='.f($row,'sq_siw_solicitacao').'|'.f($row,'sq_pessoa').MontaFiltro('GET').'">Herdar</a>&nbsp;');
       } else {
         ShowHTML('        <td></td>');
       }
@@ -2721,7 +2721,7 @@ function Parcelas() {
   // Recupera dados do contrato
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   $w_inicio           = f($RS_Solic,'inicio');
-  $w_fim              = f($RS_Solic,'fim');
+  $w_fim              = addDays(f($RS_Solic,'fim'),f($RS_Solic,'dias_pagamento'));
   $w_prazo_indeterm   = f($RS_Solic,'prazo_indeterm');
   $w_valor_acordo     = f($RS_Solic,'valor_inicial');
   $w_texto            = '';
@@ -3677,6 +3677,152 @@ function Encaminhamento() {
   Estrutura_Fecha();
   Estrutura_Fecha();
   Estrutura_Fecha();
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de tramitação
+// -------------------------------------------------------------------------
+function Encaminhamento1() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  $w_tipo       = Nvl($_REQUEST['w_tipo'],'');
+
+  if ($w_troca>'') {
+    // Se for recarga da página
+    $w_inicio           = $_REQUEST['w_inicio'];
+    $w_fim              = $_REQUEST['w_fim'];
+    $w_tramite          = $_REQUEST['w_tramite'];
+    $w_sg_tramite       = $_REQUEST['w_sg_tramite'];
+    $w_sg_novo_tramite  = $_REQUEST['w_tramite'];
+    $w_destinatario     = $_REQUEST['w_destinatario'];
+    $w_envio            = $_REQUEST['w_envio'];
+    $w_despacho         = $_REQUEST['w_despacho'];
+    $w_justificativa    = $_REQUEST['w_justificativa'];
+  } else {
+    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $w_inicio        = f($RS,'inicio');
+    $w_fim           = f($RS,'fim');
+    $w_tramite       = f($RS,'sq_siw_tramite');
+    $w_justificativa = f($RS,'justificativa');
+  } 
+
+  // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
+  $RS = db_getTramiteData::getInstanceOf($dbms,$w_tramite);
+  $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
+
+  if ($w_sg_tramite!='CI') {
+    //Verifica a fase anterior para a caixa de seleção da fase.
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,'ANTERIOR',null);
+    foreach($RS as $row) { $RS = $row; break; }
+    $w_novo_tramite = f($RS,'sq_siw_tramite');
+  } 
+
+  // Se for envio, executa verificações nos dados da solicitação
+  if ($O=='V') $w_erro = ValidaAcordo($w_cliente,$w_chave,substr($SG,0,3).'GERAL',null,null,null,$w_tramite);
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
+  if ($O=='V') {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if ($w_sg_tramite!='CI') {
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
+        Validate('w_despacho','Despacho','1','1','1','2000','1','1');
+      } else {
+        Validate('w_despacho','Despacho','','','1','2000','1','1');
+        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+        ShowHTML('     theForm.w_despacho.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+        ShowHTML('     theForm.w_despacho.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+      } 
+    } 
+    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
+      // Se não for encaminhamento e nem o sub-menu do cadastramento
+      ShowHTML('  theForm.Botao[0].disabled=true;');
+      ShowHTML('  theForm.Botao[1].disabled=true;');
+    } else {
+      ShowHTML('  theForm.Botao.disabled=true;');
+    } 
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus()";');
+  } elseif ($P1==1) {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+  } else {
+    BodyOpen('onLoad="this.focus()";');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
+  ShowHTML(VisualAcordo($w_chave,'V',$w_usuario,$P1,$P4));
+  ShowHTML('<HR>');
+  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || $w_ativo=='N' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML(MontaFiltro('POST'));
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('  <table width="97%" border="0">');
+    ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
+    if ($w_sg_tramite=='CI') {
+      if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+        // Se cadastramento inicial
+        ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
+        ShowHTML('      </table>');
+        ShowHTML('      <tr><td align="LEFT" colspan=4><b>Informe sua <U>a</U>ssinatura eletrônica para que o envio seja realizado:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+        ShowHTML('    <tr><td align="center" colspan=4><hr>');
+        ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
+      }
+    } else {
+      ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
+        ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
+        ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
+      } else {
+        if (Nvl($w_envio,'N')=='N') {
+          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');
+        } else {
+          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
+        } 
+      } 
+      ShowHTML('    <tr>');
+      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,'w_novo_tramite','DEVOLUCAO',null);
+      ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
+      ShowHTML('      </table>');
+      ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td align="center" colspan=4><hr>');
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
+    } 
+    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+    ShowHTML('      </td>');
+    ShowHTML('    </tr>');
+    ShowHTML('  </table>');
+    ShowHTML('  </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
   Rodape();
 } 
 
