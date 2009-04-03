@@ -675,32 +675,24 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
 // -------------------------------------------------------------------------
 function ExibeVariaveis() {
   extract($GLOBALS);
-  ShowHTML('<DT><font face="Verdana" size=1><b>Dados da querystring:</b></font>');
-  foreach($_GET as $chv => $vlr) {
-    if (strpos(strtoupper($chv),'W_ASSINATURA') === false ) {
-       ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
-    }
-  }
-  ShowHTML('</DT>');
-  ShowHTML('<DT><font face="Verdana" size=1><b>Dados do formulário:</b></font>');
-  foreach($_POST as $chv => $vlr) {
-    if (strpos(strtoupper($chv),'W_ASSINATURA') === false ) {
-       ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
-    }
-  }
-  ShowHTML('</DT>');
-  ShowHTML('<DT><font face="Verdana" size=1><b>Variáveis de sessão</b></font>:');
-  foreach($_SESSION as $chv => $vlr) {
-    if (strpos(strtoupper($chv),'W_ASSINATURA') === false ) {
-       ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
-    }
-  }
-  ShowHTML('</DT>');
-  ShowHTML('<DT><font face="Verdana" size=1><b>Variáveis do servidor</b></font>:');
+
+  ShowHTML('<DT><b>Dados da querystring:</b><table border=0>');
+  foreach($_GET as $chv => $vlr) { ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); }
+  ShowHTML('</table></DT><br>');
+
+  ShowHTML('<DT><b>Dados do formulário:</b><table border=0>');
+  foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); }
+  ShowHTML('</table></DT><br>');
+
+  ShowHTML('<DT><b>Variáveis de sessão:</b><table border=0>');
+  foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); } }
+  ShowHTML('</table></DT><br>');
+  
+  ShowHTML('<DT><b>Variáveis do servidor:</b><table border=0>');
   foreach($_SERVER as $chv => $vlr) {
-    ShowHTML('<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']</font><br>');
+    ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']');
   }
-  ShowHTML('</DT>');
+  ShowHTML('</table></DT>');
   $w_item=null;
   exit();
 }
@@ -2640,48 +2632,45 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'<BLOCKQUOTE>';
     $w_html .= chr(10).'<P ALIGN="JUSTIFY">Erro não previsto. <b>Uma cópia desta tela foi enviada por e-mail para os responsáveis pela correção. Favor tentar novamente mais tarde.</P>';
     $w_html .= chr(10).'<TABLE BORDER="2" BGCOLOR="#FFCCCC" CELLPADDING="5"><TR><TD><FONT COLOR="#000000">';
-    $w_html .= chr(10).'<DL><DT>Data e hora da ocorrência: <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
-    $w_html .= chr(10).'<DT>Descrição:<DD><FONT FACE="courier">'.crlf2br($Err['message']).'<br><br></font>';
-    $w_html .= chr(10).'<DT>Arquivo:<DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
+    $w_html .= chr(10).'<DL><DT><b>Data e hora da ocorrência:</b> <FONT FACE="courier">'.date('d/m/Y, h:i:s').'<br><br></font></DT>';
+    $w_html .= chr(10).'<DT><b>Descrição:</b><DD><FONT FACE="courier">'.crlf2br($Err['message']).'<br><br></font>';
+    $w_html .= chr(10).'<DT><b>Arquivo:</b><DD><FONT FACE="courier">'.$file.', linha: '.$line.'<br><br></font>';
     //$w_html .= chr(10).'<DT>Objeto:<DD><FONT FACE="courier">'.$object.'<br><br></font>';
 
-    $w_html .= chr(10).'<DT>Comando em execução:<blockquote> <FONT FACE="courier">'.nvl($Err['sqltext'],'nenhum').'</blockquote></font></DT>';
+    $w_html .= chr(10).'<DT><b>Comando em execução:</b><blockquote>'.nvl($Err['sqltext'],'nenhum').'</blockquote></font></DT>';
     if (is_array($params)) {
-      $w_html .= "<DT>Valores dos parâmetros:<DD><FONT FACE=\"courier\" size=1>";
+      $w_html .= "<DT><b>Valores dos parâmetros:<table border=0>";
       foreach ($params as $w_chave => $w_valor) {
         if ($_SESSION['DBMS']==2 && $w_valor[1]==B_DATE) {
-          $w_html .= chr(10).$w_chave.' ['.toSQLDate($w_valor[0]).']<br>';
+          $w_html .= chr(10).'<tr valign="top"><td align="right">'.$w_chave.'=><td>['.toSQLDate($w_valor[0]).']';
         } else {
-          $w_html .= chr(10).$w_chave.' ['.$w_valor[0].']<br>';
+          $w_html .= chr(10).'<tr valign="top"><td align="right">'.$w_chave.'=><td>['.$w_valor[0].']';
         }
       }
     }
-    $w_html .= "   <br><br></font>";
+    $w_html .= chr(10).'</table></DT><br>';
+    
+    $w_html .= chr(10).'<DT>Variáveis de servidor:<table border=0>';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">SCRIPT_NAME=><td>['.$_SERVER['SCRIPT_NAME'].']';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_NAME=><td>['.$_SERVER['SERVER_NAME'].']';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_PORT=><td>['.$_SERVER['SERVER_PORT'].']';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">SERVER_PROTOCOL=><td>['.$_SERVER['SERVER_PROTOCOL'].']';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">HTTP_ACCEPT_LANGUAGE=><td>['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']';
+    $w_html .= chr(10).'<tr valign="top"><td align="right">HTTP_USER_AGENT=><td>['.$_SERVER['HTTP_USER_AGENT'].']';
+    $w_html .= chr(10).'</table></DT><br>';
 
-    $w_html .= chr(10).'<DT>Variáveis de servidor:<DD><FONT FACE="courier" size=1>';
-    $w_html .= chr(10).' SCRIPT_NAME => ['.$_SERVER['SCRIPT_NAME'].']<br>';
-    $w_html .= chr(10).' SERVER_NAME => ['.$_SERVER['SERVER_NAME'].']<br>';
-    $w_html .= chr(10).' SERVER_PORT => ['.$_SERVER['SERVER_PORT'].']<br>';
-    $w_html .= chr(10).' SERVER_PROTOCOL => ['.$_SERVER['SERVER_PROTOCOL'].']<br>';
-    $w_html .= chr(10).' HTTP_ACCEPT_LANGUAGE => ['.$_SERVER['HTTP_ACCEPT_LANGUAGE'].']<br>';
-    $w_html .= chr(10).' HTTP_USER_AGENT => ['.$_SERVER['HTTP_USER_AGENT'].']<br>';
-    $w_html .= chr(10).'</DT>';
-    $w_html .= chr(10).'   <br><br></font>';
+    $w_html .= chr(10).'<DT>Dados da querystring:<table border=0>';
+    foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    $w_html .= chr(10).'</table></DT><br>';
 
-    $w_html .= chr(10).'<DT>Dados da querystring:';
-    foreach($_GET as $chv => $vlr) { $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
+    $w_html .= chr(10).'<DT>Dados do formulário:<table border=0>';
+    foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    $w_html .= chr(10).'</table></DT><br>';
 
-    $w_html .= chr(10).'</DT>';
-    $w_html .= chr(10).'<DT>Dados do formulário:';
-    foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') $w_html .= chr(10).'<DD><FONT FACE="courier" size=1>'.$chv.' => ['.$vlr.']<br>'; }
-
-    $w_html .= chr(10).'</DT>';
-    $w_html .= chr(10).'   <br><br></font>';
-    $w_html .= chr(10).'</DT>';
-    $w_html .= chr(10).'<DT>Variáveis de sessão:<DD><FONT FACE="courier" size=1>';
-    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html .= chr(10).$chv.' => ['.$vlr.']<br>'; } }
-    $w_html .= chr(10).'</DT>';
-    $w_html .= chr(10).'   <br><br></font>';
+    $w_html .= chr(10).'<DT>Variáveis de sessão:<table border=0>';
+    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
+    $w_html .= chr(10).'</table></DT>';
+    
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
     $w_html .= '</body></html>';
 

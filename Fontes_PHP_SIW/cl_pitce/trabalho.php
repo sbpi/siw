@@ -248,6 +248,7 @@ function Mesa() {
     $c_pne3 = 0;
     
     foreach($RS as $row) { 
+      $w_plano = f($row,'sq_plano');
       switch (f($row,'codigo_interno')) {
         case 'PDE':  $c_pde  = f($row,'sq_siw_solicitacao'); $w_pde = f($row,'qtd'); break;
         case 'PAS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns = f($row,'qtd'); break;
@@ -259,8 +260,8 @@ function Mesa() {
     $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
     $w_todos = $w_pns + $w_pde + $w_pne1 + $w_pne2 + $w_pne3; 
     ShowHTML('<div id="menu_superior">');
-    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
-    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
+    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
+    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
     ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'Contatos_PDP.xls',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
     ShowHTML('</div>');
     ShowHTML('<img name="pdp" src="'.$w_dir.'pdp.gif" width="611" height="402" border="0" id="pdp" usemap="#m_pdp" alt="" /><map name="m_pdp" id="m_pdp">');
@@ -409,7 +410,9 @@ function Arquivos() {
 // -------------------------------------------------------------------------
 function Calendario() {
   extract($GLOBALS);
-
+  
+  $p_plano = $_REQUEST['p_plano'];
+  
   if ($w_troca>'' && $O!='E') {
     $w_acontecimento = $_REQUEST['w_acontecimento'];
     $w_programa      = $_REQUEST['w_programa'];

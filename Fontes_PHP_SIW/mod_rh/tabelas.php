@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -164,13 +164,13 @@ function ModalidadeCont() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A'){
-    BodyOpen('onLoad=document.Form.w_sigla.focus();');
+    BodyOpen('onLoad="document.Form.w_sigla.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -363,20 +363,24 @@ function Tipoafast() {
     FormataValor();
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_sigla','Sigla','1','1','2','10','1','');
+      Validate('w_sigla','Sigla','1','1','1','3','1','1');
       Validate('w_nome','Nome','1','1','3','50','1','1');
       Validate('w_limite_dias','Limite de dias','VALOR','1',1,6,'','0123456789');
       Validate('w_perc_pag','Percentual da remuneração','VALOR','1',4,18,'','0123456789.,');
-      ShowHTML('  var cont = 0;');
-      ShowHTML('  for (i=0;i<theForm.w_sq_modalidade.length;i++) {');
-      ShowHTML('    if (theForm.w_sq_modalidade[i].checked) {');
-      ShowHTML('      cont = cont+1;');
-      ShowHTML('    }');
-      ShowHTML('   }');
-      ShowHTML('  if (theForm.w_ativo[0].checked && cont == 0) {');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  if (theForm["w_sq_modalidade[]"].value==undefined) {');
+      ShowHTML('     for (i=0; i < theForm["w_sq_modalidade[]"].length; i++) {');
+      ShowHTML('       if (theForm["w_sq_modalidade[]"][i].checked) w_erro=false;');
+      ShowHTML('     }');
+      ShowHTML('  }');
+      ShowHTML('  else {');
+      ShowHTML('     if (theForm["w_sq_modalidade[]"].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_ativo[0].checked && w_erro) {');
       ShowHTML('    alert(\'Selecione pelo menos uma modalidade para o tipo de afastamento!\');');
       ShowHTML('    return false; ');
-      ShowHTML('  } else { if (theForm.w_ativo[1].checked && cont > 0) {');
+      ShowHTML('  } else { if (theForm.w_ativo[1].checked && !w_erro) {');
       ShowHTML('     alert(\'Não selecione nenhuma modalidade para tipos de afastamento inativos!\');');
       ShowHTML('     return false; }; ');
       ShowHTML('  }');
@@ -395,13 +399,13 @@ function Tipoafast() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_sigla.focus();');
+    BodyOpen('onLoad="document.Form.w_sigla.focus();"');
   } elseif ($O=='L'){
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else {
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -467,7 +471,7 @@ function Tipoafast() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><u>L</u>imite de dias:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_dias" class="STI" SIZE="6" MAXLENGTH="6" VALUE="'.$w_limite_dias.'"></td>');
     ShowHTML('          <td><b><u>P</u>ercentual da remuneração a ser pago quando afastado por este tipo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_perc_pag" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_perc_pag.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
@@ -498,7 +502,7 @@ function Tipoafast() {
       ShowHTML('          <td rowspan=2><b>Modalidades de contratação vinculadas:</b><br>');
       if (count($RS1)> 0) {
         foreach($RS1 as $row) {
-          ShowHTML('       <input type="checkbox" name="w_sq_modalidade" value="'.f($row,'chave').'">'.f($row,'nome').'<br>');
+          ShowHTML('       <input type="checkbox" name="w_sq_modalidade[]" value="'.f($row,'chave').'">'.f($row,'nome').'<br>');
         } 
       } 
     } elseif ($O=='A' || $O=='E') {
@@ -507,9 +511,9 @@ function Tipoafast() {
       if (count($RS1)> 0) {
         foreach($RS1 as $row) {
           if (Nvl(f($row,'sq_tipo_afastamento'),'')>'') {
-            ShowHTML('       <input '.$w_disabled.' type="checkbox" name="w_sq_modalidade" value="'.f($row,'chave').'" checked>'.f($row,'nome').'<br>');
+            ShowHTML('       <input '.$w_disabled.' type="checkbox" name="w_sq_modalidade[]" value="'.f($row,'chave').'" checked>'.f($row,'nome').'<br>');
           } else { 
-            ShowHTML('       <input '.$w_disabled.' type="checkbox" name="w_sq_modalidade" value="'.f($row,'chave').'">'.f($row,'nome').'<br>');
+            ShowHTML('       <input '.$w_disabled.' type="checkbox" name="w_sq_modalidade[]" value="'.f($row,'chave').'">'.f($row,'nome').'<br>');
           } 
         } 
       } 
@@ -529,7 +533,7 @@ function Tipoafast() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1008,13 +1012,13 @@ function Cargo() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpen('onLoad=document.Form.'.$w_troca.'.focus();');
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($O=='I' || $O=='A') {
-    BodyOpen('onLoad=document.Form.w_sq_tipo.focus();');
+    BodyOpen('onLoad="document.Form.w_sq_tipo.focus();"');
   } elseif ($O=='L') {
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
   } else{
-    BodyOpen('onLoad=document.Form.w_assinatura.focus();');
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1113,7 +1117,7 @@ function Cargo() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1140,7 +1144,7 @@ function Grava() {
   Cabecalho();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
-  BodyOpen('onLoad=this.focus();');
+  BodyOpen('onLoad="this.focus();"');
   switch ($SG) {
     case 'GPMODALCON':
       // Verifica se a Assinatura Eletrônica é válida
@@ -1196,16 +1200,15 @@ function Grava() {
             ScriptClose();
           } 
         } 
+        
         dml_putGPTipoAfast::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_limite_dias'],
-        $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'],
-        $_REQUEST['w_ativo'],$_REQUEST['w_sq_modalidade']);
+          $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'],
+          $_REQUEST['w_ativo'],explodearray($_REQUEST['w_sq_modalidade']));
+        
         ScriptOpen('JavaScript');
-        
-        //($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_limite_dias, $p_sexo, $p_percentual_pagamento, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_ativo, $p_fase) {
-        
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
-        } else {
+      } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
         ScriptClose();
@@ -1394,7 +1397,7 @@ function Main() {
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    BodyOpen('onLoad=this.focus();');
+    BodyOpen('onLoad="this.focus();"');
     ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
     ShowHTML('<HR>');
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

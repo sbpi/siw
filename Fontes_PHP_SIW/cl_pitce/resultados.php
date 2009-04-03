@@ -127,7 +127,8 @@ function Inicial() {
 
   extract($GLOBALS);
   
-  $w_tipo=$_REQUEST['w_tipo'];
+  $w_tipo  = $_REQUEST['w_tipo'];
+  $p_plano = $_REQUEST['p_plano'];
   
   if ($w_tipo=='PDF') {
     headerpdf('Visualização de resultados',$w_pag);
@@ -167,7 +168,7 @@ function Inicial() {
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, null, null, '<td>');
+    SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, 1, null, '<td>');
     ShowHTML('   </tr>');
     //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('   <tr>');

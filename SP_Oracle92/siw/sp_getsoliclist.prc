@@ -1584,7 +1584,8 @@ begin
    Elsif p_restricao = 'PELIST' Then
       -- Recupera os programas para montagem da caixa de seleção
       open p_result for 
-         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, b.inicio, b.fim
+         select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo, b.inicio, b.fim,
+                b1.ordem as or_tramite, b1.ativo as tramite_ativo, b1.sigla as sg_tramite
            from siw_solicitacao            b
                 inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
                 inner   join pe_programa   c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -893,6 +893,7 @@ function GrupoDeficiencia() {
   global $w_Disabled;
 
   $p_nome                   = trim(strtoupper($_REQUEST['p_nome']));
+  $p_codigo_externo         = trim(strtoupper($_REQUEST['p_codigo_externo']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_grupo_deficiencia   = $_REQUEST['w_sq_grupo_deficiencia'];
 
@@ -900,9 +901,10 @@ function GrupoDeficiencia() {
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
     $w_nome                 = $_REQUEST['w_nome'];
+    $w_codigo_externo       = $_REQUEST['w_codigo_externo'];
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif (!(strpos('LP',$O)===false)) {
-    $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_ativo);
+    $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_codigo_externo,$p_ativo);
     if ($p_ordena>'') { 
       $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
     } else {
@@ -910,8 +912,9 @@ function GrupoDeficiencia() {
     }
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getDeficiencyGroupData::getInstanceOf($dbms,$w_sq_grupo_deficiencia);
-    $w_nome     = f($RS,'nome');
-    $w_ativo    = f($RS,'ativo');
+    $w_nome             = f($RS,'nome');
+    $w_codigo_externo   = f($RS,'codigo_externo');
+    $w_ativo            = f($RS,'ativo');
   } 
 
   Cabecalho();
@@ -922,6 +925,7 @@ function GrupoDeficiencia() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','1','50','1','1');
+      Validate('w_codigo_externo','Código Externo','1','','','60','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -968,6 +972,7 @@ function GrupoDeficiencia() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Chave</td>');
     ShowHTML('          <td><b>Nome</td>');
+    ShowHTML('          <td><b>Código externo</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -980,6 +985,7 @@ function GrupoDeficiencia() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
         ShowHTML('        <td align="center">'.f($row,'sq_grupo_defic').'</td>');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),"&nbsp;").'</td>');
         ShowHTML('        <td align="center">'.f($row,'ativodesc').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_grupo_deficiencia='.f($row,'sq_grupo_defic').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"title="Alterar">AL</A>&nbsp');
@@ -1005,6 +1011,7 @@ function GrupoDeficiencia() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="50" maxlength="50" value="'.$w_nome.'"></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b><U>C</U>odigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'"></td></tr>');
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
@@ -1031,6 +1038,7 @@ function GrupoDeficiencia() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="70%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b><U>C</U>ódigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="p_codigo_externo" size="60" maxlength="60" value="'.$p_codigo_externo.'"></td></tr>');
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$p_ativo,'p_ativo');
     ShowHTML('      </tr>');
@@ -1272,7 +1280,7 @@ function Etnia() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','1','10','1','1');
-      Validate('w_codigo_siape','codigo_siape','1','1','2','2','','0123456789');
+      Validate('w_codigo_siape','Código externo','1','1','2','2','','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -1319,7 +1327,7 @@ function Etnia() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Chave</td>');
     ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>SIAPE</td>');
+    ShowHTML('          <td><b>Código externo</td>');
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -1359,7 +1367,7 @@ function Etnia() {
     ShowHTML('    <table width="90%" border="0">');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_nome" size="10" maxlength="10" value="'.$w_nome.'"></td></tr>');
     if ($O=='I') $w_codigo_siape=0;
-    ShowHTML('      <tr><td valign="top"><b><U>S</U>IAPE:<br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="STI" type="text" name="w_codigo_siape" size="2" maxlength="2" value="'.$w_codigo_siape.'"></td></tr>');
+    ShowHTML('      <tr><td valign="top"><b><U>C</U>ódigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_siape" size="2" maxlength="2" value="'.$w_codigo_siape.'"></td></tr>');
     ShowHTML('      <tr align="left">');
     MontaRadioSN('Ativo?',$w_ativo,'w_ativo');
     ShowHTML('      </tr>');
@@ -1369,9 +1377,9 @@ function Etnia() {
     if ($O=='E') {
       ShowHTML('    <input class="stb" type="submit" name="Botao" value="Excluir">');
     } elseif ($O=='I') {
-        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Incluir">');
+      ShowHTML('  <input class="stb" type="submit" name="Botao" value="Incluir">');
     } elseif ($O=='A') {
-        ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      ShowHTML('  <input class="stb" type="submit" name="Botao" value="Atualizar">');
     }
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
@@ -1681,9 +1689,43 @@ function Grava() {
     case 'COGRDEF':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (!(strpos('IA',$O)===false)) { 
+            $RS = db_getDeficGroupList::getInstanceOf($dbms, $_REQUEST['w_nome'], null, null);
+            if (count($RS)>0) {
+              $w_erro = false;
+              foreach($RS as $row) { 
+                if(strtoupper($_REQUEST['w_nome']) == strtoupper(f($row,'nome')) && ($O=='I' || ($O=='A' && $_REQUEST['w_sq_grupo_deficiencia']!=f($row,'sq_grupo_defic') ))){
+                  $w_erro = true;
+                }                
+              }
+              if($w_erro){
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Nome já cadastrado!\');');
+                ScriptClose();
+                retornaFormulario('w_nome');
+                exit;
+              }                      
+            }
+            $RS = db_getDeficGroupList::getInstanceOf($dbms, null, $_REQUEST['w_codigo_externo'], null);
+            if (count($RS)>0) {
+              $w_erro = false;
+              foreach($RS as $row) { 
+                if($O=='I' || ($O=='A' && $_REQUEST['w_sq_grupo_deficiencia']!=f($row,'sq_grupo_defic') )){
+                  $w_erro = true;
+                }                
+              }
+              if($w_erro){
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Código externo já cadastrado!\');');
+                ScriptClose();
+                retornaFormulario('w_nome');
+                exit;
+              }                      
+            }
+        } 
         dml_CoGrDef::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_nome'],
-            $_REQUEST['w_ativo']);
+            $_REQUEST['w_codigo_externo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();
