@@ -1221,7 +1221,7 @@ begin
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
-                o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
+                o.nome as nm_solic_completo, o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
                 coalesce(q3.existe,0) as resp_meta,
                 coalesce(q4.existe,0) as qtd_meta
