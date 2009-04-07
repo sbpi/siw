@@ -8,6 +8,7 @@ create or replace procedure SP_PutPD_Bilhete
     p_trecho              in varchar2  default null,
     p_rloc                in varchar2  default null,
     p_classe              in varchar2  default null,
+    p_valor_cheio         in number    default null,
     p_valor_bilhete       in number    default null,
     p_valor_taxa          in number    default null,
     p_valor_pta           in number    default null,
@@ -41,12 +42,12 @@ begin
       -- Insere registro na tabela de bilhetes
       insert into pd_bilhete
         (sq_bilhete,         sq_siw_solicitacao,         sq_cia_transporte,       data,         numero,          trecho, 
-         valor_bilhete,      valor_pta,                  valor_taxa_embarque,     rloc,         classe,          tipo,
+         valor_bilhete_cheio, valor_bilhete,      valor_pta,                  valor_taxa_embarque,     rloc,         classe,          tipo,
          observacao
         )
       values
         (w_chave_aux,        p_chave,                    p_sq_cia_transporte,     p_data,       p_numero,        upper(p_trecho), 
-         p_valor_bilhete,    p_valor_pta,                p_valor_taxa,            p_rloc,       upper(p_classe), p_tipo,
+         p_valor_cheio, p_valor_bilhete,    p_valor_pta,                p_valor_taxa,            p_rloc,       upper(p_classe), p_tipo,
          p_observacao
         );
 
@@ -60,6 +61,7 @@ begin
            data                = p_data,
            numero              = p_numero,
            trecho              = upper(p_trecho),
+           valor_bilhete_cheio = p_valor_cheio,
            valor_bilhete       = p_valor_bilhete,
            valor_pta           = p_valor_pta,
            valor_taxa_embarque = p_valor_taxa,

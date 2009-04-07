@@ -11,7 +11,7 @@ begin
    If p_restricao is null Then
       -- Recupera os bilhetes ligados a viagens
       open p_result for
-         select a.sq_bilhete as chave, a.sq_siw_solicitacao, a.sq_cia_transporte, a.data, a.numero, a.trecho, a.valor_bilhete, a.valor_pta, 
+         select a.sq_bilhete as chave, a.sq_siw_solicitacao, a.sq_cia_transporte, a.data, a.numero, a.trecho, a.valor_bilhete, a.valor_bilhete_cheio, a.valor_pta, 
                 a.valor_taxa_embarque, a.rloc, a.classe, a.utilizado, a.faturado, a.observacao,
                 case a.utilizado when 'I' then 'Integral' when 'P' then 'Parcial' when 'C' then 'Não utilizado' else 'Não informado' end as nm_utilizado,
                 case a.faturado  when 'S' then 'Sim' else 'Não' end as nm_faturado,
