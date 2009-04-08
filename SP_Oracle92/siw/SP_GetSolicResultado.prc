@@ -204,8 +204,8 @@ begin
           where j.sq_pessoa    = p_cliente
             and p_tipo_evento  is not null 
             and 0              < InStr(x_tipo,k.sq_tipo_evento)
-            and (p_programa    is null or (p_programa    is not null and (i.sq_solic_pai      = p_programa or i3.sq_solic_pai = p_programa)))
-            and (p_projeto     is null or (p_projeto     is not null and i.sq_siw_solicitacao = p_projeto))
+            and (p_programa    is null or (p_programa    is not null and (i3.sq_solic_pai      = p_programa or i4.sq_solic_pai = p_programa)))
+            and (p_projeto     is null or (p_projeto     is not null and i3.sq_siw_solicitacao = p_projeto))
             and (p_unidade     is null or (p_unidade     is not null and i.sq_unidade         = p_unidade))
             and (p_inicio      is null or (p_inicio      is not null and (i.inicio            between p_inicio and p_fim or
                                                                           i.fim               between p_inicio and p_fim
