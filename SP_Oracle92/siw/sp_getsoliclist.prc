@@ -1538,6 +1538,7 @@ begin
                 inner     join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and b1.sigla <> 'CA')
                 inner     join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where b.sq_menu       = p_menu
+            and (p_palavra      is null or (p_palavra     is not null and b.codigo_interno = p_palavra))
             and (p_projeto      is null or (p_projeto     is not null and p_projeto  in (select sq_siw_solicitacao
                                                                                            from siw_solicitacao
                                                                                          connect by prior sq_solic_pai = sq_siw_solicitacao

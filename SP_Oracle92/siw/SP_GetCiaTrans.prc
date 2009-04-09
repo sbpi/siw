@@ -15,7 +15,7 @@ create or replace procedure SP_GetCiaTrans
 begin
    -- Recupera as companhias de viagem
    open p_result for
-      select a.sq_cia_transporte chave, a.cliente, a.nome, a.sigla,
+      select a.sq_cia_transporte as chave, a.cliente, a.nome, a.sigla,
              case a.aereo      when 'S' then 'Sim' else 'Não' end as nm_aereo, a.aereo,
              case a.rodoviario when 'S' then 'Sim' else 'Não' end as nm_rodoviario, a.rodoviario,
              case a.aquaviario when 'S' then 'Sim' else 'Não' end as nm_aquaviario, a.aquaviario,

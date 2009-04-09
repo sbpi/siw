@@ -3823,6 +3823,7 @@ SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_PutMtSituacao.prc -text
 SP_Oracle92/siw/SP_PutPAParametro.prc -text
+SP_Oracle92/siw/SP_PutPDImportacao.prc -text
 SP_Oracle92/siw/SP_PutPDParametro.prc -text
 SP_Oracle92/siw/SP_PutPDUnidade.prc -text
 SP_Oracle92/siw/SP_PutPDUsuario.prc -text
@@ -3867,6 +3868,8 @@ SP_Oracle92/siw/TG_SG_AUTENTICACAO_IN_UP.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_IN.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
+SP_Oracle92/siw/VW_ACORDO.sql -text
+SP_Oracle92/siw/VW_PROJETOS.sql -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
 SP_Oracle92/siw/VerificaDataMovel.fnc -text
 SP_Oracle92/siw/ac_criaparametro.prc -text
@@ -3929,6 +3932,7 @@ SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getMeioTransporte.prc -text
 SP_Oracle92/siw/sp_getMoeda.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
+SP_Oracle92/siw/sp_getPDImportacao.prc -text
 SP_Oracle92/siw/sp_getPrestacaoContas.prc -text
 SP_Oracle92/siw/sp_getPrograma.prc -text
 SP_Oracle92/siw/sp_getProtocolo.prc -text
