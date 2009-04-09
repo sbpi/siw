@@ -200,9 +200,9 @@ function Rel_Executivo() {
             if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
               if($w_embed != 'WORD'){
               //Programas
-                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic')).'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic_completo')).'</b></td></tr>');
               }else{
-                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.f($row1,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row1,'nm_solic').'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.f($row1,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row1,'nm_solic_completo').'</b></td></tr>');
               }
               ShowHTML('          <tr align="center">');
               ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
@@ -237,7 +237,7 @@ function Rel_Executivo() {
                       ShowHTML('          <tr valign="top">');
                       //ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'SUBPROGRAMA: '.f($row3,'titulo').'</td>');
                       if ($w_embed !='WORD'){
-                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</b></td></tr>');
+                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic_completo')).'</b></td></tr>');
                       } else {
                         ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.f($row3,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row3,'nm_solic').'</b></td></tr>');                      
                       }

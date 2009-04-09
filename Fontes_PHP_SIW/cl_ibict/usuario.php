@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -17,6 +17,7 @@ include_once($w_dir_volta.'classes/sp/db_getUsuarioTemp.php');
 include_once($w_dir_volta.'classes/sp/dml_putUsuarioTemp.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 $_SESSION['DBMS']=1;
+$w_dir = 'cl_ibict/';
 // =========================================================================
 //  /usuario.php
 // ------------------------------------------------------------------------
@@ -206,7 +207,7 @@ function Benef() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     Validate('w_nome','Nome','1',1,5,60,'1','1');
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     Validate('w_sexo','Sexo','SELECT','1','1','10','1','');
     Validate('w_email','E-Mail','1','1',4,50,'1','1');
     Validate('w_vinculo','Tipo de vinculo','SELECT','1','1','10','1','1');
@@ -225,10 +226,11 @@ function Benef() {
   ScriptClose();
   ShowHTML('<style type="text/css">');
   ShowHTML('<!--');
-  ShowHTML('@import "ibict.css";');
+  ShowHTML('@import "'.$w_dir.'ibict.css";');
   ShowHTML('-->');
   ShowHTML('</style>');
   ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif (!(strpos('ETDV',$O)===false)) {
@@ -252,18 +254,18 @@ function Benef() {
     ShowHTML('      <tr><td colspan="2"><table width="100%" cellpadding="0" cellspacing="0">');
     ShowHTML('         <tr><td><table width="100%" cellspacing="0" cellpadding="0" height="21">');
     ShowHTML('             <tr height="21">');
-    ShowHTML('                 <td class="tdLine" align="left"><IMG height=21 src="logo_ct2.gif" width=229 border=0></td>');
+    ShowHTML('                 <td class="tdLine" align="left"><IMG height=21 src="'.$w_dir.'logo_ct2.gif" width=229 border=0></td>');
     ShowHTML('                 <td class="tdLine"></td>');
     ShowHTML('                </table></td></tr>');
-    ShowHTML('                <tr><td><table width="100%" border="0" cellpadding="0" cellspacing="0" class="ibictBar" background="topbg.jpg">');
-    ShowHTML('                    <tr><td height="21" align="left" valign="center"><IMG hspace=2 src="logo.gif" align=absMiddle vspace=4 border=0></td>');
+    ShowHTML('                <tr><td><table width="100%" border="0" cellpadding="0" cellspacing="0" class="ibictBar" background="'.$w_dir.'topbg.jpg">');
+    ShowHTML('                    <tr><td height="21" align="left" valign="center"><IMG hspace=2 src="'.$w_dir.'logo.gif" align=absMiddle vspace=4 border=0></td>');
     ShowHTML('                        <td><a class="ibictTitulo">Instituto Brasileiro de Informação<br>em Ciência e Tecnologia</a></td>');
     ShowHTML('                        <td height="21" align="right" valign="center">');
     ShowHTML('                           <table cellpadding=0 cellspacing=0 border=0 width="100%"><tr><td align="right">');
     ShowHTML('                           <table cellpadding=0 cellspacing=0 border=1 width="182"><tr><td align="right">');
     ShowHTML('                           <table width="182" cellpadding=0 cellspacing=0 bgcolor="white">');
-    ShowHTML('                           <tr><td>&nbsp;<img src="logo_sgpa.gif" border=0>&nbsp;');
-    ShowHTML('                           <tr><td>&nbsp;<img src="logo_sistema.gif" border=0>&nbsp;');
+    ShowHTML('                           <tr><td>&nbsp;<img src="'.$w_dir.'logo_sgpa.gif" border=0>&nbsp;');
+    ShowHTML('                           <tr><td>&nbsp;<img src="'.$w_dir.'logo_sistema.gif" border=0>&nbsp;');
     ShowHTML('                           </table></table>');
     ShowHTML('                           <td width=5></td>');
     ShowHTML('                           </table>');
@@ -278,7 +280,7 @@ function Benef() {
     if(!$w_Disabled) ShowHTML('     <tr><td valign="top" title="Informe apenas os números do seu CPF." ><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" Class="sti" name="w_cpf" value="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);" onBlur="if (Validacao1(document.Form.w_cpf.value)) {document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_nome\'; document.Form.Botao[0].disabled=true; document.Form.Botao[1].disabled=true; document.Form.submit();}">');
     else             ShowHTML('     <tr><td valign="top"><b><u>C</u>PF:<br><INPUT READONLY ACCESSKEY="C" TYPE="text" Class="sti" name="w_cpf" value="'.$w_cpf.'" SIZE="14" MaxLength="14">');
     ShowHTML('     <tr><td valign="top" title="Informe seu nome completo, se possível sem abreviações."><b><u>N</u>ome completo:</b><br><input accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('     <td valign="top" title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b><u>N</u>ome resumido:</b><br><input accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+    ShowHTML('     <td valign="top" title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b><u>N</u>ome resumido:</b><br><input accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
     ShowHTML('     <tr>');
     selecaoSexo('<u>S</u>exo:','S',null,$w_sexo,null,'w_sexo',null,null);
     ShowHTML('    <tr><td valign="top" title="Informe seu e-mail do IBICT."><b><u>E</u>mail:</b><br><input accesskey="N" type="text" name="w_email" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');

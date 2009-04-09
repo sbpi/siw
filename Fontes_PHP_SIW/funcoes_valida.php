@@ -1,4 +1,4 @@
-<? 
+<?php 
 // Função para comparação de datas
 
 function fCompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
@@ -162,7 +162,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     if (strlen($Value)>0) {
       if (!fcheckbranco($Value)) {
         if (strlen($Value)!=10) {
-          $w_erro=1;
+          $err=1;
         } else {
           $dia=substr($Value,0,2);
           $barra1=substr($Value,2,1);

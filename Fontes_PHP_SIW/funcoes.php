@@ -576,6 +576,57 @@ function Piece($p_line,$p_delimiter,$p_separator,$p_position) {
 }
 
 // =========================================================================
+// Retorna um array com o conteúdo de um arquivo
+// -------------------------------------------------------------------------
+function csv($arq) {
+  $var = file($arq);
+  $saida = array ();
+  $qtd = count($var);
+  $table = array ();
+  $ind = null;
+
+  for ($i = 0; $i < $qtd; $i++) {
+
+    if (substr(trim($var[$i]), 0, 1) == '[' && substr(trim($var[$i]), -1, 1) == ']') {
+      if (!is_null($ind)) {
+        $saida[$ind] = $table;
+      }
+
+      $table = array ();
+      $ind = trim($var[$i]);
+      ++ $i;
+      continue;
+    }
+
+    $linha = "";
+    $linha = $var[$i];
+
+    while (isset ($var[$i +1]) && substr(trim($var[$i +1]), 0, 1) != '"' && substr(trim($var[$i +1]), 0, 1) != '[' && substr(trim($var[$i]), -1, 1) != ']') {
+      $linha .= $var[++ $i];
+    }
+
+    $linha = corrigeCar($linha);
+    $linha = explode('","', $linha);
+    $linha[0] = substr($linha[0], 1);
+    $linha[count($linha) - 1] = substr($linha[count($linha) - 1], 0, -1);
+    array_push($table, $linha);
+  }
+  //add a ultima tabela
+  $saida[$ind] = $table;
+
+  return $saida;
+}
+
+function corrigeCar($str) {
+  $str = trim($str);
+  $str = str_replace('NULL', '"NULL"', $str);
+  $str = str_replace(',,', ',"",', $str);
+  $str = str_replace(',,', ',"",', $str);
+  $str = str_replace("'", "´", $str);
+  return $str;
+}
+
+// =========================================================================
 // Montagem da URL com os parâmetros de filtragem
 // -------------------------------------------------------------------------
 function MontaFiltro($p_method) {

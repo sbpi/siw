@@ -13,12 +13,12 @@ class dml_putProjetoEtapa {
         $p_inicio, $p_fim, $p_perc_conclusao, $p_orcamento, $p_sq_pessoa, $p_sq_unidade, $p_vincula_atividade, 
         $p_vincula_contrato, $p_usuario, $p_programada, $p_cumulativa, $p_quantidade, $p_unidade_medida,
         $p_pacote, $p_base, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_peso) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTPROJETOETAPA';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putProjetoEtapa';
      $params=array('p_operacao'             =>array($operacao,                            B_VARCHAR,         1),
                    'p_chave'                =>array(tvl($p_chave),                        B_INTEGER,        32),
                    'p_chave_aux'            =>array(tvl($p_chave_aux),                    B_INTEGER,        32),
                    'p_chave_pai'            =>array(tvl($p_chave_pai),                    B_INTEGER,        32),
-                   'p_titulo'               =>array(tvl($p_titulo),                       B_VARCHAR,       100),
+                   'p_titulo'               =>array(tvl($p_titulo),                       B_VARCHAR,       150),
                    'p_descricao'            =>array(tvl($p_descricao),                    B_VARCHAR,      2000),
                    'p_ordem'                =>array(tvl($p_ordem),                        B_VARCHAR,         3),
                    'p_inicio'               =>array(tvl($p_inicio),                       B_DATE,           32),

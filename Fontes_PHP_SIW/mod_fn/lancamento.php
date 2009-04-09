@@ -1140,7 +1140,7 @@ function OutraParte() {
     ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
     if (Nvl($w_sq_pessoa,'')=='') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
-      Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+      Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     } 
     if ($w_tipo_pessoa==1) {
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
@@ -1342,7 +1342,7 @@ function OutraParte() {
       } else {
         ShowHTML('          <tr valign="top">');
         ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-        ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+        ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
       } 
       if ($w_tipo_pessoa==1) {
         ShowHTML('          <tr valign="top">');

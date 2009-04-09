@@ -838,7 +838,7 @@ function Geral() {
           }
         } else {
           Validate('w_nm_prop','Nome do beneficiário','1',1,5,60,'1','1');
-          Validate('w_nm_prop_res','Nome resumido do beneficiário','1',1,2,15,'1','1');
+          Validate('w_nm_prop_res','Nome resumido do beneficiário','1',1,2,21,'1','1');
           Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
           Validate('w_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
         }
@@ -995,7 +995,7 @@ function Geral() {
           }
         } else {
           ShowHTML('            <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nm_prop" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nm_prop.'"></td>');
-          ShowHTML('            <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nm_prop_res" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nm_prop_res.'"></td>');
+          ShowHTML('            <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nm_prop_res" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nm_prop_res.'"></td>');
           SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
           SelecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_vinculo,null,'w_vinculo','S','Física',null);
         }
@@ -1251,7 +1251,7 @@ function OutraParte() {
   } elseif ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
     Validate('w_nome','Nome','1',1,5,60,'1','1');
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
     if ($w_sq_tipo_vinculo=='') {
       Validate('w_sq_tipo_vinculo','Tipo de vínculo','SELECT',1,1,1,'','1');
@@ -1400,7 +1400,7 @@ function OutraParte() {
       ShowHTML('              <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
       ShowHTML('          <tr valign="top">');
       ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
       SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
       if (Nvl($w_sq_tipo_vinculo,'')=='') {
         SelecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física',null);
@@ -1806,6 +1806,7 @@ function Bilhetes() {
     $w_numero       = $_REQUEST['w_numero'];
     $w_trecho       = $_REQUEST['w_trecho'];
     $w_valor_bil    = $_REQUEST['w_valor_bil'];
+    $w_valor_cheio  = $_REQUEST['w_valor_cheio'];
     $w_valor_pta    = $_REQUEST['w_valor_pta'];
     $w_valor_tax    = $_REQUEST['w_valor_tax'];
     $w_rloc         = $_REQUEST['w_rloc'];
@@ -1825,6 +1826,7 @@ function Bilhetes() {
     $w_numero       = f($RS,'numero');
     $w_trecho       = f($RS,'trecho');
     $w_valor_bil    = formatNumber(f($RS,'valor_bilhete'));
+    $w_valor_cheio  = formatNumber(f($RS,'valor_bilhete_cheio'));
     $w_valor_pta    = formatNumber(f($RS,'valor_pta'));
     $w_valor_tax    = formatNumber(f($RS,'valor_taxa_embarque'));
     $w_rloc         = f($RS,'rloc');
@@ -1857,6 +1859,9 @@ function Bilhetes() {
     Validate('w_rloc','Número vôo','','',1,6,'1','1');
     Validate('w_valor_bil','Valor do bilhete','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_bil','Valor do bilhete','>','0,00','zero');
+    Validate('w_valor_cheio','Valor do bilhete cheio','VALOR','1',4,18,'','0123456789,.');
+    CompValor('w_valor_cheio','Valor do bilhete cheio','>','0,00','zero');
+    CompValor('w_valor_cheio','Valor do bilhete cheio','>=','w_valor_bil','valor do bilhete');
     Validate('w_valor_tax','Valor da taxa de embarque','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_tax','Valor da taxa de embarque','>=','0,00','zero');
     Validate('w_valor_pta','Valor da transmissão do pta','VALOR','1',4,18,'','0123456789,.');
@@ -1996,6 +2001,7 @@ function Bilhetes() {
     ShowHTML('        <td colspan=3><b><u>T</u>rechos:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_trecho" class="sti" SIZE="60" MAXLENGTH="60" style="text-transform:uppercase;" VALUE="'.$w_trecho.'"></td>');
     ShowHTML('        <td><b><u>R</u>LOC:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_rloc" class="sti" SIZE="6" MAXLENGTH="6" VALUE="'.$w_rloc.'"></td>');
     ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b>$ Bilhete <u>c</u>heio:</b><br><input type="text" accesskey="C" name="w_valor_cheio" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_cheio.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete cheio."></td>');
     ShowHTML('        <td><b>$ <u>B</u>ilhete:</b><br><input type="text" accesskey="V" name="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_bil.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_tax.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor_pta,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
@@ -6440,7 +6446,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Bilhete::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
             $_REQUEST['w_cia_aerea'],$_REQUEST['w_data'],$_REQUEST['w_numero'],$_REQUEST['w_trecho'],
-            $_REQUEST['w_rloc'],$_REQUEST['w_classe'],$_REQUEST['w_valor_bil'],$_REQUEST['w_valor_tax'],
+            $_REQUEST['w_rloc'],$_REQUEST['w_classe'],$_REQUEST['w_valor_cheio'],$_REQUEST['w_valor_bil'],$_REQUEST['w_valor_tax'],
             $_REQUEST['w_valor_pta'],explodeArray($_REQUEST['w_sq_deslocamento']),$_REQUEST['w_tipo'],
             $_REQUEST['w_utilizado'],$_REQUEST['w_faturado'],$_REQUEST['w_observacao']);
         ScriptOpen('JavaScript');

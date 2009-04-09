@@ -1901,7 +1901,7 @@ function Etapas() {
     if (strpos('IA',$O)!==false) {
       Validate('w_peso','Peso','1','1','1','2','','0123456789');
       CompValor('w_peso','Peso da etapa','>=',1,'1');
-      Validate('w_titulo','Título','','1','2','100','1','1');
+      Validate('w_titulo','Título','','1','2','150','1','1');
       Validate('w_desafio','Desafios','','','','30','1','1');
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
       Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
@@ -2112,7 +2112,7 @@ function Etapas() {
     }
     ShowHTML('        <td colspan=2><b><u>P</u>eso da etapa:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_peso" SIZE=2 MAXLENGTH=2 VALUE="'.nvl($w_peso,1).'" '.$w_Disabled.' title="Informe o peso da etapa no cálculo do percentual de execução."></td>');
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td colspan=3><b>Tít<u>u</u>lo:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="90" VALUE="'.$w_titulo.'" title="Informe um título para a etapa."></td>');
+    ShowHTML('      <tr><td colspan=3><b>Tít<u>u</u>lo:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="150" VALUE="'.$w_titulo.'" title="Informe um título para a etapa."></td>');
     ShowHTML('      <tr><td colspan=2><b><u>D</u>esafio:<br><INPUT ACCESSKEY="D" TYPE="TEXT" CLASS="STI" NAME="w_desafio" SIZE=30 MAXLENGTH=30 VALUE="'.nvl($w_desafio,'').'" '.$w_Disabled.' title="Informe o desafio da etapa."></td>');
   ShowHTML('      <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');

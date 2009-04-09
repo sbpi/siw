@@ -43,6 +43,7 @@ include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
+include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEvento.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
@@ -600,7 +601,7 @@ function Inicial() {
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
     if ($O=='C') {
       // Se for cópia
-      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Abandonar cópia">');
+      ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
     } else {
       ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';" name="Botao" value="Remover filtro">');
     } 
@@ -681,19 +682,13 @@ function Geral() {
   } else {
     if ((strpos('AEV',$O)!==false) || $w_copia>'') {
       // Recupera os dados da solicitação
-      if ($w_copia>'') {
-        $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
-            $SG,$P1,$p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente,$w_copia, $p_assunto, 
-            $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, 
-            $p_palavra, $p_prazo, $p_fase, null, null, null, null, null);
-      } else { 
-        $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
-            $SG,$P1,$p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-            $p_unidade,$p_prioridade,$p_ativo,$p_proponente,$w_chave, $p_assunto, 
-            $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, 
-            $p_palavra, $p_prazo, $p_fase, null, null, null, null, null);
-      }
+      $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+          $SG,$P1,$p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+          $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+          (($w_copia>'') ? $w_copia : $w_chave),
+          $p_assunto, 
+          $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,$p_uorg_resp, 
+          $p_palavra, $p_prazo, $p_fase, null, null, null, null, null);
       if (count($RS)>0) {
         $RS = $RS[0];
         $w_programa         = f($RS,'sq_solic_avo');
@@ -828,10 +823,9 @@ function Geral() {
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
     $w_sq_menu_relac = f($RS,'sq_menu');
     ShowHTML('<INPUT type="hidden" name="w_sq_menu_relac" value="'.$w_sq_menu_relac.'">');
-    if(Nvl($w_sq_menu_relac,'')!='') {
-      ShowHTML('          <tr valign="top">');
-      SelecaoSolic('Pr<u>o</u>grama:', 'O',null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.target=\'\'; document.Form.O.value=\'' . $O . '\'; document.Form.w_troca.value=\'w_solic_pai\'; document.Form.submit();"',$w_chave_pai,'<td colspan="3">');
-    }
+    ShowHTML('   <tr>');
+    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $w_solic_pai, $w_usuario, f($RS, 'sq_menu'), $w_programa, null, null, 'w_solic_pai', 'PJLIST', null, 1, null, '<td colspan="3">');
     ShowHTML('   </tr>');
     if (nvl($w_solic_pai,'')!='') {
       // Recupera os dados do projeto

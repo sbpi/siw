@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '';
@@ -324,7 +324,7 @@ function ExibeDocs() {
   ShowHTML('          <td>Usuário:<b>'.$_SESSION['NOME_RESUMIDO'].'</b>');
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
   if (count($RS)>0) ShowHTML('          <br>Exercício:<b>'.$_SESSION['ANO'].'</b></TD>');
-  ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
+  if($w_cliente!="14014" && $w_cliente!="11134") ShowHTML('          <td align="right"><a class="hl" href="help.php?par=Menu&TP=<img src=images/Folder/hlp.gif border=0> SIW - Visão Geral&SG=MESA&O=L" target="content" title="Exibe informações sobre os módulos do sistema."><img src="images/Folder/hlp.gif" border=0></a></TD>');
   ShowHTML('          </table>');
   ShowHTML('      <tr><td height=1><tr><td height=2 bgcolor="#000000">');
   ShowHTML('  </table></CENTER>');

@@ -2012,7 +2012,7 @@ function OutraParte() {
   } elseif ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value.indexOf(\'Alterar\') >= 0) { return true; }');
     Validate('w_nome','Nome','1',1,5,60,'1','1');
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     if ($w_sq_tipo_pessoa==1) {
       Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
@@ -2258,7 +2258,7 @@ function OutraParte() {
       } 
       ShowHTML('          <tr valign="top">');
       ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
       if ($w_sq_tipo_pessoa==1) {
         ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
         ShowHTML('          <tr valign="top">');
@@ -2493,7 +2493,7 @@ function Representante() {
       ShowHTML('}');
     } elseif ($O=='I' || $O=='A') {
       Validate('w_nome','Nome','1',1,5,60,'1','1');
-      Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+      Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
       Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
       Validate('w_rg_numero','Identidade','',1,2,30,'1','1');
       Validate('w_rg_emissor','Órgão expedidor','',1,2,30,'1','1');
@@ -2662,7 +2662,7 @@ function Representante() {
       ShowHTML('              <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
       ShowHTML('          <tr valign="top">');
       ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
       SelecaoSexo('Se<u>x</u>o:','X', null, $w_sexo, null, 'w_sexo', null, null);
       ShowHTML('          <tr valign="top">');
       ShowHTML('          <td><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg_numero" class="sti" SIZE="14" MAXLENGTH="80" VALUE="'.$w_rg_numero.'"></td>');

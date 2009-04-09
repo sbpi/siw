@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $w_dir_volta    = '';
 include_once('constants.inc');

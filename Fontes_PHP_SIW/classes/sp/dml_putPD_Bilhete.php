@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putPD_Bilhete {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_aux, $p_sq_cia_transporte, $p_data, $p_numero, 
-        $p_trecho, $p_rloc, $p_classe, $p_valor_bilhete, $p_valor_taxa, $p_valor_pta, $p_deslocamento, $p_tipo,
+        $p_trecho, $p_rloc, $p_classe, $p_valor_cheio, $p_valor_bilhete, $p_valor_taxa, $p_valor_pta, $p_deslocamento, $p_tipo,
         $p_utilizado, $p_faturado, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPD_Bilhete';
      $params=array('p_operacao'             =>array($operacao,                          B_VARCHAR,         1),
@@ -23,6 +23,7 @@ class dml_putPD_Bilhete {
                    'p_trecho'               =>array(tvl($p_trecho),                     B_VARCHAR,        60),
                    'p_rloc'                 =>array(tvl($p_rloc),                       B_VARCHAR,         6),
                    'p_classe'               =>array(tvl($p_classe),                     B_VARCHAR,         5),
+                   'p_valor_cheio'          =>array(toNumber(tvl($p_valor_cheio)),      B_NUMERIC,      18,2),
                    'p_valor_bilhete'        =>array(toNumber(tvl($p_valor_bilhete)),    B_NUMERIC,      18,2),
                    'p_valor_taxa'           =>array(toNumber(tvl($p_valor_taxa)),       B_NUMERIC,      18,2),
                    'p_valor_pta'            =>array(toNumber(tvl($p_valor_pta)),        B_NUMERIC,      18,2),

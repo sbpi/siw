@@ -394,7 +394,7 @@ function Identificacao() {
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_nome','Nome','1',1,5,60,'1','');
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','');
     Validate('w_nascimento','Data de nascimento','DATA',1,10,10,'',1);
     Validate('w_sexo','Sexo','SELECT','1','1','10','1','');
     Validate('w_sq_estado_civil','Estado civil','SELECT','1','1','10','','1');
@@ -510,7 +510,7 @@ function Identificacao() {
     ShowHTML('        <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td title="Informe seu nome completo, sem abreviações."><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="40" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('          <td title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b>Nome <u>r</u>esumido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+    ShowHTML('          <td title="Informe o nome pelo qual você prefere ser chamado ou pelo qual é mais conhecido."><b>Nome <u>r</u>esumido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
     ShowHTML('          <td title="Informe a data do seu nascimento, conforme consta da carteira de identidade."><b>Data <u>n</u>ascimento:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('        <tr valign="top">');
     SelecaoSexo('<u>S</u>exo:','S',null,$w_sexo,null,'w_sexo',null,null);

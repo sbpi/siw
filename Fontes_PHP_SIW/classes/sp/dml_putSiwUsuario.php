@@ -17,7 +17,7 @@ class dml_putSiwUsuario {
                    'p_chave'            =>array($p_chave,               B_NUMERIC,     32),
                    'p_cliente'          =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'             =>array($p_nome,                B_VARCHAR,     60),
-                   'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     15),
+                   'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     21),
                    'p_cpf'              =>array($p_cpf,                 B_VARCHAR,     14),
                    'p_sexo'             =>array($p_sexo,                B_VARCHAR,      1),
                    'p_vinculo'          =>array($p_vinculo,             B_NUMERIC,     32),

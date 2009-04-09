@@ -417,7 +417,7 @@ function Geral() {
     // Se o beneficiário já foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
     Validate('w_nome','Nome','1',1,5,60,'1','1');
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     Validate('w_sq_segmento','Segmento','SELECT',1,1,10,'1','1');
     Validate('w_inscricao_estadual','Inscrição estadual','1','',3,20,'1','1');
     Validate('w_inicio_atividade','Início de atividade','DATA',1,10,10,'','0123456789/');
@@ -505,7 +505,7 @@ function Geral() {
       } 
       ShowHTML('                   <INPUT type="hidden" name="w_cgccpf" value="'.$w_cgccpf.'">');
       ShowHTML('             <tr><td valign="top"><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'" title="Razão social do cliente, preferencialmente sem abreviações."></td>');
-      ShowHTML('                <td valign="top"><b>Nome <u>r</u>esumido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'" title="Nome resumido do cliente, a ser exibido nas listagens."></td>');
+      ShowHTML('                <td valign="top"><b>Nome <u>r</u>esumido:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'" title="Nome resumido do cliente, a ser exibido nas listagens."></td>');
       selecaoSegMercado('Se<u>g</u>mento:','G','Informe a que segmento a organização está vinculada.',$w_sq_segmento,null,'w_sq_segmento',null,null);
       ShowHTML('          </table>');
       ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');

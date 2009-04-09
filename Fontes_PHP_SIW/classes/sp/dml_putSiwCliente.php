@@ -18,7 +18,7 @@ class dml_putSiwCliente {
                    'p_chave'                =>array($p_chave,               B_NUMERIC,     32),
                    'cliente'                =>array($p_cliente,             B_NUMERIC,     32),
                    'p_nome'                 =>array($p_nome,                B_VARCHAR,     60),
-                   'p_nome_resumido'        =>array($p_nome_resumido,       B_VARCHAR,     15),
+                   'p_nome_resumido'        =>array($p_nome_resumido,       B_VARCHAR,     21),
                    'p_inicio_atividade'     =>array($p_inicio_atividade,    B_DATE,        32),
                    'p_cnpj'                 =>array($p_cnpj,                B_VARCHAR,     18),
                    'p_sede'                 =>array($p_sede,                B_VARCHAR,      1),

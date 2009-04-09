@@ -66,6 +66,7 @@ $O          = strtoupper($_REQUEST['O']);
 
 $p_agenda      = $_REQUEST['p_agenda'];
 $p_programa    = $_REQUEST['p_programa'];
+$p_projeto     = $_REQUEST['p_projeto'];
 $p_unidade     = $_REQUEST['p_unidade'];
 $p_projeto     = $_REQUEST['p_projeto'];
 $p_texto       = $_REQUEST['p_texto'];
@@ -491,8 +492,13 @@ function Calendario() {
     SelecaoTipoEventoCheck(null,null,null,$p_tipo_evento,f($RS_Projeto,'sq_menu'),'p_tipo_evento[]',null,null,null,'&nbsp;');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
-    SelecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, null, 1, null, '<td>');
+    selecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,null,'<td>');
+    ShowHTML('   </tr>');
     ShowHTML('   <tr>');
+    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, 1, null, '<td>');
+    ShowHTML('   </tr>');
+    ShowHTML('   <tr>');    
     SelecaoUnidade('<u>Ó</u>rgão responsável', 'O', null, $p_unidade, null, 'p_unidade', null, null,null,'<td>');
     ShowHTML('   <tr><td><b><u>L</u>ocal<td><input class="STI" accesskey="L" type="text" size="80" maxlength="80" name="p_texto" id="p_texto" value="'. $p_texto .'"></td>');
     ShowHTML('   </tr>');
@@ -634,7 +640,8 @@ function Calendario() {
       CabecalhoRelatorio($w_cliente,'Visualização de Calendário',4,$w_chave,null);
     }
     
-    ShowHTML('<tr><td align="right" colspan="2"><b>Resultados: ' . count($RS_Resultado) . ' </b></td></tr>');
+    ShowHTML('  <td>Período de busca: <b>'.formataDataEdicao($w_inicio).'</b> e <b>'.formataDataEdicao($w_fim).'</b></td>');
+    ShowHTML('  <td align="right">Resultados: '.count($RS_Resultado).'</td></tr>');
     ShowHTML('<tr><td align="center" colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');

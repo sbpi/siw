@@ -15,15 +15,16 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
-  $w_or_tramite     = f($RS,'or_tramite');
-  $w_tramite        = f($RS,'sq_siw_tramite');
-  $w_tramite_ativo  = f($RS,'ativo');
-  $w_valor_inicial  = f($RS,'valor');
-  $w_fim            = f($RS,'fim_real');
-  $w_sg_tramite     = f($RS,'sg_tramite');
-  $w_sigla          = f($RS,'sigla');
-  $w_aditivo        = f($RS,'aditivo');
-  $w_forma_pagamento= f($RS,'sg_forma_pagamento');
+  $w_or_tramite      = f($RS,'or_tramite');
+  $w_tramite         = f($RS,'sq_siw_tramite');
+  $w_tramite_ativo   = f($RS,'ativo');
+  $w_valor_inicial   = f($RS,'valor');
+  $w_fim             = f($RS,'fim_real');
+  $w_sg_tramite      = f($RS,'sg_tramite');
+  $w_sigla           = f($RS,'sigla');
+  $w_aditivo         = f($RS,'aditivo');
+  $w_forma_pagamento = f($RS,'sg_forma_pagamento');
+  $w_internacional   = f($RS,'internacional');
 
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
@@ -453,7 +454,6 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $i += 1;
         }
       }
-    }
 
       if (f($RS,'cumprimento')!='C') {
         $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
@@ -592,7 +592,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
     
     // Cotação de passagens
-    if($l_deslocamento=='S' && $w_or_tramite>=2) {
+    if($l_deslocamento=='S' && $w_or_tramite>=2 && $w_internacional=='S') {
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','COTPASS');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>COTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
@@ -1000,30 +1000,31 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      <tr valign="top"><td><b>Anexo do relatório:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';
       }
       
-    // Acerto de contas da viagem
-    if($l_diaria=='S' && $w_or_tramite>9 && is_array($w_tot_diaria_P)) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ACERTO DE CONTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
-      $l_html.=chr(13).'      <tr><td colspan="2">';
-      $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center"><TD><B><FONT SIZE=2>VALOR';
-      foreach($w_tot_diaria_P as $k => $v) $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.$k;
-      $l_html.=chr(13).'       </tr>';
-      $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Recebido';
-      foreach($w_tot_diaria_P as $k => $v) {
-        $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]);
+      // Acerto de contas da viagem
+      if($l_diaria=='S' && $w_or_tramite>9 && is_array($w_tot_diaria_P)) {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ACERTO DE CONTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center"><TD><B><FONT SIZE=2>VALOR';
+        foreach($w_tot_diaria_P as $k => $v) $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.$k;
+        $l_html.=chr(13).'       </tr>';
+        $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Recebido';
+        foreach($w_tot_diaria_P as $k => $v) {
+          $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]);
+        }
+        $l_html.=chr(13).'       </tr>';
+        $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Devido';
+        foreach($w_tot_diaria_P as $k => $v) {
+          $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
+        }
+        $l_html.=chr(13).'       </tr>';
+        $l_html.=chr(13).'       <tr bgcolor="'.$conTrBgColor.'" align="RIGHT"><TD><B><FONT SIZE=2>Diferença';
+        foreach($w_tot_diaria_P as $k => $v) {
+          $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]-$v);
+        }
+        $l_html.=chr(13).'     </b></td></tr>';
+        $l_html.=chr(13).'        </table></td></tr>';
       }
-      $l_html.=chr(13).'       </tr>';
-      $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Devido';
-      foreach($w_tot_diaria_P as $k => $v) {
-        $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
-      }
-      $l_html.=chr(13).'       </tr>';
-      $l_html.=chr(13).'       <tr bgcolor="'.$conTrBgColor.'" align="RIGHT"><TD><B><FONT SIZE=2>Diferença';
-      foreach($w_tot_diaria_P as $k => $v) {
-        $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]-$v);
-      }
-      $l_html.=chr(13).'     </b></td></tr>';
-      $l_html.=chr(13).'        </table></td></tr>';
     }
 
     if ($w_or_tramite>4) {

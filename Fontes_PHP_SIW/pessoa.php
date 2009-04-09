@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -165,14 +165,18 @@ function Benef() {
         $w_username_ant         = $_REQUEST['w_username_ant'];
     } else {
         if ($O=='I' && $w_sq_pessoa=='' && $w_cpf>'' && $SG=='SGUSU') {
-            $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
-            if (count($RS)>0) {
-                ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'CPF já associado a outro usuário!\');');
-                ShowHTML('  history.back(1);');
-                ScriptClose();
-                exit;
+          $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,null,$w_cpf,null);
+          if (count($RS)>0) {
+            if (nvl(f($RS,'username'),'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'CPF já associado a outro usuário!\');');
+              ShowHTML('  history.back(1);');
+              ScriptClose();
+              exit;
+            } else {
+              $w_sq_pessoa = f($RS,'sq_pessoa');
             }
+          }
         }
         if (strpos('IATDEV',$O)!==false) {
             if (nvl($w_sq_pessoa,'')!='') {
@@ -251,7 +255,7 @@ function Benef() {
     } elseif ($O=='I' || $O=='A') {
         ShowHTML('  if (theForm.Botao.value == \'Troca\') { return true; }');
         Validate('w_nome','Nome','1',1,5,60,'1','1');
-        Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+        Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
         Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
         if ($SG=='RHUSU') {
             if (strlen($w_cpf)!=10) {
@@ -386,7 +390,7 @@ function Benef() {
             ShowHTML('       <tr><td><font size=1>CPF:</font><br><b><font size=2>'.$w_cpf);
             ShowHTML('                   <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
             ShowHTML('       <tr><td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-            ShowHTML('                <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+            ShowHTML('                <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
             SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
             ShowHTML('          </table>');
             if ($SG=="RHUSU") {
@@ -652,7 +656,7 @@ function CadastraPessoa() {
     } else {
         Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
     }
-    Validate('w_nome_resumido','Nome resumido','1',1,2,15,'1','1');
+    Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     if ($w_tipo_pessoa==1) {
         Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
         Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
@@ -759,7 +763,7 @@ function CadastraPessoa() {
             ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
         }
         ShowHTML('          <tr valign="top">');
-        ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_nome_resumido.'"></td>');
+        ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
         if ($w_tipo_pessoa==1) {
             SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
             ShowHTML('          <td><b>Da<u>t</u>a de nascimento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');

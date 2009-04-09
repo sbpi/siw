@@ -342,7 +342,9 @@ function Inicial() {
     if ($w_embed!='WORD') {
       CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
     }
-    ShowHTML('<tr><td align="right" colspan="2"><b>Resultados: '.count($RS_Resultado).' </b></td></tr>');
+    ShowHTML('<tr valign="top">');
+    ShowHTML('  <td>Período de busca: <b>'.formataDataEdicao($w_inicio).'</b> e <b>'.formataDataEdicao($w_fim).'</b></td>');
+    ShowHTML('  <td align="right">Resultados: '.count($RS_Resultado).'</td></tr>');
     ShowHTML('<tr><td align="center" colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

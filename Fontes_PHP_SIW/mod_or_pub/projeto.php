@@ -1608,7 +1608,7 @@ function Etapas() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)){
       Validate('w_ordem','Tipo de visão','SELECT','1','1','10','','1');
-      Validate('w_titulo','Título','','1','2','100','1','1');
+      Validate('w_titulo','Título','','1','2','150','1','1');
       Validate('w_quantidade','Quantitativo programado','','1','2','18','','1');
       Validate('w_unidade_medida','Unidade de medida','','1','2','100','1','1');
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
@@ -1710,7 +1710,7 @@ function Etapas() {
   ShowHTML('<INPUT type="hidden" name="w_perc_conclusao" value="0">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('    <table width="97%" border="0">');
-  ShowHTML('      <tr><td><b>Prod<u>u</u>to:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="90" VALUE="'.$w_titulo.'" title="Bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Para cada ação deve haver um só produto. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação."></td>');
+  ShowHTML('      <tr><td><b>Prod<u>u</u>to:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="150" VALUE="'.$w_titulo.'" title="Bem ou serviço que resulta da ação, destinado ao público-alvo ou o investimento para a produção deste bem ou serviço. Para cada ação deve haver um só produto. Em situações especiais, expressa a quantidade de beneficiários atendidos pela ação."></td>');
   ShowHTML('     <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   MontaRadioNS('<b>Meta LOA?</b>',$w_programada,'w_programada');
   MontaRadioNS('<b>Meta cumulativa?</b>',$w_cumulativa,'w_cumulativa');

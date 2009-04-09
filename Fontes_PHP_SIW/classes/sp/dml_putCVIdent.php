@@ -17,7 +17,7 @@ class dml_putCVIdent {
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_nome'                      =>array($p_nome,                                          B_VARCHAR,        60),
-                   'p_nome_resumido'             =>array($p_nome_resumido,                                 B_VARCHAR,        15),
+                   'p_nome_resumido'             =>array($p_nome_resumido,                                 B_VARCHAR,        21),
                    'p_foto'                      =>array(tvl($p_foto),                                     B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),

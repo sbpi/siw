@@ -37,7 +37,7 @@ class dml_putViagemGeral {
                    'p_atividade'             =>array(tvl($p_atividade),                  B_INTEGER,        32),
                    'p_cpf'                   =>array(tvl($p_cpf),                        B_VARCHAR,        14),
                    'p_nome'                  =>array(tvl($p_nome),                       B_VARCHAR,        60),
-                   'p_nome_resumido'         =>array(tvl($p_nome_resumido),              B_VARCHAR,        15),
+                   'p_nome_resumido'         =>array(tvl($p_nome_resumido),              B_VARCHAR,        21),
                    'p_sexo'                  =>array(tvl($p_sexo),                       B_VARCHAR,         1),
                    'p_vinculo'               =>array(tvl($p_vinculo),                    B_INTEGER,        32),
                    'p_inicio_atual'          =>array(tvl($p_inicio_atual),               B_DATE,           32),

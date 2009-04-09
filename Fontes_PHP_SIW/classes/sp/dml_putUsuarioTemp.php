@@ -16,7 +16,7 @@ class dml_putUsuarioTemp {
                    'p_cliente'          =>array($p_cliente,             B_NUMERIC,     4),
                    'p_cpf'              =>array($p_cpf,                 B_VARCHAR,     14),
                    'p_nome'             =>array($p_nome,                B_VARCHAR,     60),
-                   'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     15),
+                   'p_nome_resumido'    =>array($p_nome_resumido,       B_VARCHAR,     21),
                    'p_sexo'             =>array($p_sexo,                B_VARCHAR,     1),
                    'p_email'            =>array($p_email,               B_VARCHAR,     30),
                    'p_vinculo'          =>array($p_vinculo,             B_NUMERIC,     1),

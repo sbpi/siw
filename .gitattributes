@@ -873,6 +873,7 @@ Fontes_PHP_SIW/classes/sp/db_getOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrImport.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridadeList.php -text
+Fontes_PHP_SIW/classes/sp/db_getPDImportacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPDParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Bilhete.php -text
@@ -1214,6 +1215,7 @@ Fontes_PHP_SIW/classes/sp/dml_putOrImport.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPAParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDDiaria.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPDImportacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDMissao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDTarefa.php -text
@@ -2187,6 +2189,7 @@ Fontes_PHP_SIW/mod_pa/relatorio.php -text
 Fontes_PHP_SIW/mod_pa/tabelas.php -text
 Fontes_PHP_SIW/mod_pa/visualGR.php -text
 Fontes_PHP_SIW/mod_pa/visualdocumento.php -text
+Fontes_PHP_SIW/mod_pd/conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text
