@@ -183,7 +183,7 @@ begin
                 null as cd_ordem,
                 null as restricao,
                 g.sigla sg_setor, g.nome as nm_setor,
-                i3.codigo_interno as cd_projeto, i3.titulo as nm_projeto, i3.executor, i3.motivo_insatisfacao,
+                i3.codigo_interno as cd_projeto, i3.titulo as nm_projeto, i3.executor, i.motivo_insatisfacao,
                 i4.sq_siw_solicitacao as sq_programa, i4.codigo_interno as cd_programa, i4.titulo as nm_programa
            from siw_solicitacao                   i
                 inner        join siw_tramite     i1 on (i.sq_siw_tramite      = i1.sq_siw_tramite and
@@ -213,7 +213,8 @@ begin
                                            )
                 )
             and (p_texto       is null or (p_texto       is not null and (acentos(i.titulo)    like '%'||acentos(p_texto)||'%' or
-                                                                          acentos(i.descricao) like '%'||acentos(p_texto)||'%'
+                                                                          acentos(i.descricao) like '%'||acentos(p_texto)||'%' or
+                                                                          acentos(i.motivo_insatisfacao) like '%'||acentos(p_texto)||'%' 
                                                                          )
                                            )
                 );
