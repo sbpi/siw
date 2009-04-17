@@ -665,7 +665,8 @@
 						$url .= 'chd=t:';
 						foreach($this->Data->data as $data) {							
 							foreach($data as $datum) {
-								$url .= number_format(intval($datum), 1, '.', '').',';
+								//$url .= number_format(intval($datum), 1, '.', '').',';
+								$url .= $datum.',';
 							}
 							$url = substr($url, 0, -1);
 							$url.= '|';
@@ -732,7 +733,7 @@
 				$url .= '&';
 			}
 			if(!empty($this->Graph->pie_labels)) {
-				$url .= 'chl=';				
+				$url .= 'chl=';
 				foreach($this->Graph->pie_labels as $value) {
 					if(!empty($value)) {
 						$url .= str_replace(' ', '+', $value).'|';
@@ -782,7 +783,7 @@
 			
 			$url = substr($url, 0, -1);	
 			$this->url = $url;
-			
+
 			echo '<img src="'.$url.'"/>';
 			
 		}

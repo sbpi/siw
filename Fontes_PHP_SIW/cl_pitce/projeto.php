@@ -3301,10 +3301,9 @@ function Pacote() {
   // Recupera os dados do projeto
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $w_cabecalho  = f($RS,'titulo').' ('.$w_chave.')';  
-
   // Recupera os interessados que são vinculados a pacotes de trabalho
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_chave_aux,'QUESTAO',null);
-  $RS = SortArray($RS,'sq_etapa_pai','asc'); 
+  $RS = SortArray($RS,'cd_ordem','asc'); 
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -3357,6 +3356,7 @@ function Pacote() {
       ShowHTML('      <tr><td align="center" colspan=8><hr>');
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
+    //var_dump($RS);
     foreach($RS as $row)  {
       if (f($row,'vinculado_inter')>0) {
         ShowHTML('      <tr valign="top">');
@@ -3872,8 +3872,19 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     } else {
       $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
     }
-    if($P4!=1) $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,$l_setor,$l_sq_setor,$TP).'</b>';
-    else       $l_html .= chr(13).'        <td>'.$l_setor.'</b>';
+    if($P4!=1) $l_html .= chr(13).'        <td>'.ExibeUnidade(null,$w_cliente,$l_setor,$l_sq_setor,$TP);
+    else       $l_html .= chr(13).'        <td>'.$l_setor;    
+    $RSPacote = db_getSolicAreas::getInstanceOf($dbms,$l_chave,$l_chave_aux,'PACOTE');
+    $RSPacote = SortArray($RSPacote,'sigla','asc');
+    if(count($RSPacote) > 0){
+      foreach($RSPacote as $row){
+        if(f($row,'sq_unidade')!=$l_sq_setor){
+          if($P4!=1) $l_html .= ', '.ExibeUnidade(null,$w_cliente,f($row,'sigla'),f($row,'sq_unidade'),$TP);
+          else       $l_html .= ', '.f($row,'sigla');      
+        }
+      }
+      $l_html .= '</td>';    
+    }
 
     if($P4!=1) $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,$l_sq_resp,$TP,$l_resp).'</b>';
     else       $l_html .= chr(13).'        <td>'.$l_resp.'</b>';

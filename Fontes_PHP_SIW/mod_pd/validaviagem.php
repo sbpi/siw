@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de validação dos dados da missão
 // -------------------------------------------------------------------------
@@ -118,7 +118,6 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
                 $w_data_atual   = f($row,'phpdt_chegada');
                 $w_cidade_atual = f($row,'cidade_dest');                
               }
-              //echo $i.'='.$w_data_atual.'-'.f($row,'phpdt_saida').'-'.$w_cidade_atual.'-'.f($row,'cidade_orig').'-'.f($row,'diaria').'<br>';
               $i++;
             }
           }
@@ -126,11 +125,11 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S') {
             $w_cont = 0;
             foreach ($l_rs5 as $row) {
-              if (nvl(f($row,'diaria'),'')!='') {
+              if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && f($row,'origem_nacional')=='S') {
                 $w_cont++;
               }
             }
-            if ($w_cont!=count($l_rs5)-1) {
+            if ($w_cont>0) {
               $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
               $l_tipo = 0;
             }
@@ -199,11 +198,11 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if (f($l_rs_solic,'cumprimento')=='P' && (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S')) {
             $w_cont = 0;
             foreach ($l_rs6 as $row) {
-              if (nvl(f($row,'diaria'),'')!='') {
+            if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && f($row,'origem_nacional')=='S') {
                 $w_cont++;
               }
             }
-            if ($w_cont!=count($l_rs6)-1) {
+            if ($w_cont>0) {
               $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
               $l_tipo = 0;
             }

@@ -3744,6 +3744,9 @@ function Diarias() {
         $w_trechos[$i][45] = f($row,'hospedagem_observacao');
         $w_trechos[$i][46] = f($row,'veiculo_retirada');
         $w_trechos[$i][47] = f($row,'veiculo_devolucao');
+        $w_trechos[$i][48] = f($row,'saida_internacional');
+        $w_trechos[$i][49] = f($row,'chegada_internacional');
+        $w_trechos[$i][50] = f($row,'origem_nacional');
         // Cria array para guardar o valor total por moeda
         if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
         if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -3787,7 +3790,7 @@ function Diarias() {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if ($w_max_hosp >=0) {
+        if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]=='S') {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -5808,25 +5811,31 @@ function PrestarContas() {
   $w_cumprimento_bd     = f($RS,'cumprimento');
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_cumprimento      = $_REQUEST['w_cumprimento'];
-    $w_sq_bilhete       = $_REQUEST['w_sq_bilhete'];
-    $w_tipo             = $_REQUEST['w_tipo'];
-    $w_nota_conclusao   = $_REQUEST['w_nota_conclusao'];
-    $w_atual            = $_REQUEST['w_atual'];
-    $w_reembolso        = $_REQUEST['w_reembolso'];
-    $w_valor            = $_REQUEST['w_valor'];
-    $w_observacao       = $_REQUEST['w_observacao'];
-    $w_relatorio        = $_REQUEST['w_relatorio'];
-    $w_deposito         = $_REQUEST['w_deposito'];
+    $w_cumprimento              = $_REQUEST['w_cumprimento'];
+    $w_sq_bilhete               = $_REQUEST['w_sq_bilhete'];
+    $w_tipo                     = $_REQUEST['w_tipo'];
+    $w_nota_conclusao           = $_REQUEST['w_nota_conclusao'];
+    $w_atual                    = $_REQUEST['w_atual'];
+    $w_reembolso                = $_REQUEST['w_reembolso'];
+    $w_valor                    = $_REQUEST['w_valor'];
+    $w_observacao               = $_REQUEST['w_observacao'];
+    $w_ressarcimento            = $_REQUEST['w_ressarcimento'];
+    $w_ressarcimento_valor      = $_REQUEST['w_ressarcimento_valor'];
+    $w_ressarcimento_observacao = $_REQUEST['w_ressarcimento_observacao'];
+    $w_relatorio                = $_REQUEST['w_relatorio'];
+    $w_deposito                 = $_REQUEST['w_deposito'];
   } else {
-    $w_cumprimento      = f($RS,'cumprimento');
-    $w_nota_conclusao   = f($RS,'nota_conclusao');
-    $w_atual            = f($RS,'sq_relatorio_viagem');
-    $w_reembolso        = f($RS,'reembolso');
-    $w_valor            = formatNumber(f($RS,'reembolso_valor'));
-    $w_observacao       = f($RS,'reembolso_observacao');
-    $w_relatorio        = f($RS,'relatorio');
-    $w_deposito         = f($RS,'deposito_identificado');
+    $w_cumprimento              = f($RS,'cumprimento');
+    $w_nota_conclusao           = f($RS,'nota_conclusao');
+    $w_atual                    = f($RS,'sq_relatorio_viagem');
+    $w_reembolso                = f($RS,'reembolso');
+    $w_valor                    = formatNumber(f($RS,'reembolso_valor'));
+    $w_observacao               = f($RS,'reembolso_observacao');
+    $w_ressarcimento            = f($RS,'ressarcimento');
+    $w_ressarcimento_valor      = formatNumber(f($RS,'ressarcimento_valor'));
+    $w_ressarcimento_observacao = f($RS,'ressarcimento_observacao');
+    $w_relatorio                = f($RS,'relatorio');
+    $w_deposito                 = f($RS,'deposito_identificado');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -5840,15 +5849,22 @@ function PrestarContas() {
   Validate('w_cumprimento','Tipo de cumprimento','SELECT','1',1,1,'1','1');
   if ($w_cumprimento=='P' || $w_cumprimento=='C') {
     Validate('w_nota_conclusao','Motivo','','1',1,2000,'1','1');
+    if($w_cumprimento=='C' && $w_ressarcimento=='S') {
+        Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
+        Validate('w_ressarcimento_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
+        CompValor('w_ressarcimento_valor','Valor do ressarcimento','>','0,00','zero');
+        Validate('w_ressarcimento_observacao','Observação sobre o ressarcimento','','1',1,2000,'1','1');
+    }
     //if ($w_cumprimento=='P') Validate('["w_tipo[]"]','Utilização','SELECT','1',1,1,'1','1');
   }
   if ($w_cumprimento!='C' && $w_cumprimento!='N') Validate('w_relatorio','Relatório de viagem','','1',1,4000,'1','1');
-  if ($w_cumprimento!='C' && $w_reembolso=='C') {
+  if ($w_cumprimento!='C' && $w_ressarcimento=='S') {
     Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
-    Validate('w_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
-    CompValor('w_valor','Valor do ressarcimento','>','0,00','zero');
-    Validate('w_observacao','Observação sobre o ressarcimento','','',1,2000,'1','1');
-  } elseif ($w_cumprimento!='C' && $w_reembolso=='S') {
+    Validate('w_ressarcimento_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
+    CompValor('w_ressarcimento_valor','Valor do ressarcimento','>','0,00','zero');
+    Validate('w_ressarcimento_observacao','Observação sobre o ressarcimento','','1',1,2000,'1','1');
+  } 
+  if ($w_cumprimento!='C' && $w_reembolso=='S') {
     Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
     CompValor('w_valor','Valor do reembolso','>','0,00','zero');
     Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
@@ -5916,16 +5932,10 @@ function PrestarContas() {
       ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
     }
 
-    ShowHTML('    <tr><td colspan="2"><b>Há reembolso ou ressarcimento?</b><br>');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Reembolso ao beneficiário');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="C" '.(($w_reembolso=='C') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Ressarcimento');
-    if ($w_reembolso=='C') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
-      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
-    } elseif ($w_reembolso=='S') {
+    ShowHTML('    <tr><td colspan="2"><b>Há reembolso?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
+      if ($w_reembolso=='S') {
       ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
       ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -5941,17 +5951,31 @@ function PrestarContas() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
     }
+    
+    ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
+    if ($w_ressarcimento=='S') {
+      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
+    }
   } elseif ($w_cumprimento=='C') {
     ShowHTML('<tr><td><br><b>Motivo do cancelamento:<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
     ShowHTML('      <tr><td valign="top"><textarea '.$w_Disabled.' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');
-    ShowHTML('    <tr><td colspan="2"><b>Há reembolso ou ressarcimento?</b><br>');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="C" '.(($w_reembolso=='C') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Ressarcimento');
-    if ($w_reembolso=='C') {
+    ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
+    if ($w_ressarcimento=='S') {
       ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
-      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
     }
   }
 
@@ -6200,11 +6224,11 @@ function Reembolso() {
   ScriptOpen('JavaScript');
   FormataValor();
   ValidateOpen('Validacao');
-  if ($w_reembolso=='C') {
+  if ($w_ressarcimento=='S') {
     Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
-    Validate('w_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
-    CompValor('w_valor','Valor do ressarcimento','>','0,00','zero');
-    Validate('w_observacao','Observação sobre o ressarcimento','','',1,2000,'1','1');
+    Validate('w_ressarcimento_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
+    CompValor('w_ressarcimento_valor','Valor do ressarcimento','>','0,00','zero');
+    Validate('w_ressarcimento_observacao','Observação sobre o ressarcimento','1','',1,2000,'1','1');
   } elseif ($w_reembolso=='S') {
     Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
     CompValor('w_valor','Valor do reembolso','>','0,00','zero');
@@ -6219,6 +6243,11 @@ function Reembolso() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'' && $w_reembolso=='S') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'document.focus()\';');
+  } 
+  if ($w_troca>'' && $w_ressarcimento=='S') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'document.focus()\';');
@@ -6256,16 +6285,10 @@ function Reembolso() {
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
-  ShowHTML('    <tr><td colspan="2"><b>Há reembolso ou ressarcimento?</b><br>');
-  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
-  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Reembolso ao beneficiário');
-  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="C" '.(($w_reembolso=='C') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Ressarcimento');
-  if ($w_reembolso=='C') {
-    ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-    ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-    ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
-    ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
-  } elseif ($w_reembolso=='S') {
+  ShowHTML('    <tr><td colspan="2"><b>Há reembolso?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').'" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='N') ? 'checked' : '').'" onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
+    if ($w_reembolso=='S') {
     ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
     ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
     ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -6281,6 +6304,17 @@ function Reembolso() {
   } else {
     ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
   }
+  ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
+    if ($w_ressarcimento=='S') {
+      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
+    }
   ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('    <tr><td align="center" colspan="2">');
   ShowHTML('        <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -6679,7 +6713,8 @@ function Grava() {
           dml_putPD_Reembolso::getInstanceOf($dbms,
               $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],
               $_REQUEST['w_valor'],$_REQUEST['w_observacao'],
-              $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento']);
+              $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
+              $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
           
           /*
           // Grava dados dos bilhetes
@@ -6789,7 +6824,8 @@ function Grava() {
         // Grava dados do reembolso
         dml_putPD_Reembolso::getInstanceOf($dbms,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
-            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento']);
+            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
+            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -7011,4 +7047,3 @@ function Main() {
   }
 }
 ?>
-

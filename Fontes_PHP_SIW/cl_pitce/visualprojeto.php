@@ -301,7 +301,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $w_total_orcamento = 0;
       $w_total_peso      = 0;
       $w_total_tarefa    = 0;
-    
+
       if ($operacao=='L' || $operacao=='V') {
         if (count($RSQuery)>0) {
           foreach($RSQuery as $row) {

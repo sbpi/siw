@@ -83,24 +83,34 @@ $w_dir = 'cl_pitce/';
 $w_cliente = RetornaCliente();
 $w_usuario = RetornaUsuario();
 $w_ano     = RetornaAno();
-$w_mes     = $_REQUEST['w_mes'];
+$w_sem     = $_REQUEST['w_sem'];
   
 // Configura variáveis para montagem do calendário
 if (nvl($w_mes, '') == '')    $w_mes = date('m', time());
-$w_inicio = first_day(toDate('01/'.substr(100 + (intVal($w_mes) - 1), 1, 2).'/'.$w_ano));
-$w_fim = last_day(toDate('01/'.substr(100 + (intVal($w_mes) + 1), 1, 2).'/'.$w_ano));
-$w_mes1 = substr(100 + intVal($w_mes) - 1, 1, 2);
-$w_mes3 = substr(100 + intVal($w_mes) + 1, 1, 2);
-$w_ano1 = $w_ano;
-$w_ano3 = $w_ano;
-// Ajusta a mudança de ano
-if ($w_mes1 == '00') {
-  $w_mes1 = '12';
-  $w_ano1 = $w_ano -1;
+if (nvl($w_sem, '') == ''){
+  $w_sem = date('Y', time());
+  if(intVal($w_mes)>=1 || intVal($w_mes)<=6){
+    $w_sem .= 1;
+  }else{
+    $w_sem .= 2;
+  }
 }
-if ($w_mes3 == '13') {
-  $w_mes3 = '01';
-  $w_ano3 = $w_ano +1;
+if(intval(substr($w_sem,4)) == 1){
+  $w_sem = ($w_ano).'1';
+  $w_inicio = first_day(toDate('01/01/'.$w_ano));
+  $w_fim = last_day(toDate('01/06/'.$w_ano));
+  $w_sem1 = ($w_ano-1).'2';
+  $w_sem3 = $w_ano.'2';
+  $w_ano1 = $w_ano-1;
+  $w_ano3 = $w_ano;
+}else{
+  $w_sem = ($w_ano).'2';
+  $w_inicio = first_day(toDate('01/07/'.$w_ano));
+  $w_fim = last_day(toDate('01/12/'.$w_ano));
+  $w_sem1 = $w_ano.'1';
+  $w_sem3 = ($w_ano+1).'1';
+  $w_ano1 = $w_ano;
+  $w_ano3 = $w_ano + 1;
 }
 
 if ($O == '') $O = 'L';
@@ -201,10 +211,10 @@ function Inicial() {
     ShowHTML(' </table></fieldset>');
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-    for ($i = $w_ano1; $i <= $w_ano3; $i++) {
-      $RS_Ano[$i] = db_getDataEspecial :: getInstanceOf($dbms, $w_cliente, null, $i, 'S', null, null, null);
-      $RS_Ano[$i] = SortArray($RS_Ano[$i], 'data_formatada', 'asc');
-    }
+    //for ($i = $w_ano1; $i <= $w_ano3; $i++) {
+      $RS_Ano[$w_ano] = db_getDataEspecial :: getInstanceOf($dbms, $w_cliente, null, $w_ano, 'S', null, null, null);
+      $RS_Ano[$w_ano] = SortArray($RS_Ano[$w_ano], 'data_formatada', 'asc');
+    //}
   
     // Recupera os dados da unidade de lotação do usuário
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
@@ -258,28 +268,37 @@ function Inicial() {
   
     // Exibe calendário e suas ocorrências ==============
     ShowHTML('          <td width="'.$width.'" align="center"><table border="1" cellpadding=0 cellspacing=0>');
-    ShowHTML('            <tr><td colspan=3 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
-    ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
+    ShowHTML('            <tr><td colspan=6 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
+    ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
     ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente, 'nome_resumido').' ('.f($RS_Unidade, 'nm_cidade').')</td>');
-    ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_mes='.$w_mes3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
+    ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
     ShowHTML('              </table>');
     // Variáveis para controle de exibição do cabeçalho das datas especiais
     $w_detalhe1 = false;
     $w_detalhe2 = false;
     $w_detalhe3 = false;
     ShowHTML('            <tr valign="top">');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1], $w_mes1.$w_ano1, $w_datas, $w_cores, & $w_detalhe1).' </td>');
+    if(substr($w_sem,4) == 1){    
+      for($i=1; $i<=6;$i++){
+        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
+      }
+    }else{
+      for($i=7; $i<=12;$i++){
+        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
+      }    
+    }
+    /*ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1], $w_mes1.$w_ano1, $w_datas, $w_cores, & $w_detalhe1).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], $w_mes.$w_ano, $w_datas, $w_cores, & $w_detalhe2).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3], $w_mes3.$w_ano3, $w_datas, $w_cores, & $w_detalhe3).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3], $w_mes3.$w_ano3, $w_datas, $w_cores, & $w_detalhe3).' </td>');*/
   
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
-      ShowHTML('            <tr><td colspan=3 bgcolor="'.$conTrBgColor.'">');
+      ShowHTML('            <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');
       ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
     }
   
     // Exibe informações complementares sobre o calendário
     ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-    ShowHTML('              <td colspan=3 align="center">');
+    ShowHTML('              <td colspan=6 align="center">');
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
       ShowHTML('                <table width="100%" border="0" cellspacing=1>');
       if (count($RS_Ano) == 0) {
@@ -287,8 +306,8 @@ function Inicial() {
       } else {
         ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
         reset($RS_Ano);
-        for ($i = $w_ano1; $i <= $w_ano3; $i++) {
-          $RS_Ano_Atual = $RS_Ano[$i];
+        //for ($i = $w_ano1; $i <= $w_ano3; $i++) {
+          $RS_Ano_Atual = $RS_Ano[$w_ano];
           foreach ($RS_Ano_Atual as $row_ano) {
             // Exibe apenas as ocorrências do trimestre selecionado
             if (f($row_ano, 'data_formatada') >= $w_inicio && f($row_ano, 'data_formatada') <= $w_fim) {
@@ -297,7 +316,7 @@ function Inicial() {
               ShowHTML('                    <td>'.f($row_ano, 'nome'));
             }
           }
-        }
+        //}
         ShowHTML('              </table>');
       }
     }

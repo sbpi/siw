@@ -1,4 +1,4 @@
-<?
+<?php
 echo 'LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");
 echo '<br>ORACLE_HOME ==>'.getenv("ORACLE_HOME");
 echo '<BR>NLS_LANG==>'.getenv("NLS_LANG");

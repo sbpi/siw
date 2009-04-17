@@ -575,10 +575,10 @@ function VisualDados() {
         ShowHTML('        '.$w_referencia);
         ShowHTML('        <td align="right">'.((f($row,'previsao')=='S') ? '* ' : '').(($p_exibe) ? '<sup>('.$p_cont.')</sup> ' : '').nvl(formatNumber(f($row,'valor'),4),'---').'</td>');
         ShowHTML('      </tr>');
-        if ($i<=5) {
+        if ($i<5) {
           // mostra somente as 5 primeiras ocorrências no gráfico
           $w_legenda[$i] = $w_referencia;
-          $w_valor[$i]   = f($row,'valor');
+          $w_valor[$i]   = str_replace(',','.',f($row,'valor'));
         }
         $i++;
       } 
@@ -605,7 +605,13 @@ function VisualDados() {
                                  $w_encoding
                                 )
               );
-      ShowHTML('</table>');
+      ShowHTML('<br/><br/>');
+      ShowHTML(geraGraficoGoogle('Evolução no período',$SG,'barind',
+                                 $w_valor, 
+                                 $w_legenda,                                
+                                 $w_encoding
+                                )
+              );      ShowHTML('</table>');
     } else {
       ShowHTML('<tr><td><td align="right"><b>Registros existentes: '.count($RS));
       ShowHTML('<tr><td align="center" colspan=3>');

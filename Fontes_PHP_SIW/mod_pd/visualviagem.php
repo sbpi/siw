@@ -367,6 +367,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $w_trechos[$i][37] = formataDataEdicao(f($row,'veiculo_retirada'));
             $w_trechos[$i][38] = formataDataEdicao(f($row,'veiculo_devolucao'));
             $w_trechos[$i][39] = f($row,'destino_nacional');
+            $w_trechos[$i][40] = f($row,'saida_internacional');
+            $w_trechos[$i][41] = f($row,'chegada_internacional');
+            $w_trechos[$i][42] = f($row,'origem_nacional');
             
             // Cria array para guardar o valor total por moeda
             if ($w_trechos[$i][13]>'') $w_tot_diaria_S[$w_trechos[$i][13]] = 0;
@@ -409,7 +412,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           
           $w_tot_local = $w_diarias + $w_locacoes;
           
-          if ($w_tot_local!=0 || $i!=count($w_trechos)) {
+          if ($w_trechos[$i][40]==0 && $w_trechos[$i][41]==0 && $w_trechos[$i][42]=='S' && ($w_tot_local!=0 || $i!=count($w_trechos))) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             
             // Configura a quantidade de linhas do trecho
@@ -987,14 +990,15 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } elseif (f($RS,'cumprimento')=='C') {
         $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Motivo do cancelamento:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } 
-      if (f($RS,'reembolso')=='C') {
-        $l_html.=chr(13).'      <tr><td><b>Ressarcimento:</b></td><td>R$ '.formatNumber(f($RS,'reembolso_valor')).'</td></tr>';
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Depósito identificado:</b></td><td>'.f($RS,'deposito_identificado').'</td></tr>';
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(CRLF2BR(f($RS,'reembolso_observacao')),'---').'</td></tr>';
-      } elseif (f($RS,'reembolso')=='S') {
+      if (f($RS,'reembolso')=='S') {
         $l_html.=chr(13).'      <tr><td><b>Reembolso ao beneficiário:</b></td><td>R$ '.formatNumber(f($RS,'reembolso_valor')).'</td></tr>';
         $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa e memória de cálculo:</b></td><td>'.nvl(CRLF2BR(f($RS,'reembolso_observacao')),'---').'</td></tr>';
       }
+      if (f($RS,'ressarcimento')=='S') {
+        $l_html.=chr(13).'      <tr><td><b>Ressarcimento:</b></td><td>R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Depósito identificado:</b></td><td>'.f($RS,'deposito_identificado').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
+      } 
       if (f($RS,'cumprimento')!='C') $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Relatório de viagem:</b></td><td>'.nvl(CRLF2BR(f($RS,'relatorio')),'---').'</td></tr>';
       if (nvl(f($RS,'sq_relatorio_viagem'),'')!='') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Anexo do relatório:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';

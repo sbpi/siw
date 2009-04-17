@@ -76,7 +76,25 @@ begin
                 n2.sq_tipo_lancamento as sq_lan_hsp, n2.nome as nm_lan_hsp,
                 o.sq_pdvinculo_financeiro as sq_fin_vei,
                 o1.sq_projeto_rubrica as sq_rub_vei, o1.codigo as cd_rub_vei, o1.nome as nm_rub_vei, o1.descricao as ds_rub_vei,
-                o2.sq_tipo_lancamento as sq_lan_vei, o2.nome as nm_lan_vei
+                o2.sq_tipo_lancamento as sq_lan_vei, o2.nome as nm_lan_vei,
+                (select count(*) 
+                   from pd_deslocamento            x
+                        inner   join co_cidade     k on (x.destino = k.sq_cidade)
+                          inner join co_pais       l on (k.sq_pais = l.sq_pais)
+                  where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                    and x.sq_deslocamento    <> a.sq_deslocamento 
+                    and trunc(x.saida)       = trunc(a.chegada) 
+                    and l.padrao             = 'N'
+                ) saida_internacional,
+                (select count(*) 
+                   from pd_deslocamento            x
+                        inner   join co_cidade     k on (x.origem  = k.sq_cidade)
+                          inner join co_pais       l on (k.sq_pais = l.sq_pais)
+                  where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                    and x.sq_deslocamento    <> a.sq_deslocamento 
+                    and trunc(x.chegada)       = trunc(a.saida) 
+                    and l.padrao             = 'N'
+                ) chegada_internacional
            from pd_deslocamento                       a
                 inner      join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
                 inner      join co_cidade             b  on (a.origem                     = b.sq_cidade)
