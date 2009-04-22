@@ -159,6 +159,9 @@ begin
        where sq_siw_solicitacao         = p_chave
          and sq_diaria                  = p_sq_diaria;
    End If;
+   
+   -- Ajusta as diárias
+   sp_calculadiarias(p_chave, null, p_tipo);
 
 end SP_PutPdDiaria;
 /

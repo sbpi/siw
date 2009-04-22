@@ -93,6 +93,9 @@ begin
             update pd_diaria a set a.sq_deslocamento_chegada = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_chegada = w_desloc(i).sq_chave_origem;
             update pd_diaria a set a.sq_deslocamento_saida   = w_desloc(i).sq_chave_destino where a.tipo='P' and a.sq_deslocamento_saida   = w_desloc(i).sq_chave_origem;
          end loop;
+
+         -- Ajusta as diárias
+         sp_calculadiarias(p_chave, null, 'P');
       End If;
    End If;
    
