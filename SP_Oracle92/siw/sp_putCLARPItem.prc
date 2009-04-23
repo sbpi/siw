@@ -100,7 +100,7 @@ begin
          If w_item_forn.embalagem <> p_embalagem              Then w_log := w_log || chr(13)||chr(10)||'Embalagem: de "'||w_item_forn.embalagem||'" para "'||p_embalagem||'"'; End If;
          If w_item_forn.fator_embalagem <> p_fator            Then w_log := w_log || chr(13)||chr(10)||'Fator de embalagem: de "'||w_item_forn.fator_embalagem||'" para "'||p_fator||'"'; End If;
          If w_item_forn.valor_unidade <> p_valor              Then w_log := w_log || chr(13)||chr(10)||'Valor unitário: de "'||fValor(w_item_forn.valor_unidade,'T',4)||'" para "'||fValor(p_valor,'T',4)||'"'; End If;
-         If w_item_sol.quantidade_autorizada <> p_quantidade  Then w_log := w_log || chr(13)||chr(10)||'CMM: de "'||fValor(w_item_sol.quantidade_autorizada,'T',2)||'" para "'||fValor(p_quantidade,'T',2)||'"'; End If;
+         If w_item_sol.quantidade_autorizada <> p_quantidade  Then w_log := w_log || chr(13)||chr(10)||case p_cliente when 9614 then 'CMM' else 'Quantidade' end||': de "'||fValor(w_item_sol.quantidade_autorizada,'T',2)||'" para "'||fValor(p_quantidade,'T',2)||'"'; End If;
          If w_item_sol.cancelado <> p_cancelado               Then 
             w_log := w_log || chr(13)||chr(10)||'Indisponível: de "'||case w_item_sol.cancelado when  'S' then 'Sim' else 'Não' end ||'" para "'||case p_cancelado when  'S' then 'Sim' else 'Não' end ||'"'; 
          End If;
