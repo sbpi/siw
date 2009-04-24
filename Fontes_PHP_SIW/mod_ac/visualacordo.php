@@ -103,7 +103,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Cidade de origem:</b></td>';
     $l_html.=chr(13).'          <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
     if ($l_tipo!='WORD') {
-      $l_html.=chr(13).'          <tr><td><b>Responsável monitoramento:</b></td>';
+      $l_html.=chr(13).'          <tr><td><b>Gestor do contrato :</b></td>';
       $l_html.=chr(13).'              <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
       $l_html.=chr(13).'          <tr><td><b>Unidade responsável monitoramento:</b></td>';
       $l_html.=chr(13).'              <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>';
@@ -180,7 +180,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td><b>Limite: </b>'.formatNumber(nvl(f($RS,'limite_variacao'),0)).'%';
           $l_html.=chr(13).'            <b>Acréscimo/Supressão: </b>'.formatNumber(nvl(f($RS,'limite_usado'),0),6).'%';
           $l_html.=chr(13).'            <b>Disponível: </b>'.formatNumber(nvl(f($RS,'limite_variacao') - nvl(f($RS,'limite_usado'),0),0),6).'%';
-          $l_html.=chr(13).'      <tr><td ><b>Parcelas pagas em uma única liquidação?</b></td>';
+          $l_html.=chr(13).'      <tr><td ><b>Parcela paga em uma única liquidação?</b></td>';
           $l_html.=chr(13).'        <td>'.RetornaSimNao(f($RS,'financeiro_unico')).'</td></tr>';
         }
         if (substr($w_sigla,0,3)=='GCB'){ 
@@ -410,7 +410,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td><b>Produtos a serem entregues:</b></td>';
       $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'produtos')),'---').'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top">';
-      $l_html.=chr(13).'        <td ><b>Qualificação exigida:</b></td>';
+      $l_html.=chr(13).'        <td ><b>Documentação vinculada:</b></td>';
       $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'requisitos')),'---').'</td></tr>';
       if (substr($w_sigla,0,3)=='GCB'){
         $l_html.=chr(13).'      <tr valign="top">';

@@ -739,7 +739,7 @@ function Inicial() {
       ShowHTML('          <td><b>Có<U>d</U>igo interno:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_palavra" size="18" maxlength="18" value="'.$p_palavra.'"></td>');
       ShowHTML('          <td><b>Có<U>d</U>igo externo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
       ShowHTML('      <tr valign="top">');
-      SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável pelo monitoramento na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
+      SelecaoPessoa('Gestor do co<u>n</u>trato:','N','Selecione o gestor do contrato na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
       SelecaoUnidade('<U>S</U>etor responsável:','S',null,$p_unidade,null,'p_unidade',null,null);
       ShowHTML('      <tr valign="top">');
       SelecaoPessoa('Responsável atua<u>l</u>:','L','Selecione o responsável atual na relação.',$p_usu_resp,null,'p_usu_resp','USUARIOS');
@@ -1345,7 +1345,7 @@ function Geral() {
     }
     ShowHTML('          </table>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-    SelecaoPessoa('Respo<u>n</u>sável monitoramento:','N','Selecione o responsável pelo monitoramento.',$w_solicitante,null,'w_solicitante','USUARIOS');
+    SelecaoPessoa('<u>G</u>estor do contrato:','G','Selecione o gestor do contrato.',$w_solicitante,null,'w_solicitante','USUARIOS');
     SelecaoUnidade('<U>S</U>etor responsável monitoramento:','S','Selecione o setor responsável pelo monitoramento.',$w_sq_unidade_resp,null,'w_sq_unidade_resp',null,null);
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1535,10 +1535,10 @@ function Termo() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_atividades','Atividades','1',1,5,2000,'1','1');
+    Validate('w_atividades','Atividades','1','',5,2000,'1','1');
     if (substr($SG,0,3)!='GCA') {
-      Validate('w_produtos','Produtos','1',1,5,2000,'1','1');
-      Validate('w_requisitos','Qualificação','1',1,5,2000,'1','1');
+      Validate('w_produtos','Produtos','1','',5,2000,'1','1');
+      Validate('w_requisitos','Qualificação','1','',5,2000,'1','1');
     } else {
       Validate('w_produtos','Produtos','1','',5,2000,'1','1');
       Validate('w_requisitos','Requisitos','1','',5,2000,'1','1');
@@ -1585,7 +1585,7 @@ function Termo() {
 
     ShowHTML('      <tr><td><b><u>A</u>tividades a serem desenvolvidas:</b><br><textarea '.$w_Disabled.' accesskey="A" name="w_atividades" class="sti" ROWS=5 cols=75 title="Descreva as atividades a serem desenvolvidas.">'.$w_atividades.'</TEXTAREA></td>');
     ShowHTML('      <tr><td><b><u>P</u>rodutos a serem entregues:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_produtos" class="sti" ROWS=5 cols=75 title="Relacione os produtos a serem entregues.">'.$w_produtos.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Qua<u>l</u>ificação exigida:</b><br><textarea '.$w_Disabled.' accesskey="L" name="w_requisitos" class="sti" ROWS=5 cols=75 title="Relacione as Qualificações a serem cumpridos para contratação.">'.$w_requisitos.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>Documentação vincu<u>l</u>ada:</b><br><textarea '.$w_Disabled.' accesskey="L" name="w_requisitos" class="sti" ROWS=5 cols=75 title="Relacione as Qualificações a serem cumpridos para contratação.">'.$w_requisitos.'</TEXTAREA></td>');
 
     ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1790,7 +1790,7 @@ function DadosAdicionais() {
     }
     ShowHTML('<tr valign="top">');
     if (substr($SG,0,3)!='GCZ') {
-      MontaRadioSN('<b>Parcelas pagas em um única liquidação?</b>',$w_financeiro_unico,'w_financeiro_unico',null,null,null);
+      MontaRadioSN('<b>Parcela paga em uma única liquidação?</b>',$w_financeiro_unico,'w_financeiro_unico',null,null,null);
     } else {
       // ARP não tem financeiro
       ShowHTML('<INPUT type="hidden" name="w_financeiro_unico" value="N">');
@@ -5471,6 +5471,7 @@ function Grava() {
             retornaFormulario('w_observacao');
             exit();
           }
+          $w_tamanho = $Field['size'];          
           if ($Field['size'] > 0) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
@@ -5497,7 +5498,6 @@ function Grava() {
                 $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
-            $w_tamanho = $Field['size'];
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') {
@@ -5512,9 +5512,15 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putSolicArquivo::getInstanceOf($dbms,$O,
-          $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $w_file,$w_tamanho,$w_tipo,$w_nome);
+        if($O=='E' || $w_tamanho > 0){
+          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        }else{
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+          ScriptClose();
+          retornaFormulario('w_caminho');
+          exit();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5565,7 +5571,13 @@ function Grava() {
               $w_tipo    = $Field['type'];
               $w_nome    = $Field['name'];
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-            } 
+            }else{
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_observacao');
+            exit();
+          } 
           } 
           dml_putAcordoEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
               $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],

@@ -4927,6 +4927,7 @@ function Grava() {
             retornaFormulario('w_observacao');
             exit();
           }
+          $w_tamanho = $Field['size'];          
           if ($Field['size'] > 0) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
             if ($Field['size'] > $w_maximo) {
@@ -4953,11 +4954,11 @@ function Grava() {
                 $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
               }
             } 
-            $w_tamanho = $Field['size'];
+
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-          } 
+          }
         } 
         // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
         if ($O=='E' && $_REQUEST['w_atual']>'') {
@@ -4966,9 +4967,15 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putSolicArquivo::getInstanceOf($dbms,$O,
-          $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $w_file,$w_tamanho,$w_tipo,$w_nome);
+        if($O=='E' || $w_tamanho > 0){
+          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        }else{
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+          ScriptClose();
+          retornaFormulario('w_caminho');
+          exit();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5030,6 +5037,12 @@ function Grava() {
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+          }else{
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_observacao');
+            exit();
           } 
         } 
         // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
@@ -5093,6 +5106,12 @@ function Grava() {
               $w_tipo    = $Field['type'];
               $w_nome    = $Field['name'];
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+            }else{
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
             } 
           } 
           dml_putProjetoEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],

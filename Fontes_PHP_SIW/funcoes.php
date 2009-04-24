@@ -76,7 +76,8 @@ function SortArray() {
 // -------------------------------------------------------------------------
 function exibeCalendario ($form, $campo) {
   extract($GLOBALS);
-  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?nmForm='.$form.'&nmCampo='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=250,height=250,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?form='.$form.'&field='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=150,height=180,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  //return '   <a class="ss" HREF="javascript:this.status.value;" onClick="javascript:window.open("calendar.php?form=frmMain&field=txtDate","","top=50,left=400,width=200,height=120,menubar=no,toolbar=no,scrollbars=no,resizable=no,status=no"); return false;
 }
 
 // =========================================================================

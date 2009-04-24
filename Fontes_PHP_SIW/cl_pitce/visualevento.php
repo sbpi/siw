@@ -187,7 +187,33 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
       $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS1,'recebedor'),$TP,f($RS1,'nm_recebedor')).'</font></td></tr>';
     }
     if (nvl(f($RS1,'observacao'),'')!='') $l_html.=chr(13).'   <tr valign="top"><td><b>Observações:</b></font></td><td>'.crlf2br(f($RS1,'observacao')).'</font></td></tr>';
-  } 
+  }
+  // Arquivos vinculados
+    $RSQuery = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $RSQuery = SortArray($RSQuery,'nome','asc');
+    if (count($RSQuery)>0) {
+      $l_html.=chr(13).'        <tr><td colspan=2><br><font size="2"><b>Arquivos ('.count($RSQuery).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'            <tr><td bgColor="#f0f0f0"><div align="center"><b>Título</b></div></td>';
+      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
+      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div align="center"><b>Tipo</b></div></td>';
+      $l_html.=chr(13).'              <td bgColor="#f0f0f0"><div align="center"><b>KB</b></div></td>';
+      $l_html.=chr(13).'            </tr>';
+      $w_cor=$conTrBgColor;
+      foreach ($RSQuery as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
+        $l_html.=chr(13).'      <tr>';
+        if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        else                $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+        $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'         </table></td></tr>';
+    } 
+  
   // Encaminhamentos
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
   $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');

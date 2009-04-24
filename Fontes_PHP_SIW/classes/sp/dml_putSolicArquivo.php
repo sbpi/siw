@@ -22,6 +22,8 @@ class dml_putSolicArquivo {
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome_original'             =>array(tvl($p_nome_original),                            B_VARCHAR,       255)
                   );
+     //print_r($params);
+     //exit();
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

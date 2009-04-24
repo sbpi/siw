@@ -52,6 +52,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
   // Recupera os deslocamentos da viagem
   $l_rs3 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', $v_sg2);
+  $l_rs3 = SortArray($l_rs3,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   $l_existe_rs3 = count($l_rs3);
 
   // Recupera as vinculações da viagem
@@ -65,10 +66,6 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   // Recupera as diárias da prestação de contas de viagem
   $l_rs6 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
   $l_existe_rs6 = count($l_rs6);
-
-  // Recupera os deslocamentos da viagem vinculados a bilhetes
-  $l_rs7 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, (($P1==1) ? 'S' : 'P'), null);
-  $l_existe_rs7 = count($l_rs7);
 
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
@@ -94,6 +91,26 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             } 
           } 
     
+          if (f($l_rs_solic,'fim_semana')=='S' and nvl(f($l_rs_solic,'justificativa_dia_util'),'')=='') {
+            $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
+            if ($l_tipo=='') $l_tipo = 2;
+          }
+          
+          if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
+            $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
+            if ($l_tipo=='') $l_tipo = 2;
+          }
+      } 
+/**
+*       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
+*       if ($l_existe_rs4==0) {
+*          $l_erro .= '<li>É obrigatório vincular a pelo menos uma atividade ou demanda eventual.';
+*          $l_tipo  = 0;
+*       } 
+*/
+    if (f($l_rs_tramite,'sigla')=='CI' || f($l_rs_tramite,'sigla')=='DF' || f($l_rs_tramite,'sigla')=='AE') {
+          // Cadastramento inicial, cotação de viagem e emissão de bilhetes deve verificar deslocamentos e diárias
+      
           // Verifica se foram cadastrados pelo menos 2 deslocamentos
           if ($l_existe_rs3<2) {
             $l_erro .= '<li>É obrigatório informar pelo menos 2 deslocamentos.';
@@ -110,7 +127,8 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
                   $l_erro .= '<li>Não pode haver sobreposição de períodos entre diferentes deslocamentos - verifique a data de saída e de chegada de cada deslocamento.';
                   $l_tipo  = 0;
                   break;
-                } elseif($w_cidade_atual!=f($row,'cidade_orig')) {
+                } 
+                if($w_cidade_atual!=f($row,'cidade_orig')) {
                   $l_erro .= '<li>A cidade de destino de um deslocamento deve ser a de origem do deslocamento seguinte.';
                   $l_tipo  = 0;
                   break;
@@ -134,26 +152,9 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_tipo = 0;
             }
           }
-            
-          if (f($l_rs_solic,'fim_semana')=='S' and nvl(f($l_rs_solic,'justificativa_dia_util'),'')=='') {
-            $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
-            if ($l_tipo=='') $l_tipo = 2;
-          }
-          
-          if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
-            $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
-            if ($l_tipo=='') $l_tipo = 2;
-          }
-      } 
-/**
-*       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
-*       if ($l_existe_rs4==0) {
-*          $l_erro .= '<li>É obrigatório vincular a pelo menos uma atividade ou demanda eventual.';
-*          $l_tipo  = 0;
-*       } 
-*/
+    }      
 
-  // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
+    // Este bloco faz verificações em solicitações que estão em fases posteriores ao cadastramento inicial
     if (Nvl(f($l_rs_tramite,'ordem'),'---')>'1') {
         // Verifica se o início da missão atende ao número de dias de antecedência regulamentares. 
         // Se não atender, deve ser informada justificativa.
@@ -175,15 +176,6 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null);
             if (count($l_rs5)==0) {
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
-              $l_tipo  = 0;
-            }
-					  // Verifica se há algum todos os deslocamentos estão vinculados a bilhetes
-					  $l_teste = false;
-					  foreach ($l_rs7 as $row) {
-					    if (nvl(f($row,'sq_bilhete'),'')=='') $l_teste = true;
-					  }
-            if ($l_teste) {
-              $l_erro .= '<li>É obrigatório vincular os deslocamentos aos bilhetes. Clique na operação "AL" de cada bilhete e verifique os deslocamentos a ele associados.';
               $l_tipo  = 0;
             }
           } 
