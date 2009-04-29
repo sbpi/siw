@@ -25,7 +25,8 @@ create or replace procedure SP_PutFinanceiroGeral
     p_tipo_rubrica        in number   default null,
     p_numero_processo     in varchar2 default null,
     p_per_ini             in date     default null,
-    p_per_fim             in date     default null,  
+    p_per_fim             in date     default null,
+    p_condicao            in varchar2  default null,  
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -76,13 +77,13 @@ begin
          ( sq_siw_solicitacao,   cliente,           sq_acordo_parcela,   sq_forma_pagamento,
            sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
            observacao,           aviso_prox_conc,   dias_aviso,          tipo,
-           processo,             referencia_inicio, referencia_fim
+           processo,             referencia_inicio, referencia_fim,      condicoes_pagamento
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
-           p_numero_processo,    w_inicio,          w_fim
+           p_numero_processo,    w_inicio,          w_fim,               p_condicao
       );
 
       -- Insere log da solicitação
@@ -121,18 +122,19 @@ begin
       
       -- Atualiza a tabela de demandas
       Update fn_lancamento set
-          sq_acordo_parcela  = p_sq_acordo_parcela,
-          sq_tipo_lancamento = p_sq_tipo_lancamento,
-          sq_tipo_pessoa     = p_sq_tipo_pessoa,
-          vencimento         = p_vencimento,
-          observacao         = trim(p_observacao),
-          aviso_prox_conc    = p_aviso,
-          dias_aviso         = p_dias,
-          sq_forma_pagamento = p_sq_forma_pagamento,
-          tipo               = p_tipo_rubrica,
-          processo           = p_numero_processo,
-          referencia_inicio  = p_per_ini,
-          referencia_fim     = p_per_fim
+          sq_acordo_parcela    = p_sq_acordo_parcela,
+          sq_tipo_lancamento   = p_sq_tipo_lancamento,
+          sq_tipo_pessoa       = p_sq_tipo_pessoa,
+          vencimento           = p_vencimento,
+          observacao           = trim(p_observacao),
+          aviso_prox_conc      = p_aviso,
+          dias_aviso           = p_dias,
+          sq_forma_pagamento   = p_sq_forma_pagamento,
+          tipo                 = p_tipo_rubrica,
+          processo             = p_numero_processo,
+          referencia_inicio    = p_per_ini,
+          referencia_fim       = p_per_fim,
+          condicoes_pagamento  = p_condicao
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then

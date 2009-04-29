@@ -15,7 +15,7 @@ begin
       Elsif  p_modulo = 'AC' Then
          -- Recupera os parametros do modulo de contratos
          open p_result for
-            select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo, a.numeracao_automatica
+            select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo, a.numeracao_automatica, a.dias_pagamento, a.texto_pagamento
               from ac_parametro  a
              where a.cliente = p_cliente;
       Elsif  p_modulo = 'PA' Then
