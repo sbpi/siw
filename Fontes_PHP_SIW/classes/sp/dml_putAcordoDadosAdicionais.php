@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -10,9 +10,10 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putAcordoDadosAdicionais {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_numero_certame, $p_numero_ata, $p_tipo_reajuste, $p_limite_variacao, $p_indice_base, $p_sq_eoindicador, 
-          $p_sq_lcfonte_recurso, $p_espec_despesa, $p_sq_lcmodalidade, $p_numero_empenho, $p_numero_processo, $p_data_assinatura, $p_data_publicacao,
-          $p_financeiro_unico, $p_pagina_diario) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_numero_certame, $p_numero_ata, $p_tipo_reajuste, $p_limite_variacao, 
+          $p_indice_base, $p_sq_eoindicador, $p_sq_lcfonte_recurso, $p_espec_despesa, $p_sq_lcmodalidade, $p_numero_empenho, 
+          $p_numero_processo, $p_data_assinatura, $p_data_publicacao, $p_financeiro_unico, $p_pagina_diario, $p_condicao,
+          $p_valor_caucao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoDadosAdicionais';
      $params=array('p_operacao'              =>array($operacao,                                    B_VARCHAR,         1),
                    'p_chave'                 =>array(tvl($p_chave),                                B_INTEGER,        32),
@@ -30,7 +31,9 @@ class dml_putAcordoDadosAdicionais {
                    'p_data_assinatura'       =>array(tvl($p_data_assinatura),                      B_DATE,           32),
                    'p_data_publicacao'       =>array(tvl($p_data_publicacao),                      B_DATE,           32),
                    'p_financeiro_unico'      =>array($p_financeiro_unico,                          B_VARCHAR,         1),
-                   'p_pagina_diario'         =>array(tvl($p_pagina_diario),                        B_INTEGER,        32)
+                   'p_pagina_diario'         =>array(tvl($p_pagina_diario),                        B_INTEGER,        32),
+                   'p_condicao'              =>array(tvl($p_condicao),                             B_VARCHAR,      4000),
+                   'p_valor_caucao'          =>array(toNumber(tvl($p_valor_caucao)),               B_NUMERIC,      18,2)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

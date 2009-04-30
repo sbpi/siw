@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -719,6 +719,7 @@ function Parametros() {
     $w_sufixo            = $_REQUEST['w_sufixo'];
     $w_numeracao         = $_REQUEST['w_numeracao'];
     $w_dias_pagamento    = $_REQUEST['w_dias_pagamento'];
+    $w_texto_pagamento   = $_REQUEST['w_texto_pagamento']; 
   } else {
     // Recupera os dados do parâmetro
     $RS = db_getACParametro::getInstanceOf($dbms,$w_cliente,null,null);
@@ -731,6 +732,7 @@ function Parametros() {
       $w_sufixo             = f($RS,'sufixo');
       $w_numeracao          = f($RS,'numeracao_automatica');
       $w_dias_pagamento     = f($RS,'dias_pagamento');
+      $w_texto_pagamento     = f($RS,'texto_pagamento');
     } 
   } 
   Cabecalho();
@@ -745,7 +747,8 @@ function Parametros() {
   Validate('w_ano_corrente', 'Ano corrente', '1', 1, 4, 4, '', '0123456789');
   Validate('w_prefixo','Prefixo','1','',1,10,'1','1');
   Validate('w_sufixo','Sufixo','1','',1,10,'1','1');
-  Validate('w_dias_pagamento','Limite para Pagamento','1',1,1,4,'','0123456789');
+  Validate('w_dias_pagamento','Limite para pagamento','1',1,1,4,'','0123456789');
+  Validate('w_texto_pagamento','Texto padrão para condições de pagamento','1',1,2,4000,'1','0123456789');
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -778,11 +781,14 @@ function Parametros() {
   ShowHTML('      <table width="100%" border="0">');
   ShowHTML('      <tr><td><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'" title="Armazena o último número utilizado na geração automática de acordos."></td>');
   ShowHTML('      <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'" title="Ano no qual o sequencial está sendo incrementado."></td>');
-  ShowHTML('      <tr><td><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'" title="Prefixo do código dos acordos."></td>');
-  ShowHTML('      <td><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'" title="Sufixo dos códigos dos acordos."></td>');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'" title="Prefixo do código dos acordos."></td>');
+  ShowHTML('        <td><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'" title="Sufixo dos códigos dos acordos."></td>');
+  ShowHTML('      </tr>');
   ShowHTML('      <tr>');
   MontaRadioNS('<b>Numeração automática?</b>',$w_numeracao,'w_numeracao',"Indica se o sistema deve gerar automaticamente o código interno do contrato.");
   ShowHTML('      <td><b><U>L</U>imite para pagamento:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="w_dias_pagamento" size="4" maxlength="4" VALUE="'.$w_dias_pagamento.'" title="Limite de dias para o pagamento de parcela após o término do acordo."></td></tr>');
+  ShowHTML('        <tr><td colspan=2><b><u>T</u>exto padrão para condições de pagamento:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_texto_pagamento" class="sti" ROWS="3" COLS="75">'.$w_texto_pagamento.'</textarea></td>');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
@@ -1855,16 +1861,16 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putACParametro::getInstanceOf($dbms,$w_cliente,
-           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],
-           $_REQUEST['w_sufixo'],$_REQUEST['w_numeracao'],$_REQUEST['w_dias_pagamento']);     
+           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'],
+           $_REQUEST['w_numeracao'],$_REQUEST['w_dias_pagamento'],$_REQUEST['w_texto_pagamento']);     
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
-        ShowHTML('  history.back(1);');
         ScriptClose();
+        retornaFormulario('w_assinatura');
       } 
       break;
     case 'ACMODAL':

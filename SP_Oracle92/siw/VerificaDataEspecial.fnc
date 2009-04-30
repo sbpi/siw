@@ -68,7 +68,7 @@ begin
   select count(*) into w_reg
     from eo_data_especial a
    where a.cliente       = w_cliente
-     and a.expediente    <> 'S' 
+     and a.expediente    = 'N' 
      and ((a.abrangencia in ('I','O')) or
           (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
           (a.abrangencia = 'E' and a.sq_pais   = w_pais and a.co_uf = w_uf) or
@@ -88,28 +88,59 @@ begin
           )
          );
   If w_reg > 0 Then
+     result := 'N';
+  Else
      select a.expediente into Result
-    from eo_data_especial a
-   where a.cliente       = w_cliente
-     and a.expediente    <> 'S' 
-     and ((a.abrangencia in ('I','O')) or
-          (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
-          (a.abrangencia = 'E' and a.sq_pais   = w_pais and a.co_uf = w_uf) or
-          (a.abrangencia = 'M' and a.sq_cidade = w_cidade)
-         )
-     and ((a.tipo        = 'I' and a.data_especial = substr(w_data,1,5)) or
-          (a.tipo        = 'E' and a.data_especial = w_data) or
-          (a.tipo        in ('S','C','Q','P','D','H') and
-           a.sq_pais     = w_pais and
-           ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
-            (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
-            (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
-            (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
-            (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
-            (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
-           )
-          )
-         );
+       from eo_data_especial a
+      where a.cliente       = w_cliente
+        and a.expediente    = 'M'
+        and ((a.abrangencia in ('I','O')) or
+             (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
+             (a.abrangencia = 'E' and a.sq_pais   = w_pais and a.co_uf = w_uf) or
+             (a.abrangencia = 'M' and a.sq_cidade = w_cidade)
+            )
+        and ((a.tipo        = 'I' and a.data_especial = substr(w_data,1,5)) or
+             (a.tipo        = 'E' and a.data_especial = w_data) or
+             (a.tipo        in ('S','C','Q','P','D','H') and
+              a.sq_pais     = w_pais and
+              ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
+               (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
+               (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
+               (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
+               (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
+               (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+              )
+             )
+            );
+     If w_reg > 0 Then
+        result := 'M';
+     Else
+        select a.expediente into Result
+          from eo_data_especial a
+         where a.cliente       = w_cliente
+           and a.expediente    = 'T'
+           and ((a.abrangencia in ('I','O')) or
+                (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
+                (a.abrangencia = 'E' and a.sq_pais   = w_pais and a.co_uf = w_uf) or
+                (a.abrangencia = 'M' and a.sq_cidade = w_cidade)
+               )
+           and ((a.tipo        = 'I' and a.data_especial = substr(w_data,1,5)) or
+                (a.tipo        = 'E' and a.data_especial = w_data) or
+                (a.tipo        in ('S','C','Q','P','D','H') and
+                 a.sq_pais     = w_pais and
+                 ((a.tipo      = 'S' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'S')) or
+                  (a.tipo      = 'C' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'C')) or
+                  (a.tipo      = 'Q' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'Q')) or
+                  (a.tipo      = 'P' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'P')) or
+                  (a.tipo      = 'D' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'D')) or
+                  (a.tipo      = 'H' and p_data = VerificaDataMovel(to_char(p_data,'yyyy'),'H'))
+                 )
+                )
+               );
+         If w_reg > 0 Then
+            result := 'T';
+         End If;
+      End If;
   End If;
 
   return Result;

@@ -1,4 +1,4 @@
-<? 
+<?php
 // =========================================================================
 // Rotina de validação dos dados do lançamento financeiro
 // -------------------------------------------------------------------------
@@ -60,7 +60,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
   if (count($l_rs1)<=0) {
     $l_existe_rs1=0;
-  } else { 
+  } else {
     $l_existe_rs1=count($l_rs1);    
     foreach($l_rs1 as $l_row) {
       if((nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')&&(nvl(f($l_rs_solic,'tipo_rubrica'),0)<>5)) {

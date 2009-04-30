@@ -1806,10 +1806,11 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();'); 
-  
   if($SG=='EVANEXO') {
+  //exibeVariaveis();
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
+        $w_tamanho = 0;
         foreach ($_FILES as $Chv => $Field) {
           if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
             // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
@@ -1858,14 +1859,15 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         }
-        if($O=='E' || $w_tamanho > 0){
-          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-        }else{
+        
+        if(($O=='I' && $_FILES['w_caminho']['size']==0) || ($O=='A' && $_FILES['w_caminho']['size']==0 && nvl($_FILES['w_caminho']['name'],'')!='')){
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
           ScriptClose();
           retornaFormulario('w_caminho');
           exit();
+        }else{
+          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);        
         }
       } else {
         ScriptOpen('JavaScript');

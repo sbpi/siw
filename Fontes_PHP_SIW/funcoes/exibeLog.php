@@ -124,9 +124,9 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	    $l_html.=chr(13).'      <tr valign="top">';
 	    $w_cor=$conTrBgColor;
 	    $i = 0;
-	    foreach($RS_Log as $row) {
+	    foreach($RS_Log as $row_log) {
 	      if ($i==0) {
-	        $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row,'fase').'</b></td>';
+	        $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row_log,'fase').'</b></td>';
 	        $i = 1;
 	        if ($l_tramite_ativo=='S') {
 	          // Recupera os responsáveis pelo tramite
@@ -143,7 +143,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	                else                    $l_html.=chr(13).f($row2,'nome_resumido').'</td>';
 	                $j = 1;
 	              } else {
-	                if (strpos($w_tramite_resp,f($row,'nome_resumido'))===false) {
+	                if (strpos($w_tramite_resp,f($row_log,'nome_resumido'))===false) {
 	                  if ($l_formato=='HTML') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
 	                  else                    $l_html.=chr(13).', '.f($row2,'nome_resumido').'</td>';
 	                }
@@ -154,22 +154,22 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	        } 
 	      }
 	      $l_html.=chr(13).'      <tr valign="top">';
-	      $l_html.=chr(13).'        <td width="1%" nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
-	      if (Nvl(f($row,'caminho'),'')>'' && $l_formato=='HTML') {
-	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
+	      $l_html.=chr(13).'        <td width="1%" nowrap>'.FormataDataEdicao(f($row_log,'phpdt_data'),3).'</td>';
+	      if (Nvl(f($row_log,'caminho'),'')>'' && $l_formato=='HTML') {
+	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row_log,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row_log,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row_log,'tipo').' - '.round(f($row_log,'tamanho')/1024,1).' KB',null)).'</td>';
 	      } else {
-	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
+	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row_log,'despacho'),'---')).'</td>';
 	      } 
-	      if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
-	      else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'responsavel').'</td>';
-	      if (nvl(f($row,'chave_log'),'')>'' && nvl(f($row,'destinatario'),'')>'') {
-	        if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_destinatario'),$TP,f($row,'destinatario')).'</td>';
-	        else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'destinatario').'</td>';
+	      if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row_log,'sq_pessoa'),$TP,f($row_log,'responsavel')).'</td>';
+	      else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row_log,'responsavel').'</td>';
+	      if (nvl(f($row_log,'chave_log'),'')>'' && nvl(f($row_log,'destinatario'),'')>'') {
+	        if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row_log,'sq_pessoa_destinatario'),$TP,f($row_log,'destinatario')).'</td>';
+	        else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row_log,'destinatario').'</td>';
 	     } else {
-	        if(strpos(f($row,'despacho'),'***')!==false) {
+	        if(strpos(f($row_log,'despacho'),'***')!==false) {
 	          $l_html.=chr(13).'        <td width="1%" nowrap>---</td>';
 	        } else {
-	          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(f($row,'tramite'),'---').'</td>';
+	          $l_html.=chr(13).'        <td width="1%" nowrap>'.Nvl(f($row_log,'tramite'),'---').'</td>';
 	        }
 	      } 
 	      $l_html.=chr(13).'      </tr>';

@@ -691,6 +691,7 @@ function Geral() {
     $w_qtd_nota             = $_REQUEST['w_qtd_nota'];
     $w_per_ini              = $_REQUEST['w_per_ini'];
     $w_per_fim              = $_REQUEST['w_per_fim'];
+    $w_texto_pagamento      = $_REQUEST['w_texto_pagamento']; 
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
 
@@ -738,14 +739,15 @@ function Geral() {
       $w_qtd_nota             = f($RS,'qtd_nota');
       $w_per_ini              = FormataDataEdicao(f($RS,'referencia_inicio'));
       $w_per_fim              = FormataDataEdicao(f($RS,'referencia_fim'));
+      $w_texto_pagamento      = f($RS,'condicoes_pagamento');
     } 
   }
-  // Recupera dados do contrato
- 
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'GCDCAD');
 
-  $w_inicio = FormataDataEdicao(f($RS_Solic,'inicio'));
-  $w_fim    = FormataDataEdicao(f($RS_Solic,'fim'));
+  // Recupera dados do contrato
+  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'GCDCAD');
+  $w_inicio           = FormataDataEdicao(f($RS_Solic,'inicio'));
+  $w_fim              = FormataDataEdicao(f($RS_Solic,'fim'));
+  $w_padrao_pagamento = f($RS_Solic,'condicoes_pagamento');
   
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -790,6 +792,7 @@ function Geral() {
       CompData('w_per_fim','Fim do período de realização','>=','w_inicio','Data de início de vigência do contrato');
       CompData('w_per_fim','Fim do período de realização','<=','w_fim','Data de término de vigência do contrato');
     }
+    Validate('w_texto_pagamento','Condições de pagamento','1',1,2,4000,'1','0123456789');
   } 
   ValidateClose();
   ScriptClose();
@@ -932,6 +935,7 @@ function Geral() {
         }         
       }
     } 
+    ShowHTML('        <tr><td colspan=3><b><u>C</u>ondições de pagamento:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_texto_pagamento" class="sti" ROWS="3" COLS="75" title="Relacione as condições para pagamento deste lançamento.">'.nvl($w_texto_pagamento,$w_padrao_pagamento).'</textarea></td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -2787,7 +2791,11 @@ function Encaminhamento() {
     $w_tramite      = f($RS,'sq_siw_tramite');
     $w_sg_tramite_ant = f($RS,'sg_tramite');
     $w_novo_tramite = f($RS,'sq_siw_tramite');
-  } 
+  }
+   
+  // Recupera os dados da solicitação
+  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+  
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
@@ -2853,6 +2861,14 @@ function Encaminhamento() {
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     ShowHTML('      <input class="stb" type="button" onClick="history.back(1);" name="Botao" value="Abandonar">');
   } else {  
+    if (nvl(f($RS_Solic,'condicoes_pagamento'),'')!='') {
+      ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);" colspan=4><b><font color="#BC3131">');
+      ShowHTML('        VERIFIQUE AS CONDIÇÕES ABAIXO ANTES DE EXECUTAR O ENVIO:<ul>');
+      ShowHTML('        <li>'.str_replace($crlf,'<li>',f($RS_Solic,'condicoes_pagamento')));
+      ShowHTML('        </b></font></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('<tr><td>&nbsp;');
+    }
     if ($P1!=1) {
       // Se não for cadastramento
       if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S'))
@@ -2865,10 +2881,11 @@ function Encaminhamento() {
       else
         SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o lançamento na relação.', $w_destinatario, $w_chave, $w_novo_tramite, $w_novo_tramite, 'w_destinatario', 'USUARIOS');
     } else {
-      if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S'))
+      if (Nvl($w_erro,'')=='' || (Nvl($w_erro,'')>'' && substr($w_erro,0,1)!='0' && RetornaGestor($w_chave,$w_usuario)=='S')) {
         SelecaoFase('<u>F</u>ase do lançamento:','F','Se deseja alterar a fase atual do lançamento, selecione a fase para a qual deseja enviá-la.', $w_novo_tramite, $w_menu, 'w_novo_tramite', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
-      else
+      } else {
         SelecaoFase('<u>F</u>ase do lançamento:','F','Se deseja alterar a fase atual do lançamento, selecione a fase para a qual deseja enviá-la.', $w_novo_tramite, $w_tramite, 'w_novo_tramite', 'ERRO', null);
+      }
       SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o lançamento na relação.', $w_destinatario, $w_chave, $w_novo_tramite, $w_novo_tramite, 'w_destinatario', 'USUARIOS');
     }     
     ShowHTML('    <tr><td colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="sti" ROWS=5 cols=75 title="Descreva a ação esperada pelo destinatário na execução do lançamento.">'.$w_despacho.'</TEXTAREA></td>');
@@ -3398,7 +3415,7 @@ function Grava() {
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],$_REQUEST['w_numero_processo'],
-          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       ScriptClose();
@@ -3665,7 +3682,7 @@ function Grava() {
                 Nvl($_REQUEST['w_valor'][$i],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],
                 $_REQUEST['w_chave_pai'][$i],$_REQUEST['w_sq_acordo_parcela'][$i],$_REQUEST['w_observacao'],$_REQUEST['w_sq_tipo_lancamento'][$i],
                 $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],$_REQUEST['w_vencimento_atual'][$i],
-                $w_tipo,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],&$w_chave_nova,&$w_codigo);
+                $w_tipo,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento
             $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null,null);
             foreach ($RS as $row) {$RS=$row; break;}
@@ -3686,7 +3703,8 @@ function Grava() {
         dml_putFinanceiroGeral::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],
             $_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
             $_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),Nvl($_REQUEST['w_sq_forma_pagamento'],''),
-            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],&$w_chave_nova,&$w_codigo);
+            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
+            $_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
       } 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');

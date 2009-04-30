@@ -74,9 +74,9 @@ function SortArray() {
 // =========================================================================
 // Montagem do link para abrir o calendário
 // -------------------------------------------------------------------------
-function exibeCalendario ($form, $campo) {
+function exibeCalendario ($form,$campo) {
   extract($GLOBALS);
-  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?form='.$form.'&field='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=0,width=150,height=180,left=500,top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
+  return '   <a class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'calendario.php?form='.$form.'&field='.$campo.'&vData=\'+document.'.$form.'.'.$campo.'.value,\'dp\',\'toolbar=0, location=0, directories=0, status=0, menubar=0, scrollbars=0, resizable=0, width=150, height=160, left=500, top=200\'); return false;" title="Visualizar calendário"><img src="images/icone/GotoTop.gif" border=0 align=top height=13 width=15></a>';
   //return '   <a class="ss" HREF="javascript:this.status.value;" onClick="javascript:window.open("calendar.php?form=frmMain&field=txtDate","","top=50,left=400,width=200,height=120,menubar=no,toolbar=no,scrollbars=no,resizable=no,status=no"); return false;
 }
 
@@ -2072,6 +2072,17 @@ function RetornaAno() {
   else                           return Date('Y');
 }
 
+
+// =========================================================================
+// Função que retorna o ano a ser utilizado para recuperação de dados
+// -------------------------------------------------------------------------
+function RetornaMes() {
+  extract($GLOBALS);
+  if ($_REQUEST['w_mes']>'')     return $_REQUEST['w_mes'];
+  elseif ($_SESSION['MES'] > '') return $_SESSION['MES'];
+  else                           return Date('m');
+}
+
 // =========================================================================
 // Função que retorna o código do menu
 // -------------------------------------------------------------------------
@@ -3341,10 +3352,14 @@ function mesAno($l_data, $l_formato=null) {
   }
 }
 
+
+
+
+
 // =========================================================================
 // Monta string html para montagem de calendário do mês informado
 // -------------------------------------------------------------------------
-function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) {
+function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, $p_form=FALSE, $p_campo=FALSE, $p_valor=FALSE) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'ex_');
   $p_detalhe = false;
   // Atribui nomes dos meses
@@ -3367,6 +3382,13 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
   // Define cor de fundo padrão para as células de sábado e domingo
   $l_cor_padrao = '#DAEABD';
 
+  ShowHTML('<script language=\'javascript\'> '); 
+  ShowHTML('    function sendToForm(val,field,form) { '); 
+  ShowHTML('        eval(\'opener.document.\' + form+\'.\'+field+\'.\'+\'value="\'+val+\'"\'); ');
+  ShowHTML('        window.close(); '); 
+  ShowHTML('    } '); 
+  ShowHTML('</script>');
+
   // Recupera as datas especiais do ano informado e carrega no array de calendário base
   foreach ($p_base as $row_ano) {
     $l_data   = FormataDataEdicao(f($row_ano,'data_formatada'));
@@ -3381,7 +3403,9 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
   if (fMod($l_ano,4)==0) $l_qtd[2] = 29;
 
   $l_html  = '<table border=0 cellspacing=1 cellpadding=1>'.$crlf;
-  $l_html .= '  <tr><td colspan=7 align="center" bgcolor="'.$l_cor_padrao.'"><b>'.$l_meses[intVal($l_mes)].'/'.$l_ano.'</td></tr>'.$crlf;
+  if(!$p_form){
+    $l_html .= '  <tr><td colspan=7 align="center" bgcolor="'.$l_cor_padrao.'"><b>'.$l_meses[intVal($l_mes)].'/'.$l_ano.'</td></tr>'.$crlf;  
+  }
   $l_html .= '  <tr align="center">'.$crlf;
 
   // Monta a linha com a sigla para os dias das semanas
@@ -3415,7 +3439,6 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
         $l_ocorrencia .= substr(str_replace($crlf,' ',$p_datas[$l_data]['valor']),0,80).'\r\n';
       }
     }
-
     // Trata a cor de fundo da célula
     $l_cor = '';
     if ($i==1 ||($l_celulas[$i]!='&nbsp;' && ((fMod($i,7)==0) || (fMod($i-1,7)==0)))) {
@@ -3440,9 +3463,15 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE) 
       if ($l_data==formataDataEdicao(time())) $l_ocorrencia = 'HOJE\r\n'.$l_ocorrencia;
       $l_borda = ' style="border: 2px solid rgb(0,0,0);"';
     }
-
-    if ($l_ocorrencia!='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_ocorrencia.'\')"';
-
+    if($p_form !== FALSE){
+      //'onclick="sendToForm('.$l_data.','$p_campo','$p_form');"'
+      //if ($l_ocorrencia=='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_data.'\')"';
+      $l_ocorrencia = ' title="'./*str_replace('\r\n',' - ',*/$l_ocorrencia/*)*/.'" onclick="sendToForm(\''.$l_data.'\',\''.$p_campo.'\',\''.$p_form.'\');"';
+      //if ($l_ocorrencia!='') $l_ocorrencia = ' title="'.$l_ocorrencia.'"';
+    }else{
+      if ($l_ocorrencia!='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_ocorrencia.'\')"';
+    }  
+    //print_r($l_ocorrencia);
     // Coloca uma célula do calendário
     $l_html .= '    <td'.$l_cor.$l_borda.$l_ocorrencia.'>'.$l_celulas[$i].'</td>'.$crlf;
 

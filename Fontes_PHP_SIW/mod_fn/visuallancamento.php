@@ -89,6 +89,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td>';
     $l_html.=chr(13).'            <td>'.formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td>';
+      $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
+    }
+    
+    
     // Dados da conclusão do projeto, se ela estiver nessa situação
     if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA LIQUIDAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -96,7 +102,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if (Nvl(f($RS,'codigo_deposito'),'')>''){
         $l_html.=chr(13).'    <tr><td><b>Código do depósito:</b></td><td>'.f($RS,'codigo_deposito').' </td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Observação:</b></td>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td>';
       $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     } 
 

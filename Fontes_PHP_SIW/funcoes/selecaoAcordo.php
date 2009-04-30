@@ -1,4 +1,4 @@
-<? 
+<?php 
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
@@ -18,7 +18,7 @@ function selecaoAcordo($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$campo,
               null,null,null,$l_fase,null,null,null,null,null);
     }
   } else {
-    $RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
+      $RS = db_getSolicList::getInstanceOf($dbms,$chaveAux,$w_usuario,$restricao,4,
             null,null,null,null,null,null,
             null,null,null,null,
             null,null,null,null,null,null,null,

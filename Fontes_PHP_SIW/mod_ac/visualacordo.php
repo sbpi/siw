@@ -8,18 +8,19 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $l_html='';
   
   // Carrega o segmento do cliente
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
-  $w_segmento = f($RS,'segmento');
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+  $w_segmento = f($RS_Cliente,'segmento');
   
   // Recupera os dados do acordo
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,substr($SG,0,3).'GERAL');
-  $w_tramite        = f($RS,'sq_siw_tramite');
-  $w_tramite_ativo  = f($RS,'ativo');
-  $w_valor_inicial  = f($RS,'valor');
-  $w_fim            = f($RS,'fim_real');
-  $w_sg_tramite     = f($RS,'sg_tramite');
-  $w_sigla          = f($RS,'sigla');
-  $w_aditivo        = f($RS,'aditivo');
+  $w_tramite         = f($RS,'sq_siw_tramite');
+  $w_tramite_ativo   = f($RS,'ativo');
+  $w_valor_inicial   = f($RS,'valor');
+  $w_fim             = f($RS,'fim_real');
+  $w_sg_tramite      = f($RS,'sg_tramite');
+  $w_sigla           = f($RS,'sigla');
+  $w_aditivo         = f($RS,'aditivo');
+  $w_texto_pagamento = f($RS,'condicoes_pagamento');
 
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
@@ -165,8 +166,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td ><b>Número do certame:</b></td>';
         $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_certame')),'---').'</td></tr>';
         if (substr($w_sigla,0,3)!='GCZ') {
-          $l_html.=chr(13).'      <tr><td ><b>Número da ata:</b></td>';
-          $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'numero_ata')),'---').'</td></tr>';
+          if (f($RS_Cliente,'ata_registro_preco')=='S') $l_html.=chr(13).'      <tr><td ><b>Número da ata:</b></td><td>'.nvl(CRLF2BR(f($RS,'numero_ata')),'---').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Tipo de reajuste:</b></td>';
           $l_html.=chr(13).'        <td>'.nvl(CRLF2BR(f($RS,'nm_tipo_reajuste')),'---').'</td></tr>';
           if(nvl(f($RS,'tipo_reajuste'),'')==1) {
@@ -187,6 +187,11 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <tr valign="top">';
           $l_html.=chr(13).'          <td><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
           $l_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
+        }
+        if (f($RS,'valor_caucao')>0){ 
+          $l_html.=chr(13).'          <tr valign="top">';
+          $l_html.=chr(13).'          <td><b>Valor da caução:</b></td>';
+          $l_html.=chr(13).'          <td>'.formatNumber(f($RS,'valor_caucao')).'</td></tr>';
         }
       }
     } 
@@ -658,6 +663,10 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if (count($RS)>0) {
     //$l_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    if (nvl($w_texto_pagamento,'')!='') {
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Condições para pagamento:</b></td>';
+      $l_html.=chr(13).'        <td>'.CRLF2BR($w_texto_pagamento).'</td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
@@ -692,6 +701,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $w_total_r  = 0;
     $w_atual    = 0;
     $w_tot_parc = 0;
+    $w_tot_liq  = 0;
     $w_cont     = 1;
     foreach($RS as $row) {
       $l_html.=chr(13).'        <tr valign="top">';
@@ -768,8 +778,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         else                             $l_html.=chr(13).'        <td align="center">---</td>';
         $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'vl_lancamento')).'</td>';
-        if (Nvl(f($row,'quitacao'),'nulo') <> 'nulo') $w_real     += f($row,'vl_lancamento');
+        if (Nvl(f($row,'quitacao'),'')!='') $w_real += f($row,'vl_lancamento');
         $w_tot_parc += f($row,'vl_lancamento');
+        $w_tot_liq  += f($row,'vl_lancamento');
       } else {
         $l_html.=chr(13).'        <td align="center">---</td>';
         $l_html.=chr(13).'        <td align="center">---</td>';
@@ -778,8 +789,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } 
       $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
       $l_html.=chr(13).'      </tr>';
-    } 
-    if ($w_total>0 || $w_real>0) {     
+    }
+    if ($w_total>0 || $w_real>0) {
       $l_html.=chr(13).'      <tr valign="top">';
       $l_html.=chr(13).'        <td align="right" colspan=3><b>Previsto</b></td>';
       if($w_aditivo>0) {
@@ -794,8 +805,8 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'        &nbsp;</td>';
       } 
-      $l_html.=chr(13).'        <td align="right"><b>Liquidado</b></td>';
-      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_real).'</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>Liquidado<br>Pago</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_liq).'<br>'.formatNumber($w_real).'</b></td>';
       $l_html.=chr(13).'        <td>&nbsp;</td>';
       $l_html.=chr(13).'      </tr>';
     } 

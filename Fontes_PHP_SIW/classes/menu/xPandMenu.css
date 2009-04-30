@@ -352,3 +352,20 @@ table ul li{
 }
 
 /***************************/
+#calendario a{
+  color:#333333;
+  text-decoration: none;
+  font-size: 80%;
+}
+
+#calendario a:hover{
+  color:#333333;
+  text-decoration: none;
+  font-size: 80%;
+  font-weight: bolder;
+}
+
+#calendario td{
+  border: 1px solid #ffffff;
+  font-size: 80%;
+}

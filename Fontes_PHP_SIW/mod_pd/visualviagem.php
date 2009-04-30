@@ -5,7 +5,7 @@
 function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S',$l_proposto='S',$l_deslocamento='S',
       $l_orcamentaria='S',$l_diaria='S',$l_vinculacao='S',$l_anexo='S',$l_ocorrencia='S') {
   extract($GLOBALS);
-
+  
   if ($l_tipo!='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   
@@ -88,7 +88,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } else {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Tipo:</b></td><td>'.f($RS,'nm_tipo_missao').' </b></td></tr>';
+      //$l_html.=chr(13).'      <tr valign="top"><td><b>Tipo:</b></td><td>'.f($RS,'nm_tipo_missao').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Contato na ausência:</b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';

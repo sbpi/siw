@@ -192,9 +192,16 @@ if (count($RS)>0) $w_acao='S'; else $w_acao='N';
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
 if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
   
-// Carrega o segmento do cliente
-$RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-$w_segmento = f($RS,'segmento');
+// Carrega os parâmetros do módulo
+$RS = db_getParametro::getInstanceOf($dbms,$w_cliente,'AC',null);
+if (count($RS)>0) {
+  foreach($RS as $row) { $RS = $row; break; }
+  $w_padrao_pagamento = f($RS,'texto_pagamento');
+} 
+
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+$w_segmento = f($RS_Cliente,'segmento');
 
 $w_copia         = $_REQUEST['w_copia'];
 $w_herda         = $_REQUEST['w_herda'];
@@ -1661,6 +1668,8 @@ function DadosAdicionais() {
     $w_data_publicacao    = $_REQUEST['w_data_publicacao'];
     $w_pagina_diario      = $_REQUEST['w_pagina_diario'];
     $w_financeiro_unico   = $_REQUEST['w_financeiro_unico'];
+    $w_texto_pagamento    = $_REQUEST['w_texto_pagamento'];
+    $w_valor_caucao       =  $_REQUEST['w_valor_caucao'];
 
     $w_chave   = $_REQUEST['w_chave'];
     $w_sq_menu = $_REQUEST['w_sq_menu'];
@@ -1680,6 +1689,8 @@ function DadosAdicionais() {
     $w_pagina_diario      = f($RS,'pagina_diario_oficial');
     $w_financeiro_unico   = f($RS,'financeiro_unico');
     $w_sq_menu            = f($RS,'sq_menu');
+    $w_texto_pagamento    = f($RS,'condicoes_pagamento');
+    $w_valor_caucao       = formatNumber(f($RS,'valor_caucao'));
   } 
 
   if (nvl($w_sq_cc,'')=='') {
@@ -1710,7 +1721,7 @@ function DadosAdicionais() {
     if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCZ') Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
     Validate('w_numero_certame','Numero do certame','1','1',1,50,'1','1');
     if (substr($SG,0,3)!='GCZ') {
-      Validate('w_numero_ata','Número da ata','1','',1,30,'1','1');
+      if (f($RS_Cliente,'ata_registro_preco')=='S') Validate('w_numero_ata','Número da ata','1','',1,30,'1','1');
       Validate('w_tipo_reajuste','Tipo de reajuste','SELECT','1',1,18,'','0123456789');
       if($w_tipo_reajuste==1) {
         Validate('w_indice_base','Índice base','DATAMA','1',1,7,'1','1');
@@ -1727,6 +1738,8 @@ function DadosAdicionais() {
       Validate('w_data_publicacao','Data Publicação','DATA',1,10,10,'','0123456789/'); 
       Validate('w_pagina_diario','Número da página do D.O.','1','',1,4,'','0123456789');
     }
+    Validate('w_valor_caucao','Valor da caução','VALOR','1',4,18,'','0123456789.,');
+    Validate('w_texto_pagamento','Condições de pagamento','1',1,2,4000,'1','0123456789');
   } 
   ValidateClose();
   ScriptClose();
@@ -1762,7 +1775,7 @@ function DadosAdicionais() {
     if (substr($SG,0,3)=='GCD' || substr($SG,0,3)=='GCZ') SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do contrato.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
     ShowHTML('          <td><b><u>N</u>úmero do certame:</b><br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_numero_certame" size="30" maxlength="50" value="'.$w_numero_certame.'" title="Número do certame licitatório que originou o contrato."></td>');
     if (substr($SG,0,3)!='GCZ') {
-      ShowHTML('          <td><b>N<u>ú</u>mero da ata:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata de registro de preços que originou o contrato."></td>');
+      if (f($RS_Cliente,'ata_registro_preco')=='S') ShowHTML('          <td><b>N<u>ú</u>mero da ata:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_ata" size="30" maxlength="30" value="'.$w_numero_ata.'" title="Número da ata de registro de preços que originou o contrato."></td>');
       ShowHTML('<tr valign="top">');
       SelecaoTipoReajuste('<u>T</u>ipo de reajuste:','T','Indica o tipo de reajuste do contrato.',$w_tipo_reajuste,null,'w_tipo_reajuste',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_tipo_reajuste\'; document.Form.submit();"');
       if($w_tipo_reajuste==1) {
@@ -1795,6 +1808,8 @@ function DadosAdicionais() {
       // ARP não tem financeiro
       ShowHTML('<INPUT type="hidden" name="w_financeiro_unico" value="N">');
     }
+    ShowHTML('      <tr><td><b><u>V</u>alor da caução:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_caucao" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_caucao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Se necessário, Informe o valor da caução do contrato."></td>');
+    ShowHTML('        <tr><td colspan=2><b><u>C</u>ondições para pagamento das parcelas:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_texto_pagamento" class="sti" ROWS="3" COLS="75" title="Condições para pagamento das parcelas.">'.nvl($w_texto_pagamento,$w_padrao_pagamento).'</textarea></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -5170,7 +5185,8 @@ function Grava() {
         nvl($_REQUEST['w_limite_variacao'],0),$_REQUEST['w_indice_base'],$_REQUEST['w_sq_eoindicador'],
         $_REQUEST['w_sq_lcfonte_recurso'],$_REQUEST['w_espec_despesa'],$_REQUEST['w_sq_lcmodalidade'],
         null, $_REQUEST['w_numero_processo'], $_REQUEST['w_data_assinatura'],
-        $_REQUEST['w_data_publicacao'],$_REQUEST['w_financeiro_unico'],$_REQUEST['w_pagina_diario']);
+        $_REQUEST['w_data_publicacao'],$_REQUEST['w_financeiro_unico'],$_REQUEST['w_pagina_diario'],
+        $_REQUEST['w_texto_pagamento'],$_REQUEST['w_valor_caucao']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
