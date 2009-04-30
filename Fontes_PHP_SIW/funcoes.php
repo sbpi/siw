@@ -2815,13 +2815,8 @@ function RodapePDF() {
   
   
   
-//  $shtml = str_replace("msword",'', $shtml);
   $shtml = str_replace("'",'"', $shtml);
   $shtml = str_replace('"',"'", $shtml);
-
-  //echo $shtml;
-  //exit();
-
 
   list($usec, $sec) = explode(" ", microtime());
   $w_microtime = ((float)$usec + (float)$sec);
@@ -3392,7 +3387,11 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, 
   // Recupera as datas especiais do ano informado e carrega no array de calendário base
   foreach ($p_base as $row_ano) {
     $l_data   = FormataDataEdicao(f($row_ano,'data_formatada'));
-    $x_datas[$l_data] = f($row_ano,'nome').' '.f($row_ano,'nm_expediente');
+    if(isset($x_datas[$l_data])){
+      $x_datas[$l_data] .= '\\n'. f($row_ano,'nome').' '.f($row_ano,'nm_expediente');
+    }else{
+      $x_datas[$l_data] = f($row_ano,'nome').' '.f($row_ano,'nm_expediente');
+    }
     $x_cores[$l_data] = $l_cor_padrao;
   }
 
@@ -3430,7 +3429,7 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, 
     if (isset($x_datas[$l_data])) {
       $p_detalhe = true;
       $l_borda      = ' style="border: 1px solid rgb(0,0,0);"';
-      $l_ocorrencia .= $x_datas[$l_data].'\r\n';
+      $l_ocorrencia .= $x_datas[$l_data];
     }
     if (isset($p_datas[$l_data])) {
       if ((fMod($i,7)==0) || (fMod($i-1,7)==0) || isset($x_datas[$l_data])) {
@@ -3460,18 +3459,14 @@ function montaCalendario($p_base, $p_mes, $p_datas, $p_cores, $p_detalhe=FALSE, 
 
     // Trata a data de hoje
     if ($l_data==formataDataEdicao(time())) {
-      if ($l_data==formataDataEdicao(time())) $l_ocorrencia = 'HOJE\r\n'.$l_ocorrencia;
+      if ($l_data==formataDataEdicao(time())) $l_ocorrencia = 'HOJE\\n'.$l_ocorrencia;
       $l_borda = ' style="border: 2px solid rgb(0,0,0);"';
     }
     if($p_form !== FALSE){
-      //'onclick="sendToForm('.$l_data.','$p_campo','$p_form');"'
-      //if ($l_ocorrencia=='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_data.'\')"';
-      $l_ocorrencia = ' title="'./*str_replace('\r\n',' - ',*/$l_ocorrencia/*)*/.'" onclick="sendToForm(\''.$l_data.'\',\''.$p_campo.'\',\''.$p_form.'\');"';
-      //if ($l_ocorrencia!='') $l_ocorrencia = ' title="'.$l_ocorrencia.'"';
+      $l_ocorrencia = ' title="'.str_replace('\\n',' - ',$l_ocorrencia).'" onclick="sendToForm(\''.$l_data.'\',\''.$p_campo.'\',\''.$p_form.'\');"';
     }else{
       if ($l_ocorrencia!='') $l_ocorrencia = ' onClick="javascript:alert(\''.$l_ocorrencia.'\')"';
     }  
-    //print_r($l_ocorrencia);
     // Coloca uma célula do calendário
     $l_html .= '    <td'.$l_cor.$l_borda.$l_ocorrencia.'>'.$l_celulas[$i].'</td>'.$crlf;
 
