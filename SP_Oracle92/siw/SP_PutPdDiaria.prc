@@ -33,12 +33,17 @@ create or replace procedure SP_PutPdDiaria
     p_hos_observ            in  varchar2 default null,
     p_vei_ret               in  date     default null,
     p_vei_dev               in  date     default null,
-    p_tipo                  in varchar2  default null
+    p_tipo                  in varchar2  default null,
+    p_origem                in varchar2  default null,
+    p_texto_diaria          in varchar2  default null,
+    p_texto_hospedagem      in varchar2  default null,
+    p_texto_veiculo         in varchar2  default null
    ) is
-   w_reg      number(18);
-   w_fin_dia  number(18) := p_fin_dia;
-   w_fin_hsp  number(18) := p_fin_hsp;
-   w_fin_vei  number(18) := p_fin_vei;
+   w_reg       number(18);
+   w_sq_diaria number(18) := p_sq_diaria;
+   w_fin_dia   number(18) := p_fin_dia;
+   w_fin_hsp   number(18) := p_fin_hsp;
+   w_fin_vei   number(18) := p_fin_vei;
 begin
    -- Verifica se precisa gravar o tipo de vínculo financeiro
    If instr('IA','I')>0 Then
@@ -96,6 +101,9 @@ begin
    End If;
 
    If p_operacao = 'I' Then
+      -- Recupera o valor da chave
+      select  sq_diaria.nextval into w_sq_diaria from dual;
+      
       -- Insere os registros em PD_DIARIA
       insert into pd_diaria
         (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
@@ -103,8 +111,9 @@ begin
          veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
          sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
          sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
-         hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo)
-      (select sq_diaria.nextval,      p_chave,                         p_sq_cidade,
+         hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo,                      calculo_diaria_texto,
+         calculo_hospedagem_texto,    calculo_veiculo_texto)
+      (select w_sq_diaria,            p_chave,                         p_sq_cidade,
               case p_diaria when 'S' then p_quantidade else 0 end,
               case p_diaria when 'S' then p_valor else 0 end,
               p_hospedagem,           
@@ -125,12 +134,15 @@ begin
               p_hos_observ,
               case p_veiculo when 'S' then p_vei_ret else null end,
               case p_veiculo when 'S' then p_vei_dev else null end,
-              p_tipo
+              p_tipo,
+              p_texto_diaria,
+              p_texto_hospedagem,
+              p_texto_veiculo
          from dual
       );
    Elsif p_operacao = 'A' Then
       -- Atualiza os dados PD_DIARIA
-      update pd_diaria
+      update pd_diaria a
          set sq_cidade                  = p_sq_cidade,
              quantidade                 = case p_diaria when 'S' then p_quantidade else 0 end,
              valor                      = case p_diaria when 'S' then p_valor else 0 end,
@@ -155,13 +167,21 @@ begin
              hospedagem_checkout        = case p_hospedagem when 'S' then p_hos_out else null end,
              hospedagem_observacao      = p_hos_observ,
              veiculo_retirada           = case p_veiculo when 'S' then p_vei_ret else null end,
-             veiculo_devolucao          = case p_veiculo when 'S' then p_vei_dev else null end
+             veiculo_devolucao          = case p_veiculo when 'S' then p_vei_dev else null end,
+             calculo_diaria_texto       = p_texto_diaria,
+             calculo_hospedagem_texto   = p_texto_hospedagem,
+             a.calculo_veiculo_texto    = p_texto_veiculo
        where sq_siw_solicitacao         = p_chave
          and sq_diaria                  = p_sq_diaria;
    End If;
    
-   -- Ajusta as diárias
-   sp_calculadiarias(p_chave, null, p_tipo);
+   If p_origem = 'SOLIC' Then
+      -- Se tela preenchida pelo solicitante, atualiza o valor calculado das hospedagens e das diárias de veículo
+      update pd_diaria set calculo_hospedagem_qtd = hospedagem_qtd, calculo_veiculo_qtd = veiculo_qtd where sq_diaria =  w_sq_diaria;
+   End If;
+   
+   -- Ajusta as diárias se o usuário não as definiu manualmente
+   If p_texto_diaria is null Then sp_calculadiarias(p_chave, null, p_tipo); End If;
 
 end SP_PutPdDiaria;
 /

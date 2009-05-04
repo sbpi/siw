@@ -755,7 +755,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $w_trechos[$i][31] = f($row,'compromisso');
             $w_trechos[$i][32] = 'N';
             $w_trechos[$i][33] = 'N';
-      
+            $w_trechos[$i][34] = f($row,'calculo_diaria_qtd');
+            $w_trechos[$i][35] = f($row,'calculo_diaria_texto');
+            $w_trechos[$i][36] = f($row,'calculo_hospedagem_qtd');
+            $w_trechos[$i][37] = f($row,'calculo_hospedagem_texto');
+            $w_trechos[$i][38] = f($row,'calculo_veiculo_qtd');
+            $w_trechos[$i][39] = f($row,'calculo_veiculo_texto');
+            
             // Cria array para guardar o valor total por moeda
             if ($w_trechos[$i][13]>'') $w_tot_diaria_S[$w_trechos[$i][13]] = 0;
             if ($w_trechos[$i][18]>'') $w_tot_diaria_S[$w_trechos[$i][18]] = 0;
@@ -816,11 +822,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             if ($w_trechos[$i][27]>'' && f($RS,'veiculo')=='S' && $w_trechos[$i][21]>0)    $rowspan+=1;
             if ($w_trechos[$i][26]>'' && f($RS,'hospedagem')=='S' && $w_trechos[$i][16]>0) $rowspan+=1;
             $rowspan_local = $rowspan;
-            if ($w_trechos[$i][28]>'') $rowspan_local += 1;
-            if ($w_trechos[$i][29]>'') $rowspan_local += 1;
+            if ($w_trechos[$i][35]>''||$w_trechos[$i][37]>''||$w_trechos[$i][39]>'') $rowspan_local += 1;
             
             $l_html.=chr(13).'     <tr valign="top">';
-            $l_html.=chr(13).'       <td rowspan="'.$rowspan.'"><b>'.$w_trechos[$i][5].'</b>';
+            $l_html.=chr(13).'       <td rowspan="'.$rowspan_local.'"><b>'.$w_trechos[$i][5].'</b>';
             $l_html.=chr(13).'<br>'.$w_trechos[$i][13].' '.formatNumber($w_tot_local);
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</td>';
             $l_html.=chr(13).'       <td align="center" rowspan="'.$rowspan.'">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</td>';
@@ -846,6 +851,12 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               $l_html.=chr(13).'         <td align="right">'.formatNumber($w_trechos[$i][17]).'</td>';
               $l_html.=chr(13).'         <td align="right">'.formatNumber($w_hospedagens,2).'</td>';
               $l_html.=chr(13).'       </tr>';
+            }
+            if ($w_trechos[$i][35]>''||$w_trechos[$i][37]>''||$w_trechos[$i][39]>'') {
+              $l_html.=chr(13).'     <tr><td colspan="6">';
+              if ($w_trechos[$i][35]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],1).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
+              if ($w_trechos[$i][37]>'') $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
+              if ($w_trechos[$i][39]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias de veículo alterada de <b>'.formatNumber($w_trechos[$i][38],1).'</b> para <b>'.formatNumber($w_trechos[$i][21],1).'</b>. Motivo: <b>'.$w_trechos[$i][39].'</b></li>';
             }
           }
           $i += 1;

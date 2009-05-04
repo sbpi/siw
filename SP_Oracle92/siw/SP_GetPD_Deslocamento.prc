@@ -68,6 +68,7 @@ begin
                 f.hospedagem, f.hospedagem_qtd, f.hospedagem_valor, h1.sigla as sg_moeda_hospedagem, h.valor as vl_diaria_hospedagem, h.sq_valor_diaria as sq_diaria_hospedagem,
                 f.veiculo, f.veiculo_qtd, f.veiculo_valor, i1.sigla as sg_moeda_veiculo, i.valor as vl_diaria_veiculo, i.sq_valor_diaria as sq_diaria_veiculo,
                 f.hospedagem_checkin, f.hospedagem_checkout, f.hospedagem_observacao, f.veiculo_retirada, f.veiculo_devolucao,
+                f.calculo_diaria_qtd, f.calculo_diaria_texto, f.calculo_hospedagem_qtd, f.calculo_hospedagem_texto, f.calculo_veiculo_qtd, f.calculo_veiculo_texto,
                 m.sq_pdvinculo_financeiro as sq_fin_dia,
                 m1.sq_projeto_rubrica as sq_rub_dia, m1.codigo as cd_rub_dia, m1.nome as nm_rub_dia, m1.descricao as ds_rub_dia,
                 m2.sq_tipo_lancamento as sq_lan_dia, m2.nome as nm_lan_dia,

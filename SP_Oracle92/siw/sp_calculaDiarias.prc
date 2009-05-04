@@ -177,7 +177,7 @@ begin
   end loop;
   
   for j in diarias.FIRST..diarias.LAST loop
-     update pd_diaria a set a.quantidade = coalesce(diarias(j),0) where sq_diaria = j;
+     update pd_diaria a set a.quantidade = coalesce(diarias(j),0), a.calculo_diaria_qtd = coalesce(diarias(j),0) where sq_diaria = j;
   end loop;
 end sp_calculaDiarias;
 /
