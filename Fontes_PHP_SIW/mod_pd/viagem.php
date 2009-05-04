@@ -39,14 +39,17 @@ include_once($w_dir_volta.'classes/sp/db_getPD_Deslocamento.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Vinculacao.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Financeiro.php');
 include_once($w_dir_volta.'classes/sp/db_getPDParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getMoeda.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Bilhete.php');
+include_once($w_dir_volta.'classes/sp/db_getPD_Reembolso.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Contas.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Reembolso.php');
+include_once($w_dir_volta.'classes/sp/dml_putPD_ReembValor.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Deslocamento.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Alteracao.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Bilhete.php');
@@ -85,6 +88,7 @@ include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoCumprimento.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoUtilBilhete.php');
+include_once($w_dir_volta.'funcoes/selecaoMoeda.php');
 include_once('visualviagem.php');
 include_once('validaviagem.php');
 
@@ -1796,13 +1800,6 @@ function Bilhetes() {
   $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,null);
   $RS_Trecho = SortArray($RS_Trecho,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
 
-  // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
-  $w_incluir = false;
-  foreach ($RS_Trecho as $row) {
-    if (nvl(f($row,'sq_bilhete'),'')=='') $w_incluir = true;
-  }
-  reset($RS_Trecho);
-
   if ($w_troca>'') {
     // Se for recarga da página
     $w_cia_aerea    = $_REQUEST['w_cia_area'];
@@ -1869,12 +1866,20 @@ function Bilhetes() {
     CompValor('w_valor_tax','Valor da taxa de embarque','>=','0,00','zero');
     Validate('w_valor_pta','Valor da transmissão do pta','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_pta','Valor da transmissão do pta','>=','0,00','zero');
-    ShowHTML('  if (theForm.w_valor_cheio.value=="0,00" && theForm.w_valor_bil.value=="0,00" && theForm.w_valor_tax.value=="0,00" && theForm.w_valor_pta.value=="0,00") {');
-    ShowHTML('     alert (\'Pelo menos um dos valores deve ser maior que zero!\');');
-    ShowHTML('     theForm.w_valor_cheio.focus();');
-    ShowHTML('     return false;');
-    ShowHTML('  }');
     Validate('w_observacao','Observação','','','1','500','1','1');
+    ShowHTML('  var i; ');
+    ShowHTML('  var w_erro=true; ');
+    ShowHTML('  if (theForm["w_sq_deslocamento[]"].value==undefined) {');
+    ShowHTML('     for (i=0; i < theForm["w_sq_deslocamento[]"].length; i++) {');
+    ShowHTML('       if (theForm["w_sq_deslocamento[]"][i].checked) w_erro=false;');
+    ShowHTML('     }');
+    ShowHTML('  }');
+    ShowHTML('  else {');
+    ShowHTML('     if (theForm["w_sq_deslocamento[]"].checked) w_erro=false;');
+    ShowHTML('  }');
+    ShowHTML('  if (w_erro) {');
+    ShowHTML('    return confirm("Confirma gravação de bilhete sem trechos vinculados?"); ');
+    ShowHTML('  }');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
   }
@@ -1911,7 +1916,7 @@ function Bilhetes() {
   if ($O=='L') {
     ShowHTML('<tr><td>');
     ShowHTML('<tr><td>');
-    if ($w_incluir) ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('        <a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -1978,6 +1983,7 @@ function Bilhetes() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_deslocamento[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.nvl($w_tipo,'S').'">');
     ShowHTML('<INPUT type="hidden" name="w_utilizado" value="'.nvl($w_utilizado,'N').'">');
     ShowHTML('<INPUT type="hidden" name="w_faturado" value="'.nvl($w_faturado,'N').'">');
@@ -1999,6 +2005,33 @@ function Bilhetes() {
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_tax.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor_pta,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    //Trechos contemlados no bilhete
+    ShowHTML('      <tr><td colspan="5"><br><b>Trechos contemplados pelo bilhete:</b>');
+    ShowHTML('      <tr><td colspan="5"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>&nbsp;</b></td>');
+    ShowHTML('          <td><b>Origem</td>');
+    ShowHTML('          <td><b>Destino</td>');
+    ShowHTML('          <td><b>Saída</td>');
+    ShowHTML('          <td><b>Chegada</td>');
+    ShowHTML('          <td><b>Transporte</td>');
+    ShowHTML('        </tr>');
+    foreach($RS_Trecho as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+      if(nvl($w_chave_aux,'_|_')==nvl(f($row,'sq_bilhete'),'')) {
+        ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_deslocamento[]" value="'.f($row,'sq_deslocamento').'" CHECKED>');
+      } else {
+        ShowHTML('        <td width="1%" nowrap align="center"><input '.$w_Disabled.' type="checkbox" name="w_sq_deslocamento[]" value="'.f($row,'sq_deslocamento').'">');
+      }
+      ShowHTML('        <td>'.f($row,'nm_origem').'</td>');
+      ShowHTML('        <td>'.f($row,'nm_destino').'</td>');
+      ShowHTML('        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),6),0,-3).'</td>');
+      ShowHTML('        <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),6),0,-3).'</td>');
+      ShowHTML('        <td align="center">'.nvl(f($row,'nm_meio_transporte'),'---').'</td>');
+      ShowHTML('      </tr>');
+    }
+    ShowHTML('        </table>');
     
     ShowHTML('      <tr><td align="center" colspan="5" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center" colspan="5">');
@@ -2109,6 +2142,13 @@ function AltSolic() {
   
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'S','PDDIARIA');
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+  $i = 0;
+  foreach($RS as $row) {
+    if ($i==0) $w_inicio = f($row,'saida');
+    $w_fim = f($row,'chegada');
+    $i++;
+  }
+  reset($RS);
 
   ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
   ShowHTML('  function altera (solic, texto) {');
@@ -2217,7 +2257,7 @@ function AltSolic() {
       $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
       $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
       $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-      if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]=='S') {
+      if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) {
         $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
         $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
         $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -2334,11 +2374,6 @@ function RegistroAlteracao() {
       Validate('w_valor_tax','Valor da taxa de embarque','VALOR','1',4,18,'','0123456789,.-');
       Validate('w_valor_hsp','Dif. hospedagem','VALOR','1',4,18,'','0123456789,.-');
       Validate('w_valor_dia','Diárias','VALOR','1',4,18,'','0123456789,.-');
-      ShowHTML('  if (theForm.w_valor_tar.value=="0,00" && theForm.w_valor_tax.value=="0,00" && theForm.w_valor_hsp.value=="0,00" && theForm.w_valor_dia.value=="0,00") {');
-      ShowHTML('     alert (\'Pelo menos um dos valores deve ser maior que zero!\');');
-      ShowHTML('     theForm.w_valor_tar.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
       Validate('w_justificativa','Justificativa','',1,5,2000,'1','1');
       Validate('w_caminho','Arquivo','','','5','255','1','1');
       Validate('w_pessoa','Autorizador','SELECT','1',1,18,'','1');
@@ -3519,6 +3554,13 @@ function Diarias() {
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+    $i = 0;
+    foreach($RS as $row) {
+      if ($i==0) $w_inicio = f($row,'saida');
+      $w_fim = f($row,'chegada');
+      $i++;
+    }
+    reset($RS);
   } elseif (strpos('AE',$O)!==false) {
     $w_trechos = unserialize(base64_decode($_REQUEST['w_trechos']));
     $w_sq_diaria            = $w_trechos[1];
@@ -3984,7 +4026,7 @@ function Diarias() {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]=='S') {
+        if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -4225,6 +4267,13 @@ function Diarias_Solic() {
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+    $i = 0;
+    foreach($RS as $row) {
+      if ($i==0) $w_inicio = f($row,'saida');
+      $w_fim = f($row,'chegada');
+      $i++;
+    }
+    reset($RS);
   } elseif (strpos('AE',$O)!==false) {
     $w_trechos = unserialize(base64_decode($_REQUEST['w_trechos']));
     $w_sq_diaria            = $w_trechos[1];
@@ -4585,7 +4634,7 @@ function Diarias_Solic() {
       ShowHTML('       <input type="hidden" name="w_trechos" value="">');
       while($i<count($w_trechos)) {
         $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
-        if ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && $w_trechos[$i][51]=='S') {
+        if ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -5999,13 +6048,15 @@ function PrestarContas() {
   $w_chave          = $_REQUEST['w_chave'];
   $w_readonly       = '';
   $w_erro           = '';
-    
+
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
   $w_diarias            = f($RS,'diaria');
   $w_nm_diaria          = f($RS,'nm_diaria');
   $w_cumprimento_bd     = f($RS,'cumprimento');
+  $w_reembolso_bd       = f($RS,'reembolso');
+  
   if ($w_troca>'') {
     // Se for recarga da página
     $w_cumprimento              = $_REQUEST['w_cumprimento'];
@@ -6060,12 +6111,14 @@ function PrestarContas() {
     Validate('w_ressarcimento_valor','Valor do ressarcimento','','1',1,18,'','0123456789,.');
     CompValor('w_ressarcimento_valor','Valor do ressarcimento','>','0,00','zero');
     Validate('w_ressarcimento_observacao','Observação sobre o ressarcimento','','1',1,2000,'1','1');
-  } 
+  }
+  /* 
   if ($w_cumprimento!='C' && $w_reembolso=='S') {
     Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
     CompValor('w_valor','Valor do reembolso','>','0,00','zero');
     Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
   }
+  */
   ValidateClose();
   ScriptClose();
   ShowHTML('</HEAD>');
@@ -6114,14 +6167,14 @@ function PrestarContas() {
   ShowHTML('    </tr>');
   if ($w_cumprimento=='I' || $w_cumprimento=='P') {
     if ($w_cumprimento=='P') {
-      ShowHTML('<tr><td><br><b>Motivo do cumprimento parcial:<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('<tr><td><br><b>Motivo do cumprimento parcial:</b></font></td></tr>');   
       ShowHTML('      <tr valign="top"><td><textarea '.$w_Disabled.' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');
     }
     
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('<tr><td><br><b>Relatório de viagem:<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('<tr><td><br><b>Relatório de viagem:</b></font></td></tr>');   
     ShowHTML('      <tr valign="top"><td><textarea '.$w_Disabled.' name="w_relatorio" class="STI" ROWS=5 cols=75>'.$w_relatorio.'</TEXTAREA></td>');
-    ShowHTML('<tr><td><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('<tr><td><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('<tr><td><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
     if (nvl($w_atual,'')!='') {
@@ -6129,15 +6182,13 @@ function PrestarContas() {
       ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
     }
 
-    ShowHTML('    <tr><td colspan="2"><b>Há reembolso?</b><br>');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Sim');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
-      if ($w_reembolso=='S') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    ShowHTML('    <tr><td colspan="2"><br><b>Há reembolso?</b> ');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').'> Sim');
+    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').'> Não');
+
+    if ($w_reembolso=='S') {
       if (count($RS_Financ)>1) {
-        ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+        ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');   
         ShowHTML('      <tr valign="top">');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave_pai,'B','w_rubrica','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
         SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
@@ -6149,28 +6200,34 @@ function PrestarContas() {
       ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
     }
     
-    ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
+    ShowHTML('    <tr><td colspan="2"><br><b>Há ressarcimento?</b> ');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento=='S') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
-      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+      ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+      ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td></tr>');
+      ShowHTML('    </table></blockquote>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
     }
   } elseif ($w_cumprimento=='C') {
-    ShowHTML('<tr><td><br><b>Motivo do cancelamento:<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('<tr><td><br><b>Motivo do cancelamento:</b></font></td></tr>');   
     ShowHTML('      <tr><td valign="top"><textarea '.$w_Disabled.' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');
-    ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
+    ShowHTML('    <tr><td colspan="2"><br><b>Há ressarcimento?</b><br>');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento=='S') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
-      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+      ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+      ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td></tr>');
+      ShowHTML('    </table></blockquote>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
     }
@@ -6183,7 +6240,39 @@ function PrestarContas() {
   ShowHTML('    </tr>');
   ShowHTML('</FORM>');
   
-	if ($w_cumprimento=='P' && $w_cumprimento_bd=='P') {
+  if ($w_reembolso=='S' && $w_reembolso_bd=='S') {
+    // Valores a serem reembolsados
+    $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$w_chave,null,null,null);
+    $RS_Reembolso = SortArray($RS_Reembolso,'sigla','asc');
+    
+    ShowHTML('    <tr><td><br><b>Valores a serem reembolsados (<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'ReembValor&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font>');   
+    ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Moeda</b></td>');
+    ShowHTML('          <td><b>Valor</td>');
+    ShowHTML('          <td><b>Justificativa</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS_Reembolso)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><font color="#BC3131"><b>INFORME OS VALORES A SEREM REEMBOLSADOS.</b></b></td></tr>');
+    } else {
+      foreach($RS_Reembolso as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'nm_moeda').' ('.f($row,'sg_moeda').')</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'&nbsp;&nbsp;&nbsp;</td>');
+        ShowHTML('        <td>'.crlf2br(f($row,'justificativa')).'</td>');
+        ShowHTML('        <td nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ReembValor&R='.$w_pagina.$par.'&O=A&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'" title="Altera os dados do valor.">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'" title="Exclusão do valor de reembolso." onClick="return(confirm(\'Confirma exclusão do valor?\'));">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      }
+    }
+    ShowHTML('    </table>');
+  }
+
+  if ($w_cumprimento=='P' && $w_cumprimento_bd=='P') {
 	  ShowHTML('<tr><td><br><b>Deslocamentos efetivamente cumpridos: (<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'trechos&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG=PDTRECHO'.MontaFiltro('GET').'"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
 	  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'P','PDTRECHO');
 	  $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
@@ -6226,6 +6315,13 @@ function PrestarContas() {
 	if ($w_cumprimento=='P' && $w_cumprimento_bd=='P' && nvl($w_diarias,'')!='') {
 	  $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'P','PDDIARIA');
 	  $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+    $i = 0;
+    foreach($RS as $row) {
+      if ($i==0) $w_inicio = f($row,'saida');
+      $w_fim = f($row,'chegada');
+      $i++;
+    }
+    reset($RS);
 	
 	  ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
 	  ShowHTML('  function altera (solic, texto) {');
@@ -6334,7 +6430,7 @@ function PrestarContas() {
 	      $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
 	      $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
 	      $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if ($w_max_diaria >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]=='S') {
+	      if ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) {
 	        $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
 	        $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
 	        $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -6399,6 +6495,7 @@ function Reembolso() {
   if ($w_troca>'') {
     // Se for recarga da página
     $w_reembolso                = $_REQUEST['w_reembolso'];
+    $w_reembolso_bd             = $_REQUEST['w_reembolso'];
     $w_valor                    = $_REQUEST['w_valor'];
     $w_observacao               = $_REQUEST['w_observacao'];
     $w_ressarcimento            = $_REQUEST['w_ressarcimento'];
@@ -6411,10 +6508,11 @@ function Reembolso() {
     $w_deposito                 = $_REQUEST['w_deposito'];
   } else {
     $w_reembolso                = f($RS,'reembolso');
+    $w_reembolso_bd             = f($RS,'reembolso');
     $w_valor                    = formatNumber(f($RS,'reembolso_valor'));
     $w_observacao               = f($RS,'reembolso_observacao');
     $w_ressarcimento            = f($RS,'ressarcimento');
-    $w_ressarcimento_valor      = f($RS,'ressarcimento_valor');
+    $w_ressarcimento_valor      = formatNumber(f($RS,'ressarcimento_valor'));
     $w_ressarcimento_observacao = f($RS,'ressarcimento_observacao');
     $w_financeiro               = f($RS,'sq_pdvinculo_reembolso');
     $w_rubrica                  = f($RS,'sq_rubrica_reemb');
@@ -6436,14 +6534,9 @@ function Reembolso() {
     CompValor('w_ressarcimento_valor','Valor do ressarcimento','>','0,00','zero');
     Validate('w_ressarcimento_observacao','Observação sobre o ressarcimento','','1',1,2000,'1','1');
   } 
-  if ($w_reembolso=='S') {
-    Validate('w_valor','Valor do reembolso','','1',1,18,'','0123456789,.');
-    CompValor('w_valor','Valor do reembolso','>','0,00','zero');
-    Validate('w_observacao','Justificativa e memória de cálculo','','1',1,2000,'1','1');
-    if (count($RS_Financ)>1) {
-      Validate('w_rubrica','Rubrica para pagamento do reembolso','SELECT','1',1,18,'','1');
-      Validate('w_lancamento','Tipo de lançamento para pagamento do reembolso','SELECT','1',1,18,'','1');
-    }
+  if ($w_reembolso=='S' && count($RS_Financ)>1) {
+    Validate('w_rubrica','Rubrica para pagamento do reembolso','SELECT','1',1,18,'','1');
+    Validate('w_lancamento','Tipo de lançamento para pagamento do reembolso','SELECT','1',1,18,'','1');
   }
   ValidateClose();
   ScriptClose();
@@ -6487,18 +6580,16 @@ function Reembolso() {
   ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
   ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
   ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
+  ShowHTML('<INPUT type="hidden" name="w_reembolso_bd" value="'.$w_reembolso_bd.'">');
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
   ShowHTML('    <tr><td colspan="2"><b>Há reembolso?</b><br>');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Sim');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor\'; document.Form.submit();"> Não');
-    if ($w_reembolso=='S') {
-    ShowHTML('    <tr><td colspan="2"><br><b>Dados do reembolso<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-    ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor do reembolso (R$):</b><br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do reembolso."></td>');
-    ShowHTML('    <tr><td colspan="2"><b><u>J</u>ustificativa e memória de cálculo:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=10 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').'> Sim');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').'> Não');
+  if ($w_reembolso=='S') {
     if (count($RS_Financ)>1) {
       ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('      <tr valign="top">');
@@ -6512,16 +6603,16 @@ function Reembolso() {
     ShowHTML('<INPUT type="hidden" name="w_valor" value="0,00">');
   }
   ShowHTML('    <tr><td colspan="2"><b>Há ressarcimento?</b><br>');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
-    ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
-    if ($w_ressarcimento=='S') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
-      ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
-    }
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
+  if ($w_ressarcimento=='S') {
+    ShowHTML('    <tr><td colspan="2"><br><b>Dados do ressarcimento<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
+    ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do ressarcimento."></td>');
+    ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
+  } else {
+    ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
+  }
   ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('    <tr><td align="center" colspan="2">');
   ShowHTML('        <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -6532,6 +6623,39 @@ function Reembolso() {
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
   ShowHTML('</FORM>');
+
+  if ($w_reembolso=='S' && $w_reembolso_bd=='S') {
+    // Valores a serem reembolsados
+    $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$w_chave,null,null,null);
+    $RS_Reembolso = SortArray($RS_Reembolso,'sigla','asc');
+    
+    ShowHTML('    <tr><td><br><b>Valores a serem reembolsados (<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'ReembValor&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font>');   
+    ShowHTML('      <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td><b>Moeda</b></td>');
+    ShowHTML('          <td><b>Valor</td>');
+    ShowHTML('          <td><b>Justificativa</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS_Reembolso)<=0) {
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><font color="#BC3131"><b>INFORME OS VALORES A SEREM REEMBOLSADOS.</b></b></td></tr>');
+    } else {
+      foreach($RS_Reembolso as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'nm_moeda').' ('.f($row,'sg_moeda').')</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'&nbsp;&nbsp;&nbsp;</td>');
+        ShowHTML('        <td>'.crlf2br(f($row,'justificativa')).'</td>');
+        ShowHTML('        <td nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ReembValor&R='.$w_pagina.$par.'&O=A&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'" title="Altera os dados do valor.">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Grava&R='.$w_pagina.$par.'&O=E&w_chave_aux='.f($row,'chave').'&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDVALRB'.MontaFiltro('GET').'" title="Exclusão do valor de reembolso." onClick="return(confirm(\'Confirma exclusão do valor?\'));">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      }
+    }
+    ShowHTML('    </table>');
+  }
+  
   ShowHTML('</table>');
   ShowHTML('</center>');
   Estrutura_Texto_Fecha();
@@ -6542,11 +6666,179 @@ function Reembolso() {
 } 
 
 // =========================================================================
+// Rotina de cadastramento de valores de reembolso
+// -------------------------------------------------------------------------
+function ReembolsoValor() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_erro       = '';
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  
+  // Recupera os dados da solicitação e do cliente
+  $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+  $w_cidade_padrao = f($RS_Cliente,'sq_cidade_padrao');
+  
+  // Se viagem nacional, seleciona BRL automaticamente.
+  if (f($RS_Solic,'internacional')=='S') {
+    $RS_Moeda = db_getMoeda::getInstanceOf($dbms,null,null,null,null,'BRL');
+    foreach ($RS_Moeda as $row) {$RS_Moeda = $row; break;}
+    $w_moeda_padrao = f($RS_Moeda,'sq_moeda');
+  } else {
+    $w_moeda_padrao = '';
+  }
+
+  if (f($RS_Solic,'sg_tramite')=='PC') $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
+
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_moeda            = $_REQUEST['w_moeda'];
+    $w_valor_solicitado = $_REQUEST['w_valor_solicitado'];
+    $w_justificativa    = $_REQUEST['w_justificativa'];
+    $w_valor_autorizado = $_REQUEST['w_valor_autorizado'];
+    $w_observacao       = $_REQUEST['w_observacao'];
+  } elseif (strpos('AE',$O)!==false) {
+    $RS = db_getPD_Reembolso::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null);
+    foreach($RS as $row) { $RS = $row; break; }
+    $w_moeda            = f($RS,'sq_moeda');
+    $w_sg_moeda         = f($RS,'sg_moeda');
+    $w_valor_solicitado = formatNumber(f($RS,'valor_solicitado'));
+    $w_justificativa    = f($RS,'justificativa');
+    $w_valor_autorizado = formatNumber(f($RS,'valor_autorizado'));
+    $w_observacao       = f($RS,'observacao');
+  }
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Cadastro de valor de reembolso</TITLE>');
+  Estrutura_CSS($w_cliente);
+  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
+  // tratando as particularidades de cada serviço
+  ScriptOpen('JavaScript');
+  FormataHora();
+  FormataValor();
+  ValidateOpen('Validacao');
+  if ($O=='I' || $O=='A') {
+    if ($O=='I'||$w_tipo_reg=='S') {
+      Validate('w_moeda','Moeda','SELECT',1,1,18,'','1');
+      Validate('w_valor_solicitado','Valor solicitado','VALOR','1',4,10,'','0123456789.,');
+      CompValor('w_valor_solicitado','Valor solicitado','>','0,00','zero');
+      Validate('w_justificativa','Justificativa','','1',1,1000,'1','1');
+    }
+    if ($w_tipo_reg=='P') {
+      Validate('w_valor_autorizado','Valor autorizado','VALOR','1',4,10,'','0123456789.,');
+      Validate('w_observacao','Observação','','',1,1000,'1','1');
+      ShowHTML('  if (theForm.w_valor_solicitado.value!=theForm.w_valor_autorizado.value && theForm.w_observacao.value=="") {');
+      ShowHTML('      alert("Registre o motivo do valor solicitado ter sido alterado!"); ');
+      ShowHTML('      theForm.w_observacao.focus(); ');
+      ShowHTML('      return (false); ');
+      ShowHTML('  }');
+    }
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  }
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.(($P1!=1 && $w_passagem=='S') ? $w_troca : 'Botao[0]').'.focus()\';');
+  } elseif ($O=='I' || $O=='A') {
+    if ($O=='I'||$w_tipo_reg=='S') {
+      if (f($RS_Solic,'internacional')=='N') {
+        BodyOpenClean('onLoad=\'document.Form.w_valor_solicitado.focus()\';');
+      } else {
+        BodyOpenClean('onLoad=\'document.Form.w_moeda.focus()\';');
+      }
+    } else {
+      BodyOpenClean('onLoad=\'document.Form.w_valor_autorizado.focus()\';');
+    }
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\';');
+  }
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
+  ShowHTML('      <table border=1 width="100%">');
+  ShowHTML('        <tr><td valign="top" colspan="2">');
+  ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('            <tr><td>Número:<b><br>'.f($RS_Solic,'codigo_interno').'</td>');
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS_Solic,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+  foreach($RS1 as $row) { $RS1 = $row; break; }
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS_Solic,'phpdt_fim')).' </b></td>');
+  ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
+  ShowHTML('          </TABLE></td></tr>');
+  ShowHTML('      </table>');
+  if (strpos('IA',$O)!==false) {
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo_reg" value="'.$w_tipo_reg.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    if ($O=='I'||$w_tipo_reg=='S') {
+      ShowHTML('      <tr valign="top">');
+      if (f($RS_Solic,'internacional')=='N') {
+        ShowHTML('<INPUT type="hidden" name="w_moeda" value="'.$w_moeda_padrao.'">');
+        ShowHTML('        <td><b>Unidade monetária:</b><br>'.f($RS_Moeda,'nome').'</td>');
+      } else {
+        selecaoMoeda('<u>U</u>nidade monetária:','U','Selecione a unidade monetária na relação.',$w_moeda,null,'w_moeda','PDRB',null);
+      }
+      ShowHTML('        <td><b><u>V</u>alor:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor_solicitado" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_solicitado.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('      <tr><td colspan="2"><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Justifique o valor solicitado.">'.$w_justificativa.'</TEXTAREA></td>');
+    }
+    if ($w_tipo_reg=='P') {
+      if ($O!='I') {
+        ShowHTML('<INPUT type="hidden" name="w_moeda" value="'.$w_moeda.'">');
+        ShowHTML('<INPUT type="hidden" name="w_valor_solicitado" value="'.$w_valor_solicitado.'">');
+        ShowHTML('<INPUT type="hidden" name="w_justificativa" value="'.$w_justificativa.'">');
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('        <td><b>Valor solicitado:</b><br>'.$w_sg_moeda.' '.$w_valor_solicitado.'</td>');
+        ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br($w_justificativa).'</TEXTAREA></td>');
+        ShowHTML('      </tr>');
+      }
+      ShowHTML('      <tr><td><b><u>V</u>alor autorizado:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor_autorizado" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_autorizado.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('      <tr><td colspan="2"><b><u>O</u>bservação: (obrigatório quando valor solicitado for alterado)</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=5 cols=75 title="Se o valor autorizado for diferente do valor solicitado, é obrigatório informar o motivo. Caso contrário, este campo é opcional.">'.$w_observacao.'</TEXTAREA></td>');
+    }
+    ShowHTML('      <tr><td colspan="5"><table border="0" width="100%">');
+    ShowHTML('      <tr><td align="center" colspan="5" height="1" bgcolor="#000000"></TD></TR>');
+    ShowHTML('      <tr><td align="center" colspan="5">');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
+    ShowHTML('              <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'Reembolso&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDREEMB&w_chave='.$w_chave.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
+// =========================================================================
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
-
+  
   $w_file       = '';
   $w_tamanho    = '';
   $w_tipo       = '';
@@ -7044,6 +7336,37 @@ function Grava() {
         retornaFormulario('w_assinatura');
       }
       break;
+    case 'PDVALRB' :
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        // Verifica se a moeda indicada já foi informada em outro lançamento
+        $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null);
+        foreach($RS_Reembolso as $row) {
+          if (f($row,'sq_moeda')==$_REQUEST['w_moeda'] && (f($row,'chave')!=nvl($_REQUEST['w_chave_aux'],0))) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Moeda já informada. Se necessário, some os valores!\');');
+            ScriptClose();
+            retornaFormulario('w_moeda');
+            exit();
+          }
+          break;
+        }
+        
+        // Grava dados do reembolso
+        dml_putPD_ReembValor::getInstanceOf($dbms,$O,
+            $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_moeda'],$_REQUEST['w_valor_solicitado'],
+            $_REQUEST['w_justificativa'],$_REQUEST['w_valor_autorizado'],$_REQUEST['w_observacao']);
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Reembolso&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDREEMB'.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
     case 'PDENVIO':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -7228,6 +7551,7 @@ function Main() {
     case 'DIARIAS_SOLIC':     Diarias_Solic(); break;
     case 'PRESTARCONTAS':     PrestarContas(); break;
     case 'REEMBOLSO':         Reembolso(); break;
+    case 'REEMBVALOR':        ReembolsoValor(); break;
     case 'VISUAL':            Visual(); break;
     case 'EXCLUIR':           Excluir(); break;
     case 'ENVIO':             Encaminhamento(); break;

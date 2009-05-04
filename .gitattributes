@@ -879,6 +879,7 @@ Fontes_PHP_SIW/classes/sp/db_getPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Financeiro.php -text
+Fontes_PHP_SIW/classes/sp/db_getPD_Reembolso.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Vinculacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPPADadoFinanc_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getPPALocalizador_IS.php -text
@@ -1229,6 +1230,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_ReembValor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPessoa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPlanoEstrategico.php -text
@@ -1388,7 +1390,6 @@ Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_Medida_PPA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_Medida_SIG.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_PPA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putXMLUnidade_SIG.php -text
-Fontes_PHP_SIW/classes/sp/selecaoMoeda.php -text
 Fontes_PHP_SIW/classes/syslog/syslog.php -text
 Fontes_PHP_SIW/cliente.php -text
 Fontes_PHP_SIW/constants.inc -text
@@ -3767,6 +3768,7 @@ SP_Oracle92/siw/SP_GetPD_Alteracao.prc -text
 SP_Oracle92/siw/SP_GetPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_GetPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_GetPD_Financeiro.prc -text
+SP_Oracle92/siw/SP_GetPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text
 SP_Oracle92/siw/SP_GetParametro.prc -text
 SP_Oracle92/siw/SP_GetSIWArquivo.prc -text
@@ -3810,6 +3812,7 @@ SP_Oracle92/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle92/siw/SP_PutPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_PutPD_Contas.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
+SP_Oracle92/siw/SP_PutPD_ReembValor.prc -text
 SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text

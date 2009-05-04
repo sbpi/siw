@@ -16,7 +16,9 @@ begin
          and (p_sigla      is null or (p_sigla is not null and a.sigla = p_sigla))
          and (p_restricao  is null or 
               (p_restricao is not null and
-               (p_restricao = 'ATIVO' and a.ativo = 'S')
+               ((p_restricao = 'ATIVO' and a.ativo = 'S') or
+                (p_restricao = 'PDRB' and a.exclusao_ptax is null)
+               )
               )
              );
 end SP_GetMoeda;

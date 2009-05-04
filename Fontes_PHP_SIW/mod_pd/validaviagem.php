@@ -62,11 +62,27 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
   // Recupera as diárias da solicitação de viagem
   $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'S', 'PDDIARIA');
   $l_existe_rs5 = count($l_rs5);
+  $l_rs5 = SortArray($l_rs5,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+  $l_i = 0;
+  foreach($l_rs5 as $row) {
+    if ($l_i==0) $w_inicio_s = f($row,'saida');
+    $w_fim_s = f($row,'chegada');
+    $l_i++;
+  }
+  reset($l_rs5);
 
   // Recupera as diárias da prestação de contas de viagem
   $l_rs6 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave, null, 'P', 'PDDIARIA');
   $l_existe_rs6 = count($l_rs6);
-
+  $l_rs6 = SortArray($l_rs6,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+  $l_i = 0;
+  foreach($l_rs6 as $row) {
+    if ($l_i==0) $w_inicio_p = f($row,'saida');
+    $w_fim_p = f($row,'chegada');
+    $l_i++;
+  }
+  reset($l_rs6);
+  
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
   // através do JavaScript por envolver mais de uma tela
@@ -142,10 +158,15 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
     
           if (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S') {
             $w_cont = 0;
+            $l_i    = 1;
             foreach ($l_rs5 as $row) {
-              if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && f($row,'origem_nacional')=='S') {
-                $w_cont++;
+              if ($l_i < count($l_rs5)) {
+                // descarta o último registro 
+                if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s)) {
+                  $w_cont++;
+                }
               }
+              $l_i++;
             }
             if ($w_cont>0) {
               $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
@@ -178,6 +199,19 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
               $l_tipo  = 0;
             }
+
+            // Pelo menos um bilhete deve ter trechos vinculados
+            $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,((f($l_rs_tramite,'sigla')=='AE') ? 'S' : 'P'),null);
+            
+            // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
+            $w_trecho = false;
+            foreach ($RS_Trecho as $row) {
+              if (nvl(f($row,'sq_bilhete'),'')!='') $w_trecho = true;
+            }
+            if (!$w_trecho) {
+              $l_erro .= '<li>Pelo menos um bilhete deve ter trechos vinculados.';
+              $l_tipo  = 0;
+            }
           } 
         } 
 
@@ -189,14 +223,29 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
           if (f($l_rs_solic,'cumprimento')=='P' && (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S')) {
             $w_cont = 0;
+            $l_i    = 0;
             foreach ($l_rs6 as $row) {
-            if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && f($row,'origem_nacional')=='S') {
-                $w_cont++;
+              if ($l_i < count($l_rs5)) {
+                // descarta o último registro 
+                if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_p)) {
+                  $w_cont++;
+                }
               }
+              $l_i++;
             }
             if ($w_cont>0) {
               $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
               $l_tipo = 0;
+            }
+          }
+
+          if (f($l_rs_solic,'reembolso')=='S') {
+            // Valores a serem reembolsados
+            $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
+
+            if (count($RS_Reembolso)==0) {
+              $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
+              $l_tipo  = 0;
             }
           }
         }

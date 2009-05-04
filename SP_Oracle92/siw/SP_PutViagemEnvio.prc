@@ -95,17 +95,17 @@ create or replace procedure SP_PutViagemEnvio
                   when 'HSP' then 'Hospedagem' 
                   else 'Locação de veículos' 
              end as nm_despesa
-        from (select 'RMB' as tp_despesa, null as sq_diaria, a1.reembolso_valor as valor,
+        from (select 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                     b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                 from siw_solicitacao                      a
                      inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla = 'EE')
+                     inner     join pd_reembolso          b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
+                       inner   join co_moeda              b1 on (b.sq_moeda                   = b1.sq_moeda)
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
                        inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica),
-                     co_moeda                             d1
+                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
                where a.sq_siw_solicitacao = p_chave
-                 and d1.sigla = 'BRL'
               UNION
               select 'DIA' as tp_despesa, b.sq_diaria, (b.quantidade*b.valor) as valor,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,

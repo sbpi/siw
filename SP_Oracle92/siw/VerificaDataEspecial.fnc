@@ -90,7 +90,7 @@ begin
   If w_reg > 0 Then
      result := 'N';
   Else
-     select a.expediente into Result
+     select count(*) into w_reg
        from eo_data_especial a
       where a.cliente       = w_cliente
         and a.expediente    = 'M'
@@ -115,7 +115,7 @@ begin
      If w_reg > 0 Then
         result := 'M';
      Else
-        select a.expediente into Result
+        select count(*) into w_reg
           from eo_data_especial a
          where a.cliente       = w_cliente
            and a.expediente    = 'T'

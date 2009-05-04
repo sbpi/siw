@@ -324,6 +324,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     if($l_diaria=='S') {
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+      $i = 0;
+      foreach($RS1 as $row) {
+        if ($i==0) $w_inicio = f($row,'saida');
+        $w_fim = f($row,'chegada');
+        $i++;
+      }
+      reset($RS1);
       $i = 1;
       if (count($RS1)>0) {
         foreach($RS1 as $row) {
@@ -412,7 +419,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           
           $w_tot_local = $w_diarias + $w_locacoes;
           
-          if ($w_trechos[$i][40]==0 && $w_trechos[$i][41]==0 && $w_trechos[$i][42]=='S' && ($w_tot_local!=0 || $i!=count($w_trechos))) {
+          if ($w_trechos[$i][40]==0 && $w_trechos[$i][41]==0 && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && ($w_tot_local!=0 || $i!=count($w_trechos))) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             
             // Configura a quantidade de linhas do trecho
@@ -461,6 +468,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       if (f($RS,'cumprimento')!='C') {
         $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
         $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+        $i = 0;
+        foreach($RS1 as $row) {
+          if ($i==0) $w_inicio = f($row,'saida');
+          $w_fim = f($row,'chegada');
+          $i++;
+        }
+        reset($RS1);
         $i = 1;
         if (count($RS1)>0) {
           foreach($RS1 as $row) {
@@ -504,6 +518,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               $w_trechos[$i][37] = formataDataEdicao(f($row,'veiculo_retirada'));
               $w_trechos[$i][38] = formataDataEdicao(f($row,'veiculo_devolucao'));
               $w_trechos[$i][39] = f($row,'destino_nacional');
+              $w_trechos[$i][40] = f($row,'saida_internacional');
+              $w_trechos[$i][41] = f($row,'chegada_internacional');
+              $w_trechos[$i][42] = f($row,'origem_nacional');
               
               // Cria array para guardar o valor total por moeda
               if ($w_trechos[$i][13]>'') $w_tot_diaria_P[$w_trechos[$i][13]] = 0;
@@ -546,7 +563,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             
             $w_tot_local = $w_diarias + $w_locacoes;
             
-            if ($w_tot_local!=0 || $i!=count($w_trechos)) {
+            if ($w_trechos[$i][40]==0 && $w_trechos[$i][41]==0 && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && ($w_tot_local!=0 || $i!=count($w_trechos))) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               
               // Configura a quantidade de linhas do trecho
@@ -695,6 +712,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
+        $i = 0;
+        foreach($RS1 as $row) {
+          if ($i==0) $w_inicio = f($row,'saida');
+          $w_fim = f($row,'chegada');
+          $i++;
+        }
+        reset($RS1);
         $i = 1;
         foreach($RS1 as $row) {
           //if (nvl(f($row,'sq_diaria'),0)>0) {
@@ -840,9 +864,16 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
       $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
       if (count($RS1)>0) {
+        $i = 0;
+        foreach($RS1 as $row) {
+          if ($i==0) $w_inicio = f($row,'saida');
+          $w_fim = f($row,'chegada');
+          $i++;
+        }
+        reset($RS1);
         $i = 1;
         foreach($RS1 as $row) {
-          if (nvl(f($row,'sq_diaria'),0)>0) {
+          //if (nvl(f($row,'sq_diaria'),0)>0) {
             $w_trechos[$i][1]  = f($row,'sq_diaria');
             $w_trechos[$i][2]  = f($row,'sq_deslocamento');
             $w_trechos[$i][3]  = f($row,'sq_deslocamento');
@@ -897,7 +928,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             $i += 1;
           }
-        } 
+        //} 
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PAGAMENTO REALIZADO DE DIÁRIAS, HOSPEDAGENS E VEÍCULOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -1030,9 +1061,49 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
         $l_html.='</td>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Reembolso ao beneficiário:</b></td><td>R$ '.formatNumber(f($RS,'reembolso_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Reembolso ao beneficiário:</b></td><td>';
       if (f($RS,'reembolso')=='S') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Justificativa e memória de cálculo:</b></td><td>'.nvl(CRLF2BR(f($RS,'reembolso_observacao')),'---').'</td></tr>';
+        // Valores a serem reembolsados
+        $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$l_chave,null,null,null);
+        $RS_Reembolso = SortArray($RS_Reembolso,'sigla','asc');
+        
+        $l_html.=chr(13).'      <table border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">';
+        $l_html.=chr(13).'          <td colspan=3><b>Solicitação</b></td>';
+        $l_html.=chr(13).'          <td colspan=3><b>Autorização</b></td>';
+        $l_html.=chr(13).'        </tr>';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">';
+        $l_html.=chr(13).'          <td><b>Moeda</b></td>';
+        $l_html.=chr(13).'          <td><b>Valor</td>';
+        $l_html.=chr(13).'          <td><b>Justificativa</td>';
+        $l_html.=chr(13).'          <td><b>Valor</td>';
+        $l_html.=chr(13).'          <td><b>Observação</td>';
+        $l_html.=chr(13).'        </tr>';
+        if (count($RS_Reembolso)<=0) {
+          $l_html.=chr(13).'      <tr><td colspan=8 align="center"><font color="#BC3131"><b>INFORME OS VALORES A SEREM REEMBOLSADOS.</b></b></td></tr>';
+        } else {
+          foreach($RS_Reembolso as $row) {
+            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+            $l_html.=chr(13).'      <tr valign="top">';
+            $l_html.=chr(13).'        <td>'.f($row,'nm_moeda').' ('.f($row,'sg_moeda').')</td>';
+            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'</td>';
+            $l_html.=chr(13).'        <td>'.crlf2br(f($row,'justificativa')).'</td>';
+            if ($w_or_tramite<=9) {
+              // No trâmite de prestação de contas
+              $l_html.=chr(13).'        <td align="center" colspan="2">&nbsp;</td>';
+            } elseif ($w_or_tramite==10 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+              // No trâmite de verificação da prestação de contas mas sem valor informado.
+              $l_html.=chr(13).'        <td align="center" colspan="2">Em análise</td>';
+            } else {
+              // No trâmite de verificação da prestação de contas e com valor informado, ou em trâmite posterior a PC
+              $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_autorizado')).'</td>';
+              $l_html.=chr(13).'        <td>'.nvl(crlf2br(f($row,'observacao')),'---').'</td>';
+            }
+            $l_html.=chr(13).'        </td>';
+            $l_html.=chr(13).'      </tr>';
+          }
+        }
+        $l_html.=chr(13).'    </table>';
       }
       if (f($RS,'ressarcimento')=='S') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Depósito identificado:</b></td><td>'.f($RS,'deposito_identificado').'</td></tr>';
