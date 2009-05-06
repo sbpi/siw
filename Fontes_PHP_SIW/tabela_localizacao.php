@@ -124,9 +124,10 @@ function Cidade() {
 
     $RS = db_getCityList::getInstanceOf($dbms,$p_sq_pais,$p_co_uf,$p_nome,null);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc');
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
     } else {
-      $RS = SortArray($RS,'nome','asc');
+      $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_cidade = $_REQUEST['w_sq_cidade'];
@@ -146,8 +147,8 @@ function Cidade() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_sq_pais','País','SELECT','1','1','10','','1');
-      Validate('w_co_uf','Estado','SELECT','1','1','3','1','1');
+      Validate('w_sq_pais','País','SELECT','','1','10','','1');
+      Validate('w_co_uf','Estado','SELECT','','1','3','1','1');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_ddd','DDD','1','','2','4','','1');
       Validate('w_codigo_ibge','IBGE','1','','1','20','1','1');
@@ -159,8 +160,8 @@ function Cidade() {
       ShowHTML('     { return (true); }; ');
       ShowHTML('     { return (false); }; ');
     } elseif ($O=='P') {
-      Validate('p_sq_pais','Pais','SELECT','1','1','10','','1');
-      Validate('p_co_uf','UF','SELECT','1','2','2','1','');
+      Validate('p_sq_pais','Pais','SELECT','','1','10','','1');
+      Validate('p_co_uf','UF','SELECT','','2','2','1','');
       Validate('p_nome','nome','1','','3','50','1','1');
       Validate('P4','Linhas por página','1','1','1','4','','0123456789');
     } 
@@ -201,14 +202,15 @@ function Cidade() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>País</td>');
-    ShowHTML('          <td><b>UF</td>');
-    ShowHTML('          <td><b>Cidade</td>');
-    ShowHTML('          <td><b>DDD</td>');
-    ShowHTML('          <td><b>IBGE</td>');
-    ShowHTML('          <td><b>Capital</td>');
-	ShowHTML('          <td><b>Aeroportos</td>');
+    //ShowHTML('          <td><b>Chave</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_cidade').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('País','sq_pais').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('UF','co_uf').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Cidade','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('DDD','ddd').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('IBGE','codigo_ibge').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Capital','capital').'</td>');
+	  ShowHTML('          <td><b>'.LinkOrdena('Aeroportos','aeroportos').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 
@@ -298,7 +300,7 @@ function Cidade() {
     selecaoEstado('<u>U</u>F:','U',null,$p_co_uf,$p_sq_pais,null,'p_co_uf',null,null);
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr><td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="p_nome" size="50" maxlength="50" value="'.$p_nome.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
+    /*ShowHTML('      <tr><td valign="top"><b><U>O</U>rdenação por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_ordena" size="1">');
     if ($p_ordena=='nome') {
       ShowHTML('          <option value="">Código<option value="nome" SELECTED>Nome<option value="ativo">Ativo');
     } elseif ($p_ordena=='codigo_siafi') {
@@ -307,7 +309,7 @@ function Cidade() {
       ShowHTML('          <option value="">Código<option value="nome">Nome<option value="ativo" SELECTED>Ativo');
     } else {
       ShowHTML('          <option value="" SELECTED>Código<option value="nome">Nome<option value="ativo">Ativo');
-    } 
+    } */
     ShowHTML('          </select></td>');
     ShowHTML('      <tr><td valign="top"><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="STI" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
@@ -803,9 +805,9 @@ function Pais() {
   } elseif ($O=='L') {
     $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
+      $RS = SortArray($RS,$p_ordena,'asc','sq_pais','asc','nome','asc');
     } else {
-      $RS = SortArray($RS,'padrao','desc','nome','asc');
+      $RS = SortArray($RS,'sq_pais','asc','padrao','desc','nome','asc');
     }
   } elseif ($O=='A' || $O=='E') {
     $w_sq_pais = $_REQUEST['w_sq_pais'];

@@ -104,13 +104,13 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
     if ($l_tipo!='WORD') {
       $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDE',$TP,'IDE').': '.ExibeSmile('IDE',$w_ide).' '.formatNumber($w_ide,2).'%</b></td>';
       $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGE',$TP,'IGE').': '.ExibeSmile('IGE',$w_ige).' '.formatNumber($w_ige,2).'%</b></td>';
-      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').': '.ExibeSmile('IDC',$w_ide).' '.formatNumber($w_idc,2).'%</b></td>';
-      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').': '.ExibeSmile('IGC',$w_ige).' '.formatNumber($w_igc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDC',$TP,'IDC').': '.ExibeSmile('IDC',$w_idc).' '.formatNumber($w_idc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGC',$TP,'IGC').': '.ExibeSmile('IGC',$w_igc).' '.formatNumber($w_igc,2).'%</b></td>';
     } else {
       $l_html .= chr(13).'        <td width="25%">IDE: '.ExibeSmile('IDE',$w_ide).' '.formatNumber($w_ide,2).'%</b></td>';
       $l_html .= chr(13).'        <td width="25%">IGE: '.ExibeSmile('IGE',$w_ige).' '.formatNumber($w_ige,2).'%</b></td>';
-      $l_html .= chr(13).'        <td width="25%">IDC: '.ExibeSmile('IDC',$w_ide).' '.formatNumber($w_idc,2).'%</b></td>';
-      $l_html .= chr(13).'        <td width="25%">IGC: '.ExibeSmile('IGC',$w_ige).' '.formatNumber($w_igc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IDC: '.ExibeSmile('IDC',$w_idc).' '.formatNumber($w_idc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IGC: '.ExibeSmile('IGC',$w_igc).' '.formatNumber($w_igc,2).'%</b></td>';
     }
     $l_html .= chr(13).'      </table>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>';

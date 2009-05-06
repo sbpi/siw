@@ -1,6 +1,6 @@
 create or replace procedure SP_GetCityList
-   (p_pais      in  number,
-    p_estado    in  varchar2,
+   (p_pais      in  number    default null,
+    p_estado    in  varchar2  default null,
     p_nome      in  varchar2  default null,
     p_restricao in  varchar2  default null,
     p_result    out sys_refcursor) is
@@ -30,8 +30,8 @@ begin
                              and x.sq_cidade is not null
                           group by x.sq_cidade
                          )         d on (a.sq_cidade = d.sq_cidade)
-        where b.co_uf   = p_estado
-          and c.sq_pais = p_pais
+        where (p_estado is null or (p_estado is not null and b.co_uf   = p_estado))
+          and (p_pais   is null or (p_pais   is not null and c.sq_pais = p_pais))
           and ((w_restricao  = 'INDICADOR'  and d.sq_cidade is not null) or
                (w_restricao  <> 'INDICADOR' and (p_nome     is null      or (p_nome is not null and acentos(a.nome) like '%'||acentos(p_nome)||'%')))
               );
