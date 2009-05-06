@@ -69,8 +69,8 @@ begin
       if p_sq_acordo_parcela is not null then
          select inicio, fim into w_inicio, w_fim from ac_acordo_parcela where sq_acordo_parcela = p_sq_acordo_parcela;
       else
-         w_inicio := null;
-         w_fim    := null;
+         w_inicio := p_per_ini;
+         w_fim    := p_per_fim;
       end if;
       -- Insere registro em FN_LANCAMENTO
       Insert into fn_lancamento 

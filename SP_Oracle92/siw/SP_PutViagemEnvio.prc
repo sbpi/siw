@@ -353,7 +353,7 @@ begin
                                p_chave              => w_sq_doc,
                                p_chave_aux          => null,
                                p_sq_projeto_rubrica => drec.sq_rubrica,
-                               p_descricao          => drec.nm_despesa||': '||drec.sg_moeda||' '||fValor(drec.valor,'T'),
+                               p_descricao          => drec.nm_despesa||': '||drec.sg_moeda||' ('||drec.nm_moeda||') '||fValor(drec.valor,'T'),
                                p_quantidade         => 1,
                                p_valor_unitario     => drec.valor,
                                p_ordem              => i

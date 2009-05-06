@@ -162,7 +162,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             foreach ($l_rs5 as $row) {
               if ($l_i < count($l_rs5)) {
                 // descarta o último registro 
-                if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s)) {
+                if (($l_i>1 && $l_i<count($l_rs5)) || (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s))) {
                   $w_cont++;
                 }
               }
@@ -213,6 +213,31 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_tipo  = 0;
             }
           } 
+          
+          if (f($l_rs_tramite,'sigla')=='VP') {
+            if (f($l_rs_solic,'reembolso')=='S') {
+              // Valores a serem reembolsados
+              $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
+  
+              if (count($RS_Reembolso)==0) {
+                $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
+                $l_tipo  = 0;
+              } else {
+                $w_erro = true;
+                foreach ($RS_Reembolso as $row) {
+                  //echo nvl(f($row,'valor_autorizado'),-10).'-'.nvl(f($row,'observacao'),'nulo').'<br>';
+                  if (f($row,'valor_autorizado')>0 || f($row,'observacao')!='') {
+                    $w_erro = false;
+                    break;
+                  }
+                }
+                if ($w_erro) {
+                  $l_erro .= '<li>É necessário autorizar todos os valores solicitados para reembolso.';
+                  $l_tipo  = 0;
+                }
+              }
+            }
+          }
         } 
 
         if (Nvl(f($l_rs_tramite,'sigla'),'---')=='PC') {

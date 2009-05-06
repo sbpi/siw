@@ -14,16 +14,6 @@ begin
      :new.valor_alimentacao := nvl(w_valor_alimentacao,:old.valor_alimentacao);
   end if;
 
-  if coalesce(:new.valor_passagem,0) = 0 then
-     select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
-       into w_valor_passagem
-       from pd_bilhete x
-      where x.sq_siw_solicitacao = :new.sq_siw_solicitacao
-        and x.tipo = 'S';
-        
-     :new.valor_passagem := nvl(w_valor_passagem,:old.valor_passagem);
-  end if;
-
   -- Atualiza o valor da solicitação
   update siw_solicitacao a 
      set a.valor = a.valor + 

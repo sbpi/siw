@@ -15,20 +15,20 @@ begin
              case coalesce(f.qtd,0) when 0 then 'N' else 'S' end as mail_tramite, 
              c.sigla as sg_modulo, c.nome as nm_modulo, e.sq_cidade
       from siw_menu                               a
-             left outer   join (select x.sq_menu, count(sq_siw_tramite) as qtd
-                                  from siw_tramite x
-                                 where x.solicita_cc = 'S'
-                                   and 'CI'          = coalesce(x.sigla,'--')
-                                group by x.sq_menu
-                               )                  b on (a.sq_menu  = b.sq_menu)
-             left outer   join (select x.sq_menu, count(sq_siw_tramite) as qtd
-                                  from siw_tramite x
-                                 where x.envia_mail = 'S'
-                                   and 'CI'          = coalesce(x.sigla,'--')
-                                group by x.sq_menu
-                               )                  f on (a.sq_menu  = f.sq_menu)
-             left outer   join eo_unidade         d on (a.sq_unid_executora  = d.sq_unidade)
-               left outer join co_pessoa_endereco e on (d.sq_pessoa_endereco = e.sq_pessoa_endereco)
+             left    join (select x.sq_menu, count(sq_siw_tramite) as qtd
+                             from siw_tramite x
+                            where x.solicita_cc = 'S'
+                              and 'CI'          = coalesce(x.sigla,'--')
+                           group by x.sq_menu
+                          )                  b on (a.sq_menu  = b.sq_menu)
+             left    join (select x.sq_menu, count(sq_siw_tramite) as qtd
+                             from siw_tramite x
+                            where x.envia_mail = 'S'
+                              and 'CI'          = coalesce(x.sigla,'--')
+                           group by x.sq_menu
+                          )                  f on (a.sq_menu  = f.sq_menu)
+             left    join eo_unidade         d on (a.sq_unid_executora  = d.sq_unidade)
+               left  join co_pessoa_endereco e on (d.sq_pessoa_endereco = e.sq_pessoa_endereco)
              inner        join siw_modulo         c on (a.sq_modulo          = c.sq_modulo)
       where a.sq_menu   = p_sq_menu;
 end SP_GetMenuData;

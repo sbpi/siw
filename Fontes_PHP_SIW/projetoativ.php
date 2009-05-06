@@ -2539,13 +2539,7 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }else{
-                ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-                ScriptClose();
-                retornaFormulario('w_observacao');
-                exit();
-            }  
+              } 
             } 
             dml_putDemandaEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
                 $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
@@ -2641,13 +2635,7 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }else{
-                ScriptOpen('JavaScript');
-                ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-                ScriptClose();
-                retornaFormulario('w_observacao');
-                exit();
-              }  
+              }
             } 
           } else {
             ScriptOpen('JavaScript');

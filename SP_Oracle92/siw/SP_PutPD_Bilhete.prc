@@ -18,10 +18,12 @@ create or replace procedure SP_PutPD_Bilhete
     p_faturado            in varchar2  default null,
     p_observacao          in varchar2  default null
    ) is
-   w_chave_aux number(18)    := p_chave_aux;
-   l_item      varchar2(18);
-   l_desloc    varchar2(200) := p_deslocamento ||',';
-   x_desloc    varchar2(200) := '';
+   
+   w_chave_aux      number(18)    := p_chave_aux;
+   w_valor_passagem number(18,2);
+   l_item           varchar2(18);
+   l_desloc         varchar2(200) := p_deslocamento ||',';
+   x_desloc         varchar2(200) := '';
 begin
    If p_deslocamento is not null Then
       Loop
@@ -86,6 +88,22 @@ begin
       -- Remove o registro na tabela de deslocamentos
       delete pd_bilhete where sq_bilhete = w_chave_aux;
    End If;
+
+  -- Recupera o valor total dos bilhetes
+  select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
+     into w_valor_passagem
+     from pd_bilhete x
+    where x.sq_siw_solicitacao = p_chave
+      and x.tipo = p_tipo;
+
+  -- Atualiza o valor consolidado dos bilhetes
+  If p_tipo = 'P' Then
+     -- Se informação da agência de viagens, atualiza apenas o valor real
+     update pd_missao set valor_passagem = w_valor_passagem where sq_siw_solicitacao = p_chave;
+  Else
+     -- Caso contrário, atualiza valor previsto e valor real
+     update pd_missao set valor_passagem = w_valor_passagem, valor_previsto_bilhetes = w_valor_passagem where sq_siw_solicitacao = p_chave;
+  End If;
 
 end SP_PutPD_Bilhete;
 /

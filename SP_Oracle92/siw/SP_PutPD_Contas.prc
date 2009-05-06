@@ -71,18 +71,20 @@ begin
       select count(*) into w_cont from pd_diaria a where a.tipo = 'P' and a.sq_siw_solicitacao = p_chave;
       If w_cont = 0 Then
          insert into pd_diaria
-           (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
-            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
-            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
-            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
-            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
-            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      tipo)
-         (select sq_diaria.nextval,      sq_siw_solicitacao,              sq_cidade,              quantidade,                valor, 
-            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,       veiculo,                   veiculo_qtd, 
-            veiculo_valor,               sq_valor_diaria,                 diaria,                 sq_deslocamento_chegada,   sq_deslocamento_saida, 
-            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,   justificativa_veiculo,
-            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,   hospedagem_checkin,        hospedagem_checkout,
-            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,      'P'
+           (sq_diaria,                   sq_siw_solicitacao,              sq_cidade,                quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,         veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                   sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,     justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,     hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,        tipo,                      calculo_diaria_qtd,
+            calculo_diaria_texto,        calculo_hospedagem_qtd,          calculo_hospedagem_texto, calculo_veiculo_qtd,       calculo_veiculo_texto)
+         (select sq_diaria.nextval,      sq_siw_solicitacao,              sq_cidade,                quantidade,                valor, 
+            hospedagem,                  hospedagem_qtd,                  hospedagem_valor,         veiculo,                   veiculo_qtd, 
+            veiculo_valor,               sq_valor_diaria,                 diaria,                   sq_deslocamento_chegada,   sq_deslocamento_saida, 
+            sq_valor_diaria_hospedagem,  sq_valor_diaria_veiculo,         justificativa_diaria,     justificativa_veiculo,
+            sq_pdvinculo_diaria,         sq_pdvinculo_hospedagem,         sq_pdvinculo_veiculo,     hospedagem_checkin,        hospedagem_checkout,
+            hospedagem_observacao,       veiculo_retirada,                veiculo_devolucao,        'P',                       calculo_diaria_qtd,
+            calculo_diaria_texto,        calculo_hospedagem_qtd,          calculo_hospedagem_texto, calculo_veiculo_qtd,       calculo_veiculo_texto
             from pd_diaria a 
            where a.tipo              = 'S' 
             and a.sq_siw_solicitacao = p_chave
