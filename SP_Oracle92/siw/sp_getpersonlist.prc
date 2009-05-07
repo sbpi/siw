@@ -183,6 +183,41 @@ begin
                                                                    or   a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(f.sigla) like '%'||acentos(p_sg_unidade)||'%'))           
       order by a.nome_indice;
+   Elsif substr(p_restricao,1,6) = 'FORNEC' Then
+      -- Recupera todas as pessoas do cadastro da organização, físicas e jurídicas
+      open p_result for 
+         select a.sq_pessoa, a.nome, a.nome_resumido, a.nome_indice, a.nome_resumido_ind,
+                b.codigo,
+                c.username, c.ativo usuario,
+                b.codigo sg_unidade, d.nome nm_unidade, e.nome nm_local
+           from co_pessoa                              a
+                left outer join (select x.sq_pessoa, 
+                                        case when y.sq_pessoa is not null 
+                                             then y.cpf
+                                             else case when z.sq_pessoa is not null
+                                                       then z.cnpj
+                                                       else null
+                                                  end
+                                        end codigo
+                                   from co_pessoa                          x
+                                        left outer join co_pessoa_fisica   y on (x.sq_pessoa = y.sq_pessoa)
+                                        left outer join co_pessoa_juridica z on (x.sq_pessoa = z.sq_pessoa)
+                                )                      b on (a.sq_pessoa      = b.sq_pessoa)
+                 left outer    join sg_autenticacao    c on (a.sq_pessoa      = c.sq_pessoa) 
+                    left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
+                    left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
+                 inner         join co_tipo_pessoa     f on (a.sq_tipo_pessoa = f.sq_tipo_pessoa)
+          where a.fornecedor = 'S'
+            and (p_restricao  not in ('FORNECPF','FORNECPJ') or
+                 (p_restricao = 'FORNECPF' and f.nome = 'Física') or 
+                 (p_restricao = 'FORNECPJ' and f.nome = 'Jurídica')
+                )
+            and (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
+            and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
+                                                                   or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
+            and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
+            and (p_codigo     is null or (p_codigo     is not null and b.codigo = p_codigo))
+         order by a.nome_indice;
    Elsif p_restricao = 'INTERES' Then
       -- Recupera os usuários do sistema
       open p_result for 

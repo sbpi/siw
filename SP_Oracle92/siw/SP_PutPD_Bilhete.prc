@@ -43,14 +43,14 @@ begin
       
       -- Insere registro na tabela de bilhetes
       insert into pd_bilhete
-        (sq_bilhete,         sq_siw_solicitacao,         sq_cia_transporte,       data,         numero,          trecho, 
-         valor_bilhete_cheio, valor_bilhete,      valor_pta,                  valor_taxa_embarque,     rloc,         classe,          tipo,
-         observacao
+        (sq_bilhete,          sq_siw_solicitacao, sq_cia_transporte,       data,                    numero,          trecho, 
+         valor_bilhete_cheio, valor_bilhete,      valor_pta,               valor_taxa_embarque,     rloc,            classe,
+         tipo,                observacao,         utilizado
         )
       values
-        (w_chave_aux,        p_chave,                    p_sq_cia_transporte,     p_data,       p_numero,        upper(p_trecho), 
-         p_valor_cheio, p_valor_bilhete,    p_valor_pta,                p_valor_taxa,            p_rloc,       upper(p_classe), p_tipo,
-         p_observacao
+        (w_chave_aux,         p_chave,            p_sq_cia_transporte,     p_data,                  p_numero,        upper(p_trecho), 
+         p_valor_cheio,       p_valor_bilhete,    p_valor_pta,             p_valor_taxa,            p_rloc,          upper(p_classe), 
+         p_tipo,              p_observacao,       p_utilizado
         );
 
       -- Vincula os deslocamentos indicados
@@ -69,7 +69,8 @@ begin
            valor_taxa_embarque = p_valor_taxa,
            rloc                = p_rloc,
            classe              = p_classe,
-           observacao          = p_observacao
+           observacao          = p_observacao,
+           utilizado           = p_utilizado
        where sq_bilhete = w_chave_aux;
 
       -- Desvincula os deslocamentos
