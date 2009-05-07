@@ -12,7 +12,7 @@ begin
 
    If p_operacao = 'I' Then
       -- Insere registro
-      inset into pd_desconto_agencia (
+      insert into pd_desconto_agencia (
               sq_desconto_agencia,        cliente,   agencia_viagem,
               faixa_inicio, faixa_fim, desconto,   ativo)
       (select sq_desconto_agencia.nextval,p_cliente, p_agencia, 
@@ -26,7 +26,7 @@ begin
          desconto               = p_desconto,
          ativo                  = p_ativo
       where sq_desconto_agencia = p_chave;
-   Elsif p_operacao = 'E' Then
+   Elsif p_operacao = 'E' Then 
       -- Exclui registro
       delete pd_desconto_agencia where sq_desconto_agencia = p_chave;
    End If;
