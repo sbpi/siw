@@ -1146,7 +1146,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     if ($w_or_tramite>4) {
       // Bilhete de passagem
-      $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null);
+      $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
       if (count($RS1)>0) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BILHETES EMITIDOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   

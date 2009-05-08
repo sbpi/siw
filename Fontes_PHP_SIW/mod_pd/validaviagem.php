@@ -194,7 +194,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
         if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE' || Nvl(f($l_rs_tramite,'sigla'),'---')=='VP') {
           if (f($l_rs_solic,'passagem')=='S') {
-            $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null);
+            $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,null);
             if (count($l_rs5)==0) {
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
               $l_tipo  = 0;

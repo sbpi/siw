@@ -1824,10 +1824,10 @@ function Bilhetes() {
     $w_faturado     = $_REQUEST['w_faturado'];
     $w_observacao   = $_REQUEST['w_observacao'];
   } elseif ($O=='L') {
-    $RS = db_getPD_Bilhete::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null);
+    $RS = db_getPD_Bilhete::getInstanceOf($dbms,$w_chave,null,null,null,null,null,null,null);
     $RS = SortArray($RS,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');
   } elseif (strpos('AE',$O)!==false) {
-    $RS = db_getPD_Bilhete::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null);
+    $RS = db_getPD_Bilhete::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_cia_aerea    = f($RS,'sq_cia_transporte');
     $w_data         = formataDataEdicao(f($RS,'data'));
@@ -1861,6 +1861,7 @@ function Bilhetes() {
     Validate('w_data','Data de emissão','DATA','1',10,10,'','0123456789/');
     CompData('w_data','Data de saída','<=',formataDataEdicao(time()),'data atual');
     Validate('w_cia_aerea','Companhia cotada','SELECT','1',1,18,'','1');
+    Validate('w_utilizado','Utilização','SELECT','1',1,18,'1','');
     Validate('w_numero','Número','',1,1,20,'1','1');
     Validate('w_classe','Classe','','1',1,1,'1','1');
     Validate('w_trecho','Trecho','',1,1,60,'1','1');
@@ -1992,7 +1993,6 @@ function Bilhetes() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_deslocamento[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.nvl($w_tipo,'S').'">');
-    ShowHTML('<INPUT type="hidden" name="w_utilizado" value="'.nvl($w_utilizado,'N').'">');
     ShowHTML('<INPUT type="hidden" name="w_faturado" value="'.nvl($w_faturado,'N').'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
@@ -2011,6 +2011,13 @@ function Bilhetes() {
     ShowHTML('        <td><b>$ <u>B</u>ilhete:</b><br><input type="text" accesskey="V" name="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_bil.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_tax.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor_pta,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
+    if($w_tipo_reg=='P') {
+      showHTML('      <tr>');
+      selecaoTipoUtilBilhete('<u>U</u>tilização:','u',null,$w_utilizado,null,'w_utilizado',null,null);
+      showHTML('      </tr>');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_utilizado" value="'.nvl($w_utilizado,'N').'">');
+    }
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     //Trechos contemlados no bilhete
     ShowHTML('      <tr><td colspan="5"><br><b>Trechos contemplados pelo bilhete:</b>');

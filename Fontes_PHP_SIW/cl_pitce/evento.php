@@ -1876,7 +1876,7 @@ function Grava() {
         exit();
       }
       ScriptOpen('JavaScript');
-      ShowHTML('  location.href=\''.$R.'&R='.$R.'&O=L&w_menu='.$w_menu.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\';');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&R='.$R.'&O=L&w_menu='.$w_menu.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
   }elseif (strpos('IAE',$O)!==false) {
     // Verifica se a Assinatura Eletrônica é válida

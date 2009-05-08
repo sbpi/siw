@@ -17,6 +17,7 @@ include_once($w_dir_volta.'classes/sp/db_getPDParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getCategoriaDiaria.php');
+include_once($w_dir_volta.'classes/sp/db_getDescontoAgencia.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCiaTrans.php');
 include_once($w_dir_volta.'classes/sp/dml_putMeioTrans.php');
@@ -26,6 +27,7 @@ include_once($w_dir_volta.'classes/sp/dml_putPDUnidLimite.php');
 include_once($w_dir_volta.'classes/sp/dml_putPDUsuario.php');
 include_once($w_dir_volta.'classes/sp/dml_putCategoriaDiaria.php');
 include_once($w_dir_volta.'classes/sp/dml_putValorDiaria.php');
+include_once($w_dir_volta.'classes/sp/dml_putDescontoAgencia.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoAno.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
@@ -254,6 +256,171 @@ function CiaTrans() {
     ShowHTML('        <tr valign="top">');
     MontaRadioNS('<b>Padrão?</b>',$w_padrao,'w_padrao');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') { 
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_cliente='.$w_cliente.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
+// =========================================================================
+// Manter Tabela básica 'PD_CIA_TRANSPORTE'
+// -------------------------------------------------------------------------
+function Desconto() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave=$_REQUEST['w_chave'];
+
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página
+    $w_ativo        = $_REQUEST['w_ativo'];
+    $w_desconto     = $_REQUEST['w_desconto'];
+    $w_agencia      = $_REQUEST['w_agencia'];
+    $w_faixa_inicio = $_REQUEST['w_faixa_inicio'];
+    $w_faixa_fim    = $_REQUEST['w_faixa_fim'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getDescontoAgencia::getInstanceOf($dbms,$w_cliente,null,$w_agencia,null,$w_faixa_inicio,$faixa_fim,$desconto,$w_ativo);
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc','faixa_inicio','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc','faixa_inicio','asc');
+    }
+  } elseif (!(strpos('AE',$O)===false) || nvl($w_troca,'')!='') {
+    // Recupera os dados chave informada
+    $RS = db_getDescontoAgencia::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null);
+    foreach($RS as $row) { $RS = $row; break; }
+    $w_chave        = f($RS,'chave');
+    $w_agencia      = f($RS,'agencia_viagem');
+    $w_desconto     = formatNumber(f($RS,'desconto'),2);
+    $w_faixa_inicio = formatNumber(f($RS,'faixa_inicio'),2);
+    $w_faixa_fim    = formatNumber(f($RS,'faixa_fim'),2);
+    $w_ativo        = f($RS,'ativo');
+  } 
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      //Validate('w_nome','Nome','1','1','2','30','1','1');
+      Validate('w_agencia','Agência de viagem','SELECT','1','1','18','','0123456789');
+      Validate('w_faixa_inicio','Faixa inicial de desconto','1','1','4','6','','0123456789,');
+      Validate('w_faixa_fim','Faixa final de desconto','1','1','4','6','','0123456789,');
+      Validate('w_desconto','Desconto da agência','1','1','4','6','','0123456789,');
+      CompValor('w_faixa_inicio','Faixa inicial','<','w_faixa_fim','faixa final de desconto');
+      CompValor('w_faixa_inicio','Faixa inicial','<=','100','100%');
+      CompValor('w_faixa_fim','Faixa final','<=','100','100%');
+      CompValor('w_desconto','Desconto da agência','<=','100','100%');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');      
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif (!(strpos('IA',$O)===false)) {
+    BodyOpen('onLoad=\'document.Form.w_agencia.focus()\';');
+  } elseif ($O=='E') {
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  } 
+
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Desconto<br />(Trf Cheia X Trf Aplicada)','faixa_inicio').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Desconto Agência de Viagens','desconto').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b>Operações</font></td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.ExibePessoa(null,$w_cliente,f($row,'agencia_viagem'),$TP,f($row,'nome_resumido')).'</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'faixa_inicio'),2).'% a '.formatNumber(f($row,'faixa_fim'),2).'%&nbsp;</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'desconto'),2).'%</td>');
+        ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (!(strpos('IAE',$O)===false)) {
+    if ($O=='E') $w_Disabled=' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><table border=0 width="100%">');
+    ShowHTML('       <tr valign="top">');
+    SelecaoPessoa('Agê<u>n</u>cia de viagem:','N','Selecione a agência de viagem emissora da fatura.',$w_agencia,null,'w_agencia','FORNECPJ');
+    ShowHTML('       <tr>');
+    ShowHTML('          <td><b>Faixa de desconto (Tarifa cheia x Tarifa aplicada):</b><br><input type="text" '.$w_Disabled.' accesskey="I" name="w_faixa_inicio" class="sti" SIZE="8" MAXLENGTH="6" VALUE="'.$w_faixa_inicio.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">%&nbsp;a&nbsp;<input type="text" '.$w_Disabled.' accesskey="F" name="w_faixa_fim" class="sti" SIZE="8" maxlength="6" VALUE="'.$w_faixa_fim.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">%&nbsp;</td>');
+    ShowHTML('       <tr>');
+    ShowHTML('          <td><b>Desconto da Agência de viagens:</b><br><input type="text" '.$w_Disabled.' accesskey="D" name="w_desconto" class="sti" SIZE="8" MAXLENGTH="6" VALUE="'.$w_desconto.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">%</td>');
+    ShowHTML('       <tr>');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');    
     ShowHTML('           </table>');
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
@@ -1369,7 +1536,71 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpenClean('onLoad=this.focus();');
-
+  
+  if (!(strpos($SG,'PDDESC')===false)) {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (!(strpos('IA',$O)===false)) {
+        if ($_REQUEST['w_ativo']=='S') {
+          //$RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
+          $RS = db_getDescontoAgencia::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_agencia'],null,$_REQUEST['w_faixa_inicio'],$_REQUEST['faixa_fim'],$_REQUEST['desconto'],$_REQUEST['w_ativo']);
+          //print_r($RS);
+          foreach($RS as $row) {
+           if($O=='I' || ($O=='A' && $_REQUEST['w_chave']!=f($row,'chave'))){
+              if((toNumber($_REQUEST['w_faixa_inicio'])+0>= f($row,'faixa_inicio') && 
+                  toNumber($_REQUEST['w_faixa_inicio'])+0 <= f($row,'faixa_fim')
+                 ) || 
+                 (toNumber($_REQUEST['w_faixa_fim'])+0<= f($row,'faixa_inicio') && 
+                  toNumber($_REQUEST['w_faixa_fim'])+0 >= f($row,'faixa_fim')
+                 )||
+                 (f($row,'faixa_inicio')>= toNumber($_REQUEST['w_faixa_inicio'])+0 && 
+                  f($row,'faixa_inicio') <= toNumber($_REQUEST['w_faixa_fim'])+0
+                 ) || 
+                 (f($row,'faixa_fim')>= toNumber($_REQUEST['w_faixa_inicio'])+0 && 
+                  f($row,'faixa_fim') <= toNumber($_REQUEST['w_faixa_fim'])+0
+                 )
+                ){
+                  ScriptOpen('JavaScript');
+                  ShowHTML('  alert(\''.$w_chave.'Não pode haver sobreposição na faixa ativa de desconto de uma mesma agência.\');');
+                  ScriptClose();
+                  retornaFormulario('w_faixa_inicio');
+                  exit;
+                }            
+              }
+          }
+          
+          //exit();          
+          /*if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Somente pode existir uma companhia padrão!\');');
+            ScriptClose();
+            retornaFormulario('w_nome');
+            exit;
+          } */
+        }
+        /*$RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null,null,null,null,null,$_REQUEST['w_chave'],null);
+        if (count($RS)>0) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Companhia já cadastrada!\');');
+          ScriptClose();
+          retornaFormulario('w_nome');
+          exit;
+        }*/ 
+      } 
+      //($dbms, $operacao, $p_cliente, $p_chave, $p_agencia, $p_inicio, $p_fim, $p_desconto, $p_ativo)
+      dml_putDescontoAgencia::getInstanceOf($dbms,$O,$w_cliente,
+      $_REQUEST['w_chave'],$_REQUEST['w_agencia'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_desconto'],$_REQUEST['w_ativo']);
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit();
+    } 
+  }
   if (!(strpos($SG,'PDCIA')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1630,6 +1861,7 @@ function Main() {
   case 'UNIDADE'       : Unidade();         break;
   case 'LIMUNIDADE'    : LimiteUnidade();   break;
   case 'USUARIO'       : Usuario();         break;
+  CASE 'DESCONTO'      : Desconto();        break;
   case 'GRAVA'         : Grava();           break;
   default:
     Cabecalho();

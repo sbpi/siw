@@ -53,6 +53,7 @@ begin
                     left outer join eo_unidade         d on (c.sq_unidade     = d.sq_unidade)
                     left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
           where (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
+            and (p_chave      is null or (p_chave      is not null and a.sq_pessoa = p_chave))
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
                                                                    or    a.nome_resumido_ind like '%'||upper(acentos(p_nome))||'%')))
             and (p_sg_unidade is null or (p_sg_unidade is not null and acentos(d.sigla) like '%'||acentos(p_sg_unidade)||'%'))
@@ -208,9 +209,10 @@ begin
                     left outer join eo_localizacao     e on (c.sq_localizacao = e.sq_localizacao)
                  inner         join co_tipo_pessoa     f on (a.sq_tipo_pessoa = f.sq_tipo_pessoa)
           where a.fornecedor = 'S'
-            and (p_restricao  not in ('FORNECPF','FORNECPJ') or
+            and (p_restricao  not in ('FORNECPF','FORNECPJ','FORNECPD') or
                  (p_restricao = 'FORNECPF' and f.nome = 'Física') or 
-                 (p_restricao = 'FORNECPJ' and f.nome = 'Jurídica')
+                 (p_restricao = 'FORNECPJ' and f.nome = 'Jurídica') or
+                 (p_restricao = 'FORNECPD' and 0 < (select count(*) from pd_desconto_agencia k where k.ativo='S' and k.agencia_viagem = a.sq_pessoa))
                 )
             and (a.sq_pessoa = p_cliente or a.sq_pessoa_pai = p_cliente)
             and (p_nome       is null or (p_nome       is not null and ((a.nome_indice like '%'||upper(acentos(p_nome))||'%')
