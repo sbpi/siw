@@ -14,7 +14,9 @@ begin
    open p_result for
       select a.sq_desconto_agencia as chave,
              a.cliente,
+             a.agencia_viagem,
              b.nome,
+             b.nome_resumido,
              a.faixa_inicio,
              a.faixa_fim,
              a.desconto,
