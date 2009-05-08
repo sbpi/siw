@@ -2,7 +2,7 @@ create or replace procedure SP_PutDescontoAgencia
    (p_operacao        in  varchar2,
     p_cliente         in  number   default null,
     p_chave           in  number   default null,
-    p_agencia         in  number   default null, -- Agência
+    p_agencia         in  number   default null, 
     p_inicio          in  number   default null,    
     p_fim             in  number   default null,
     p_desconto        in  number   default null,   
