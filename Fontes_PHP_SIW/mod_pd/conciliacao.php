@@ -19,6 +19,8 @@ include_once($w_dir_volta.'classes/sp/db_getPDImportacao.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putPDImportacao.php');
+include_once($w_dir_volta.'classes/sp/dml_putPD_Fatura.php');
+include_once($w_dir_volta.'classes/sp/dml_putPD_Bilhete.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 // =========================================================================
 //  /conciliacao.php
@@ -130,6 +132,14 @@ function Inicial() {
     $RS = db_getPDImportacao::getInstanceOf($dbms,$w_chave,$w_cliente,$p_responsavel,$p_dt_ini,$p_dt_fim,$p_imp_ini,$p_imp_fim);
     $RS = SortArray($RS,'phpdt_data_arquivo','desc','phpdt_data_importacao','desc');
   } 
+  
+  // Verifica quantas agências de viagens estão cadastradas
+  $RS1 = db_getPersonList::getInstanceOf($dbms, $w_cliente, null, 'FORNECPD', null, null, null, null);
+  $w_qtd_agencia = count($RS1);
+  if ($w_qtd_agencia==1) {
+    foreach($RS1 as $row1) $w_agencia = f($row1,'sq_pessoa');
+  }
+  
   Cabecalho();
   ShowHTML('<HEAD>');
   if (!(strpos('IP',$O)===false)) {
@@ -139,7 +149,7 @@ function Inicial() {
     SaltaCampo();
     ValidateOpen('Validacao');
     if (!(strpos('I',$O)===false)) {
-      Validate('w_agencia','Agência de viagem','SELECT','1','1','18','','0123456789');
+      if ($w_qtd_agencia>1) Validate('w_agencia','Agência de viagem','SELECT','1','1','18','','0123456789');
       Validate('w_data_arquivo','Data e hora','DATAHORA','1','17','17','','0123456789 /:,');
       Validate('w_arquivo_recebido','Arquivo de dados','1','1','1','255','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -152,8 +162,15 @@ function Inicial() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                      BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  elseif (!(strpos('I',$O)===false))    BodyOpen('onLoad=\'document.Form.w_agencia.focus()\';');
-  else                                  BodyOpen('onLoad=\'this.focus()\';');
+  elseif ($O=='I') {
+    if ($w_qtd_agencia==1) {
+      BodyOpen('onLoad=\'document.Form.w_agencia.focus()\';');
+    } else {
+      BodyOpen('onLoad=\'document.Form.w_data_arquivo.focus()\';');
+    }
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
   ShowHTML('<div align=center><center>');
@@ -186,7 +203,7 @@ function Inicial() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'phpdt_data_arquivo'),3).'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.substr(FormataDataEdicao(f($row,'phpdt_data_arquivo'),3),0,-3).'</td>');
         ShowHTML('        <td align="center"><font size="1">'.FormataDataEdicao(f($row,'phpdt_data_importacao'),3).'</td>');
         ShowHTML('        <td title="'.f($row,'nm_resp').'"><font size="1">'.f($row,'nm_resumido_resp').'</td>');
         ShowHTML('        <td align="right"><font size="1">'.f($row,'registros').'&nbsp;</td>');
@@ -221,8 +238,13 @@ function Inicial() {
       ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
       ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     } 
-    ShowHTML('       <tr valign="top">');
-    SelecaoPessoa('Agê<u>n</u>cia de viagem:','N','Selecione a agência de viagem emissora da fatura.',$w_agencia,null,'w_agencia','FORNECPD');
+    if ($w_qtd_agencia>1) {
+      ShowHTML('       <tr valign="top">');
+      SelecaoPessoa('Agê<u>n</u>cia de viagem:','N','Selecione a agência de viagem emissora da fatura.',$w_agencia,null,'w_agencia','FORNECPD');
+      ShowHTML('       </tr>');
+    } elseif ($w_qtd_agencia==1) {
+      ShowHTML('<INPUT type="hidden" name="w_agencia" value="'.$w_agencia.'">');
+    }
     ShowHTML('       <tr>');
     ShowHTML('      <tr><td><font size="1"><b><u>D</u>ata/hora extração:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data_arquivo" class="sti" SIZE="17" MAXLENGTH="17" VALUE="'.$w_data_arquivo.'"  onKeyDown="FormataDataHora(this, event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="OBRIGATÓRIO. Informe a data e hora da extração do aquivo. Digite apenas números. O sistema colocará os separadores automaticamente."></td>');
     ShowHTML('      <tr><td><font size="1"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_arquivo_recebido" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo (sua extensão deve ser .TXT). Ele será transferido automaticamente para o servidor.">');
@@ -548,8 +570,6 @@ function Grava() {
           $w_rejeitados = 0;
           $w_cont       = 0;
           
-          // Gera o arquivo registro da importação
-          $F1 = fopen($w_caminho.$w_caminho_registro, 'w');
           //Abre o arquivo recebido para gerar o arquivo registro
           $F2 = csv($w_caminho.$w_caminho_recebido);
           if (is_array($F2[""])) {
@@ -570,7 +590,7 @@ function Grava() {
               $desconto_padrao  = 0;     // percentual de desconto a ser aplicado no valor do bilhete
               $desconto_bilhete = 0;     // valor do desconto contratual do bilhete
               if ($w_cont==0) {
-                $w_cont+=1;
+                $w_cont++;
                 continue;
               } elseif ($w_cont==1) {
                 // Se for a primeira linha, recupera os dados que devem ser repetidos em todo o arquivo
@@ -589,103 +609,89 @@ function Grava() {
                 $inicio_dec = toDate($inicio);
                 $fim_dec    = toDate($fim);
                 
-                fwrite($F1,'=================================================================================');                
-                fwrite($F1,$crlf.'Resultado do processamento do arquivo '.$w_nome_recebido);                
-                fwrite($F1,$crlf.'Agência de viagens: '.f($RS_Agencia,'nome').' - CNPJ: '.f($RS_Agencia,'codigo'));                
-                fwrite($F1,$crlf.'Fatura: '.$fatura);                
-                fwrite($F1,$crlf.'Decêndio: '.$inicio.' a '.$fim);                
-                fwrite($F1,$crlf.'Emissão: '.$emissao);                
-                fwrite($F1,$crlf.'Valor: '.$valor);                
-                fwrite($F1,$crlf.'Projeto: '.$projeto);                
-                fwrite($F1,$crlf.'=================================================================================');                
+                $w_arquivo ='=================================================================================';                
+                $w_arquivo.=$crlf.'Resultado do processamento do arquivo '.$w_nome_recebido;
+                $w_arquivo.=$crlf.'Agência de viagens: '.f($RS_Agencia,'nome').' - CNPJ: '.f($RS_Agencia,'codigo');                
               }
               $w_linha = '';
               foreach($row as $k => $v) {
                 $w_linha .= '"'.trim($v).'",';
               }
               $w_linha = substr($w_linha,0,-1);
-              fwrite($F1,$crlf.$crlf.'[Linha '.$w_cont.'] '.$w_linha);
-              $w_erro     = 0;
+              $w_erro     = '';
               
               $w_fatura     = trim($row[0]);
               // Só pode haver uma fatura no arquivo
               if ($fatura!=$w_fatura) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Número da fatura: só é possível conciliar uma fatura em cada arquivo'); 
+                $w_erro.=$crlf.'Número da fatura: só é possível conciliar uma fatura em cada arquivo'; 
               }
               // Valida o campo Número da Fatura
               $w_result = fValidate(1,$w_fatura,'Fatura','',1,1,30,'','0123456789');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Número da fatura: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Número da fatura: '.$w_result; }
               
               $w_inicio     = trim($row[1]);
               $w_temp = explode('/',$w_inicio); $w_inicio = substr(100+$w_temp[0],1,2).'/'.substr(100+$w_temp[1],1,2).'/'.substr(10000+$w_temp[2],1,4);
               // Só pode haver um decêndio no arquivo
               if ($inicio!=$w_inicio) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Início do decêndio: todos as linhas devem ter o mesmo valor'); 
+                
+                $w_erro.=$crlf.'Início do decêndio: todos as linhas devem ter o mesmo valor'; 
               }
               // Valida o campo início do decêndio
               $w_result = fValidate(1,$w_inicio,'início do decêndio','DATA',1,10,10,'','0123456789/');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Início do Decêndio: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Início do Decêndio: '.$w_result; }
               
               $w_fim        = trim($row[2]);
               $w_temp = explode('/',$w_fim); $w_fim = substr(100+$w_temp[0],1,2).'/'.substr(100+$w_temp[1],1,2).'/'.substr(10000+$w_temp[2],1,4);
               // Só pode haver um decêndio no arquivo
-              if ($fim!=$w_fim) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Fim do decêndio: todos as linhas devem ter o mesmo valor'); 
-              }
+              if ($fim!=$w_fim) $w_erro.=$crlf.'Fim do decêndio: todos as linhas devem ter o mesmo valor'; 
               // Valida o campo fim do decêndio
               $w_result = fValidate(1,$w_fim,'fim do decêndio','DATA',1,10,10,'','0123456789/');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Fim do Decêndio: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Fim do Decêndio: '.$w_result; }
               
               $w_emissao_fat= trim($row[3]);
               $w_temp = explode('/',$w_emissao_fat); $w_emissao_fat = substr(100+$w_temp[0],1,2).'/'.substr(100+$w_temp[1],1,2).'/'.substr(10000+$w_temp[2],1,4);
               // Só pode haver uma emissão de fatura no arquivo
-              if ($emissao!=$w_emissao_fat) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Data de emissão da fatura: todos as linhas devem ter o mesmo valor'); 
-              }
+              if ($emissao!=$w_emissao_fat) $w_erro.=$crlf.'Data de emissão da fatura: todos as linhas devem ter o mesmo valor'; 
               // Valida o campo emissao da fatura
               $w_result = fValidate(1,$w_emissao_fat,'data de emissão da fatura','DATA',1,10,10,'','0123456789/');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Data de emissão da fatura: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Data de emissão da fatura: '.$w_result; }
               
               $w_venc       = trim($row[4]);
               $w_temp = explode('/',$w_venc); $w_venc = substr(100+$w_temp[0],1,2).'/'.substr(100+$w_temp[1],1,2).'/'.substr(10000+$w_temp[2],1,4);
               // Só pode haver uma emissão de fatura no arquivo
               if ($vencimento!=$w_venc) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Data de vencimento da fatura: todos as linhas devem ter o mesmo valor'); 
+                
+                $w_erro.=$crlf.'Data de vencimento da fatura: todos as linhas devem ter o mesmo valor'; 
               }
               // Valida o campo vencimento da fatura
               $w_result = fValidate(1,$w_venc,'data de vencimento da fatura','DATA',1,10,10,'','0123456789/');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Data de vencimento da fatura: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Data de vencimento da fatura: '.$w_result; }
               
               $w_valor_fat  = trim($row[5]);
               if (strpos($w_valor_fat,',')===false) $w_valor_fat .= ',00';
               // Só pode haver uma emissão de fatura no arquivo
               if ($valor!=$w_valor_fat) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Valor da fatura: todos as linhas devem ter o mesmo valor'); 
+                
+                $w_erro.=$crlf.'Valor da fatura: todos as linhas devem ter o mesmo valor'; 
               }
               // Valida o campo valor da fatura
               $w_result = fValidate(1,$w_valor_fat,'valor da fatura','VALOR',1,3,18,'','0123456789,.');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Valor da fatura: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Valor da fatura: '.$w_result; }
               
               $w_cia        = trim(strtoupper($row[6]));
               // Valida o campo cia aérea
               $w_result = fValidate(1,$w_cia,'cia aérea','',1,2,20,'1','1');
               if ($w_result>'') { 
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Cia aérea: '.$w_result); 
+                
+                $w_erro.=$crlf.'Cia aérea: '.$w_result; 
               } else {
                 $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,$w_cia,'S',null,null,null,null,null,null);
                 if (count($RS)==0) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Cia aérea: na base de dados não há companhia com a sigla "'.$w_cia.'"');
+                  
+                  $w_erro.=$crlf.'Cia aérea: na base de dados não há companhia com a sigla "'.$w_cia.'"';
                 } elseif (count($RS)>1) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Cia aérea: há mais de uma companhia com a sigla "'.$w_cia.'"');
+                  
+                  $w_erro.=$crlf.'Cia aérea: há mais de uma companhia com a sigla "'.$w_cia.'"';
                 } else {
                   foreach($RS as $row1) { $w_hn_cia = f($row1,'chave'); break; } 
                 }
@@ -695,12 +701,12 @@ function Grava() {
               // Valida o campo numero do bilhete
               $w_result = fValidate(1,$w_bilhete,'número do bilhete','',1,1,20,'1','1');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Número do bilhete: '.$w_result); 
+                $w_erro.=$crlf.'Número do bilhete: '.$w_result; 
               } else {
                 // Verifica se o bilhete já foi relacionado no arquivo
                 if (isset($bilhetes[$w_cia][$w_bilhete])) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Número do bilhete: bilhete "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado no arquivo (Linha '.$bilhetes[$w_cia][$w_bilhete].')'); 
+                  
+                  $w_erro.=$crlf.'Número do bilhete: bilhete "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado no arquivo (Linha '.$bilhetes[$w_cia][$w_bilhete].')'; 
                 } else {
                   $bilhetes[$w_cia][$w_bilhete] = $w_cont;
                 }
@@ -708,23 +714,21 @@ function Grava() {
                   // Verificações se a companhia aérea for localizada na base de dados
                   $RS_Bilhete = db_getPD_Bilhete::getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
                   if (count($RS_Bilhete)==0) {
-                    $w_erro=1; 
-                    fwrite($F1,$crlf.'Número do bilhete: na base de dados não há bilhete com o número "'.$w_bilhete.'" da cia "'.$w_cia.'"');
+                    
+                    $w_erro.=$crlf.'Número do bilhete: na base de dados não há bilhete com o número "'.$w_bilhete.'" da cia "'.$w_cia.'"';
                   } elseif (count($RS_Bilhete)>1) {
-                    $w_erro=1; 
-                    fwrite($F1,$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado na base de dados');
+                    
+                    $w_erro.=$crlf.'Número do bilhete: bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'" duplicado na base de dados';
                   } else {
                     foreach($RS_Bilhete as $row1) { $RS_Bil = $row1; break; }
-                    $w_hn_bilhete = f($RS_Bil,'chave');
-                    $w_hn_solic   = f($RS_Bil,'sq_siw_solicitacao');
-                    fwrite($F1,$crlf.f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario'));
+                    $w_hn_bilhete  = f($RS_Bil,'chave');
+                    $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
+                    $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
                     if (f($RS_Bil,'faturado')=='S') {
-                      $w_erro=1; 
-                      fwrite($F1,$crlf.'Número do bilhete: já há fatura para o bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'"');
+                      $w_erro.=$crlf.'Número do bilhete: já há fatura para o bilhete número "'.$w_bilhete.'" da cia "'.$w_cia.'"';
                     }
                     if (f($RS_Bil,'cd_pai')!=$projeto) {
-                      $w_erro=1; 
-                      fwrite($F1,$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura');
+                      $w_erro.=$crlf.'Número do bilhete: '.f($RS_Bil,'codigo_interno').' está vinculada ao projeto '.f($RS_Bil,'cd_pai').', divergindo do projeto da fatura';
                     }
                   }
                 }
@@ -735,17 +739,17 @@ function Grava() {
               // Valida o campo data de emissão do bilhete
               $w_result = fValidate(1,$w_emissao_bil,'data de emissão do bilhete','DATA',1,10,10,'','0123456789/');
               if ($w_result>'') { 
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Data de emissão do bilhete: '.$w_result); 
+                
+                $w_erro.=$crlf.'Data de emissão do bilhete: '.$w_result; 
               } else {
                 $w_temp = toDate($w_emissao_bil);
                 if ($w_temp<$inicio_dec || $w_temp>$fim_dec) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): deve estar contida no decêndio da fatura'); 
+                  
+                  $w_erro.=$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): deve estar contida no decêndio da fatura'; 
                 }
                 if ($w_hn_bilhete) {
                   if (f($RS_Bil,'data')!=$w_temp) {
-                    $w_erro=1; fwrite($F1,$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): valor constante do arquivo diverge do valor registrado na base de dados ('.formataDataEdicao(f($RS_Bil,'data')).')'); 
+                    $w_erro.=$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): valor constante do arquivo diverge do valor registrado na base de dados ('.formataDataEdicao(f($RS_Bil,'data')).')'; 
                   }
                 }
               }
@@ -753,28 +757,28 @@ function Grava() {
               $w_trechos    = trim($row[9]);
               // Valida o campo trechos
               $w_result = fValidate(1,$w_trechos,'trechos','',1,3,60,'1','1');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Trechos: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Trechos: '.$w_result; }
               
               $w_projeto    = trim($row[10]);
               if ($projeto!=$w_projeto) {
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Código do projeto: todos as linhas devem ter o mesmo valor'); 
+                
+                $w_erro.=$crlf.'Código do projeto: todos as linhas devem ter o mesmo valor'; 
               }
               // Valida o campo código do projeto
               $w_result = fValidate(1,$w_projeto,'código do projeto','',1,3,60,'ABCDEFGHIJKLMNOPQRSTUVWXYZ ','0123456789 ');
               if ($w_result>'') { 
-                $w_erro=1; 
-                fwrite($F1,$crlf.'Código do projeto: '.$w_result); 
+                
+                $w_erro.=$crlf.'Código do projeto: '.$w_result; 
               } else {
                 // Verifica se o projeto existe
                 $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
                 $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLIST', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                 if (count($RS)==0) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"');
+                  
+                  $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                 } elseif (count($RS)>1) {
-                  $w_erro=1; 
-                  fwrite($F1,$crlf.'Código do projeto: há mais de um projeto ativo com o código "'.$w_projeto.'"');
+                  
+                  $w_erro.=$crlf.'Código do projeto: há mais de um projeto ativo com o código "'.$w_projeto.'"';
                 } else {
                   foreach($RS as $row1) { $w_hn_projeto = f($row1,'sq_siw_solicitacao'); break; } 
                 }
@@ -785,10 +789,10 @@ function Grava() {
               // Valida o campo valor pleno do bilhete
               $w_result = fValidate(1,$w_valor_pleno,'valor pleno do bilhete','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Valor pleno do bilhete: '.$w_result); 
+                $w_erro.=$crlf.'Valor pleno do bilhete: '.$w_result; 
               } elseif ($w_hn_bilhete) {
                 if (formatNumber(f($RS_Bil,'valor_bilhete_cheio'))!=$w_valor_pleno) {
-                  $w_erro=1; fwrite($F1,$crlf.'Valor pleno do bilhete: valor constante do arquivo ('.$w_valor_pleno.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete_cheio')).')'); 
+                  $w_erro.=$crlf.'Valor pleno do bilhete: valor constante do arquivo ('.$w_valor_pleno.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete_cheio')).')'; 
                 }
               }
               
@@ -801,15 +805,15 @@ function Grava() {
               // Valida o campo percentual de desconto
               $w_result = fValidate(1,$w_desconto,'percentual de desconto','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Percentual de desconto: '.$w_result); 
+                $w_erro.=$crlf.'Percentual de desconto: '.$w_result; 
               } else {
                 if (count($RS_Desconto)==0) {
-                  $w_erro=1; fwrite($F1,$crlf.'Percentual de desconto: não há tabela ativa de desconto cadastrada para a agência de viagens emissora da fatura'); 
+                  $w_erro.=$crlf.'Percentual de desconto: não há tabela ativa de desconto cadastrada para a agência de viagens emissora da fatura'; 
                 } else {
                   $desconto = round(100*(1-(toNumber($w_valor_bil)/toNumber($w_valor_pleno))),2);
                   if (formatNumber($desconto)!=$w_desconto) {
                     // Verifica se o desconto está correto
-                    $w_erro=1; fwrite($F1,$crlf.'Percentual de desconto: valor constante do arquivo ('.$w_desconto.') diverge do valor calculado ('.formatNumber($desconto).')');
+                    $w_erro.=$crlf.'Percentual de desconto: valor constante do arquivo ('.$w_desconto.') diverge do valor calculado ('.formatNumber($desconto).')';
                   } else {
                     // Recupera o desconto contratual a ser aplicado para o bilhete
                     foreach($RS_Desconto as $row1) {
@@ -825,10 +829,10 @@ function Grava() {
               // Valida o campo valor do bilhete
               $w_result = fValidate(1,$w_valor_bil,'valor do bilhete','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Valor do bilhete: '.$w_result); 
+                $w_erro.=$crlf.'Valor do bilhete: '.$w_result; 
               } elseif ($w_hn_bilhete) {
                 if (formatNumber(f($RS_Bil,'valor_bilhete'))!=$w_valor_bil) {
-                  $w_erro=1; fwrite($F1,$crlf.'Valor do bilhete: valor constante do arquivo ('.$w_valor_bil.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete')).') '.f($RS_Bil,'chave')); 
+                  $w_erro.=$crlf.'Valor do bilhete: valor constante do arquivo ('.$w_valor_bil.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete')).') '.f($RS_Bil,'chave'); 
                 }
               }
               
@@ -836,17 +840,17 @@ function Grava() {
               if (strpos($w_ret_tarifa,',')===false) $w_ret_tarifa .= ',00';
               // Valida o campo valor da tarifa retornado
               $w_result = fValidate(1,$w_ret_tarifa,'valor retido da tarifa','VALOR',1,3,18,'','0123456789,.');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Valor retido da tarifa: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Valor retido da tarifa: '.$w_result; }
               
               $w_taxa       = trim($row[15]);
               if (strpos($w_taxa,',')===false) $w_taxa .= ',00';
               // Valida o campo valor da taxa
               $w_result = fValidate(1,$w_taxa,'valor da taxa','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Valor da taxa: '.$w_result); 
+                $w_erro.=$crlf.'Valor da taxa: '.$w_result; 
               } elseif ($w_hn_bilhete) {
                 if (formatNumber(f($RS_Bil,'valor_taxa_embarque')+f($RS_Bil,'valor_pta'))!=$w_taxa) {
-                  $w_erro=1; fwrite($F1,$crlf.'Valor da taxa: valor constante do arquivo ('.$w_taxa.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_taxa_embarque')+f($RS_Bil,'valor_pta')).')'); 
+                  $w_erro.=$crlf.'Valor da taxa: valor constante do arquivo ('.$w_taxa.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_taxa_embarque')+f($RS_Bil,'valor_pta')).')'; 
                 }
               }
               
@@ -854,18 +858,18 @@ function Grava() {
               if (strpos($w_ret_taxa,',')===false) $w_ret_taxa .= ',00';
               // Valida o campo valor da taxa retornado
               $w_result = fValidate(1,$w_ret_taxa,'valor retido da taxa','VALOR',1,3,18,'','0123456789,.');
-              if ($w_result>'') { $w_erro=1; fwrite($F1,$crlf.'Valor retido da taxa: '.$w_result); }
+              if ($w_result>'') { $w_erro.=$crlf.'Valor retido da taxa: '.$w_result; }
               
               $w_desc_contr = trim($row[17]);
               if (strpos($w_desc_contr,',')===false) $w_desc_contr .= ',00';
               // Valida o campo valor do desconto contratual
               $w_result = fValidate(1,$w_desc_contr,'valor do desconto contratual','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Valor do desconto contratual: '.$w_result); 
+                $w_erro.=$crlf.'Valor do desconto contratual: '.$w_result; 
               } else {
                 $desconto_bilhete = round((toNumber($w_valor_bil) * $desconto_padrao / 100),2);
                 if ($w_desc_contr!=formatNumber($desconto_bilhete)) {
-                  $w_erro=1; fwrite($F1,$crlf.'Valor do desconto contratual: valor constante do arquivo ('.$w_desc_contr.') diverge do valor calculado ('.formatNumber($desconto_bilhete).')'); 
+                  $w_erro.=$crlf.'Valor do desconto contratual: valor constante do arquivo ('.$w_desc_contr.') diverge do valor calculado ('.formatNumber($desconto_bilhete).')'; 
                 }
               }
               
@@ -874,13 +878,20 @@ function Grava() {
               // Valida o campo valor total do bilhete
               $w_result = fValidate(1,$w_valor_total,'valor total do bilhete','VALOR',1,3,18,'','0123456789,.');
               if ($w_result>'') { 
-                $w_erro=1; fwrite($F1,$crlf.'Valor total do bilhete: '.$w_result); 
+                $w_erro.=$crlf.'Valor total do bilhete: '.$w_result; 
               } elseif ($w_hn_bilhete) {
                 $valor_total = formatNumber(f($RS_Bil,'valor_bilhete')-$desconto_bilhete+f($RS_Bil,'valor_taxa_embarque')+f($RS_Bil,'valor_pta'));
                 if ($valor_total!=$w_valor_total) {
-                  $w_erro=1; fwrite($F1,$crlf.'Valor total do bilhete: valor constante do arquivo ('.$w_valor_total.') diverge do valor calculado ('.$valor_total.')'); 
+                  $w_erro.=$crlf.'Valor total do bilhete: valor constante do arquivo ('.$w_valor_total.') diverge do valor calculado ('.$valor_total.')'; 
                 }
               }
+              
+              // Monta array de impressao
+              $linhas[$w_cont]['fatura'] = $w_fatura;
+              $linhas[$w_cont]['bilhete'] = $w_bilhete;
+              $linhas[$w_cont]['solicitacao'] = $w_solicitacao;
+              $linhas[$w_cont]['conteudo'] = $w_linha;
+              $linhas[$w_cont]['erro'] = substr($w_erro,2);
               
               // Guarda dados para gravação
               $faturas[$w_fatura]['fatura'] = $w_fatura;
@@ -890,7 +901,7 @@ function Grava() {
               $faturas[$w_fatura]['emissao'] = $w_emissao_fat;
               $faturas[$w_fatura]['vencimento'] = $w_venc;
               $faturas[$w_fatura]['valor'] = $w_valor_fat;
-              if ($w_erro>1) $faturas[$w_fatura]['erro'] = 'erro';
+              if ($w_erro!='') $faturas[$w_fatura]['erro'] = 'erro';
               
               $bilhetes[$w_fatura][$w_bilhete]['solicitacao'] = $w_hn_solic;
               $bilhetes[$w_fatura][$w_bilhete]['desconto'] = $w_hn_desconto;
@@ -902,46 +913,80 @@ function Grava() {
               $bilhetes[$w_fatura][$w_bilhete]['valor'] = $w_valor_bil;
               $bilhetes[$w_fatura][$w_bilhete]['embarque'] = $w_taxa;
               $bilhetes[$w_fatura][$w_bilhete]['cia'] = $w_hn_cia;
+              $bilhetes[$w_fatura][$w_bilhete]['erro'] = substr($w_erro,2);
               
               $w_cont      += 1;
               $w_registros += 1;
-              if ($w_erro==0)   $w_importados += 1;
-              else              $w_rejeitados += 1;
-            }
-          }
-          fclose($F1);
-          if (is_array($faturas)) {
-            foreach($faturas as $row) {
-              if (nvl(f($row,'erro'),'')!='xxx') {
-                $w_fatura = f($row,'fatura');
-                $fatura_grava[$w_fatura]['fatura'] = $w_fatura;
-                $fatura_grava[$w_fatura]['projeto'] = f($row,'projeto');
-                $fatura_grava[$w_fatura]['inicio'] = f($row,'inicio');
-                $fatura_grava[$w_fatura]['fim'] = f($row,'fim');
-                $fatura_grava[$w_fatura]['emissao'] = f($row,'emissao');
-                $fatura_grava[$w_fatura]['vencimento'] = f($row,'vencimento');
-                $fatura_grava[$w_fatura]['valor'] = f($row,'valor');
-                
-                foreach($bilhetes[$w_fatura] as $row1) {
-                  $w_bilhete = f($row1,'numero');
-                  $bilhete_grava[$w_bilhete]['fatura'] = $w_fatura;
-                  $bilhete_grava[$w_bilhete]['solicitacao'] = f($row1,'solicitacao');
-                  $bilhete_grava[$w_bilhete]['cia'] = f($row1,'cia');
-                  $bilhete_grava[$w_bilhete]['desconto'] = f($row1,'desconto');
-                  $bilhete_grava[$w_bilhete]['emissao'] = f($row1,'emissao');
-                  $bilhete_grava[$w_bilhete]['numero'] = f($row1,'numero');
-                  $bilhete_grava[$w_bilhete]['trecho'] = f($row1,'trecho');
-                  $bilhete_grava[$w_bilhete]['valor_cheio'] = f($row1,'valor_cheio');
-                  $bilhete_grava[$w_bilhete]['valor'] = f($row1,'valor');
-                  $bilhete_grava[$w_bilhete]['embarque'] = f($row1,'embarque');
-                }
+              if ($w_erro=='')  {
+                $faturas[$w_fatura]['aceitos'] = nvl($faturas[$w_fatura]['aceitos'],0) + 1;
+                $w_importados++;
+              } else {
+                $faturas[$w_fatura]['rejeitados'] = nvl($faturas[$w_fatura]['rejeitados'],0) + 1;
+                $w_rejeitados += 1;
               }
             }
           }
-          //print_r($faturas);
-          //print_r($bilhetes);
-          //print_r($bilhete_grava);
-          //exit;
+          if (is_array($faturas)) {
+            foreach($faturas as $row) {
+              $w_fatura = f($row,'fatura');
+              $fatura_grava[$w_fatura]['fatura'] = $w_fatura;
+              $fatura_grava[$w_fatura]['projeto'] = f($row,'projeto');
+              $fatura_grava[$w_fatura]['inicio'] = f($row,'inicio');
+              $fatura_grava[$w_fatura]['fim'] = f($row,'fim');
+              $fatura_grava[$w_fatura]['emissao'] = f($row,'emissao');
+              $fatura_grava[$w_fatura]['vencimento'] = f($row,'vencimento');
+              $fatura_grava[$w_fatura]['valor'] = f($row,'valor');
+              $fatura_grava[$w_fatura]['aceitos'] = f($row,'aceitos');
+              $fatura_grava[$w_fatura]['rejeitados'] = f($row,'rejeitados');
+              $fatura_grava[$w_fatura]['erro'] = f($row,'erro');
+              
+              foreach($bilhetes[$w_fatura] as $row1) {
+                $w_bilhete = f($row1,'numero');
+                $bilhete_grava[$w_fatura][$w_bilhete]['fatura'] = $w_fatura;
+                $bilhete_grava[$w_fatura][$w_bilhete]['solicitacao'] = f($row1,'solicitacao');
+                $bilhete_grava[$w_fatura][$w_bilhete]['cia'] = f($row1,'cia');
+                $bilhete_grava[$w_fatura][$w_bilhete]['desconto'] = f($row1,'desconto');
+                $bilhete_grava[$w_fatura][$w_bilhete]['emissao'] = f($row1,'emissao');
+                $bilhete_grava[$w_fatura][$w_bilhete]['numero'] = f($row1,'numero');
+                $bilhete_grava[$w_fatura][$w_bilhete]['trecho'] = f($row1,'trecho');
+                $bilhete_grava[$w_fatura][$w_bilhete]['valor_cheio'] = f($row1,'valor_cheio');
+                $bilhete_grava[$w_fatura][$w_bilhete]['valor'] = f($row1,'valor');
+                $bilhete_grava[$w_fatura][$w_bilhete]['embarque'] = f($row1,'embarque');
+                $bilhete_grava[$w_fatura][$w_bilhete]['erro'] = f($row1,'erro');
+              }
+            }
+          }
+          
+          // Gera o arquivo registro da importação
+          $F1 = fopen($w_caminho.$w_caminho_registro, 'w');
+          fwrite($F1,$w_arquivo);
+          if (is_array($fatura_grava)) {
+            fwrite($F1,$crlf.'---------------------------------------------------------------------------------');
+            fwrite($F1,$crlf.'    FATURA          BILHETES               ACEITOS             REJEITADOS');
+            fwrite($F1,$crlf.'---------------------------------------------------------------------------------');
+            foreach($fatura_grava as $row1) {
+              fwrite($F1,$crlf.str_pad(f($row1,'fatura'),10,' ',STR_PAD_LEFT));
+              fwrite($F1,str_pad(nvl(f($row1,'aceitos'),0)+nvl(f($row1,'rejeitados'),0),18,' ',STR_PAD_LEFT));
+              fwrite($F1,str_pad(nvl(f($row1,'aceitos'),0),22,' ',STR_PAD_LEFT));
+              fwrite($F1,str_pad(nvl(f($row1,'rejeitados'),0),23,' ',STR_PAD_LEFT));
+            }
+            fwrite($F1,$crlf.'                  ---------------------------------------------------------------');
+            fwrite($F1,$crlf.'    TOTAIS');
+            fwrite($F1,str_pad(nvl($w_importados,0)+nvl($w_rejeitados,0),18,' ',STR_PAD_LEFT));
+            fwrite($F1,str_pad(nvl($w_importados,0),22,' ',STR_PAD_LEFT));
+            fwrite($F1,str_pad(nvl($w_rejeitados,0),23,' ',STR_PAD_LEFT));
+            fwrite($F1,$crlf.'=================================================================================');
+          }
+          if (is_array($linhas)) {
+            for ($i=1;$i<$w_cont;$i++) {
+              fwrite($F1,$crlf.$crlf.'[Linha '.$i.'] '.$linhas[$i]['conteudo']);
+              fwrite($F1,$crlf.'Fatura: '.$linhas[$i]['fatura']);
+              if (nvl($linhas[$i]['solicitacao'],'')!='') fwrite($F1,' - '.$linhas[$i]['solicitacao']);
+              fwrite($F1,$crlf.$linhas[$i]['erro']);
+            }
+          }
+          fclose($F1);
+          
           // Configura o valor dos campos necessários para gravação
           $w_arquivo_registro   = 'registro.txt';
           $w_tamanho_registro   = filesize($w_caminho.$w_caminho_registro);
@@ -951,7 +996,26 @@ function Grava() {
                 $_REQUEST['w_chave'],$w_cliente,$w_usuario,$_REQUEST['w_data_arquivo'],
                 $w_nome_recebido,$w_caminho_recebido,$w_tamanho_recebido,$w_tipo_recebido,
                 $w_arquivo_registro,$w_caminho_registro,$w_tamanho_registro,$w_tipo_registro,
-                $w_registros,$w_importados,$w_rejeitados,$w_nome_recebido,$w_arquivo_registro);
+                $w_registros,$w_importados,$w_rejeitados,$w_nome_recebido,$w_arquivo_registro,
+                &$w_chave_arq);
+          
+          foreach($fatura_grava as $row1) {
+            //Grava cada uma das faturas
+            $w_fatura = f($row1,'fatura');
+            dml_putPD_Fatura::getInstanceOf($dbms,'I',
+                null,$w_chave_arq,$_REQUEST['w_agencia'],f($row1,'fatura'),f($row1,'inicio'),f($row1,'fim'),
+                f($row1,'emissao'),f($row1,'vencimento'),f($row1,'valor'),nvl(f($row1,'aceitos'),0)+nvl(f($row1,'rejeitados'),0),
+                nvl(f($row1,'aceitos'),0),nvl(f($row1,'rejeitados'),0),&$w_chave_fatura);
+                  
+            foreach($bilhete_grava[$w_fatura] as $row2) {
+              foreach($bilhete_grava[$w_fatura] as $row3) {
+                // Grava bilhetes da fatura
+                dml_putPD_Bilhete::getInstanceOf($dbms,'I',f($row3,'solicitacao'),null,f($row3,'cia'),$w_chave_fatura,f($row3,'desconto'),
+                  f($row3,'emissao'),f($row3,'numero'),f($row3,'trecho'),null,null,f($row3,'valor_cheio'),f($row3,'valor'),
+                  f($row3,'embarque'),0,null,'P','S','N',f($row3,'erro'));
+              }
+            }
+          }
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
           ScriptClose();

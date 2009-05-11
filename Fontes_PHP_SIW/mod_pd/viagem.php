@@ -7058,7 +7058,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Bilhete::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
-            $_REQUEST['w_cia_aerea'],$_REQUEST['w_data'],$_REQUEST['w_numero'],$_REQUEST['w_trecho'],
+            $_REQUEST['w_cia_aerea'],null,null,$_REQUEST['w_data'],$_REQUEST['w_numero'],$_REQUEST['w_trecho'],
             $_REQUEST['w_rloc'],$_REQUEST['w_classe'],$_REQUEST['w_valor_cheio'],$_REQUEST['w_valor_bil'],$_REQUEST['w_valor_tax'],
             $_REQUEST['w_valor_pta'],explodeArray($_REQUEST['w_sq_deslocamento']),$_REQUEST['w_tipo'],
             $_REQUEST['w_utilizado'],$_REQUEST['w_faturado'],$_REQUEST['w_observacao']);
@@ -7308,7 +7308,7 @@ function Grava() {
           for ($i=0; $i<=count($_POST['w_sq_bilhete'])-1; $i=$i+1) {
             if (Nvl($_POST['w_sq_bilhete'][$i],'')>'') {
               dml_putPD_Bilhete::getInstanceOf($dbms,'C',$_REQUEST['w_chave'],$_POST['w_sq_bilhete'][$i],
-                  null,null,null,null,null,null,null,null,null,null,null,$_POST['w_tipo'][$i],null);
+                  null,null,null,null,null,null,null,null,null,null,null,null,null,$_POST['w_tipo'][$i],null);
             }
           }
           */

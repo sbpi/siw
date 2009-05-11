@@ -3,6 +3,8 @@ create or replace procedure SP_PutPD_Bilhete
     p_chave               in number,
     p_chave_aux           in number    default null,
     p_sq_cia_transporte   in number    default null,
+    p_fatura              in number    default null,
+    p_desconto            in number    default null,
     p_data                in date      default null,
     p_numero              in varchar2  default null,
     p_trecho              in varchar2  default null,
@@ -45,12 +47,12 @@ begin
       insert into pd_bilhete
         (sq_bilhete,          sq_siw_solicitacao, sq_cia_transporte,       data,                    numero,          trecho, 
          valor_bilhete_cheio, valor_bilhete,      valor_pta,               valor_taxa_embarque,     rloc,            classe,
-         tipo,                observacao,         utilizado
+         tipo,                observacao,         utilizado,               sq_fatura_agencia,       sq_desconto_agencia
         )
       values
         (w_chave_aux,         p_chave,            p_sq_cia_transporte,     p_data,                  p_numero,        upper(p_trecho), 
          p_valor_cheio,       p_valor_bilhete,    p_valor_pta,             p_valor_taxa,            p_rloc,          upper(p_classe), 
-         p_tipo,              p_observacao,       p_utilizado
+         p_tipo,              p_observacao,       p_utilizado,             p_fatura,                p_desconto
         );
 
       -- Vincula os deslocamentos indicados
@@ -70,7 +72,9 @@ begin
            rloc                = p_rloc,
            classe              = p_classe,
            observacao          = p_observacao,
-           utilizado           = p_utilizado
+           utilizado           = p_utilizado,
+           sq_fatura_agencia   = p_fatura,
+           sq_desconto_agencia = p_desconto
        where sq_bilhete = w_chave_aux;
 
       -- Desvincula os deslocamentos
@@ -90,21 +94,22 @@ begin
       delete pd_bilhete where sq_bilhete = w_chave_aux;
    End If;
 
-  -- Recupera o valor total dos bilhetes
-  select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
-     into w_valor_passagem
-     from pd_bilhete x
-    where x.sq_siw_solicitacao = p_chave
-      and x.tipo = p_tipo;
-
-  -- Atualiza o valor consolidado dos bilhetes
-  If p_tipo = 'P' Then
-     -- Se informação da agência de viagens, atualiza apenas o valor real
-     update pd_missao set valor_passagem = w_valor_passagem where sq_siw_solicitacao = p_chave;
-  Else
-     -- Caso contrário, atualiza valor previsto e valor real
-     update pd_missao set valor_passagem = w_valor_passagem, valor_previsto_bilhetes = w_valor_passagem where sq_siw_solicitacao = p_chave;
+  If p_tipo = 'S' Then
+     -- Recupera o valor total dos bilhetes
+     select sum(nvl(x.valor_bilhete,0))+sum(nvl(x.valor_pta,0))+sum(nvl(x.valor_taxa_embarque,0))
+        into w_valor_passagem
+        from pd_bilhete x
+       where x.sq_siw_solicitacao = p_chave
+         and x.tipo               = p_tipo;
+  
+     -- Atualiza o valor consolidado dos bilhetes
+     If p_tipo = 'P' Then
+        -- Se informação da agência de viagens, atualiza apenas o valor real
+        update pd_missao set valor_passagem = w_valor_passagem where sq_siw_solicitacao = p_chave;
+     Else
+        -- Caso contrário, atualiza valor previsto e valor real
+        update pd_missao set valor_passagem = w_valor_passagem, valor_previsto_bilhetes = w_valor_passagem where sq_siw_solicitacao = p_chave;
+     End If;
   End If;
-
 end SP_PutPD_Bilhete;
 /

@@ -16,7 +16,8 @@ create or replace procedure SP_PutPDImportacao
     p_importados               in  number    default null,
     p_rejeitados               in  number    default null,
     p_nome_recebido            in  varchar2  default null,
-    p_nome_registro            in  varchar2  default null
+    p_nome_registro            in  varchar2  default null,
+    p_chave_nova               out number
    ) is
    
    w_chave  number(18);
@@ -73,5 +74,12 @@ begin
          p_rejeitados
         );
    End If;
+
+   -- Devolve a chave
+   If p_chave is not null
+      Then p_chave_nova := p_chave;
+      Else p_chave_nova := w_chave;
+   End If;
+
 end SP_PutPDImportacao;
 /

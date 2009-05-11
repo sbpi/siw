@@ -1231,6 +1231,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_ReembValor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
@@ -3816,6 +3817,7 @@ SP_Oracle92/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle92/siw/SP_PutPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_PutPD_Contas.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
+SP_Oracle92/siw/SP_PutPD_Fatura.prc -text
 SP_Oracle92/siw/SP_PutPD_ReembValor.prc -text
 SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
