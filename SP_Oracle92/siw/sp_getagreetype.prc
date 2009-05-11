@@ -58,7 +58,7 @@ begin
       open p_result for 
          select a.sq_tipo_acordo,
                 a.sq_tipo_acordo_pai, a.nome,            a.sigla, a.modalidade, 
-                a.prazo_indeterm,     a.pessoa_fisica,   a.pessoa_juridica, a.ativo
+                a.prazo_indeterm,     a.pessoa_fisica,   a.pessoa_juridica, a.exibe_idec, a.ativo
            from ac_tipo_acordo a
           where a.sq_tipo_acordo = p_chave
          order by 2;

@@ -9,6 +9,7 @@ create or replace procedure SP_PutAgreeType
     p_prazo_indeterm           in  varchar2 default null,
     p_pessoa_juridica          in  varchar2 default null,
     p_pessoa_fisica            in  varchar2 default null,
+    p_idec                     in  varchar2 default null,
     p_ativo                    in  varchar2 default null
    ) is
 begin
@@ -16,7 +17,7 @@ begin
       -- Insere registro
       insert into ac_tipo_acordo (
               sq_tipo_acordo, sq_tipo_acordo_pai,  cliente,         nome,          sigla, 
-              modalidade,     prazo_indeterm,      pessoa_juridica, pessoa_fisica, ativo)
+              modalidade,     prazo_indeterm,      pessoa_juridica, pessoa_fisica, exibe_idec, ativo)
       (select sq_tipo_acordo.nextval,
               p_chave_pai,
               p_cliente,
@@ -26,6 +27,7 @@ begin
               p_prazo_indeterm,
               p_pessoa_juridica,
               p_pessoa_fisica,
+              p_idec,
               p_ativo
          from dual
       );
@@ -38,7 +40,8 @@ begin
          modalidade           = p_modalidade,
          prazo_indeterm       = p_prazo_indeterm,
          pessoa_juridica      = p_pessoa_juridica,
-         pessoa_fisica        = p_pessoa_fisica
+         pessoa_fisica        = p_pessoa_fisica,
+         exibe_idec           = p_idec
       where sq_tipo_acordo    = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro
@@ -52,4 +55,3 @@ begin
    End If;
 end SP_PutAgreeType;
 /
-
