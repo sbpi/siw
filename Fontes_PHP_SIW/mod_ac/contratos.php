@@ -503,7 +503,7 @@ function Inicial() {
         if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Empenho','processo').'</font></td>');
         else                        ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Processo','processo').'</font></td>');
       }
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinc.','dados_pai').'</td>');
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('$ Previsto','valor').'</font></td>');
@@ -515,11 +515,15 @@ function Inicial() {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</font></td>');
       } 
+      ShowHTML('          <td colspan=4><b>Indicadores</font></td>');
       if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') ShowHTML('          <td rowspan=2><b>Operações</font></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Início','inicio').'</font></td>');
       ShowHTML('          <td><b>'.LinkOrdena('Fim','fim').'</font></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('IDEC','idcc').'</font></td>');
+      ShowHTML('          <td colspan="2"><b>'.LinkOrdena('IDCC','idcc').'</font></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('IGCC','igcc').'</font></td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Código</font></td>');
@@ -528,7 +532,7 @@ function Inicial() {
          if (substr($SG,0,3)=='GCB') ShowHTML('          <td rowspan=2><b>Empenho</font></td>');
          else                        ShowHTML('          <td rowspan=2><b>Processo</font></td>');
       }
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinculação</td>');
+      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td rowspan=2><b>Vinc.</td>');
       ShowHTML('          <td colspan=2><b>Vigência</font></td>');
       if (substr($SG,0,3)!='GCA') {
         ShowHTML('          <td rowspan=2><b>$ Previsto</font></td>');
@@ -540,14 +544,18 @@ function Inicial() {
         // Se for cadastramento ou mesa de trabalho
         ShowHTML('          <td rowspan=2><b>Fase atual</font></td>');
       } 
+      ShowHTML('          <td colspan=4><b>Indicadores</font></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>Início</font></td>');
-      ShowHTML('          <td><b>Fim</font></td>');
+      ShowHTML('          <td><b>Início</td>');
+      ShowHTML('          <td><b>Fim</td>');
+      ShowHTML('          <td><b>IDEC</td>');
+      ShowHTML('          <td colspan="2">IDCC</td>');
+      ShowHTML('          <td><b>IGCC</td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=14 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       $w_atual=0;
@@ -572,7 +580,7 @@ function Inicial() {
 	        }
         } elseif ($w_segmento=='Público') ShowHTML('        <td>'.f($row,'processo').'</td>');        
         if ($_SESSION['INTERNO']=='S') {
-          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'S',$w_embed).'</td>');
+          if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_embed).'</td>');
           else                                 ShowHTML('        <td>---</td>');
         } 
         ShowHTML('        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'inicio'),5),'-').'</td>');
@@ -597,6 +605,10 @@ function Inicial() {
           // Se não for cadastramento, mostra a fase atual
           ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
         } 
+        ShowHTML('        <td align="center">'.((f($row,'exibe_idec')=='S') ? ExibeSmile('idec',f($row,'idcc')) : '&nbsp;').'</td>');
+        ShowHTML('        <td align="center">'.ExibeSmile('idcc',f($row,'idcc')).'</td>');
+        ShowHTML('        <td align="center">'.formatNumber(f($row,'idcc')).'%</td>');
+        ShowHTML('        <td align="right">'.formatNumber(f($row,'igcc')).'%</td>');
         if ($_SESSION['INTERNO']=='S' && $w_embed!='WORD') { 
           ShowHTML('        <td align="top" nowrap>');
           if ($P1!=3) {
@@ -667,7 +679,7 @@ function Inicial() {
           if (strpos(strtoupper($R),'GR_')!==false) {
             ShowHTML('          <td align="right"><b>'.number_format($w_atual,2,',','.').'&nbsp;</font></td>');
           } 
-          ShowHTML('          <td colspan=2>&nbsp;</font></td>');
+          ShowHTML('          <td colspan=4>&nbsp;</font></td>');
           ShowHTML('        </tr>');
         } 
         // Se for a última página da listagem, soma e exibe o valor total
@@ -682,7 +694,7 @@ function Inicial() {
           if (strpos(strtoupper($R),'GR_')!==false) {
             ShowHTML('          <td align="right"><b>'.number_format($w_real,2,',','.').'&nbsp;</font></td>');
           } 
-          ShowHTML('          <td colspan=2>&nbsp;</font></td>');
+          ShowHTML('          <td colspan=6>&nbsp;</font></td>');
           ShowHTML('        </tr>');
         } 
       } 

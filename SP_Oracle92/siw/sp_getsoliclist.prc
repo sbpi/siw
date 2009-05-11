@@ -609,6 +609,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
+                calculaIDCC(b.sq_siw_solicitacao) as idcc, calculaIGCC(b.sq_siw_solicitacao) as igcc,
                 round(months_between(b.fim,b.inicio)) as meses_contrato,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -640,7 +641,7 @@ begin
                 case when b.titulo is null then 'Não informado ('||d2.nome_resumido||')' else b.titulo end as nm_acordo,
                 acentos(b.titulo) as ac_titulo,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
-                d1.nome as nm_tipo_acordo,d1.sigla as sg_acordo,           d1.modalidade as cd_modalidade,
+                d1.nome as nm_tipo_acordo,d1.sigla as sg_acordo,     d1.modalidade as cd_modalidade, d1.exibe_idec,
                 d2.nome as nm_outra_parte, d2.nome_resumido as nm_outra_parte_resumido,
                 d2.nome_resumido_ind as nm_outra_parte_resumido_ind,
                 d21.cpf, d22.cnpj,

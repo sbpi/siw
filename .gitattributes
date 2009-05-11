@@ -879,6 +879,7 @@ Fontes_PHP_SIW/classes/sp/db_getPDParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Deslocamento.php -text
+Fontes_PHP_SIW/classes/sp/db_getPD_Fatura.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Financeiro.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Reembolso.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Vinculacao.php -text
@@ -3730,8 +3731,10 @@ SP_Oracle92/siw/CARREGA_PAC.prc -text
 SP_Oracle92/siw/CL_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/CL_CriaParametro.prc -text
 SP_Oracle92/siw/CalculaIDC.fnc -text
+SP_Oracle92/siw/CalculaIDCC.fnc -text
 SP_Oracle92/siw/CalculaIDE.fnc -text
 SP_Oracle92/siw/CalculaIGC.fnc -text
+SP_Oracle92/siw/CalculaIGCC.fnc -text
 SP_Oracle92/siw/CalculaIGE.fnc -text
 SP_Oracle92/siw/GeraCodigoInterno.prc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
@@ -3771,6 +3774,7 @@ SP_Oracle92/siw/SP_GetPDParametro.prc -text
 SP_Oracle92/siw/SP_GetPD_Alteracao.prc -text
 SP_Oracle92/siw/SP_GetPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_GetPD_Deslocamento.prc -text
+SP_Oracle92/siw/SP_GetPD_Fatura.prc -text
 SP_Oracle92/siw/SP_GetPD_Financeiro.prc -text
 SP_Oracle92/siw/SP_GetPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_GetPD_Vinculacao.prc -text

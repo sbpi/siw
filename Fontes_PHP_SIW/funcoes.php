@@ -1042,6 +1042,16 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
       $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 70%).';
       $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 70% a 89,99% ou acima de 120%).';
       $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (de 90% a 120%). ';
+    } elseif ($l_tipo=='IDCC') {
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 70%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 70% a 99,99%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (acima de 100%). ';
+    } elseif ($l_tipo=='IDEC') {
+      $l_string .= '<tr valign="top">';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width=10 height=10 align="center"><td>Fora da faixa desejável (abaixo de 70%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmAviso.'" border=0 width=10 height=10 align="center"><td>Próximo da faixa desejável (de 70% a 89,99% ou acima de 120%).';
+      $l_string .= '<td width="1%" nowrap><img src="'.$conRootSIW.$conImgSmNormal.'" border=0 width=10 height=10 align="center"><td>Na faixa desejável (acima de 90%). ';
     }
   } else {
     if ($l_tipo=='IDE') {
@@ -1052,6 +1062,14 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
       if ($l_andamento < 70)                           $l_string .= '<img title="IDC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
       elseif ($l_andamento < 90 || $l_andamento > 120) $l_string .= '<img title="IDC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
       else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+    } elseif ($l_tipo=='IDCC') {
+      if ($l_andamento < 75)                           $l_string .= '<img title="IDCC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento <= 100)                      $l_string .= '<img title="IDCC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDCC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+    } elseif ($l_tipo=='IDEC') {
+      if ($l_andamento < 70)                           $l_string .= '<img title="IDEC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
+      elseif ($l_andamento < 90)                       $l_string .= '<img title="IDEC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
+      else                                             $l_string .= '<img title="IDEC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     }
   }
   return $l_string;

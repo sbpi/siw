@@ -289,6 +289,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.protocolo_siw,
+                calculaIDCC(b.sq_siw_solicitacao) as idcc, calculaIGCC(b.sq_siw_solicitacao) as igcc,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -326,7 +327,7 @@ begin
                 retornaAfericaoIndicador(d.sq_eoindicador,d.indice_base) as vl_indice_base,
                 retornaExcedenteContrato(d.sq_siw_solicitacao,b.fim) as limite_usado,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end nm_tipo_reajuste,
-                d1.nome nm_tipo_acordo,d1.sigla sg_acordo,           d1.modalidade cd_modalidade,
+                d1.nome as nm_tipo_acordo,d1.sigla as sg_acordo,     d1.modalidade as cd_modalidade, d1.exibe_idec,
                 d1.prazo_indeterm,    d1.pessoa_fisica,              d1.pessoa_juridica,  
                 d2.nome nm_outra_parte, d2.nome_resumido nm_outra_parte_resumido,
                 d3.nome nm_outra_parte, d3.nome_resumido nm_outra_parte_resumido,

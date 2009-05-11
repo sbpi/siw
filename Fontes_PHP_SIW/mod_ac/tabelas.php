@@ -145,6 +145,7 @@ function TipoAcordo() {
     $w_ativo                = $_REQUEST['w_ativo'];
     $w_pessoa_fisica        = $_REQUEST['w_pessoa_fisica'];
     $w_prazo_indeterminado  = $_REQUEST['w_prazo_indeterminado'];
+    $w_idec                 = $_REQUEST['w_idec'];
     $w_modalidade           = $_REQUEST['w_modalidade'];
   } elseif ($O!='L') {
     if ($O!='P' && $O!='H') {
@@ -160,6 +161,7 @@ function TipoAcordo() {
           $w_pessoa_juridica      = f($row,'pessoa_juridica');
           $w_pessoa_fisica        = f($row,'pessoa_fisica');
           $w_prazo_indeterminado  = f($row,'prazo_indeterm');
+          $w_idec                 = f($row,'exibe_idec');
           $w_modalidade           = f($row,'modalidade');
         }
       } elseif ($O=='A' || nvl($w_troca,'') > '') {
@@ -172,6 +174,7 @@ function TipoAcordo() {
           $w_pessoa_juridica      = f($row,'pessoa_juridica');
           $w_pessoa_fisica        = f($row,'pessoa_fisica');
           $w_prazo_indeterminado  = f($row,'prazo_indeterm');
+          $w_idec                 = f($row,'exibe_idec');
           $w_modalidade           = f($row,'modalidade');
         }
       }
@@ -410,7 +413,7 @@ function TipoAcordo() {
     } 
     ShowHTML('          <td valign="top" TITLE="Informe "Sim" se este tipo de acordo aplicar-se a pessoas jurídicas."><b>Pessoa jurídica?</b><br>');
     if ($w_pessoa_juridica=='S' || $w_pessoa_juridica=='') {
-      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="N"> Não');
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="N" checked> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_pessoa_juridica" value="N" checked> Não');
     } 
@@ -434,6 +437,12 @@ function TipoAcordo() {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="N"> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_prazo_indeterminado" value="N" checked> Não');
+    }
+    ShowHTML('          <td valign="top" TITLE="Indica se deve ser exibido indice de desempenho de escopo do contrato."><b>Exibir índice de desempenho de escopo?</b><br>');
+    if ($w_idec=='S' || $w_idec=='') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="N"> Não');
+    } else {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_idec" value="N" checked> Não');
     } 
     if ($O=='I') {
       ShowHTML('          <tr><td height="30"><b>Ativo?</b><br>');
@@ -1819,7 +1828,7 @@ function Grava() {
         dml_putAgreeType::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_acordo'],$_REQUEST['w_sq_tipo_acordo_pai'],$_REQUEST['w_cliente'],
             $_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_modalidade'],
-            $_REQUEST['w_prazo_indeterminado'],$_REQUEST['w_pessoa_juridica'],$_REQUEST['w_pessoa_fisica'],
+            $_REQUEST['w_prazo_indeterminado'],$_REQUEST['w_pessoa_juridica'],$_REQUEST['w_pessoa_fisica'],$_REQUEST['w_idec'],
             $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');

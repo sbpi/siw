@@ -6,6 +6,7 @@ create or replace procedure SP_GetPDImportacao
     p_dt_fim          in date     default null,
     p_imp_ini         in date     default null,
     p_imp_fim         in date     default null,
+    p_restricao       in varchar2 default null,
     p_result          out sys_refcursor) is
 begin
    -- Recupera as importações dos dados financeiros
@@ -20,11 +21,16 @@ begin
               case rejeitados
                 when 0 then 'Completa'
                 else        'Parcial'
-              end nm_situacao
+              end nm_situacao,
+              coalesce(e.qtd,0) as qt_fatura
          from pd_arquivo_eletronico  a
-              inner join siw_arquivo b on (a.arquivo_recebido = b.sq_siw_arquivo)
-              inner join siw_arquivo c on (a.arquivo_registro = c.sq_siw_arquivo)
-              inner join co_pessoa   d on (a.sq_pessoa        = d.sq_pessoa)
+              inner join siw_arquivo b on (a.arquivo_recebido      = b.sq_siw_arquivo)
+              inner join siw_arquivo c on (a.arquivo_registro      = c.sq_siw_arquivo)
+              inner join co_pessoa   d on (a.sq_pessoa             = d.sq_pessoa)
+              left  join (select x.sq_arquivo_eletronico, count(*) as qtd
+                            from pd_fatura_agencia x
+                           group by x.sq_arquivo_eletronico
+                         )           e on (a.sq_arquivo_eletronico = e.sq_arquivo_eletronico)
         where a.cliente      = p_cliente
          and ((p_chave       is null) or (p_chave       is not null and a.sq_arquivo_eletronico = p_chave))
          and ((p_responsavel is null) or (p_responsavel is not null and acentos(d.nome)         like '%'||acentos(p_responsavel)||'%'))

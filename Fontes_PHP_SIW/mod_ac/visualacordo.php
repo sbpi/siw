@@ -21,7 +21,10 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_sigla           = f($RS,'sigla');
   $w_aditivo         = f($RS,'aditivo');
   $w_texto_pagamento = f($RS,'condicoes_pagamento');
-
+  $w_idcc            = f($RS,'idcc');
+  $w_igcc            = f($RS,'igcc');
+  $w_exibe_idec      = f($RS,'exibe_idec');
+  
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
     // Se for usuário externa, tem visão resumida
@@ -60,6 +63,17 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       else                        $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify<font size="2"><b>CONTRATO: '.f($RS,'codigo_interno').' - '.f($RS,'titulo').' ('.$l_chave.')'.'</b></font></td></tr>';
     }
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+    $l_html .= chr(13).'    <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top" align="center">';
+    if ($l_tipo!='WORD') {
+      if ($w_exibe_idec=='S') $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDEC',$TP,'IDEC').': '.ExibeSmile('IDEC',$w_idcc).' '.formatNumber($w_idcc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IDCC',$TP,'IDCC').': '.ExibeSmile('IDCC',$w_idcc).' '.formatNumber($w_idcc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">'.VisualIndicador($w_dir_volta,$w_cliente,'IGCC',$TP,'IGCC').': '.ExibeSmile('IGCC',$w_igcc).' '.formatNumber($w_igcc,2).'%</b></td>';
+    } else {
+      if ($w_exibe_idec=='S') $l_html .= chr(13).'        <td width="25%">IDEC: '.ExibeSmile('idec',$w_idcc).' '.formatNumber($w_idcc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IDCC: '.ExibeSmile('idcc',$w_idcc).' '.formatNumber($w_idcc,2).'%</b></td>';
+      $l_html .= chr(13).'        <td width="25%">IGCC: '.ExibeSmile('igcc',$w_igcc).' '.formatNumber($w_igcc,2).'%</b></td>';
+    }
+    $l_html .= chr(13).'      </table>';
     // Identificação do acordo
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     
@@ -188,7 +202,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td><b>Número do empenho (modalidade/nível/mensalidade):</b></td>';
           $l_html.=chr(13).'          <td>'.Nvl(f($RS,'processo'),'---').'</td></tr>';
         }
-        if (f($RS,'valor_caucao')>0){ 
+        if (f($RS,'valor_caucao')>0 || $w_segmento=='Público' || $w_segmento=='Agência'){ 
           $l_html.=chr(13).'          <tr valign="top">';
           $l_html.=chr(13).'          <td><b>Valor da caução:</b></td>';
           $l_html.=chr(13).'          <td>'.formatNumber(f($RS,'valor_caucao')).'</td></tr>';

@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putAgreeType {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_pai, $p_cliente, $p_nome, $p_sigla, $p_modalidade, $p_prazo_indeterm, $p_pessoa_juridica, $p_pessoa_fisica, $p_ativo) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_chave_pai, $p_cliente, $p_nome, $p_sigla, $p_modalidade, $p_prazo_indeterm, $p_pessoa_juridica, $p_pessoa_fisica, $p_idec, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTAGREETYPE';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
@@ -22,6 +22,7 @@ class dml_putAgreeType {
                    'p_prazo_indeterm'            =>array(tvl($p_prazo_indeterm),                           B_VARCHAR,         1),
                    'p_pessoa_juridica'           =>array(tvl($p_pessoa_juridica),                          B_VARCHAR,         1),
                    'p_pessoa_fisica'             =>array(tvl($p_pessoa_fisica),                            B_VARCHAR,         1),
+                   'p_idec'                      =>array(tvl($p_idec),                                     B_VARCHAR,         1),     
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
