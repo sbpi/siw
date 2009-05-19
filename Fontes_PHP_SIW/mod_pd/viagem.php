@@ -1635,7 +1635,7 @@ function Trechos() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
-    BodyOpenClean('onLoad=\'document.Form.'.(($P1!=1 && $w_passagem=='S') ? $w_troca : 'Botao[0]').'.focus()\';');
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='I' || $O=='A') {
     BodyOpenClean('onLoad=\'document.Form.w_pais_orig.focus()\';');
   } else {
@@ -6553,19 +6553,18 @@ function PrestarContas() {
 function Reembolso() {
   extract($GLOBALS);
   global $w_Disabled;
-  
   $w_chave          = $_REQUEST['w_chave'];
   $w_readonly       = '';
   $w_erro           = '';
-    
+
+  // Recupera as possibilidades de vinculação financeira
+  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null);
+  
   // Recupera os dados da solicitação
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
   $w_chave_pai = f($RS,'sq_solic_pai');
   $w_or_tramite = f($RS,'or_tramite');
 
-  // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null);
-  
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
@@ -6770,7 +6769,7 @@ function ReembolsoValor() {
   $w_cidade_padrao = f($RS_Cliente,'sq_cidade_padrao');
   
   // Se viagem nacional, seleciona BRL automaticamente.
-  if (f($RS_Solic,'internacional')=='S') {
+  if (f($RS_Solic,'internacional')=='N') {
     $RS_Moeda = db_getMoeda::getInstanceOf($dbms,null,null,null,null,'BRL');
     foreach ($RS_Moeda as $row) {$RS_Moeda = $row; break;}
     $w_moeda_padrao = f($RS_Moeda,'sq_moeda');
@@ -6867,6 +6866,7 @@ function ReembolsoValor() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_sg_tramite" value="'.f($RS_Solic,'sg_tramite').'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_reg" value="'.$w_tipo_reg.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
@@ -7203,6 +7203,12 @@ function Grava() {
               if ($w_file>'') {
                 move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               }
+            }elseif(nvl($Field['name'],'')!=''){
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
             }
           }
           // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.
@@ -7212,15 +7218,7 @@ function Grava() {
               if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
             }
           }
-          if(($O=='I' && $_FILES['w_caminho']['size']==0) || ($O=='A' && $_FILES['w_caminho']['size']==0 && nvl($_FILES['w_caminho']['name'],'')!='')){
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-            ScriptClose();
-            retornaFormulario('w_caminho');
-            exit();
-          }else{
-            dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);        
-          }
+          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);        
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -7446,7 +7444,14 @@ function Grava() {
             $_REQUEST['w_justificativa'],$_REQUEST['w_valor_autorizado'],$_REQUEST['w_observacao']);
 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Reembolso&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDREEMB'.MontaFiltro('GET')).'\';');
+        if ($_REQUEST['w_sg_tramite']=='PC') {
+          // Volta para tela de prestação de contas
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'PrestarContas&O=A&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDREEMB'.MontaFiltro('GET')).'\';');
+        } else {
+          // Volta para tela de reembolso
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Reembolso&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PDREEMB'.MontaFiltro('GET')).'\';');
+        }
+        
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

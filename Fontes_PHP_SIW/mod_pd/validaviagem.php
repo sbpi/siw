@@ -162,7 +162,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             foreach ($l_rs5 as $row) {
               if ($l_i < count($l_rs5)) {
                 // descarta o último registro 
-                if (($l_i>1 && $l_i<count($l_rs5)) || (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s))) {
+                if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s)) {
                   $w_cont++;
                 }
               }
@@ -183,7 +183,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
         } 
 
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='DF') {
+        if (f($l_rs_tramite,'sigla')=='DF') {
           $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,'S',f($l_rs_tramite,'sigla'));
           foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
           if (f($l_rs5,'existe')>0) {
@@ -192,7 +192,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           }
         }
 
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='AE' || Nvl(f($l_rs_tramite,'sigla'),'---')=='VP') {
+        if (f($l_rs_tramite,'sigla')=='AE' || f($l_rs_tramite,'sigla')=='VP') {
           if (f($l_rs_solic,'passagem')=='S') {
             $l_rs5 = db_getPD_Bilhete::getInstanceOf($dbms,$v_chave,null,null,null,null,null,null,null);
             if (count($l_rs5)==0) {
@@ -213,21 +213,20 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_tipo  = 0;
             }
           } 
-          
+           
           if (f($l_rs_tramite,'sigla')=='VP') {
             if (f($l_rs_solic,'reembolso')=='S') {
               // Valores a serem reembolsados
               $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
-  
+
               if (count($RS_Reembolso)==0) {
                 $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
                 $l_tipo  = 0;
               } else {
-                $w_erro = true;
+                $w_erro = false;
                 foreach ($RS_Reembolso as $row) {
-                  //echo nvl(f($row,'valor_autorizado'),-10).'-'.nvl(f($row,'observacao'),'nulo').'<br>';
-                  if (f($row,'valor_autorizado')>0 || f($row,'observacao')!='') {
-                    $w_erro = false;
+                if (f($row,'valor_autorizado')==0 && nvl(f($row,'observacao'),'')=='') {
+                    $w_erro = true;
                     break;
                   }
                 }
@@ -240,7 +239,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           }
         } 
 
-        if (Nvl(f($l_rs_tramite,'sigla'),'---')=='PC') {
+        if (f($l_rs_tramite,'sigla')=='PC') {
           if (f($l_rs_solic,'cumprimento')=='N') {
             $l_erro .= '<li>É obrigatório informar se a viagem foi cumprida e, em caso positivo, os dados da prestação de contas.';
             $l_tipo  = 0;
@@ -248,9 +247,9 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
 
           if (f($l_rs_solic,'cumprimento')=='P' && (nvl(f($l_rs_solic,'diaria'),'')!='' || f($l_rs_solic,'hospedagem')=='S'|| f($l_rs_solic,'veiculo')=='S')) {
             $w_cont = 0;
-            $l_i    = 0;
+            $l_i    = 1;
             foreach ($l_rs6 as $row) {
-              if ($l_i < count($l_rs5)) {
+              if ($l_i < count($l_rs6)) {
                 // descarta o último registro 
                 if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_p)) {
                   $w_cont++;
@@ -267,7 +266,6 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
           if (f($l_rs_solic,'reembolso')=='S') {
             // Valores a serem reembolsados
             $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$v_chave,null,null,null);
-
             if (count($RS_Reembolso)==0) {
               $l_erro .= '<li>É obrigatório informar os valores a serem reembolsados.';
               $l_tipo  = 0;

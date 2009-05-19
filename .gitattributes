@@ -983,6 +983,7 @@ Fontes_PHP_SIW/classes/sp/db_getTipoIndicador.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoIndice.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoInteressado.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoLancamento.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoLog.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoMatServ.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoMovimentacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoPostoList.php -text
@@ -1603,6 +1604,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoIndicador.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoIndice.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoInteressado.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoLancamento.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoLog.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoMatServSubord.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoOutraParte.php -text

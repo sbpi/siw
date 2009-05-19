@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -38,11 +38,6 @@ include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 
-/* Adicionado César Martin em 04/06/2008
-Funções que geram gráficos em flash: */
-include_once($w_dir_volta.'funcoes/FusionCharts.php'); 
-include_once($w_dir_volta.'funcoes/FC_Colors.php');
-/**/
 // =========================================================================
 //  gr_viagem.php
 // ------------------------------------------------------------------------
@@ -687,18 +682,21 @@ function Gerencial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if (count($RS1)>0 && $p_graf=='N') {
-      // Coloca o gráfico somente se o usuário desejar
-        if($w_embed != 'WORD'){
-            include_once($w_dir_volta.'funcoes/geragraficoflash.php');
-            ShowHTML('<tr><td align="center" height=20>');
-            //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'mod_pd/'.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-            ShowHTML('<tr><td align="center" height=20>');
-            barra_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "barra");
-            if (($t_totcad+$t_tottram)>0) {
-                //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'mod_pd/'.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-                pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
-            } 
-        }
+      include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      if($p_tipo == 'PDF') $w_embed = 'WORD';
+      $w_legenda = array('Prest. contas pendente','Cadastramento','Tramitando','Encerradas','Total');
+      ShowHTML('<tr><td align="center"><br>');
+      ShowHTML(geraGraficoGoogle(f($RS_Menu,'nome').' - Resumo',$SG,'bar',
+                                 array($t_totsolic,$t_totconc,$t_tottram,$t_totcad,$t_totatraso),
+                                 $w_legenda
+                                )
+              );
+      ShowHTML('<tr><td align="center"><br>');
+      ShowHTML(geraGraficoGoogle(f($RS_Menu,'nome').' em andamento',$SG,'pie',
+                                 array(($t_tottram+$t_totcad-$t_totatraso-$t_totaviso),$t_totatraso),
+                                 array('Normal','Prest. contas pendente')
+                                )
+              );
     }    
   } elseif ($O='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
@@ -803,14 +801,16 @@ function ImprimeCabecalho() {
     case 'GRPDTIPO':        ShowHTML('          <td><b>Tipo</td>');               break;
   } 
   ShowHTML('          <td><b>Total</td>');
-  ShowHTML('          <td><b>Cad.</td>');
-  ShowHTML('          <td><b>Tram.</td>');
-  ShowHTML('          <td><b>Enc.</td>');
-  ShowHTML('          <td><b>Atraso</td>');
+  ShowHTML('          <td><b>Cadastramento</td>');
+  ShowHTML('          <td><b>Tramitando</td>');
+  ShowHTML('          <td><b>Encerrada</td>');
+  ShowHTML('          <td><b>Prestação de Contas Pendente</td>');
+  /*
   ShowHTML('          <td><b>Aviso</td>');
   ShowHTML('          <td><b>$ Prev.</td>');
   ShowHTML('          <td><b>$ Real</td>');
   ShowHTML('          <td><b>Real > Previsto</td>');
+  */
   ShowHTML('        </tr>');
 } 
 
@@ -828,6 +828,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
   if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
   if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
+  /*
   if ($l_agrega=='GRPDCIAVIAGEM' || $l_agrega=='GRPDCIDADE' || $l_agrega=='GRPDDATA') {
     ShowHTML('          <td align="right">---&nbsp;</td>');
     ShowHTML('          <td align="right">---&nbsp;</td>');
@@ -847,6 +848,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
       ShowHTML('          <td align="right"><b>'.$l_acima.'&nbsp;</td>');
     } 
   } 
+  */
   ShowHTML('        </tr>');
 } 
 

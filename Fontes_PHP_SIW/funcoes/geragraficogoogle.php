@@ -1,7 +1,6 @@
 <?php
 function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encoding='') {
   extract($GLOBALS);
-  
   include_once($w_dir_volta.'classes/googlegraph/GoogleGraph.php');
 
   //Create Object

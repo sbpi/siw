@@ -118,7 +118,7 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Cidade de origem:</b></td>';
     $l_html.=chr(13).'          <td>'.f($RS,'nm_cidade').' ('.f($RS,'co_uf').')</td></tr>';
     if ($l_tipo!='WORD') {
-      $l_html.=chr(13).'          <tr><td><b>Gestor do contrato :</b></td>';
+      $l_html.=chr(13).'          <tr><td><b>Gestor do contrato:</b></td>';
       $l_html.=chr(13).'              <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
       $l_html.=chr(13).'          <tr><td><b>Unidade responsável monitoramento:</b></td>';
       $l_html.=chr(13).'              <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>';
@@ -669,58 +669,111 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
       } 
     }
-    } 
+  } 
 
-  // Parcelas
-  $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
-  $RS = SortArray($RS,'ordem','asc', 'dt_lancamento', 'asc');
-  if (count($RS)>0) {
-    //$l_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    if (nvl($w_texto_pagamento,'')!='') {
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Condições para pagamento:</b></td>';
-      $l_html.=chr(13).'        <td>'.CRLF2BR($w_texto_pagamento).'</td></tr>';
-    }
-    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-    $l_html.=chr(13).'          <tr align="center">';
-    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Ordem</b></td>';
-    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Período</b></td>';
-    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Vencimento</b></td>';
-    if($w_aditivo>0) {
-      $l_html.=chr(13).'            <td colspan=4 bgColor="#f0f0f0"><b>Valor</b></td>';
-    } else {
-      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Valor</b></td>';
-    }
-    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Observações</b></td>';
-    $l_html.=chr(13).'            <td colspan=5 bgColor="#f0f0f0"><b>Financeiro</b></td>';
-    $l_html.=chr(13).'          </tr>';
-    $l_html.=chr(13).'          <tr align="center">';
-    if($w_aditivo>0) {
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Inicial</b></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Excedente</b></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Reajuste</b></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Total</b></td>';
-    }
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Lançamento</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Período</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Vencimento</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Quitação</b></td>';
-    $l_html.=chr(13).'          </tr>';
-    $w_cor=$w_TrBgColor;
-    $w_total    = 0;
-    $w_total_i  = 0;
-    $w_total_e  = 0;
-    $w_total_r  = 0;
-    $w_atual    = 0;
-    $w_tot_parc = 0;
-    $w_tot_liq  = 0;
-    $w_cont     = 1;
-    foreach($RS as $row) {
-      $l_html.=chr(13).'        <tr valign="top">';
-      if ($w_atual!=f($row,'sq_acordo_parcela')) {
-        if ($w_cont > 1) {
+  if ($O!='V') {
+    // Parcelas
+    $RS = db_getAcordoParcela::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null,null,null);
+    $RS = SortArray($RS,'ordem','asc', 'dt_lancamento', 'asc');
+    if (count($RS)>0) {
+      //$l_html.=chr(13).'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parcelas</td>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PARCELAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      if (nvl($w_texto_pagamento,'')!='') {
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Condições para pagamento:</b></td>';
+        $l_html.=chr(13).'        <td>'.CRLF2BR($w_texto_pagamento).'</td></tr>';
+      }
+      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Ordem</b></td>';
+      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Período</b></td>';
+      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Vencimento</b></td>';
+      if($w_aditivo>0) {
+        $l_html.=chr(13).'            <td colspan=4 bgColor="#f0f0f0"><b>Valor</b></td>';
+      } else {
+        $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Valor</b></td>';
+      }
+      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><b>Observações</b></td>';
+      $l_html.=chr(13).'            <td colspan=5 bgColor="#f0f0f0"><b>Financeiro</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $l_html.=chr(13).'          <tr align="center">';
+      if($w_aditivo>0) {
+        $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Inicial</b></td>';
+        $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Excedente</b></td>';
+        $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Reajuste</b></td>';
+        $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Total</b></td>';
+      }
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Lançamento</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Período</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Vencimento</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Quitação</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      $w_total    = 0;
+      $w_total_i  = 0;
+      $w_total_e  = 0;
+      $w_total_r  = 0;
+      $w_atual    = 0;
+      $w_tot_parc = 0;
+      $w_tot_liq  = 0;
+      $w_cont     = 1;
+      foreach($RS as $row) {
+        $l_html.=chr(13).'        <tr valign="top">';
+        if ($w_atual!=f($row,'sq_acordo_parcela')) {
+          if ($w_cont > 1) {
+            if($w_aditivo>0) {
+              $l_html.=chr(13).'          <td>&nbsp;</td>';
+              $l_html.=chr(13).'          <td>&nbsp;</td>';
+              $l_html.=chr(13).'          <td>&nbsp;</td>';
+            }
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'          <td colspan=3 align="right"><b>Total da parcela: </b></td>';
+            $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_tot_parc).'</b></td>';
+            $l_html.=chr(13).'          <td>&nbsp;</td>';
+            $l_html.=chr(13).'        <tr valign="top">';
+          }
+          $w_cont     = 1;
+          $w_tot_parc = 0;
+          $w_atual = f($row,'sq_acordo_parcela');
+          $l_html.=chr(13).'          <td align="center">';
+          if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
+            $l_html.=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center" title="Parcela cancelada!">';
+          } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
+            if (f($row,'vencimento')<addDays(time(),-1))  {
+              $l_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center">';
+            } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
+              $l_html.=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=10 height=10 align="center">';
+            } else {
+              $l_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=10 height=10 align="center">';
+            } 
+          } else {
+            if (f($row,'quitacao')>f($row,'vencimento')) {
+              $l_html.=chr(13).'           <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center">';
+            } else {
+              $l_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=10 height=10 align="center">';
+            } 
+          } 
+          $l_html.=chr(13).'        '.f($row,'ordem').'</td>';
+          if(nvl(f($row,'inicio'),'')!='') $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
+          else                             $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
+          if($w_aditivo>0) {
+            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
+            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
+            $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+          }
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          $l_html.=chr(13).'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
+          $w_total   += f($row,'valor');
+          $w_total_i += f($row,'valor_inicial');
+          $w_total_e += f($row,'valor_excedente');
+          $w_total_r += f($row,'valor_reajuste');
+        } else {
           if($w_aditivo>0) {
             $l_html.=chr(13).'          <td>&nbsp;</td>';
             $l_html.=chr(13).'          <td>&nbsp;</td>';
@@ -731,197 +784,146 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td>&nbsp;</td>';
           $l_html.=chr(13).'          <td>&nbsp;</td>';
           $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'          <td colspan=3 align="right"><b>Total da parcela: </b></td>';
-          $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_tot_parc).'</b></td>';
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'        <tr valign="top">';
+          $w_cont += 1;
         }
-        $w_cont     = 1;
-        $w_tot_parc = 0;
-        $w_atual = f($row,'sq_acordo_parcela');
-        $l_html.=chr(13).'          <td align="center">';
-        if (Nvl($w_sg_tramite,'-')=='CR' && $w_fim-f($row,'vencimento')<0) {
-          $l_html.=chr(13).'           <img src="'.$conImgCancel.'" border=0 width=10 heigth=10 align="center" title="Parcela cancelada!">';
-        } elseif (Nvl(f($row,'quitacao'),'nulo')=='nulo') {
-          if (f($row,'vencimento')<addDays(time(),-1))  {
-            $l_html.=chr(13).'           <img src="'.$conImgAtraso.'" border=0 width=10 heigth=10 align="center">';
-          } elseif (f($row,'vencimento')-addDays(time(),-1)<=5) {
-            $l_html.=chr(13).'           <img src="'.$conImgAviso.'" border=0 width=10 height=10 align="center">';
-          } else {
-            $l_html.=chr(13).'           <img src="'.$conImgNormal.'" border=0 width=10 height=10 align="center">';
-          } 
+        if (Nvl(f($row,'cd_lancamento'),'')>'') {
+          if ($l_tipo!='WORD') $l_html.=chr(13).'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
+          else                 $l_html.=chr(13).'        <td align="center" nowrap>'.f($row,'cd_lancamento').'</td>';
+          if(nvl(f($row,'inicio'),'')!='') $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>';
+          else                             $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
+          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'vl_lancamento')).'</td>';
+          if (Nvl(f($row,'quitacao'),'')!='') $w_real += f($row,'vl_lancamento');
+          $w_tot_parc += f($row,'vl_lancamento');
+          $w_tot_liq  += f($row,'vl_lancamento');
         } else {
-          if (f($row,'quitacao')>f($row,'vencimento')) {
-            $l_html.=chr(13).'           <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10 align="center">';
-          } else {
-            $l_html.=chr(13).'           <img src="'.$conImgOkNormal.'" border=0 width=10 height=10 align="center">';
-          } 
+          $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">---</td>';
         } 
-        $l_html.=chr(13).'        '.f($row,'ordem').'</td>';
-        if(nvl(f($row,'inicio'),'')!='') $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'inicio'),5).' a '.FormataDataEdicao(f($row,'fim'),5).'</td>';
-        else                             $l_html.=chr(13).'        <td align="center">---</td>';
-        $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>';
+        $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
+        $l_html.=chr(13).'      </tr>';
+      }
+      if ($w_total>0 || $w_real>0) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="right" colspan=3><b>Previsto</b></td>';
         if($w_aditivo>0) {
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_inicial')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_excedente')).'</td>';
-          $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_reajuste')).'</td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_i).'</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_e).'</b></td>';
+          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_r).'</b></td>';
         }
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
-        $l_html.=chr(13).'        <td>'.crlf2br(Nvl(f($row,'observacao'),'---')).'</td>';
-        $w_total   += f($row,'valor');
-        $w_total_i += f($row,'valor_inicial');
-        $w_total_e += f($row,'valor_excedente');
-        $w_total_r += f($row,'valor_reajuste');
-      } else {
-        if($w_aditivo>0) {
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-          $l_html.=chr(13).'          <td>&nbsp;</td>';
-        }
-        $l_html.=chr(13).'          <td>&nbsp;</td>';
-        $l_html.=chr(13).'          <td>&nbsp;</td>';
-        $l_html.=chr(13).'          <td>&nbsp;</td>';
-        $l_html.=chr(13).'          <td>&nbsp;</td>';
-        $l_html.=chr(13).'          <td>&nbsp;</td>';
-        $w_cont += 1;
-      }
-      if (Nvl(f($row,'cd_lancamento'),'')>'') {
-        if ($l_tipo!='WORD') $l_html.=chr(13).'        <td align="center" nowrap><A class="hl" HREF="mod_fn/lancamento.php?par=Visual&O=L&w_chave='.f($row,'sq_lancamento').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG=FN'.substr($SG,2,1).'CONT" title="Exibe as informações do lançamento." target="Lancamento">'.f($row,'cd_lancamento').'</a></td>';
-        else                 $l_html.=chr(13).'        <td align="center" nowrap>'.f($row,'cd_lancamento').'</td>';
-        if(nvl(f($row,'inicio'),'')!='') $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>';
-        else                             $l_html.=chr(13).'        <td align="center">---</td>';
-        $l_html.=chr(13).'        <td align="center">'.FormataDataEdicao(f($row,'dt_lancamento'),5).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'vl_lancamento')).'</td>';
-        if (Nvl(f($row,'quitacao'),'')!='') $w_real += f($row,'vl_lancamento');
-        $w_tot_parc += f($row,'vl_lancamento');
-        $w_tot_liq  += f($row,'vl_lancamento');
-      } else {
-        $l_html.=chr(13).'        <td align="center">---</td>';
-        $l_html.=chr(13).'        <td align="center">---</td>';
-        $l_html.=chr(13).'        <td align="center">---</td>';
-        $l_html.=chr(13).'        <td align="center">---</td>';
-      } 
-      $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
-      $l_html.=chr(13).'      </tr>';
-    }
-    if ($w_total>0 || $w_real>0) {
-      $l_html.=chr(13).'      <tr valign="top">';
-      $l_html.=chr(13).'        <td align="right" colspan=3><b>Previsto</b></td>';
-      if($w_aditivo>0) {
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_i).'</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_e).'</b></td>';
-        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_r).'</b></td>';
-      }
-      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
-      $l_html.=chr(13).'        <td colspan=3>';
-      if (round($w_valor_inicial-$w_total,2)!=0) {
-        $l_html.=chr(13).'        <font size=1><b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
-      } else {
-        $l_html.=chr(13).'        &nbsp;</td>';
-      } 
-      $l_html.=chr(13).'        <td align="right"><b>Liquidado<br>Pago</b></td>';
-      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_liq).'<br>'.formatNumber($w_real).'</b></td>';
-      $l_html.=chr(13).'        <td>&nbsp;</td>';
-      $l_html.=chr(13).'      </tr>';
-    } 
-    $l_html.=chr(13).'         </table></td></tr>';
-  } 
-
-  //Listagem dos itens do pedido de compra
-  $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
-  $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
-  if (count($RS1)>0) {  
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="0" bordercolor="#00000">';
-    if (count($RS1)==0) {
-      // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td align="center"><b>Não foram encontrados registros.</b></td></tr>';
-    } else {
-      // Lista os registros selecionados para listagem
-      $w_total_preco = 0;
-      $i             = 0;
-      foreach($RS1 as $row){ 
-        if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
-        $l_html.=chr(13).'      <tr valign="top" '.$w_cor.'>';
-        if (f($row,'cancelado')=='S') {
-          $l_html.=chr(13).'        <td rowspan="4"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+        $l_html.=chr(13).'        <td colspan=3>';
+        if (round($w_valor_inicial-$w_total,2)!=0) {
+          $l_html.=chr(13).'        <font size=1><b>O valor das parcelas difere do valor contratado ('.formatNumber($w_valor_inicial-$w_total).')</b></td>';
         } else {
-          $l_html.=chr(13).'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
-        }
-        $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
-        if ($l_tipo!='WORD'){
-          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
-        } else {
-          $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
-        }
-        $l_html.=chr(13).'      </tr>';
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
-        $l_html.=chr(13).'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
-        $l_html.=chr(13).'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
-        $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
-        $l_html.=chr(13).'      </tr>';
-        $l_html.=chr(13).'      <tr valign="top">';
-        if ($w_cliente==9614) {
-          $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-        } else {
-          $l_html.=chr(13).'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
-        }
-        $l_html.=chr(13).'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
-        if ($w_cliente==9614) {
-          $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-        } else {
-          $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
-        }
-        
-        $l_html.=chr(13).'      </tr>';
-        if (f($row,'cancelado')=='S') {
-          $l_html.=chr(13).'      <tr>';
-          $l_html.=chr(13).'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
-          $l_html.=chr(13).'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
-          $l_html.=chr(13).'      </tr>';
-        }
-        $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
-        $w_total_preco += f($row,'valor_item');
-      }
-      $l_html.=chr(13).'      <tr>';
-      $l_html.=chr(13).'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
-      $l_html.=chr(13).'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
-      $l_html.=chr(13).'      </tr>';
-      $l_html.=chr(13).'    </table></td></tr>';
-    } 
-  }
-
-  if ($w_tipo_visao!=2 && $l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
-    // Arquivos vinculados
-    $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
-    $RS = SortArray($RS,'nome','asc');
-    if (count($RS)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>KB</b></td>';
-      $l_html.=chr(13).'          </tr>';
-      $w_cor=$w_TrBgColor;
-      foreach($RS as $row) {
-        $l_html.=chr(13).'      <tr valign="top">';
-        if ($l_tipo!='WORD') {
-          $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
-        } else {
-          $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+          $l_html.=chr(13).'        &nbsp;</td>';
         } 
-        $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
-        $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
-        $l_html.=chr(13).'        <td align="right">'.(round(f($row,'tamanho')/1024,1)).'&nbsp;</td>';
+        $l_html.=chr(13).'        <td align="right"><b>Liquidado<br>Pago</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_tot_liq).'<br>'.formatNumber($w_real).'</b></td>';
+        $l_html.=chr(13).'        <td>&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
       } 
       $l_html.=chr(13).'         </table></td></tr>';
     } 
+  
+    //Listagem dos itens do pedido de compra
+    $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,'ITEMARP');
+    $RS1 = SortArray($RS1,'ordem','asc','nm_tipo_material','asc','nome','asc'); 
+    if (count($RS1)>0) {  
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="0" bordercolor="#00000">';
+      if (count($RS1)==0) {
+        // Se não foram selecionados registros, exibe mensagem
+        $l_html.=chr(13).'      <tr><td align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      } else {
+        // Lista os registros selecionados para listagem
+        $w_total_preco = 0;
+        $i             = 0;
+        foreach($RS1 as $row){ 
+          if (f($row,'cancelado')=='S') $w_cor = ' BGCOLOR="'.$conTrBgColorLightRed2.'" '; else $w_cor = '';
+          $l_html.=chr(13).'      <tr valign="top" '.$w_cor.'>';
+          if (f($row,'cancelado')=='S') {
+            $l_html.=chr(13).'        <td rowspan="4"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
+          } else {
+            $l_html.=chr(13).'        <td rowspan="3"><font size="2"><b>'.f($row,'ordem').'</b></font></td>';
+          }
+          $l_html.=chr(13).'        <td>Código:<br><b>'.f($row,'codigo_interno').'</b></td>';
+          if ($l_tipo!='WORD'){
+            $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</b></td>';
+          } else {
+            $l_html.=chr(13).'        <td colspan="3">Nome:<br><b>'.f($row,'nome').'</b></td>';
+          }
+          $l_html.=chr(13).'      </tr>';
+          $l_html.=chr(13).'      <tr valign="top">';
+          $l_html.=chr(13).'        <td>Fabricante:<br><b>'.f($row,'fabricante').'</b></td>';
+          $l_html.=chr(13).'        <td>Marca/Modelo:<br><b>'.f($row,'marca_modelo').'</b></td>';
+          $l_html.=chr(13).'        <td>Embalagem:<br><b>'.nvl(f($row,'embalagem'),'---').'</b></td>';
+          $l_html.=chr(13).'        <td>Fator de embalagem:<br><b>'.nvl(f($row,'fator_embalagem'),'---').'</b></td>';
+          $l_html.=chr(13).'      </tr>';
+          $l_html.=chr(13).'      <tr valign="top">';
+          if ($w_cliente==9614) {
+            $l_html.=chr(13).'        <td>CMM:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+          } else {
+            $l_html.=chr(13).'        <td>Quantidade:<br><b>'.formatNumber(f($row,'quantidade'),0).'</b></td>';
+          }
+          $l_html.=chr(13).'        <td>$ Unitário:<br><b>'.formatNumber(f($row,'valor_unidade'),4).'</b></td>';
+          if ($w_cliente==9614) {
+            $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+          } else {
+            $l_html.=chr(13).'        <td>$ Total<br><b>'.formatNumber(f($row,'valor_item'),4).'</b></td>';
+          }
+          
+          $l_html.=chr(13).'      </tr>';
+          if (f($row,'cancelado')=='S') {
+            $l_html.=chr(13).'      <tr>';
+            $l_html.=chr(13).'        <td valign="center"><font size="2"><b>INDISPONÍVEL</b></font></td>';
+            $l_html.=chr(13).'        <td colspan=3>Motivo da indisponibilidade:<br><b>'.f($row,'motivo_cancelamento').'</b></td>';
+            $l_html.=chr(13).'      </tr>';
+          }
+          $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
+          $w_total_preco += f($row,'valor_item');
+        }
+        $l_html.=chr(13).'      <tr>';
+        $l_html.=chr(13).'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
+        $l_html.=chr(13).'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
+        $l_html.=chr(13).'      </tr>';
+        $l_html.=chr(13).'    </table></td></tr>';
+      } 
+    }
+  
+    if ($w_tipo_visao!=2 && $l_P1==4 && ($l_O=='L' || $l_O=='V' || $l_O=='T')) {
+      // Arquivos vinculados
+      $RS = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+      $RS = SortArray($RS,'nome','asc');
+      if (count($RS)>0) {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'          <tr align="center">';
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>KB</b></td>';
+        $l_html.=chr(13).'          </tr>';
+        $w_cor=$w_TrBgColor;
+        foreach($RS as $row) {
+          $l_html.=chr(13).'      <tr valign="top">';
+          if ($l_tipo!='WORD') {
+            $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+          } else {
+            $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+          } 
+          $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+          $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
+          $l_html.=chr(13).'        <td align="right">'.(round(f($row,'tamanho')/1024,1)).'&nbsp;</td>';
+          $l_html.=chr(13).'      </tr>';
+        } 
+        $l_html.=chr(13).'         </table></td></tr>';
+      } 
+    }
   } 
 
   // Se for envio, executa verificações nos dados da solicitação

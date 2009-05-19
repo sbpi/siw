@@ -1,4 +1,4 @@
-<?
+<?php
 function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'local');
   if ($l_O=='V') {

@@ -62,6 +62,7 @@ include_once($w_dir_volta.'classes/sp/dml_putAcordoAditivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoNota.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoNotaCancel.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoLog.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoAcordo.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
@@ -2822,6 +2823,8 @@ function Parcelas() {
     FormataValor();
     ShowHTML('function trataUnica() {');
     ShowHTML('  if (document.Form.w_tipo_geracao[0].checked || document.Form.w_tipo_geracao[1].checked) {');
+    ShowHTML('     document.Form.w_tipo_mes[0].checked = false;');
+    ShowHTML('     document.Form.w_tipo_mes[1].checked = false;');
     ShowHTML('     document.Form.w_vencimento[0].checked = false;');
     ShowHTML('     document.Form.w_vencimento[1].checked = false;');
     ShowHTML('     document.Form.w_vencimento[2].checked = false;');
@@ -2873,7 +2876,7 @@ function Parcelas() {
     if (strpos('IA',$O)!==false) {
       Validate('w_ordem','Número de ordem da parcela','1','1','1','4','','0123456789');
       Validate('w_data','Data de vencimento da parcela','DATA','1','10','10','','0123456789/');
-      if($w_segmento=='Público' || $w_segmento=='Agência') {
+      if ($w_segmento=='Público' || $w_segmento=='Agência') {
         CompData('w_data','Data de vencimento','>=','w_inicio','Data de início de vigência');
         CompData('w_data','Data de vencimento','<=','w_fim','Data de término de vigência');
       }
@@ -3181,8 +3184,13 @@ function Parcelas() {
     ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=11 onClick="trataUnica();"><td>Gerar uma única parcela, paga no início da vigência</td>');
     ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=12 onClick="trataUnica();"><td>Gerar uma única parcela, paga no fim da vigência</td>');
     ShowHTML('          <tr valign="top"><td colspan=2><b>Dados necessários à geração de parcelas mensais:</b>');
-    ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=21 onClick="trataUnica();"><td>Gerar parcelas mensais, a cada trinta dias após o início da vigência</td>');
-    ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=22 onClick="trataUnica();"><td>Gerar parcelas mensais, a cada trinta dias a partir do início da vigência</td>');
+    ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=21 onClick="trataUnica();"><td>Gerar parcelas mensais com vencimento a cada trinta dias após o início da vigência</td>');
+    ShowHTML('          <tr valign="top"><td><input '.$w_Disabled.' type="radio" name="w_tipo_geracao" value=22 onClick="trataUnica();"><td>Gerar parcelas mensais com vencimento a cada trinta dias a partir do início da vigência</td>');
+    ShowHTML('          <tr><td><td><table border=0 cellspacing=0 cellpadding=0>');
+    ShowHTML('              <tr valign="top"><td colspan=3><b>Período de referência das parcelas:</td>');
+    ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_tipo_mes" value="F"><td>Fechado: deve estar contido em um único mês</td>');
+    ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_tipo_mes" value="A"><td>Aberto: pode abranger mais de um mês</td>');
+    ShowHTML('              </table>');
     ShowHTML('          <tr><td><td><table border=0 cellspacing=0 cellpadding=0>');
     ShowHTML('              <tr valign="top"><td colspan=3><b>Dia de vencimento das parcelas:</td>');
     ShowHTML('              <tr valign="top"><td><td><input '.$w_Disabled.' type="radio" name="w_vencimento" value="P" onClick="trataVencimento();"><td>Sempre no primeiro dia do mês</td>');
@@ -3863,9 +3871,14 @@ function Anotar() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
+  // Verifica se há tabela de tipos de log cadastrada para a opção de menu
+  $RS = db_getTipoLog::getInstanceOf($dbms, $w_cliente, $w_menu, null, null, null, 'S', null);
+  if (count($RS)>0) $w_existe_tipo_log = true; else $w_existe_tipo_log = false;
+  
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_observacao=$_REQUEST['w_observacao'];
+    $w_observacao = $_REQUEST['w_observacao'];
+    $w_tipo_log   = $_REQUEST['w_tipo_log'];
   } 
 
   Cabecalho();
@@ -3875,7 +3888,8 @@ function Anotar() {
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    Validate('w_observacao','Anotação','','1','1','2000','1','1');
+    if ($w_existe_tipo_log) Validate('w_tipo_log','Tipo','SELECT','1','1','18','','1');
+    Validate('w_observacao','Texto','','1','1','2000','1','1');
     Validate('w_caminho','Arquivo','','','5','255','1','1');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     if ($P1!=1) {
@@ -3894,7 +3908,11 @@ function Anotar() {
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpenClean('onLoad=\'document.Form.w_observacao.focus()\';');
+    if ($w_existe_tipo_log) {
+      BodyOpenClean('onLoad=\'document.Form.w_tipo_log.focus()\';');
+    } else {
+      BodyOpenClean('onLoad=\'document.Form.w_observacao.focus()\';');
+    }
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -3925,7 +3943,12 @@ function Anotar() {
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
   ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
-  ShowHTML('      <tr><td><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="sti" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
+  if ($w_existe_tipo_log) {
+    ShowHTML('      <tr>');
+    SelecaoTipoLog('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$w_tipo_log,$w_menu,'w_tipo_log',null,null);
+    ShowHTML('      </tr>');
+  }
+  ShowHTML('      <tr><td><b><u>T</u>exto:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_observacao" class="sti" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -4197,7 +4220,7 @@ function Aditivos() {
     ValidateOpen('Validacao');
     if (strpos('IAE',$O)!==false) {
       if (strpos('IA',$O)!==false) {
-        Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
+        if ($w_segmento=='Público') Validate('w_sq_cc','Classificação','SELECT',1,1,18,'','0123456789');
         Validate('w_codigo','Código','1','1','1','30','1','1');
         Validate('w_objeto','Objeto','1','1','1','2000','1','1');
         Validate('w_inicio','Início','DATA','1','10','10','','0123456789/');
@@ -4220,8 +4243,8 @@ function Aditivos() {
         if($w_prorrogacao=='S' && substr($SG,0,3)!='GCZ') {
           Validate('w_valor_inicial','Valor inicial','VALOR','1',4,18,'','0123456789.,');
           Validate('w_parcela_inicial','Valor mensal inicial','VALOR','1',4,18,'','0123456789.,');
-          CompValor('w_valor_inicial','Valor inicial','>',0,'0');
-          CompValor('w_parcela_inicial','Valor mensal inicial','>',0,'0');
+          //CompValor('w_valor_inicial','Valor inicial','>',0,'0');
+          //CompValor('w_parcela_inicial','Valor mensal inicial','>',0,'0');
         }
         if($w_revisao=='S') {
           Validate('w_valor_reajuste','Valor do reajste','VALOR','1',4,18,'','0123456789.,-');
@@ -4257,7 +4280,7 @@ function Aditivos() {
       BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
     }
   } elseif ($O=='I' || $O=='A') {
-    if (substr($SG,0,3)!='GCZ') {
+    if (substr($SG,0,3)!='GCZ' && $w_segmento=='Público') {
       BodyOpenClean('onLoad=\'document.Form.w_sq_cc.focus()\';');
     } else {
       BodyOpenClean('onLoad=\'document.Form.w_codigo.focus()\';');
@@ -4400,7 +4423,7 @@ function Aditivos() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_revisao" value="N">');
     }
-    if (substr($SG,0,3)!='GCZ') {
+    if (substr($SG,0,3)!='GCZ' && $w_segmento=='Público') {
       ShowHTML('          <tr>');
       SelecaoCC('C<u>l</u>assificação:','L','Selecione a classificação desejada.',nvl($w_sq_cc,f($RS_Solic,'sq_cc')),null,'w_sq_cc','SIWSOLIC');
     } else {
@@ -4458,7 +4481,7 @@ function Aditivos() {
     }
     if(substr($SG,0,3)!='GCZ' && f($RS_Solic,'limite_variacao')>0 && $w_tipo!='NAOAPLICA') {
       ShowHTML('      <tr><td><b>Va<u>l</u>or do acréscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor_acrescimo" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_acrescimo.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor total do aditivo, referente ao acrescimo ao acréscimo/supressão do valor inicial do contrato."></td>');
-      ShowHTML('          <td><b>V<u>a</u>lor mensal do do acréscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_parcela_acrescida" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_acrescida.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao acréscimo/supressão do valor inicial das parcelas do contrato."></td>');
+      ShowHTML('          <td><b>V<u>a</u>lor mensal do acréscimo/supressao:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_parcela_acrescida" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_parcela_acrescida.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor de cada parcela do aditivo, referente ao acréscimo/supressão do valor inicial das parcelas do contrato."></td>');
     }
     ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_observacao" class="STI" ROWS=5 cols=65 title="Observações gerais sobre o aditivo.">'.$w_observacao.'</TEXTAREA></td>');
 
@@ -5349,14 +5372,14 @@ function Grava() {
         for ($i=0; $i<=count($_POST['w_sq_acordo_parcela'])-1; $i=$i+1) {
           if (Nvl($_REQUEST['w_sq_acordo_parcela'][$i],'')>'') {
             dml_putAcordoParc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_acordo_parcela'][$i],
-              $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,
+              $_REQUEST['w_sq_acordo_aditivo'], null,null,null,null,null,null,null,
               null,null,null,$_REQUEST['w_inicio'][$i],$_REQUEST['w_fim'][$i],null,null,null);
            }
         }
       } else {
         dml_putAcordoParc::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], 
           $_REQUEST['w_sq_acordo_aditivo'], $_REQUEST['w_ordem'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
-          $_REQUEST['w_observacao'], $_REQUEST['w_tipo_geracao'],$_REQUEST['w_vencimento'],
+          $_REQUEST['w_observacao'], $_REQUEST['w_tipo_geracao'],$_REQUEST['w_tipo_mes'],$_REQUEST['w_vencimento'],
           $_REQUEST['w_dia_vencimento'], $_REQUEST['w_valor_parcela'],$_REQUEST['w_valor_diferente'],
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_valor_inicial'],
           $_REQUEST['w_valor_excedente'],$_REQUEST['w_valor_reajuste']);
@@ -5531,6 +5554,12 @@ function Grava() {
             if ($w_file>'') {
               move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
             }
+          }elseif(nvl($Field['name'],'')!=''){
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_caminho');
+            exit();
           } 
         } 
         // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
@@ -5540,15 +5569,7 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        if($O=='E' || $w_tamanho > 0){
-          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-        }else{
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-          ScriptClose();
-          retornaFormulario('w_caminho');
-          exit();
-        }
+        dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5581,6 +5602,7 @@ function Grava() {
               retornaFormulario('w_observacao');
               exit();
             }
+            $w_tamanho = $Field['size'];          
             if ($Field['size'] > 0) {
               // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
               if ($Field['size'] > $w_maximo) {
@@ -5599,16 +5621,16 @@ function Grava() {
               $w_tipo    = $Field['type'];
               $w_nome    = $Field['name'];
               if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-            }else{
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-            ScriptClose();
-            retornaFormulario('w_observacao');
-            exit();
-          } 
+            } elseif (nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            } 
           } 
           dml_putAcordoEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
-              $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
+              $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_tipo_log'],$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               $w_file,$w_tamanho,$w_tipo,$w_nome);
           //Rotina para gravação da imagem da versão da solicitacão no log.
           if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
@@ -5629,7 +5651,7 @@ function Grava() {
         ScriptClose();
       } else {
         dml_putAcordoEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
-          $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
+          $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_tipo_log'],$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
           null,null,null,null);
         //Rotina para gravação da imagem da versão da solicitacão no log.
         if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
