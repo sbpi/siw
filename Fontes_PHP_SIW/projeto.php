@@ -5622,11 +5622,11 @@ function Grava() {
             $w_tipo    = $Field['type'];
             $w_nome    = $Field['name'];
             if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-          }elseif(nvl($Field['name'],'')!=''){
+          } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
             ScriptClose();
-            retornaFormulario('w_caminho');
+            retornaFormulario('w_observacao');
             exit();
           }  
         } 
@@ -5637,7 +5637,15 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        if($O=='E' || $w_tamanho > 0){
+          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+          ScriptClose();
+          retornaFormulario('w_caminho');
+          exit();
+        }
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -5803,12 +5811,12 @@ function Grava() {
             $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
             $w_sg_tramite = f($RS,'sigla');
             if($w_sg_tramite=='CI') {
-			  global $P4;
-			  $w_p4 = $P4;
-			  $P4 = 1;
+              global $P4;
+              $w_p4 = $P4;
+              $P4 = 1;
               $w_html = VisualProjeto($_REQUEST['w_chave'],'T',$w_usuario,'WORD');
               CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
-  			  $P4 = $w_p4;
+              $P4 = $w_p4;
             }
           }
           // Envia e-mail comunicando a tramitação

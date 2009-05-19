@@ -5,6 +5,7 @@ create or replace procedure SP_PutAcordoEnvio
     p_tramite             in number,
     p_novo_tramite        in number,
     p_devolucao           in varchar2,
+    p_tipo_log            in number    default null,
     p_observacao          in varchar2,
     p_destinatario        in number,
     p_despacho            in varchar2,
@@ -64,12 +65,12 @@ begin
    Insert into ac_acordo_log 
       (sq_acordo_log,             sq_siw_solicitacao, cadastrador, 
        destinatario,              data_inclusao,      observacao, 
-       despacho,                  sq_siw_solic_log
+       despacho,                  sq_siw_solic_log,   sq_tipo_log
       )
    Values (
        w_chave_dem,               p_chave,            p_pessoa,
        p_destinatario,            sysdate,            p_observacao,
-       p_despacho,                w_chave
+       p_despacho,                w_chave,            p_tipo_log
     );
 
    -- Se foi informado um arquivo, grava.

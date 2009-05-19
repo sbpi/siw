@@ -8,6 +8,7 @@ create or replace procedure SP_PutAcordoParc
     p_valor               in number   default null,
     p_observacao          in varchar2 default null,
     p_tipo_geracao        in number   default null,
+    p_tipo_mes            in varchar2 default null,
     p_vencimento          in varchar2 default null,
     p_dia_vencimento      in number   default null,
     p_valor_parcela       in varchar2 default null,
@@ -35,6 +36,7 @@ create or replace procedure SP_PutAcordoParc
    
    w_reg         ac_acordo%rowtype;
    w_aditivo     ac_acordo_aditivo%rowtype;
+   w_existe_aditivo varchar2(1) := 'N';
    w_parcela     ac_acordo_parcela%rowtype;
    
    w_inicio      date;
@@ -92,6 +94,7 @@ begin
       where sq_acordo_parcela = p_chave_aux;
    Elsif p_operacao = 'E' Then -- Exclusão
       If p_aditivo is not null Then
+         w_existe_aditivo := 'S';
          select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
          If w_aditivo.prorrogacao = 'N' Then
             update ac_acordo_parcela x
@@ -175,7 +178,11 @@ begin
       Else
          -- Define o número de meses da vigência para cálculo do valor mensal e para geração das parcelas
          w_meses      := round(months_between(w_fim, w_inicio));
-         w_meses_parc := round(months_between(last_day(w_fim), to_date('01/'||to_char(w_inicio,'mm/yyyy'),'dd/mm/yyyy')));
+         If p_tipo_mes = 'F' Then
+            w_meses_parc := round(months_between(last_day(w_fim), to_date('01/'||to_char(w_inicio,'mm/yyyy'),'dd/mm/yyyy')));
+         Else
+            w_meses_parc := round(months_between(w_fim, w_inicio));
+         End If;
          If w_meses = 0 Then
             w_meses := 1;
          End If;
@@ -243,7 +250,10 @@ begin
             If w_cont = 1 Then
                -- Define o período de realização da primeira parcela
                w_per_ini := w_inicio;
-               w_per_fim := last_day(w_inicio);
+               If p_tipo_mes = 'F'
+                  Then w_per_fim := last_day(w_inicio);
+                  Else w_per_fim := add_months(w_per_ini,1)-1;
+               End If;
                
                -- Calcula a data de vencimento da primeira parcela
                If p_vencimento = 'P' Then
@@ -265,7 +275,7 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
 
                -- Calcula o valor total da parcela
-               If(w_inicial_1=0) Then
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
                   w_valor_1 := round(coalesce(w_valor_1,0),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
                Else
                   w_valor_1 :=  round(coalesce(w_inicial_1,p_valor_diferente),2) + round(coalesce(w_excedente_1,0),2) + round(coalesce(w_reajuste_1,0),2);
@@ -283,8 +293,13 @@ begin
                   w_per_ini,                 w_per_fim,          p_aditivo,          round(coalesce(w_inicial_1,w_valor_1),2), round(coalesce(w_excedente_1,0),2), round(coalesce(w_reajuste_1,0),2));
             Elsif w_cont = w_meses_parc Then
                -- Define o período de realização da ultima parcela
-               w_per_ini := to_date('01'||to_char(w_fim,'mmyyyy'),'ddmmyyyy'); 
-               w_per_fim := w_fim;
+               If p_tipo_mes = 'F' Then
+                  w_per_ini := to_date('01'||to_char(w_fim,'mmyyyy'),'ddmmyyyy'); 
+                  w_per_fim := w_fim;
+               Else
+                  w_per_ini := w_per_fim + 1;
+                  w_per_fim := w_fim;
+               End If;
 
                -- Calcula a data de vencimento da última parcela
                w_vencimento := add_months(w_vencimento,1);
@@ -293,7 +308,7 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               If(w_inicial_n=0) Then
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
                   w_valor_n := round(coalesce(w_valor_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
                Else
                   w_valor_n :=  round(coalesce(w_inicial_n,0),2) + round(coalesce(w_excedente_n,0),2) + round(coalesce(w_reajuste_n,0),2);
@@ -314,8 +329,13 @@ begin
                w_vencimento := add_months(w_vencimento,1);
                
                -- Define o período de realização da ultima parcela
-               w_per_ini := to_date('01'||to_char(add_months(w_inicio,(w_cont-1)),'mmyyyy'),'ddmmyyyy'); 
-               w_per_fim := last_day(add_months(w_inicio,(w_cont-1)));
+               If p_tipo_mes = 'F' Then
+                  w_per_ini := to_date('01'||to_char(add_months(w_inicio,(w_cont-1)),'mmyyyy'),'ddmmyyyy'); 
+                  w_per_fim := last_day(add_months(w_inicio,(w_cont-1)));
+               Else
+                  w_per_ini := w_per_fim + 1;
+                  w_per_fim := add_months(w_per_ini,1)-1;
+               End If;
 
                If p_vencimento    = 'P' Then w_vencimento := to_date('01'||to_char(w_vencimento,'mmyyyy'),'ddmmyyyy'); 
                Elsif p_vencimento = 'U' Then w_vencimento := last_day(w_vencimento); 
@@ -326,7 +346,7 @@ begin
                If w_vencimento < w_inicio Then w_vencimento := w_inicio; End If;
                
                -- Calcula o valor total da parcela
-               If(w_inicial=0) Then
+               If(w_existe_aditivo='N' or (w_existe_aditivo='S' and w_aditivo.prorrogacao='N')) Then
                   w_valor := round(coalesce(w_valor,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);
                Else
                   w_valor :=  round(coalesce(w_inicial,0),2) + round(coalesce(w_excedente,0),2) + round(coalesce(w_reajuste,0),2);

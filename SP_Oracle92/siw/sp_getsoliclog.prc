@@ -212,6 +212,7 @@ begin
                       end as despacho,
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
+                   h1.sq_tipo_log, h1.nome as nm_tipo_log, h1.sigla as sg_tipo_log,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
                    f.nome as fase, f.descricao,
@@ -220,14 +221,15 @@ begin
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    null as tipo_anotacao
               from siw_solic_log                       a
-                   inner        join co_pessoa         c on (a.sq_pessoa          = c.sq_pessoa)
-                   inner        join siw_tramite       e on (a.sq_siw_tramite     = e.sq_siw_tramite)
-                   inner        join siw_solicitacao   g on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
-                     inner      join siw_tramite       f on (g.sq_siw_tramite     = f.sq_siw_tramite)
-                   left outer   join ac_acordo_log     h on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
-                     left outer join co_pessoa         i on (h.destinatario       = i.sq_pessoa)
-                   left outer   join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
-                     left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
+                   inner        join co_pessoa         c  on (a.sq_pessoa          = c.sq_pessoa)
+                   inner        join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
+                   inner        join siw_solicitacao   g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
+                     inner      join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                   left outer   join ac_acordo_log     h  on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
+                     left outer join siw_tipo_log      h1 on (h.sq_tipo_log        = h1.sq_tipo_log)
+                     left outer join co_pessoa         i  on (h.destinatario       = i.sq_pessoa)
+                   left outer   join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
+                     left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
@@ -238,6 +240,7 @@ begin
             select b.sq_acordo_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
+                   b1.sq_tipo_log, b1.nome as nm_tipo_log, b1.sigla as sg_tipo_log,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
                    f.nome as fase, f.nome as tramite, f.descricao,
@@ -245,6 +248,7 @@ begin
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    case when despacho is null then 'Anotação' else b.observacao end as tipo_anotacao
               from ac_acordo_log                       b 
+                   left outer join siw_tipo_log        b1 on (b.sq_tipo_log        = b1.sq_tipo_log)
                    left outer   join co_pessoa         d on (b.destinatario       = d.sq_pessoa)
                    inner        join co_pessoa         c on (b.cadastrador        = c.sq_pessoa)
                    inner        join siw_solicitacao   g on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)

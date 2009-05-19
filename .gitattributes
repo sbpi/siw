@@ -3944,6 +3944,7 @@ SP_Oracle92/siw/sp_getSolic_Vinculo.prc -text
 SP_Oracle92/siw/sp_getTipoEvento.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
+SP_Oracle92/siw/sp_getTipoLog.prc -text
 SP_Oracle92/siw/sp_getTipoMatServ.prc -text
 SP_Oracle92/siw/sp_getTipoRecurso.prc -text
 SP_Oracle92/siw/sp_getTipoRestricao.prc -text

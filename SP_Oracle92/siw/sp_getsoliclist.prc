@@ -661,6 +661,7 @@ begin
                 e1.sq_pessoa as titular, e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 h.qtd as qtd_item,
+                k1.sq_tipo_log, k1.nome as nm_tipo_log, k1.sigla as sg_tipo_log,
                 m1.titulo as nm_projeto,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
@@ -749,6 +750,7 @@ begin
                                            group by x.sq_siw_solicitacao
                                           )                    j  on (b.sq_siw_solicitacao       = j.sq_siw_solicitacao)
                      left            join ac_acordo_log        k  on (j.chave                    = k.sq_siw_solic_log)
+                       left          join siw_tipo_log         k1 on (k.sq_tipo_log              = k1.sq_tipo_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
           where a.sq_menu        = p_menu
             and (p_chave          is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
