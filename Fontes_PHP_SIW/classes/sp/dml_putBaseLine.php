@@ -1,16 +1,16 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putBaseLine
 *
 * { Description :- 
-*    Mantém as imagens das versões das solicitações
+*    Grava visualização da solicitação
 * }
 */
 
 class dml_putBaseLine {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_pessoa, $p_tramite, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTBASELINE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putBaseLine';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_pessoa'                    =>array(tvl($p_pessoa),                                   B_INTEGER,        32),

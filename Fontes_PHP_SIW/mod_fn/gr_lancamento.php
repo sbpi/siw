@@ -399,7 +399,7 @@ function Gerencial() {
           case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
           case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
+        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         $w_fase_conc='';

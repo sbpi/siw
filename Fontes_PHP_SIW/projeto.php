@@ -2246,7 +2246,7 @@ function Etapas() {
         ShowHTML('    document.Form.P2.value=\''.w_p2.'\';');
         ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
         ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
-        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases='';
@@ -2269,7 +2269,7 @@ function Etapas() {
         ShowHTML('    document.Form.P2.value=\''.w_p3.'\';');
         ShowHTML('    document.Form.SG.value=\''.f($RS1,'sigla').'\';');
         ShowHTML('    document.Form.p_agrega.value=\''.substr(f($RS1,'sigla'),0,3).'ETAPA\';');
-        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases='';
@@ -2835,7 +2835,7 @@ function AtualizaEtapa() {
         ShowHTML('    document.Form.p_projeto.value=projeto;');
         ShowHTML('    document.Form.p_atividade.value=etapa;');
         ShowHTML('    document.Form.p_agrega.value=\'GRDMETAPA\';');
-        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+        $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null,null);
         $RS1 = SortArray($RS1,'ordem','asc');
         ShowHTML('    document.Form.p_fase.value=\'\';');
         $w_fases = '';
@@ -4188,7 +4188,7 @@ function Encaminhamento() {
     // Tratamento para trâmites inativos. 
     // Nesse caso o sistema pega o maior trâmite ativo para definir os parâmetros de funcionamento
     if ($w_tram_ord==0 ||f($RS,'destinatario')=='N') {
-      $RS = db_getTramiteList::getInstanceOf($dbms, $w_tramite, 'FLUXO','S');
+      $RS = db_getTramiteList::getInstanceOf($dbms, $w_tramite,null, 'FLUXO','S');
       $RS = SortArray($RS,'ordem','asc');
       foreach($RS as $row) { $w_novo_tramite = f($row,'sq_siw_tramite'); break; }
     }
@@ -4201,7 +4201,7 @@ function Encaminhamento() {
   $w_destinatario    = f($RS,'destinatario');
   $w_chefia_imediata = f($RS,'chefia_imediata');
   if ($w_ativo == 'N') {
-    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
+    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu,null, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
       $w_novo_tramite = f($row,'sq_siw_tramite');
@@ -4255,7 +4255,7 @@ function Encaminhamento() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0" bgcolor="'.$conTrBgColor.'">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_tramite,'w_novo_tramite','FLUXO','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
+  SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','FLUXO','onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_novo_tramite\'; document.Form.submit();"');
   if ($w_cliente==10135) {
     if ($w_destinatario=='S') {
       // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
@@ -4268,14 +4268,14 @@ function Encaminhamento() {
   } else {
     if ($P1!=1) {
       // Se não for cadastramento
-      //SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+      //SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
       if ($w_destinatario=='S') {
         // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
         if ($w_sg_tramite=='CI') SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
         else                     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
       }
     } else {
-      //SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+      //SelecaoFase('<u>F</u>ase do projeto:','F','Se deseja alterar a fase atual do projeto, selecione a fase para a qual deseja enviá-lo.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,null);
       if ($w_destinatario=='S') {
         SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para o projeto na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
       }
@@ -5626,7 +5626,7 @@ function Grava() {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
             ScriptClose();
-            retornaFormulario('w_observacao');
+            retornaFormulario('w_caminho');
             exit();
           }  
         } 
@@ -5637,15 +5637,7 @@ function Grava() {
             if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
           }
         } 
-        if($O=='E' || $w_tamanho > 0){
-          dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-        } else {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
-          ScriptClose();
-          retornaFormulario('w_caminho');
-          exit();
-        }
+        dml_putSolicArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

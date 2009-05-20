@@ -248,7 +248,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html.=chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
           $l_html.=chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
           $l_html.=chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
-          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null,null);
            $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
           $l_html.=chr(13).'    document.Form1.p_fase.value=\'\';';
           $w_fases='';

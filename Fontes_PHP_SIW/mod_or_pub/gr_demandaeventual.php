@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -347,7 +347,7 @@ function Gerencial() {
           case 'GRDMPRIO':            ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');      break;
           case 'GRDMAREA':            ShowHTML('    else document.Form.p_area.value=\''.$_REQUEST['p_area'].'\';');                  break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
+        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec = '';
         foreach($RS2 as $row2) {

@@ -65,7 +65,36 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'      <tr><td valign="top"><b>Vinculação: </b></td>';
       if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
       else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-  
+      if(nvl(f($RS,'sq_solic_pai'),'')!='' && f($RS,'ativo')=='S') {
+        // Exibe saldos das rubricas
+        $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,'ORCAM_SIT');
+        $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Disponibilidade orçamentária:</b></td>';
+        $l_html.=chr(13).'      <td><table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+        $l_html.=chr(13).'          <td><b>Rubrica</td>';
+        $l_html.=chr(13).'          <td><b>Descrição</td>';
+        $l_html.=chr(13).'          <td><b>% Executado</td>';
+        $l_html.=chr(13).'         <td><b>Saldo (R$)</td>';
+        $l_html.=chr(13).'        </tr>';
+        if (count($RS_Fin)<=0) {
+          $l_html.=chr(13).'      <tr><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+        } else {
+          foreach ($RS_Fin as $row) {
+            $l_html.=chr(13).'      <tr valign="top">';
+            $l_html.=chr(13).'        <td>'.Nvl(f($row,'cd_rubrica'),'&nbsp;').'&nbsp;'.Nvl(f($row,'nm_rubrica'),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'&nbsp;').'</td>';
+            $l_html.=chr(13).'        <td align="center">'.formatNumber(f($row,'perc_exec'))  .'</td>';
+            $l_html.=chr(13).'        <td align="center">'.formatNumber(f($row,'saldo')).'</td>';
+            $l_html.=chr(13).'      </tr>';
+          } 
+        } 
+        $l_html.=chr(13).'      </center>';
+        $l_html.=chr(13).'    </table>';
+        $l_html.=chr(13).'  </td>';
+        $l_html.=chr(13).'</tr>';
+      }
+      
       if (nvl(f($RS,'nm_etapa'),'')>'') {
         if (substr($w_sigla,0,3)=='GCB') {   
           $l_html.=chr(13).'      <tr valign="top"><td><b>Modalidade: </b></td>';

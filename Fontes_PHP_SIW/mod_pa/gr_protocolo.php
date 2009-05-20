@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $w_dir_volta = '../';
 include_once($w_dir_volta.'constants.inc');
@@ -433,7 +433,7 @@ function Gerencial() {
           case 'GRPAPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
           case 'GRPALOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
+        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2  = SortArray($RS2,'ordem','asc');
         $w_fase_exec = '';
         foreach($RS2 as $row) {

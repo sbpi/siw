@@ -95,9 +95,9 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	      $l_html.=chr(13).'      <tr valign="top">';
 	      $l_html.=chr(13).'        <td width="1%" nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
 	      if (Nvl(f($row,'caminho'),'')>'' && $l_formato=='HTML') {
-	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---').'<br>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.','Anexo - '.f($row,'tipo').' - '.round(f($row,'tamanho')/1024,1).' KB',null)).'</td>';
+	        $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.',f($row,'despacho').' ('.f($row,'nm_tramite_log').')',null).'</td>';
 	      } else {
-	        $l_html.=chr(13).'        <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
+	        $l_html.=chr(13).'        <td>'.f($row,'despacho').' ('.f($row,'fase').')</td>';
 	      } 
 	      if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
 	      else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'responsavel').'</td>';

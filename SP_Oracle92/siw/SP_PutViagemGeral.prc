@@ -290,9 +290,10 @@ begin
             select Nvl(max(to_number(replace(replace(replace(a.codigo_interno,'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(w_reg.sufixo,''),''))),0)+1
               into w_sequencial
               from siw_solicitacao        a
-                     inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                   inner join pd_missao   b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
              where to_char(a.inicio,'yyyy') = to_char(p_inicio,'yyyy')
-               and b.cliente                = p_cliente;
+               and b.cliente                = p_cliente
+               and a.codigo_interno         like w_reg.prefixo||'%';
          End If;
          
          p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');

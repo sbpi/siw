@@ -495,7 +495,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p2.'\';';
           $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';        
           $l_html .= chr(13).'    document.Form1.p_agrega.value=\'GRDMETAPA\';';
-          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null);
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p2,null,null,null);
           $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
           $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
           $w_fases='';
@@ -518,7 +518,7 @@ function VisualProjeto($l_chave,$l_O,$l_usuario,$l_tipo=null) {
           $l_html .= chr(13).'    document.Form1.P2.value=\''.$w_p3.'\';';
           $l_html .= chr(13).'    document.Form1.SG.value=\''.f($RSQuery1,'sigla').'\';';
           $l_html .= chr(13).'    document.Form1.p_agrega.value=\''.substr(f($RSQuery1,'sigla'),0,3).'ETAPA\';';
-          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null);
+          $RSQuery1 = db_getTramiteList::getInstanceOf($dbms,$w_p3,null,null,null);
           $RSQuery1 = SortArray($RSQuery1,'ordem','asc');
           $l_html .= chr(13).'    document.Form1.p_fase.value=\'\';';
           $w_fases='';

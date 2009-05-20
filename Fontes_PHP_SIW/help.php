@@ -163,7 +163,7 @@ function Help() {
               ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row1,'como_funciona')));
 
               // Verifica se têm trâmites e exibe
-              $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'), null, null);
+              $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'),null, null, null);
               if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
                 ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -207,7 +207,7 @@ function Help() {
                   ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row2,'como_funciona')));
   
                   // Verifica se têm trâmites e exibe
-                  $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'), null, null);
+                  $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row2,'sq_menu'),null, null, null);
                   if (count($RS_Tramite) > 0) {
                     ShowHTML('    <DD><BR>Fases:');
                     ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -246,7 +246,7 @@ function Help() {
                       ShowHTML('        <DD><BR>Como funciona: '.crlf2br(f($row3,'como_funciona')));
 
                       // Verifica se têm trâmites e exibe
-                      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'), null, null);
+                      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row3,'sq_menu'),null, null, null);
                       if (count($RS_Tramite) > 0) {
                         ShowHTML('    <DD><BR>Fases:');
                         ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -367,7 +367,7 @@ function Pagina() {
   
   // Verifica se tem trâmites e exibe
   if (f($RS_Menu,'tramite')=='S') {
-    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), null, null);
+    $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($RS_Menu,'sq_menu'),null, null, null);
     if (count($RS_Tramite) > 0) {
       ShowHTML('      <tr><td colspan="2"><font size="2"><b>FASES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
       ShowHTML('      <tr valign="top"><td colspan=2><table width=100%  border="1" bordercolor="#00000">');

@@ -3185,7 +3185,7 @@ function Encaminhamento() {
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,'ANTERIOR',null);
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,null,'ANTERIOR',null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   } 
@@ -3278,7 +3278,7 @@ function Encaminhamento() {
         } 
       } 
       ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,'w_novo_tramite','DEVFLUXO',null);
+      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a PCD, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,null,'w_novo_tramite','DEVFLUXO',null);
       ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
       if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
@@ -3419,7 +3419,7 @@ function Concluir() {
     $RS_Fin = db_getMenuCode::getInstanceOf($dbms,$w_cliente,'FNDEVENT');
     foreach ($RS_Fin as $row) { $RS_Fin = $row; break; }
     if (count($RS_Fin)>0) {
-      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms,f($RS_Fin,'sq_menu'),null,null);
+      $RS_Tramite = db_getTramiteList::getInstanceOf($dbms,f($RS_Fin,'sq_menu'),null,null,null);
       $RS_Tramite = SortArray($RS_Tramite,'ordem','asc');
       foreach($RS_Tramite as $row) { $RS_Tramite = $row; break; }
       $w_indica_usuario = 'S';

@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $w_dir_volta = '../';
 include_once($w_dir_volta.'constants.inc');
@@ -372,7 +372,7 @@ function Gerencial() {
           case 'GRSREXEC':      ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
         } 
         if ($p_sq_menu>'') {
-          $RS2 = db_getTramiteList::getInstanceOf($dbms,$p_sq_menu,null,null);
+          $RS2 = db_getTramiteList::getInstanceOf($dbms,$p_sq_menu,null,null,null);
           $RS2  = SortArray($RS2,'ordem','asc');
           $w_fase_exec = '';
           foreach($RS2 as $row) {

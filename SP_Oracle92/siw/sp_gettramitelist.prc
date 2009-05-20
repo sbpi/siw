@@ -1,5 +1,6 @@
 create or replace procedure SP_GetTramiteList
    (p_chave     in  number,
+    p_solic     in  number   default null,
     p_restricao in  varchar2 default null,
     p_ativo     in  varchar2 default null,
     p_result    out sys_refcursor
@@ -53,7 +54,60 @@ begin
                 siw_tramite            c
           where a.sq_siw_tramite_origem = p_chave
             and c.sq_siw_tramite        = p_chave
-            and b.ordem                 < c.ordem;
+            and b.ordem                 < c.ordem
+         MINUS
+         (select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,
+                 b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem, 
+                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                 b.destinatario,
+                 case b.chefia_imediata
+                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                    when 'N' then 'Apenas usuários com permissão'
+                    when 'I' then 'Todos os usuários internos'
+                 end nm_chefia
+            from siw_tramite_fluxo                a
+                 inner   join siw_tramite         b  on (a.sq_siw_tramite_destino = b.sq_siw_tramite),
+                 siw_tramite                      c
+                 inner       join siw_solicitacao d  on (c.sq_siw_tramite         = d.sq_siw_tramite)
+                   inner     join sg_autenticacao d1 on (d.solicitante            = d1.sq_pessoa)
+                     inner   join eo_unidade      d2 on (d1.sq_unidade            = d2.sq_unidade)
+                   inner     join siw_menu        e  on (d.sq_menu                = e.sq_menu)
+                   inner     join pd_missao       f  on (d.sq_siw_solicitacao     = f.sq_siw_solicitacao)
+                     left    join sg_autenticacao f1 on (f.sq_pessoa              = f1.sq_pessoa)
+                       left  join eo_unidade      f2 on (f1.sq_unidade            = f2.sq_unidade)
+           where a.sq_siw_tramite_origem = p_chave
+             and c.sq_siw_tramite        = p_chave
+             and d.sq_siw_solicitacao    = p_solic
+             and e.sq_pessoa             = 10135 -- Abdi
+             and ((d2.sq_unidade_pai      is not null and d2.sigla <> 'GABINETE') and
+                  (f1.sq_pessoa           is null or (f1.sq_pessoa is not null and f2.sq_unidade_pai is not null and f2.sigla <> 'GABINETE'))
+                 )
+             and b.sigla                 = 'PR'  -- Tramite de reservas pelo gabinete
+          UNION
+          select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,
+                 b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem, 
+                 b.sigla, b.descricao, b.chefia_imediata, b.ativo, b.solicita_cc, b.envia_mail,
+                 b.destinatario,
+                 case b.chefia_imediata
+                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
+                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                    when 'N' then 'Apenas usuários com permissão'
+                    when 'I' then 'Todos os usuários internos'
+                 end nm_chefia
+            from siw_tramite_fluxo            a
+                 inner   join siw_tramite     b on (a.sq_siw_tramite_destino = b.sq_siw_tramite),
+                 siw_tramite                  c
+                 inner   join siw_solicitacao d on (c.sq_siw_tramite         = d.sq_siw_tramite)
+                   inner join siw_menu        e on (d.sq_menu                = e.sq_menu)
+                   inner join pd_missao       f on (d.sq_siw_solicitacao     = f.sq_siw_solicitacao)
+           where a.sq_siw_tramite_origem = p_chave
+             and c.sq_siw_tramite        = p_chave
+             and d.sq_siw_solicitacao    = p_solic
+             and e.sq_pessoa             = 10135 -- Abdi
+             and f.internacional         = 'N'   -- Viagem nacional
+             and b.sigla                 = 'DF'
+         ); -- Tramite de cotação de preços
    Elsif upper(p_restricao) = 'DEVOLUCAO' Then
       open p_result for
          select b.sq_siw_tramite, b.sq_menu, b.nome, b.ordem,

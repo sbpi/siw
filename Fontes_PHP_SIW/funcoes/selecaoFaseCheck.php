@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 // =========================================================================
 // Montagem da seleção da fase de uma solicitação
 // -------------------------------------------------------------------------
 function selecaoFaseCheck($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, null, null);
+  $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux,null, null, null);
   $RS = SortArray($RS,'ordem','asc');
   if (count($RS)>0) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b>');

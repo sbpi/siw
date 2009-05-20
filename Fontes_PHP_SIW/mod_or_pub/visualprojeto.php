@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados da ação
 // -------------------------------------------------------------------------
@@ -574,7 +574,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
           $l_html .=chr(13).'    document.Form.p_projeto.value=projeto;';
           $l_html .=chr(13).'    document.Form.p_atividade.value=etapa;';
           $l_html .=chr(13).'    document.Form.p_agrega.value=\'GRDMETAPA\';';
-          $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_P2,null,null);
+          $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_P2,null,null,null);
           $RS1 = SortArray($RS1,'ordem','asc');
           $l_html .=chr(13).'    document.Form.p_fase.value=\'\';';
           $w_fases='';

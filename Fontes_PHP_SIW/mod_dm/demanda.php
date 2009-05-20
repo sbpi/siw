@@ -835,7 +835,7 @@ function Geral() {
     $w_sg_tramite = f($RS,'sigla');
     $w_ativo      = f($RS,'ativo');
     if ($w_ativo == 'N') {
-      $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
+      $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu,null, null,'S');
       $RS = SortArray($RS,'ordem','asc');
       foreach ($RS as $row) {
         $w_novo_tramite = f($row,'sq_siw_tramite');
@@ -1052,7 +1052,7 @@ function Geral() {
       }
       if(nvl($w_envio,'')=='S') {
         ShowHTML('          <tr>');
-        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+        SelecaoFase('<u>F</u>ase:','F','Se deseja alterar a fase atual, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
         SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
         ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>'); 
       }
@@ -1656,7 +1656,7 @@ function Encaminhamento() {
   $w_sg_tramite = f($RS,'sigla');
   $w_ativo      = f($RS,'ativo');
   if ($w_ativo == 'N') {
-    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu, null,'S');
+    $RS = db_getTramiteList::getInstanceOf($dbms, $w_menu,null, null,'S');
     $RS = SortArray($RS,'ordem','asc');
     foreach ($RS as $row) {
       $w_novo_tramite = f($row,'sq_siw_tramite');
@@ -1708,7 +1708,7 @@ function Encaminhamento() {
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   if ($P1!=1) {
     // Se não for cadastramento
-    SelecaoFase('<u>F</u>ase da demanda:','F','Se deseja alterar a fase atual da demanda, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+    SelecaoFase('<u>F</u>ase da demanda:','F','Se deseja alterar a fase atual da demanda, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
     // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
     if ($w_sg_tramite=='CI') {
       SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
@@ -1716,7 +1716,7 @@ function Encaminhamento() {
       SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
     } 
   } else {
-    SelecaoFase('<u>F</u>ase da demanda:','F','Se deseja alterar a fase atual da demanda, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+    SelecaoFase('<u>F</u>ase da demanda:','F','Se deseja alterar a fase atual da demanda, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,null);
     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione um destinatário para a demanda na relação.',$w_destinatario,null,'w_destinatario','USUARIOS');
   } 
   ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Descreva o papel desempenhado pela área ou instituição na execução da demanda.">'.$w_despacho.'</TEXTAREA></td>');

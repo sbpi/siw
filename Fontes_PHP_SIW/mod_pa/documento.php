@@ -44,7 +44,6 @@ include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
 include_once($w_dir_volta.'funcoes/selecaoCidade.php');
-include_once($w_dir_volta.'funcoes/selecaoFase.php');
 include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once($w_dir_volta.'funcoes/selecaoNaturezaDocumento.php');
 include_once($w_dir_volta.'funcoes/selecaoEspecieDocumento.php');

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -272,7 +272,7 @@ function Vinculacao() {
     $w_embed = 'HTML';
     cabecalho();
     ShowHTML('<HEAD>');
-    if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
+    if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de projetos</TITLE>');
     ScriptOpen('Javascript');
     CheckBranco();
@@ -357,7 +357,7 @@ function Vinculacao() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Projeto','titulo').'</td>');
-    ShowHTML ('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+    ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
     ShowHTML('          <td colspan=2><b>Responsável</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -650,11 +650,11 @@ function ConfiguraViagem() {
     ShowHTML('          <td><b>'.LinkOrdena('Rubrica','cd_rubrica').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo de lançamento','nm_lancamento').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Diária','diaria').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Hosped.','hospedagem').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Veíc.','veiculo').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Seg.','seguro').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Bil.','bilhete').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Reemb.','bilhete').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Hosped.','hospedagem').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Veíc.','veiculo').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Seg.','seguro').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Bil.','bilhete').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Reemb.','bilhete').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS_Fin)<=0) {
@@ -822,9 +822,9 @@ function ConfiguraCompra() {
     ShowHTML('          <td><b>'.LinkOrdena('Rubrica','cd_rubrica').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo de lançamento','nm_lancamento').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Consumo','consumo').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Permanente','permanente').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Serviço','servico').'</td>');
-    ShowHTML ('         <td><b>'.LinkOrdena('Outros','outros').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Permanente','permanente').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Serviço','servico').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Outros','outros').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS_Fin)<=0) {

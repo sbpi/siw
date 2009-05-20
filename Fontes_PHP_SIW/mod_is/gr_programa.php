@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -288,7 +288,7 @@ function Gerencial() {
           case 'GRISPRESPATU':  ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
           case 'GRISPSETOR':    ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
         } 
-        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null);
+        $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
         $w_fase_exec='';
         foreach ($RS2 as $row2) {

@@ -3,9 +3,9 @@ include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 // =========================================================================
 // Montagem da seleção da fase de uma solicitação
 // -------------------------------------------------------------------------
-function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoFase($label,$accesskey,$hint,$chave,$chaveAux,$p_solic,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, $restricao,'S');
+  $RS = db_getTramiteList::getInstanceOf($dbms, $chaveAux, $p_solic, $restricao,'S');
   $RS = SortArray($RS,'ordem','asc');
   if (!isset($hint)) {
     ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

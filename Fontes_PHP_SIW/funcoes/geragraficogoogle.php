@@ -105,6 +105,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     $graph->Graph->setSize(500, 300);
     $graph->Graph->setAxis(array('x'));
     //$graph->Graph->setGridLines(20, 0, 1, 0);
+
     $l_tot = 0; foreach($l_x as $k=>$v) $l_tot+=intVal($v);
     if ($l_tot==0) $l_tot=1;
     
@@ -118,8 +119,9 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     //$graph->Graph->addFill('background', '#00FF00', 'gradient', '#0000FF', 90, 0.5, 0);
     
     //Axis Labels
-    foreach($l_y as $k=>$v) $l_y[$k] = utf8_encode($v); $l_tot+=$v;
+    foreach($l_y as $k=>$v) $l_y[$k] = str_replace(' ','+',utf8_encode($v));
     foreach($l_x as $k=>$v) $l_legend[$k]=utf8_encode(strVal(round($v/$l_tot*100,1)).'%');
+    
     $graph->Graph->addAxisLabel($l_legend);
     $graph->Graph->setLegend($l_y);
     $graph->Graph->addAxisStyle(array(0, '#222222', 11));

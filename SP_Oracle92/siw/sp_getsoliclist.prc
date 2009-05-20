@@ -1050,7 +1050,7 @@ begin
                 d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,       d11.codigo_interno,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complementação' end as nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
-                d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res,
+                d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res, d2.nome_indice as nm_prop_ind, d2.nome_resumido_ind as nm_prop_res_ind,
                 d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
@@ -1061,7 +1061,8 @@ begin
                 n1.valor_diaria, d1.valor_passagem as valor_trecho,
                 d5.limite_passagem, d5.limite_diaria,
                 to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
-                pd_retornatrechos(b.sq_siw_solicitacao) as trechos
+                pd_retornatrechos(b.sq_siw_solicitacao) as trechos,
+                case when (b1.sigla='PC' and soma_dias(a.sq_pessoa,trunc(b.fim),a5.dias_prestacao_contas + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                a
                 inner         join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left        join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -1148,7 +1149,7 @@ begin
             and (p_regiao         is null or (p_regiao      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.tipo = 'S' and x.destino = y.sq_cidade and y.sq_regiao = p_regiao and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_uf             is null or (p_uf          is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x, co_cidade y where x.tipo = 'S' and x.destino = y.sq_cidade and y.co_uf = p_uf and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_cidade         is null or (p_cidade      is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.tipo = 'S' and x.destino = p_cidade and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
-            and (p_ativo          is null or (p_ativo       is not null and d1.tipo = p_ativo))            
+            and (coalesce(p_ativo,'N') = 'N' or (p_ativo    = 'S' and (b.justificativa is not null)))
             and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.tipo = 'S' and x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_ini_i          is null or (p_ini_i       is not null and ((b.inicio           between p_ini_i  and p_ini_f) or
                                                                              (b.fim              between p_ini_i  and p_ini_f) or
@@ -1158,7 +1159,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and soma_dias(a.sq_pessoa,trunc(b.fim),a5.dias_prestacao_contas + 1,'U') - trunc(sysdate)<0))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

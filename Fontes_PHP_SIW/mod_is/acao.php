@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -563,7 +563,7 @@ function Inicial() {
           ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
         else
           ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
-        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
+        SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,null,'p_fase[]',null,null);
       } 
     } 
     ShowHTML('      <tr>');
@@ -3324,12 +3324,12 @@ function Encaminhamento() {
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   if ($P1!=1) {
     // Se não for cadastramento\
-    SelecaoFase('<u>F</u>ase da ação:','F','Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+    SelecaoFase('<u>F</u>ase da ação:','F','Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
     // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
     if ($w_sg_tramite=='CI') SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para a ação.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
     else                     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para a ação.',$w_destinatario,null,'w_destinatario','USUARIOS');
   } else {
-    SelecaoFase('<u>F</u>ase da ação:','F','Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+    SelecaoFase('<u>F</u>ase da ação:','F','Se deseja alterar a fase atual da ação, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,null);
     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para a ação.',$w_destinatario,null,'w_destinatario','USUARIOS');
   } 
   ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a ação.">'.$w_despacho.'</TEXTAREA></td>');

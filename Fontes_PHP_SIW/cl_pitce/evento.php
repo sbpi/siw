@@ -633,7 +633,7 @@ function Geral() {
   extract($GLOBALS);
   if ($P1==1 && $O=='I' &&f($RS_Menu,'envio_inclusao')=='S') {
     // Recupera a chave do trâmite de cadastramento
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_menu,null,null);
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_menu,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
     foreach($RS as $row) { 
       $w_tramite = f($row,'sq_siw_tramite'); 
@@ -1037,7 +1037,7 @@ function Encaminhamento() {
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,'ANTERIOR',null);
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,null,'ANTERIOR',null);
     foreach($RS as $row) { $RS = $row; break; }
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   } 
@@ -1127,7 +1127,7 @@ function Encaminhamento() {
         } 
       } 
       ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,'w_novo_tramite','DEVOLUCAO',null);
+      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,null,'w_novo_tramite','DEVOLUCAO',null);
       ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a PCD.">'.$w_despacho.'</TEXTAREA></td>');
       if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
@@ -1759,7 +1759,7 @@ function SolicMail($p_solic,$p_tipo) {
       }
     } elseif ($p_tipo==4) {
       // Se for comunicado de insatisfação, envia e-mail para os responsáveis pelo cumprimento do trâmite "Em execução".
-      $RS = db_getTramiteList::getInstanceOf($dbms,f($RSM,'sq_siw_tramite'),'ANTERIOR',null);
+      $RS = db_getTramiteList::getInstanceOf($dbms,f($RSM,'sq_siw_tramite'),null,'ANTERIOR',null);
       foreach($RS as $row) { $RS = $row; break; }
       $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,f($RS,'sq_siw_tramite'),null);
       if (count($RS)>0) {
@@ -2045,9 +2045,9 @@ function Grava() {
         } else {
           // Verifica o próximo trâmite
           if ($_REQUEST['w_envio']=='N') {
-            $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],'PROXIMO',null);
+            $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],null,'PROXIMO',null);
           } else {
-            $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],'ANTERIOR',null);
+            $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],null,'ANTERIOR',null);
           } 
           foreach($RS as $row) { $RS = $row; break; }
           $RS1 = db_getTramiteSolic::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS,'sq_siw_tramite'),null,null);

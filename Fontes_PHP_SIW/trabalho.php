@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '';
@@ -441,7 +441,7 @@ function Mesa() {
                   $w_texto   = f($row,'trechos');
                 }
               }
-              ShowHTML('                    <td nowrap>'.$w_texto.'</td>');
+              ShowHTML('                    <td nowrap>'.$w_texto.'&nbsp;</td>');
               ShowHTML('                  </tr>');
             }
           }

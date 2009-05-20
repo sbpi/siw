@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -1468,7 +1468,7 @@ function Encaminhamento() {
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   if ($P1!=1) {
     // Se não for cadastramento
-    SelecaoFase('<u>F</u>ase do programa:','F','Se deseja alterar a fase atual do programa, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
+    SelecaoFase('<u>F</u>ase do programa:','F','Se deseja alterar a fase atual do programa, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_destinatario\'; document.Form.submit();"');
     // Se for envio para o cadastramento, exibe apenas as pessoas autorizadas a fazê-lo.
     if ($w_sg_tramite=='CI') {
       SelecaoSolicResp('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para o programa.',$w_destinatario,$w_chave,$w_novo_tramite,$w_novo_tramite,'w_destinatario','CADASTRAMENTO');
@@ -1476,7 +1476,7 @@ function Encaminhamento() {
       SelecaoPessoa('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para o programa.',$w_destinatario,null,'w_destinatario','USUARIOS');
     } 
   } else {
-    SelecaoFase('<u>F</u>ase do programa:','F','Se deseja alterar a fase atual do programa, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,'w_novo_tramite',null,null);
+    SelecaoFase('<u>F</u>ase do programa:','F','Se deseja alterar a fase atual do programa, selecione a fase para a qual deseja enviá-la.',$w_novo_tramite,$w_menu,null,'w_novo_tramite',null,null);
     SelecaoPessoa('<u>D</u>estinatário:','D','Selecione, na relação, um destinatário para o programa.',$w_destinatario,null,'w_destinatario', 'USUARIOS');
   } 
   ShowHTML('    <tr><td valign="top" colspan=2><b>D<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber o programa.">'.$w_despacho.'</TEXTAREA></td>');

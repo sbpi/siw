@@ -119,6 +119,35 @@ begin
                where a.sq_siw_solicitacao = p_solic
              )
       group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_tipo_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda;
+   Elsif p_restricao = 'ORCAM_SIT' Then
+      -- Recupera o orçamento atual do projeto para pagamento de viagens
+      open p_result for
+      select distinct e.codigo as cd_rubrica, e.nome as nm_rubrica, e.descricao, e.ativo as at_rubrica,
+             f.total_previsto, f.total_real,
+             case coalesce(f.total_previsto,0) when 0 then 0 else (f.total_real/f.total_previsto*100) end as perc_exec,
+             (f.total_previsto-f.total_real) as saldo
+        from pd_vinculo_financeiro             a
+             inner     join siw_solicitacao    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner   join siw_menu           c on (b.sq_menu            = c.sq_menu)
+                 inner join siw_modulo         d on (c.sq_modulo          = d.sq_modulo)
+             inner     join pj_rubrica         e on (a.sq_projeto_rubrica = e.sq_projeto_rubrica)
+                left   join (select sum(x.valor_previsto) as total_previsto, 
+                                    sum(x.valor_real) as total_real, 
+                                    x.sq_projeto_rubrica
+                               from pj_rubrica_cronograma x
+                             group by x.sq_projeto_rubrica
+                            )                  f on (e.sq_projeto_rubrica = f.sq_projeto_rubrica)
+       where a.cliente = p_cliente
+         and (p_chave      is null or (p_chave      is not null and a.sq_pdvinculo_financeiro = p_chave))
+         and (p_solic      is null or (p_solic      is not null and a.sq_siw_solicitacao      = p_solic))
+         and (p_rubrica    is null or (p_rubrica    is not null and a.sq_projeto_rubrica      = p_rubrica))
+         and (p_lancamento is null or (p_lancamento is not null and a.sq_tipo_lancamento      = p_lancamento))
+         and (p_diaria     is null or (p_diaria     is not null and a.diaria                  = p_diaria))
+         and (p_hospedagem is null or (p_hospedagem is not null and a.hospedagem              = p_hospedagem))
+         and (p_veiculo    is null or (p_veiculo    is not null and a.veiculo                 = p_veiculo))
+         and (p_seguro     is null or (p_seguro     is not null and a.seguro                  = p_seguro))
+         and (p_bilhete    is null or (p_bilhete    is not null and a.bilhete                 = p_bilhete))
+         and (p_reembolso  is null or (p_reembolso  is not null and a.reembolso               = p_reembolso));
    Elsif p_restricao = 'ORCAM_PREV' Then
       -- Recupera a previsão orçamentária da viagem
       open p_result for

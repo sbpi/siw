@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -360,7 +360,7 @@ function Tramite() {
     $w_acesso_geral     = $_REQUEST['w_acesso_geral'];
     $w_destinatario     = $_REQUEST['w_destinatario'];
   } elseif ($O=='L') {
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null);
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
   } elseif ($O=='A' || $O=='E') {
     $RS = db_getTramiteData::getInstanceOf($dbms,$w_sq_siw_tramite);
@@ -534,11 +534,11 @@ function Tramite() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_destinatario" value="S"> Sim <input '.$w_Disabled.' type="radio" name="w_destinatario" value="N" checked> Não');
     } 
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,'S');
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null,'S');
     $RS = SortArray($RS,'ordem','asc');
     ShowHTML('          <td valign="top"><font  size="1"><b>Fluxo de tramitação?</b>');
     foreach($RS as $row) {
-      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_sq_siw_tramite,'FLUXO','S');
+      $RS1 = db_getTramiteList::getInstanceOf($dbms,$w_sq_siw_tramite,null,'FLUXO','S');
       $w_checked = '';
       foreach($RS1 as $row1) {
         if(f($row1,'sq_siw_tramite_destino')==f($row,'sq_siw_tramite')) {
@@ -1067,7 +1067,7 @@ function Grava() {
     case 'SIWTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null);
+        $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null,null);
         if(count($RS)>0) {
           foreach ($RS as $row) {
             if (f($row,'ordem')==$_REQUEST['w_ordem'] && f($row,'sq_siw_tramite')!=nvl($_REQUEST['w_sq_siw_tramite'],0)) {

@@ -279,14 +279,8 @@ function Inicial() {
         foreach($RS as $row) { $RS = $row; break; }
         $w_filtro .= '<tr valign="top"><td align="right">Companhia de viagem<td>[<b>'.f($RS,'nome').'</b>]';
       }
-      if ($p_ativo>'') {
-        $w_filtro .= '<tr valign="top"><td align="right">Tipo<td>[<b>';
-        if ($p_ativo=='I') $w_filtro .= 'Inicial';
-        elseif ($p_ativo=='P') $w_filtro .= 'Prorrogação';
-        elseif ($p_ativo=='C') $w_filtro .= 'Complementação';
-        $w_filtro .= '</b>]';
-      }
       if ($p_ini_i>'')      $w_filtro .= '<tr valign="top"><td align="right">Mês <td>[<b>'.$p_ini_i.'</b>]';
+      if ($p_ativo=='S')   $w_filtro .= '<tr valign="top"><td align="right">Conformidade <td>[<b>Somente solicitações fora do prazo</b>]';
       if ($p_atraso=='S')   $w_filtro .= '<tr valign="top"><td align="right">Situação <td>[<b>Somente pendente de prestação de contas</b>]';
       if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     }
@@ -303,7 +297,7 @@ function Inicial() {
               $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
               $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
               $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-              $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
+              $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, $p_sq_prop);
     } else {
       if (Nvl($_REQUEST['p_agrega'],'')=='GRPDCIAVIAGEM' || Nvl($_REQUEST['p_agrega'],'')=='GRPDCIDADE' || Nvl($_REQUEST['p_agrega'],'')=='GRPDDATA') {
         $RS = db_getSolicViagem::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
@@ -315,7 +309,7 @@ function Inicial() {
                 $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
                 $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
                 $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-                $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, null);
+                $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_codigo, $p_sq_prop);
       }
     }
 
@@ -916,6 +910,37 @@ function Geral() {
         //ShowHTML('      </tr>');
         //} else {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
+        if(f($RS_Relac,'sg_modulo')=='PR' && nvl($w_chave_pai,'')!='') {
+          // Exibe saldos das rubricas
+          $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'ORCAM_SIT');
+          $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
+          ShowHTML('<tr><td colspan=3><b>Disponibilidade orçamentária:</b>');
+          ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+          ShowHTML('        <tr bgcolor="'.$conTrAlternateBgColor.'" align="center">');
+          ShowHTML('          <td><b>Rubrica</td>');
+          ShowHTML('          <td><b>Descrição</td>');
+          ShowHTML('          <td><b>% Executado</td>');
+          ShowHTML('         <td><b>Saldo (R$)</td>');
+          ShowHTML('        </tr>');
+          if (count($RS_Fin)<=0) {
+            ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+          } else {
+            $RS_Fin = array_slice($RS_Fin, (($P3-1)*$P4), $P4);
+            foreach ($RS_Fin as $row) {
+              $w_cor = $conTrBgColor;
+              ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+              ShowHTML('        <td>'.Nvl(f($row,'cd_rubrica'),'&nbsp;').'&nbsp;'.Nvl(f($row,'nm_rubrica'),'&nbsp;').'</td>');
+              ShowHTML('        <td>'.Nvl(f($row,'descricao'),'&nbsp;').'</td>');
+              ShowHTML('        <td align="center">'.formatNumber(f($row,'perc_exec'))  .'</td>');
+              ShowHTML('        <td align="center">'.formatNumber(f($row,'saldo')).'</td>');
+              ShowHTML('      </tr>');
+            } 
+          } 
+          ShowHTML('      </center>');
+          ShowHTML('    </table>');
+          ShowHTML('  </td>');
+          ShowHTML('</tr>');
+        }
         //}
       }
     }
@@ -2872,10 +2897,10 @@ function Vinculacao() {
       // Recupera os registros
       $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,$p_sigla);
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
-      $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
-      $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-      $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-      $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
+                $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+                $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+                $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+                $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null);
       $RS = SortArray($RS,'assunto','asc');
       ShowHTML('<tr><td colspan=3>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -5057,7 +5082,8 @@ function Encaminhamento() {
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,'ANTERIOR',null);
+    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,$w_chave,'DEVFLUXO',null);
+    $RS = SortArray($RS,'ordem','desc');
     foreach($RS as $row) { $RS = $row; break; }
     $w_novo_tramite = f($RS,'sq_siw_tramite');
   }
@@ -5169,7 +5195,7 @@ function Encaminhamento() {
         }
       }
       ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_novo_tramite,'w_novo_tramite','DEVOLUCAO',null);
+      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,$w_chave,'w_novo_tramite','DEVFLUXO',null);
       ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
       if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
         if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
@@ -7512,7 +7538,7 @@ function Grava() {
               if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
                 $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
                 $w_sg_tramite = f($RS,'sigla');
-                if($w_sg_tramite=='CI') {
+                if($w_sg_tramite=='CI' || ($w_sg_tramite=='DF' || $w_sg_tramite=='AE' || $w_sg_tramite=='PC' || $w_sg_tramite=='VP')) {
                   $w_html = VisualViagem($w_chave,'L',$w_usuario,$P1,'1');
                   CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
                   exit();
@@ -7538,9 +7564,9 @@ function Grava() {
           } else {
             // Verifica o próximo trâmite
             if ($_REQUEST['w_envio']=='N') {
-              $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],'PROXIMO',null);
+              $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],null,'PROXIMO',null);
             } else {
-              $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],'ANTERIOR',null);
+              $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_tramite'],null,'ANTERIOR',null);
             }
             foreach($RS as $row) { $RS = $row; break; }
             $RS1 = db_getTramiteSolic::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS,'sq_siw_tramite'),null,null);
@@ -7561,7 +7587,7 @@ function Grava() {
             if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
               $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
               $w_sg_tramite = f($RS,'sigla');
-              if($w_sg_tramite=='CI') {
+              if($w_sg_tramite=='CI' || ($w_sg_tramite=='DF' || $w_sg_tramite=='AE' || $w_sg_tramite=='PC' || $w_sg_tramite=='VP')) {
                 $w_html = VisualViagem($_REQUEST['w_chave'],'L',$w_usuario,$P1,'1');
                 CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
               }
