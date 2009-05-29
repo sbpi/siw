@@ -199,18 +199,20 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_erro .= '<li>É obrigatório informar os bilhetes.';
               $l_tipo  = 0;
             }
-
-            // Pelo menos um bilhete deve ter trechos vinculados
-            $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,((f($l_rs_tramite,'sigla')=='AE') ? 'S' : 'P'),null);
             
-            // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
-            $w_trecho = false;
-            foreach ($RS_Trecho as $row) {
-              if (nvl(f($row,'sq_bilhete'),'')!='') $w_trecho = true;
-            }
-            if (!$w_trecho) {
-              $l_erro .= '<li>Pelo menos um bilhete deve ter trechos vinculados.';
-              $l_tipo  = 0;
+            if (f($l_rs_tramite,'sigla')=='AE' || (f($l_rs_tramite,'sigla')=='VP' && f($l_rs_solic,'cumprimento')!='C')) {
+              // Pelo menos um bilhete deve ter trechos vinculados
+              $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,((f($l_rs_tramite,'sigla')=='AE') ? 'S' : 'P'),null);
+              
+              // Verifica se há algum deslocamento disponível para vinculação a novos bilhetes
+              $w_trecho = false;
+              foreach ($RS_Trecho as $row) {
+                if (nvl(f($row,'sq_bilhete'),'')!='') $w_trecho = true;
+              }
+              if (!$w_trecho) {
+                $l_erro .= '<li>Pelo menos um bilhete deve ter trechos vinculados.';
+                $l_tipo  = 0;
+              }
             }
           } 
            

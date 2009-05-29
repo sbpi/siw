@@ -181,7 +181,16 @@ begin
    End If;
    
    -- Ajusta as diárias se o usuário não as definiu manualmente
-   If p_texto_diaria is null Then sp_calculadiarias(p_chave, null, p_tipo); End If;
+   If p_texto_diaria is null Then 
+     sp_calculadiarias(p_chave, null, p_tipo); 
+   End If;
 
+   If p_operacao in ('I','A') Then
+      -- Ajusta a quantidade de locações de veiculo quando a quantidade de diárias é menor
+      update pd_diaria a
+         set veiculo_qtd = quantidade
+      where sq_diaria  = p_sq_diaria
+        and quantidade < veiculo_qtd;
+   End If;
 end SP_PutPdDiaria;
 /

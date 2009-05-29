@@ -640,6 +640,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';              
             $l_html.=chr(13).'          <tr><td bgColor="#f0f0f0" align="center"><b><b>Nome</b></td>';
             $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>CPF</b></td>';
+            $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Sexo</b></td>';
+            $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Identidade</b></td>';
+            $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b>Orgão emissão</b></td>';
             $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b><b>DDD</b></td>';
             $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b><b>Telefone</b></td>';
             $l_html.=chr(13).'            <td bgColor="#f0f0f0" align="center"><b><b>Celular</b></td>';
@@ -650,6 +653,9 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             foreach($RSQuery as $row2) {
               $l_html.=chr(13).'      <tr><td>'.f($row2,'nm_pessoa').'</td>';
               $l_html.=chr(13).'        <td align="center">'.f($row2,'cpf').'</td>';
+              $l_html.=chr(13).'        <td>'.f($row1,'nm_sexo').'</td>';
+              $l_html.=chr(13).'        <td>'.Nvl(f($row1,'rg_numero'),'---').'</td>';
+              $l_html.=chr(13).'        <td>'.Nvl(f($row1,'rg_emissor'),'---').'</td>';
               $l_html.=chr(13).'        <td align="center" >'.Nvl(f($row2,'ddd'),'---').'</td>';
               $l_html.=chr(13).'        <td>'.Nvl(f($row2,'nr_telefone'),'---').'</td>';
               $l_html.=chr(13).'        <td>'.Nvl(f($row2,'nr_celular'),'---').'</td>';

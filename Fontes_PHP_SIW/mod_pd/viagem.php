@@ -2298,7 +2298,7 @@ function AltSolic() {
       $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
       if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
         $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
-        $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+        $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
         $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
     
         if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
@@ -3653,7 +3653,6 @@ function Diarias() {
     $w_max_hosp             = ($w_hos_out-$w_hos_in)/86400;
     $w_max_veiculo          = ($w_vei_dev-$w_vei_ret)/86400;
     
-    
     // Reconfigura o máximo de diárias para o primeiro trecho
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
     $RS = SortArray($RS,'phpdt_saida', 'asc');
@@ -3912,8 +3911,11 @@ function Diarias() {
       ShowHTML('  var MinMilli = 1000 * 60;');
       ShowHTML('  var HrMilli = MinMilli * 60;');
       ShowHTML('  var DyMilli = HrMilli * 24;');
-      ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli));');
+      ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli))+1;');
+      ShowHTML('  var Qtd  = parseFloat(theForm.w_quantidade.value.replace(",","."));');
       ShowHTML('  theForm.w_veiculo_qtd.value=Days+",0";');
+      ShowHTML('  alert(Days);');
+      
       if (count($RS_Fin_Vei)>1) {
         ShowHTML('    if(theForm.w_rub_vei.selectedIndex==0) {');
         ShowHTML('      alert("Favor informar a rubrica para pagamento de locações de veículo!");');
@@ -4067,7 +4069,7 @@ function Diarias() {
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
         if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
-          $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+          $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
 
           if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
@@ -4710,7 +4712,7 @@ function Diarias_Solic() {
         $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
         if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
-          $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+          $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
 
           if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
@@ -6531,9 +6533,9 @@ function PrestarContas() {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        if (($i>0 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
-          $w_locacoes     = -1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0);
+          $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
       
           if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;

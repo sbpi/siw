@@ -369,7 +369,6 @@ begin
       select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
       select * into w_parcela from ac_acordo_parcela where sq_acordo_parcela = p_chave_aux;
       
-      
       If to_char(w_aditivo.inicio,'mmyyyy') = to_char(w_aditivo.fim,'mmyyyy') Then
          -- O mês incorpora todo o valor do aditivo
          w_valor := w_aditivo.valor_acrescimo;
@@ -378,7 +377,7 @@ begin
          If to_char(w_aditivo.inicio,'dd') > 1 and to_char(w_aditivo.inicio,'mm') = to_char(p_per_ini,'mm') Then
             -- Parcela termina no último dia mas não começa no primeiro dia
             w_ultimo := 30;
-            If to_char(last_day(p_per_fim),'dd') < 30 Then 
+            If to_char(last_day(p_per_ini),'dd') < 30 Then 
                w_ultimo := to_char(last_day(p_per_ini),'dd'); 
             End If;
             w_dias_1 := to_date(w_ultimo||'/'||to_char(p_per_ini,'mm/yyyy'),'dd/mm/yyyy') - w_aditivo.inicio + 1 + (30-w_ultimo);

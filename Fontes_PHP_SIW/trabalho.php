@@ -427,21 +427,7 @@ function Mesa() {
               ShowHTML('                    <td nowrap>');
               ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
               ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
-              $w_texto   = f($row,'trechos');
-              $w_trechos = explode(' - ',f($row,'trechos'));
-              if (count($w_trechos)>0) {
-                $w_texto   = '';
-                if (count($w_trechos)==2) {
-                  for ($i=0;$i<(count($w_trechos)-1);$i++) $w_texto .= trim($w_trechos[$i]).' - ';
-                  $w_texto = substr($w_texto,0,-3);
-                } elseif (trim($w_trechos[0])==trim($w_trechos[count($w_trechos)-1])) {
-                  for ($i=1;$i<(count($w_trechos)-1);$i++) $w_texto .= trim($w_trechos[$i]).' - ';
-                  $w_texto = substr($w_texto,0,-3);
-                } else {
-                  $w_texto   = f($row,'trechos');
-                }
-              }
-              ShowHTML('                    <td nowrap>'.$w_texto.'&nbsp;</td>');
+              ShowHTML('                    <td nowrap>'.f($row,'trechos').'&nbsp;</td>');
               ShowHTML('                  </tr>');
             }
           }

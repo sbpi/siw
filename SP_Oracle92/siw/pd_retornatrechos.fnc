@@ -2,30 +2,26 @@ create or replace function pd_retornatrechos(p_chave in number) return varchar2 
 -- Retorna os trechos de uma viagem, recebendo a chave de siw_solicitacao
   
   w_texto   varchar2(2000) := '';
-  w_chegada varchar2(100);
+  w_cont    number(10) := 0;
 
   cursor c_deslocamentos is
-    select a.sq_deslocamento,
-           b.nome as nm_cidade_origem,
-           d.nome as nm_cidade_destino,
-           case c.padrao when 'S' then b.nome||'-'||b.co_uf else b.nome||'-'||c.nome end as nm_origem,
-           case e.padrao when 'S' then d.nome||'-'||d.co_uf else d.nome||'-'||e.nome end as nm_destino
-      from pd_deslocamento        a
-           inner   join co_cidade b on (a.origem  = b.sq_cidade)
-             inner join co_pais   c on (b.sq_pais = c.sq_pais)
-           inner   join co_cidade d on (a.destino = d.sq_cidade)
-             inner join co_pais   e on (d.sq_pais = e.sq_pais)
+    select b.nome as nm_cidade
+      from pd_diaria                    a
+           inner   join co_cidade       b on (a.sq_cidade               = b.sq_cidade)
+             inner join co_pais         c on (b.sq_pais                 = c.sq_pais)
+           inner   join pd_deslocamento d on (a.sq_deslocamento_chegada = d.sq_deslocamento)
      where a.sq_siw_solicitacao = p_chave
        and a.tipo               = 'S'
-    order by a.saida, a.chegada;
+       and (a.diaria            = 'S' or a.hospedagem = 'S' or a.veiculo = 'S')
+    order by d.saida, d.chegada;
 begin
   -- Concatena em w_texto cada cidade encontrada
   for crec in c_deslocamentos loop 
-    w_chegada := crec.nm_cidade_destino; 
-    w_texto   := w_texto || crec.nm_cidade_origem ||' - '; 
+    w_texto   := w_texto || case w_cont when 0 then '' else ' - ' end || crec.nm_cidade; 
+    w_cont    := w_cont + 1;
   end loop;
   -- Configura o retorno
-  if length(w_texto) > 0 then w_texto := w_texto||' '||w_chegada; else w_texto := null; end if;
+  if length(w_texto) = 0 then w_texto := null; end if;
   return w_texto;
 end pd_retornatrechos;
 /
