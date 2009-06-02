@@ -1400,6 +1400,7 @@ function CategoriaDiaria() {
     // Se for recarga da página
     $w_nome         = $_REQUEST['w_nome'];
     $w_ativo        = $_REQUEST['w_ativo'];
+    $w_tramite      = $_REQUEST['w_tramite'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getCategoriaDiaria::getInstanceOf($dbms,$w_cliente,null,null,null,null);
@@ -1416,6 +1417,7 @@ function CategoriaDiaria() {
     $w_chave        = f($RS,'chave');
     $w_nome         = f($RS,'nome');
     $w_ativo        = f($RS,'ativo');
+    $w_tramite      = f($RS,'tramite_especial');
   }
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -1461,6 +1463,7 @@ function CategoriaDiaria() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Trâmite especial','nm_tramite_especial').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
@@ -1473,6 +1476,7 @@ function CategoriaDiaria() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_tramite_especial').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -1493,11 +1497,11 @@ function CategoriaDiaria() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
-    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
-    ShowHTML('           <td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('        <tr valign="top">');
+    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr>');
+    MontaRadioSN('<b>Categoria passa por trâmite especial?</b>',$w_tramite,'w_tramite');
+    ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
-    ShowHTML('           </table>');
     ShowHTML('      <tr><td align="LEFT"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center"><hr>');
     if ($O=='E') {
@@ -1643,15 +1647,17 @@ function Grava() {
       if (!(strpos('IA',$O)===false)) {
           $RS = db_getCategoriaDiaria::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null);
           if (count($RS)>0) {
-            ScriptOpen('JavaScript');
-            ShowHTML('  alert(\'Categoria já cadastrada!\');');
-            ScriptClose();
-            retornaFormulario('w_nome');
-            exit;
+            foreach($RS as $row) { $RS = $row; break; }
+            if ($O=='I' || ($O=='A' && f($row,'chave')!=$_REQUEST['w_chave'])) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Categoria já cadastrada!\');');
+              ScriptClose();
+              retornaFormulario('w_nome');
+              exit;
+            }
           }
       }
-      dml_putCategoriaDiaria::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],
-      $_REQUEST['w_nome'],$_REQUEST['w_ativo']);
+      dml_putCategoriaDiaria::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_ativo'],$_REQUEST['w_tramite']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();

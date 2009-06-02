@@ -69,20 +69,15 @@ begin
             from siw_tramite_fluxo                a
                  inner   join siw_tramite         b  on (a.sq_siw_tramite_destino = b.sq_siw_tramite),
                  siw_tramite                      c
-                 inner       join siw_solicitacao d  on (c.sq_siw_tramite         = d.sq_siw_tramite)
-                   inner     join sg_autenticacao d1 on (d.solicitante            = d1.sq_pessoa)
-                     inner   join eo_unidade      d2 on (d1.sq_unidade            = d2.sq_unidade)
-                   inner     join siw_menu        e  on (d.sq_menu                = e.sq_menu)
-                   inner     join pd_missao       f  on (d.sq_siw_solicitacao     = f.sq_siw_solicitacao)
-                     left    join sg_autenticacao f1 on (f.sq_pessoa              = f1.sq_pessoa)
-                       left  join eo_unidade      f2 on (f1.sq_unidade            = f2.sq_unidade)
+                 inner   join siw_solicitacao     d  on (c.sq_siw_tramite         = d.sq_siw_tramite)
+                   inner join siw_menu            e  on (d.sq_menu                = e.sq_menu)
+                   inner join pd_missao           f  on (d.sq_siw_solicitacao     = f.sq_siw_solicitacao)
+                   inner join pd_categoria_diaria g  on (f.diaria                  = g.sq_categoria_diaria)
            where a.sq_siw_tramite_origem = p_chave
              and c.sq_siw_tramite        = p_chave
              and d.sq_siw_solicitacao    = p_solic
              and e.sq_pessoa             = 10135 -- Abdi
-             and ((d2.sq_unidade_pai      is not null and d2.sigla <> 'GABINETE') and
-                  (f1.sq_pessoa           is null or (f1.sq_pessoa is not null and f2.sq_unidade_pai is not null and f2.sigla <> 'GABINETE'))
-                 )
+             and g.tramite_especial      <> 'S'
              and b.sigla                 = 'PR'  -- Tramite de reservas pelo gabinete
           UNION
           select a.sq_siw_tramite_origem, a.sq_siw_tramite_destino,

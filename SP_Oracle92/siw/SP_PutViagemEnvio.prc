@@ -171,27 +171,16 @@ begin
             w_salto := 1;
          End If;
       Elsif w_sg_tramite = 'EA' Then
-         -- ABDI: Se análise pela DIREX, decide o salto se o usuário for da presidência ou do gabinete
-         select (x.qtd + y.qtd) into w_existe
-           from (select count(*) as qtd
-                   from pd_missao                    a
-                        inner   join sg_autenticacao b on (a.sq_pessoa          = b.sq_pessoa)
-                          inner join eo_unidade      c on (b.sq_unidade         = c.sq_unidade)
-                        inner   join siw_solicitacao d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                          inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
-                  where a.sq_siw_solicitacao = p_chave
-                    and e.sq_pessoa          = w_cliente
-                    and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
-                ) x,
-                (select count(*) as qtd
-                   from siw_solicitacao              d
-                        inner   join sg_autenticacao b on (d.solicitante        = b.sq_pessoa)
-                          inner join eo_unidade      c on (b.sq_unidade         = c.sq_unidade)
-                          inner join siw_menu        e on (d.sq_menu            = e.sq_menu)
-                  where d.sq_siw_solicitacao = p_chave
-                    and e.sq_pessoa          = w_cliente
-                    and (c.sq_unidade_pai    is null or c.sigla = 'GABINETE')
-                ) y;
+         -- ABDI: Se análise pela DIREX, decide o salto dependendo da categoria de diária
+         select count(*) into w_existe
+           from pd_missao                        a
+                inner   join pd_categoria_diaria b on (a.diaria             = b.sq_categoria_diaria and
+                                                       b.tramite_especial   = 'S'
+                                                      )
+                inner   join siw_solicitacao     d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                  inner join siw_menu            e on (d.sq_menu            = e.sq_menu)
+          where a.sq_siw_solicitacao = p_chave
+            and e.sq_pessoa          = w_cliente;
         
          If w_existe > 0 
             Then w_salto := 1;

@@ -3154,16 +3154,16 @@ function f($rs, $fld) {
   }
   if (isset($rs[Strtolower($fld)])) {
     if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtolower($fld)]));
-    } else return str_replace('.asp','.php',$rs[Strtolower($fld)]);
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtolower($fld)])));
+    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[Strtolower($fld)]));
   } elseif (isset($rs[Strtoupper($fld)])) {
     if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtoupper($fld)]));
-    } else return str_replace('.asp','.php',$rs[Strtoupper($fld)]);
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtoupper($fld)])));
+    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[Strtoupper($fld)]));
   } elseif (isset($rs[$fld])) {
     if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[$fld]));
-    } else return str_replace('.asp','.php',$rs[$fld]);
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[$fld])));
+    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[$fld]));
   } else return null;
 }
 
