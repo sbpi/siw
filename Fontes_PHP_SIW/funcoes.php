@@ -773,7 +773,7 @@ function consultaTelefone($p_cliente) {
 // -------------------------------------------------------------------------
 function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
-  if ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD'){
+  if ($_REQUEST['p_tipo'] == 'PDF' || $l_word=='WORD' || $l_word=='S'){
     $l_embed = 'WORD';
   }
   if (strpos($l_texto,'|@|')!==false) {
@@ -2312,7 +2312,6 @@ function MascaraBeneficiario($cgccpf) {
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   extract($GLOBALS);
 
-
   include_once($w_dir_volta.'classes/mail/email_message.php');
   include_once($w_dir_volta.'classes/mail/smtp_message.php');
   include_once($w_dir_volta.'classes/mail/smtp.php');
@@ -2320,9 +2319,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
 
   // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-
-
-
+  
   if( trim(f($RS_Cliente,'siw_email_conta')) == 'false' ){
     $from = f($RS_Cliente,'siw_email_nome');
     EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments);
@@ -2469,7 +2466,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
 }
 
 function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_attachments=null){
-    extract($GLOBALS);
+  extract($GLOBALS);
   date_default_timezone_set('America/Sao_Paulo');
   include_once($w_dir_volta.'classes/mailAlternative/class.phpmailer.php');
 
@@ -2546,7 +2543,7 @@ function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_atta
       if (nvl($w_attachments,'')!='') $mail->AddAttachment($w_attachments);                    // attachment quando string
     }
   }
-
+    
   $mail->IsHTML(true); // send as HTML
   //send your e-mail
   if ($conEnviaMail) {

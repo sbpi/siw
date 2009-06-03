@@ -101,7 +101,7 @@ begin
                      then dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,
+                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b2.acesso,
                 b3.sq_solic_pai as sq_solic_avo, b3.sq_plano as sq_plano_avo, b3.sq_menu as sq_menu_avo,
                 b4.sq_tipo_evento,    b4.nome as nm_tipo_evento,     b4.sigla as sg_tipo_evento,
@@ -118,7 +118,7 @@ begin
                 o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind,
                 'S' as aviso_prox_conc, 1 as dias_aviso, trunc(b.fim)-1 as aviso
-           from siw_menu                                       a 
+           from siw_menu                                    a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
                                                                    a3.tipo_respons            = 'T'           and
