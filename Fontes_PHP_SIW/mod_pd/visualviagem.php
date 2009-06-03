@@ -117,8 +117,8 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } else {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
-      //$l_html.=chr(13).'      <tr valign="top"><td><b>Tipo:</b></td><td>'.f($RS,'nm_tipo_missao').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.f($RS,'nm_diaria').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Contato na ausência:</b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {
