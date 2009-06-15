@@ -982,7 +982,10 @@ function Excluir() {
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+      $SG,5,null,null,null,null,null,null,null,null,null,null,$w_chave, null, 
+      null, null, null, null, null,null, null, null, null, null, null, null, null, null);
+  $RS = $RS[0];
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -1024,7 +1027,10 @@ function Encaminhamento() {
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_justificativa    = $_REQUEST['w_justificativa'];
   } else {
-    $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+    $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+      $SG,5,null,null,null,null,null,null,null,null,null,null,$w_chave, null, 
+      null, null, null, null, null,null, null, null, null, null, null, null, null, null);
+    $RS = $RS[0];
     $w_inicio        = f($RS,'inicio');
     $w_fim           = f($RS,'fim');
     $w_tramite       = f($RS,'sq_siw_tramite');
@@ -1156,7 +1162,10 @@ function Anotar() {
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
+  $RS = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
+      $SG,5,null,null,null,null,null,null,null,null,null,null,$w_chave, null, 
+      null, null, null, null, null,null, null, null, null, null, null, null, null, null);
+  $RS = $RS[0];
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<INPUT type="hidden" name="w_novo_tramite" value="'.f($RS,'sq_siw_tramite').'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1180,145 +1189,6 @@ function Anotar() {
   ShowHTML('</FORM>');
   ShowHTML('</table>');
   ShowHTML('</center>');
-  Rodape();
-} 
-
-// =========================================================================
-// Rotina de informações complementares da solicitação
-// -------------------------------------------------------------------------
-function Informar() {
-  extract($GLOBALS);
-  if ($SG=='SRTRANSP') {
-    include_once('transporte_inf.php');
-  }
-} 
-
-// =========================================================================
-// Rotina de dados adicionais
-// -------------------------------------------------------------------------
-function DadosExecucao() {
-  extract($GLOBALS);
-  global $w_Disabled;
-
-  $w_chave   = $_REQUEST['w_chave'];
-  $w_sq_menu = $_REQUEST['w_sq_menu'];
-
-  $w_readonly       = '';
-  $w_erro           = '';
-
-  // Recupera os dados da solicitação
-  $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
-
-  // Verifica se há necessidade de recarregar os dados da tela a partir
-  // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  if ($w_troca>'') {
-    // Se for recarga da página
-    $w_inicio           = $_REQUEST['w_inicio'];
-    $w_fim              = $_REQUEST['w_fim'];
-    $w_valor            = $_REQUEST['w_valor'];
-  } else {
-    $w_inicio           = FormataDataEdicao(f($RS_Solic,'inicio'));
-    $w_fim              = FormataDataEdicao(f($RS_Solic,'fim'));
-    $w_valor            = ((nvl(f($RS_Solic,'valor'),'')!='') ? formatNumber(f($RS_Solic,'valor')) : ''); 
-  } 
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  Estrutura_CSS($w_cliente);
-  // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
-  // tratando as particularidades de cada serviço
-  ScriptOpen('JavaScript');
-  CheckBranco();
-  FormataData();
-  SaltaCampo();
-  FormataDataHora();
-  FormataValor();  
-  ValidateOpen('Validacao');
-  switch (f($RS_Menu,'data_hora')) {
-    case 0: Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');        break;
-    case 1: Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');        break;
-    case 2: Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/');    break;
-    case 3: 
-      Validate('w_inicio','Início previsto','DATA',1,10,10,'','0123456789/');       
-      Validate('w_fim','Término previsto','DATA',1,10,10,'','0123456789/');
-      CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
-      break;
-  case 4:
-      Validate('w_inicio','Início previsto','DATAHORA',1,17,17,'','0123456789/,: ');
-      Validate('w_fim','Término previsto','DATAHORA',1,17,17,'','0123456789/,: ');
-      CompData('w_inicio','Início previsto','<=','w_fim','Término previsto');
-      break;
-  } 
-  Validate('w_valor','Valor previsto','VALOR','',4,18,'','0123456789.,');
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  switch (f($RS_Menu,'data_hora')) {
-    case 0: BodyOpenClean('onLoad=\'document.Form.w_fim.focus()\';');    break;
-    case 1: BodyOpenClean('onLoad=\'document.Form.w_fim.focus()\';');    break;
-    case 2: BodyOpenClean('onLoad=\'document.Form.w_fim.focus()\';');    break;
-    case 3: BodyOpenClean('onLoad=\'document.Form.w_inicio.focus()\';'); break;
-    case 4: BodyOpenClean('onLoad=\'document.Form.w_inicio.focus()\';'); break;
-  } 
-  Estrutura_Topo_Limpo();
-  Estrutura_Menu();
-  Estrutura_Corpo_Abre();
-  Estrutura_Texto_Abre();
-  ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
-  // Exibe os dados da solicitação
-  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
-  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-  ShowHTML('      <tr><td><table border=0 width="100%">');
-  ShowHTML('          <tr valign="top">');
-  ShowHTML('            <td>'.f($RS_Menu,'nome').':<b><br>'.f($RS_Solic,'sq_siw_solicitacao').'</td>');
-  ShowHTML('            <td>Solicitante:<b><br>'.ExibePessoa('../',$w_cliente,f($RS_Solic,'solicitante'),$TP,f($RS_Solic,'nm_sol')).'</td>');
-  ShowHTML('            <td>Setor solicitante:<b><br>'.ExibeUnidade('../',$w_cliente,f($RS_Solic,'sg_unidade_solic'),f($RS_Solic,'sq_unidade'),$TP).'</td>');
-  ShowHTML('          <tr><td colspan="2">Descrição:<b><br>'.f($RS_Solic,'descricao').'</td>');
-  ShowHTML('      </table>');
-  ShowHTML('    </TABLE>');
-  ShowHTML('</table>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'F');
-  ShowHTML(MontaFiltro('POST'));
-  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-  
-  ShowHTML('<tr><td>');
-  ShowHTML('    <tr><td><table width="100%" border="0" bgcolor="'.$conTrBgColor.'">');
-  ShowHTML('      <tr><td colspan="3"><font size="2"><b>DADOS DA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-  ShowHTML('      <tr valign="top">');
-  switch (f($RS_Menu,'data_hora')) {
-    case 0: ShowHTML('              <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');           break;
-    case 1: ShowHTML('              <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');           break;
-    case 2: ShowHTML('              <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');  break;
-    case 3: 
-      ShowHTML('              <td><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Início previsto da demanda.">'.ExibeCalendario('Form','w_inicio').'</td>'); 
-      ShowHTML('              <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');
-      break;
-    case 4:
-      ShowHTML('              <td><b>Iní<u>c</u>io previsto:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_inicio" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_inicio.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora de início previsto da demanda.">'.ExibeCalendario('Form','w_inicio').'</td>');
-      ShowHTML('              <td><b><u>T</u>érmino previsto:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_fim" class="STI" SIZE="17" MAXLENGTH="17" VALUE="'.$w_fim.'" onKeyDown="FormataDataHora(this,event);" onKeyUp="SaltaCampo(this.form.name,this,17,event);" title="Data/hora limite para que a execução da demanda esteja concluída.">'.ExibeCalendario('Form','w_fim').'</td>');
-      break;
-  } 
-  ShowHTML('              <td><b>Valo<u>r</u> previsto:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_valor" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o orçamento disponível para execução da demanda, ou zero se não for o caso."></td>');
-  ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('      <tr><td align="center" colspan="2">');
-  ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
-  $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
-  ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-  ShowHTML('          </td>');
-  ShowHTML('      </tr>');
-  
-  ShowHTML('    </table>');
-  ShowHTML('    </TD>');
-  ShowHTML('</tr>');
-  ShowHTML('</FORM>');
-  ShowHTML('</table>');
-  ShowHTML('</center>');
-  Estrutura_Texto_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
-  Estrutura_Fecha();
   Rodape();
 } 
 
@@ -1507,6 +1377,10 @@ function Anexos() {
 function SolicMail($p_solic,$p_tipo) {
   extract($GLOBALS);
   global $w_Disabled;
+  
+  // Desarma o envio de e-mail se o ambiente estiver configurado para não enviá-lo
+  if (!$conEnviaMail) { return true; }
+  
   //Verifica se o cliente está configurado para receber email na tramitaçao de solicitacao
   $RS = db_getCustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
   $RSM = db_getLinkData::getInstanceOf($dbms,$w_cliente,$SG);
@@ -1518,7 +1392,7 @@ function SolicMail($p_solic,$p_tipo) {
   if(f($RS,'envia_mail_tramite')=='S' && f($RS_Menu,'envia_email')=='S' && f($RSM,'envia_mail')=='S') {
     // Recupera os dados da solicitação
     $l_solic          = $p_solic;
-    $w_destinatarios  = '';
+    $w_destinatarios  = str_replace(';;',';',trim(f($RSM,'observacao')).';');
     $w_resultado      = '';
     $w_assunto='COMUNICAÇÃO DE '.strtoupper(f($RSM,'nm_tipo_evento'));
     $w_html='<HTML>'.$crlf;
@@ -1549,10 +1423,17 @@ function SolicMail($p_solic,$p_tipo) {
         $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
       }
     }
-
+    
+    $RS = db_getSolicAnexo::getInstanceOf($dbms,$p_solic,null,$w_cliente);
+    $RS = SortArray($RS,'nome','asc');
+    $w_anexos = '';
+    foreach($RS as $row) {
+      $w_anexos .= f($row,'nome_original').'|'.$conFilePhysical.$w_cliente.'/'.f($row,'caminho').';';
+    }
+    
     if ($w_destinatarios>'') {
       // Executa o envio do e-mail
-      $w_resultado=EnviaMail($w_assunto,$w_html,$w_destinatarios,null);
+      $w_resultado=EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);
     } 
     // Se ocorreu algum erro, avisa da impossibilidade de envio
     if ($w_resultado>'') {
@@ -1722,11 +1603,9 @@ function Grava() {
   } elseif ($O=='V') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      SolicMail($_REQUEST['w_chave'],3);
-      exit();
       include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
       dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
-          $_REQUEST['w_fim'],$_REQUEST['w_executor'],$_REQUEST['w_observacao'],nvl($_REQUEST['w_valor'],'0,00'),
+          $_REQUEST['w_fim'],$w_usuario,$_REQUEST['w_observacao'],nvl($_REQUEST['w_valor'],'0,00'),
           $w_file,$w_tamanho,$w_tipo,$w_nome,null,null,null);
 
       // Envia mail avisando sobre a tramitação da solicitação

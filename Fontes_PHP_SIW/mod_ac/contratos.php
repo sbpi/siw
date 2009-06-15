@@ -363,13 +363,19 @@ function Inicial() {
       $RS = SortArray($RS,'nm_outra_parte','asc','inicio','desc');
     }
   }
-  if ($w_tipo=='WORD') {
+  if ($w_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
-    ShowHTML('</HEAD>');
+    $w_embed = 'WORD';
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  }elseif($w_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    $w_embed = 'WORD';
+    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     Estrutura_CSS($w_cliente);
@@ -429,7 +435,10 @@ function Inicial() {
     ShowHTML('</HEAD>');
   }
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
+  if ($w_embed=='WORD') {
+      // Se for Word
+      BodyOpenWord();
+  } elseif ($w_troca>'') {
     // Se for recarga da página
     BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
   } elseif ($O=='I') {
@@ -446,7 +455,7 @@ function Inicial() {
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
-  if($w_tipo!='WORD') {
+  if($w_embed!='WORD') {
     if ((strpos(strtoupper($R),'GR_'))===false) {
        Estrutura_Texto_Abre();
     } else {
@@ -458,7 +467,7 @@ function Inicial() {
   if ($O=='L') {
     ShowHTML('<tr><td>');
     if ($P1==1 && $w_copia=='') {
-      if ($w_tipo!='WORD') {
+      if ($w_embed!='WORD') {
         // Se for cadastramento e não for resultado de busca para cópia
         ShowHTML('<tr><td>');
         if ($w_submenu>'') {
@@ -475,7 +484,7 @@ function Inicial() {
       }
     } 
     if ((strpos(strtoupper($R),'GR_')===false) && (strpos(strtoupper($R),'ACORDO')===false) && $P1!=6) {
-      if ($w_tipo!='WORD') {
+      if ($w_embed!='WORD') {
         if ($w_copia>'') {
           // Se for cópia
           if (MontaFiltro('GET')>'') {
@@ -551,7 +560,7 @@ function Inicial() {
       ShowHTML('          <td><b>Início</td>');
       ShowHTML('          <td><b>Fim</td>');
       ShowHTML('          <td><b>IDEC</td>');
-      ShowHTML('          <td colspan="2">IDCC</td>');
+      ShowHTML('          <td colspan="2"><b>IDCC</b></td>');
       ShowHTML('          <td><b>IGCC</td>');
       ShowHTML('        </tr>');
     }  
@@ -704,7 +713,7 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    if ($w_tipo!='WORD') {
+    if ($w_embed!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
       if ($R>'') {
         MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_copia='.$w_copia,ceil(count($RS)/$P4),$P3,$P4,count($RS));
@@ -714,7 +723,7 @@ function Inicial() {
       ShowHTML('</tr>');
     } 
   } elseif (strpos('CP',$O)!==false) {
-    if ($w_tipo!='WORD') { 
+    if ($w_embed!='WORD') { 
       if ($O=='C') {
         // Se for cópia
         ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Para selecionar o que deseja copiar, informe nos campos abaixo os critérios de seleção e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
@@ -4165,7 +4174,7 @@ function Aditivos() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem 
     $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null,null,null,null,null,null);
-    $RS = SortArray($RS,'inicio','desc');
+    $RS = SortArray($RS,'sq_acordo_aditivo','desc');
   } elseif (strpos('AEV',$O)!==false && $w_troca=='') {
     $RS = db_getAcordoAditivo::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) {
@@ -4314,9 +4323,9 @@ function Aditivos() {
     $RS_Aditivo = SortArray($RS_Aditivo,'sq_acordo_aditivo','desc');
     foreach($RS_Aditivo as $row){$RS_Aditivo=$row; break;}
     ShowHTML('<tr valign="top"><td>');
-    if($P1!=6 && ((count($RS)==0 || Nvl(f($RS_Aditivo,'qtd_parcela'),0)>0) || (f($RS_Aditivo,'prorrogacao')=='N'&&f($RS_Aditivo,'acrescimo')=='N')&&f($RS_Aditivo,'supressao')=='N')) {
+    //if($P1!=6 && ((count($RS)==0 || Nvl(f($RS_Aditivo,'qtd_parcela'),0)>0) || (f($RS_Aditivo,'prorrogacao')=='N'&&f($RS_Aditivo,'acrescimo')=='N')&&f($RS_Aditivo,'supressao')=='N')) {
       ShowHTML('      <a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    }
+    //}
     ShowHTML('        <a accesskey="F" class="ss" href="javascript:window.close(); this.opener.location.reload(); opener.focus();"><u>F</u>echar</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');

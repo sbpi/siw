@@ -1,4 +1,4 @@
-<?
+<?php
 ob_start();
 session_start();
 include_once($w_dir_volta.'constants.inc');
@@ -22,8 +22,11 @@ $w_id       = $_REQUEST['id'];
 $w_force    = Nvl($_REQUEST['force'],'false');
 $w_sessao   = $_REQUEST['sessao'];
 $w_erro     = 0; // Se tiver valor diferente de 0, exibe mensagem de erro
+$w_dbms     = nvl($_SESSION['DBMS'],$_REQUEST['dbms']);
 
-if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $_SESSION['DBMS']=='')) {
+if (nvl($_SESSION['DBMS'],'')=='') $_SESSION['DBMS'] = $w_dbms;
+
+if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $w_dbms=='')) {
   $w_erro=1; // Parâmetros incorretos
 } elseif (!(strpos($w_id,'.')===false)) {
   $w_nome       = '';
@@ -36,10 +39,11 @@ if (Nvl($w_cliente,'')=='' || Nvl($w_id,'')=='' || (Nvl($w_sessao,'')=='' && $_S
   $w_id         = str_replace('\\','/',$w_id);
 } else {
   // Configura objetos de BD
-  $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
-
+  $dbms = abreSessao::getInstanceOf($w_dbms);
+  
   // Tenta recuperar os dados do arquivo selecionado
   $RS = db_getSiwArquivo::getInstanceOf($dbms,$w_cliente,$w_id,null);
+  
   if (count($RS)==0) {
     $w_erro=2; // Arquivo não encontrado
   } else {
@@ -73,7 +77,7 @@ if ($w_erro>0) { // Se houve erro, exibe HTML
 
 function DownloadFile($strFileName,$blnForceDownload) {
   extract($GLOBALS);
-
+  
   //----------------------
   //first step: verify the file exists
   //----------------------

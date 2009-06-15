@@ -100,8 +100,8 @@ begin
                 case when b.sq_solic_pai is not null 
                      then dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b1.nome nm_tramite,   b1.ordem or_tramite,           b1.sigla as sg_tramite,
+                b1.ativo,             b1.envia_mail,
                 b2.acesso,
                 b3.sq_solic_pai as sq_solic_avo, b3.sq_plano as sq_plano_avo, b3.sq_menu as sq_menu_avo,
                 b4.sq_tipo_evento,    b4.nome as nm_tipo_evento,     b4.sigla as sg_tipo_evento,

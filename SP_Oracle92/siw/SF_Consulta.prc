@@ -118,7 +118,7 @@ begin
                                                                                     )
                                          )
                )
-       order by dt_vcto desc;
+       order by 1 desc;
   Elsif upper(p_restricao) = 'NR_COMPROVANTE' Then
      open p_result for
         select numerodoc

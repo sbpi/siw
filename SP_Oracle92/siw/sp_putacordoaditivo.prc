@@ -108,7 +108,7 @@ begin
          update ac_acordo_parcela x set 
             valor             = valor_inicial + valor_reajuste, 
             valor_excedente   = 0, 
-            sq_acordo_aditivo = (select b.sq_acordo_aditivo
+            sq_acordo_aditivo = (select max(b.sq_acordo_aditivo)
                                    from ac_acordo_parcela a
                                         left join ac_acordo_aditivo b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao and
                                                                            a.inicio             between b.inicio and b.fim and

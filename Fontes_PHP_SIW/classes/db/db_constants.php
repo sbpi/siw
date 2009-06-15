@@ -15,7 +15,7 @@ define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
 //define("ORA9_SERVER_NAME", "io.sbpi.com.br");
-define("ORA9_SERVER_NAME", "XE.localdomain");
+define("ORA9_SERVER_NAME", "");
 define("ORA9_DB_USERID", "desenv");
 define("ORA9_DB_PASSWORD", "desenv");
 define("ORA9_DATABASE_NAME", "desenv");

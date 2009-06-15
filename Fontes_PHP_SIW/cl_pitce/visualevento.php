@@ -6,7 +6,6 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  //$RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
   $RS1 = db_getSolicEV::getInstanceOf($dbms, $w_cliente,$w_menu,$w_usuario,
       $l_sg,5,null,null,null,null,null,null,null,null,null,null,$l_chave, null, 
       null, null, null, null, null,null, null, null, null, null, null, null, null, null);
@@ -15,7 +14,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   $w_tramite_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b> '.f($RS1,'titulo').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b> '.f($RS1,'titulo').(($l_tipo=='WORD') ? '' : ' ('.f($RS1,'sq_siw_solicitacao').')').'</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
 
   // Exibe a vinculação
@@ -202,7 +201,7 @@ function VisualEvento($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     foreach ($RSQuery as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
       $l_html.=chr(13).'      <tr>';
-      $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+      $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome').(($l_tipo=='WORD') ? ' ('.f($row,'nome_original').')' : ''),$l_tipo).'</td>';
       $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
       $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
       $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';

@@ -105,15 +105,15 @@ function LinkArquivo ($v_classe, $v_cliente, $v_arquivo, $v_target, $v_hint, $v_
   // Monta a chamada para a página que retorna o arquivo
   $l_link = $conRootSIW.'file.php?force=false&cliente='.$v_cliente.'&id='.$v_arquivo;
 
-  If (strtoupper(Nvl($v_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
-     // Altera a chamada padrão, dispensando a sessão
-     $l_link = $conRootSIW.'file.php?force=false&sessao=false&cliente=' & $v_cliente & '&id=' & $v_arquivo;
-  } ElseIf (strtoupper(Nvl($v_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
-     // Trata a possibilidade da chamada ter passado classe, target e hint
-     If (Nvl($v_classe,'') > '') $l_classe = ' class="' . $v_classe . '" ';  Else $l_classe = '';
-     If (Nvl($v_target,'') > '') $l_target = ' target="' . $v_target . '" '; Else $l_target = '';
-     If (Nvl($v_hint,'')   > '') $l_hint   = ' title="' . $v_hint . '" ';    Else $l_hint   = '';
+  // Trata a possibilidade da chamada ter passado classe, target e hint
+  If (Nvl($v_classe,'') > '') $l_classe = ' class="' . $v_classe . '" ';  Else $l_classe = '';
+  If (Nvl($v_target,'') > '') $l_target = ' target="' . $v_target . '" '; Else $l_target = '';
+  If (Nvl($v_hint,'')   > '') $l_hint   = ' title="' . $v_hint . '" ';    Else $l_hint   = '';
 
+  If (strtoupper(Nvl($v_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
+     // Montagem da tag anchor
+     $l_link = $v_descricao;
+  } ElseIf (strtoupper(Nvl($v_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
      // Montagem da tag anchor
      $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$v_descricao.'</a>';
   }
@@ -1474,7 +1474,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           $l_title  = 'Missão não iniciada.';
         }
       } else {
-        if ($l_tramite!='EE') {
+        if ($l_tramite!='EE' && $l_tramite!='PC'  && $l_tramite!='VP') {
           $l_imagem = $conImgOkAtraso;
           $l_title  = 'Missão em andamento com tramitação em atraso.';
         } else {
@@ -2311,7 +2311,6 @@ function MascaraBeneficiario($cgccpf) {
 // -------------------------------------------------------------------------
 function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   extract($GLOBALS);
-
   include_once($w_dir_volta.'classes/mail/email_message.php');
   include_once($w_dir_volta.'classes/mail/smtp_message.php');
   include_once($w_dir_volta.'classes/mail/smtp.php');
@@ -2373,7 +2372,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   $l_recipients = explode(';',$w_recipients);
   $l_cont = 0;
   foreach($l_recipients as $k => $v) {
-    if (nvl($v,'')!='') {
+    if (nvl($v,'')!='' && strpos($v,'@')!==false) {
       if (strpos($v,'|')!==false) {
         $rec = explode('|',$v);
         $rec_address = trim($rec[0]);
@@ -2493,13 +2492,12 @@ function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_atta
   $mail->MsgHTML($body);
 
   //Varios destinatarios separados por ';'
-
   if (strpos($w_recipients,';')===false) $w_recipients .= ';';
   $l_recipients = explode(';',$w_recipients);
   $l_cont = 0;
   foreach($l_recipients as $k => $v) {
-    if (nvl($v,'')!='') {
-      if (strpos($v,'|')!==false) {
+    if (nvl($v,'')!='' && strpos($v,'@')!==false) {
+    if (strpos($v,'|')!==false) {
       $rec = explode('|',$v);
       $rec_address = trim($rec[0]);
       $rec_name    = trim($rec[1]);
@@ -2522,14 +2520,14 @@ function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_atta
         if ($i==0) {
           // O primeiro destinatário será colocado como "To"
           $mail->AddAddress($k, $v);
-          unset($l_dest[$k]);
+          //unset($l_dest[$k]);
         } elseif ($i==1 && $l_cont==2) {
           // Se só tiver mais um destinatário, coloca header único
           $mail->AddCC($k, $v);
-          unset($l_dest[$k]);
+          //unset($l_dest[$k]);
         }
       }
-      $i++;
+      //$i++;
     }
   }
 
@@ -2543,7 +2541,33 @@ function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_atta
       if (nvl($w_attachments,'')!='') $mail->AddAttachment($w_attachments);                    // attachment quando string
     }
   }
-    
+  //Varios anexos separados por ';'
+  if (strpos($w_attachments,';')===false) $w_attachments .= ';';
+  $l_attachments = explode(';',$w_attachments);
+  $l_cont = 0;
+  foreach($l_attachments as $k => $v) {
+    if (nvl($v,'')!='') {
+    if (strpos($v,'|')!==false) {
+      $file = explode('|',$v);
+      $file_address = trim($file[0]);
+      $file_name    = trim($file[1]);
+    } else {
+      $file_address = trim($v);
+      $file_name    = trim($v);
+    }
+    $l_anexo[$file_address] = $file_name;
+    $l_cont++;
+  }
+  }
+
+  if (is_array($l_anexo)) {
+    foreach($l_anexo as $k => $v) {
+      if (nvl($k,'')!='' && nvl($v,'')!='') {
+        $mail->AddAttachment($v, $k);
+      }
+    }
+  }
+  
   $mail->IsHTML(true); // send as HTML
   //send your e-mail
   if ($conEnviaMail) {

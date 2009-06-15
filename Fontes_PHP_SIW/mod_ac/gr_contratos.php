@@ -307,17 +307,17 @@ function Gerencial() {
   $w_linha_filtro = $w_linha;
   if ($p_tipo == 'WORD') {
     HeaderWord($_REQUEST['orientacao']);
-     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 45: 30);
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-    CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 40: 25);
+    CabecalhoWord($w_cliente,$w_TP,$w_pag);
     $w_embed = 'WORD';
-    if ($w_filtro>'') ShowHTML($w_filtro);    
-  } elseif($p_tipo == 'PDF'){
-    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 60: 35);
+    if ($w_filtro>'') ShowHTML($w_filtro);
+  }elseif($p_tipo == 'PDF'){
+    $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 25: 25);
     $w_embed = 'WORD';
-    HeaderPdf('Consulta de '.f($RS_Menu,'nome'),$w_pag);
+    HeaderPdf($w_TP,$w_pag);
     if ($w_filtro>'') ShowHTML($w_filtro);
   } else {
+    $w_embed = 'HTML';
     Cabecalho();
     ShowHTML('<HEAD>');
     if ($O=='P') {
@@ -1050,6 +1050,7 @@ function ImprimeCabecalho() {
   ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
   ShowHTML('          <td><font size="1"><b>Exec.</font></td>');
   ShowHTML('          <td><font size="1"><b>Conc.</font></td>');
+  ShowHTML('          <td><font size="1"><b>Atraso</font></td>');
   ShowHTML('          <td><font size="1"><b>Aviso</font></td>');
 
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
@@ -1071,6 +1072,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_cad>0 && $O=='L' && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.formatNumber($l_cad,0).'</a>&nbsp;</font></td>');        else ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_cad,0).'&nbsp;</font></td>');
   if ($l_tram>0 && $O=='L' && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.formatNumber($l_tram,0).'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_tram,0).'&nbsp;</font></td>');
   if ($l_conc>0 && $O=='L' && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.formatNumber($l_conc,0).'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_conc,0).'&nbsp;</font></td>');
+  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</font></a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.formatNumber($l_atraso,0).'&nbsp;</td>');
   if ($l_aviso>0 && $O=='L' && $w_embed != 'WORD') ShowHTML('          <td align="right"><font size="1" color="red"><b>'.formatNumber($l_aviso,0).'&nbsp;</font></td>');                                                                                                                                                                                                   else ShowHTML('          <td align="right"><font size="1"><b>'.$l_aviso.'&nbsp;</font></td>');
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
     ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_valor,2).'&nbsp;</font></td>');

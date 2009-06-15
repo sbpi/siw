@@ -21,6 +21,7 @@ create or replace procedure SP_PutSolicConc
    w_menu          siw_menu%rowtype;
    w_menu_lic      siw_menu%rowtype;
    w_sg_modulo     siw_modulo.sigla%type;
+   w_sg_menu       siw_menu.sigla%type;
    w_solic         siw_solicitacao%rowtype;
    w_pedido        cl_solicitacao%rowtype;
    w_chave_nova    siw_solicitacao.sq_siw_solicitacao%type;
@@ -137,7 +138,7 @@ create or replace procedure SP_PutSolicConc
        where a.sq_siw_solicitacao = p_chave;
 begin
    -- Recupera o módulo da solicitação
-   select c.sigla into w_sg_modulo
+   select b.sigla, c.sigla into w_sg_menu, w_sg_modulo
      from siw_solicitacao         a
           inner   join siw_menu   b on (a.sq_menu   = b.sq_menu)
             inner join siw_modulo c on (b.sq_modulo = c.sq_modulo)
@@ -155,7 +156,7 @@ begin
    Values
       (w_chave_dem,               p_chave,            p_pessoa,
        p_tramite,                 sysdate,            'N',
-       'Conclusão da solicitação');
+       case w_sg_menu when 'EVCAD' then 'Envio do evento' else 'Conclusão da solicitação' end);
        
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
@@ -164,7 +165,7 @@ begin
       valor          = coalesce(p_valor,valor),
       sq_siw_tramite = (select sq_siw_tramite 
                           from siw_tramite 
-                         where sq_menu=p_menu 
+                         where sq_menu = p_menu 
                            and Nvl(sigla,'z')='AT'
                        )
    Where sq_siw_solicitacao = p_chave;

@@ -364,6 +364,12 @@ begin
             End If;
          end loop;
       End If;
+      
+      -- Atualiza o valor da parcela
+      update ac_acordo_parcela
+         set valor             = valor_inicial + valor_reajuste + valor_excedente
+       where sq_siw_solicitacao = p_chave;
+
    Elsif p_operacao = 'V' Then
       -- Recupera os dados do aditivo
       select * into w_aditivo from ac_acordo_aditivo where sq_acordo_aditivo = p_aditivo;
@@ -374,7 +380,7 @@ begin
          w_valor := w_aditivo.valor_acrescimo;
       Else
          w_dias := w_aditivo.fim - w_aditivo.inicio;
-         If to_char(w_aditivo.inicio,'dd') > 1 and to_char(w_aditivo.inicio,'mm') = to_char(p_per_ini,'mm') Then
+         If to_char(w_parcela.inicio,'dd') = 1 and to_char(w_aditivo.inicio,'dd') > 1 and to_char(w_aditivo.inicio,'mm') = to_char(p_per_ini,'mm') Then
             -- Parcela termina no último dia mas não começa no primeiro dia
             w_ultimo := 30;
             If to_char(last_day(p_per_ini),'dd') < 30 Then 
@@ -385,7 +391,7 @@ begin
                w_dias_1 := 1; 
             End If;
             w_valor := round(w_dias_1 * (w_aditivo.valor_acrescimo/w_dias),2);
-         Elsif w_aditivo.fim <> p_per_fim and to_char(w_aditivo.fim,'mm') = to_char(p_per_fim,'mm') Then
+         Elsif to_char(w_parcela.inicio,'dd') = 1 and w_aditivo.fim <> p_per_fim and to_char(w_aditivo.fim,'mm') = to_char(p_per_fim,'mm') Then
             -- Parcela começa no primeiro dia mas não termina no último dia
             w_dias_n := w_aditivo.fim - p_per_ini + 1;
             If w_dias_n > 30 Then w_dias_n := 30; End If;
@@ -399,8 +405,8 @@ begin
       -- Atualiza o valor da parcela
       update ac_acordo_parcela
          set sq_acordo_aditivo = p_aditivo,
-             valor             = valor_inicial + valor_reajuste + w_valor,
-             valor_excedente   = w_valor
+             valor             = valor_inicial + valor_reajuste + valor_excedente + w_valor,
+             valor_excedente   = valor_excedente + w_valor
        where sq_acordo_parcela = p_chave_aux;
        
    End If;
