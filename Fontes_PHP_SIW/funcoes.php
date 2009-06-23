@@ -1064,7 +1064,7 @@ function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
       else                                             $l_string .= '<img title="IDC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDCC') {
       if ($l_andamento < 75)                           $l_string .= '<img title="IDCC próximo da faixa desejável." src="'.$conRootSIW.$conImgSmAviso.'" border=0 width="10" height="10">';
-      elseif ($l_andamento <= 100)                      $l_string .= '<img title="IDCC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
+      elseif ($l_andamento <= 100)                     $l_string .= '<img title="IDCC na faixa desejável." src="'.$conRootSIW.$conImgSmNormal.'" border=0 width="10" height="10">';
       else                                             $l_string .= '<img title="IDCC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';
     } elseif ($l_tipo=='IDEC') {
       if ($l_andamento < 70)                           $l_string .= '<img title="IDEC fora da faixa desejável." src="'.$conRootSIW.$conImgSmAtraso.'" border=0 width="10" height="10">';

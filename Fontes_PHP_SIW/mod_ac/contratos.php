@@ -232,6 +232,7 @@ $p_palavra       = strtoupper($_REQUEST['p_palavra']);
 $p_prazo         = strtoupper($_REQUEST['p_prazo']);
 $p_fase          = explodeArray($_REQUEST['p_fase']);
 $p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
+$p_sq_acao_ppa   = strtoupper($_REQUEST['p_sq_acao_ppa']);
 $p_sq_orprior    = strtoupper($_REQUEST['p_sq_orprior']);
 $p_empenho       = strtoupper($_REQUEST['p_empenho']);
 $p_processo      = strtoupper($_REQUEST['p_processo']);
@@ -287,6 +288,7 @@ function Inicial() {
         $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_chave>'') $w_filtro .= '<tr valign="top"><td align="right">Contrato nº <td>[<b>'.$p_chave.'</b>]';
+      if ($p_sq_acao_ppa>'') $w_filtro .= '<tr valign="top"><td align="right">Indicador <td>[<b>'.$p_sq_acao_ppa.'</b>]';
       if ($p_prazo>'') $w_filtro .= ' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
@@ -347,14 +349,14 @@ function Inicial() {
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
-          null, $p_sq_orprior, $p_empenho, $p_processo);
+          $p_sq_acao_ppa, $p_sq_orprior, $p_empenho, $p_processo);
     } else {      
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
-          null, $p_sq_orprior, $p_empenho, $p_processo);
+          $p_sq_acao_ppa, $p_sq_orprior, $p_empenho, $p_processo);
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));

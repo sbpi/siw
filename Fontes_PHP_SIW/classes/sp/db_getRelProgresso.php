@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -22,6 +22,7 @@ class db_getRelProgresso {
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        50),
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
+                  //print_r($params);
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0);
      if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }

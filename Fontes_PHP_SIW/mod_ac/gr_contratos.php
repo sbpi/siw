@@ -85,9 +85,9 @@ $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
 if ($O=='') $O='P';
 switch ($O) {
-  case 'V': $w_TP=$TP.' - Gráfico'; break;
-  case 'P': $w_TP=$TP.' - Filtragem'; break;
-  default : $w_TP=$TP.' - Listagem'; 
+  case 'V': $w_TP.=' - Gráfico'; break;
+  case 'P': $w_TP.=' - Filtragem'; break;
+  default : $w_TP.=' - Listagem'; 
 }
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
@@ -123,6 +123,7 @@ $p_palavra       = strtoupper($_REQUEST['p_palavra']);
 $p_prazo         = strtoupper($_REQUEST['p_prazo']);
 $p_fase          = explodeArray($_REQUEST['p_fase']);
 $p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
+$p_sq_acao_ppa   = $_REQUEST['p_sq_acao_ppa']; 
 $p_sq_orprior    = $_REQUEST['p_sq_orprior'];
 $p_empenho       = strtoupper($_REQUEST['p_empenho']);
 $p_processo      = strtoupper($_REQUEST['p_processo']);
@@ -134,8 +135,14 @@ $p_chave_pai     = strtoupper($_REQUEST['p_chave_pai']);
 // Recupera a configuração do serviço
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 
+// Variável para identificar a sigla do serviço
+$sigla = substr(f($RS_Menu,'sigla'),0,3);
+
 // Recupera a configuração do serviço de origem
 $RS_Menu_Origem = db_getMenuData::getInstanceOf($dbms,$P2);
+
+// Variável para identificar a sigla do serviço de origem
+$sigla_origem = substr(f($RS_Menu_Origem,'sigla'),0,3);
 
 // Carrega o segmento do cliente
 $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
@@ -153,7 +160,7 @@ function Gerencial() {
   $w_linha = 0;
   
   extract($GLOBALS);
-
+  
   // Verifica se o cliente tem o módulo de acordos contratado
   $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
   if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
@@ -177,29 +184,30 @@ function Gerencial() {
     if ($p_atividade>'') {
       $w_linha++;
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     }     
     if ($p_sqcc>'') {
       $w_linha++;
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Classificação <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_chave>'') {$w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Contrato nº <td><font size=1>[<b>'.$p_chave.'</b>]'; }
-    if ($p_prazo>'') {$w_linha++; $w_filtro=$w_filtro.' <tr valign="top"><td align="right"><font size=1>Prazo para conclusão até<td><font size=1>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
+    if ($p_chave>'') {$w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Contrato nº <td><font size=1>[<b>'.$p_chave.'</b>]'; }
+    if ($p_sq_acao_ppa>'') $w_filtro .= '<tr valign="top"><td align="right">Desempenho <td>[<b>'.$p_sq_acao_ppa.'</b>]';
+    if ($p_prazo>'') {$w_linha++; $w_filtro.=' <tr valign="top"><td align="right"><font size=1>Prazo para conclusão até <td><font size=1>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
     if ($p_solicitante>'') {
       $w_linha++;
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Responsável <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Responsável <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_unidade>'') {
       $w_linha++;
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade responsável <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Unidade responsável <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_usu_resp>'') {
       $w_linha++;
       $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_usu_resp,null,null);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Executor <td><font size=1>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_sq_orprior>''){
       $w_linha++;
@@ -210,41 +218,41 @@ function Gerencial() {
     if ($p_uorg_resp>'') {
       $w_linha++;
       $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Unidade atual <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'') {
       $w_linha++;
       $RS = db_getCountryData::getInstanceOf($dbms,$p_pais);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>País <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>País <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_regiao>'') {
       $w_linha++;
       $RS = db_getRegionData::getInstanceOf($dbms,$p_regiao);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Região <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Região <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_uf>'') {
       $w_linha++;
       $RS = db_getStateData::getInstanceOf($dbms,$p_pais,$p_uf);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Estado <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Estado <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_cidade>'') {
       $w_linha++;
       $RS = db_getCityData::getInstanceOf($dbms,$p_cidade);
-      $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Cidade <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right"><font size=1>Cidade <td><font size=1>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_prioridade>'') { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]'; }
+    if ($p_prioridade>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Prioridade <td><font size=1>[<b>'.RetornaPrioridade($p_prioridade).'</b>]'; }
     if ($p_proponente>'')   {
       $w_linha++;
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Bolsista <td><font size=1>[<b>'.$p_proponente.'</b>]';
-      else                                                  $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Outra parte <td><font size=1>[<b>'.$p_proponente.'</b>]';
+      if ($sigla_origem=='GCB')    $w_filtro.='<tr valign="top"><td align="right"><font size=1>Bolsista <td><font size=1>[<b>'.$p_proponente.'</b>]';
+      else                                                  $w_filtro.='<tr valign="top"><td align="right"><font size=1>Outra parte <td><font size=1>[<b>'.$p_proponente.'</b>]';
     }
-    if ($p_objeto>'')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Objeto <td><font size=1>[<b>'.$p_objeto.'</b>]'; }
-    if ($p_palavra>'')  { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]'; }
-    if ($p_ini_i>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Início vigência <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
-    if ($p_fim_i>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Término vigência <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
-    if ($p_atraso>'')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Título <td><font size=1>[<b>'.$p_atraso.'</b>]'; }
-    if ($p_empenho>'')  { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho .'</b>]'; }
-    if ($p_processo>'') { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]'; }
+    if ($p_objeto>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Objeto <td><font size=1>[<b>'.$p_objeto.'</b>]'; }
+    if ($p_palavra>'')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Código interno <td><font size=1>[<b>'.$p_palavra.'</b>]'; }
+    if ($p_ini_i>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Início vigência <td><font size=1>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
+    if ($p_fim_i>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Término vigência <td><font size=1>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
+    if ($p_atraso>'')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Título <td><font size=1>[<b>'.$p_atraso.'</b>]'; }
+    if ($p_empenho>'')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Número do empenho<td><font size=1>[<b>'.$p_empenho .'</b>]'; }
+    if ($p_processo>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right"><font size=1>Número do processo<td><font size=1>[<b>'.$p_processo.'</b>]'; }
     if ($w_filtro>'')   { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>'.$w_filtro.'</ul></tr></table>'; }
     $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
@@ -253,53 +261,61 @@ function Gerencial() {
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_chave_pai, $p_atividade, 
         null, $p_sq_orprior, $p_empenho, $p_processo);
     switch ($p_agrega) {
-      case substr(f($RS_Menu,'sigla'),0,3).'TIPO':
-        $w_TP=$TP.' - Por tipo do acordo';
+      case $sigla.'TIPO':
+        $w_TP.=' - Por tipo do acordo';
         $RS1 = SortArray($RS1,'nm_tipo_acordo','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-        $w_TP=$TP.' - Por projeto';
+      case $sigla.'PROJ':
+        $w_TP.=' - Por projeto';
         $RS1 = SortArray($RS1,'nm_projeto','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
+      case $sigla.'ETAPA':
         $w_TP = $TP.' - Por etapa de projeto';
         $RS1 = SortArray($RS1,'cd_ordem','asc');
         break;        
-      case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-        if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')  $w_TP=$TP.' - Pelo bolista';
-        else                                                $w_TP=$TP.' - Pela outra parte';
+      case $sigla.'PROP':
+        if ($sigla_origem=='GCB')  $w_TP.=' - Pelo bolsista';
+        else                       $w_TP.=' - Pela outra parte';
         $RS1 = SortArray($RS1,'nm_outra_parte_resumido_ind','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'RESP':
-        $w_TP=$TP.' - Por responsável';
+      case $sigla.'RESP':
+        $w_TP.=' - Por responsável';
         $RS1 = SortArray($RS1,'nm_solic','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
-        $w_TP=$TP.' - Por executor';
+      case $sigla.'IDCC':
+        $w_TP.=' - Por desempenho de custo';
+        $RS1 = SortArray($RS1,'nm_idcc','asc');
+        break;
+      case $sigla.'IDEC':
+        $w_TP.=' - Por desempenho de escopo';
+        $RS1 = SortArray($RS1,'nm_idec','asc');
+        break;
+      case $sigla.'RESPATU':
+        $w_TP.=' - Por executor';
         $RS1 = SortArray($RS1,'nm_exec','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'CC':
-        $w_TP=$TP.' - Por classificação';
+      case $sigla.'CC':
+        $w_TP.=' - Por classificação';
         $RS1 = SortArray($RS1,'sg_cc','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
-        $w_TP=$TP.' - Por setor responsável';
+      case $sigla.'SETOR':
+        $w_TP.=' - Por setor responsável';
         $RS1 = SortArray($RS1,'nm_unidade_resp','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'TITULO':
-        $w_TP=$TP.' - Pelo título';
+      case $sigla.'TITULO':
+        $w_TP.=' - Pelo título';
         $RS1 = SortArray($RS1,'nm_acordo','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
-        $w_TP=$TP.' - Por UF';
+      case $sigla.'LOCAL':
+        $w_TP.=' - Por UF';
         $RS1 = SortArray($RS1,'co_uf','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':
-        $w_TP=$TP.' - Por especificação de despesa';
+      case $sigla.'ESPEC':
+        $w_TP.=' - Por especificação de despesa';
         $RS1 = SortArray($RS1,'nm_espec_despesa','asc');
         break;
-      case substr(f($RS_Menu,'sigla'),0,3).'FONTE':
-        $w_TP=$TP.' - Por fonte de recurso';
+      case $sigla.'FONTE':
+        $w_TP.=' - Por fonte de recurso';
         $RS1 = SortArray($RS1,'nm_lcfonte_recurso','asc');
         break;        
     } 
@@ -311,7 +327,7 @@ function Gerencial() {
     CabecalhoWord($w_cliente,$w_TP,$w_pag);
     $w_embed = 'WORD';
     if ($w_filtro>'') ShowHTML($w_filtro);
-  }elseif($p_tipo == 'PDF'){
+  } elseif($p_tipo == 'PDF'){
     $w_linha_pag = ((nvl($_REQUEST['orientacao'],'PORTRAIT')=='PORTRAIT') ? 25: 25);
     $w_embed = 'WORD';
     HeaderPdf($w_TP,$w_pag);
@@ -342,10 +358,10 @@ function Gerencial() {
         }
       }            
       Validate('p_chave','Chave','','','1','18','','0123456789');
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_proponente','Bolsista','','','2','90','1','');
+      if ($sigla_origem=='GCB')    Validate('p_proponente','Bolsista','','','2','90','1','');
       else                                                  Validate('p_proponente','Outra parte','','','2','90','1','');
       Validate('p_atraso','Título','','','1','90','1','1');
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
+      if ($sigla_origem=='GCB')    Validate('p_objeto','Plano de trabalho','','','2','90','1','1');
       else                                                  Validate('p_objeto','Objeto','','','2','90','1','1');
       Validate('p_palavra','Código interno','','','3','90','1','1');
       Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
@@ -374,7 +390,7 @@ function Gerencial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
-      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.substr(f($RS_Menu,'sigla'),0,3).'ETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
+      ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\''.$sigla.'ETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
       ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
       ShowHTML('     theForm.p_chave_pai.focus();');
       ShowHTML('     return false;');
@@ -427,29 +443,33 @@ function Gerencial() {
         ShowHTML('  function lista (chave_aux, filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('      document.Form.p_sq_orprior.value=filtro;');     break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');        break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
-          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    ShowHTML('      document.Form.p_atraso.value=filtro;');         break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
+          case $sigla.'ETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
+          case $sigla.'TIPO':      ShowHTML('      document.Form.p_sq_orprior.value=filtro;');     break;
+          case $sigla.'PROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');      break;
+          case $sigla.'PROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
+          case $sigla.'RESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
+          case $sigla.'IDCC':      ShowHTML('      document.Form.p_sq_acao_ppa.value=filtro;');    break;
+          case $sigla.'IDEC':      ShowHTML('      document.Form.p_sq_acao_ppa.value=filtro;');    break;
+          case $sigla.'RESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
+          case $sigla.'CC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
+          case $sigla.'SETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
+          case $sigla.'TITULO':    ShowHTML('      document.Form.p_atraso.value=filtro;');         break;
+          case $sigla.'LOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');     break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      ShowHTML('    else document.Form.p_sq_orprior.value=\''.$_REQUEST['p_sq_orprior'].'\';');   break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');         break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');               break;
-          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    ShowHTML('    else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\';');           break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
+          case $sigla.'ETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');     break;
+          case $sigla.'TIPO':      ShowHTML('    else document.Form.p_sq_orprior.value=\''.$_REQUEST['p_sq_orprior'].'\';');   break;
+          case $sigla.'PROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');     break;
+          case $sigla.'PROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');   break;
+          case $sigla.'RESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';'); break;
+          case $sigla.'IDCC':      ShowHTML('    else document.Form.p_sq_acao_ppa.value=\''.$_REQUEST['p_sq_acao_ppa'].'\';'); break;
+          case $sigla.'IDEC':      ShowHTML('    else document.Form.p_sq_acao_ppa.value=\''.$_REQUEST['p_sq_acao_ppa'].'\';'); break;
+          case $sigla.'RESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');       break;
+          case $sigla.'CC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');               break;
+          case $sigla.'SETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');         break;
+          case $sigla.'TITULO':    ShowHTML('    else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\';');           break;
+          case $sigla.'LOCAL':     ShowHTML('    else { document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';}');                break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2 = SortArray($RS2,'ordem','asc');
@@ -474,16 +494,18 @@ function Gerencial() {
         AbreForm('Form',f($RS2,'link'),'POST','return(Validacao(this));','Contrato',3,$P2,f($RS2,'P3'),null,$w_TP,f($RS2,'sigla'),$w_pagina.$par,'L');
         ShowHTML(MontaFiltro('POST'));
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':     if ($_REQUEST['p_atividade']=='')       ShowHTML('<input type="Hidden" name="p_atividade" value="">');  break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':      if ($_REQUEST['p_sq_orprior']=='')      ShowHTML('<input type="Hidden" name="p_sq_orprior" value="">'); break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':      if ($_REQUEST['p_chave_pai']=='')       ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':      if ($_REQUEST['p_proponente']=='')      ShowHTML('<input type="Hidden" name="p_proponente" value="">'); break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':      if ($_REQUEST['p_solicitante']=='')     ShowHTML('<input type="Hidden" name="p_solicitante" value="">');break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':   if ($_REQUEST['p_usu_resp']=='')        ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');   break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':        if ($_REQUEST['p_sqcc']=='')            ShowHTML('<input type="Hidden" name="p_sqcc" value="">');       break;
-          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':     if ($_REQUEST['p_unidade']=='')         ShowHTML('<input type="Hidden" name="p_unidade" value="">');    break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':    if ($_REQUEST['p_atraso']=='')          ShowHTML('<input type="Hidden" name="p_atraso" value="">');     break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':     if ($_REQUEST['p_uf']=='')              ShowHTML('<input type="Hidden" name="p_uf" value="">');         break;
+          case $sigla.'ETAPA':     if ($_REQUEST['p_atividade']=='')       ShowHTML('<input type="Hidden" name="p_atividade" value="">');   break;
+          case $sigla.'TIPO':      if ($_REQUEST['p_sq_orprior']=='')      ShowHTML('<input type="Hidden" name="p_sq_orprior" value="">');  break;
+          case $sigla.'PROJ':      if ($_REQUEST['p_chave_pai']=='')       ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');   break;
+          case $sigla.'PROP':      if ($_REQUEST['p_proponente']=='')      ShowHTML('<input type="Hidden" name="p_proponente" value="">');  break;
+          case $sigla.'RESP':      if ($_REQUEST['p_solicitante']=='')     ShowHTML('<input type="Hidden" name="p_solicitante" value="">'); break;
+          case $sigla.'IDCC':      if ($_REQUEST['p_sq_acao_ppa']=='')     ShowHTML('<input type="Hidden" name="p_sq_acao_ppa" value="">'); break;
+          case $sigla.'IDEC':      if ($_REQUEST['p_sq_acao_ppa']=='')     ShowHTML('<input type="Hidden" name="p_sq_acao_ppa" value="">'); break;
+          case $sigla.'RESPATU':   if ($_REQUEST['p_usu_resp']=='')        ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');    break;
+          case $sigla.'CC':        if ($_REQUEST['p_sqcc']=='')            ShowHTML('<input type="Hidden" name="p_sqcc" value="">');        break;
+          case $sigla.'SETOR':     if ($_REQUEST['p_unidade']=='')         ShowHTML('<input type="Hidden" name="p_unidade" value="">');     break;
+          case $sigla.'TITULO':    if ($_REQUEST['p_atraso']=='')          ShowHTML('<input type="Hidden" name="p_atraso" value="">');      break;
+          case $sigla.'LOCAL':     if ($_REQUEST['p_uf']=='')              ShowHTML('<input type="Hidden" name="p_uf" value="">');          break;
         } 
       } 
       $w_nm_quebra='';
@@ -508,7 +530,7 @@ function Gerencial() {
       $t_totacima=0.00;
       foreach ($RS1 as $row1) {
         switch ($p_agrega) {
-          case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
+          case $sigla.'ETAPA':
             if ($w_nm_quebra!=f($row1,'nm_etapa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -533,7 +555,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TIPO':
+          case $sigla.'TIPO':
             if ($w_nm_quebra!=f($row1,'nm_tipo_acordo')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -558,7 +580,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
+          case $sigla.'PROJ':
             if ($w_nm_quebra!=f($row1,'nm_projeto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -583,7 +605,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'PROP':
+          case $sigla.'PROP':
             if ($w_nm_quebra!=f($row1,'nm_outra_parte_resumido')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -608,7 +630,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESP':
+          case $sigla.'RESP':
             if ($w_nm_quebra!=f($row1,'nm_solic')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -633,7 +655,57 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':
+          case $sigla.'IDCC':
+            if ($w_nm_quebra!=f($row1,'nm_idcc')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+              } 
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idcc'));
+              } 
+              $w_nm_quebra=f($row1,'nm_idcc');
+              $w_chave=f($row1,'nm_idcc');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
+            } 
+            break;
+          case $sigla.'IDEC':
+            if ($w_nm_quebra!=f($row1,'nm_idec')) {
+              if ($w_qt_quebra>0) {
+                ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
+              } 
+              if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
+                // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idec'));
+              } 
+              $w_nm_quebra=f($row1,'nm_idec');
+              $w_chave=f($row1,'nm_idec');
+              $w_chave_aux=-1;
+              $w_qt_quebra=0.00;
+              $t_solic=0.00;
+              $t_cad=0.00;
+              $t_tram=0.00;
+              $t_conc=0.00;
+              $t_atraso=0.00;
+              $t_aviso=0.00;
+              $t_valor=0.00;
+              $t_acima=0.00;
+              $t_custo=0.00;
+              $w_linha += 1;
+            } 
+            break;
+          case $sigla.'RESPATU':
             if ($w_nm_quebra!=f($row1,'nm_exec')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -658,7 +730,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'CC':
+          case $sigla.'CC':
             if ($w_nm_quebra!=f($row1,'sg_cc')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -683,7 +755,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'SETOR':
+          case $sigla.'SETOR':
             if ($w_nm_quebra!=f($row1,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -708,7 +780,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'TITULO':
+          case $sigla.'TITULO':
             if ($w_nm_quebra!=f($row1,'nm_acordo')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -733,7 +805,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':
+          case $sigla.'LOCAL':
             if ($w_nm_quebra!=f($row1,'co_uf')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -758,7 +830,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':
+          case $sigla.'ESPEC':
             if ($w_nm_quebra!=f($row1,'nm_espec_despesa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -783,7 +855,7 @@ function Gerencial() {
               $w_linha += 1;
             } 
             break;
-          case substr(f($RS_Menu,'sigla'),0,3).'FONTE':
+          case $sigla.'FONTE':
             if ($w_nm_quebra!=f($row1,'nm_lcfonte_recurso')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
@@ -826,18 +898,20 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));                   break;
-            case substr(f($RS_Menu,'sigla'),0,3).'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));             break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));                 break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));    break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));                   break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));                    break;
-            case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));                      break;
-            case substr(f($RS_Menu,'sigla'),0,3).'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));            break;
-            case substr(f($RS_Menu,'sigla'),0,3).'TITULO':  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));                  break;
-            case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));                      break;
-            case substr(f($RS_Menu,'sigla'),0,3).'FONTE':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));         break;
-            case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));           break;
+            case $sigla.'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));                   break;
+            case $sigla.'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));             break;
+            case $sigla.'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));                 break;
+            case $sigla.'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));    break;
+            case $sigla.'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));                   break;
+            case $sigla.'IDCC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idcc'));                    break;
+            case $sigla.'IDEC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idec'));                    break;
+            case $sigla.'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));                    break;
+            case $sigla.'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));                      break;
+            case $sigla.'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));            break;
+            case $sigla.'TITULO':  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));                  break;
+            case $sigla.'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));                      break;
+            case $sigla.'FONTE':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));         break;
+            case $sigla.'ESPEC':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));           break;
           } 
           $w_linha += 1;
         }
@@ -909,28 +983,24 @@ function Gerencial() {
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><font size="1"><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
     if (f($RS_Menu,'solicita_cc')=='S') {
-      if ($p_agrega==(substr(f($RS_Menu,'sigla'),0,3).'CC'))
-        ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC" selected>Classificação');
-      else
-        ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC'.'">Classificação');
+      ShowHTML('          <option value="'.$sigla.'CC" '.($p_agrega==($sigla.'CC') ? 'selected' : '').'>Classificação');
     } 
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESPATU')                                                    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU" selected>Executor');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESPATU">Executor');
-    if (Nvl($p_agrega,substr(f($RS_Menu,'sigla'),0,3).'PROP')==substr(f($RS_Menu,'sigla'),0,3).'PROP') {
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Bolsista');
-      else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP" selected>Outra parte');
-    } else { 
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Bolsista');
-      else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
+    ShowHTML('          <option value="'.$sigla.'IDCC" '.(($p_agrega==$sigla.'IDCC') ? 'selected' : '').'>Desempenho de custo');
+    ShowHTML('          <option value="'.$sigla.'IDEC" '.(($p_agrega==$sigla.'IDEC') ? 'selected' : '').'>Desempenho de escopo');
+    ShowHTML('          <option value="'.$sigla.'RESPATU" '.(($p_agrega==$sigla.'RESPATU') ? 'selected' : '').'>Executor');
+    if ($sigla_origem=='GCB') ShowHTML('          <option value="'.$sigla.'PROP" '.((Nvl($p_agrega,$sigla.'PROP')==$sigla.'PROP') ? 'selected' : '').'>Bolsista');
+    else                      ShowHTML('          <option value="'.$sigla.'PROP" '.((Nvl($p_agrega,$sigla.'PROP')==$sigla.'PROP') ? 'selected' : '').'>Outra parte');
+    if ($sigla_origem!='GCA') ShowHTML('          <option value="'.$sigla.'PROJ" '.(($p_agrega==$sigla.'PROJ') ? 'selected' : '').'>Projeto');
+    if ($sigla_origem=='GCB') ShowHTML('          <option value="'.$sigla.'ETAPA" '.(($p_agrega==$sigla.'ETAPA') ? 'selected' : '').'>Modalidade de bolsa');
+    ShowHTML('          <option value="'.$sigla.'RESP" '.(($p_agrega==$sigla.'RESP') ? 'selected' : '').'>Responsável');
+    ShowHTML('          <option value="'.$sigla.'SETOR" '.(($p_agrega==$sigla.'SETOR') ? 'selected' : '').'>Setor responsável');
+    ShowHTML('          <option value="'.$sigla.'TIPO" '.(($p_agrega==$sigla.'TIPO') ? 'selected' : '').'>Tipo de acordo');
+    ShowHTML('          <option value="'.$sigla.'TITULO" '.(($p_agrega==$sigla.'TITULO') ? 'selected' : '').'>Título');
+    ShowHTML('          <option value="'.$sigla.'LOCAL" '.(($p_agrega==$sigla.'LOCAL') ? 'selected' : '').'>UF');
+    if($w_segmento=='Público') {
+      ShowHTML('          <option value="'.$sigla.'FONTE" '.(($p_agrega==$sigla.'FONTE') ? 'selected' : '').'>Fonte de recurso');
+      ShowHTML('          <option value="'.$sigla.'ESPEC" '.(($p_agrega==$sigla.'ESPEC') ? 'selected' : '').'>Especificação de despesa');
     }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');                   else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa');      else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');               else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'SETOR')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR" selected>Setor responsável');        else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'SETOR">Setor responsável');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TIPO')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO" selected>Tipo de acordo');            else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO">Tipo de acordo');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TITULO')                                                     ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TITULO" selected>Título');                  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TITULO">Título');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'LOCAL')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL" selected>UF');                       else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'LOCAL">UF');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'FONTE')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'FONTE" selected>Fonte de recurso');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'FONTE">Fonte de recurso');
-    if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ESPEC')                                                      ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ESPEC" selected>Especificação de despesa'); else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ESPEC">Especificação de despesa');
     ShowHTML('          </select></td>');
     MontaRadioSN('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
@@ -939,7 +1009,7 @@ function Gerencial() {
     ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');
     // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
     ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') {
+    if ($sigla_origem=='GCB') {
       $w_atributo = 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_atividade\'; document.Form.submit();"';
     }
     ShowHTML('          <tr><td><table border=0 colspan=0 cellspan=0 width="100%">');
@@ -965,7 +1035,7 @@ function Gerencial() {
     }
     ShowHTML('          </td></tr></table></td></tr>');    
     ShowHTML('      <tr><td colspan=2><table width="100%" border=0><tr valign="top">');
-    SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',substr(f($RS_Menu_Origem,'sigla'),0,3).'TODOS',null);
+    SelecaoTipoAcordo('<u>T</u>ipo:','T','Selecione na lista o tipo adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',$sigla_origem.'TODOS',null);
     ShowHTML('        </table></tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><font size="1"><b>C<u>h</u>ave:<br><INPUT ACCESSKEY="H" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
@@ -978,7 +1048,7 @@ function Gerencial() {
     ShowHTML('          <td><font size="1"><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
     if($w_segmento=='Público') {
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><font size="1"><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
+      if ($sigla_origem!='GCA') ShowHTML('          <td><font size="1"><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
       ShowHTML('          <td><font size="1"><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
     }
     ShowHTML('      <tr valign="top">');
@@ -1033,18 +1103,20 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');             break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');                    break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');                break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');                break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');                   break;
-    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');              break;
-    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');          break;
-    case substr(f($RS_Menu,'sigla'),0,3).'TITULO':      ShowHTML('          <td><font size="1"><b>Título</font></td>');                     break;
-    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                         break;
-    case substr(f($RS_Menu,'sigla'),0,3).'FONTE':       ShowHTML('          <td><font size="1"><b>Fonte de recurso</font></td>');           break;
-    case substr(f($RS_Menu,'sigla'),0,3).'ESPEC':       ShowHTML('          <td><font size="1"><b>Especificação de despesa</font></td>');   break;
+    case $sigla.'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');                      break;
+    case $sigla.'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de acordo</font></td>');             break;
+    case $sigla.'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');                    break;
+    case $sigla.'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');                break;
+    case $sigla.'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');                break;
+    case $sigla.'IDCC':        ShowHTML('          <td><font size="1"><b>IDCC</font></td>');                       break;
+    case $sigla.'IDEC':        ShowHTML('          <td><font size="1"><b>IDEC</font></td>');                       break;
+    case $sigla.'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');                   break;
+    case $sigla.'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');              break;
+    case $sigla.'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');          break;
+    case $sigla.'TITULO':      ShowHTML('          <td><font size="1"><b>Título</font></td>');                     break;
+    case $sigla.'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                         break;
+    case $sigla.'FONTE':       ShowHTML('          <td><font size="1"><b>Fonte de recurso</font></td>');           break;
+    case $sigla.'ESPEC':       ShowHTML('          <td><font size="1"><b>Especificação de despesa</font></td>');   break;
   } 
   ShowHTML('          <td><font size="1"><b>Total</font></td>');
   ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
@@ -1053,7 +1125,7 @@ function ImprimeCabecalho() {
   ShowHTML('          <td><font size="1"><b>Atraso</font></td>');
   ShowHTML('          <td><font size="1"><b>Aviso</font></td>');
 
-  if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
+  if ($_SESSION['INTERNO']=='S' && $sigla_origem!='GCA') {
     ShowHTML('          <td><font size="1"><b>$ Prev.</font></td>');
     ShowHTML('          <td><font size="1"><b>$ Real</font></td>');
     ShowHTML('          <td><font size="1"><b>$ Pendente</font></td>');
@@ -1074,7 +1146,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_conc>0 && $O=='L' && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.formatNumber($l_conc,0).'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_conc,0).'&nbsp;</font></td>');
   if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os projetos.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</font></a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.formatNumber($l_atraso,0).'&nbsp;</td>');
   if ($l_aviso>0 && $O=='L' && $w_embed != 'WORD') ShowHTML('          <td align="right"><font size="1" color="red"><b>'.formatNumber($l_aviso,0).'&nbsp;</font></td>');                                                                                                                                                                                                   else ShowHTML('          <td align="right"><font size="1"><b>'.$l_aviso.'&nbsp;</font></td>');
-  if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
+  if ($_SESSION['INTERNO']=='S' && $sigla_origem!='GCA') {
     ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_valor,2).'&nbsp;</font></td>');
     ShowHTML('          <td align="right"><font size="1">'.formatNumber($l_custo,2).'&nbsp;</font></td>');
     ShowHTML('          <td align="right"><font size="1" '.(($l_acima>0) ? 'color="red"' : '').'><b>'.formatNumber($l_acima,2).'&nbsp;</font></td>');

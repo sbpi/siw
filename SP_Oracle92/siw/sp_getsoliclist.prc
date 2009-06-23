@@ -609,7 +609,18 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.sq_plano,                    b.protocolo_siw,
-                calculaIDCC(b.sq_siw_solicitacao) as idcc, calculaIGCC(b.sq_siw_solicitacao) as igcc,
+                b4.idcc,              b5.igcc,
+                case when b4.idcc < 75   then 'IDCC próximo da faixa desejável'
+                     when b4.idcc <= 100 then 'IDCC na faixa desejável'
+                     else                     'IDCC fora da faixa desejável'
+                end as nm_idcc,
+                case d1.exibe_idec 
+                     when 'N' then null
+                     else case when b4.idcc < 70   then 'IDEC fora da faixa desejável'
+                               when b4.idcc < 90   then 'IDEC próximo da faixa desejável'
+                               else                     'IDEC na faixa desejável'
+                          end
+                end as nm_idec,
                 round(months_between(b.fim,b.inicio)) as meses_contrato,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
@@ -687,6 +698,12 @@ begin
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
+                      inner          join (select sq_siw_solicitacao, calculaIDCC(sq_siw_solicitacao) as idcc
+                                             from siw_solicitacao
+                                          )                    b4 on (b.sq_siw_solicitacao       = b4.sq_siw_solicitacao)
+                      inner          join (select sq_siw_solicitacao, calculaIGCC(sq_siw_solicitacao) as igcc
+                                             from siw_solicitacao
+                                          )                    b5 on (b.sq_siw_solicitacao       = b5.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
@@ -783,6 +800,15 @@ begin
                                                                             )
                                              )
                 )
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and ((p_sq_acao_ppa = 'IDCC PRÓXIMO DA FAIXA DESEJÁVEL' and b4.idcc <   75 ) or
+                                                                             (p_sq_acao_ppa = 'IDCC NA FAIXA DESEJÁVEL'         and b4.idcc >=  75 and b4.idcc <= 100 ) or
+                                                                             (p_sq_acao_ppa = 'IDCC FORA DA FAIXA DESEJÁVEL'    and b4.idcc >  100 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC FORA DA FAIXA DESEJÁVEL'    and b4.idcc <   70 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC PRÓXIMO DA FAIXA DESEJÁVEL' and b4.idcc >=  70 and b4.idcc < 90 ) or
+                                                                             (p_sq_acao_ppa = 'IDEC NA FAIXA DESEJÁVEL'         and b4.idcc >=  90 )
+                                                                            )
+                                             )
+                )
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d2.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
@@ -802,6 +828,7 @@ begin
             and ((instr(p_restricao,'PROJ')    = 0 and
                   instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
+                  instr(p_restricao,'IDEC')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
                   instr(p_restricao,'FONTE')   = 0 and
                   instr(p_restricao,'ESPEC')   = 0 and
@@ -810,6 +837,7 @@ begin
                  ((instr(p_restricao,'PROJ')    > 0    and b.sq_solic_pai is not null) or
                   (instr(p_restricao,'ETAPA')   > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.outra_parte  is not null) or
+                  (instr(p_restricao,'IDEC')    > 0    and d1.exibe_idec = 'S') or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
                   (instr(p_restricao,'FONTE')   > 0    and d.sq_lcfonte_recurso is not null) or
                   (instr(p_restricao,'ESPEC')   > 0    and d.sq_especificacao_despesa is not null) or
