@@ -87,7 +87,7 @@ begin
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
-         select a.sq_projeto_etapa, a.ordem, a.titulo nm_etapa, a.sq_pessoa, a.fim_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, 
+         select a.sq_projeto_etapa, a.descricao, a.pacote_trabalho, a.ordem, a.titulo nm_etapa, a.sq_pessoa, a.fim_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, 
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
                 b.sq_siw_solicitacao as sq_projeto,b.objetivo_superior, c.codigo_interno, c.titulo as nm_projeto, 
                 c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,
