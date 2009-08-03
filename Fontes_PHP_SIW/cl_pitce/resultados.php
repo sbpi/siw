@@ -50,7 +50,7 @@ if ($_SESSION['LOGON'] != 'Sim') {
 }
 
 // Declaração de variáveis
-$dbms = abreSessao :: getInstanceOf($_SESSION['DBMS']);
+$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par = strtoupper($_REQUEST['par']);
@@ -72,6 +72,12 @@ $p_ordena      = strtolower($_REQUEST['p_ordena']);
 $p_atrasado    = $_REQUEST['p_atrasado'];
 $p_adiantado   = $_REQUEST['p_adiantado'];
 $p_concluido   = $_REQUEST['p_concluido'];
+$p_nini_atraso = $_REQUEST['p_nini_atraso'];
+$p_nini_prox   = $_REQUEST['p_nini_prox'];
+$p_nini_normal = $_REQUEST['p_nini_normal'];
+$p_ini_prox    = $_REQUEST['p_ini_prox'];
+$p_ini_normal  = $_REQUEST['p_ini_normal'];
+$p_conc_atraso = $_REQUEST['p_conc_atraso'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
@@ -83,35 +89,26 @@ $w_dir = 'cl_pitce/';
 $w_cliente = RetornaCliente();
 $w_usuario = RetornaUsuario();
 $w_ano     = RetornaAno();
-$w_sem     = $_REQUEST['w_sem'];
-  
+$w_dt_ini  = $_REQUEST['w_dt_ini'];
+$w_dt_fim  = $_REQUEST['w_dt_fim'];
+
 // Configura variáveis para montagem do calendário
 if (nvl($w_mes, '') == '')    $w_mes = date('m', time());
-if (nvl($w_sem, '') == ''){
-  $w_sem = date('Y', time());
-  if(intVal($w_mes)>=1 || intVal($w_mes)<=6){
-    $w_sem .= 1;
-  }else{
-    $w_sem .= 2;
+
+if(nvl($w_dt_ini,'')==''){
+  $w_dt_ini = substr(100+intVal($w_mes),1,2).'/'.$w_ano;
+  if (($w_mes+5)<=12) {
+    $w_dt_fim = substr(100+intVal($w_mes)+5,1,2).'/'.$w_ano;
+  } else {
+    $w_dt_fim = substr(100+intVal($w_mes)+6-12,1,2).'/'.($w_ano+1);
   }
+} else {
+   $w_mes = substr($w_dt_ini,0,2);
+   $w_ano = substr($w_dt_ini,3);
 }
-if(intval(substr($w_sem,4)) == 1){
-  $w_sem = ($w_ano).'1';
-  $w_inicio = first_day(toDate('01/01/'.$w_ano));
-  $w_fim = last_day(toDate('01/06/'.$w_ano));
-  $w_sem1 = ($w_ano-1).'2';
-  $w_sem3 = $w_ano.'2';
-  $w_ano1 = $w_ano-1;
-  $w_ano3 = $w_ano;
-}else{
-  $w_sem = ($w_ano).'2';
-  $w_inicio = first_day(toDate('01/07/'.$w_ano));
-  $w_fim = last_day(toDate('01/12/'.$w_ano));
-  $w_sem1 = $w_ano.'1';
-  $w_sem3 = ($w_ano+1).'1';
-  $w_ano1 = $w_ano;
-  $w_ano3 = $w_ano + 1;
-}
+
+$w_inicio  = first_day(toDate('01/'.$w_dt_ini));
+$w_fim     = last_day(toDate('01/'.$w_dt_fim));
 
 if ($O == '') $O = 'L';
 
@@ -136,6 +133,8 @@ exit;
 function Inicial() {
 
   extract($GLOBALS);
+  global $w_dt_ini;
+  global $w_dt_fim;
   
   $w_tipo  = $_REQUEST['w_tipo'];
   $p_plano = $_REQUEST['p_plano'];
@@ -156,7 +155,11 @@ function Inicial() {
     ShowHTML('  <!-- JS FILE for my tree-view menu -->');
     ShowHTML('  <script src="'.$w_dir_volta.'classes/menu/xPandMenu.js"></script>');
     ScriptOpen('JavaScript');
+    checkBranco();
+    formatadatama();
     ValidateOpen('Validacao');
+    Validate('w_dt_ini','Início','DATAMA','1','7','7','','0123456789/');
+    Validate('w_dt_fim','Fim','DATAMA','1','7','7','','0123456789/');
     Validate('p_texto','Texto','','',3,50,'1','1');
     ValidateClose();
     ScriptClose();
@@ -173,11 +176,13 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
     ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
+    ShowHTML('   <tr><td valign="top"><b>Período de bus<u>c</u>a: (mm/aaaa)</b><td><input '.$w_Disabled.' accesskey="c" type="text" name="w_dt_ini" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_dt_ini.'" onKeyDown="FormataDataMA(this,event);">');
+    ShowHTML('                                                                     a <input '.$w_Disabled.' accesskey="M" type="text" name="w_dt_fim" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_dt_fim.'" onKeyDown="FormataDataMA(this,event);">');
     ShowHTML('   <tr>');
     selecaoPrograma('<u>M</u>acroprograma', 'R', 'Se desejar, selecione um dos macroprogramas.', $p_programa, $p_plano, $p_objetivo, 'p_programa', null, 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"',1,null,'<td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr>');
-    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    $RS = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'PJCAD');
     SelecaoProjeto('<u>P</u>rograma', 'P', 'Selecione um item na relação.', $p_projeto, $w_usuario, f($RS, 'sq_menu'), $p_programa, $p_objetivo, $p_plano, 'p_projeto', 'PJLIST', null, 1, null, '<td>');
     ShowHTML('   </tr>');
     //ShowHTML('                                                 <input '.$w_Disabled.' accesskey="P" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
@@ -191,10 +196,20 @@ function Inicial() {
     ShowHTML('   <td><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_texto" value="'. $p_texto .'"></td>');
     ShowHTML('   </tr>');
     ShowHTML('   <tr><td><b>Recuperar apenas</b></td>');
-    ShowHTML('       <td>');
-    ShowHTML('     <input id="p_atrasado" type="checkbox" '.((nvl($p_atrasado,'')!='') ? 'checked' : '').'  name="p_atrasado"  value="1" />Atrasados');
-    ShowHTML('     <input id="p_adiantado" type="checkbox" '.((nvl($p_adiantado,'')!='') ? 'checked' : '').' name="p_adiantado" value="1" />Concluídos antes do prazo ');
-    ShowHTML('     <input id="p_concluido" type="checkbox" '.((nvl($p_concluido,'')!='') ? 'checked' : '').' name="p_concluido" value="1" /> Concluídos no prazo');
+    ShowHTML('       <td><table border=0 width="100%">');
+    ShowHTML('         <tr valign="top">');
+    ShowHTML('            <td>Não iniciada<td><input id="p_nini_atraso" type="checkbox" '.((nvl($p_nini_atraso,'')!='') ? 'checked' : '').'  name="p_nini_atraso"  value="1" /> <img src="'.$conImgAtraso.'" border=0 width=10> Fim previsto superado.');
+    ShowHTML('            <td><input id="p_nini_prox" type="checkbox" '.((nvl($p_nini_prox,'')!='') ? 'checked' : '').' name="p_nini_prox" value="1" /> <img src="'.$conImgAviso.'" border=0 width=10 heigth=10> Fim previsto próximo.');
+    ShowHTML('            <td><input id="p_nini_normal" type="checkbox" '.((nvl($p_nini_normal,'')!='') ? 'checked' : '').' name="p_nini_normal" value="1" /> <img src="'.$conImgNormal.'" border=0 width=10 heigth=10> Prazo final dentro do previsto.');
+    ShowHTML('         <tr valign="top">');
+    ShowHTML('            <td>Em execução<td><input id="p_atrasado" type="checkbox" '.((nvl($p_atrasado,'')!='') ? 'checked' : '').'  name="p_atrasado"  value="1" /> <img src="'.$conImgStAtraso.'" border=0 width=10 heigth=10> Fim previsto superado.');
+    ShowHTML('            <td><input id="p_ini_prox" type="checkbox" '.((nvl($p_ini_prox,'')!='') ? 'checked' : '').' name="p_ini_prox" value="1" /> <img src="'.$conImgStAviso.'" border=0 width=10 heigth=10> Fim previsto próximo.');
+    ShowHTML('            <td><input id="p_ini_normal" type="checkbox" '.((nvl($p_ini_normal,'')!='') ? 'checked' : '').' name="p_ini_normal" value="1" /> <img src="'.$conImgStNormal.'" border=0 width=10 heigth=10> Prazo final dentro do previsto.');
+    ShowHTML('         <tr valign="top">');
+    ShowHTML('            <td>Concluída<td><input id="p_conc_atraso" type="checkbox" '.((nvl($p_conc_atraso,'')!='') ? 'checked' : '').'  name="p_conc_atraso"  value="1" /> <img src="'.$conImgOkAtraso.'" border=0 width=10 heigth=10> Após a data prevista.');
+    ShowHTML('            <td><input id="p_adiantado" type="checkbox" '.((nvl($p_adiantado,'')!='') ? 'checked' : '').' name="p_adiantado" value="1" /> <img src="'.$conImgOkAcima.'" border=0 width=10 heigth=10> Antes da data prevista.');
+    ShowHTML('            <td><input id="p_concluido" type="checkbox" '.((nvl($p_concluido,'')!='') ? 'checked' : '').' name="p_concluido" value="1" /> <img src="'.$conImgOkNormal.'" border=0 width=10 heigth=10> Na data prevista.');
+    ShowHTML('         </table>');
     ShowHTML('   </td></tr>');
     ShowHTML('   <tr><td><b>Exibir</b></td>');
     ShowHTML('       <td>');
@@ -204,151 +219,31 @@ function Inicial() {
     ShowHTML('   <tr><td>&nbsp;</td>');
     ShowHTML('       <td>');
     ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
-    $RS_Volta = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'MESA');
+    $RS_Volta = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'MESA');
     ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
     ShowHTML('   </td></tr>');
     ShowHTML('</FORM>');
     ShowHTML(' </table></fieldset>');
-    // Exibe o calendário da organização
-    include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-    //for ($i = $w_ano1; $i <= $w_ano3; $i++) {
-      $RS_Ano[$w_ano] = db_getDataEspecial :: getInstanceOf($dbms, $w_cliente, null, $w_ano, 'S', null, null, null);
-      $RS_Ano[$w_ano] = SortArray($RS_Ano[$w_ano], 'data_formatada', 'asc');
-    //}
   
     // Recupera os dados da unidade de lotação do usuário
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
-    $RS_Unidade = db_getUorgData :: getInstanceOf($dbms, $_SESSION['LOTACAO']);
-  
-    if (nvl($w_viagem, '') != '') {
-      $RSMenu_Viagem = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PDINICIAL');
-      $RS_Viagem = db_getSolicList :: getInstanceOf($dbms, f($RSMenu_Viagem, 'sq_menu'), $w_usuario, 'PD', 4, formataDataEdicao($w_inicio), formataDataEdicao($w_fim), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_usuario);
-      $RS_Viagem = SortArray($RS_Viagem, 'inicio', 'desc', 'fim', 'desc');
-  
-      // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
-      foreach ($RS_Viagem as $row) {
-        $w_saida = f($row,'phpdt_saida');
-        $w_chegada = f($row,'phpdt_chegada');
-        if (f($row,'concluida') == 'S') {
-          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), & $w_datas, 'Viagem a serviço\r\nSituação: Finalizada', 'N');
-        }
-        elseif (f($row,'sg_tramite') == 'AE' || f($row,'sg_tramite') == 'EE') {
-          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), & $w_datas, 'Viagem a serviço\r\nSituação: Confirmada', 'N');
-        } else {
-          retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), & $w_datas, 'Viagem a serviço\r\nSituação: Prevista', 'N');
-        }
-        $w_datas[formataDataEdicao($w_saida)]['valor'] = str_replace('serviço', 'serviço (saída às '.date('H:i', $w_saida).'h)', $w_datas[formataDataEdicao($w_saida)]['valor']);
-        $w_datas[formataDataEdicao($w_chegada)]['valor'] = str_replace('serviço', 'serviço (chegada às '.date('H:i', $w_chegada).'h)', $w_datas[formataDataEdicao($w_chegada)]['valor']);
-      }
-      reset($RS_Viagem);
-      foreach ($RS_Viagem as $row) {
-        $w_saida = f($row,'phpdt_saida');
-        $w_chegada = f($row,'phpdt_chegada');
-        retornaArrayDias(f($row,'phpdt_saida'), f($row,'phpdt_chegada'), & $w_cores, $conTrBgColorLightRed1, 'N');
-        if (date('H', $w_saida) > 13)
-          $w_cores[formataDataEdicao($w_saida)]['valor'] = $conTrBgColorLightRed2;
-        if (date('H', $w_chegada) < 14)
-          $w_cores[formataDataEdicao($w_chegada)]['valor'] = $conTrBgColorLightRed2;
-      }
-    }
+    $RS_Unidade = db_getUorgData::getInstanceOf($dbms, $_SESSION['LOTACAO']);
   
     // Verifica a quantidade de colunas a serem exibidas
     $w_colunas = 1;
-  
-    // Configura a largura das colunas
-    switch ($w_colunas) {
-      case 1  : $width = "100%"; break;
-      case 2  : $width = "50%";  break;
-      case 3  : $width = "33%";  break;
-      case 4  : $width = "25%";  break;
-      default : $width = "100%";
-    }
-  
-    ShowHTML('        <table width="100%" border="0" align="center" CELLSPACING=0 CELLPADDING=0 BorderColorDark='.$conTableBorderColorDark.' BorderColorLight='.$conTableBorderColorLight.'><tr valign="top">');
-  
-    // Exibe calendário e suas ocorrências ==============
-    ShowHTML('          <td width="'.$width.'" align="center"><table border="1" cellpadding=0 cellspacing=0>');
-    ShowHTML('            <tr><td colspan=6 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
-    ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
-    ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente, 'nome_resumido').' ('.f($RS_Unidade, 'nm_cidade').')</td>');
-    ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
-    ShowHTML('              </table>');
-    // Variáveis para controle de exibição do cabeçalho das datas especiais
-    $w_detalhe1 = false;
-    $w_detalhe2 = false;
-    $w_detalhe3 = false;
-    ShowHTML('            <tr valign="top">');
-    if(substr($w_sem,4) == 1){    
-      for($i=1; $i<=6;$i++){
-        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
-      }
-    }else{
-      for($i=7; $i<=12;$i++){
-        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
-      }    
-    }
-    /*ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1], $w_mes1.$w_ano1, $w_datas, $w_cores, & $w_detalhe1).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], $w_mes.$w_ano, $w_datas, $w_cores, & $w_detalhe2).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3], $w_mes3.$w_ano3, $w_datas, $w_cores, & $w_detalhe3).' </td>');*/
-  
-    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
-      ShowHTML('            <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');
-      ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
-    }
-  
-    // Exibe informações complementares sobre o calendário
-    ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-    ShowHTML('              <td colspan=6 align="center">');
-    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
-      ShowHTML('                <table width="100%" border="0" cellspacing=1>');
-      if (count($RS_Ano) == 0) {
-        ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
-      } else {
-        ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
-        reset($RS_Ano);
-        //for ($i = $w_ano1; $i <= $w_ano3; $i++) {
-          $RS_Ano_Atual = $RS_Ano[$w_ano];
-          foreach ($RS_Ano_Atual as $row_ano) {
-            // Exibe apenas as ocorrências do trimestre selecionado
-            if (f($row_ano, 'data_formatada') >= $w_inicio && f($row_ano, 'data_formatada') <= $w_fim) {
-              ShowHTML('                  <tr valign="top">');
-              ShowHTML('                    <td align="center">'.date(d.'/'.m, f($row_ano, 'data_formatada')));
-              ShowHTML('                    <td>'.f($row_ano, 'nome'));
-            }
-          }
-        //}
-        ShowHTML('              </table>');
-      }
-    }
-    ShowHTML('          </table>');
-    // Final da exibição do calendário e suas ocorrências ==============
-    ShowHTML('</table>');
-    
   }
 
   
   if($_REQUEST['p_pesquisa'] == 'S'){
     $w_legenda='<table border=0>';
-    $w_legenda.='  <tr valign="top"><td colspan=6>'.(($w_embed=='WORD') ? 'Legenda: ' : '').ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true);
+    $w_legenda.='  <tr valign="top"><td colspan=6>'.(($w_embed=='WORD') ? 'Legenda: ' : '').ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
     $w_legenda.='</table>';
   
-    if ($w_embed!='WORD') {
-      // Inclusão do arquivo da classe
-      include_once($w_dir_volta.'classes/menu/xPandMenu.php');
-      
-      $root = new XMenu();
-      $node1 = &$root->addItem(new XNode('Legenda',false,$conRootSIW.'images/Folder/LineBeginPlus.gif',$conRootSIW.'images/Folder/LineBeginMinus.gif'));
-      $node11 = &$node1->addItem(new XNode($w_legenda,false,'',''));
+    if ($w_embed=='WORD') ShowHTML($w_legenda);
     
-      // Quando for concluída a montagem dos nós, chame a função generateTree(), usando o objeto raiz, para gerar o código HTML.
-      // Essa função não possui argumentos.
-      // No código da função pode ser verificado que há um parâmetro opcional, usado internamente para chamadas recursivas, necessárias à montagem de toda a árvore.
-      ShowHTML(str_replace('Xnode','Xnode1',str_replace('Xleaf','Xleaf1',$root->generateTree())));
-    } else {
-      ShowHTML($w_legenda);
-    }
-    
-    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim), $p_atrasado, $p_adiantado, $p_concluido,null,null,'LISTA');
+    $RS_Resultado = db_getSolicResultado::getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,
+        formataDataEdicao($w_inicio),formataDataEdicao($w_fim), $p_atrasado, $p_adiantado, $p_concluido,$p_nini_atraso, $p_nini_prox, 
+        $p_nini_normal, $p_ini_prox, $p_ini_normal, $p_conc_atraso,null,null,'LISTA');
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -362,7 +257,7 @@ function Inicial() {
       CabecalhoRelatorio($w_cliente,'Visualização de resultados',4,$w_chave,null);
     }
     ShowHTML('<tr valign="top">');
-    ShowHTML('  <td>Período de busca: <b>'.formataDataEdicao($w_inicio).'</b> e <b>'.formataDataEdicao($w_fim).'</b></td>');
+    ShowHTML('  <td>Período de busca: <b>'.formataDataEdicao($w_inicio,9).'</b> a <b>'.formataDataEdicao($w_fim,9).'</b></td>');
     ShowHTML('  <td align="right">Resultados: '.count($RS_Resultado).'</td></tr>');
     ShowHTML('<tr><td align="center" colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -388,7 +283,7 @@ function Inicial() {
       foreach ($RS_Resultado as $row) {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('    <tr valign="top" bgColor="'.$w_cor.'">');
-        ShowHTML('      <td align="center" width="1%" nowrap>'.Date('d/m/Y', Nvl(f($row,'mes_ano'), '---')).'</td>');
+        ShowHTML('      <td align="center" width="1%" nowrap>'.formataDataEdicao(nvl(f($row,'fim_real'),f($row,'mes_ano')),9).'</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row,'nm_programa').'" nowrap>'.Nvl(f($row,'cd_programa'), '---').'</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row,'nm_projeto').'" nowrap>'.Nvl(f($row,'cd_projeto'), '---').'</td>');
         ShowHTML('      <td>'.ExibeImagemSolic('ETAPA',f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row, 'fim_real'),null,null,null,f($row, 'perc_conclusao')).'&nbsp;'.f($row,'titulo'));

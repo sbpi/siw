@@ -14,6 +14,9 @@ include_once($w_dir_volta.'classes/sp/db_getDeskTop_Recurso.php');
 include_once($w_dir_volta.'classes/sp/db_exec.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop.php');
 include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
+include_once($w_dir_volta.'classes/sp/db_getUserList.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
 include_once($w_dir_volta.'classes/sp/db_getEtapaAnexo.php');
@@ -25,6 +28,8 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoEventoCheck.php');
+include_once($w_dir_volta.'funcoes/selecaoMes.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoArquivoTab.php');
 include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  trabalho.php
@@ -71,7 +76,7 @@ $p_unidade     = $_REQUEST['p_unidade'];
 $p_projeto     = $_REQUEST['p_projeto'];
 $p_texto       = $_REQUEST['p_texto'];
 $p_tipo_evento = explodeArray($_REQUEST['p_tipo_evento']);
-$p_ordena      = strtolower($_REQUEST['p_ordena']);
+$p_ordena     = $_REQUEST['p_ordena'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
@@ -80,40 +85,39 @@ $w_pagina       = 'trabalho.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_pitce/';
 
-$w_cliente       = RetornaCliente();
-$w_usuario       = RetornaUsuario();
-$w_ano           = RetornaAno();
-$w_troca      = $_REQUEST['w_troca'];
-$w_sem     = $_REQUEST['w_sem'];
-
+$w_cliente      = RetornaCliente();
+$w_usuario      = RetornaUsuario();
+$w_troca        = $_REQUEST['w_troca'];
+$w_mesano      = $_REQUEST['w_mesano'];
+$w_ano          = RetornaAno();
 
 // Configura variáveis para montagem do calendário
 if (nvl($w_mes,'')=='') $w_mes = date('m',time());
-if (nvl($w_sem, '') == ''){
-  $w_sem = date('Y', time());
-  if(intVal($w_mes)>=1 || intVal($w_mes)<=6){
-    $w_sem .= 1;
-  }else{
-    $w_sem .= 2;
-  }
+
+if (nvl($w_mesano,'')=='') {
+  $w_mesano = $w_mes.'/'.$w_ano;
+} else {
+  $w_mes = substr($w_mesano,0,2);
+  $w_ano = substr($w_mesano,3);
 }
-if(intval(substr($w_sem,4)) == 1){
-  $w_sem = ($w_ano).'1';
-  $w_inicio = first_day(toDate('01/01/'.$w_ano));
-  $w_fim = last_day(toDate('01/06/'.$w_ano));
-  $w_sem1 = ($w_ano-1).'2';
-  $w_sem3 = $w_ano.'2';
-  $w_ano1 = $w_ano-1;
-  $w_ano3 = $w_ano;
-}else{
-  $w_sem = ($w_ano).'2';
-  $w_inicio = first_day(toDate('01/07/'.$w_ano));
-  $w_fim = last_day(toDate('01/12/'.$w_ano));
-  $w_sem1 = $w_ano.'1';
-  $w_sem3 = ($w_ano+1).'1';
-  $w_ano1 = $w_ano;
-  $w_ano3 = $w_ano + 1;
-}
+
+$w_mes1    = substr(100+intVal($w_mes),1,2);
+$w_mes2    = substr(100+intVal($w_mes)+1,1,2);
+$w_mes3    = substr(100+intVal($w_mes)+2,1,2);
+$w_mes4    = substr(100+intVal($w_mes)+3,1,2);
+$w_mes5    = substr(100+intVal($w_mes)+4,1,2);
+$w_mes6    = substr(100+intVal($w_mes)+5,1,2);
+$w_ano1    = $w_ano;
+$w_ano3    = $w_ano;
+// Ajusta a mudança de ano
+if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano3 = $w_ano+1; }
+if ($w_mes3 > 12)  { $w_mes3 = '01'; $w_mes4 = '02'; $w_mes5 = '03'; $w_mes6 = '04'; $w_ano3 = $w_ano+1; }
+if ($w_mes4 > 12)  { $w_mes4 = '01'; $w_mes5 = '02'; $w_mes6 = '03'; $w_ano3 = $w_ano+1; }
+if ($w_mes5 > 12)  { $w_mes5 = '01'; $w_mes6 = '02'; $w_ano3 = $w_ano+1; }
+if ($w_mes6 > 12)  { $w_mes6 = '01'; $w_ano3 = $w_ano+1; }
+
+$w_inicio  = first_day(toDate('01/'.substr(100+(intVal($w_mes1)),1,2).'/'.$w_ano));
+$w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes6)),1,2).'/'.$w_ano3));
 
 if ($O=='') $O='L';
 
@@ -284,15 +288,15 @@ function Mesa() {
     ShowHTML('<img name="pdp" src="'.$w_dir.'pdp.gif" width="611" height="402" border="0" id="pdp" usemap="#m_pdp" alt="" /><map name="m_pdp" id="m_pdp">');
     ShowHTML('<area shape="poly" coords="376,374,608,374,608,402,376,402,376,374" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&O=L&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PRG"" title="Programas: '.$w_todos.'" />');
     //ShowHTML('<area shape="poly" coords="258,248,261,240,269,237,593,237,600,240,603,248,603,253,600,260,593,263,269,263,261,260,258,253,258,248,258,248" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_programa='.$c_pne.'&O=L&p_sinal=S&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne.'" />');
-    ShowHTML('<area shape="poly" coords="409,79,410,76,412,73,421,71,597,71,606,73,608,76,609,79,609,110,608,113,606,116,597,118,421,118,412,116,410,113,409,110,409,79,409,79" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CG-PDP - Docs&TP='.$TP.' - Documentos do Conselho Gestor da PDP" title="Documentos do Conselho Gestor da PDP" />');
+    ShowHTML('<area shape="poly" coords="409,79,410,76,412,73,421,71,597,71,606,73,608,76,609,79,609,110,608,113,606,116,597,118,421,118,412,116,410,113,409,110,409,79,409,79" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=PDPGESTOR&TP='.$TP.' - Documentos do Conselho Gestor da PDP" title="Documentos do Conselho Gestor da PDP" />');
     ShowHTML('<area shape="poly" coords="495,292,496,287,499,283,503,280,509,279,596,279,602,280,606,283,609,287,610,292,610,336,609,341,606,345,602,348,596,349,509,349,503,348,499,345,496,341,495,336,495,292,495,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne2.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne2.'" />');
     ShowHTML('<area shape="poly" coords="372,293,373,288,376,284,380,281,386,281,473,281,479,281,483,284,486,288,487,293,487,338,486,343,483,347,479,350,473,351,386,351,380,350,376,347,373,343,372,338,372,293,372,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne3.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne3.'" />');
     ShowHTML('<area shape="poly" coords="251,293,252,288,254,284,259,281,265,281,351,281,357,281,362,284,364,288,366,293,366,338,364,343,362,347,357,350,351,351,265,351,259,350,254,347,252,343,251,338,251,293,251,293" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pne1.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne1.'" />');
     ShowHTML('<area shape="poly" coords="127,292,128,287,131,283,135,280,141,279,228,279,234,280,238,283,241,287,242,292,242,336,241,341,238,345,234,348,228,349,141,349,135,348,131,345,128,341,127,336,127,292,127,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pde.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pde.'" />');
     ShowHTML('<area shape="poly" coords="1,292,2,287,5,283,9,280,15,279,102,279,108,280,112,283,115,287,116,292,116,336,115,341,112,345,108,348,102,349,15,349,9,348,5,345,2,341,1,336,1,292,1,292" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pns.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pns.'" />');
-    ShowHTML('<area shape="poly" coords="233,84,234,79,237,75,242,72,247,71,369,71,374,72,379,75,382,79,383,84,383,105,382,110,379,114,374,117,369,118,247,118,242,117,237,114,234,110,233,105,233,84,233,84" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=MDIC-PDP - Docs&TP='.$TP.' - Documentos do MDIC" title="Documentos do MDIC" />');
-    ShowHTML('<area shape="poly" coords="233,154,234,149,237,145,242,142,247,141,369,141,374,142,379,145,382,149,383,154,383,175,382,180,379,184,374,187,369,188,247,188,242,187,237,184,234,180,233,175,233,154,233,154" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=SE-PDP - Docs&TP='.$TP.' - Documentos da Secretaria Executiva" title="Documentos da Secretaria Executiva da PDP" />');
-    ShowHTML('<area shape="poly" coords="233,14,234,9,237,5,242,2,247,1,369,1,374,2,379,5,382,9,383,14,383,35,382,40,379,44,374,47,369,48,247,48,242,47,237,44,234,40,233,35,233,14,233,14" target="arquivo" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CNDI-PDP - Docs&TP='.$TP.' - Documentos do CNDI" title="Documentos do CNDI" />');
+    ShowHTML('<area shape="poly" coords="233,84,234,79,237,75,242,72,247,71,369,71,374,72,379,75,382,79,383,84,383,105,382,110,379,114,374,117,369,118,247,118,242,117,237,114,234,110,233,105,233,84,233,84" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=PDPCG&TP='.$TP.' - Documentos do MDIC" title="Documentos do MDIC" />');
+    ShowHTML('<area shape="poly" coords="233,154,234,149,237,145,242,142,247,141,369,141,374,142,379,145,382,149,383,154,383,175,382,180,379,184,374,187,369,188,247,188,242,187,237,184,234,180,233,175,233,154,233,154" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=PDPSE&TP='.$TP.' - Documentos da Secretaria Executiva" title="Documentos da Secretaria Executiva da PDP" />');
+    ShowHTML('<area shape="poly" coords="233,14,234,9,237,5,242,2,247,1,369,1,374,2,379,5,382,9,383,14,383,35,382,40,379,44,374,47,369,48,247,48,242,47,237,44,234,40,233,35,233,14,233,14" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CNDI&TP='.$TP.' - Documentos do CNDI" title="Documentos do CNDI" />');
     ShowHTML('</map>');
     ShowHTML('<table border="0" width="100%">');
     ShowHTML('      <tr><td colspan=3><p>&nbsp;</p>');
@@ -356,66 +360,131 @@ function Alerta() {
 function Arquivos() {
   extract($GLOBALS);
 
-  $p_codigo = $_REQUEST['p_codigo'];
+  $p_unidade = $_REQUEST['p_unidade'];
+  $p_codigo  = $_REQUEST['p_codigo'];
+  $p_tipo    = $_REQUEST['p_tipo'];
+  $p_titulo  = $_REQUEST['p_titulo'];
   
-  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-  $RS1 = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-  $RS1 = SortArray($RS1,'codigo_interno','asc');
-  foreach($RS1 as $row) {
-    if (f($row,'codigo_interno')==$p_codigo) {
-      $RS_Solic = $row;
-      break;
-    }
+  if (nvl($p_unidade,'')!='') {
+    $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
+    foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
+  
+    $p_codigo = f($RS_Unidade,'sigla');
+  } else {
+    $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,null,null,$p_codigo,null);
+    foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
+  
+    $p_unidade = f($RS_Unidade,'sq_unidade');
+
   }
+
+  $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null);
 
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
+  ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
+  ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');
+  ShowHTML('  <!-- JS FILE for my tree-view menu -->');
+  ShowHTML('  <script src="'.$w_dir_volta.'classes/menu/xPandMenu.js"></script>');
+  ScriptOpen('JavaScript');
+  checkBranco();
+  formatadatama();
+  ValidateOpen('Validacao');
+  Validate('p_texto','Texto','','',3,50,'1','1');
+  ValidateClose();
+  ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad=this.focus();');
+  $w_embed="HTML";
   ShowHTML('<table border="0" width="100%">');
-  if (nvl($TP,'')!='') ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  ShowHTML('<tr><td colspan=2><hr>');
-  
-  if (!is_array($RS_Solic)) {
-    ShowHTML('<tr><td colspan=2>Registro não encontrado');
-  } else {
-    // Recupera a EAP
-    $RS_Etapa = db_getSolicEtapa::getInstanceOf($dbms,f($RS_Solic,'sq_siw_solicitacao'),null,'ARVORE',null);
-    
-    foreach($RS_Etapa as $row) {
-      // Se tiver anexos, exibe
-      if (f($row,'qt_anexo')>0) {
-        // Exibe arquivos vinculados
-        $RS = db_getEtapaAnexo::getInstanceOf($dbms,f($row,'sq_projeto_etapa'),null,$w_cliente);
-        $RS = SortArray($RS,'nome','asc');
-        if (count($RS) > 0) {
-          ShowHTML('<tr><td colspan="2"><b>'.strtoupper(f($row,'titulo')).'</b>');
-          ShowHTML('<tr><td align="center" colspan=2>');
-          ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-          ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('          <td width="20%"><b>Título</td>');
-          ShowHTML('          <td width="40%"><b>Resumo</td>');
-          ShowHTML('          <td width="10%"><b>Data</td>');
-          ShowHTML('          <td width="20%"><b>Tipo</td>');
-          ShowHTML('          <td width="20%"><b>Tamanho</td>');
-          ShowHTML('        </tr>');
-          $w_cor=$conTrBgColor;
-          foreach ($RS as $row1) {
-            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-            ShowHTML('    <tr bgColor="'.$w_cor.'">');
-            ShowHTML('     <td>'.LinkArquivo('HL',$w_cliente,f($row1,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row1,'nome'),null).'</td>');
-            ShowHTML('     <td>'.Nvl(f($row1,'descricao'),'---').'</td>');
-            ShowHTML('     <td>'.formataDataEdicao(f($row1,'inclusao')).'</td>');
-            ShowHTML('     <td>'.f($row1,'tipo').'</td>');
-            ShowHTML('     <td align="right">'.round(f($row1,'tamanho')/1024,1).' KB&nbsp;</td>');
-          } 
-          ShowHTML('  </table>');
-          ShowHTML('<tr><td>&nbsp;</td></tr>');
-        }           
-      }
+  ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
+  ShowHTML('<tr><td><hr>');
+  if (count($RS_Membros)>0) {
+    ShowHTML('<fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
+    ShowHTML('   <tr><td><b>Composição</b></td>');
+    foreach($RS_Membros as $row) {
+      ShowHTML('  <tr valign="top">');
+      ShowHTML('    <td width="1%" nowrap><li>'.f($row,'nome').((f($row,'localizacao')!='Única') ? ' ('.f($row,'localizacao').')' : '').'</td>');
+      ShowHTML('    <td><a href="mailto:'.f($row,'email').'">'.f($row,'email').'</a></td>');
+      ShowHTML('  </tr>');
     }
+    ShowHTML('</table></fieldset>');
+    ShowHTML('<tr><td><hr>');
+  }
+  ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
+  AbreForm('Form', $w_dir.$w_pagina.$par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="p_codigo" value="'.$p_codigo.'">');
+  ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
+  ShowHTML('<INPUT type="hidden" name="p_unidade" value="'.f($RS_Unidade,'sq_unidade').'">');
+  /*
+  ShowHTML('   <tr>');
+  SelecaoUnidade('<u>Á</u>rea', 'A', null, $p_unidade, null, 'p_unidade', null, null, null, '<td>');
+  ShowHTML('   </tr>');
+  */
+  ShowHTML('   <tr><td colspan="2"><b>Documentos</b></td>');
+  ShowHTML('   <tr>');
+  SelecaoTipoArquivoTab('Ti<u>p</u>o:','P',null,$p_tipo,null,'p_tipo',null,null,null,'<td>');
+  ShowHTML('   </tr>');
+  ShowHTML('   <tr><td><b>Pesquisa por <u>t</u>exto</b></td>');
+  ShowHTML('   <td><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_texto" value="'. $p_texto .'"></td>');
+  ShowHTML('   </tr>');
+  ShowHTML('   <tr><td>&nbsp;</td>');
+  ShowHTML('       <td>');
+  ShowHTML('       <input class="STB" type="submit" name="Botao" value="BUSCAR" onClick="document.Form.target=\'\'; javascript:document.Form.O.value=\'L\'; javascript:document.Form.p_pesquisa.value=\'S\';">');
+  $RS_Volta = db_getLinkData::getInstanceOf($dbms, $w_cliente, 'MESA');
+  ShowHTML('       <input class="STB" type="button" name="Botao" value="VOLTAR" onClick="javascript:location.href=\''.$conRootSIW.f($RS_Volta, 'link').'&P1='.f($RS_Volta, 'p1').'&P2='.f($RS_Volta, 'p2').'&P3='.f($RS_Volta, 'p3').'&P4='.f($RS_Volta, 'p4').'&TP=<img src='.f($RS_Volta, 'imagem').' BORDER=0>'.f($RS_Volta, 'nome').'&SG='.f($RS_Volta, 'sigla').'\';">');
+  ShowHTML('   </td></tr>');
+  ShowHTML('</FORM>');
+  ShowHTML(' </table></fieldset>');
+  
+  if($_REQUEST['p_pesquisa'] == 'S'){
+    $RS = db_getUorgAnexo::getInstanceOf($dbms,f($RS_Unidade,'sq_unidade'),null,$p_tipo,$p_titulo,$w_cliente);
+    if ($p_ordena>'') { 
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nome','asc');
+    } else {
+      $RS = SortArray($RS,'ordem','asc','nome','asc');
+    }
+    ShowHTML('<tr><td colspan=2><hr>');
+    
+    if (count($RS)==0) {
+      ShowHTML('<tr><td colspan=2>Registro não encontrado');
+    } else {
+      ShowHTML('<tr><td colspan="2"><b>'.strtoupper(f($row,'titulo')).'</b>');
+      ShowHTML('<tr><td align="center" colspan=2>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>'.linkOrdena('Tipo do arquivo','nm_tipo_arquivo').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Título','nome').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Resumo','descricao').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Data','inclusao').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Formato','tipo').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Tamanho','tamanho').'</td>');
+      ShowHTML('        </tr>');
+      $w_cor=$conTrBgColor;
+      foreach($RS as $row1) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('    <tr bgColor="'.$w_cor.'">');
+        ShowHTML('     <td>'.f($row1,'nm_tipo_arquivo').'</td>');
+        ShowHTML('     <td>'.LinkArquivo('HL',$w_cliente,f($row1,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row1,'nome'),null).'</td>');
+        ShowHTML('     <td>'.Nvl(f($row1,'descricao'),'---').'</td>');
+        ShowHTML('     <td>'.formataDataEdicao(f($row1,'inclusao')).'</td>');
+        ShowHTML('     <td>'.f($row1,'tipo').'</td>');
+        ShowHTML('     <td align="right">'.round(f($row1,'tamanho')/1024,1).' KB&nbsp;</td>');
+      } 
+      ShowHTML('  </table>');
+      ShowHTML('<tr><td>&nbsp;</td></tr>');
+    }
+  }
+  if (count($RS_Membros)>0) {
+    ShowHTML('<tr><td colspan=2><hr>');
+    ShowHTML('<fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
+    ShowHTML('   <tr><td><b>Acompanhamento e Monitoramento (SERÁ AZUL POR SER LINK)</b></td>');
+    ShowHTML('</table></fieldset>');
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
@@ -483,6 +552,7 @@ function Calendario() {
       ShowHTML('    return false;');
       ShowHTML('  }');
       Validate('p_programa','Programa','SELECT',null,1,18,'','0123456789');
+      Validate('w_mesano','Mês inicial','DATAMA','1','7','7','','0123456789/');
       ShowHTML('  theForm.p_pesquisa.value="OK";');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -499,8 +569,8 @@ function Calendario() {
     ShowHTML(' <fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));', null, $P1, $P2, $P3, null, $TP, $SG, $R, 'L');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
     ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
+    ShowHTML('   <tr><td><b><u>M</u>ês inicial</b> (mm/aaaa)</b><td><input '.$w_Disabled.' accesskey="m" type="text" name="w_mesano" class="sti" SIZE="7" MAXLENGTH="7" VALUE="'.$w_mesano.'" onKeyDown="FormataDataMA(this,event);" onBlur="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.target=\'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_programa\'; document.Form.submit();"></td>');
     ShowHTML('   <tr>');
     ShowHTML('     <td><b>Recuperar</b><td>');
     ShowHTML('          <input type="CHECKBOX" name="p_agenda" value="S" '.((nvl($p_agenda,'')!='') ? 'checked': '').'> Agenda de ação');
@@ -542,7 +612,7 @@ function Calendario() {
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
     $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
     if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
       if ($p_ordena>'') { 
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -555,13 +625,13 @@ function Calendario() {
       foreach($RS_ResultCal as $row) {
         $w_saida   = f($row,'mes_ano');
         $w_chegada = f($row,'mes_ano');
-        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? 'Início/fim de item da agenda de ação.' : 'Início/fim de evento'), 'N');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_datas, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? 'Item da agenda de ação.' : f($row, 'nm_tipo_evento')), 'N');
       }
       reset($RS_ResultCal);
       foreach($RS_ResultCal as $row) {
         $w_saida   = f($row,'mes_ano');
         $w_chegada = f($row,'mes_ano');
-        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? $conTrBgColorLightYellow2 : $conTrBgColorLightGreen2), 'N');
+        retornaArrayDias(f($row,'mes_ano'), f($row,'mes_ano'), &$w_cores, (((nvl(f($row, 'sq_projeto_etapa'),'')!='')) ? $conTrBgColorLightYellow2 : ((f($row, 'sg_tipo_evento')=='REUNIAO') ? $conTrBgColorLightGreen2 : $conTrBgColorLightBlue1)), 'N');
       }
     }
 
@@ -580,27 +650,19 @@ function Calendario() {
     // Exibe calendário e suas ocorrências ==============
     ShowHTML('          <td width="'.$width.'" align="center"><table border="1" cellpadding=0 cellspacing=0>');
     ShowHTML('            <tr><td colspan=6 width="100%"><table width="100%" border=0 cellpadding=0 cellspacing=0><tr>');
-    ShowHTML('              <td bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem1.'&w_ano='.$w_ano1.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'"><<<</A>');
     ShowHTML('              <td align="center" bgcolor="'.$conTrBgColor.'"><b>Calendário '.f($RS_Cliente, 'nome_resumido').' ('.f($RS_Unidade, 'nm_cidade').')</td>');
-    ShowHTML('              <td align="right" bgcolor="'.$conTrBgColor.'"><A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&w_sem='.$w_sem3.'&w_ano='.$w_ano3.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'">>>></A>');
     ShowHTML('              </table>');
     // Variáveis para controle de exibição do cabeçalho das datas especiais
     $w_detalhe1 = false;
     $w_detalhe2 = false;
     $w_detalhe3 = false;
     ShowHTML('            <tr valign="top">');
-    if(substr($w_sem,4) == 1){    
-      for($i=1; $i<=6;$i++){
-        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
-      }
-    }else{
-      for($i=7; $i<=12;$i++){
-        ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano], substr(100+$i,1,2).$w_sem, $w_datas, $w_cores, & $w_detalhe1).' </td>');
-      }    
-    }
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
-    //ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes2.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes4.$w_ano3,$w_datas,$w_cores,&$w_detalhe4).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes5.$w_ano3,$w_datas,$w_cores,&$w_detalhe5).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes6.$w_ano3,$w_datas,$w_cores,&$w_detalhe6).' </td>');
 
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
       ShowHTML('            <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');
@@ -609,7 +671,7 @@ function Calendario() {
 
     // Exibe informações complementares sobre o calendário
     ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
-    ShowHTML('              <td colspan=6 align="center">');
+    ShowHTML('              <td colspan=3 align="center">');
     if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
       ShowHTML('                <table width="100%" border="0" cellspacing=1>');
       if (count($RS_Ano)==0) {
@@ -631,6 +693,13 @@ function Calendario() {
         ShowHTML('              </table>');
       }
     }
+    ShowHTML('              <td colspan=3>Legenda:<br><table border=0>');
+    ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;&nbsp;&nbsp;<td>Reuniões da PDP');
+    ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightYellow2.'">&nbsp;&nbsp;&nbsp;<td>Itens de Agendas de Ação');
+    ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;&nbsp;&nbsp;<td>Outros eventos');
+    ShowHTML('              <tr><td style="border: 1px solid rgb(0,0,0);">&nbsp;<td>Feriados');
+    ShowHTML('              <tr><td style="border: 2px solid rgb(0,0,0);">&nbsp;<td>Data de hoje');
+    ShowHTML('              </table><br>Observação: as reuniões da PDP terão prioridade sobre os demais tipos de eventos.');
     ShowHTML('          </table>');
     ShowHTML('  </table>');
   }
@@ -638,7 +707,7 @@ function Calendario() {
   if (nvl($_REQUEST['p_pesquisa'],'')!='') {
     $w_legenda='    <table id="legenda">';
     $w_legenda.='      <tr><td colspan="2"><table border=0>';
-    $w_legenda.='        <tr valign="top"><td colspan=6>'.(($w_embed=='WORD') ? 'Legenda para itens de agenda de ação: ' : '').ExibeImagemSolic('PJ',null,null,null,null,null,null,null, null,true);
+    $w_legenda.='        <tr valign="top"><td colspan=6>'.(($w_embed=='WORD') ? 'Legenda para itens de agenda de ação: ' : '').ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
     $w_legenda.='      </table>';
     $w_legenda.='    </table>';
   
@@ -658,7 +727,7 @@ function Calendario() {
       ShowHTML($w_legenda);
     }
     
-    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
     ShowHTML('<table width="100%">');
     ShowHTML('<tr><td align="right" colspan="2"><hr>');      
     if ($w_embed!='WORD') {
@@ -698,8 +767,10 @@ function Calendario() {
         ShowHTML('    <tr valign="top" bgColor="' . $w_cor . '">');
         if (nvl(f($row, 'sq_projeto_etapa'),'')!='') {
           ShowHTML('      <td bgcolor="'.$conTrBgColorLightYellow2.'">&nbsp;</td>');
-        } else {
+        } elseif (f($row, 'sg_tipo_evento')=='REUNIAO') {
           ShowHTML('      <td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;</td>');
+        } else {
+          ShowHTML('      <td bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;</td>');
         }
         ShowHTML('      <td align="center" width="1%" nowrap>' . Date('d/m/Y', Nvl(f($row, 'mes_ano'), '---')) . '</td>');
         ShowHTML('      <td align="center" width="1%" title="'.f($row, 'nm_programa').'" nowrap>' . Nvl(f($row, 'cd_programa'), '---') . '</td>');

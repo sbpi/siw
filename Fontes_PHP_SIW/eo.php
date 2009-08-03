@@ -1,20 +1,23 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
 include_once('jscript.php');
 include_once('funcoes.php');
 include_once('classes/db/abreSessao.php');
+include_once('classes/sp/db_getCustomerData.php');
 include_once('classes/sp/db_getMenuCode.php');
 include_once('classes/sp/db_getMenuData.php');
 include_once('classes/sp/db_getUorgList.php');
 include_once('classes/sp/db_getUorgData.php');
 include_once('classes/sp/db_getAddressList.php');
 include_once('classes/sp/db_getUorgResp.php');
+include_once('classes/sp/db_getUorgAnexo.php');
 include_once('classes/sp/db_verificaAssinatura.php');
 include_once('classes/sp/dml_EoUnidade.php');
 include_once('classes/sp/dml_EoLocal.php');
 include_once('classes/sp/dml_EoResp.php');
+include_once('classes/sp/dml_putUorgArquivo.php');
 include_once('funcoes/selecaoTipoUnidade.php');
 include_once('funcoes/selecaoEOAreaAtuacao.php');
 include_once('funcoes/selecaoUnidadePai.php');
@@ -22,6 +25,7 @@ include_once('funcoes/selecaoUnidadePag.php');
 include_once('funcoes/selecaoUnidadeGest.php');
 include_once('funcoes/selecaoEndereco.php');
 include_once('funcoes/selecaoUsuUnid.php');
+include_once('funcoes/selecaoTipoArquivoTab.php');
 
 // =========================================================================
 //  /eo.php
@@ -147,6 +151,10 @@ function Unidade() {
 
   cabecalho();
   ShowHTML('<HEAD>');
+  ShowHTML('<style> ');
+  ShowHTML(' .lh {text-decoration:none;font:Arial;color="#FF0000"}');
+  ShowHTML(' .lh:HOVER {text-decoration: underline;} ');
+  ShowHTML('</style> ');
   Estrutura_CSS($w_cliente);
   ShowHTML('  <script src="classes/menu/xPandMenu.js"></script>');
   if (strpos('IAE',$O)!==false)   {
@@ -191,7 +199,7 @@ function Unidade() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('L',$O)!==false) {
-    ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO:</font> Unidades com marcadores piscantes não têm responsáveis ou locais indicados.</b></td>');
+    ShowHTML('      <tr><td bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO:</font> Unidades com marcadores na cor vermelha não têm responsáveis ou locais indicados.</b></td>');
     ShowHTML('<tr><td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('<a accesskey="I" class="ss" href="'.$w_pagina.$par.'&TP='.$TP.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
@@ -211,14 +219,15 @@ function Unidade() {
       foreach($RS as $row) {
         $w_ContImg += 1;
         $w_ContOut += 1;
-        if (f($row,'qtd_resp')>0 && f($row,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+        if (f($row,'qtd_resp')>0 && f($row,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
         ShowHTML('<li id="Xnode" class="Xnode" nowrap><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row,'NOME').'</span> ');
         if ($w_libera_edicao=='S') {
-          ShowHTML('<A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-          ShowHTML('<A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+          ShowHTML('<A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+          ShowHTML('<A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
         } 
-        ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Locais</a>&nbsp');
-        ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>');
+        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Locais</a>&nbsp');
+        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>');
+        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
         ShowHTML('</li>');
         ShowHTML('   <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
         $RS1 = db_getUorgList::getInstanceOf($dbms, $w_cliente,f($row,'sq_unidade'),'FILHO',null,null,null);
@@ -226,14 +235,15 @@ function Unidade() {
         foreach($RS1 as $row1) {
           $w_ContImg += 1;
           $w_ContOut += 1;
-          if (f($row1,'qtd_resp')>0 && f($row1,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+          if (f($row1,'qtd_resp')>0 && f($row1,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
           ShowHTML('   <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row1,'NOME').'</span> ');
           if ($w_libera_edicao=='S') {
-            ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-            ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+            ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+            ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row1,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
           } 
-          ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-          ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row1,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row1,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
           ShowHTML('   </li>');
           ShowHTML('      <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
           $RS2 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row1,'sq_unidade'),'FILHO',null,null,null);
@@ -241,14 +251,15 @@ function Unidade() {
           foreach($RS2 as $row2) {
             $w_ContImg += 1;
             $w_ContOut += 1;
-            if (f($row2,'qtd_resp')>0 && f($row2,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+            if (f($row2,'qtd_resp')>0 && f($row2,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
             ShowHTML('         <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row2,'NOME').'</span> ');
             if ($w_libera_edicao=='S') {
-              ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-              ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+              ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+              ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row2,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
             } 
-            ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-            ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+            ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+            ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row2,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+            ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row2,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
             ShowHTML('         </li>');
             ShowHTML('            <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
             $RS3 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row2,'sq_unidade'),'FILHO',null,null,null);
@@ -256,14 +267,15 @@ function Unidade() {
             foreach($RS3 as $row3) {
               $w_ContImg += 1;
               $w_ContOut += 1;
-              if (f($row3,'qtd_resp')>0 && f($row3,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+              if (f($row3,'qtd_resp')>0 && f($row3,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
               ShowHTML('            <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row3,'NOME').'</span> ');
               if ($w_libera_edicao=='S') {
-                ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row3,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
               } 
-              ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-              ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+              ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+              ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row3,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+              ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row3,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
               ShowHTML('            </li>');
               ShowHTML('               <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
               $RS4 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row3,'sq_unidade'),'FILHO',null,null,null);
@@ -271,14 +283,15 @@ function Unidade() {
               foreach($RS4 as $row4) {
                 $w_ContImg += 1;
                 $w_ContOut += 1;
-                if (f($row4,'qtd_resp')>0 && f($row4,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                if (f($row4,'qtd_resp')>0 && f($row4,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                 ShowHTML('               <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row4,'NOME').'</span> ');
                 if ($w_libera_edicao=='S') {
-                  ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                  ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                  ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                  ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row4,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                 } 
-                ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row4,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row4,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                 ShowHTML('               </li>');
                 ShowHTML('                  <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                 $RS5 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row4,'sq_unidade'),'FILHO',null,null,null);
@@ -286,14 +299,15 @@ function Unidade() {
                 foreach($RS5 as $row5) {
                   $w_ContImg += 1;
                   $w_ContOut += 1;
-                  if (f($row5,'qtd_resp')>0 && f($row5,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                  if (f($row5,'qtd_resp')>0 && f($row5,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                   ShowHTML('                  <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row5,'NOME').'</span> ');
                   if ($w_libera_edicao=='S') {
-                    ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                    ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                    ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                    ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row5,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                   } 
-                  ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                  ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                  ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                  ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row5,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                  ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row5,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                   ShowHTML('                  </li>');
                   ShowHTML('                     <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                   $RS6 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row5,'sq_unidade'),'FILHO',null,null,null);
@@ -301,14 +315,15 @@ function Unidade() {
                   foreach($RS6 as $row6) {
                     $w_ContImg += 1;
                     $w_ContOut += 1;
-                    if (f($row6,'qtd_resp')>0 && f($row6,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                    if (f($row6,'qtd_resp')>0 && f($row6,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                     ShowHTML('                     <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row6,'NOME').'</span> ');
                     if ($w_libera_edicao=='S') {
-                      ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                      ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                      ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                      ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row6,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                     } 
-                    ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                    ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                    ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                    ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row6,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                    ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row6,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                     ShowHTML('                     </li>');
                     ShowHTML('                        <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                     $RS7 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row6,'sq_unidade'),'FILHO',null,null,null);
@@ -316,14 +331,15 @@ function Unidade() {
                     foreach($RS7 as $row7) {
                       $w_ContImg += 1;
                       $w_ContOut += 1;
-                      if (f($row7,'qtd_resp')>0 && f($row7,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                      if (f($row7,'qtd_resp')>0 && f($row7,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                       ShowHTML('                        <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row7,'NOME').'</span> ');
                       if ($w_libera_edicao=='S') {
-                        ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                        ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                        ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                        ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row7,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                       } 
-                      ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                      ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                      ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                      ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row7,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                      ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row7,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                       ShowHTML('                        </li>');
                       ShowHTML('                           <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                       $RS8 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row7,'sq_unidade'),'FILHO',null,null,null);
@@ -331,14 +347,15 @@ function Unidade() {
                       foreach($RS8 as $row8) {
                         $w_ContImg += 1;
                         $w_ContOut += 1;
-                        if (f($row8,'qtd_resp')>0 && f($row8,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                        if (f($row8,'qtd_resp')>0 && f($row8,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                         ShowHTML('                           <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row8,'NOME').'</span> ');
                         if ($w_libera_edicao=='S') {
-                          ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                          ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                          ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                          ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row8,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                         } 
-                        ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                        ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row8,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                        ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row8,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                         ShowHTML('                           </li>');
                         ShowHTML('                              <ul id="Xtree'.$w_ContOut.'" class="Xtree" style="display:block;">');
                         $RS9 = db_getUorgList::getInstanceOf($dbms,$w_cliente,f($row8,'sq_unidade'),'FILHO',null,null,null);
@@ -346,14 +363,15 @@ function Unidade() {
                         foreach($RS9 as $row9) {
                           $w_ContImg += 1;
                           $w_ContOut += 1;
-                          if (f($row9,'qtd_resp')>0 && f($row9,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conRootSIW.'images/ballc.gif'; 
+                          if (f($row9,'qtd_resp')>0 && f($row9,'qtd_local')>0) $w_imagem=$conRootSIW.'images/ballw.gif'; else $w_imagem=$conImgAtraso; 
                           ShowHTML('                              <li id="Xnode" class="Xnode"><span onClick="xSwapImg(document.getElementById(\'Ximg'.$w_ContImg.'\'),\''.$w_imagem.'\',\''.$w_imagem.'\');xMenuShowHide(document.getElementById(\'Xtree'.$w_ContOut.'\'));"><img id="Ximg'.$w_ContImg.'" src="'.$w_imagem.'" border="0">&nbsp;'.f($row9,'NOME').'</span> ');
                           if ($w_libera_edicao=='S') {
-                            ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
-                            ShowHTML(' <A class="Xlink" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
+                            ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">AL</A>&nbsp');
+                            ShowHTML(' <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_sq_unidade='.f($row9,'sq_unidade').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir">EX</A>&nbsp');
                           } 
-                          ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row9,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
-                          ShowHTML('<a class="Xlink" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row9,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Localizacao&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Localização&O=L&SG=LUORG&w_sq_unidade='.f($row9,'sq_unidade').'\',\'Local\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\')">Locais</a>&nbsp');
+                          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Responsavel&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Responsáveis&O=L&SG=RESPONSAVEL&w_sq_unidade='.f($row9,'sq_unidade').'\',\'Responsaveis\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Responsáveis</a>&nbsp');
+                          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave='.f($row9,'sq_unidade').'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Documentos</a>');
                           ShowHTML('                              </li>');
                         } 
                       } 
@@ -609,6 +627,175 @@ function Localizacao() {
   Estrutura_Texto_Fecha();
 } 
 
+// =========================================================================
+// Rotina da tabela de documentos
+// -------------------------------------------------------------------------
+function Documentos() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+
+  $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null);
+  foreach ($RS as $row) $w_nome_unidade = f($row,'nome');
+  
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página 
+    $w_tipo      = $_REQUEST['w_tipo'];
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_ordem     = $_REQUEST['w_ordem'];
+    $w_descricao = $_REQUEST['w_descricao'];
+    $w_caminho   = $_REQUEST['w_caminho'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem 
+    $RS = db_getUorgAnexo::getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
+    $RS = SortArray($RS,'ordem','asc','nome','asc');
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado 
+    $RS = db_getUorgAnexo::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
+    foreach ($RS as $row) {
+      $w_tipo      = f($row,'sq_tipo_arquivo');
+      $w_nome      = f($row,'nome');
+      $w_ordem     = f($row,'ordem');
+      $w_descricao = f($row,'descricao');
+      $w_caminho   = f($row,'chave_aux');
+    }
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (strpos('IAEP',$O)!==false) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      Validate('w_nome','Título','1','1','1','255','1','1');
+      Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
+      Validate('w_tipo','Tipo','SELECT','1','1','18','','1');
+      Validate('w_descricao','Descrição','1','1','1','1000','1','1');
+      if ($O=='I') {
+        Validate('w_caminho','Arquivo','','1','5','255','1','1');
+      } 
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I') {
+    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  } elseif ($O=='A') {
+    BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td colspan=4 align=center><font size="2"><b>'.$w_nome_unidade.'&nbsp;');
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.linkOrdena('Ordem','ordem').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Tipo do arquivo','nm_tipo_arquivo').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Título','nome').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Formato','tipo').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('KB','tamanho').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem 
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem 
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'ordem').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_arquivo').'</td>');
+        ShowHTML('        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+        ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'tipo').'</td>');
+        ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
+    ShowHTML('<FORM action="'.$w_pagina.'Grava&SG='.$SG.'&O='.$O.'" name="Form" onSubmit="return(Validacao(this));" enctype="multipart/form-data" method="POST">');
+    ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+    ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+    ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+    ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+    ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+    ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_caminho.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    if ($O=='I' || $O=='A') {
+      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      ShowHTML('      <tr><td align="center" colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
+      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    }  
+    ShowHTML('      <tr><td colspan="2"><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>O</u>rdem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_ordem" class="STI" SIZE="4" MAXLENGTH="255" VALUE="'.$w_ordem.'" title="OBRIGATÓRIO. Informe um número de ordem para o arquivo."></td>');
+    SelecaoTipoArquivoTab('<u>T</u>ipo:','T',null,$w_tipo,null,'w_tipo',null);
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr><td colspan="2"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="OBRIGATÓRIO. Descreva a finalidade do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="2"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
+    if ($w_caminho>'') {
+      ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
+    } 
+    ShowHTML('      <tr><td align="center" colspan="2"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);' 
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+  
 // =========================================================================
 // Rotina da tabela de responsavel
 // -------------------------------------------------------------------------
@@ -1019,7 +1206,84 @@ function Grava() {
       } 
       retornaFormulario('w_assinatura');
       break;
-    } 
+    case 'DOCS':  //CADASTRO DE DOCUMENTOS
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (UPLOAD_ERR_OK==0) {
+          $w_maximo = $_REQUEST['w_upload_maximo'];
+          foreach ($_FILES as $Chv => $Field) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            }
+            $w_tamanho = $Field['size'];          
+            if ($Field['size'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ScriptClose();
+                retornaFormulario('w_observacao');
+                exit();
+              } 
+              // Se já há um nome para o arquivo, mantém 
+              if ($_REQUEST['w_atual']>'') {
+                $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+                foreach ($RS as $row) {
+                  if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                  if (strpos(f($row,'caminho'),'.')!==false) {
+                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                  } else {
+                    $w_file = basename(f($row,'caminho'));
+                  }
+                }
+              } else {
+                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+                if (strpos($Field['name'],'.')!==false) {
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+                }
+              }
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+              } elseif(nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
+            }  
+          } 
+          // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+          if ($O=='E' && $_REQUEST['w_atual']>'') {
+            $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+            foreach ($RS as $row) {
+              if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+            }
+          } 
+          dml_putUorgArquivo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
+               $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ScriptClose();
+          exit();
+        } 
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
+  } 
 } 
 
 // =========================================================================
@@ -1029,6 +1293,7 @@ function Main() {
   extract($GLOBALS);
   switch ($par) {
   case 'UORG':           Unidade();          break;
+  case 'DOCUMENTOS':     Documentos();       break;
   case 'BUSCAUNIDADE':   BuscaUnidade();     break;
   case 'BUSCALCUNIDADE': BuscaLcUnidade;     break;
   case 'LOCALIZACAO':    Localizacao();      break;

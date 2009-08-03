@@ -974,6 +974,7 @@ Fontes_PHP_SIW/classes/sp/db_getTTUsuario.php -text
 Fontes_PHP_SIW/classes/sp/db_getTabela.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoAcao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoApoioList.php -text
+Fontes_PHP_SIW/classes/sp/db_getTipoArquivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDado.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/db_getTipoDespacho_PA.php -text
@@ -1009,6 +1010,7 @@ Fontes_PHP_SIW/classes/sp/db_getUnidade_PA.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnidade_PE.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnitTypeData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUnitTypeList.php -text
+Fontes_PHP_SIW/classes/sp/db_getUorgAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getUorgData.php -text
 Fontes_PHP_SIW/classes/sp/db_getUorgList.php -text
 Fontes_PHP_SIW/classes/sp/db_getUorgResp.php -text
@@ -1321,6 +1323,7 @@ Fontes_PHP_SIW/classes/sp/dml_putTTUsuarioCentral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTabela.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTarefaGeral.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTarefaLimite.php -text
+Fontes_PHP_SIW/classes/sp/dml_putTipoArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDado.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDemanda.php -text
 Fontes_PHP_SIW/classes/sp/dml_putTipoDespacho_PA.php -text
@@ -1345,6 +1348,7 @@ Fontes_PHP_SIW/classes/sp/dml_putUnidadeMedida.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_CL.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUnidade_PE.php -text
+Fontes_PHP_SIW/classes/sp/dml_putUorgArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putUsuarioTemp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putValorDiaria.php -text
@@ -1587,6 +1591,7 @@ Fontes_PHP_SIW/funcoes/selecaoTelefoneTT.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAcordo.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAfastamento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoArquivo.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoArquivoTab.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoAutenticacao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoConclusao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoCumprimento.php -text
@@ -2131,6 +2136,7 @@ Fontes_PHP_SIW/mod_dm/visualdemanda.php -text
 Fontes_PHP_SIW/mod_dm/visualtriagem.php -text
 Fontes_PHP_SIW/mod_eo/fornecedor.php -text
 Fontes_PHP_SIW/mod_eo/relatorios.php -text
+Fontes_PHP_SIW/mod_eo/tabelas.php -text
 Fontes_PHP_SIW/mod_eo/visualfornecedor.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
@@ -2258,6 +2264,7 @@ Fontes_PHP_SIW/tabela_localizacao.php -text
 Fontes_PHP_SIW/tabela_siw.php -text
 Fontes_PHP_SIW/tarifacao.php -text
 Fontes_PHP_SIW/test.php -text
+Fontes_PHP_SIW/teste.php -text
 Fontes_PHP_SIW/trabalho.php -text
 Fontes_PHP_SIW/visualCliente.php -text
 Fontes_PHP_SIW/visualalerta.php -text
@@ -3743,6 +3750,7 @@ SP_Oracle92/siw/GeraCodigoInterno.prc -text
 SP_Oracle92/siw/GetCodigo.fnc -text
 SP_Oracle92/siw/LIMPA_BASE.prc -text
 SP_Oracle92/siw/MontaNomeAlmoxLocal.fnc -text
+SP_Oracle92/siw/MontaNomeArquivoLocal.fnc -text
 SP_Oracle92/siw/MontaNomeMenu.fnc -text
 SP_Oracle92/siw/MontaNomePrestacaoContas.fnc -text
 SP_Oracle92/siw/MontaNomeSolic.fnc -text
@@ -3758,6 +3766,7 @@ SP_Oracle92/siw/SF_Consulta.prc -text
 SP_Oracle92/siw/SP_GetACParametro.prc -text
 SP_Oracle92/siw/SP_GetAfastamento.prc -text
 SP_Oracle92/siw/SP_GetAlmoxarifado.prc -text
+SP_Oracle92/siw/SP_GetArquivo_PA.prc -text
 SP_Oracle92/siw/SP_GetCLFinanceiro.prc -text
 SP_Oracle92/siw/SP_GetCLParametro.prc -text
 SP_Oracle92/siw/SP_GetCaixa.prc -text
@@ -3795,6 +3804,8 @@ SP_Oracle92/siw/SP_PutACParametro.prc -text
 SP_Oracle92/siw/SP_PutAfastamento.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifado.prc -text
 SP_Oracle92/siw/SP_PutAlmoxarifadoLocal.prc -text
+SP_Oracle92/siw/SP_PutArquivoLocal_PA.prc -text
+SP_Oracle92/siw/SP_PutArquivo_PA.prc -text
 SP_Oracle92/siw/SP_PutCLGeral.prc -text
 SP_Oracle92/siw/SP_PutCLUsuario.prc -text
 SP_Oracle92/siw/SP_PutCaixa.prc -text
@@ -3942,6 +3953,7 @@ SP_Oracle92/siw/sp_getSolicRecursos.prc -text
 SP_Oracle92/siw/sp_getSolicRestricao.prc -text
 SP_Oracle92/siw/sp_getSolicSR.prc -text
 SP_Oracle92/siw/sp_getSolic_Vinculo.prc -text
+SP_Oracle92/siw/sp_getTipoArquivo.prc -text
 SP_Oracle92/siw/sp_getTipoEvento.prc -text
 SP_Oracle92/siw/sp_getTipoIndicador.prc -text
 SP_Oracle92/siw/sp_getTipoInteressado.prc -text
@@ -3952,6 +3964,7 @@ SP_Oracle92/siw/sp_getTipoRestricao.prc -text
 SP_Oracle92/siw/sp_getTipoVeiculo.prc -text
 SP_Oracle92/siw/sp_getUnidadeMedida.prc -text
 SP_Oracle92/siw/sp_getUnidade_PE.prc -text
+SP_Oracle92/siw/sp_getUorgAnexo.prc -text
 SP_Oracle92/siw/sp_getVeiculo.prc -text
 SP_Oracle92/siw/sp_getacaoppa.prc -text
 SP_Oracle92/siw/sp_getacordoparcela.prc -text
@@ -4226,6 +4239,7 @@ SP_Oracle92/siw/sp_putSolicRecAlocacao.prc -text
 SP_Oracle92/siw/sp_putSolicRecurso.prc -text
 SP_Oracle92/siw/sp_putSolicRestricao.prc -text
 SP_Oracle92/siw/sp_putSolic_Vinculo.prc -text
+SP_Oracle92/siw/sp_putTipoArquivo.prc -text
 SP_Oracle92/siw/sp_putTipoEvento.prc -text
 SP_Oracle92/siw/sp_putTipoIndicador.prc -text
 SP_Oracle92/siw/sp_putTipoInteressado.prc -text
@@ -4234,6 +4248,7 @@ SP_Oracle92/siw/sp_putTipoRecurso.prc -text
 SP_Oracle92/siw/sp_putTipoRestricao.prc -text
 SP_Oracle92/siw/sp_putUnidadeMedida.prc -text
 SP_Oracle92/siw/sp_putUnidade_PE.prc -text
+SP_Oracle92/siw/sp_putUorgArquivo.prc -text
 SP_Oracle92/siw/sp_putabastecimento.prc -text
 SP_Oracle92/siw/sp_putacaoppa.prc -text
 SP_Oracle92/siw/sp_putacordoaditivo.prc -text

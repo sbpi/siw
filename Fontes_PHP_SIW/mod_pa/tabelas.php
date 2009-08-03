@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -18,6 +18,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoGuarda_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getCaixa.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoDespacho_PA.php');
@@ -127,7 +128,12 @@ function TipoDespacho() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc');
+    }    
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados chave informada
     $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
@@ -181,9 +187,10 @@ function TipoDespacho() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Descricao','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
@@ -197,6 +204,7 @@ function TipoDespacho() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -547,7 +555,12 @@ function EspecieDocumento() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc');
+    }    
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
@@ -600,9 +613,9 @@ function EspecieDocumento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -925,7 +938,12 @@ function NaturezaDoc() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getNaturezaDoc_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados chave informada
     $RS = db_getNaturezaDoc_PA::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
@@ -979,9 +997,10 @@ function NaturezaDoc() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Descricao','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
@@ -995,6 +1014,7 @@ function NaturezaDoc() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -1070,7 +1090,12 @@ function TipoGuarda() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null,null,null,null);
-    $RS = SortArray($RS,'sigla','asc');
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sigla','asc');
+    } else {
+      $RS = SortArray($RS,'sigla','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados chave informada
     $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null,null,null,null);
@@ -1126,12 +1151,13 @@ function TipoGuarda() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Fase corrente</td>');
-    ShowHTML('          <td><b>Fase intermediária</td>');
-    ShowHTML('          <td><b>Fase final</td>');
-    ShowHTML('          <td><b>Destinação final</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Fase corrente','nm_fase_corrente').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Fase intermediária','nm_fase_intermed').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Fase final','nm_fase_final').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Destinação final','nm_destinacao_final').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
@@ -1144,6 +1170,7 @@ function TipoGuarda() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_fase_corrente').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_fase_intermed').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_fase_final').'</td>');
@@ -2113,8 +2140,8 @@ function Arquivo() {
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
-      } else {
-      $RS = SortArray($RS,'padrao','desc','nome','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc');
     }
   } elseif (!(strpos('AE',$O)===false) && $w_troca=='') {
     // Recupera os dados chave informada
@@ -2172,7 +2199,7 @@ function Arquivo() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    //ShowHTML('          <td><b>'.LinkOrdena('Localização','nm_unidade').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Localização','nm_unidade').'</font></td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><b>Operações</font></td>');
     ShowHTML('        </tr>');
@@ -2185,7 +2212,7 @@ function Arquivo() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
-        //ShowHTML('        <td>'.f($row,'nm_unidade').' (' . f($row, 'nm_localizacao') . ')</td>');
+        ShowHTML('        <td>'.f($row,'nm_unidade').' (' . f($row, 'nm_localizacao') . ')</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -2255,6 +2282,11 @@ function Locais() {
   $w_chave        = $_REQUEST['w_chave'];
   $w_chave_aux    = $_REQUEST['w_chave_aux'];
     
+  // Recupera o nome do arquivo
+  $RS = db_getArquivo_PA::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,'OUTROS');
+  foreach($RS as $row) { $RS = $row; break; }
+  $w_nome_arquivo         = f($RS,'nome');
+  
   if ($w_troca>'' && $O!='E' && $O!='D' && $O!='T') {  
     $w_cliente        = $_REQUEST['w_cliente'];
     $w_chave_pai      = $_REQUEST['w_chave_pai'];
@@ -2310,6 +2342,7 @@ function Locais() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('<tr><td align="center"><font size="2"><b>'.$w_nome_arquivo.'&nbsp;');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="99%" border="0">');
   if ($O=='L') {

@@ -19,7 +19,6 @@
   include_once($w_dir_volta.'classes/sp/db_getEtapaAnexo.php');
   include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
-  include_once($w_dir_volta.'classes/sp/db_getSolicResultado.php');
   include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
   include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
   include_once($w_dir_volta.'funcoes/selecaoProjeto.php');

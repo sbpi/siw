@@ -1,4 +1,4 @@
-<?
+<?php
 // Garante que a sessão será reinicializada.
 session_start();
 if (isset($_SESSION['LOGON1'])) {
@@ -80,7 +80,6 @@ exit;
 function Valida() {
     extract($GLOBALS);
     $w_erro=0;
-    
     if (db_verificaUsuario::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $wNoUsuario)==0) {
       $w_erro=1;
     } else {

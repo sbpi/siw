@@ -1,4 +1,4 @@
-<?
+<?php 
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');

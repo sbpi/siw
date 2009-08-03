@@ -10,6 +10,12 @@ create or replace procedure SP_GetSolicResultado
     p_atrasado    in varchar2 default null,
     p_adiantado   in varchar2 default null,
     p_concluido   in varchar2 default null,
+    p_nini_atraso in varchar2 default null,
+    p_nini_prox   in varchar2 default null,
+    p_nini_normal in varchar2 default null,
+    p_ini_prox    in varchar2 default null,
+    p_ini_normal  in varchar2 default null,
+    p_conc_atraso in varchar2 default null,
     p_agenda      in varchar2 default null,
     p_tipo_evento in varchar2 default null,
     p_restricao   in varchar2 default null,
@@ -56,7 +62,8 @@ begin
                         e.email, e.ativo st_resp,
                         i.codigo_interno as cd_projeto, i.titulo as nm_projeto, i.executor,
                         i1.sq_pessoa tit_proj, i2.sq_pessoa sub_proj,
-                        i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa
+                        i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa,
+                        m.perc_dias_aviso_pacote
                    from pj_projeto_etapa                    a
                         inner          join siw_solicitacao i  on (a.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                             inner      join siw_tramite     i5 on (i.sq_siw_tramite      = i5.sq_siw_tramite and
@@ -117,8 +124,16 @@ begin
                                                    )
                         )
                 )
-          where (p_atrasado    is null and p_adiantado is null and p_concluido is null) 
-             or (p_atrasado    is not null and ((fim_real is null and fim_previsto < trunc(sysdate)) or (fim_real is not null and fim_previsto < fim_real)))
+          where (p_atrasado    is null and p_adiantado is null and p_concluido is null and 
+                 p_nini_atraso is null and p_nini_prox is null and p_nini_normal is null and p_ini_prox is null and p_ini_normal is null and p_conc_atraso is null
+                ) 
+             or (p_nini_atraso is not null and inicio_real is null and fim_previsto < trunc(sysdate))
+             or (p_nini_prox   is not null and inicio_real is null and fim_previsto > trunc(sysdate) and ((trunc(sysdate)-inicio_previsto)/(fim_previsto-inicio_previsto+1)*100 > (100-perc_dias_aviso_pacote)))
+             or (p_nini_normal is not null and inicio_real is null and fim_previsto > trunc(sysdate) and ((trunc(sysdate)-inicio_previsto)/(fim_previsto-inicio_previsto+1)*100 <= (100-perc_dias_aviso_pacote)))
+             or (p_atrasado    is not null and inicio_real is not null and fim_real is null and fim_previsto < trunc(sysdate))
+             or (p_ini_prox    is not null and inicio_real is not null and fim_real is null and fim_previsto > trunc(sysdate) and ((trunc(sysdate)-inicio_previsto)/(fim_previsto-inicio_previsto+1)*100 > (100-perc_dias_aviso_pacote)))
+             or (p_ini_normal  is not null and inicio_real is not null and fim_real is null and fim_previsto > trunc(sysdate) and ((trunc(sysdate)-inicio_previsto)/(fim_previsto-inicio_previsto+1)*100 <= (100-perc_dias_aviso_pacote)))
+             or (p_conc_atraso is not null and perc_conclusao = 100 and fim_real is not null and fim_real > fim_previsto)
              or (p_adiantado   is not null and perc_conclusao = 100 and fim_real is not null and fim_real < fim_previsto)
              or (p_concluido   is not null and perc_conclusao = 100 and fim_real is not null and fim_real = fim_previsto);
    Elsif p_restricao = 'CALEND' Then
@@ -139,7 +154,8 @@ begin
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 g.sigla sg_setor, g.nome as nm_setor,
                 i.codigo_interno as cd_projeto, i.titulo as nm_projeto, i.executor, i.motivo_insatisfacao,
-                i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa
+                i3.sq_siw_solicitacao as sq_programa, i3.codigo_interno as cd_programa, i3.titulo as nm_programa,
+                null as nm_tipo_evento, null as sg_tipo_evento
            from pj_projeto_etapa                    a
                 inner          join siw_solicitacao i  on (a.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                     inner      join siw_tramite     i1 on (i.sq_siw_tramite      = i1.sq_siw_tramite and
@@ -184,7 +200,8 @@ begin
                 null as restricao,
                 g.sigla sg_setor, g.nome as nm_setor,
                 i3.codigo_interno as cd_projeto, i3.titulo as nm_projeto, i3.executor, i.motivo_insatisfacao,
-                i4.sq_siw_solicitacao as sq_programa, i4.codigo_interno as cd_programa, i4.titulo as nm_programa
+                i4.sq_siw_solicitacao as sq_programa, i4.codigo_interno as cd_programa, i4.titulo as nm_programa,
+                k.nome as nm_tipo_evento, k.sigla as sg_tipo_evento
            from siw_solicitacao                   i
                 inner        join siw_tramite     i1 on (i.sq_siw_tramite      = i1.sq_siw_tramite and
                                                          i1.sigla             <> 'CA'
