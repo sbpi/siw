@@ -87,15 +87,17 @@ begin
                 );
   ElsIf p_restricao = 'RELATORIO' Then
       open p_result for 
-         select a.sq_projeto_etapa, a.descricao, a.pacote_trabalho, a.ordem, a.titulo nm_etapa, a.sq_pessoa, a.fim_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, 
+         select a.sq_projeto_etapa, a.descricao, a.pacote_trabalho, a.ordem, a.titulo nm_etapa, a.sq_pessoa, 
+                a.fim_previsto, a.inicio_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, a.inicio_real,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
+                SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 b.sq_siw_solicitacao as sq_projeto,b.objetivo_superior, c.codigo_interno, c.titulo as nm_projeto, 
                 c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,
                 c1.sq_pessoa as resp_projeto, c1.nome_resumido as nm_resp_projeto, 
                 c3.titulo as nm_programa,
                 c7.nome as nm_cc, 
                 e.sq_siw_solicitacao, 
-                f.assunto as nm_tarefa, f.fim_real, 
+                f.assunto as nm_tarefa,
                 g.solicitante, 
                 i.nome_resumido as nm_resp_tarefa, i.nome_resumido,
                 g.inicio, 
