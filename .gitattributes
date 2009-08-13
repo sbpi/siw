@@ -3874,7 +3874,10 @@ SP_Oracle92/siw/TG_SIW_SOLIC_IN.trg -text
 SP_Oracle92/siw/TG_SIW_SOLIC_UP.trg -text
 SP_Oracle92/siw/TG_SR_VEICULO_IN_UP.trg -text
 SP_Oracle92/siw/VW_ACORDO.sql -text
+SP_Oracle92/siw/VW_ACORDO_PARCELA.sql -text
+SP_Oracle92/siw/VW_GESTORES_MODULO.sql -text
 SP_Oracle92/siw/VW_PROJETOS.sql -text
+SP_Oracle92/siw/VW_USUARIOS.sql -text
 SP_Oracle92/siw/VerificaDataEspecial.fnc -text
 SP_Oracle92/siw/VerificaDataMovel.fnc -text
 SP_Oracle92/siw/ac_criaparametro.prc -text
