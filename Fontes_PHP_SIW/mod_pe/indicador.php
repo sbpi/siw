@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -22,6 +22,9 @@ include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
 include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
+include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
+include_once($w_dir_volta.'classes/sp/db_getMetaAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putIndicador.php');
 include_once($w_dir_volta.'classes/sp/dml_putIndicador_Aferidor.php');
@@ -29,6 +32,7 @@ include_once($w_dir_volta.'classes/sp/dml_putIndicador_Afericao.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicIndicador.php');
 include_once($w_dir_volta.'classes/sp/dml_putIndicador_Meta.php');
 include_once($w_dir_volta.'classes/sp/dml_putCronMeta.php');
+include_once($w_dir_volta.'classes/sp/dml_putMetaAnexo.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidadeMedida.php');
 include_once($w_dir_volta.'funcoes/selecaoIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoBaseGeografica.php');
@@ -40,6 +44,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoUsuUnid.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoArquivoTab.php');
 
 // =========================================================================
 //  /indicador.php
@@ -547,8 +552,8 @@ function VisualDados() {
           ShowHTML('  <tr><td align="center" colspan=3>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-          ShowHTML('          <td>'.linkOrdena('Referência','phpdt_fim').'</td>');
-          ShowHTML('          <td>'.linkOrdena('Valor aferido','valor').' ('.f($row,'sg_unidade_medida').')</td>');
+          ShowHTML('          <td>Referência</td>');
+          ShowHTML('          <td>Valor aferido ('.f($row,'sg_unidade_medida').')</td>');
           ShowHTML('        </tr>');
         }
         // Tratamento para aferições com alguma observação
@@ -575,7 +580,7 @@ function VisualDados() {
         ShowHTML('        '.$w_referencia);
         ShowHTML('        <td align="right">'.((f($row,'previsao')=='S') ? '* ' : '').(($p_exibe) ? '<sup>('.$p_cont.')</sup> ' : '').nvl(formatNumber(f($row,'valor'),4),'---').'</td>');
         ShowHTML('      </tr>');
-        if ($i<5) {
+        if ($i<8) {
           // mostra somente as 5 primeiras ocorrências no gráfico
           $w_legenda[$i] = $w_referencia;
           $w_valor[$i]   = str_replace(',','.',f($row,'valor'));
@@ -587,7 +592,6 @@ function VisualDados() {
       ShowHTML('  </td>');
       ShowHTML('</tr>');
       ShowHTML('<tr><td colspan=3><table border=0>');
-      ShowHTML('  <tr><td align="right">U.M.<td>Unidade de medida');
       ShowHTML('  <tr><td align="right">*<td>Projeção');
       if ($p_cont>0) {
         for ($i=1;$i<=$p_cont;$i++) ShowHTML('  <tr valign="top"><td align="right">('.$i.')<td>'.$p_observacao[$i]);
@@ -1761,6 +1765,7 @@ function Meta() {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Excluir">EX</A>&nbsp');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'CronMeta&R='.$w_pagina.$par.'&O=L&w_chave_pai='.f($row,'chave').'&w_chave='.f($row,'chave_aux').'&w_plano='.$w_plano.'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Cronograma de aferição&SG=MTCRON'.MontaFiltro('GET').'" title="Registrar o cronograma de aferição da meta." target="CronMeta">Cr</A>&nbsp');
+          ShowHTML('<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Documentos&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Documentos&O=L&SG=DOCS&w_chave_pai='.f($row,'chave').'&w_chave='.f($row,'chave_aux').'&w_plano='.$w_plano).'\',\'Documentos\',\'toolbar=no,width=780,height=350,top=30,left=10,scrollbars=yes,resizable=yes\');">Docs</a>');          
         } elseif ($w_sg_tramite!='CI') {
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'chave_aux').'&w_plano='.$w_plano.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"title="Alterar">AL</A>&nbsp');
         } else {
@@ -2335,7 +2340,34 @@ function VisualMeta() {
     }
     ShowHTML('</table>');
   }
-
+  
+  // Exibe arquivos vinculados
+  $RS = db_getMetaAnexo::getInstanceOf($dbms,$w_chave_aux,null,null,null,$w_cliente);
+  $RS = SortArray($RS,'ordem','asc','nome','asc');
+  if (count($RS) > 0) {
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><table width="100%" border="1">');
+    ShowHTML('  <tr><td bgcolor="#D0D0D0"><b>'.count($RS).' arquivo(s) vinculado(s)</b>');
+    ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');     
+    ShowHTML('    <tr align="center" bgColor="#f0f0f0">');
+    ShowHTML('      <td><b>Título</td>');
+    ShowHTML('      <td><b>Descrição</td>');
+    ShowHTML('      <td><b>Tipo</td>');
+    ShowHTML('      <td><b>KB</td>');
+    ShowHTML('    </tr>');
+    $w_cor=$conTrBgColor;
+    foreach ($RS as $row) {
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      ShowHTML('    <tr bgColor="'.$w_cor.'">');
+      ShowHTML('     <td nowrap width="1%">'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+      ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+      ShowHTML('        <td>'.f($row,'tipo').'</td>');
+      ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
+    } 
+    ShowHTML('  </table>');
+    ShowHTML('</table>');
+    //ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>&nbsp;</td></tr>');
+  } 
+  
   ShowHTML('      <tr><td align="center" colspan=3><hr>');
   ShowHTML('            <input class="STB" type="button" onClick="window.close(); opener.focus();" name="Botao" value="Fechar">');
   ShowHTML('          </td>');
@@ -2347,6 +2379,190 @@ function VisualMeta() {
   ShowHTML('</center>');
   Rodape();
 } 
+
+// =========================================================================
+// Rotina da tabela de documentos
+// -------------------------------------------------------------------------
+function Documentos() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+  
+  // Recupera os dados da meta
+  $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS as $row) { $RS = $row; break; }
+  $w_inicio_meta = formataDataEdicao(f($RS,'inicio'));
+  $w_fim_meta    = formataDataEdicao(f($RS,'fim'));
+  $w_cumulativa  = f($RS,'cumulativa');
+  $w_valor_base  = f($RS,'valor_inicial');
+  $w_valor_meta  = f($RS,'quantidade');
+  $w_meta        = f($RS,'titulo').' ('.(($w_cumulativa=='S') ? 'Meta cumulativa' :'Meta não cumulativa').'. Resultado previsto ('.f($RS,'sg_unidade_medida').'): '.formatNumber($w_valor_meta,4).' em '.$w_fim_meta.')';
+  $w_projeto     = f($RS,'nm_projeto');
+
+  if ($w_troca>'' && $O!='E') {
+    // Se for recarga da página 
+    $w_tipo      = $_REQUEST['w_tipo'];
+    $w_nome      = $_REQUEST['w_nome'];
+    $w_ordem     = $_REQUEST['w_ordem'];
+    $w_descricao = $_REQUEST['w_descricao'];
+    $w_caminho   = $_REQUEST['w_caminho'];
+  } elseif ($O=='L') {
+    // Recupera todos os registros para a listagem 
+    $RS = db_getMetaAnexo::getInstanceOf($dbms,$w_chave,null,null,null,$w_cliente);
+    $RS = SortArray($RS,'ordem','asc','nome','asc');
+  } elseif (strpos('AEV',$O)!==false) {
+    // Recupera os dados do endereço informado 
+    $RS = db_getMetaAnexo::getInstanceOf($dbms,$w_chave,$w_chave_aux,null,null,$w_cliente);
+    foreach ($RS as $row) {
+      $w_tipo      = f($row,'sq_tipo_arquivo');
+      $w_nome      = f($row,'nome');
+      $w_ordem     = f($row,'ordem');
+      $w_descricao = f($row,'descricao');
+      $w_caminho   = f($row,'chave_aux');
+    }
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if (strpos('IAEP',$O)!==false) {
+    ScriptOpen('JavaScript');
+    ValidateOpen('Validacao');
+    if (strpos('IA',$O)!==false) {
+      Validate('w_nome','Título','1','1','1','255','1','1');
+      Validate('w_ordem','Ordem','1','1','1','4','','0123456789');
+      Validate('w_tipo','Tipo','SELECT','1','1','18','','1');
+      Validate('w_descricao','Descrição','1','1','1','1000','1','1');
+      if ($O=='I') {
+        Validate('w_caminho','Arquivo','','1','5','255','1','1');
+      } 
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
+  if ($w_troca>'') {
+    BodyOpenClean('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='I') {
+    BodyOpenClean('onLoad=\'document.Form.w_nome.focus()\';');
+  } elseif ($O=='A') {
+    BodyOpenClean('onLoad=\'document.Form.w_descricao.focus()\';');
+  } else {
+    BodyOpenClean('onLoad=\'this.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<tr><td colspan="2"><table border="0" width="100%">');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
+  ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><b> '.$w_projeto.'</b></div></td></tr>');
+  ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify>Meta:<b> '.$w_meta.' </b></div></td></tr>');
+  ShowHTML('<tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');  
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+    
+  if ($O=='L') {
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
+    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="opener.focus(); window.close();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.linkOrdena('Ordem','ordem').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Tipo do arquivo','nm_tipo_arquivo').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Título','nome').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Formato','tipo').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('KB','tamanho').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem 
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem 
+      foreach($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td>'.f($row,'ordem').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo_arquivo').'</td>');
+        ShowHTML('        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>');
+        ShowHTML('        <td>'.Nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td>'.f($row,'tipo').'</td>');
+        ShowHTML('        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  } elseif (strpos('IAEV',$O)!==false) {
+    if (strpos('EV',$O)!==false) $w_Disabled=' DISABLED ';
+    ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG='.$SG.'&O='.$O.'" name="Form" onSubmit="return(Validacao(this));" enctype="multipart/form-data" method="POST">');
+    ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+    ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+    ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+    ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+    ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+    ShowHTML('<INPUT type="hidden" name="R" value="'.$R.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_caminho.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    if ($O=='I' || $O=='A') {
+      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+      ShowHTML('      <tr><td align="center" colspan="2" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</font></b>.</td>');
+      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    }  
+    ShowHTML('      <tr><td colspan="2"><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>O</u>rdem:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_ordem" class="STI" SIZE="4" MAXLENGTH="255" VALUE="'.$w_ordem.'" title="OBRIGATÓRIO. Informe um número de ordem para o arquivo."></td>');
+    SelecaoTipoArquivoTab('<u>T</u>ipo:','T',null,$w_tipo,null,'w_tipo',null);
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr><td colspan="2"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="OBRIGATÓRIO. Descreva a finalidade do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="2"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OBRIGATÓRIO. Clique no botão ao lado para localizar o arquivo. Ele será transferido automaticamente para o servidor.">');
+    if ($w_caminho>'') {
+      ShowHTML('              <b>'.LinkArquivo('SS',$w_cliente,$w_caminho,'_blank','Clique para exibir o arquivo atual.','Exibir',null).'</b>');
+    } 
+    ShowHTML('      <tr><td align="center" colspan="2"><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir" onClick="return confirm(\'Confirma a exclusão do registro?\');">');
+    } else {
+      if ($O=='I') {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);' 
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+
 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -2577,6 +2793,83 @@ function Grava() {
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
       ScriptClose();
       break;
+    case 'DOCS':  //CADASTRO DE DOCUMENTOS
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (UPLOAD_ERR_OK==0) {
+        $w_maximo = $_REQUEST['w_upload_maximo'];
+        foreach ($_FILES as $Chv => $Field) {
+          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_observacao');
+            exit();
+          }
+          $w_tamanho = $Field['size'];          
+          if ($Field['size'] > 0) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            if ($Field['size'] > $w_maximo) {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            } 
+            // Se já há um nome para o arquivo, mantém 
+            if ($_REQUEST['w_atual']>'') {
+              $RS = db_getUorgAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+              foreach ($RS as $row) {
+                if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                if (strpos(f($row,'caminho'),'.')!==false) {
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strpos($Field['name'],'.') ? strpos($Field['name'],'.')+1 : 0)-1,30);
+                } else {
+                  $w_file = basename(f($row,'caminho'));
+                }
+              }
+            } else {
+              $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+              if (strpos($Field['name'],'.')!==false) {
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+              }
+            }
+            $w_tipo    = $Field['type'];
+            $w_nome    = $Field['name'];
+            if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+            } elseif(nvl($Field['name'],'')!='') {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+            ScriptClose();
+            retornaFormulario('w_caminho');
+            exit();
+          }  
+        } 
+        // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+        if ($O=='E' && $_REQUEST['w_atual']>'') {
+          $RS = db_getMetaAnexo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+          foreach ($RS as $row) {
+            if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+          }
+        } 
+        dml_putMetaAnexo::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
+             $_REQUEST['w_ordem'],$_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+        ScriptClose();
+        exit();
+      } 
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.RemoveTP($TP).'&SG='.$SG.'&w_chave='.$_REQUEST['w_chave'].'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    }
+    break;      
   } 
 } 
 
@@ -2599,6 +2892,7 @@ function Main() {
     case 'META':               Meta();              break;
     case 'CRONMETA':           CronMeta();          break;
     case 'VISUALMETA':         VisualMeta();        break;
+    case 'DOCUMENTOS':         Documentos();        break;    
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();

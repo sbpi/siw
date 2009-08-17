@@ -17,11 +17,7 @@ include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getUserList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgAnexo.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicEtapa.php');
-include_once($w_dir_volta.'classes/sp/db_getEtapaAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicResultado.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -128,6 +124,16 @@ switch ($O) {
   case 'V': $w_TP=$TP.' - Envio'; break;
   case 'P': $w_TP=$TP.' - Filtragem'; break;
   default : $w_TP=$TP.' - Listagem'; 
+}
+
+// Define visualizações disponíveis para o usuário
+$RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
+  
+// Identifica se o vínculo do usuário é com a a Secretaria executiva
+if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+  $w_usuario_se = true;
+} else {
+  $w_usuario_se = false;
 }
 
 Main();
@@ -480,10 +486,17 @@ function Arquivos() {
       ShowHTML('<tr><td>&nbsp;</td></tr>');
     }
   }
-  if (count($RS_Membros)>0) {
+  if (!$w_usuario_se) {
+    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJMON');
+    $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+              null,null,null,null,null,null,null,null,null,null,
+              null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
     ShowHTML('<tr><td colspan=2><hr>');
     ShowHTML('<fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
-    ShowHTML('   <tr><td><b>Acompanhamento e Monitoramento (SERÁ AZUL POR SER LINK)</b></td>');
+    foreach($RS as $row) {
+      ShowHTML('            <FONT SIZE="2"><A class="SS" HREF="cl_pitce/monitor.php?par=Visual&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">Acompanhamento e Monitoramento</a></FONT>');
+      break;
+    }
     ShowHTML('</table></fieldset>');
   }
   ShowHTML('</table>');

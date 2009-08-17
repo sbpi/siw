@@ -541,6 +541,7 @@ Fontes_PHP_SIW/cl_pitce/evento.php -text
 Fontes_PHP_SIW/cl_pitce/exibeprojeto.php -text
 Fontes_PHP_SIW/cl_pitce/gr_evento.php -text
 Fontes_PHP_SIW/cl_pitce/gr_projeto.php -text
+Fontes_PHP_SIW/cl_pitce/monitor.php -text
 Fontes_PHP_SIW/cl_pitce/pdp.gif -text
 Fontes_PHP_SIW/cl_pitce/pe_exibeprograma.php -text
 Fontes_PHP_SIW/cl_pitce/pe_programa.php -text
@@ -555,6 +556,7 @@ Fontes_PHP_SIW/cl_pitce/tabelas.php -text
 Fontes_PHP_SIW/cl_pitce/trabalho.php -text
 Fontes_PHP_SIW/cl_pitce/validaevento.php -text
 Fontes_PHP_SIW/cl_pitce/visualevento.php -text
+Fontes_PHP_SIW/cl_pitce/visualmonitor.php -text
 Fontes_PHP_SIW/cl_pitce/visualprojeto.php -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Area2D.swf -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Column2D.swf -text
@@ -860,6 +862,7 @@ Fontes_PHP_SIW/classes/sp/db_getMenuOrder.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuRelac.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUpper.php -text
 Fontes_PHP_SIW/classes/sp/db_getMenuUser.php -text
+Fontes_PHP_SIW/classes/sp/db_getMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getModData.php -text
 Fontes_PHP_SIW/classes/sp/db_getModList.php -text
@@ -1210,6 +1213,7 @@ Fontes_PHP_SIW/classes/sp/dml_putMacroObjetivo_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMatServ.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMeioTrans.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMenuRelac.php -text
+Fontes_PHP_SIW/classes/sp/dml_putMetaAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensalIni_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMetaMensal_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putMtSituacao.php -text
