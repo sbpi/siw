@@ -43,7 +43,7 @@ begin
                      when 5 then 'Organizacional'
                 end as nm_base_geografica,
                 a1.sq_siw_tramite,     a1.solicitante,                 a1.inicio as ini_solic,
-                a1.fim as fim_solic,   a1.conclusao,
+                a1.fim as fim_solic,   a1.conclusao,                   a1.titulo as nm_projeto,
                 a2.sq_menu,            a2.sq_modulo,                   a2.nome,
                 a2.p1,                 a2.p2,                          a2.p3,
                 a2.p4,                 a2.sigla,                       a2.link,
@@ -148,7 +148,7 @@ begin
                      when 5 then 'Organizacional'
                 end as nm_base_geografica,
                 null as sq_siw_tramite,null as solicitante,            a1.inicio as ini_solic,
-                a1.fim as fim_solic,   null as conclusao,
+                a1.fim as fim_solic,   null as conclusao,              a1.titulo as nm_projeto,
                 null as sq_menu,       null as sq_modulo,              null as nome,
                 null as p1,            null as p2,                     null as p3,
                 null as p4,            null as sigla,                  null as link,
