@@ -486,18 +486,18 @@ function Arquivos() {
       ShowHTML('<tr><td>&nbsp;</td></tr>');
     }
   }
-  if (!$w_usuario_se) {
+  if ($w_usuario_se) {
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJMON');
     $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
               null,null,null,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-    ShowHTML('<tr><td colspan=2><hr>');
-    ShowHTML('<fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
     foreach($RS as $row) {
+      ShowHTML('<tr><td colspan=2><hr>');
+      ShowHTML('<fieldset><table width="100%" bgcolor="'.$conTrBgColor.'">');
       ShowHTML('            <FONT SIZE="2"><A class="SS" HREF="cl_pitce/monitor.php?par=Visual&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">Acompanhamento e Monitoramento</a></FONT>');
+      ShowHTML('</table></fieldset>');
       break;
     }
-    ShowHTML('</table></fieldset>');
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
