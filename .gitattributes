@@ -4851,3 +4851,4 @@ SP_PostgreSQL_8-0/siw/to_char.sql -text
 SP_PostgreSQL_8-0/siw/to_number.sql -text
 SP_PostgreSQL_8-0/siw/trunc.sql -text
 SP_PostgreSQL_8-0/siw/tt_carregaligacao.sql -text
+SP_PostgreSQL_8-0/versoes/siw.sql -text
