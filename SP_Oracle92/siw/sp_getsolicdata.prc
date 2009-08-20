@@ -472,6 +472,17 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
+                b4.sq_solic_pai as sq_solic_avo,
+                case when b4.sq_solic_pai is null 
+                     then case when b4.sq_plano is null
+                               then case when b6.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||b6.nome 
+                                    end
+                               else ' Plano: '||b5.titulo
+                          end
+                     else dados_solic(b4.sq_solic_pai) 
+                end as dados_avo,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
@@ -530,6 +541,9 @@ begin
                 inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                    inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                    left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                   left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
+                     left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
+                     left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                    inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)

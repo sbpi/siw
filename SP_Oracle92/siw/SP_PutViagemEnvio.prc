@@ -90,7 +90,7 @@ create or replace procedure SP_PutViagemEnvio
    cursor c_financeiro_item is
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
              case tp_despesa 
-                  when 'RMB' then 'Reembolso de viagem'
+                  when 'RMB' then 'Diferença de diárias'
                   when 'DIA' then 'Diárias' 
                   when 'HSP' then 'Hospedagem' 
                   else 'Locação de veículos' 
@@ -362,7 +362,7 @@ begin
                                  p_devolucao     => 'N',
                                  p_despacho      => case w_sg_tramite 
                                                          when 'EE' 
-                                                         then 'Envio automático de reembolso de viagem.' 
+                                                         then 'Envio automático de diferença de diárias.' 
                                                          else 'Envio automático de adiantamento de diárias.' 
                                                     end
                                 );

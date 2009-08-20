@@ -659,6 +659,7 @@ begin
                 d21.cpf, d22.cnpj,
                 d3.nome as nm_preposto,  d3.nome_resumido as nm_preposto_resumido,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
+                d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
                 d7.sq_forma_pagamento,d7.nome as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
@@ -878,6 +879,17 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
+                b4.sq_solic_pai as sq_solic_avo,
+                case when b4.sq_solic_pai is null 
+                     then case when b4.sq_plano is null
+                               then case when b6.sq_cc is null
+                                         then '???'
+                                         else 'Classif: '||b6.nome 
+                                    end
+                               else ' Plano: '||b5.titulo
+                          end
+                     else dados_solic(b4.sq_solic_pai) 
+                end as dados_avo,
                 case coalesce(b1.sigla,'--') when 'AT' then b.valor else 0 end as valor_atual,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
@@ -895,6 +907,7 @@ begin
                 d2.nome_resumido_ind as nm_pessoa_resumido_ind,
                 coalesce(d3.valor,0) as valor_doc,
                 d4.sq_pessoa_conta,   d4.operacao,                   d4.numero as nr_conta,
+                d4.devolucao_valor,
                 d5.sq_agencia,        d5.codigo as cd_agencia,       d5.nome as nm_agencia,
                 d6.sq_banco,          d6.codigo as cd_banco,         d6.nome as nm_banco,
                 d7.sq_forma_pagamento,d7.nome as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
@@ -929,6 +942,9 @@ begin
                                              from siw_solicitacao
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                      left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
+                        left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
+                        left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)

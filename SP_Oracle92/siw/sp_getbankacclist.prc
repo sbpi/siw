@@ -10,7 +10,7 @@ begin
          select a.sq_pessoa, b.sq_pessoa_conta, 
                 d.sq_banco, d.codigo||' - '||d.nome banco, 
                 e.sq_agencia, e.codigo||' - '||e.nome agencia,  
-                b.operacao, b.numero, b.ativo, b.padrao, 
+                b.operacao, b.numero, b.ativo, b.padrao, b.devolucao_valor,
                 case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end tipo_conta
            from co_pessoa a,  
                 co_pessoa_conta b 
@@ -25,7 +25,7 @@ begin
          select a.sq_pessoa, b.sq_pessoa_conta, 
                 d.sq_banco, d.codigo||' - '||d.nome banco, 
                 e.sq_agencia, e.codigo||' - '||e.nome agencia,  
-                b.operacao, b.numero, b.ativo, b.padrao, 
+                b.operacao, b.numero, b.ativo, b.padrao,  b.devolucao_valor,
                 case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end tipo_conta
            from co_pessoa a,  
                 co_pessoa_conta b 

@@ -7,7 +7,7 @@ begin
    If p_restricao is null Then
       -- Recupera os parametros do modulo de recursos humanos de um cliente
       open p_result for 
-         select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo
+         select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo, a.texto_devolucao
            from fn_parametro  a
           where a.cliente = p_cliente;
    End If;

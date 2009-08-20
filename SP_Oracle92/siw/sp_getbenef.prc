@@ -24,7 +24,7 @@ begin
             c.sq_tipo_pessoa, c.nome as nm_tipo_pessoa,
             d.sq_tipo_vinculo, d.nome as nm_tipo_vinculo, d.interno, d.ativo as vinculo_ativo,
             e.sq_pessoa_conta, e.sq_banco, e.sq_agencia, e.cd_agencia, e.operacao, e.numero as nr_conta,
-            e.nm_agencia, e.cd_banco, e.nm_banco,
+            e.nm_agencia, e.cd_banco, e.nm_banco,  e.devolucao_valor,
             b.sq_pessoa_fax, b.nr_fax,
             f.sq_pessoa_telefone, f.ddd, f.nr_telefone,
             l.sq_pessoa_celular, l.nr_celular,
@@ -58,8 +58,9 @@ begin
             left join  co_tipo_pessoa           c on (a.sq_tipo_pessoa     = c.sq_tipo_pessoa)
             left join  co_tipo_vinculo          d on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
             left join  (select w.sq_pessoa_conta, w.sq_pessoa, x.sq_banco, w.sq_agencia, 
-                               w.operacao, w.numero, x.codigo cd_agencia, x.nome nm_agencia,
-                               y.codigo cd_banco, y.nome nm_banco
+                               w.operacao, w.numero,  w.devolucao_valor,
+                               x.codigo as cd_agencia, x.nome as nm_agencia,
+                               y.codigo as cd_banco, y.nome as nm_banco
                           from co_pessoa_conta         w
                                inner   join co_agencia x on (w.sq_agencia = x.sq_agencia)
                                  inner join co_banco   y on (x.sq_banco   = y.sq_banco)
