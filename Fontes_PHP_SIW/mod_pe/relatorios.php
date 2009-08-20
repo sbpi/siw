@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -294,8 +294,8 @@ function Rel_Executivo() {
                   ShowHTML('     <td colspan=6>&nbsp;');
                   ShowHTML('</tr>');
                 }
-                $w_proj += 1;
               }
+              $w_proj += 1;
             }
           }
           if ($p_projeto=='S') {

@@ -41,6 +41,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     // Identificação do lançamento
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';      // Identificação do lançamento
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    
     if (Nvl(f($RS,'cd_acordo'),'')>'') {
       if (!($l_P1==4 || $l_tipo=='WORD')) {
         $l_html.=chr(13).'      <tr><td width="30%"><b>Contrato: </b></td>';
@@ -48,7 +49,23 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'      <tr><td><b>Contrato: </b></td><td>'.f($RS,'cd_acordo').' ('.f($RS,'sq_solic_pai').') </td></tr>';
       }
+    } else {
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
+      if (Nvl(f($RS,'dados_pai'),'')!='') {
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo).'</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---</td>';
+      }
     } 
+    if (f($RS_Menu,'sigla')=='FNDVIA') {
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
+      if (Nvl(f($RS,'dados_avo'),'')!='') {
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_avo'),f($RS,'dados_avo'),'N',$l_tipo).'</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---</td>';
+      }
+    }
+/*
     if (Nvl(f($RS,'nm_projeto'),'') > '') {
       if (!($l_P1==4 || $l_tipo=='WORD')){
         $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td><td><A class="hl" HREF="projeto.php?par=Visual&O=L&w_chave='.f($RS,'sq_projeto').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$l_tipo.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="Projeto">'.f($RS,'nm_projeto').'</a></td></tr>';
@@ -60,6 +77,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if (Nvl(f($RS,'sq_cc'),'')>'') {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação: </b></td><td>'.f($RS,'nm_cc').' </td></tr>';
     }
+*/
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
     // Verifica o segmento do cliente    
     $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
@@ -97,7 +115,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     
     // Dados da conclusão do projeto, se ela estiver nessa situação
     if (Nvl(f($RS,'conclusao'),'')>'' && Nvl(f($RS,'quitacao'),'')>'') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA LIQUIDAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO PAGAMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Data:</b></td><td>'.FormataDataEdicao(f($RS,'quitacao')).' </td></tr>';
       if (Nvl(f($RS,'codigo_deposito'),'')>''){
         $l_html.=chr(13).'    <tr><td><b>Código do depósito:</b></td><td>'.f($RS,'codigo_deposito').' </td></tr>';
@@ -471,7 +489,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'<tr><td colspan=2><font size=2>';
     $l_html.=chr(13).'<HR>';
     if (substr($w_erro,0,1)=='0') {
-      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual, nem sua liquidação.';
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual, nem seu pagamento.';
     }elseif (substr($w_erro,0,1)=='1') {
       $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.';
     } else {
@@ -495,6 +513,10 @@ function rubricalinha($v_RS3){
   $v_html.=chr(13).'          <td width="12%" bgColor="#f0f0f0"><b>Rubrica</b></td>';
   $v_html.=chr(13).'          <td width="45%" bgColor="#f0f0f0"><b>Descrição</b></td>';
   $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Qtd</b></td>';
+  if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
+    $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Data cotação</b></td>';
+    $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Valor cotação</b></td>';
+  }
   $v_html.=chr(13).'          <td width="15%" bgColor="#f0f0f0"><b>$ Unit</b></td>';
   $v_html.=chr(13).'          <td width="15%" bgColor="#f0f0f0"><b>$ Total</b></td>';
   $v_html.=chr(13).'        </tr>';
@@ -506,7 +528,11 @@ function rubricalinha($v_RS3){
     else
       $v_html.=chr(13).'        <td align="center">???</td>';
     $v_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
-    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade')).'</td>';
+    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
+    if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
+      $v_html.=chr(13).'        <td align="center">'.formataDataEdicao(f($row,'data_cotacao')).'</td>';
+      $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_cotacao'),4).'&nbsp;&nbsp;</td>';
+    }
     $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'&nbsp;&nbsp;</td>';
     $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'&nbsp;&nbsp;</td>';
     $v_html.=chr(13).'      </tr>';
@@ -514,7 +540,7 @@ function rubricalinha($v_RS3){
   } 
   if ($w_total>0) {
     $v_html.=chr(13).'      <tr valign="top">';
-    $v_html.=chr(13).'        <td align="right" colspan=5><b>Total</b></td>';
+    $v_html.=chr(13).'        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')!==false) ? 7 : 5).'"><b>Total</b></td>';
     $v_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
     $v_html.=chr(13).'      </tr>';
   }

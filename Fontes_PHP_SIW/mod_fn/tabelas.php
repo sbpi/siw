@@ -653,7 +653,7 @@ function Parametros() {
   ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
   ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
   ShowHTML('      </table>');
-  ShowHTML('        <tr><td colspan=2><b><u>T</u>exto padrão para condições de devolução de valores:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_devolucao" class="sti" ROWS="3" COLS="75">'.$w_devolucao.'</textarea></td>');  
+  ShowHTML('        <tr><td colspan=2><b><u>T</u>exto padrão para devolução de valores:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_devolucao" class="sti" ROWS="3" COLS="75">'.$w_devolucao.'</textarea></td>');  
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
   ShowHTML('      <tr><td align="center" colspan="3">');

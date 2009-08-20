@@ -274,8 +274,13 @@
 					case 'vertical_range':
 						$markers[0] = 'R';
 						$this->markers[] = $markers;
-					default:						
+					default:	
+          if(substr(strtolower($markers[0]),0,1)=='t'){
+            $this->markers[] = $markers;            
+            break;
+          }else{					
 						break;
+          }
 				}
 			}
 		}

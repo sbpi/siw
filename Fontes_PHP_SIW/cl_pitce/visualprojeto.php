@@ -97,7 +97,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       Nvl(f($RS,'titular'),0)==$l_usuario || 
       Nvl(f($RS,'substituto'),0)==$l_usuario || 
       Nvl(f($RS,'tit_exec'),0)==$l_usuario || 
-      Nvl(f($RS,'subst_exec'),0)==$l_usuario || 
+      Nvl(f($RS,'subst_exec'),0)==$l_usuario ||
+      $w_exibe1 || 
       SolicAcesso($l_chave,$l_usuario) >= 8) {
     // Se for solicitante, executor ou cadastrador, tem visão completa
     $w_tipo_visao = 0;
@@ -810,9 +811,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html.=chr(13).'         </table></td></tr>';
     } 
   }
-  
   // Encaminhamentos
-  if($w_tipo_visao==0) {
+  if($w_tipo_visao==0 && $O <> 'V') {
     include_once($w_dir_volta.'funcoes/exibeLog.php');
     $l_html.=exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
   }

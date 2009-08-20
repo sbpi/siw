@@ -371,6 +371,9 @@ function Inicial() {
       if (strpos('CONT',substr($SG,3))!==false) {
         ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
       }
+      if (f($RS_Menu,'sigla')=='FNDVIA') {
+        ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
+      }
       ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td><b>Operações</td>');
@@ -380,7 +383,13 @@ function Inicial() {
       ShowHTML('          <td><b>Pessoa</td>');
       if (!(strpos($SG,'CONT')===false))  ShowHTML('          <td><b>Contrato (Parcela)</td>');
       else                                ShowHTML('          <td><b>Vinculação</td>');
-      ShowHTML('          <td><b>Data</td>');
+      if (strpos('CONT',substr($SG,3))!==false) {
+        ShowHTML('          <td><b>Referência</td>');
+      }
+      if (f($RS_Menu,'sigla')=='FNDVIA') {
+        ShowHTML('          <td><b>Projeto</td>');
+      }
+      ShowHTML('          <td><b>Vencimento</td>');
       ShowHTML('          <td><b>Valor</td>');
       ShowHTML('        </tr>');
     }  
@@ -413,6 +422,13 @@ function Inicial() {
             ShowHTML('        <td>---</td>');
           }
         } 
+        if (f($RS_Menu,'sigla')=='FNDVIA') {
+          if (Nvl(f($row,'dados_avo'),'')!='') {
+            ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
+          } else {
+            ShowHTML('        <td>---</td>');
+          }
+        }
         if (strpos('CONT',substr($SG,3))!==false) {
           if (nvl(f($row,'referencia_inicio'),'')!='') {
             ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>');
@@ -461,7 +477,7 @@ function Inicial() {
                   if(nvl(f($row,'qtd_nota'),'')!='') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
                   if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE')
-                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Liquidação do lançamento.">Liquidar</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registro do pagamento.">Pagar</A>&nbsp');
                 } else {
                   if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                     ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
@@ -2022,7 +2038,7 @@ function Itens() {
     $w_valor_unitario       = number_format(f($RS,'valor_unitario'),2,',','.');
     $w_ordem                = f($RS,'ordem');
     $w_data_cotacao         = formataDataEdicao(f($RS,'data_cotacao'));
-    $w_valor_cotacao        = formatNumber(f($RS,'valor_cotacao'));
+    $w_valor_cotacao        = formatNumber(f($RS,'valor_cotacao'),4);
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -2044,7 +2060,7 @@ function Itens() {
       Validate('w_quantidade','Quantidade','1','1','1','18','','0123456789');
       if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
         Validate('w_data_cotacao','Data da cotação', 'DATA', '1', 10, 10, '', '0123456789/');
-        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 4, 18, '', '0123456789.,');
+        Validate('w_valor_cotacao','Valor da cotação', 'VALOR', '1', 6, 18, '', '0123456789.,');
       }
       Validate('w_valor_unitario','Valor unitário do item', 'VALOR', '1', 4, 18, '', '0123456789.,-');
     }
@@ -2132,7 +2148,7 @@ function Itens() {
         ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
         if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_cotacao')).'</td>');
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_cotacao')).'&nbsp;&nbsp;</td>');
+          ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_cotacao'),4).'&nbsp;&nbsp;</td>');
         }
         ShowHTML('        <td align="right">'.number_format(f($row,'valor_unitario'),2,',','.').'&nbsp;&nbsp;</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor_total'),2,',','.').'&nbsp;&nbsp;</td>');
@@ -2176,7 +2192,7 @@ function Itens() {
     ShowHTML('          <td><b><u>Q</u>uantidade:<br><input accesskey="Q" type="text" name="w_quantidade" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_quantidade.'" '.$w_Disabled.''.$w_readonly.' style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);"></td>');
     if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
       ShowHTML('          <td><b>Da<u>t</u>a da cotação:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_data_cotacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_data_cotacao,formataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-      ShowHTML('          <td><b><u>V</u>alor cotação:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_cotacao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_cotacao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe a cotação da moeda na data de conversão."></td>');
+      ShowHTML('          <td><b><u>V</u>alor cotação:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_cotacao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_cotacao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe a cotação da moeda na data de conversão."></td>');
       ShowHTML('<INPUT type="hidden" name="w_sq_projeto_rubrica" value="'.$w_sq_projeto_rubrica.'">');
     }
     ShowHTML('          <td><b><u>V</u>alor unitário:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_unitario" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_unitario.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor unitário do item."></td>');
@@ -3007,11 +3023,20 @@ function Concluir() {
     $w_codigo_deposito  = $_REQUEST['w_codigo_deposito'];
     $w_observacao       = $_REQUEST['w_observacao'];
   } 
+
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   $w_tramite            = f($RS,'sq_siw_tramite');
   $w_valor_real         = number_format(f($RS,'valor'),2,',','.');
   $w_sg_forma_pagamento = f($RS,'sg_forma_pagamento');
+  $w_inicio             = FormataDataEdicao(time());
+
+  // Se pagamento de viagem, recupera os dados da solicitação
+  if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
+    $RS_Viagem = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PDINICIAL');
+    $w_inicio = formataDataEdicao(f($RS_Viagem,'inicio'));
+  }
+  
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaLancamento($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
@@ -3026,8 +3051,8 @@ function Concluir() {
     FormataDataHora();
     FormataValor();
     ValidateOpen('Validacao');
-    Validate('w_quitacao','Data da liquidação', 'DATA', 1, 10, 10, '', '0123456789/');
-    CompData('w_quitacao','Data da liquidação','<=',FormataDataEdicao(time()),'data atual');
+    Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
+    CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
     Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
@@ -3075,7 +3100,7 @@ function Concluir() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   if ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
-     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Não é possível liquidar o lançamento enquanto as correções listadas não forem feitas.</b></font></td>');
+     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Não é possível registrar o pagamento enquanto as correções listadas não forem feitas.</b></font></td>');
      ShowHTML('    <tr><td align="center" colspan=4><hr>');
      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } else {
@@ -3084,7 +3109,7 @@ function Concluir() {
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr>');
-    ShowHTML('              <td><b><u>D</u>ata da liquidação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,FormataDataEdicao(time())).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de liquidação deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
+    ShowHTML('              <td><b><u>D</u>ata do pagamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
     ShowHTML('              <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
     if ($w_sg_forma_pagamento=='DEPOSITO')
       ShowHTML('              <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
@@ -3093,7 +3118,7 @@ function Concluir() {
     ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
-    ShowHTML('      <input class="stb" type="submit" name="Botao" value="Liquidar">');
+    ShowHTML('      <input class="stb" type="submit" name="Botao" value="Gravar">');
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } 
   ShowHTML('      </td>');
@@ -3306,7 +3331,7 @@ function SolicMail($p_solic,$p_tipo) {
       // Se for conclusão
       // Dados da conclusão do lançamento, se ela estiver nessa situação
       if (Nvl(f($RSM,'conclusao'),'')>'' && Nvl(f($RSM,'quitacao'),'')>'') {
-        $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA LIQUIDAÇÃO</td>';
+        $w_html.=$crlf.'      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DO PAGAMENTO</td>';
         $w_html.=$crlf.'      <tr><td><table border=0 width="100%" cellspacing=0>';
         $w_html.=$crlf.'          <tr valign="top">';
         $w_html.=$crlf.'          <td>Data:<br><b>'.FormataDataEdicao(f($RSM,'quitacao')).' </b></td>';

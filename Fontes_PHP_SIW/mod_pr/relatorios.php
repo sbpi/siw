@@ -688,7 +688,7 @@ function Rel_Executivo() {
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     //ShowHTML('   <tr><td colspan="3"><hr NOSHADE color=#000000 size=4></td></tr>');
-    ShowHTML('   <tr><td colspan="3" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.nomeMes(date("m")).'/'.$w_ano.'</b></td></tr>');
+    ShowHTML('   <tr><td colspan="3" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.nomeMes(date("m")-1).'/'.$w_ano.'</b></td></tr>');
     $w_projeto_atual = 0;
     $RS = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, $p_projeto,$p_inicio,$p_fim,'RELATORIO');
     $RS = SortArray($RS,'codigo_interno','asc','nm_projeto','asc');
@@ -712,8 +712,8 @@ function Rel_Executivo() {
           }
           ShowHTML('   <tr><td colspan="3"><hr NOSHADE color=#000000 size=2></td></tr>');
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
-          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Programa: '.f($row,'nm_programa').'</b></div></td></tr>');
-          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Projeto: '.f($row,'nm_projeto').'</b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>'.f($row,'nm_programa').'</big></b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>Projeto: '.f($row,'nm_projeto').'</big></b></div></td></tr>');
           if ($w_embed!='WORD') {
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade'),f($row,'sq_unidade'),$TP).'</b></div></td></tr>');
@@ -809,7 +809,8 @@ function Rel_Executivo() {
                   //print_r($row1);
                       ShowHTML('        <tr valign="top"><td nowrap>');
                       if ($w_embed!='WORD') ShowHTML('<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/restricao.php?par=ComentarioEtapa&w_solic='.f($row1,'sq_projeto').'&w_chave='.f($row1,'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP=Comentários&SG=PJETACOM').'\',\'Etapa\',\'width=780,height=550,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir ou registrar comentários sobre este item."><img src="'.$conImgSheet.'" border=0>&nbsp;</A>');
-                      ShowHTML(ExibeImagemSolic('ETAPA',f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real_etapa'),f($row1,'fim_real_etapa'),null,null,null, f($row1,'perc_conclusao')));
+                      //var_dump(f($row1,'inicio_real'));
+                      ShowHTML(ExibeImagemSolic('ETAPA',f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),null,null,null, f($row1,'perc_conclusao')));                      
                       if ($w_embed!='WORD') {
                         ShowHTML(' '.ExibeEtapa('V',f($row1,'sq_projeto'),f($row1,'sq_projeto_etapa'),'Volta',10,f($row1,'cd_ordem'),$TP,$SG).'');
                       } else {

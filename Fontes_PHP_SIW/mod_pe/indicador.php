@@ -1305,7 +1305,7 @@ function Solic() {
   
   if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));
@@ -1514,7 +1514,7 @@ function Meta() {
 
   if (nvl($w_plano,'')!='') {
     // Recupera os dados do plano a que a meta está ligada
-    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,'REGISTROS');
+    $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_inicio_projeto = formataDataEdicao(f($RS,'inicio'));
     $w_fim_projeto    = formataDataEdicao(f($RS,'fim'));

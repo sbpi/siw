@@ -1123,9 +1123,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'    </table>';
       }
       if (f($RS,'ressarcimento')=='S') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Depósito identificado:</b></td><td>'.f($RS,'deposito_identificado').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Depósito identificado:</b></td><td>'.nvl(f($RS,'deposito_identificado'),'---').'</td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td><b>Ressarcimento:</b></td><td>R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Valor devolvido:</b></td><td>R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
       if (f($RS,'ressarcimento')=='S') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
       } 

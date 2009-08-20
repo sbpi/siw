@@ -246,7 +246,7 @@ function Rel_Executivo() {
                       ShowHTML('            <td nowrap>');
                       ShowHTML(ExibeImagemSolic(f($row3,'sigla'),f($row3,'inicio'),f($row3,'fim'),f($row3,'inicio_real'),f($row3,'fim_real'),f($row3,'aviso_prox_conc'),f($row3,'aviso'),f($row3,'sg_tramite'), null));
                       if ($w_embed !='WORD'){
-                        ShowHTML('            <A class="HL" HREF="cl_pitce/projeto.php?par=Visual&O=L&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
+                        ShowHTML('            <A class="HL" HREF="cl_pitce/projeto.php?par=Visual&O=V&w_chave='.f($row3,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.f($row3,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).'&nbsp;</a>');
                       }else{
                         ShowHTML('            '.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).''); 
                       }

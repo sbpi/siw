@@ -91,6 +91,8 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
       $l_scale_min = str_replace(',','.',$l_scale_min);      
       $graph->Data->setScale(array(0,$l_scale_max));
       $graph->Graph->setAxisRange(array(1, $l_scale_min, $l_scale_max));
+      $graph->Graph->addShapeMarker(array('t'.number_format($l_x[0],2,'.','').'', '333333', 0, 0,10.0));                
+      $graph->Graph->addShapeMarker(array('t'.number_format($l_x[1],2,'.','').'', '333333', 0, 1,10.0));                      
     } 
     
     //Output Graph
