@@ -1058,6 +1058,7 @@ function ContasBancarias() {
     $w_operacao     = $_REQUEST['w_operacao'];
     $w_tipo_conta   = $_REQUEST['w_tipo_conta'];
     $w_ativo        = $_REQUEST['w_ativo'];
+    $w_devolucao    = $_REQUEST['w_devolucao'];
     $w_padrao       = $_REQUEST['w_padrao'];
   } elseif ($O=='L') {
     // Recupera as contas bancárias do cliente
@@ -1073,6 +1074,7 @@ function ContasBancarias() {
     $w_tipo_conta   = f($RS,'tipo_conta');
     $w_ativo        = f($RS,'ativo');
     $w_padrao       = f($RS,'padrao');
+    $w_devolucao    = f($RS,'devolucao_valor');    
   } 
 
   // Recupera informação do campo operação do banco selecionado
@@ -1131,6 +1133,7 @@ function ContasBancarias() {
     ShowHTML('          <td><b>Banco</td>');
     ShowHTML('          <td><b>Agência</td>');
     ShowHTML('          <td><b>Conta</td>');
+    ShowHTML('          <td><b>Devolução</td>');    
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Padrão</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -1147,6 +1150,7 @@ function ContasBancarias() {
         ShowHTML('        <td>'.f($row,'banco').'</td>');
         ShowHTML('        <td>'.f($row,'agencia').'</td>');
         ShowHTML('        <td>'.f($row,'numero').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'devolucao_valor').'</td>');                
         ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padrao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -1196,7 +1200,13 @@ function ContasBancarias() {
     } else {
       ShowHTML('              <input class="str" type="radio" name="w_tipo_conta" VALUE="1">Corrente <input class="str" type="radio" name="w_tipo_conta" VALUE="2" checked>Poupança');
     } 
-    ShowHTML('          <td title="Indique se esta conta está ativa, clicando sobre a opção "Sim"."><b>Ativa?</b><br>');
+    ShowHTML('          <td title="Indique se esta conta permite a devolução de valores, clicando sobre a opção "Sim"."><b>Permite devolução de valores?</b><br>');
+    if ($w_devolucao=='' || $w_devolucao=='N') {
+      ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N" checked>Não <input class="str" type="radio" name="w_devolucao" VALUE="S">Sim');
+    } else {
+      ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N">Não <input class="str" type="radio" name="w_devolucao" VALUE="S" checked>Sim');
+    }     
+    ShowHTML('          <tr><td title="Indique se esta conta está ativa, clicando sobre a opção "Sim"."><b>Ativa?</b><br>');
     if ($w_ativo=='' || $w_ativo=='N') {
       ShowHTML('              <input class="str" type="radio" name="w_ativo" VALUE="N" checked>Não <input class="str" type="radio" name="w_ativo" VALUE="S">Sim');
     } else {
@@ -1908,7 +1918,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesConBan::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
-            $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_ativo'],
+            $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_ativo'],
             $_REQUEST['w_padrao']);
 
         ScriptOpen('JavaScript');
