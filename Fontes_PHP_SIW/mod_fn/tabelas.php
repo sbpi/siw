@@ -591,6 +591,7 @@ function Parametros() {
     $w_ano_corrente      = $_REQUEST['w_ano_corrente'];
     $w_prefixo           = $_REQUEST['w_prefixo'];
     $w_sufixo            = $_REQUEST['w_sufixo'];
+    $w_devolucao         = $_REQUEST['w_devolucao'];    
   } else {
     // Recupera os dados do parâmetro
     $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
@@ -601,6 +602,7 @@ function Parametros() {
       $w_ano_corrente       = f($RS,'ano_corrente');
       $w_prefixo            = f($RS,'prefixo');
       $w_sufixo             = f($RS,'sufixo');
+      $w_devolucao          = f($RS,'texto_devolucao');
     } 
   } 
   Cabecalho();
@@ -615,6 +617,7 @@ function Parametros() {
   Validate('w_ano_corrente', 'Ano corrente', '1', 1, 4, 4, '', '0123456789');
   Validate('w_prefixo','Prefixo','1','',1,10,'1','1');
   Validate('w_sufixo','Sufixo','1','',1,10,'1','1');
+  Validate('w_devolucao','Devolução de valores','1','',2,4000,'1','1');  
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
   ScriptClose();
@@ -650,7 +653,7 @@ function Parametros() {
   ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
   ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
   ShowHTML('      </table>');
-  ShowHTML('      <tr>');
+  ShowHTML('        <tr><td colspan=2><b><u>T</u>exto padrão para condições de devolução de valores:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_devolucao" class="sti" ROWS="3" COLS="75">'.$w_devolucao.'</textarea></td>');  
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
   // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
   ShowHTML('      <tr><td align="center" colspan="3">');
@@ -732,7 +735,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putFNParametro::getInstanceOf($dbms,$w_cliente,
-           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo']);     
+           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'], $_REQUEST['w_devolucao']);     
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
