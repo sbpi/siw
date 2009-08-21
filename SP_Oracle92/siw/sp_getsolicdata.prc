@@ -692,6 +692,7 @@ begin
                 d1.cumprimento,       d1.relatorio,                  d1.sq_relatorio_viagem, 
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
                 d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
+                d1.ressarcimento_data,
                 d1.nacional,          d1.internacional,              d1.deposito_identificado,
                 case d1.passagem    when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 case d1.hospedagem  when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
