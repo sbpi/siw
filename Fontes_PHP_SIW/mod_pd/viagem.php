@@ -43,6 +43,8 @@ include_once($w_dir_volta.'classes/sp/db_getMoeda.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Bilhete.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Reembolso.php');
+include_once($w_dir_volta.'classes/sp/db_getFNParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemOutra.php');
@@ -6595,6 +6597,7 @@ function Reembolso() {
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
+  //print_r($RS);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_reembolso                = $_REQUEST['w_reembolso'];
@@ -6609,6 +6612,7 @@ function Reembolso() {
     $w_rubrica                  = $_REQUEST['w_rubrica'];
     $w_lancamento               = $_REQUEST['w_lancamento'];
     $w_deposito                 = $_REQUEST['w_deposito'];
+    $w_ressarcimento_data       = $_REQUEST['w_ressarcimento_data'];    
   } else {
     $w_reembolso                = f($RS,'reembolso');
     $w_reembolso_bd             = f($RS,'reembolso');
@@ -6621,6 +6625,7 @@ function Reembolso() {
     $w_rubrica                  = f($RS,'sq_rubrica_reemb');
     $w_lancamento               = f($RS,'sq_lancamento_reemb');
     $w_deposito                 = f($RS,'deposito_identificado');
+    $w_ressarcimento_data       = FormataDataEdicao(f($RS,'ressarcimento_data'));
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -6629,11 +6634,15 @@ function Reembolso() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  CheckBranco();  
+  FormataData();  
+  SaltaCampo();  
   FormataValor();
   ValidateOpen('Validacao');
   if ($w_ressarcimento=='S') {
-    Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
+    Validate('w_deposito','Código do depósito identificado','','',1,20,'1',1);
     Validate('w_ressarcimento_valor','Valor da devolução','','1',1,18,'','0123456789,.');
+    Validate('w_ressarcimento_data','Data de devolução','DATA','1',10,10,'','0123456789/');
     CompValor('w_ressarcimento_valor','Valor da devolução','>','0,00','zero');
     Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
   } 
@@ -6704,7 +6713,33 @@ function Reembolso() {
   ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
   ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
   if ($w_ressarcimento=='S') {
+    // Recupera os dados do parâmetro
+    $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
+    if (count($RS)>0) {
+      foreach($RS as $row) { $RS = $row; break; }
+      $w_devolucao          = f($RS,'texto_devolucao');
+    }
+    $RSConta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'CONTADEV');
+    if (count($RS)>0) {
+      $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
+      $contas .= '<tr>';
+      $contas .= '<td width="60%"><b>Banco</b></td>';                  
+      $contas .= '<td width="20%"><b>Agência</b></td>';                        
+      $contas .= '<td width="20%"><b>Conta</b></td>';                              
+      $contas .= '</tr>';      
+      foreach($RSConta as $row) { 
+        $contas .= '<tr>';
+        $contas .= '<td>'.f($row,'banco').'</td>';                  
+        $contas .= '<td>'.f($row,'agencia').'</td>';                        
+        $contas .= '<td>'.f($row,'numero').'</td>';                              
+        $contas .= '</tr>';                  
+      }
+      $contas .= '</table>';      
+    }    
+    $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
     ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+    ShowHTML('      <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
+    ShowHTML('    <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');    
     ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
     ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
     ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
@@ -7438,7 +7473,7 @@ function Grava() {
         dml_putPD_Reembolso::getInstanceOf($dbms,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
             $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
-            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
+            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
