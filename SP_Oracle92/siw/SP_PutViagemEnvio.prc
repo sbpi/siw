@@ -24,6 +24,7 @@ create or replace procedure SP_PutViagemEnvio
    w_ee            number(18);
    w_salto         number(4);
    w_reembolso     pd_missao.reembolso%type;
+   w_ressarcimento pd_missao.ressarcimento%type;
    w_cumprimento   pd_missao.cumprimento%type;
    
    cursor c_missao is
@@ -31,7 +32,7 @@ create or replace procedure SP_PutViagemEnvio
       
    cursor c_financeiro_geral is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
-             case x5.sigla when 'EE' then 'Reembolso da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||'.' as descricao,
+             case x5.sigla when 'EE' then 'Diferença de diárias da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||'.' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
@@ -43,7 +44,9 @@ create or replace procedure SP_PutViagemEnvio
                inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
              siw_solicitacao                   x
              inner     join siw_tramite       x5 on (x.sq_siw_tramite      = x5.sq_siw_tramite)
-             inner     join pd_missao         x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao)
+             inner     join pd_missao         x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao and
+                                                     x1.reembolso          = 'S'
+                                                    )
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite)
@@ -137,7 +140,7 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação.
-   select reembolso into w_reembolso from pd_missao where sq_siw_solicitacao = p_chave;
+   select reembolso,ressarcimento into w_reembolso, w_ressarcimento from pd_missao where sq_siw_solicitacao = p_chave;
    
    -- Recupera a chave do cliente
    select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
@@ -188,7 +191,7 @@ begin
          End If;
       Elsif w_sg_tramite = 'VP' Then
          -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.
-         If w_reembolso = 'S'
+         If w_reembolso = 'S' or w_ressarcimento = 'S'
             Then w_salto := 1;
             Else w_salto := 3;
          End If;
@@ -267,7 +270,7 @@ begin
    End If;
    
    If p_devolucao = 'N' Then
-      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and w_reembolso = 'S') Then
+      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
           -- Cria/atualiza lançamento financeiro
          for crec in c_financeiro_geral loop
              sp_putfinanceirogeral(
