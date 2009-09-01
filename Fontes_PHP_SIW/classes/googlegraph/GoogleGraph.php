@@ -668,7 +668,6 @@
 						break;
 					case 'text':
 						$url .= 'chd=t:';
-            print_r($this->Data->data);
 						foreach($this->Data->data as $data) {			
 							foreach($data as $datum) {
 								//$url .= number_format(intval($datum), 1, '.', '').',';
