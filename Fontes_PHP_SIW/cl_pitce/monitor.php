@@ -1213,10 +1213,10 @@ function Descritivo() {
     // Validate('w_restricoes','Estratégias','1','',5,2000,'1','1');          
     // Validate('w_objetivo_superior','Objetivo superior','1','',5,2000,'1','1');
     // Validate('w_descricao','Objetivos estratégicos','1','',5,2000,'1','1');
-    // Validate('w_exclusoes','Desafios','1','',5,2000,'1','1');
-    // Validate('w_premissas','Prioridades','1','',5,2000,'1','1');
-    Validate('w_instancia_articulacao','Prioridades Horizontais','1','',5,500,'1','1');
-    Validate('w_composicao_instancia','Prioridades por Programa','1','',5,500,'1','1');
+    Validate('w_exclusoes','Prioridades por Programa','1','',5,2000,'1','1');
+    Validate('w_premissas','Prioridades Horizontais','1','',5,2000,'1','1');
+    //Validate('w_instancia_articulacao','Prioridades Horizontais','1','',5,2000,'1','1');
+    //Validate('w_composicao_instancia','','1','',5,500,'1','1');
     //Validate('w_estudos','Estudos','1','',5,500,'1','1');
   
 
@@ -1250,8 +1250,8 @@ function Descritivo() {
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><b>Descritivos</td></td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td><b>Prioridades <u>H</u>orizontais</b><br><textarea '.$w_Disabled.' accesskey="H" name="w_instancia_articulacao" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_instancia_articulacao.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>Prioridades por <u>P</u>rogramas</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_composicao_instancia" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_composicao_instancia.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>Prioridades <u>H</u>orizontais</b><br><textarea '.$w_Disabled.' accesskey="H" name="w_premissas" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_premissas.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td><b>Prioridades por <u>P</u>rogramas</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_exclusoes" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_exclusoes.'</TEXTAREA></td>');
     // ShowHTML('      <tr><td><b>Es<u>t</u>udos:</b><br><textarea '.$w_Disabled.' accesskey="T" name="w_estudos" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_estudos.'</TEXTAREA></td>');
     // ShowHTML('      <tr><td><b><u>S</u>ituação inicial:</b><br><textarea '.$w_Disabled.' accesskey="S" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Relacione recomendações e observações a serem seguidas na execução do programa.">'.$w_justificativa.'</TEXTAREA></td>');
     // ShowHTML('      <tr><td><b><u>E</u>stratégias:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_restricoes" class="STI" ROWS=5 cols=75 title="Descreva as estratégias a serem aplicadas na execução do programa.">'.$w_restricoes.'</TEXTAREA></td>');
@@ -1259,7 +1259,7 @@ function Descritivo() {
     // ShowHTML('      <tr><td><b>Objetivos <u>e</u>stratégicos:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos específicos esperados após a execução do programa.">'.$w_descricao.'</TEXTAREA></td>');
     // ShowHTML('      <tr><td><b><u>D</u>esafios:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_exclusoes" class="STI" ROWS=5 cols=75 title="Descreva os desafios a serem superados pelo programa.">'.$w_exclusoes.'</TEXTAREA></td>');
     //ShowHTML('      <tr><td><b><u>P</u>rioridades:</b><br><textarea '.$w_Disabled.' accesskey="P" name="w_premissas" class="STI" ROWS=5 cols=75 title="Descreva as prioridades do programa.">'.$w_premissas.'</TEXTAREA></td>'); 
-    ShowHTML('<INPUT type="hidden" name="w_premissas" value="'.$w_premissas.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_premissas" value="'.$w_premissas.'">');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></TD></TR>');
     ShowHTML('      <tr><td align="center">');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
@@ -3579,8 +3579,7 @@ function Encaminhamento() {
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
   ShowHTML('<HR>');
-  if($SG=='PJMONBOLSA') AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJBENVIO',$w_pagina.$par,$O);
-  else                  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJENVIO',$w_pagina.$par,$O);
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PJMENVIO',$w_pagina.$par,$O);
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
@@ -3663,8 +3662,7 @@ function Anotar() {
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
   ShowHTML(VisualProjeto($w_chave,'V',$w_usuario));
   ShowHTML('<HR>');
-  if($SG=='PJMONBOLSA')  ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_dir.$w_pagina.'Grava&SG=PJBENVIO&O='.$O.'&w_menu='.$w_menu.'">');
-  else                   ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_dir.$w_pagina.'Grava&SG=PJENVIO&O='.$O.'&w_menu='.$w_menu.'">');
+  ShowHTML('<FORM  name="Form" method="POST" enctype="multipart/form-data" onSubmit="return(Validacao(this));" action="'.$w_dir.$w_pagina.'Grava&SG=PJMENVIO&O='.$O.'&w_menu='.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
   ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
   ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
@@ -3848,7 +3846,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $grupo = MontaOrdemEtapa($l_chave_aux);
   
   if ($P4!=1) {
-    if ($l_destaque!='<b>' && $P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+    if ($P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
     $fechado = 'style="display:none"';
 
@@ -4001,7 +3999,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $grupo = MontaOrdemEtapa($l_chave_aux);
   
   if ($P4!=1) {
-    if ($l_destaque!='<b>' || ($l_destaque=='<b>' && (count($RS_Ativ)>0 || count($RS_Contr)>0))) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+    if (count($RS_Ativ)>0 || count($RS_Contr)>0) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
     $fechado = 'style="display:none"';
     if(strpos($grupo,'.')===false) $fechado = '';

@@ -184,6 +184,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     if (is_array($RS2)) {
       foreach($RS2 as $row) {
         if (f($row,'sg_tipo_interessado')!='PDPCES'&&f($row,'sg_tipo_interessado')!='PDPCEGS'&&f($row,'sg_tipo_interessado')!='PDPCECGS') {
+          $l_cont = 1;
           if (f($row,'sg_tipo_interessado')=='PDPCEGT') {
             $l_html.=chr(13).'       <tr valign="top" bgColor="#f8f8f8">';
             $l_html.=chr(13).'         <td nowrap>GESTOR</td>';
@@ -196,8 +197,15 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           } 
           $l_html.=chr(13).'         <td nowrap>'.f($row,'lotacao').'</td>';
         }
+        if ($l_cont>2) {
+          $l_html.=chr(13).'       <tr valign="top">';
+          $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
+          $l_html.=chr(13).'         <td nowrap>'.f($row,'lotacao').'</td>';
+          $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
+        }
         if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).'</td>';
         else       $l_html.=chr(13).'           <td>'.f($row,'nome').'</td>';
+        $l_cont++;
       }    
     }
     $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#969696" align="center" height=5></td></tr>';

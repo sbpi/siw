@@ -289,7 +289,7 @@ function Mesa() {
     ShowHTML('<div id="menu_superior">');
     ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
-    ShowHTML('<a title="Estrutura de governança da PDP" href="'.LinkArquivo(null,$w_cliente,'Contatos_PDP.xls',null,null,null,'EMBED').'" target="download"><div id="download"></div></a>');
+    ShowHTML('<a title="Consulta a documentos da PDP" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
     ShowHTML('</div>');
     ShowHTML('<img name="pdp" src="'.$w_dir.'pdp.gif" width="611" height="402" border="0" id="pdp" usemap="#m_pdp" alt="" /><map name="m_pdp" id="m_pdp">');
     ShowHTML('<area shape="poly" coords="376,374,608,374,608,402,376,402,376,374" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&O=L&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PRG"" title="Programas: '.$w_todos.'" />');
@@ -371,7 +371,13 @@ function Arquivos() {
   $p_tipo    = $_REQUEST['p_tipo'];
   $p_titulo  = $_REQUEST['p_titulo'];
   
-  if (nvl($p_unidade,'')!='') {
+  if ($p_codigo=='TODOS') {
+    $RS_Unidade = array();
+    if (nvl($p_unidade,'')!='') { 
+      $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
+      foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
+    }
+  } elseif (nvl($p_unidade,'')!='') {
     $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,null,null,null,null);
     foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }
   
@@ -384,7 +390,11 @@ function Arquivos() {
 
   }
 
-  $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null);
+  if (nvl($p_unidade,'')!='') {
+    $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  } else {
+    $RS_Membros = array();
+  }
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -426,12 +436,12 @@ function Arquivos() {
   ShowHTML('<INPUT type="hidden" name="p_pesquisa" value="">');
   ShowHTML('<INPUT type="hidden" name="w_mes" value="'.$w_mes.'">');
   ShowHTML('<INPUT type="hidden" name="p_unidade" value="'.f($RS_Unidade,'sq_unidade').'">');
-  /*
-  ShowHTML('   <tr>');
-  SelecaoUnidade('<u>Á</u>rea', 'A', null, $p_unidade, null, 'p_unidade', null, null, null, '<td>');
-  ShowHTML('   </tr>');
-  */
   ShowHTML('   <tr><td colspan="2"><b>Documentos</b></td>');
+  if ($p_codigo=='TODOS') {
+    ShowHTML('   <tr>');
+    SelecaoUnidade('<u>Á</u>rea', 'A', null, $p_unidade, null, 'p_unidade', 'CL_PITCE', null, null, '<td>');
+    ShowHTML('   </tr>');
+  }
   ShowHTML('   <tr>');
   SelecaoTipoArquivoTab('Ti<u>p</u>o:','P',null,$p_tipo,null,'p_tipo',null,null,null,'<td>');
   ShowHTML('   </tr>');
@@ -486,7 +496,7 @@ function Arquivos() {
       ShowHTML('<tr><td>&nbsp;</td></tr>');
     }
   }
-  if ($w_usuario_se) {
+  if ($w_usuario_se && $p_codigo=='PDPSE') {
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJMON');
     $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
               null,null,null,null,null,null,null,null,null,null,

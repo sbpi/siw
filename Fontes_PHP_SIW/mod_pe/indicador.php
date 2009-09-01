@@ -615,7 +615,8 @@ function VisualDados() {
                                  $w_legenda,                                
                                  $w_encoding
                                 )
-              );      ShowHTML('</table>');
+              );
+      ShowHTML('</table>');
     } else {
       ShowHTML('<tr><td><td align="right"><b>Registros existentes: '.count($RS));
       ShowHTML('<tr><td align="center" colspan=3>');
@@ -2295,7 +2296,7 @@ function VisualMeta() {
 
   if (count($RS_Cronograma) > 0) {
     ShowHTML('<tr><td colspan="2"><br><b>Cronograma da meta</b>');
-    ShowHTML('  <tr><td align="center"><table width=100%  border="1" bordercolor="#00000">');     
+    ShowHTML('  <tr><td align="center"><table align="left" width=25%  border="1" bordercolor="#00000">');     
     ShowHTML('    <tr align="center" valign="top" bgColor="'.$conTrAlternateBgColor.'">');
     ShowHTML('      <td><b>Referência</b></td>');
     ShowHTML('      <td><b>Previsto</b></td>');
@@ -2304,18 +2305,32 @@ function VisualMeta() {
     $w_cor=$conTrBgColor;
     $w_previsto  = 0;
     $w_realizado = 0;
+    $i = 0;
     foreach($RS_Cronograma as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('    <tr bgcolor="'.$w_cor.'" valign="top">');
       $p_array = retornaNomePeriodo(f($row,'inicio'), f($row,'fim'));
-      ShowHTML('        <td align="center" width="50%">');
-      if ($p_array['TIPO']=='DIA') {
+      ShowHTML('        <td nowrap align="center" width="50%">');
+      /*if ($p_array['TIPO']=='DIA') {
         ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
       } elseif ($p_array['TIPO']=='MES') {
         ShowHTML('        '.$p_array['VALOR']);
       } elseif ($p_array['TIPO']=='ANO') {
         ShowHTML('        '.$p_array['VALOR']);
       } else {
+        ShowHTML('        '.formataDataEdicao(f($row,'inicio')).' a '.formataDataEdicao(f($row,'fim')));
+      }*/
+      if ($p_array['TIPO']=='DIA') {
+        $w_referencia = date(d.'/'.m.'/'.y,$p_array['VALOR']);
+        ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
+      } elseif ($p_array['TIPO']=='MES') {
+        $w_referencia = $p_array['VALOR'];
+        ShowHTML('        '.$p_array['VALOR']);        
+      } elseif ($p_array['TIPO']=='ANO') {
+        $w_referencia = $p_array['VALOR'];
+        ShowHTML('        '.$p_array['VALOR']);        
+      } else {
+        $w_referencia = substr(formataDataEdicao(f($row,'inicio')),0,5).' a '.substr(formataDataEdicao(f($row,'fim')),0,5);
         ShowHTML('        '.formataDataEdicao(f($row,'inicio')).' a '.formataDataEdicao(f($row,'fim')));
       }
       ShowHTML('        </td>');
@@ -2328,7 +2343,16 @@ function VisualMeta() {
         $w_previsto  = f($row,'valor_previsto');
         if (nvl(f($row,'valor_real'),'')!='') $w_realizado = f($row,'valor_real');
       }
+      if ($i<8) {
+        // mostra somente as 5 primeiras ocorrências no gráfico
+        echo $w_legenda[$i] = $w_referencia;
+        $w_valor1[$i]   = str_replace(',','.',f($row,'valor_previsto'));
+        $w_valor2[$i]   = str_replace(',','.',f($row,'valor_real'));        
+      }
+      $i++;      
     } 
+    
+    
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
     if (f($RS,'cumulativa')=='S') ShowHTML('        <td align="right"><b>Total acumulado&nbsp;</b></td>');
     else                          ShowHTML('        <td align="right"><b>Total não acumulado&nbsp;</b></td>');
@@ -2338,7 +2362,26 @@ function VisualMeta() {
     if ($w_previsto!=f($RS,'quantidade')) {
       ShowHTML('      <tr valign="top"><td colspan="3"><font color="#FF0000"><b>ATENÇÃO: Total previsto do cronograma difere do resultado previsto para a meta!</b></font></td>');
     }
-    ShowHTML('</table>');
+    ShowHTML('</table><br>');
+    ShowHTML('<td width="50%"><table border=0 align="center">');
+      //include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      ShowHTML('<tr><td align="center">');
+      //arsort($w_valor1);
+      //arsort($w_legenda);
+      /*ShowHTML(geraGraficoGoogle('Evolução no período - '.date(Y).'',$SG,'line',
+                                 $w_valor1,
+                                 $w_legenda,
+                                 $w_encoding
+                                )
+              );
+      ShowHTML('<br/><br/>');
+      ShowHTML(geraGraficoGoogle('Evolução no período - '.date(Y).'',$SG,'barind',
+                                 $w_valor1, 
+                                 $w_legenda,                                
+                                 $w_encoding
+                                )
+              );      ShowHTML('</table>');    */
+  
   }
   
   // Exibe arquivos vinculados

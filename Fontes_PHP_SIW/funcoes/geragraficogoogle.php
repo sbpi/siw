@@ -149,7 +149,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     $graph->Graph->setSubtype('chart');
     $graph->Graph->setSize(300, 200);
     $graph->Graph->setAxis(array('x','y'));
-    $graph->Graph->setGridLines(0, 20, 1, 0);
+    $graph->Graph->setGridLines(20, 20, 1, 0);
     
     //Title
     $graph->Graph->setTitle(utf8_encode($l_titulo), '#222222', 12); 

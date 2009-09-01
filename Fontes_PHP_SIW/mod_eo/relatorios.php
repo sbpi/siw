@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -240,7 +240,7 @@ function Rel_Unidades() {
           }
           // Usuários
           if ($p_usuarios=='S') {
-            $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null);
+            $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,$p_endereco,f($row,'sq_unidade'),null,null,null,null,null,null,null,'S',null,null,null,null,null);
             $RS1 = SortArray($RS1,'nome','asc');
             if (count($RS1)>0) {
               ShowHTML('      <tr><td colspan="2"><br><b>Pessoas ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></td></tr>');

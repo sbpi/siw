@@ -11,7 +11,8 @@ begin
       p_restricao = 'CODIGO'       or p_restricao = 'CODIGONULL'       or p_restricao = 'MOD_PE' or 
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
       p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
-      p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET'
+      p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET' or
+      p_restricao = 'CL_PITCE'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -56,7 +57,8 @@ begin
                                                     (p_restricao = 'MOD_PA_SET'   and h.sq_unidade is not null and (h.sq_unidade_pai   is null or h.arquivo_setorial = 'S')) or 
                                                     (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos  = 'S') or 
                                                     (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento     = 'S') or 
-                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S')
+                                                    (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or 
+                                                    (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI'))
                                                    )
                                                   )
                 )

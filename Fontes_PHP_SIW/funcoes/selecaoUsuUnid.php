@@ -1,11 +1,11 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getUserList.php');
 // =========================================================================
 // Montagem da seleção do centro de custo
 // -------------------------------------------------------------------------
 function selecaoUsuUnid($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
   extract($GLOBALS);
-  $RS = db_getUserList::getInstanceOf($dbms, $w_cliente, null, null, null, null, null, null, null, null, null, 'S', 'S', null, null);
+  $RS = db_getUserList::getInstanceOf($dbms, $w_cliente, null, null, null, null, null, null, null, null, null, 'S', 'S', null, null,null,null);
   $RS = SortArray($RS,'nome_indice','asc');
 
   if (!isset($hint)) {

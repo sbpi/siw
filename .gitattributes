@@ -3847,6 +3847,7 @@ SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
 SP_Oracle92/siw/SP_PutPdMissao.prc -text
 SP_Oracle92/siw/SP_PutPdTarefa.prc -text
+SP_Oracle92/siw/SP_PutProjetoAnalise.prc -text
 SP_Oracle92/siw/SP_PutProjetoDescritivo.prc -text
 SP_Oracle92/siw/SP_PutSolicConc.prc -text
 SP_Oracle92/siw/SP_PutSolicConcTransp.prc -text

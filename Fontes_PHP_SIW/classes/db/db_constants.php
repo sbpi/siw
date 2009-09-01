@@ -7,10 +7,10 @@ define("MSSQL_DATABASE_NAME", "SIWGP");
 define("MSSQL_VERSION_TEXT", "MS SQL Server 2000 SP 3");
 
 // Oracle8 Database Constants
-define("ORA8_SERVER_NAME", "saturno");
-define("ORA8_DB_USERID", "siw");
-define("ORA8_DB_PASSWORD", "siw");
-define("ORA8_DATABASE_NAME", "siw");
+define("ORA8_SERVER_NAME", "XE.localdomain");
+define("ORA8_DB_USERID", "PDP_UOL");
+define("ORA8_DB_PASSWORD", "PDP_UOL");
+define("ORA8_DATABASE_NAME", "PDP_UOL");
 define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants

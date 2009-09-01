@@ -12,6 +12,8 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
   include_once($w_dir_volta.'classes/sp/db_getUserList.php');  
   include_once($w_dir_volta.'classes/sp/db_getUorgList.php');  
+  include_once($w_dir_volta.'classes/sp/db_getVincKindList.php');
+  include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
   
   //Recupera as informações do sub-menu
   $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJMON');
@@ -134,7 +136,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   //else                $l_html.=chr(13).'        <td colspan="2" bgcolor="#f0f0f0" align="center">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
   //$l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align="center"><b>'.strtoupper(f($RS,'codigo_interno').' - '.f($RS,'titulo')).'</b></td></tr>';
   //$l_html.=chr(13).'      <tr valign="top">';
-  $l_html.=chr(13).'        <td colspan="2" width="100%" align="center"><b>COORDENAÇÃO:';
+  $l_html.=chr(13).'        <td colspan="3" width="100%" align="center"><b>COORDENAÇÃO:';
   if($l_tipo!='WORD') $l_html.=chr(13).'        '.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
   else       $l_html.=chr(13).'        '.f($RS,'sg_unidade_resp').'</b></td>';
   // Recupera coordenadores do macroprograma
@@ -164,38 +166,65 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
          $l_cont++;
       }
     }
+    
+    // Recupera a chave do vínculo SECRETARIA EXECUTIVA
+    $RS1 = db_getVincKindList::getInstanceOf($dbms,$w_cliente,'S',null,'SECRETARIA EXECUTIVA',null);
+    foreach($RS1 as $row) { $RS1 = $row; break; }
+    $w_vinculo = f($row,'sq_tipo_vinculo');
+    
     $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS_Unidade = db_getUorgList::getInstanceOf($dbms,$w_cliente,null,null,null,'PDPSE',null);
     foreach($RS_Unidade as $row) { $RS_Unidade = $row; break; }  
     $p_unidade = f($RS_Unidade,'sq_unidade');    
-    $RS1 = db_getUserList::getInstanceOf($dbms,$w_cliente,null,$p_unidade,null,null,null,null,null,null,null,null,null,null,null);    
-    $RS1 = SortArray($RS1,'ordena','asc','localizacao','asc','nome','asc');    
-    $l_cont = 0;
+
+    $RS1 = db_getaddressList::getInstanceOf($dbms,$w_cliente,$p_unidade,'LISTALOCALIZACAO',null);
+    $RS1 = SortArray($RS1,'nome','asc');
+
     $l_html.=chr(13).'       <tr valign="top">';
-    $l_html.=chr(13).'         <td width="30%"><div align="center"><b>ÓRGÃO</b></div></td>';
-    $l_html.=chr(13).'         <td width="70%"><div align="center"><b>EQUIPE</b></div></td>';
+    $l_html.=chr(13).'         <td width="20%"><div align="center"><b>ÓRGÃO</b></div></td>';
+    $l_html.=chr(13).'         <td width="40%"><div align="center"><b>SECRETARIA EXECUTIVA</b></div></td>';
+    $l_html.=chr(13).'         <td width="40%"><div align="center"><b>EQUIPE</b></div></td>';    
     $l_html.=chr(13).'       </tr>';
-    $l_cont = 1;
     $l_novo = 'S';
     if (is_array($RS1)) {
       $nomeAtual = '';    
       $i=0;
       foreach($RS1 as $row) {
         $l_html.=chr(13).'       <tr valign="top">';      
-        if(Nvl($nomeAtual,'')==f($row,'localizacao')){
-          $l_html.=chr(13).'         <td nowrap></td>';        
-        }else{
-          $l_html.=chr(13).'         <td nowrap>'.f($row,'localizacao').'</td>';          
-        }        
-        if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).'</td>';
-        else       $l_html.=chr(13).'           <td>'.f($row,'nome').'</td>';
-        $l_html.=chr(13).'       </tr>';        
-        $nomeAtual = f($row,'localizacao');
-      }    
+        $l_html.=chr(13).'         <td nowrap>'.f($row,'nome').'</td>';
+        
+        // Composição da secretaria executiva no órgão
+        $l_html.=chr(13).'         <td><table border=1 width="100%">';
+        $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,f($row,'sq_localizacao'),null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        if (count($RS_Membros)>0) {
+          foreach($RS_Membros as $row1) {
+            $l_html.=chr(13).'       <tr valign="top">';
+            if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,strtoupper(f($row1,'nome'))).'</td>';
+            else                $l_html.=chr(13).'           <td>'.f($row1,'nome').'</td>';
+            $l_html.=chr(13).'       </tr>';
+          }          
+          $l_html.=chr(13).'         </table></td>';
+        }          
+        
+        // Imprime o nome das pessoas da equipe de trabalho
+        $l_html.=chr(13).'         <td><table border=1 width="100%">';
+        $RS_Membros = db_getUserList::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_vinculo,null);
+        if (count($RS_Membros)>0) {
+          foreach($RS_Membros as $row1) {
+            if (f($row,'nome')==f($row1,'lotacao') || f($row,'nome')==f($row1,'localizacao')) {
+              $l_html.=chr(13).'       <tr valign="top">';
+              if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row1,'sq_pessoa'),$TP,strtoupper(f($row1,'nome'))).'</td>';
+              else                $l_html.=chr(13).'           <td>'.f($row1,'nome').'</td>';
+              $l_html.=chr(13).'       </tr>';
+            }        
+          }          
+          $l_html.=chr(13).'         </table></td>';          
+        }
+      }
     }
     $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#969696" align="center" height=5></td></tr>';
-    $l_html.=chr(13).'      <tr><td bgColor="#f8f8f8" colspan="4"><b>Prioridades Horizontais:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td bgColor="#f8f8f8" colspan="4"><b>Prioridades por Programas:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr><td bgColor="#f8f8f8" colspan="4"><b>Prioridades Horizontais:</b><br>'.Nvl(CRLF2BR(f($RS,'premissas')),'---').'</td></tr>';
+    $l_html.=chr(13).'      <tr><td bgColor="#f8f8f8" colspan="4"><b>Prioridades por Programas:</b><br>'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').'</td></tr>';
     // $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
     // if ($w_exibe1) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
     // if ($w_exibe2) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';

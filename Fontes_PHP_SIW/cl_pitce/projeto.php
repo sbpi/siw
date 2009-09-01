@@ -2766,7 +2766,7 @@ function InteressadoPacote() {
       ShowHTML('          <tr align="center">');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Item</b></td>');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Agenda de Ação</b></td>');
-      ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Entidade executora</b></td>');
+      ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Entidades executora</b></td>');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Responsável pela atualização</b></td>');
       ShowHTML('            <td colspan=2 bgColor="#f0f0f0"><b>Execução</b></td>');
       ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Peso</b></td>');
@@ -3848,7 +3848,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $grupo = MontaOrdemEtapa($l_chave_aux);
   
   if ($P4!=1) {
-    if ($l_destaque!='<b>' && $P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+    if ($P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
     $fechado = 'style="display:none"';
 
@@ -4001,7 +4001,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
   $grupo = MontaOrdemEtapa($l_chave_aux);
   
   if ($P4!=1) {
-    if ($l_destaque!='<b>' || ($l_destaque=='<b>' && (count($RS_Ativ)>0 || count($RS_Contr)>0))) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+    if (count($RS_Ativ)>0 || count($RS_Contr)>0) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
     $fechado = 'style="display:none"';
     if(strpos($grupo,'.')===false) $fechado = '';
