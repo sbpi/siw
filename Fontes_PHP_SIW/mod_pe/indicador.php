@@ -2311,26 +2311,13 @@ function VisualMeta() {
       ShowHTML('    <tr bgcolor="'.$w_cor.'" valign="top">');
       $p_array = retornaNomePeriodo(f($row,'inicio'), f($row,'fim'));
       ShowHTML('        <td nowrap align="center" width="50%">');
-      /*if ($p_array['TIPO']=='DIA') {
-        ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
-      } elseif ($p_array['TIPO']=='MES') {
-        ShowHTML('        '.$p_array['VALOR']);
-      } elseif ($p_array['TIPO']=='ANO') {
-        ShowHTML('        '.$p_array['VALOR']);
-      } else {
-        ShowHTML('        '.formataDataEdicao(f($row,'inicio')).' a '.formataDataEdicao(f($row,'fim')));
-      }*/
       if ($p_array['TIPO']=='DIA') {
-        $w_referencia = date(d.'/'.m.'/'.y,$p_array['VALOR']);
         ShowHTML('        '.date(d.'/'.m.'/'.y,$p_array['VALOR']));
       } elseif ($p_array['TIPO']=='MES') {
-        $w_referencia = $p_array['VALOR'];
-        ShowHTML('        '.$p_array['VALOR']);        
+        ShowHTML('        '.$p_array['VALOR']);
       } elseif ($p_array['TIPO']=='ANO') {
-        $w_referencia = $p_array['VALOR'];
-        ShowHTML('        '.$p_array['VALOR']);        
+        ShowHTML('        '.$p_array['VALOR']);
       } else {
-        $w_referencia = substr(formataDataEdicao(f($row,'inicio')),0,5).' a '.substr(formataDataEdicao(f($row,'fim')),0,5);
         ShowHTML('        '.formataDataEdicao(f($row,'inicio')).' a '.formataDataEdicao(f($row,'fim')));
       }
       ShowHTML('        </td>');
@@ -2345,7 +2332,7 @@ function VisualMeta() {
       }
       if ($i<8) {
         // mostra somente as 5 primeiras ocorrências no gráfico
-        echo $w_legenda[$i] = $w_referencia;
+        $w_legenda[$i] = $w_referencia;
         $w_valor1[$i]   = str_replace(',','.',f($row,'valor_previsto'));
         $w_valor2[$i]   = str_replace(',','.',f($row,'valor_real'));        
       }
@@ -2364,23 +2351,24 @@ function VisualMeta() {
     }
     ShowHTML('</table><br>');
     ShowHTML('<td width="50%"><table border=0 align="center">');
-      //include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      /*include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
       ShowHTML('<tr><td align="center">');
-      //arsort($w_valor1);
-      //arsort($w_legenda);
-      /*ShowHTML(geraGraficoGoogle('Evolução no período - '.date(Y).'',$SG,'line',
+      krsort($w_valor1);
+      krsort($w_legenda);
+      ShowHTML(geraGraficoGoogle('Evolução no período',$SG,'line',
                                  $w_valor1,
                                  $w_legenda,
                                  $w_encoding
                                 )
               );
       ShowHTML('<br/><br/>');
-      ShowHTML(geraGraficoGoogle('Evolução no período - '.date(Y).'',$SG,'barind',
+      ShowHTML(geraGraficoGoogle('Evolução no período',$SG,'barind',
                                  $w_valor1, 
                                  $w_legenda,                                
                                  $w_encoding
                                 )
-              );      ShowHTML('</table>');    */
+              );      */
+              ShowHTML('</table>');    
   
   }
   
