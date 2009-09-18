@@ -53,7 +53,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     //Graph
     $graph->Graph->setType('bar');
     $graph->Graph->setSubtype('vertical_grouped');
-    $graph->Graph->setSize(300,200);
+    $graph->Graph->setSize(400,200);
     $graph->Graph->setAxis(array('x','y')); //no arguments means all on
     $graph->Graph->setGridLines(0, 20, 1, 0);
     
@@ -69,7 +69,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     $graph->Graph->addAxisLabel($l_y);
     $graph->Graph->addAxisStyle(array(0, '#222222', 11));
     $graph->Graph->addAxisStyle(array(1, '#222222', 10));
-    $graph->Graph->setBarSize(floor(230/count($l_x)));
+    $graph->Graph->setBarSize(floor(300/count($l_x)));
     
     //Lines
     $graph->Graph->setLineColors(array('#99C1F6'));
@@ -77,10 +77,20 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     
     //Data  
     $l_data = $l_x;
-    
+	
+	// Verifica se deve ser exibido rótulo com valor de cada barra
+	$l_rotulo = true;
+	foreach($l_data as $k => $v) {
+	  if (strlen($v) > 7) { 
+	    // Se valor tiver mais que seis posições, não mostra o valor da barra pois "encavala"
+	    $l_rotulo = false; 
+	    break; 
+	  }
+	}
+	
     $graph->Data->addData($l_data);
-    //var_dump($graph->Data);
-    if (is_array($l_x)) {
+
+	if (is_array($l_x)) {
       sort($l_x);
       $l_scale_min = $l_x[0];
       $l_scale_min = floor($l_scale_min-(0.1*$l_scale_min));
@@ -89,10 +99,14 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
       $l_scale_max += (0.1*$l_scale_max);
       $l_scale_max = ceil(str_replace(',','.',$l_scale_max));
       $l_scale_min = str_replace(',','.',$l_scale_min);      
-      $graph->Data->setScale(array(0,$l_scale_max));
+      $graph->Data->setScale(array($l_scale_min,$l_scale_max));
       $graph->Graph->setAxisRange(array(1, $l_scale_min, $l_scale_max));
-      $graph->Graph->addShapeMarker(array('t'.number_format($l_x[0],2,'.','').'', '333333', 0, 0,10.0));                
-      $graph->Graph->addShapeMarker(array('t'.number_format($l_x[1],2,'.','').'', '333333', 0, 1,10.0));                      
+	  if ($l_rotulo) {
+	    $y = count($l_data)-1; // ajuste para colocar os valores na ordem correta
+	    for($i = 0; $i < count($l_data); $i++){
+          $graph->Graph->addShapeMarker(array('t'.number_format($l_data[$y-$i],2,'.',''), '333333', 0, $i,10.0));                	  
+	    }	
+      }
     } 
     
     //Output Graph
@@ -147,7 +161,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     //Graph
     $graph->Graph->setType('line');
     $graph->Graph->setSubtype('chart');
-    $graph->Graph->setSize(300, 200);
+    $graph->Graph->setSize(400, 200);
     $graph->Graph->setAxis(array('x','y'));
     $graph->Graph->setGridLines(20, 20, 1, 0);
     

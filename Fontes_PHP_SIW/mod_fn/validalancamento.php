@@ -63,14 +63,12 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   } else {
     $l_existe_rs1=count($l_rs1);    
     foreach($l_rs1 as $l_row) {
-      if((nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')&&(nvl(f($l_rs_solic,'tipo_rubrica'),0)<>5)) {
+      if (nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
         $l_rs2 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if($l_existe_rs2>0) {
           $l_valor_rubrica=0;
-          foreach($l_rs2 as $l_row2) {
-            $l_valor_rubrica += f($l_row2,'valor'); 
-          }
+          foreach($l_rs2 as $l_row2) $l_valor_rubrica += f($l_row2,'valor'); 
           if (((f($l_row,'valor')!=$l_valor_rubrica) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
             $l_erro=$l_erro.'<li>'.f($l_row,'nm_tipo_documento').' - '.f($l_row,'numero').': Soma dos valores das rubricas(<b>R$ '.formatNumber(Nvl($l_valor_rubrica,0)).'</b>) difere do valor do documento(<b>R$ '.formatNumber(Nvl(f($l_row,'valor'),0)).'</b>).';
             $l_tipo=0;

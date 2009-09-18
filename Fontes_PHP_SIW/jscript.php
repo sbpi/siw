@@ -1,4 +1,4 @@
-<?
+<?php
 // Função para crítica da hora
 function VerfHora() {
   print "function VerfHora(Datac) {"."\r\n";
@@ -50,7 +50,11 @@ function VerfHora() {
 }
 
 // Abre a tag SCRIPT
-function ScriptOpen($Language) { print chr(13).chr(10).'<SCRIPT LANGUAGE="'.$Language.'"><!--'.chr(13).chr(10); }
+function ScriptOpen($Language) { 
+  extract($GLOBALS);
+  print chr(13).chr(10).'<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>';
+  print chr(13).chr(10).'<SCRIPT LANGUAGE="'.$Language.'"><!--'.chr(13).chr(10); 
+}
 
 // Encerra a tag SCRIPT
 function ScriptClose() { print "--></SCRIPT>"."\r\n"; }

@@ -47,7 +47,7 @@ begin
             inner join siw_menu        c on (b.sq_menu            = c.sq_menu)
     where a.sq_lancamento_doc = p_chave;
     
-   If w_sigla = 'FNDVIA' Then
+   If w_sigla = 'FNDVIA' or w_sigla = 'FNREVENT' Then
       -- Atualiza o documento
       update fn_lancamento_doc a
          set a.valor = coalesce((select sum(x.valor_total) from fn_documento_item x where x.sq_lancamento_doc = a.sq_lancamento_doc),0)

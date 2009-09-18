@@ -275,12 +275,12 @@
 						$markers[0] = 'R';
 						$this->markers[] = $markers;
 					default:	
-          if(substr(strtolower($markers[0]),0,1)=='t'){
-            $this->markers[] = $markers;            
-            break;
-          }else{					
-						break;
-          }
+                        if(substr(strtolower($markers[0]),0,1)=='t'){
+                          $this->markers[] = $markers;            
+                          break;
+                        } else {					
+                          break;
+                        }
 				}
 			}
 		}

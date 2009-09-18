@@ -30,6 +30,7 @@ array_push($arrayFun,array('texto' => 'openssl_pkcs7_sign' ,'param' => 'openssl_
 // Diretivas INI
 array_push($arrayIni,array('texto' => 'allow_call_time_pass_ reference' ,'param' => 'allow_call_time_pass_reference','funcao'=> false,'test'=> 'On (1)'));
 array_push($arrayIni,array('texto' => 'error_reporting' ,'param' => 'error_reporting','funcao'=> false,'test'=> 'E_ALL & ~E_NOTICE'));
+array_push($arrayIni,array('texto' => 'magic_quotes_gpc' ,'param' => 'magic_quotes_gpc','funcao'=> false,'test'=> '0'));
 array_push($arrayIni,array('texto' => 'max_execution_time' ,'param' => 'max_execution_time','funcao'=> false,'test'=> '300'));
 array_push($arrayIni,array('texto' => 'max_input_time' ,'param' => 'max_input_time','funcao'=> false,'test'=> '-1'));
 array_push($arrayIni,array('texto' => 'memory_limit' ,'param' => 'memory_limit','funcao'=> false,'test'=> '-1'));
@@ -105,11 +106,11 @@ function checkFun($arrayFun){
 
 function checkIni($arrayIni){
   $saida = '<table border="1"><caption><b>Diretivas INI</b></caption>';
-  $saida .= '<tr><td><b>Item</b></td><td><b>Atual</b></td><td><b>Default</b></td></tr>';
+  $saida .= '<tr align="center"><td><b>Item</b></td><td><b>Atual</b></td><td><b>Default</b></td></tr>';
   foreach($arrayIni as $row){
-    $saida .= '<tr valign="top">';
-    $retorno = ini_get($row['param']);
-    $ret = '<td> ' . $row['texto'] . '</td><td><b>' . nvl($retorno,'&nbsp') . '</b></td><td>' . $row['test'] . ' </td>';
+    $saida .= '<tr valign="top" align="center">';
+    $retorno = ((ini_get($row['param'])) ? ini_get($row['param']) : '0');
+    $ret = '<td align="left"> ' . $row['texto'] . '</td><td><b>' . nvl($retorno,'&nbsp') . '</b></td><td>' . $row['test'] . ' </td>';
     $saida .= $ret;      
     $saida .='</tr>';
   }

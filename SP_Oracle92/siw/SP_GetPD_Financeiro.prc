@@ -10,6 +10,7 @@ create or replace procedure SP_GetPD_Financeiro
     p_seguro          in  varchar2 default null,
     p_bilhete         in  varchar2 default null,
     p_reembolso       in  varchar2 default null,
+    p_ressarcimento   in  varchar2 default null,
     p_restricao       in  varchar2 default null,
     p_result          out sys_refcursor) is
 begin
@@ -18,12 +19,14 @@ begin
       open p_result for
       select a.sq_pdvinculo_financeiro as chave, a.cliente, a.sq_siw_solicitacao, a.sq_projeto_rubrica, 
              a.sq_tipo_lancamento, a.diaria, a.hospedagem, a.veiculo, a.seguro, a.bilhete, a.reembolso,
-             case a.diaria     when 'S' then 'Sim' else 'Não' end as nm_diaria,
-             case a.hospedagem when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
-             case a.veiculo    when 'S' then 'Sim' else 'Não' end as nm_veiculo,
-             case a.seguro     when 'S' then 'Sim' else 'Não' end as nm_seguro,
-             case a.bilhete    when 'S' then 'Sim' else 'Não' end as nm_bilhete,
-             case a.reembolso  when 'S' then 'Sim' else 'Não' end as nm_reembolso,
+             a.ressarcimento,
+             case a.diaria         when 'S' then 'Sim' else 'Não' end as nm_diaria,
+             case a.hospedagem     when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
+             case a.veiculo        when 'S' then 'Sim' else 'Não' end as nm_veiculo,
+             case a.seguro         when 'S' then 'Sim' else 'Não' end as nm_seguro,
+             case a.bilhete        when 'S' then 'Sim' else 'Não' end as nm_bilhete,
+             case a.reembolso      when 'S' then 'Sim' else 'Não' end as nm_reembolso,
+             case a.ressarcimento  when 'S' then 'Sim' else 'Não' end as nm_ressarcimento,
              e.codigo as cd_rubrica, e.nome as nm_rubrica, e.ativo as at_rubrica,
              f.nome   as nm_lancamento, f.descricao as ds_lancamento, f.ativo as at_lancamento
         from pd_vinculo_financeiro             a
@@ -32,17 +35,18 @@ begin
                  inner join siw_modulo         d on (c.sq_modulo          = d.sq_modulo)
              left      join pj_rubrica         e on (a.sq_projeto_rubrica = e.sq_projeto_rubrica)
              inner     join fn_tipo_lancamento f on (a.sq_tipo_lancamento = f.sq_tipo_lancamento)
-       where a.cliente = p_cliente
-         and (p_chave      is null or (p_chave      is not null and a.sq_pdvinculo_financeiro = p_chave))
-         and (p_solic      is null or (p_solic      is not null and a.sq_siw_solicitacao      = p_solic))
-         and (p_rubrica    is null or (p_rubrica    is not null and a.sq_projeto_rubrica      = p_rubrica))
-         and (p_lancamento is null or (p_lancamento is not null and a.sq_tipo_lancamento      = p_lancamento))
-         and (p_diaria     is null or (p_diaria     is not null and a.diaria                  = p_diaria))
-         and (p_hospedagem is null or (p_hospedagem is not null and a.hospedagem              = p_hospedagem))
-         and (p_veiculo    is null or (p_veiculo    is not null and a.veiculo                 = p_veiculo))
-         and (p_seguro     is null or (p_seguro     is not null and a.seguro                  = p_seguro))
-         and (p_bilhete    is null or (p_bilhete    is not null and a.bilhete                 = p_bilhete))
-         and (p_reembolso  is null or (p_reembolso  is not null and a.reembolso               = p_reembolso));
+       where a.cliente        = p_cliente
+         and (p_chave         is null or (p_chave         is not null and a.sq_pdvinculo_financeiro = p_chave))
+         and (p_solic         is null or (p_solic         is not null and a.sq_siw_solicitacao      = p_solic))
+         and (p_rubrica       is null or (p_rubrica       is not null and a.sq_projeto_rubrica      = p_rubrica))
+         and (p_lancamento    is null or (p_lancamento    is not null and a.sq_tipo_lancamento      = p_lancamento))
+         and (p_diaria        is null or (p_diaria        is not null and a.diaria                  = p_diaria))
+         and (p_hospedagem    is null or (p_hospedagem    is not null and a.hospedagem              = p_hospedagem))
+         and (p_veiculo       is null or (p_veiculo       is not null and a.veiculo                 = p_veiculo))
+         and (p_seguro        is null or (p_seguro        is not null and a.seguro                  = p_seguro))
+         and (p_bilhete       is null or (p_bilhete       is not null and a.bilhete                 = p_bilhete))
+         and (p_reembolso     is null or (p_reembolso     is not null and a.reembolso               = p_reembolso))
+         and (p_ressarcimento is null or (p_ressarcimento is not null and a.ressarcimento           = p_ressarcimento));
    Elsif p_restricao = 'PREV_ORCFIN' Then
       -- Recupera a previsão orçamentária e financeira da viagem
       open p_result for

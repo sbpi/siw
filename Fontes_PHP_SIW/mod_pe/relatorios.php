@@ -263,7 +263,6 @@ function Rel_Executivo() {
                       else                 ShowHTML('            '.nvl(f($row3,'codigo_interno'),f($row3,'sq_siw_solicitacao')).''); 
                       ShowHTML('        '.exibeImagemRestricao(f($row,'restricao'),'P'));
                       ShowHTML('            <td>'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).f($row3,'titulo').'</td>');
-                      //if ($p_tipo!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
                       if ($w_embed!='WORD') ShowHTML('            <td align="left">'.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic')).'</td>');
                       else                 ShowHTML('            <td align="left">'.f($row3,'nm_solic').'</td>'); 
                       ShowHTML('            <td align="center">'.Nvl(FormataDataEdicao(f($row3,'inicio'),5),'-').'</td>');

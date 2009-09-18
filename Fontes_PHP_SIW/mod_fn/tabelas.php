@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -19,6 +19,7 @@ include_once($w_dir_volta.'classes/sp/dml_putFNParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putImposto.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoDocumento.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoLancamento.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoEsfera.php');
 include_once($w_dir_volta.'funcoes/selecaoCalculo.php');
 // =========================================================================
@@ -420,23 +421,19 @@ function Lancamento() {
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
     // Se for recarga da página
+    $w_pai          = $_REQUEST['w_pai'];
     $w_nome         = $_REQUEST['w_nome'];
     $w_descricao    = $_REQUEST['w_descricao'];
     $w_receita      = $_REQUEST['w_receita'];
     $w_despesa      = $_REQUEST['w_despesa'];
     $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
-    $RS = db_getTipoLancamento::getInstanceOf($dbms,null,$w_cliente,null);
-    if ($p_ordena>'') {
-      $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'receita','desc');
-    } else {
-      $RS = SortArray($RS,'receita','desc','nome','asc');
-    }
+    $RS = db_getTipoLancamento::getInstanceOf($dbms,null,null,$w_cliente,'ARVORE');
   } elseif (strpos('AEV',$O)!==false) {
-    $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,$w_cliente,null);
+    $RS = db_getTipoLancamento::getInstanceOf($dbms,$w_chave,null,$w_cliente,null);
     foreach ($RS as $row) {$RS=$row; break;}
     $w_chave        = f($RS,'chave');
+    $w_pai          = f($RS,'sq_tipo_lancamento_pai');
     $w_nome         = f($RS,'nome');
     $w_descricao    = f($RS,'descricao');
     $w_receita      = f($RS,'receita');
@@ -492,6 +489,7 @@ function Lancamento() {
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><font size="1"><b> Operações </font></td>');
     ShowHTML('        </tr>');
@@ -500,13 +498,18 @@ function Lancamento() {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
-      foreach ($RS1 as $row) {
+      foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="left"><font size="1">'.f($row,'nome').'</td>');
+        $l_destaque = ((f($row,'qt_filhos')>0) ? '<b>' : '');
+        if (nvl(f($row,'level'),0)==1) {
+          ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.f($row,'nome').'</b></td></tr></table>');
+        } else {
+          ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(f($row,'level')-1)).$imagem.'<td>'.$l_destaque.f($row,'nome').' '.'</b></td></tr></table>');
+        }
         ShowHTML('        <td align="left"><font size="1">'.f($row,'descricao').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_receita').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_despesa').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'qt_lancamentos').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
@@ -518,13 +521,6 @@ function Lancamento() {
     ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
-    ShowHTML('<tr><td align="center" colspan=3>');
-    if ($R>'') {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    } else {
-      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    } 
-    ShowHTML('</tr>');
     //Aqui começa a manipulação de registros
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
@@ -535,6 +531,8 @@ function Lancamento() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr>');
+    SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null);
     ShowHTML('      <tr><td colspan=3><font size="1"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Receita?</b>',$w_receita,'w_receita');
@@ -719,8 +717,8 @@ function Grava() {
     case 'FNTPLANC':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        dml_putTipoLancamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-          $_REQUEST['w_receita'],$_REQUEST['w_despesa'],$_REQUEST['w_ativo']);
+        dml_putTipoLancamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_pai'],$_REQUEST['w_cliente'],
+          $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_receita'],$_REQUEST['w_despesa'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

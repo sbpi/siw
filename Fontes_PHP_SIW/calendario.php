@@ -35,9 +35,13 @@
   $w_usuario    = RetornaUsuario();
   $w_form       = $_REQUEST['form'];
   $w_campo      = $_REQUEST['field'];
+  //exibeVariaveis();
   if($_REQUEST['w_mes'] != ''){
     $w_mes      = substr($_REQUEST['w_mes'],0,2);
     $w_ano      = substr($_REQUEST['w_mes'],2,4);
+  }elseif($_REQUEST['vData'] != ''){
+    $w_mes      = substr($_REQUEST['vData'],3,2);
+    $w_ano      = substr($_REQUEST['vData'],6,4);
   }else{
     $w_mes      = RetornaMes();
     $w_ano      = RetornaAno();

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
 // =========================================================================
 // Montagem da seleção das rubricas de um projeto

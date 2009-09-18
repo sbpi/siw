@@ -69,11 +69,12 @@ begin
                 inner join pd_vinculo_financeiro d on (a.sq_projeto_rubrica = d.sq_projeto_rubrica and
                                                        (p_codigo            = 'T' or
                                                         (p_codigo           <> 'T' and
-                                                         ((p_codigo         = 'D' and d.diaria     = 'S') or
-                                                          (p_codigo         = 'H' and d.hospedagem = 'S')or
-                                                          (p_codigo         = 'V' and d.veiculo    = 'S')or
-                                                          (p_codigo         = 'S' and d.seguro     = 'S')or
-                                                          (p_codigo         = 'B' and d.bilhete    = 'S')
+                                                         ((p_codigo         = 'D' and d.diaria        = 'S') or
+                                                          (p_codigo         = 'H' and d.hospedagem    = 'S')or
+                                                          (p_codigo         = 'V' and d.veiculo       = 'S')or
+                                                          (p_codigo         = 'S' and d.seguro        = 'S')or
+                                                          (p_codigo         = 'B' and d.bilhete       = 'S')or
+                                                          (p_codigo         = 'R' and d.ressarcimento = 'S')
                                                          )
                                                         )
                                                        )

@@ -11,14 +11,18 @@ create or replace procedure SP_PutPD_Reembolso
     p_ressarcimento            in varchar2  default null,
     p_ressarcimento_data       in date      default null,
     p_ressarcimento_valor      in number    default null,
-    p_ressarcimento_observacao in varchar2  default null
+    p_ressarcimento_observacao in varchar2  default null,
+    p_fin_dev                  in number    default null,
+    p_rub_dev                  in number    default null,
+    p_lan_dev                  in number    default null
    ) is
 
    w_financeiro number(18) := p_financeiro;
+   w_fin_dev    number(18) := p_fin_dev;
    w_existe     number(18);
    
 begin
-   -- Verifica se precisa gravar o tipo de vínculo financeiro
+   -- Verifica se precisa gravar o tipo de vínculo financeiro para reembolso
    If p_financeiro is null and p_lancamento is not null Then
       -- Verifica se há um vínculo único para as opções enviadas
       select count(*) into w_existe
@@ -37,17 +41,37 @@ begin
       End If;
    End If;
    
+   -- Verifica se precisa gravar o tipo de vínculo financeiro para devolucao de valores
+   If p_fin_dev is null and p_lan_dev is not null Then
+      -- Verifica se há um vínculo único para as opções enviadas
+      select count(*) into w_existe
+        from pd_vinculo_financeiro
+       where sq_projeto_rubrica = p_rubrica
+         and sq_tipo_lancamento = p_lancamento
+         and ressarcimento      = 'S';
+
+      -- Prepara variável para gravação se encontrou um, e apenas um registro.
+      If w_existe = 1 Then
+         select sq_pdvinculo_financeiro into w_fin_dev
+           from pd_vinculo_financeiro
+          where sq_projeto_rubrica = p_rubrica
+            and sq_tipo_lancamento = p_lancamento
+            and ressarcimento      = 'S';
+      End If;
+   End If;
+   
    -- Atualiza os dados da viagem
    update pd_missao 
-      set reembolso                = coalesce(p_reembolso,'N'),
-          reembolso_valor          = coalesce(p_valor,0),
-          reembolso_observacao     = p_observacao,
-          ressarcimento            = coalesce(p_ressarcimento,'N'),
-          ressarcimento_data       = p_ressarcimento_data,
-          ressarcimento_valor      = coalesce(p_ressarcimento_valor,0),
-          ressarcimento_observacao = p_ressarcimento_observacao,
-          sq_pdvinculo_reembolso   = coalesce(w_financeiro,sq_pdvinculo_reembolso),
-          deposito_identificado    = p_deposito
+      set reembolso                  = coalesce(p_reembolso,'N'),
+          reembolso_valor            = coalesce(p_valor,0),
+          reembolso_observacao       = p_observacao,
+          ressarcimento              = coalesce(p_ressarcimento,'N'),
+          ressarcimento_data         = p_ressarcimento_data,
+          ressarcimento_valor        = coalesce(p_ressarcimento_valor,0),
+          ressarcimento_observacao   = p_ressarcimento_observacao,
+          sq_pdvinculo_reembolso     = coalesce(w_financeiro,sq_pdvinculo_reembolso),
+          sq_pdvinculo_ressarcimento = coalesce(w_fin_dev,sq_pdvinculo_ressarcimento),
+          deposito_identificado      = p_deposito
     where sq_siw_solicitacao = p_chave;
 end SP_PutPD_Reembolso;
 /

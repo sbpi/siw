@@ -25,8 +25,9 @@ include_once($w_dir_volta.'classes/sp/dml_putTipoRestricao.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoEvento.php');
 include_once($w_dir_volta.'classes/sp/dml_putContasCronograma.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolic_Vinculo.php');
-include_once($w_dir_volta.'classes/sp/dml_putConfPD.php');
+include_once($w_dir_volta.'classes/sp/dml_putConfPJ.php');
 include_once($w_dir_volta.'classes/sp/dml_putConfCL.php');
+include_once($w_dir_volta.'classes/sp/dml_putConfPD.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPrestacao.php');
 include_once($w_dir_volta.'funcoes/selecaoPrestacaoSub.php');
@@ -399,6 +400,7 @@ function Vinculacao() {
   } elseif ($O=='A') {
     // Recupera as vinculações existentes
     $RS1 = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
+    $w_exibe_relatorio = f($RS1,'exibe_relatorio');
 
     $w_texto = ExibeImagemSolic(f($RS1,'sigla'),f($RS1,'inicio'),f($RS1,'fim'),f($RS1,'inicio_real'),f($RS1,'fim_real'),f($RS1,'aviso_prox_conc'),f($RS1,'aviso'),f($RS1,'sg_tramite'), null).
                ' '.exibeSolic($w_dir,f($RS1,'sq_siw_solicitacao'),nvl(f($RS1,'codigo_interno'),f($RS1,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($RS1,'restricao'),'P')).
@@ -414,12 +416,15 @@ function Vinculacao() {
     ShowHTML('    </TABLE>');
     ShowHTML('</TABLE><BR>');
 
-    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Marque os serviços que poderão alocar este recurso.<li>Desmarque os serviços que não poderão alocar este recurso.</ul></b></font></td>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PRVINCITEM',$w_pagina.$par,$O);
     ShowHTML(montaFiltro('POST'));
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'">');
+    MontaRadioNS("<b>Mesmo concluído, projeto deve ser exibido nos relatórios gerenciais?</b>",$w_exibe_relatorio,'w_exibe_relatorio',null,null,null,3,'&nbsp;');
+    ShowHTML('<tr><td>&nbsp;</td></tr>');
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">Orientação:<ul><li>Marque os serviços que poderão alocar este recurso.<li>Desmarque os serviços que não poderão alocar este recurso.</ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td><table border="0">');
@@ -571,28 +576,30 @@ function ConfiguraViagem() {
   $w_menu      = $_REQUEST['w_menu'];
 
   if ($w_troca>'' && $O!='E') {
-    $w_rubrica    = $_REQUEST['w_rubrica'];
-    $w_lancamento = $_REQUEST['w_lancamento'];
-    $w_diaria     = $_REQUEST['w_diaria'];
-    $w_hospedagem = $_REQUEST['w_hospedagem'];
-    $w_veiculo    = $_REQUEST['w_veiculo'];
-    $w_seguro     = $_REQUEST['w_seguro'];
-    $w_bilhete    = $_REQUEST['w_bilhete'];
-    $w_reembolso  = $_REQUEST['w_reembolso'];
+    $w_rubrica        = $_REQUEST['w_rubrica'];
+    $w_lancamento     = $_REQUEST['w_lancamento'];
+    $w_diaria         = $_REQUEST['w_diaria'];
+    $w_hospedagem     = $_REQUEST['w_hospedagem'];
+    $w_veiculo        = $_REQUEST['w_veiculo'];
+    $w_seguro         = $_REQUEST['w_seguro'];
+    $w_bilhete        = $_REQUEST['w_bilhete'];
+    $w_reembolso      = $_REQUEST['w_reembolso'];
+    $w_ressarcimento  = $_REQUEST['w_ressarcimento'];
   } elseif ($O=='L') {
-    $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null);
+    $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null,null);
     $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
   } elseif ($O!='I') {
-    $RS = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null);
+    $RS = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,$w_chave_aux,$w_chave,null,null,null,null,null,null,null,null,null,null);
     foreach($RS as $row) { $RS = $row; break; }
-    $w_rubrica    = f($RS,'sq_projeto_rubrica');
-    $w_lancamento = f($RS,'sq_tipo_lancamento');
-    $w_diaria     = f($RS,'diaria');
-    $w_hospedagem = f($RS,'hospedagem');
-    $w_veiculo    = f($RS,'veiculo');
-    $w_seguro     = f($RS,'seguro');
-    $w_bilhete    = f($RS,'bilhete');
-    $w_reembolso  = f($RS,'reembolso');
+    $w_rubrica       = f($RS,'sq_projeto_rubrica');
+    $w_lancamento    = f($RS,'sq_tipo_lancamento');
+    $w_diaria        = f($RS,'diaria');
+    $w_hospedagem    = f($RS,'hospedagem');
+    $w_veiculo       = f($RS,'veiculo');
+    $w_seguro        = f($RS,'seguro');
+    $w_bilhete       = f($RS,'bilhete');
+    $w_reembolso     = f($RS,'reembolso');
+    $w_ressarcimento = f($RS,'ressarcimento');
   }
   
   cabecalho();
@@ -654,7 +661,8 @@ function ConfiguraViagem() {
     ShowHTML('         <td><b>'.LinkOrdena('Veíc.','veiculo').'</td>');
     ShowHTML('         <td><b>'.LinkOrdena('Seg.','seguro').'</td>');
     ShowHTML('         <td><b>'.LinkOrdena('Bil.','bilhete').'</td>');
-    ShowHTML('         <td><b>'.LinkOrdena('Reemb.','bilhete').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Reemb.','reembolso').'</td>');
+    ShowHTML('         <td><b>'.LinkOrdena('Devol.','ressarcimento').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS_Fin)<=0) {
@@ -672,6 +680,7 @@ function ConfiguraViagem() {
         ShowHTML('        <td align="center">'.f($row,'nm_seguro').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_bilhete').'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_reembolso').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ressarcimento').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações do registro">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_menu='.$w_menu.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclui o registro">EX</A>&nbsp');
@@ -699,7 +708,7 @@ function ConfiguraViagem() {
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
     SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,3);
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento',null,null,3);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,3);
     ShowHTML('      <tr valign="top">');
     MontaRadioSN("<b>Diária?</b>",$w_diaria,'w_diaria');
     MontaRadioSN("<b>Hospedagem?</b>",$w_hospedagem,'w_hospedagem');
@@ -707,6 +716,7 @@ function ConfiguraViagem() {
     MontaRadioSN("<b>Seguro?</b>",$w_seguro,'w_seguro');
     MontaRadioSN("<b>Bilhete?</b>",$w_bilhete,'w_bilhete');
     MontaRadioSN("<b>Reembolso?</b>",$w_reembolso,'w_reembolso');
+    MontaRadioSN("<b>Devolução de valores?</b>",$w_ressarcimento,'w_ressarcimento');
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
@@ -867,7 +877,7 @@ function ConfiguraCompra() {
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
     SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,2);
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento',null,null,3);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,3);
     ShowHTML('      <tr valign="top">');
     MontaRadioSN("<b>Material de consumo?</b>",$w_consumo,'w_consumo');
     MontaRadioSN("<b>Material permanente?</b>",$w_permanente,'w_permanente');
@@ -1520,7 +1530,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O!='E') {
-          $RS = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null);
+          $RS = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null);
           foreach ($RS as $row) {
             if (f($row,'sq_tipo_lancamento')==$_REQUEST['w_lancamento'] && f($row,'sq_projeto_rubrica')==$_REQUEST['w_rubrica'] && f($row,'chave')!=nvl($_REQUEST['w_chave_aux'],'0')) {
               ScriptOpen('JavaScript');
@@ -1533,7 +1543,8 @@ function Grava() {
         }
         dml_putConfPD::getInstanceOf($dbms,$O,$w_cliente, Nvl($_REQUEST['w_chave_aux'],''),$_REQUEST['w_chave'],
             $_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],$_REQUEST['w_diaria'],$_REQUEST['w_hospedagem'],
-            $_REQUEST['w_veiculo'],$_REQUEST['w_seguro'],$_REQUEST['w_bilhete'],$_REQUEST['w_reembolso']);
+            $_REQUEST['w_veiculo'],$_REQUEST['w_seguro'],$_REQUEST['w_bilhete'],$_REQUEST['w_reembolso'],
+            $_REQUEST['w_ressarcimento']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&w_servico='.$_REQUEST['w_servico'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1600,6 +1611,10 @@ function Grava() {
     case 'PRVINCITEM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        
+        // Grava informação sobre relatório gerencial
+        dml_putConfPJ::getInstanceOf($dbms,$O,$w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_exibe_relatorio']);
+      
         // Remove os registros existentes
         dml_putSolic_Vinculo::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 

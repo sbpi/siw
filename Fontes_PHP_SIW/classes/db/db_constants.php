@@ -14,19 +14,18 @@ define("ORA8_DATABASE_NAME", "PDP_UOL");
 define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
-//define("ORA9_SERVER_NAME", "io.sbpi.com.br");
-define("ORA9_SERVER_NAME", "XE.localdomain");
-define("ORA9_DB_USERID", "desenv");
-define("ORA9_DB_PASSWORD", "desenv");
-define("ORA9_DATABASE_NAME", "desenv");
+define("ORA9_SERVER_NAME", "XE");
+define("ORA9_DB_USERID", "siw");
+define("ORA9_DB_PASSWORD", "siw");
+define("ORA9_DATABASE_NAME", "siw");
 define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 
 // Oracle9 Database Constants
 //define("ORA10_SERVER_NAME", "mercurio");
-define("ORA10_SERVER_NAME", "XE.localdomain");
-define("ORA10_DB_USERID", "SMSSP_DADOS");
-define("ORA10_DB_PASSWORD", "SMSSP_DADOS");
-define("ORA10_DATABASE_NAME", "smssp_dados");
+define("ORA10_SERVER_NAME", "XE");
+define("ORA10_DB_USERID", "SMSSP");
+define("ORA10_DB_PASSWORD", "SMSSP");
+define("ORA10_DATABASE_NAME", "smssp");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants

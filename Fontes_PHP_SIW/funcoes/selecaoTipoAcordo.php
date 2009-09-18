@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getAgreeType.php');
 // =========================================================================
 // Montagem da seleção de tipos de acordo
@@ -8,18 +8,10 @@ function SelecaoTipoAcordo($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$
 
   $RS = db_getAgreeType::getInstanceOf($dbms,null,$chaveAux,$chaveAux2,null,null,$restricao);
   $RS = SortArray($RS,'nm_tipo','asc');
-  if (!isset($hint)) {
-    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-    ShowHTML('          <td colspan="'.$colspan.'" TITLE="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } 
+  ShowHTML('          <td colspan="'.$colspan.'"'.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
-    if (nvl(f($row,'sq_tipo_acordo'),0)==nvl($chave,0)) {
-      ShowHTML('          <option value="'.f($row,'sq_tipo_acordo').'" SELECTED>'.f($row,'nm_tipo'));
-    } else {
-      ShowHTML('          <option value="'.f($row,'sq_tipo_acordo').'">'.f($row,'nm_tipo'));
-    } 
+    ShowHTML('          <option value="'.f($row,'sq_tipo_acordo').'" '.(((nvl(f($row,'sq_tipo_acordo'),0)==nvl($chave,0))) ? 'SELECTED' : '').'>'.f($row,'nm_tipo'));
   } 
   ShowHTML('          </select>');
 } 

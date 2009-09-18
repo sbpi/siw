@@ -586,7 +586,7 @@ function Rel_Progresso() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td colspan=2><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
@@ -1047,7 +1047,7 @@ function Rel_Executivo() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td colspan=2><b><u>P</u>eríodo de reporte:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' a ');
@@ -1299,7 +1299,7 @@ function Rel_Projeto() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     /*
     ShowHTML('      <tr valign="top">');
@@ -1585,7 +1585,7 @@ function Rel_Atualizacao() {
     }
     ShowHTML('      <tr><td colspan=2><table border=0 cellpadding=0 cellspacing=0><tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLIST',null);
+    SelecaoProjeto('Pr<u>o</u>jeto:','O','Selecione o projeto na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),$p_programa,$p_objetivo,$p_plano,'p_projeto','PJLISTREL',null);
     ShowHTML('      </table>');
     ShowHTML('      <tr><td colspan=2><b>Informações a serem exibidas:');
     if ($w_marca_bloco) ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação" checked> Todas</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="w_marca_bloco" value="S" onClick="javascript:MarcaTodosBloco();" TITLE="Marca todos os itens da relação"> Todas</td>');

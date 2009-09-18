@@ -180,7 +180,7 @@ function Gerencial() {
     } 
     if ($p_sq_orprior>''){
       $w_linha++;
-      $RS = db_getTipoLancamento::getInstanceOf($dbms,$p_sq_orprior,$w_cliente,null);
+      $RS = db_getTipoLancamento::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null);
       foreach($RS as $row) {$RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo do lançamento <td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -819,7 +819,7 @@ function Gerencial() {
     }
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$p_sq_orprior,$w_cliente,'p_sq_orprior',f($RS_Menu_Origem,'sigla'),null);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',f($RS_Menu_Origem,'sigla'),null);
     if (f($RS_Menu,'solicita_cc')=='S') {
       SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
     } 

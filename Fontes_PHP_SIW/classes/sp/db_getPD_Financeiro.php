@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getPD_Financeiro {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_solic, $p_rubrica, $p_lancamento, $p_diaria, $p_hospedagem, 
-        $p_veiculo, $p_seguro, $p_bilhete, $p_reembolso, $p_restricao) {
+        $p_veiculo, $p_seguro, $p_bilhete, $p_reembolso, $p_ressarcimento, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getPD_Financeiro';
      $params=array('p_cliente'              =>array(tvl($p_cliente),                            B_INTEGER,        32),
                    'p_chave'                =>array(tvl($p_chave),                              B_INTEGER,        32),
@@ -24,6 +24,7 @@ class db_getPD_Financeiro {
                    'p_seguro'               =>array(tvl($p_seguro),                             B_VARCHAR,         1),
                    'p_bilhete'              =>array(tvl($p_bilhete),                            B_VARCHAR,         1),
                    'p_reembolso'            =>array(tvl($p_reembolso),                          B_VARCHAR,         1),
+                   'p_ressarcimento'        =>array(tvl($p_ressarcimento),                      B_VARCHAR,         1),
                    'p_restricao'            =>array(tvl($p_restricao),                          B_VARCHAR,        30),
                    'p_result'               =>array(null,                                       B_CURSOR,         -1)
                   );

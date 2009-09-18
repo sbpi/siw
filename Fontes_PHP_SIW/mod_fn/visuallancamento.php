@@ -57,7 +57,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>---</td>';
       }
     } 
-    if (f($RS_Menu,'sigla')=='FNDVIA') {
+    if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
       if (Nvl(f($RS,'dados_avo'),'')!='') {
         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_avo'),f($RS,'dados_avo'),'N',$l_tipo).'</td>';
@@ -86,7 +86,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
       $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
     }   
-    if (Nvl(f($RS,'tipo_rubrica'),'')>'') {
+    if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
       $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
@@ -186,7 +186,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de pagamento/recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       }
-      if (substr($w_SG,0,3)!='FNR') {
+      if (substr($w_SG,0,3)!='FNR' || Nvl(f($RS,'numero_conta'),'')!='') {
         if (!(strpos('CREDITO,DEPOSITO',f($RS,'sg_forma_pagamento'))===false)) {
           if (Nvl(f($RS,'cd_banco'),'')>'') {
             $l_html.=chr(13).'          <tr><td><b>Banco:</b></td>';
@@ -305,15 +305,16 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Série</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
-    if((Nvl($w_tipo_rubrica,'')=='')||((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5)))
+    if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Patrimônio</b></td>';
+    }
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_total=0;
     foreach ($RS as $row) {
       $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'calculo','asc','esfera','asc','nm_imposto','asc');
-      if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) {
+      if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
         $RS3 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null);
         $RS3 = SortArray($RS3,'cd_rubrica_origem','asc');
       } else {
@@ -328,16 +329,17 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
         $l_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
         $l_html.=chr(13).'            <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
-        if((Nvl($w_tipo_rubrica,'')=='')||((Nvl($w_tipo_rubrica,'')>'') && (Nvl($w_tipo_rubrica,0)==5)))
+        if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
           $l_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
+        }
         $l_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
-          if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) {
-             $l_html.=chr(13).'              <tr align="center"><td colspan=4 align="center">';
-             $l_html.=chr(13).documentorubrica($RS3,$w_tipo_rubrica);
+          if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
+            $l_html.=chr(13).'              <tr align="center"><td colspan=4 align="center">';
+            $l_html.=chr(13).documentorubrica($RS3,$w_tipo_rubrica);
           } else {
-             $l_html.=chr(13).'              <tr align="center"><td colspan=5 align="center">';
-             $l_html.=chr(13).rubricalinha($RS3);            
+            $l_html.=chr(13).'              <tr align="center"><td colspan="'.((Nvl($w_tipo_rubrica,0)==4) ? '4' : '5').'" align="center">';
+            $l_html.=chr(13).rubricalinha($RS3);            
           }
         }
       } else {
@@ -387,10 +389,11 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $w_vl_retencao=$w_vl_retencao+f($row2,'vl_retencao');
           $w_vl_normal=$w_vl_normal+f($row2,'vl_normal');
         } 
-        if (Nvl(f($row,'valor'),0)==0)
+        if (Nvl(f($row,'valor'),0)==0) {
           $w_valor=1;
-        else
+        } else {
           $w_valor=Nvl(f($row,'valor'),0);
+        }
         $w_al_total=100-(($w_valor-($w_vl_normal+$w_vl_retencao))*100/$w_valor);
         $w_al_retencao=100-(($w_valor-$w_vl_retencao)*100/$w_valor);
         $w_al_normal=100-(($w_valor-$w_vl_normal)*100/$w_valor);
@@ -411,15 +414,17 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } 
     if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     $l_html.=chr(13).'      <tr valign="top">';
-    if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5) 
+    if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
       $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
-    else
-      $l_html.=chr(13).'        <td align="right" colspan=4><b>Total</b></td>';
+    } else {
+      $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '4' : '5').'"><b>Total</b></td>';
+    }
     $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
-    $l_html.=chr(13).'          <td align="right">&nbsp;</td>';
+    if(Nvl($w_tipo_rubrica,0)==0 && Nvl($w_tipo_rubrica,0)==5) $l_html.=chr(13).'          <td align="right">&nbsp;</td>';
     $l_html.=chr(13).'      </tr>';
     $l_html.=chr(13).'         </table></td></tr>';
   } 
+
   // Rubricas
   if($w_qtd_rubrica>0) {
     $RS = db_getLancamentoItem::getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'RUBRICA');
@@ -437,12 +442,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       foreach($RS as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="left"><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha1\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'rubrica').'</A>&nbsp</td>';
-        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5)
+        if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
           $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_rubrica'),0)).'&nbsp;&nbsp;</td>';
         else
           $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_total'),0)).'&nbsp;&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
-        if(Nvl($w_tipo_rubrica,'')>'' && Nvl($w_tipo_rubrica,0)<>5)
+        if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
           $w_total += nvl(f($row,'valor_rubrica'),0);
         else
           $w_total += nvl(f($row,'valor_total'),0);
@@ -464,10 +469,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td align="center">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>KB</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Título</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>KB</b></td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     foreach($RS as $row) {
@@ -530,18 +535,18 @@ function rubricalinha($v_RS3){
     $v_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
     $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
     if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
-      $v_html.=chr(13).'        <td align="center">'.formataDataEdicao(f($row,'data_cotacao')).'</td>';
-      $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_cotacao'),4).'&nbsp;&nbsp;</td>';
+      $v_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'data_cotacao')),'&nbsp;').'</td>';
+      $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_cotacao'),4).'&nbsp;</td>';
     }
-    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'&nbsp;&nbsp;</td>';
-    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'&nbsp;&nbsp;</td>';
+    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'&nbsp;</td>';
+    $v_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'&nbsp;</td>';
     $v_html.=chr(13).'      </tr>';
     $w_total += f($row,'valor_total');
   } 
   if ($w_total>0) {
     $v_html.=chr(13).'      <tr valign="top">';
     $v_html.=chr(13).'        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')!==false) ? 7 : 5).'"><b>Total</b></td>';
-    $v_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+    $v_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;</td>';
     $v_html.=chr(13).'      </tr>';
   }
   $v_html.=chr(13).'    </table>';

@@ -792,7 +792,7 @@ function Geral() {
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   
   // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,'S',null,null);
+  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,'S',null,null,null);
   
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -914,7 +914,7 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"');
         if(f($RS_Relac,'sg_modulo')=='PR' && nvl($w_chave_pai,'')!='') {
           // Exibe saldos das rubricas
-          $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'ORCAM_SIT');
+          $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,null,'ORCAM_SIT');
           $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
           ShowHTML('<tr><td colspan=3><b>Disponibilidade orçamentária:</b>');
           ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -1003,7 +1003,7 @@ function Geral() {
         ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr valign="top">');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave_pai,'B','w_rubrica','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
       } elseif (count($RS_Financ)==1) {
         foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
         ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
@@ -3673,9 +3673,9 @@ function Diarias() {
     if ($w_meia_volta=='S') $w_max_diaria -= 0.5; elseif ($w_compromisso_saida=='N')   $w_max_diaria -= 0.5;
   }
   // Recupera as possibilidades de vinculação financeira para diárias, hospedagens e locações de veículo
-  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null,null);
-  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null,null);
-  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null);
+  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null,null,null);
+  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null,null,null);
+  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null,null);
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -4160,7 +4160,7 @@ function Diarias() {
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('          <tr><td>');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dia,f($RS_Solic,'sq_solic_pai'),'D','w_rub_dia','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dia\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dia,$w_cliente,'w_lan_dia','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_dia,10,'0',STR_PAD_LEFT).'D',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dia,null,$w_cliente,'w_lan_dia','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_dia,10,'0',STR_PAD_LEFT).'D',null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
       } elseif (count($RS_Fin_Dia)==1) {
         foreach($RS_Fin_Dia as $row) { $RS_Fin_Dia = $row; break; }
@@ -4182,7 +4182,7 @@ function Diarias() {
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('          <tr><td>');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_hsp,f($RS_Solic,'sq_solic_pai'),'D','w_rub_hsp','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,null,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
       } elseif (count($RS_Fin_Hsp)==1) {
         foreach($RS_Fin_Hsp as $row) { $RS_Fin_Hsp = $row; break; }
@@ -4204,7 +4204,7 @@ function Diarias() {
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('          <tr><td>');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_vei,f($RS_Solic,'sq_solic_pai'),'D','w_rub_vei','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_vei\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,null,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
       } elseif (count($RS_Fin_Vei)==1) {
         foreach($RS_Fin_Vei as $row) { $RS_Fin_Vei = $row; break; }
@@ -4407,9 +4407,9 @@ function Diarias_Solic() {
     if ($w_meia_volta=='S') $w_max_diaria -= 0.5; elseif ($w_compromisso_saida=='N')   $w_max_diaria -= 0.5;
   }
   // Recupera as possibilidades de vinculação financeira para diárias, hospedagens e locações de veículo
-  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null,null);
-  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null,null);
-  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null);
+  $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null,null,null);
+  $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null,null,null);
+  $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null,null);
 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -4842,7 +4842,7 @@ function Diarias_Solic() {
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('          <tr><td>');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dia,f($RS_Solic,'sq_solic_pai'),'D','w_rub_dia','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dia\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dia,$w_cliente,'w_lan_dia','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_dia,10,'0',STR_PAD_LEFT).'D',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dia,null,$w_cliente,'w_lan_dia','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_dia,10,'0',STR_PAD_LEFT).'D',null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
       } elseif (count($RS_Fin_Dia)==1) {
         foreach($RS_Fin_Dia as $row) { $RS_Fin_Dia = $row; break; }
@@ -4875,7 +4875,7 @@ function Diarias_Solic() {
           ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
           ShowHTML('          <tr><td>');
           SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_hsp,f($RS_Solic,'sq_solic_pai'),'D','w_rub_hsp','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_hsp\'; document.Form.submit();"');
-          SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
+          SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_hsp,null,$w_cliente,'w_lan_hsp','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_hsp,10,'0',STR_PAD_LEFT).'D',null);
           ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
         } elseif (count($RS_Fin_Hsp)==1) {
           foreach($RS_Fin_Hsp as $row) { $RS_Fin_Hsp = $row; break; }
@@ -4909,7 +4909,7 @@ function Diarias_Solic() {
         ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('          <tr><td>');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_vei,f($RS_Solic,'sq_solic_pai'),'D','w_rub_vei','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_vei\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,null,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
         ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
       } elseif (count($RS_Fin_Vei)==1) {
         foreach($RS_Fin_Vei as $row) { $RS_Fin_Vei = $row; break; }
@@ -6147,8 +6147,11 @@ function PrestarContas() {
   $w_cumprimento_bd     = f($RS,'cumprimento');
   $w_reembolso_bd       = f($RS,'reembolso');
   
-  // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null);
+  // Recupera as possibilidades de vinculação financeira do reembolso
+  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null,null);
+
+  // Recupera as possibilidades de vinculação financeira da devolução de valores
+  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'S',null);
   
   if ($w_troca>'') {
     // Se for recarga da página
@@ -6165,8 +6168,12 @@ function PrestarContas() {
     $w_valor                    = $_REQUEST['w_valor'];
     $w_observacao               = $_REQUEST['w_observacao'];
     $w_ressarcimento            = $_REQUEST['w_ressarcimento'];
+    $w_ressarcimento_data       = $_REQUEST['w_ressarcimento_data'];
     $w_ressarcimento_valor      = $_REQUEST['w_ressarcimento_valor'];
     $w_ressarcimento_observacao = $_REQUEST['w_ressarcimento_observacao'];
+    $w_rub_dev                  = $_REQUEST['w_rub_dev'];
+    $w_lan_dev                  = $_REQUEST['w_lan_dev'];
+    $w_fin_dev                  = $_REQUEST['w_fin_dev'];
     $w_relatorio                = $_REQUEST['w_relatorio'];
     $w_deposito                 = $_REQUEST['w_deposito'];
   } else {
@@ -6180,8 +6187,12 @@ function PrestarContas() {
     $w_valor                    = formatNumber(f($RS,'reembolso_valor'));
     $w_observacao               = f($RS,'reembolso_observacao');
     $w_ressarcimento            = f($RS,'ressarcimento');
+    $w_ressarcimento_data       = FormataDataEdicao(f($RS,'ressarcimento_data'));
     $w_ressarcimento_valor      = formatNumber(f($RS,'ressarcimento_valor'));
     $w_ressarcimento_observacao = f($RS,'ressarcimento_observacao');
+    $w_rub_dev                  = f($RS,'sq_rubrica_ressarc');
+    $w_lan_dev                  = f($RS,'sq_lancamento_ressarc');
+    $w_fin_dev                  = f($RS,'sq_pdvinculo_ressarcimento');
     $w_relatorio                = f($RS,'relatorio');
     $w_deposito                 = f($RS,'deposito_identificado');
   } 
@@ -6199,10 +6210,15 @@ function PrestarContas() {
     if ($w_cumprimento=='P' || $w_cumprimento=='C') {
       Validate('w_nota_conclusao','Motivo','','1',1,2000,'1','1');
       if($w_cumprimento=='C' && $w_ressarcimento=='S') {
-          Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
-          Validate('w_ressarcimento_valor','Valor da devolução','','1',1,18,'','0123456789,.');
-          CompValor('w_ressarcimento_valor','Valor da devolução','>','0,00','zero');
-          Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
+        Validate('w_ressarcimento_data','Data de devolução','DATA','1',10,10,'','0123456789/');
+        Validate('w_deposito','Código do depósito identificado','','',1,20,'1',1);
+        Validate('w_ressarcimento_valor','Valor da devolução','','1',1,18,'','0123456789,.');
+        CompValor('w_ressarcimento_valor','Valor da devolução','>','0,00','zero');
+        if (count($RS_Fin_Dev)>1) {
+          Validate('w_rub_dev','Rubrica para crédito da devolução do valor','SELECT','1',1,18,'','1');
+          Validate('w_lan_dev','Tipo de lançamento para devolução do valor','SELECT','1',1,18,'','1');
+        }
+        Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
       }
       //if ($w_cumprimento=='P') Validate('["w_tipo[]"]','Utilização','SELECT','1',1,1,'1','1');
     }
@@ -6212,9 +6228,14 @@ function PrestarContas() {
       Validate('w_lancamento','Tipo de lançamento para pagamento do reembolso','SELECT','1',1,18,'','1');
     }
     if ($w_cumprimento!='C' && $w_ressarcimento=='S') {
-      Validate('w_deposito','Código do depósito identificado','','1',1,20,'1',1);
+      Validate('w_ressarcimento_data','Data de devolução','DATA','1',10,10,'','0123456789/');  
+      Validate('w_deposito','Código do depósito identificado','','',1,20,'1',1);
       Validate('w_ressarcimento_valor','Valor da devolução','','1',1,18,'','0123456789,.');
       CompValor('w_ressarcimento_valor','Valor da devolução','>','0,00','zero');
+      if (count($RS_Fin_Dev)>1) {
+        Validate('w_rub_dev','Rubrica para crédito da devolução do valor','SELECT','1',1,18,'','1');
+        Validate('w_lan_dev','Tipo de lançamento para devolução do valor','SELECT','1',1,18,'','1');
+      }
       Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
     }
   }
@@ -6290,7 +6311,7 @@ function PrestarContas() {
         ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');   
         ShowHTML('      <tr valign="top">');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave_pai,'B','w_rubrica','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
       } elseif (count($RS_Financ)==1) {
         foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
         ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
@@ -6303,11 +6324,47 @@ function PrestarContas() {
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.((nvl($w_ressarcimento,'N')=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento=='S') {
+      // Recupera os dados do parâmetro
+      $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
+      if (count($RS)>0) {
+        foreach($RS as $row) { $RS = $row; break; }
+        $w_devolucao          = f($RS,'texto_devolucao');
+      }
+      $RSConta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'CONTADEV');
+      if (count($RS)>0) {
+        $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
+        $contas .= '<tr>';
+        $contas .= '<td width="60%"><b>Banco</b></td>';                  
+        $contas .= '<td width="20%"><b>Agência</b></td>';                        
+        $contas .= '<td width="20%"><b>Conta</b></td>';                              
+        $contas .= '</tr>';      
+        foreach($RSConta as $row) { 
+          $contas .= '<tr>';
+          $contas .= '<td>'.f($row,'banco').'</td>';                  
+          $contas .= '<td>'.f($row,'agencia').'</td>';                        
+          $contas .= '<td>'.f($row,'numero').'</td>';                              
+          $contas .= '</tr>';                  
+        }
+        $contas .= '</table>';      
+      }    
+      $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
+      ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
       ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
       ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
       ShowHTML('      </tr>');
+      if (count($RS_Fin_Dev)>1) {
+        ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');   
+        ShowHTML('      <tr valign="top">');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dev,$w_chave_pai,'R','w_rub_dev','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dev\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dev,null,$w_cliente,'w_lan_dev','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rub_dev,10,'0',STR_PAD_LEFT).'R',null);
+      } elseif (count($RS_Financ)==1) {
+        foreach($RS_Fin_Dev as $row) { $RS_Fin_Dev = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_fin_dev" value="'.f($RS_Fin_Dev,'chave').'">');
+      }
       ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td></tr>');
       ShowHTML('    </table></blockquote>');
     } else {
@@ -6327,11 +6384,47 @@ function PrestarContas() {
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="S" '.(($w_ressarcimento=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_ressarcimento" value="N" '.(($w_ressarcimento=='N') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_ressarcimento_valor\'; document.Form.submit();"> Não');
     if ($w_ressarcimento=='S') {
+      // Recupera os dados do parâmetro
+      $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
+      if (count($RS)>0) {
+        foreach($RS as $row) { $RS = $row; break; }
+        $w_devolucao          = f($RS,'texto_devolucao');
+      }
+      $RSConta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'CONTADEV');
+      if (count($RS)>0) {
+        $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
+        $contas .= '<tr>';
+        $contas .= '<td width="60%"><b>Banco</b></td>';                  
+        $contas .= '<td width="20%"><b>Agência</b></td>';                        
+        $contas .= '<td width="20%"><b>Conta</b></td>';                              
+        $contas .= '</tr>';      
+        foreach($RSConta as $row) { 
+          $contas .= '<tr>';
+          $contas .= '<td>'.f($row,'banco').'</td>';                  
+          $contas .= '<td>'.f($row,'agencia').'</td>';                        
+          $contas .= '<td>'.f($row,'numero').'</td>';                              
+          $contas .= '</tr>';                  
+        }
+        $contas .= '</table>';      
+      }    
+      $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
+      ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
       ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
       ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
       ShowHTML('      </tr>');
+      if (count($RS_Fin_Dev)>1) {
+        ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');   
+        ShowHTML('      <tr valign="top">');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dev,$w_chave_pai,'R','w_rub_dev','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dev\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dev,null,$w_cliente,'w_lan_dev','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rub_dev,10,'0',STR_PAD_LEFT).'R',null);
+      } elseif (count($RS_Financ)==1) {
+        foreach($RS_Fin_Dev as $row) { $RS_Fin_Dev = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_fin_dev" value="'.f($RS_Fin_Dev,'chave').'">');
+      }
       ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td></tr>');
       ShowHTML('    </table></blockquote>');
     } else {
@@ -6588,7 +6681,10 @@ function Reembolso() {
   $w_erro           = '';
 
   // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null);
+  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null,null);
+  
+  // Recupera as possibilidades de vinculação financeira da devolução de valores
+  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'S',null);
   
   // Recupera os dados da solicitação
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
@@ -6607,6 +6703,9 @@ function Reembolso() {
     $w_ressarcimento            = $_REQUEST['w_ressarcimento'];
     $w_ressarcimento_valor      = $_REQUEST['w_ressarcimento_valor'];
     $w_ressarcimento_observacao = $_REQUEST['w_ressarcimento_observacao'];
+    $w_rub_dev                  = $_REQUEST['w_rub_dev'];
+    $w_lan_dev                  = $_REQUEST['w_lan_dev'];
+    $w_fin_dev                  = $_REQUEST['w_fin_dev'];
     $w_atual                    = $_REQUEST['w_atual'];
     $w_financeiro               = $_REQUEST['w_financeiro'];
     $w_rubrica                  = $_REQUEST['w_rubrica'];
@@ -6621,6 +6720,9 @@ function Reembolso() {
     $w_ressarcimento            = f($RS,'ressarcimento');
     $w_ressarcimento_valor      = formatNumber(f($RS,'ressarcimento_valor'));
     $w_ressarcimento_observacao = f($RS,'ressarcimento_observacao');
+    $w_rub_dev                  = f($RS,'sq_rubrica_ressarc');
+    $w_lan_dev                  = f($RS,'sq_lancamento_ressarc');
+    $w_fin_dev                  = f($RS,'sq_pdvinculo_ressarcimento');
     $w_financeiro               = f($RS,'sq_pdvinculo_reembolso');
     $w_rubrica                  = f($RS,'sq_rubrica_reemb');
     $w_lancamento               = f($RS,'sq_lancamento_reemb');
@@ -6640,10 +6742,14 @@ function Reembolso() {
   FormataValor();
   ValidateOpen('Validacao');
   if ($w_ressarcimento=='S') {
+    Validate('w_ressarcimento_data','Data de devolução','DATA','1',10,10,'','0123456789/');
     Validate('w_deposito','Código do depósito identificado','','',1,20,'1',1);
     Validate('w_ressarcimento_valor','Valor da devolução','','1',1,18,'','0123456789,.');
-    Validate('w_ressarcimento_data','Data de devolução','DATA','1',10,10,'','0123456789/');
     CompValor('w_ressarcimento_valor','Valor da devolução','>','0,00','zero');
+    if (count($RS_Fin_Dev)>1) {
+      Validate('w_rub_dev','Rubrica para crédito da devolução do valor','SELECT','1',1,18,'','1');
+      Validate('w_lan_dev','Tipo de lançamento para devolução do valor','SELECT','1',1,18,'','1');
+    }
     Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
   } 
   if ($w_reembolso=='S' && count($RS_Financ)>1) {
@@ -6701,7 +6807,7 @@ function Reembolso() {
       ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('      <tr valign="top">');
       SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave_pai,'B','w_rubrica','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
-      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
+      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
     } elseif (count($RS_Financ)==1) {
       foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
       ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
@@ -6742,6 +6848,15 @@ function Reembolso() {
     ShowHTML('    <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');    
     ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
     ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_ressarcimento_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
+    if (count($RS_Fin_Dev)>1) {
+      ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');   
+      ShowHTML('      <tr valign="top">');
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_dev,$w_chave_pai,'R','w_rub_dev','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_dev\'; document.Form.submit();"');
+      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_dev,null,$w_cliente,'w_lan_dev','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rub_dev,10,'0',STR_PAD_LEFT).'R',null);
+    } elseif (count($RS_Fin_Dev)==1) {
+      foreach($RS_Fin_Dev as $row) { $RS_Fin_Dev = $row; break; }
+      ShowHTML('<INPUT type="hidden" name="w_fin_dev" value="'.f($RS_Fin_Dev,'chave').'">');
+    }
     ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
   } else {
     ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
@@ -7361,8 +7476,9 @@ function Grava() {
           dml_putPD_Reembolso::getInstanceOf($dbms,
               $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],
               $_REQUEST['w_valor'],$_REQUEST['w_observacao'],
-              $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
-              $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
+              $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],$_REQUEST['w_ressarcimento'],
+              $_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao'],
+              $_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def']);
           
           /*
           // Grava dados dos bilhetes
@@ -7471,9 +7587,10 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Grava dados do reembolso
         dml_putPD_Reembolso::getInstanceOf($dbms,
-            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],$_REQUEST['w_observacao'],
-            $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
-            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao']);
+            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],
+            $_REQUEST['w_observacao'],$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
+            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],
+            $_REQUEST['w_ressarcimento_observacao'],$_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

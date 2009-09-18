@@ -133,7 +133,7 @@ begin
                                             where y.ativo = 'S'
                                            group by y.sq_siw_solicitacao
                                           )                   d2 on (d.sq_siw_solicitacao  = d2.sq_siw_solicitacao)
-          where 'S'            = b1.ativo
+          where ('S'           = b1.ativo or coalesce(d.exibe_relatorio,'N') = 'S')
             and 'GD'           <> a1.sigla
             and 'GDP'          <> substr(a.sigla,1,3)
             and b.sq_tipo_evento is null
@@ -168,7 +168,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,      
+                b.palavra_chave,      dados_solic(b.sq_siw_solicitacao) as dados_solic,
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
@@ -1582,7 +1582,7 @@ begin
           where b.sq_menu        = p_menu
             and coalesce(b1.sigla,'-') = 'EE' 
             and acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
-   Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' Then
+   Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' or p_restricao = 'PJLISTREL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
@@ -1590,6 +1590,9 @@ begin
                 inner     join siw_tramite     b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite and b1.sigla <> 'CA')
                 inner     join pj_projeto      d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where b.sq_menu       = p_menu
+            and (p_restricao <> 'PJLISTREL' or 
+                 (p_restricao = 'PJLISTREL' and (b1.ativo = 'S' or d.exibe_relatorio = 'S'))
+                )
             and (p_palavra      is null or (p_palavra     is not null and b.codigo_interno = p_palavra))
             and (p_projeto      is null or (p_projeto     is not null and p_projeto  in (select sq_siw_solicitacao
                                                                                            from siw_solicitacao

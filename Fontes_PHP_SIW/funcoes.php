@@ -1997,10 +1997,10 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Não
 // -------------------------------------------------------------------------
-function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null) {
+function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  ShowHTML('          <td'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
-  if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
+  ShowHTML('          <td '.((nvl($hint,'')!='') ? ' colspan="'.$colspan.'" TITLE="'.$hint.'"': '').'>');
+  if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave=='S') ? 'checked' : '').' '.$atributo.'> Sim');
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave!='S') ? 'checked' : '').' '.$atributo.'> Não');
 }
@@ -2008,10 +2008,10 @@ function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
 // =========================================================================
 // Montagem de campo do tipo radio com padrão Sim
 // -------------------------------------------------------------------------
-function MontaRadioSN($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null) {
+function MontaRadioSN($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  ShowHTML('          <td'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
-  if (Nvl($label,'')>'') { ShowHTML($label.'</b><br>'); }
+  ShowHTML('          <td '.((nvl($hint,'')!='') ? ' colspan="'.$colspan.'" TITLE="'.$hint.'"': '').'>');
+  if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave!='N') ? 'checked' : '').' '.$atributo.'> Sim');
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave=='N') ? 'checked' : '').' '.$atributo.'> Não');
 }

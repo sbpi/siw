@@ -1074,7 +1074,8 @@ function ContasBancarias() {
     $w_tipo_conta   = f($RS,'tipo_conta');
     $w_ativo        = f($RS,'ativo');
     $w_padrao       = f($RS,'padrao');
-    $w_devolucao    = f($RS,'devolucao_valor');    
+    $w_devolucao    = f($RS,'devolucao_valor');
+    $w_saldo        = formatNumber(f($RS,'saldo_inicial'));
   } 
 
   // Recupera informação do campo operação do banco selecionado
@@ -1087,7 +1088,7 @@ function ContasBancarias() {
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
-  if (!(strpos('IAE',$O)===false)) {
+  if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
     CheckBranco();
     FormataValor();
@@ -1101,6 +1102,11 @@ function ContasBancarias() {
       if ($w_exige_operacao=='S') Validate('w_operacao','Operacao','1','1','1','3','1','1');
       Validate('w_numero_conta','Conta corrente','1','1','3','12','','0123456789-XP');
     } 
+    if (strpos('IA',$O)!==false) {
+      if ($P1==2) {
+        Validate('w_saldo','Saldo inicial','VALOR','1','4','18','','0123456789.,');
+      }
+    }
     if ($_SESSION['P_PORTAL']=='') {
       Validate('w_assinatura','Assinatura eletrônica','1','1','3','14','1','1');
     } 
@@ -1133,7 +1139,10 @@ function ContasBancarias() {
     ShowHTML('          <td><b>Banco</td>');
     ShowHTML('          <td><b>Agência</td>');
     ShowHTML('          <td><b>Conta</td>');
-    ShowHTML('          <td><b>Devolução</td>');    
+    if ($P1==2) {
+      ShowHTML('          <td><b>Devolução</td>');    
+      ShowHTML('          <td><b>Saldo inicial</td>');
+    }
     ShowHTML('          <td><b>Ativo</td>');
     ShowHTML('          <td><b>Padrão</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -1150,9 +1159,12 @@ function ContasBancarias() {
         ShowHTML('        <td>'.f($row,'banco').'</td>');
         ShowHTML('        <td>'.f($row,'agencia').'</td>');
         ShowHTML('        <td>'.f($row,'numero').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'devolucao_valor').'</td>');                
-        ShowHTML('        <td align="center">'.f($row,'ativo').'</td>');
-        ShowHTML('        <td align="center">'.f($row,'padrao').'</td>');
+        if ($P1==2) {
+          ShowHTML('        <td align="center">'.retornaSimNao(f($row,'devolucao_valor')).'</td>');
+          ShowHTML('        <td align="right">'.formatNumber(f($row,'saldo_inicial')).'</td>');
+        }
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'ativo')).'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_conta='.f($row,'sq_pessoa_conta').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_conta='.f($row,'sq_pessoa_conta').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão da conta?\');">EX</A>&nbsp');
@@ -1200,12 +1212,18 @@ function ContasBancarias() {
     } else {
       ShowHTML('              <input class="str" type="radio" name="w_tipo_conta" VALUE="1">Corrente <input class="str" type="radio" name="w_tipo_conta" VALUE="2" checked>Poupança');
     } 
-    ShowHTML('          <td title="Indique se esta conta permite a devolução de valores, clicando sobre a opção "Sim"."><b>Permite devolução de valores?</b><br>');
-    if ($w_devolucao=='' || $w_devolucao=='N') {
-      ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N" checked>Não <input class="str" type="radio" name="w_devolucao" VALUE="S">Sim');
+    if ($P1==2) {
+      ShowHTML('          <td title="Indique se esta conta permite a devolução de valores, clicando sobre a opção "Sim"."><b>Permite devolução de valores?</b><br>');
+      if ($w_devolucao=='' || $w_devolucao=='N') {
+        ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N" checked>Não <input class="str" type="radio" name="w_devolucao" VALUE="S">Sim');
+      } else {
+        ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N">Não <input class="str" type="radio" name="w_devolucao" VALUE="S" checked>Sim');
+      }
+      ShowHTML('        <td><b><u>S</u>aldo inicial:</b><br><input accesskey="S" type="text" name="w_saldo" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber(nvl($w_saldo,0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Saldo inicial desta conta."></td>');
     } else {
-      ShowHTML('              <input class="str" type="radio" name="w_devolucao" VALUE="N">Não <input class="str" type="radio" name="w_devolucao" VALUE="S" checked>Sim');
-    }     
+      ShowHTML('<INPUT type="hidden" name="w_devolucao" value="N">');
+      ShowHTML('<INPUT type="hidden" name="w_saldo" value="0,00">');
+    }
     ShowHTML('          <tr><td title="Indique se esta conta está ativa, clicando sobre a opção "Sim"."><b>Ativa?</b><br>');
     if ($w_ativo=='' || $w_ativo=='N') {
       ShowHTML('              <input class="str" type="radio" name="w_ativo" VALUE="N" checked>Não <input class="str" type="radio" name="w_ativo" VALUE="S">Sim');
@@ -1918,8 +1936,8 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesConBan::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
-            $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_ativo'],
-            $_REQUEST['w_padrao']);
+            $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],
+            $_REQUEST['w_ativo'], $_REQUEST['w_padrao']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');

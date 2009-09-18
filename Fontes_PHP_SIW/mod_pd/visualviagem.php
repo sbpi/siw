@@ -50,11 +50,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    if ($w_segmento=='Públicoxx') { 
-      $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size="2"><b>PROCESSO: '.nvl(f($RS,'processo'),'---').'<td bgcolor="#f0f0f0" align="right"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
-    } else {
-      $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
-    }
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     
     // Identificação da viagem
@@ -67,7 +63,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
       if(nvl(f($RS,'sq_solic_pai'),'')!='' && f($RS,'ativo')=='S') {
         // Exibe saldos das rubricas
-        $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,'ORCAM_SIT');
+        $RS_Fin = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS,'sq_solic_pai'),null,null,null,null,null,null,null,null,null,'ORCAM_SIT');
         $RS_Fin = SortArray($RS_Fin,'cd_rubrica','asc','nm_rubrica','asc','nm_lancamento','asc');
         $l_html.=chr(13).'      <tr valign="top"><td><b>Disponibilidade orçamentária:</b></td>';
         $l_html.=chr(13).'      <td><table width=100%  border="1" bordercolor="#00000">';
@@ -1264,7 +1260,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       // Prepara array de impressão dos dados orçamentários
-      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,'ORCAM_PREV');
+      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'ORCAM_PREV');
       $RS_Financ = SortArray($RS_Financ,'cd_rubrica','asc','sg_moeda','asc');
       if (count($RS_Financ)>0) {
         $i       = -1;
@@ -1286,7 +1282,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
       }
       // Prepara array de impressão dos dados financeiros
-      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,'FINANC_PREV');
+      $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$l_chave,null,null,null,null,null,null,null,null,null,'FINANC_PREV');
       $RS_Financ = SortArray($RS_Financ,'nm_lancamento','asc','sg_moeda','asc');
       if (count($RS_Financ)>0) {
         $i       = -1;
@@ -1411,9 +1407,14 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $i             = 1;
         $w_total       = 0;
         foreach ($RS1 as $row) {
-          $w_total       += f($row,'valor');
+          if (f($row,'sigla')=='FNREVENT') {
+            $w_total       -= f($row,'valor');
+          } else {
+            $w_total       += f($row,'valor');
+          }
           $l_html.=chr(13).'        <tr valign="middle">';
-          $l_html.=chr(13).'           <td>'.f($row,'codigo_interno').'</td>';
+          if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N').'</td>';
+          else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
           $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'nm_tramite').'</td>';

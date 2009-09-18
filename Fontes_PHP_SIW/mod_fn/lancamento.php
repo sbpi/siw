@@ -213,7 +213,7 @@ function Inicial() {
       $w_filtro .= '<tr valign="top"><td align="right">Executor <td>[<b>'.f($RS,'nome_resumido').'</b>]';
     } 
     if ($p_sq_orprior>''){
-      $RS = db_getTipoLancamento::getInstanceOf($dbms,$p_sq_orprior,$w_cliente,null);
+      $RS = db_getTipoLancamento::getInstanceOf($dbms,$p_sq_orprior,null,$w_cliente,null);
       foreach($RS as $row) {$RS = $row; break; }
       $w_filtro .= '<tr valign="top"><td align="right">Tipo do lançamento <td>[<b>'.f($RS,'nome').'</b>]';
     } 
@@ -371,7 +371,7 @@ function Inicial() {
       if (strpos('CONT',substr($SG,3))!==false) {
         ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
       }
-      if (f($RS_Menu,'sigla')=='FNDVIA') {
+      if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
         ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
       }
       ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
@@ -386,7 +386,7 @@ function Inicial() {
       if (strpos('CONT',substr($SG,3))!==false) {
         ShowHTML('          <td><b>Referência</td>');
       }
-      if (f($RS_Menu,'sigla')=='FNDVIA') {
+      if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
         ShowHTML('          <td><b>Projeto</td>');
       }
       ShowHTML('          <td><b>Vencimento</td>');
@@ -422,7 +422,7 @@ function Inicial() {
             ShowHTML('        <td>---</td>');
           }
         } 
-        if (f($RS_Menu,'sigla')=='FNDVIA') {
+        if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
           if (Nvl(f($row,'dados_avo'),'')!='') {
             ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
           } else {
@@ -477,7 +477,7 @@ function Inicial() {
                   if(nvl(f($row,'qtd_nota'),'')!='') ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Notas&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Notas'.'&SG=NOTA').'\',\'Nota\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informa os valores específicos para cada nota de empenho ligado a parcela.">NE</A>&nbsp');
                   ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
                   if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE')
-                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registro do pagamento.">Pagar</A>&nbsp');
+                    ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registro do pagamento.">'.((substr($SG,2,1)=='R') ? 'Receber' : 'Pagar').'</A>&nbsp');
                 } else {
                   if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
                     ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia o lançamento para outro responsável.">EN</A>&nbsp');
@@ -508,7 +508,7 @@ function Inicial() {
         // Coloca o valor parcial apenas se a listagem ocupar mais de uma página
         if (ceil(count($RS)/$P4)>1) {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (strpos('CONT',substr($SG,3))===false) {
+          if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
             ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
           } else {
             ShowHTML('          <td colspan=5 align="right"><b>Total desta página&nbsp;</td>');
@@ -524,7 +524,7 @@ function Inicial() {
             else                            $w_total += f($row,'valor');
           } 
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
-          if (strpos('CONT',substr($SG,3))===false) {
+          if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
             ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
           } else {
             ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</td>');
@@ -877,7 +877,7 @@ function Geral() {
     ShowHTML('      <tr><td>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
     ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_cliente,'w_sq_tipo_lancamento',$SG,null);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null);
     ShowHTML('      </tr>');
     if (!(strpos('CONT',substr($SG,3))===false)) ShowHTML('      <tr><td colspan=2>Finalidade:<br><b>'.$w_descricao.'</b></td>');
     else                               ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
@@ -2637,7 +2637,7 @@ function BuscaParcela() {
             ShowHTML('        <td align="center">-</td>');
           }
           ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'vencimento'),5).'</td>');
-          SelecaoTipoLancamento('','T', 'Selecione na lista o tipo de lançamento adequado.', f($row,'sq_tipo_lancamento'), $w_cliente, 'w_sq_tipo_lancamento[]', $SG, 'disabled');
+          SelecaoTipoLancamento('','T', 'Selecione na lista o tipo de lançamento adequado.', f($row,'sq_tipo_lancamento'),null, $w_cliente, 'w_sq_tipo_lancamento[]', $SG, 'disabled');
           ShowHTML('        <td><input type="text" disabled name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.number_format(Nvl(f($row,'valor'),0),2,',','.').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da parcela."></td>');
         }
         ShowHTML('      </tr>');

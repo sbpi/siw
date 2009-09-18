@@ -73,7 +73,7 @@ begin
                                group by x.sq_projeto_etapa
                               )                o on (o.sq_projeto_etapa = a.sq_projeto_etapa)                                
           where d.sq_pessoa       = p_cliente
-            and j.ativo           = 'S'
+            and (j.ativo          = 'S' or b.exibe_relatorio = 'S')
             and ((i.sq_tarefa is null and a.pacote_trabalho = 'S') or i.sq_tarefa is not null)
             and (p_chave     is null or (p_chave       is not null and a.sq_siw_solicitacao   = p_chave))
             and (i.sq_tarefa is not null or
@@ -114,9 +114,7 @@ begin
                   inner       join co_pessoa        c1 on (c.solicitante         = c1.sq_pessoa)
                     inner     join sg_autenticacao  m  on (c1.sq_pessoa          = m.sq_pessoa)
                       inner   join eo_unidade       m1 on (m.sq_unidade          = m1.sq_unidade) 
-                  inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite and 
-                                                           j.ativo               = 'S'
-                                                          )
+                  inner       join siw_tramite      j  on (c.sq_siw_tramite      = j.sq_siw_tramite)
                   inner       join siw_menu         d  on (c.sq_menu             = d.sq_menu)
                   left        join pe_programa      c2 on (c.sq_solic_pai        = c2.sq_siw_solicitacao)
                     left      join siw_solicitacao  c3 on (c2.sq_siw_solicitacao = c3.sq_siw_solicitacao)
@@ -131,6 +129,7 @@ begin
                                                            l.ativo               = 'S'
                                                           )
           where d.sq_pessoa      = p_cliente
+            and (j.ativo         = 'S' or b.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -183,7 +182,7 @@ begin
                 left        join pe_programa      b  on (a.sq_solic_pai       = b.sq_siw_solicitacao)
                   left      join siw_solicitacao  b1 on (b.sq_siw_solicitacao = b1.sq_siw_solicitacao)
           where d.sq_pessoa      = p_cliente
-            and f.ativo          = 'S'
+            and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -233,7 +232,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and f.ativo          = 'S'
+            and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -283,7 +282,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and f.ativo          = 'S'
+            and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -333,7 +332,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.sq_pessoa_atualizacao = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and f.ativo          = 'S'
+            and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
@@ -383,7 +382,7 @@ begin
                                                         )
                     left    join co_pessoa        i  on (h.cadastrador = i.sq_pessoa)
           where d.sq_pessoa      = p_cliente
-            and f.ativo          = 'S'
+            and (f.ativo         = 'S' or e.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa      is null or (p_programa    is not null and p_programa in (select x.sq_siw_solicitacao
                                                                                             from siw_solicitacao                     x
