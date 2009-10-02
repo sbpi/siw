@@ -41,6 +41,8 @@ create or replace procedure SP_PutFinanceiroGeral
    w_inicio     date;
    w_fim        date;
 
+   w_protocolo_siw             number(18);
+
    cursor c_arquivos is
       select t.sq_siw_arquivo from siw_solic_arquivo t where t.sq_siw_solicitacao = p_chave;
    
@@ -207,6 +209,16 @@ begin
       End If;
    End If;
    
+   If p_operacao in ('I','A') and p_numero_processo is not null Then
+      -- Recupera a chave do protocolo
+      select sq_siw_solicitacao into w_protocolo_siw 
+        from pa_documento 
+       where p_numero_processo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2);
+       
+      -- Grava a chave do protocolo na solicitação
+      update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = w_chave;
+   End If;
+
    -- Recupera os parâmetros do cliente informado
    select * into w_reg from fn_parametro where cliente = p_cliente;
 

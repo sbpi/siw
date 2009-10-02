@@ -58,7 +58,6 @@ create or replace procedure SP_PutAcordoGeral
    w_outra_parte               number(18);
    w_compra                    number(18);
    w_protocolo_siw             number(18);
-   w_protocolo_numero          varchar2(50);
 
    cursor c_arquivos is
       select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
