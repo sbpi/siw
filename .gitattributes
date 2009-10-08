@@ -3786,6 +3786,7 @@ SP_Oracle92/siw/SP_GetGPContrato.prc -text
 SP_Oracle92/siw/SP_GetGPModalidade.prc -text
 SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_GetGpDesempenho.prc -text
 SP_Oracle92/siw/SP_GetMetaAnexo.prc -text
 SP_Oracle92/siw/SP_GetMtSituacao.prc -text
 SP_Oracle92/siw/SP_GetOpiniao.prc -text
@@ -3931,6 +3932,7 @@ SP_Oracle92/siw/sp_getAcordoNota.prc -text
 SP_Oracle92/siw/sp_getAlerta.prc -text
 SP_Oracle92/siw/sp_getAssunto_PA.prc -text
 SP_Oracle92/siw/sp_getCLSolicItem.prc -text
+SP_Oracle92/siw/sp_getCargo.prc -text
 SP_Oracle92/siw/sp_getCategoriaDiaria.prc -text
 SP_Oracle92/siw/sp_getContasCronograma.prc -text
 SP_Oracle92/siw/sp_getContasRegistro.prc -text
@@ -4223,6 +4225,7 @@ SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
+SP_Oracle92/siw/sp_putGpDesempenho.prc -text
 SP_Oracle92/siw/sp_putIndicador.prc -text
 SP_Oracle92/siw/sp_putIndicador_Afericao.prc -text
 SP_Oracle92/siw/sp_putIndicador_Aferidor.prc -text

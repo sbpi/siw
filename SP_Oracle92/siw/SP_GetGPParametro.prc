@@ -9,7 +9,7 @@ begin
       open p_result for 
          select a.sq_unidade_gestao, a.admissao_texto, a.admissao_destino, a.rescisao_texto,
                 a.rescisao_destino, a.feriado_legenda, a.feriado_nome, a.ferias_legenda, a.ferias_nome,
-                a.viagem_legenda, a.viagem_nome
+                a.viagem_legenda, a.viagem_nome,a.dias_atualizacao_cv, a.aviso_atualizacao_cv
            from gp_parametro  a
           where a.cliente = p_cliente;
    End If;

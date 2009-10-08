@@ -10,7 +10,9 @@ create or replace procedure SP_PutGPParametro
     p_ferias_legenda           in  varchar2,
     p_ferias_nome              in  varchar2,
     p_viagem_legenda           in  varchar2,
-    p_viagem_nome              in  varchar2
+    p_viagem_nome              in  varchar2,
+    p_dias_atualizacao_cv      in  varchar2,
+    p_aviso_atualizacao_cv     in  varchar2    
    ) is
    
    p_operacao varchar2(1);
@@ -29,9 +31,9 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into gp_parametro
-         (cliente, sq_unidade_gestao, admissao_texto, admissao_destino, rescisao_texto, rescisao_destino, feriado_legenda, feriado_nome, ferias_legenda, ferias_nome, viagem_legenda, viagem_nome)
+         (cliente, sq_unidade_gestao, admissao_texto, admissao_destino, rescisao_texto, rescisao_destino, feriado_legenda, feriado_nome, ferias_legenda, ferias_nome, viagem_legenda, viagem_nome, dias_atualizacao_cv, aviso_atualizacao_cv)
       values
-         (p_cliente, p_sq_unidade_gestao, p_admissao_texto, p_admissao_destino, p_rescisao_texto, p_rescisao_destino, p_feriado_legenda, p_feriado_nome, p_ferias_legenda, p_ferias_nome, p_viagem_legenda, p_viagem_nome);
+         (p_cliente, p_sq_unidade_gestao, p_admissao_texto, p_admissao_destino, p_rescisao_texto, p_rescisao_destino, p_feriado_legenda, p_feriado_nome, p_ferias_legenda, p_ferias_nome, p_viagem_legenda, p_viagem_nome, p_dias_atualizacao_cv, p_aviso_atualizacao_cv);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_parametro
@@ -45,7 +47,9 @@ begin
              ferias_legenda       = p_ferias_legenda,
              ferias_nome          = p_ferias_nome,
              viagem_legenda       = p_viagem_legenda,
-             viagem_nome          = p_viagem_nome
+             viagem_nome          = p_viagem_nome,
+             dias_atualizacao_cv  = p_dias_atualizacao_cv,
+             aviso_atualizacao_cv = p_aviso_atualizacao_cv
        where cliente = p_cliente;
    End If;
 end SP_PutGPParametro;
