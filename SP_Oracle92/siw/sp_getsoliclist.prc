@@ -551,7 +551,7 @@ begin
                                                                             )
                                              )
                 )
-            and (p_processo       is null or (p_processo    = 'CLASSIF' and b.sq_cc is not null) or (p_processo <> 'CLASSIF' and m1.sq_menu = to_number(p_processo)))
+            and (p_processo       is null or (p_processo    = 'CLASSIF' and b.sq_cc is not null) or (p_processo = 'PLANOEST') or (p_processo not in ('CLASSIF','PLANOEST') and m1.sq_menu = to_number(p_processo)))
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.titulo,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
@@ -1729,7 +1729,7 @@ begin
                 left    join cl_solicitacao  h on (b.sq_siw_solicitacao = h.sq_siw_solicitacao)
                 left    join gd_demanda      i on (b.sq_siw_solicitacao = i.sq_siw_solicitacao)
           where a.sq_menu        = p_restricao
-            and 0                = (select count(*) from siw_solic_vinculo where sq_menu = p_restricao)
+            --and 0                = (select count(*) from siw_solic_vinculo where sq_menu = p_restricao)
             and b.sq_menu        = coalesce(p_menu, b.sq_menu)
             and ((a1.sigla = 'DM' and b3.sigla = 'AC' and e.vincula_demanda  = 'S') or
                  (a1.sigla = 'PR' and b3.sigla = 'AC' and e.vincula_projeto  = 'S') or
