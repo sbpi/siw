@@ -18,14 +18,12 @@ create or replace procedure SP_PutViagemEnvio
    w_sq_financ     number(18)   := null;
    w_cd_financ     varchar2(60) := null;
    w_sq_doc        number(18)   := null;
-   w_operacao      varchar2(1);
    i               number(18);
    w_ci            number(18);
    w_ee            number(18);
    w_salto         number(4);
    w_reembolso     pd_missao.reembolso%type;
    w_ressarcimento pd_missao.ressarcimento%type;
-   w_cumprimento   pd_missao.cumprimento%type;
    w_conta         co_pessoa_conta%rowtype;
    
    cursor c_missao is
@@ -46,7 +44,9 @@ create or replace procedure SP_PutViagemEnvio
              siw_solicitacao                   x
              inner     join siw_tramite       x5 on (x.sq_siw_tramite      = x5.sq_siw_tramite)
              inner     join pd_missao         x1 on (x.sq_siw_solicitacao  = x1.sq_siw_solicitacao and
-                                                     (x1.reembolso         = 'S')
+                                                     (x1.reembolso         = 'S' or
+                                                      x5.sigla             <> 'EE'
+                                                     )
                                                     )
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
                                from siw_solicitacao                a
@@ -163,22 +163,23 @@ create or replace procedure SP_PutViagemEnvio
                                       inner join fn_lancamento_doc d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                             )                 x2 on (x.sq_siw_solicitacao  = x2.sq_solic_pai and 
                                                      instr(lower(x2.descricao),'devolução')>0
+                                                    )
+             left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento as sq_lancamento, d.sq_lancamento_doc,
+                                    e.nome as nm_lancamento
+                               from siw_solicitacao                 a
+                                    inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite)
+                                    inner   join fn_lancamento      c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+                                      inner join fn_lancamento_doc  d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                                      inner join fn_tipo_lancamento e on (c.sq_tipo_lancamento = e.sq_tipo_lancamento)
+                            )                 z on (x.sq_siw_solicitacao  = z.sq_solic_pai and 
+                                                     (x5.sigla <> 'EE' or (x5.sigla = 'EE' and instr(lower(z.descricao),'adiantamento')=0 and instr(lower(z.descricao),'diferença')=0))
                                                     ),
-             fn_tipo_documento             y,
-             (select c2.sq_tipo_lancamento as sq_lancamento, c2.nome as nm_lancamento
-                from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite              = a2.sq_siw_tramite and a2.sigla = 'EE')
-                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao          = a1.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_ressarcimento = c.sq_pdvinculo_financeiro)
-                         inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento          = c2.sq_tipo_lancamento)
-               where a.sq_siw_solicitacao = p_chave
-             )                             z
+             fn_tipo_documento             y
        where w.sq_pessoa          = w_cliente
          and w.sigla              = 'FNREVENT'
          and x.sq_siw_solicitacao = p_chave
          and y.sigla              = 'VG'
          and z.sq_lancamento      = case when x2.sq_financeiro is null then z.sq_lancamento else x2.sq_tipo_lancamento end;
-
 
    cursor c_ressarcimento_item is
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
@@ -335,7 +336,7 @@ begin
    
    If p_devolucao = 'N' Then
       If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
-         If w_reembolso = 'S' Then
+         If w_reembolso = 'S' or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso_geral loop
                 sp_putfinanceirogeral(
@@ -347,7 +348,7 @@ begin
                                   p_solicitante        => p_pessoa,
                                   p_cadastrador        => p_pessoa,
                                   p_descricao          => crec.descricao,
-                                  p_vencimento         => crec.vencimento,
+                                  p_vencimento         => case when crec.vencimento > trunc(crec.inicio) then crec.vencimento else trunc(crec.inicio) end,
                                   p_valor              => 0,
                                   p_data_hora          => 3,
                                   p_aviso              => 'S',

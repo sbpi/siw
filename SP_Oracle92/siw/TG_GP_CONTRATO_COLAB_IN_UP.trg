@@ -3,6 +3,9 @@ create or replace trigger TG_GP_CONTRATO_COLAB_IN_UP
   for each row
 declare
   w_recurso eo_recurso.sq_recurso%type;
+  w_minutos_manha number(4) := 0;
+  w_minutos_tarde number(4) := 0;
+  w_minutos_noite number(4) := 0;
 begin
   If :new.matricula <> :old.matricula and :new.fim is null Then
      -- Verifica se o usuário está ligado a um recurso
@@ -12,5 +15,12 @@ begin
         update eo_recurso set codigo = :new.matricula where sq_recurso = w_recurso;
      End If;
   End If;
+  
+  -- Calcula os minutos dos horários de trabalho
+  If :new.entrada_manha is not null Then w_minutos_manha := horario2minutos(:new.entrada_manha,:new.saida_manha); End If;
+  If :new.entrada_tarde is not null Then w_minutos_tarde := horario2minutos(:new.entrada_tarde,:new.saida_tarde); End If;  
+  If :new.entrada_noite is not null Then w_minutos_noite := horario2minutos(:new.entrada_noite,:new.saida_noite); End If;  
+
+  :new.minutos_diarios := w_minutos_manha + w_minutos_tarde + w_minutos_noite;
 end TG_GP_CONTRATO_COLAB_IN_UP;
 /

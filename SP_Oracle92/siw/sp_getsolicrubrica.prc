@@ -124,7 +124,12 @@ begin
                c.vencimento, d.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
                to_char(c.vencimento, 'DD/MM/YYYY, HH24:MI:SS') phpdt_vencimento,
                d.descricao nm_lancamento, e.sigla sg_lancamento_menu,
-               case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
+               case c.tipo when 5 then e.nome 
+                           when 4 then case when lower(d.descricao) like 'devolução%sv%' then 'Devolução de diárias' else 'Entradas' end 
+                           when 3 then 'Atualização de aplicação' 
+                           when 2 then 'Transferência entre rubricas' 
+                           when 1 then 'Dotação inicial' 
+               end as operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                h.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, j.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
                l.nome nm_label, l.sigla sg, m.sigla sg_tramite,
@@ -152,7 +157,12 @@ begin
                c.vencimento, d.codigo_interno cd_lancamento, c.sq_siw_solicitacao sq_lancamento, c.tipo tipo_rubrica,
                to_char(c.vencimento, 'DD/MM/YYYY, HH24:MI:SS') phpdt_vencimento,
                d.descricao nm_lancamento,  e.sigla sg_lancamento_menu,
-               case c.tipo when 5 then e.nome when 4 then 'Entradas' when 3 then 'Atualização de aplicação' when 2 then 'Transferência entre rubricas' when 1 then 'Dotação inicial' end operacao,
+               case c.tipo when 5 then e.nome 
+                           when 4 then case when lower(d.descricao) like 'devolução%sv%' then 'Devolução de diárias' else 'Entradas' end 
+                           when 3 then 'Atualização de aplicação' 
+                           when 2 then 'Transferência entre rubricas' 
+                           when 1 then 'Dotação inicial' 
+               end as operacao,
                f.nome nm_rubrica, f.codigo codigo_rubrica,
                h.titulo nm_projeto, g.sq_siw_solicitacao sq_projeto, j.codigo_interno cd_acordo, i.sq_siw_solicitacao sq_acordo,
                l.nome nm_label, l.sigla sg, m.sigla sg_tramite,

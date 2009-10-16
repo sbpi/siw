@@ -3903,10 +3903,12 @@ SP_Oracle92/siw/fvalor.fnc -text
 SP_Oracle92/siw/geracpfespecial.fnc -text
 SP_Oracle92/siw/gestor.fnc -text
 SP_Oracle92/siw/hash_md5.fnc -text
+SP_Oracle92/siw/horario2minutos.fnc -text
 SP_Oracle92/siw/indicecols.fnc -text
 SP_Oracle92/siw/limpaorcamento.prc -text
 SP_Oracle92/siw/marcado.fnc -text
 SP_Oracle92/siw/md5.jsp -text
+SP_Oracle92/siw/minutos2horario.fnc -text
 SP_Oracle92/siw/montaordem.fnc -text
 SP_Oracle92/siw/pd_retornatrechos.fnc -text
 SP_Oracle92/siw/recompile.sql -text
