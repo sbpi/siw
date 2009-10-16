@@ -42,21 +42,27 @@ begin
                 c.cpf, c.sq_cidade_nasc, c.passaporte_numero, c.sq_pais_passaporte, c.sq_etnia, c.sq_deficiencia,
                 e.matricula, g.nome nm_exercicio, e.inicio, e.fim,
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
-                e.matricula, e.sq_localizacao,
+                e.matricula, e.sq_localizacao, e.trata_username, e.trata_ferias, e.trata_extras, e.entrada_manha, e.saida_manha,
+                e.entrada_tarde, e.saida_tarde, e.entrada_noite, e.saida_noite, e.sabado, e.domingo, e.centro_custo,
+                minutos2horario(e.minutos_diarios) as carga_diaria, e.minutos_diarios, dados_solic(e.centro_custo) as dados_cc,
+                e.banco_horas_saldo, e.banco_horas_data,
                 h.sigla||' ('||g.nome||')' local, g.ramal, h.nome nm_unidade_exercicio, h.sigla sg_unidade_exercicio,
                 i.nome nm_modalidade_contrato, j.nome nm_posto_trabalho, 
-                l.nome nm_unidade_lotacao, l.sigla sg_unidade_lotacao
-           from gp_colaborador                                a
-                inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
-                                                                    a.cliente   = b.sq_pessoa_pai)
-                inner          join co_pessoa_fisica          c on (a.sq_pessoa = c.sq_pessoa)
-                inner          join gp_contrato_colaborador   e on (a.sq_pessoa = e.sq_pessoa)
-                  left outer   join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
-                    left outer join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)
-                  left outer   join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
-                  left outer   join gp_afastamento            f on (e.sq_contrato_colaborador = f.sq_contrato_colaborador)
-                  inner        join eo_posto_trabalho         j on (e.sq_posto_trabalho       = j.sq_posto_trabalho)
-                  inner        join eo_unidade                l on (e.sq_unidade_lotacao      = l.sq_unidade)
+                l.nome nm_unidade_lotacao, l.sigla sg_unidade_lotacao,
+                m.sq_menu as sq_menu_cc, m.titulo as nm_cc, m.codigo_interno as cd_cc
+           from gp_colaborador                          a
+                inner    join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
+                                                              a.cliente   = b.sq_pessoa_pai
+                                                             )
+                inner    join co_pessoa_fisica          c on (a.sq_pessoa = c.sq_pessoa)
+                inner    join gp_contrato_colaborador   e on (a.sq_pessoa = e.sq_pessoa)
+                  left   join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
+                    left join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)
+                  left   join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
+                  left   join gp_afastamento            f on (e.sq_contrato_colaborador = f.sq_contrato_colaborador)
+                  inner  join eo_posto_trabalho         j on (e.sq_posto_trabalho       = j.sq_posto_trabalho)
+                  inner  join eo_unidade                l on (e.sq_unidade_lotacao      = l.sq_unidade)
+                  left   join siw_solicitacao           m on (e.centro_custo            = m.sq_siw_solicitacao)
           where a.cliente              = p_cliente 
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_sq_pessoa           is null or (p_sq_pessoa           is not null and a.sq_pessoa               = p_sq_pessoa))

@@ -11,16 +11,34 @@ create or replace procedure SP_PutAfastamento
     p_dias                     in  number    default null,
     p_observacao               in  varchar2  default null
    ) is
+   cursor c_dados is
+       select e.sq_contrato_colaborador as chave
+         from gp_colaborador                     a
+              inner join gp_contrato_colaborador e on (a.sq_pessoa = e.sq_pessoa and
+                                                       e.fim       is null)
+        where a.cliente  = p_cliente;
 begin
    -- Grava uma modalidade de contratação
    If p_operacao = 'I' Then
-      -- Insere registro
-      insert into gp_afastamento
-        (sq_afastamento, cliente, sq_tipo_afastamento, sq_contrato_colaborador, inicio_data, inicio_periodo, 
-         fim_data, fim_periodo, dias, observacao)
-      values
-        (sq_afastamento.nextval, p_cliente,  p_sq_tipo_afastamento, p_sq_contrato_colaborador, p_inicio_data, p_inicio_periodo, 
-         p_fim_data, p_fim_periodo, p_dias, p_observacao);
+      If p_sq_contrato_colaborador = 0 Then
+         For crec in c_dados loop
+           -- Insere registro
+           insert into gp_afastamento
+             (sq_afastamento, cliente, sq_tipo_afastamento, sq_contrato_colaborador, inicio_data, inicio_periodo, 
+              fim_data, fim_periodo, dias, observacao)
+           values
+             (sq_afastamento.nextval, p_cliente,  p_sq_tipo_afastamento, crec.chave, p_inicio_data, p_inicio_periodo, 
+              p_fim_data, p_fim_periodo, p_dias, p_observacao);        
+         End loop;
+      Else
+         -- Insere registro
+         insert into gp_afastamento
+           (sq_afastamento, cliente, sq_tipo_afastamento, sq_contrato_colaborador, inicio_data, inicio_periodo, 
+            fim_data, fim_periodo, dias, observacao)
+         values
+           (sq_afastamento.nextval, p_cliente,  p_sq_tipo_afastamento, p_sq_contrato_colaborador, p_inicio_data, p_inicio_periodo, 
+            p_fim_data, p_fim_periodo, p_dias, p_observacao);
+      End If;
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_afastamento

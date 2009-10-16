@@ -2,6 +2,7 @@ create or replace procedure SP_PutGPContrato
    (p_operacao                 in  varchar2              ,
     p_cliente                  in  number    default null,
     p_chave                    in  number    default null,    
+    p_cc                       in  number    default null,    
     p_sq_pessoa                in  number    default null,
     p_sq_posto_trabalho        in  number    default null,
     p_sq_modalidade_contrato   in  number    default null,
@@ -11,7 +12,20 @@ create or replace procedure SP_PutGPContrato
     p_matricula                in  varchar2  default null,
     p_inicio                   in  date      default null,
     p_fim                      in  date      default null,
-    p_tipo_vinculo             in  number    default null
+    p_trata_username           in  varchar2  default null,
+    p_trata_ferias             in  varchar2  default null,
+    p_trata_extras             in  varchar2  default null,        
+    p_tipo_vinculo             in  number    default null,
+    p_entrada_manha            in  varchar2  default null,
+    p_saida_manha              in  varchar2  default null,
+    p_entrada_tarde            in  varchar2  default null,
+    p_saida_tarde              in  varchar2  default null,    
+    p_entrada_noite            in  varchar2  default null,
+    p_saida_noite              in  varchar2  default null,
+    p_sabado                   in  varchar2  default null,
+    p_domingo                  in  varchar2  default null,
+    p_banco_horas_saldo        in  varchar2  default null,             
+    p_banco_horas_data         in  date      default null
    ) is
    
    w_colaborador      number(18);
@@ -29,10 +43,22 @@ begin
          values (p_sq_pessoa, p_cliente);
       End If;
       insert into gp_contrato_colaborador 
-      (sq_contrato_colaborador, cliente, sq_pessoa, sq_posto_trabalho, sq_localizacao, sq_unidade_lotacao,
-       sq_unidade_exercicio, sq_modalidade_contrato, matricula, inicio, fim)
-      (select sq_contrato_colaborador.nextval, p_cliente, p_sq_pessoa,  p_sq_posto_trabalho, p_sq_localizacao, 
-       p_sq_unidade_lotacao, p_sq_unidade_exercicio, p_sq_modalidade_contrato, p_matricula, p_inicio, p_fim from dual);
+             (sq_contrato_colaborador,         cliente,                sq_pessoa,             centro_custo, 
+              sq_posto_trabalho,               sq_localizacao,         sq_unidade_lotacao,    sq_unidade_exercicio,  
+              sq_modalidade_contrato,          matricula,              inicio,                fim, 
+              trata_username,                  trata_ferias,           trata_extras,          entrada_manha, 
+              saida_manha,                     entrada_tarde,          saida_tarde,           entrada_noite, 
+              saida_noite,                     sabado,                 domingo,
+              banco_horas_saldo,               banco_horas_data
+              )
+      (select sq_contrato_colaborador.nextval, p_cliente,              p_sq_pessoa,           p_cc,
+              p_sq_posto_trabalho,             p_sq_localizacao,       p_sq_unidade_lotacao,  p_sq_unidade_exercicio, 
+              p_sq_modalidade_contrato,        p_matricula,            p_inicio,              p_fim, 
+              p_trata_username,                p_trata_ferias,         p_trata_extras,        p_entrada_manha, 
+              p_saida_manha,                   p_entrada_tarde,        p_saida_tarde,         p_entrada_noite, 
+              p_saida_noite,                   p_sabado,               p_domingo,
+              p_banco_horas_saldo,             p_banco_horas_data
+         from dual);
        If p_fim is null Then
           update co_pessoa 
              set sq_tipo_vinculo = p_tipo_vinculo,
@@ -42,15 +68,34 @@ begin
    Elsif p_chave is not null and p_operacao = 'A' Then
       -- Altera registro
       update gp_contrato_colaborador
-         set sq_posto_trabalho      = p_sq_posto_trabalho,
+         set centro_custo           = p_cc,
+             sq_posto_trabalho      = p_sq_posto_trabalho,
              sq_localizacao         = p_sq_localizacao,
              sq_unidade_lotacao     = p_sq_unidade_lotacao,
              sq_unidade_exercicio   = p_sq_unidade_exercicio,             
              sq_modalidade_contrato = p_sq_modalidade_contrato, 
              matricula              = p_matricula,
              inicio                 = p_inicio,
-             fim                    = p_fim
+             fim                    = p_fim,
+             trata_username         = p_trata_username,
+             trata_ferias           = p_trata_ferias,
+             trata_extras           = p_trata_extras,
+             entrada_manha          = p_entrada_manha,
+             saida_manha            = p_saida_manha,
+             entrada_tarde          = p_entrada_tarde,
+             saida_tarde            = p_saida_tarde,
+             entrada_noite          = p_entrada_noite,
+             saida_noite            = p_saida_noite,
+             sabado                 = p_sabado,
+             domingo                = p_domingo,
+             banco_horas_saldo      = p_banco_horas_saldo,
+             banco_horas_data       = p_banco_horas_data
        where sq_contrato_colaborador = p_chave;
+
+      update co_pessoa 
+         set sq_tipo_vinculo = p_tipo_vinculo,
+             funcionario     = 'S'
+       where sq_pessoa = p_sq_pessoa;  
    Elsif p_operacao = 'E' Then
       -- Encerra um contrato
       update gp_contrato_colaborador

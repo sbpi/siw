@@ -9,6 +9,7 @@ create or replace procedure SP_PutGPModalidade
     p_username                 in  varchar2  default null,
     p_passagem                 in  varchar2,
     p_diaria                   in  varchar2,
+    p_horas_extras             in  varchar2,
     p_ativo                    in  varchar2
    ) is
 begin
@@ -16,9 +17,9 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into gp_modalidade_contrato
-        (sq_modalidade_contrato, cliente, nome, descricao, sigla, ferias, username, passagem, diaria, ativo)
+        (sq_modalidade_contrato, cliente, nome, descricao, sigla, ferias, username, passagem, diaria, horas_extras, ativo)
       values
-        (sq_modalidade_contrato.nextval, p_cliente, trim(p_nome), p_descricao, upper(trim(p_sigla)), p_ferias, p_username, p_passagem, p_diaria, p_ativo);
+        (sq_modalidade_contrato.nextval, p_cliente, trim(p_nome), p_descricao, upper(trim(p_sigla)), p_ferias, p_username, p_passagem, p_diaria, p_horas_extras, p_ativo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_modalidade_contrato
@@ -30,7 +31,8 @@ begin
              username      = p_username,
              passagem      = p_passagem,
              diaria        = p_diaria,
-             ativo = p_ativo
+             horas_extras  = p_horas_extras,
+             ativo         = p_ativo
        where sq_modalidade_contrato = p_chave;
       If p_ativo = 'N' Then
          delete gp_afastamento_modalidade where sq_modalidade_contrato = p_chave;

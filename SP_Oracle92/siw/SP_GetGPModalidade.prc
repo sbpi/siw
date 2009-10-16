@@ -12,7 +12,7 @@ begin
       -- Recupera todas ou muma das modalidades de contratação
       open p_result for 
          select a.sq_modalidade_contrato chave, a.cliente, a.nome, a.sigla, a.descricao, 
-                a.ferias, a.username, a.passagem, a.diaria, a.ativo
+                a.ferias, a.username, a.passagem, a.diaria, a.horas_extras, a.ativo
            from gp_modalidade_contrato  a
           where a.cliente = p_cliente
             and ((p_chave is null) or (p_chave is not null and a.sq_modalidade_contrato = p_chave))

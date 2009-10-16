@@ -1573,6 +1573,14 @@ begin
                   (p_restricao = 'GRPAVINC'    and b.sq_solic_pai      is not null)
                  )
                 );
+   Elsif p_restricao = 'RHCC' Then
+      -- Recupera os centros de custo para contratos de trabalho de pessoal
+      open p_result for 
+         select b.sq_siw_solicitacao, b.titulo, coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno, b.codigo_externo
+           from siw_solicitacao               b
+                   inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
+          where b.sq_menu        = p_menu
+            and coalesce(b1.ativo,'-') = 'S';
    Elsif p_restricao = 'PJEXEC' or p_restricao = 'OREXEC' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 

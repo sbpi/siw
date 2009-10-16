@@ -12,7 +12,10 @@ create or replace procedure SP_PutGPParametro
     p_viagem_legenda           in  varchar2,
     p_viagem_nome              in  varchar2,
     p_dias_atualizacao_cv      in  varchar2,
-    p_aviso_atualizacao_cv     in  varchar2    
+    p_aviso_atualizacao_cv     in  varchar2,
+    p_tipo_tolerancia          in  number,
+    p_minutos_tolerancia       in  number,
+    p_vincula_contrato         in  number default null
    ) is
    
    p_operacao varchar2(1);
@@ -31,9 +34,13 @@ begin
    If p_operacao = 'I' Then
       -- Insere registro
       insert into gp_parametro
-         (cliente, sq_unidade_gestao, admissao_texto, admissao_destino, rescisao_texto, rescisao_destino, feriado_legenda, feriado_nome, ferias_legenda, ferias_nome, viagem_legenda, viagem_nome, dias_atualizacao_cv, aviso_atualizacao_cv)
+         (cliente,               sq_unidade_gestao,      admissao_texto,    admissao_destino,     rescisao_texto,   rescisao_destino, 
+          feriado_legenda,       feriado_nome,           ferias_legenda,    ferias_nome,          viagem_legenda,   viagem_nome, 
+          dias_atualizacao_cv,   aviso_atualizacao_cv,   tipo_tolerancia,   minutos_tolerancia,   vinculacao_contrato)
       values
-         (p_cliente, p_sq_unidade_gestao, p_admissao_texto, p_admissao_destino, p_rescisao_texto, p_rescisao_destino, p_feriado_legenda, p_feriado_nome, p_ferias_legenda, p_ferias_nome, p_viagem_legenda, p_viagem_nome, p_dias_atualizacao_cv, p_aviso_atualizacao_cv);
+         (p_cliente,             p_sq_unidade_gestao,    p_admissao_texto,  p_admissao_destino,   p_rescisao_texto, p_rescisao_destino,
+          p_feriado_legenda,     p_feriado_nome,         p_ferias_legenda,  p_ferias_nome,        p_viagem_legenda, p_viagem_nome,
+          p_dias_atualizacao_cv, p_aviso_atualizacao_cv, p_tipo_tolerancia, p_minutos_tolerancia, p_vincula_contrato);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_parametro
@@ -49,7 +56,10 @@ begin
              viagem_legenda       = p_viagem_legenda,
              viagem_nome          = p_viagem_nome,
              dias_atualizacao_cv  = p_dias_atualizacao_cv,
-             aviso_atualizacao_cv = p_aviso_atualizacao_cv
+             aviso_atualizacao_cv = p_aviso_atualizacao_cv,
+             tipo_tolerancia      = p_tipo_tolerancia,
+             minutos_tolerancia   = p_minutos_tolerancia,
+             vinculacao_contrato  = p_vincula_contrato
        where cliente = p_cliente;
    End If;
 end SP_PutGPParametro;
