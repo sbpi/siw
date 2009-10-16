@@ -1,18 +1,13 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getLocalList.php');
 // =========================================================================
 // Montagem da seleção da localização
 // -------------------------------------------------------------------------
-function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao) {
+function selecaoLocalizacao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
   $RS = db_getLocalList::getInstanceOf($dbms, $w_cliente, $chaveAux, $restricao);
 
-  if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-
+  ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
 
   foreach ($RS as $row)  {

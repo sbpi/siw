@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados do programa
 // -------------------------------------------------------------------------
@@ -13,15 +13,25 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   // Recupera os dados do programa
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
   $w_tramite_ativo = f($RS,'ativo');
-
-
+  
+  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+  
   if ($l_o!='T' && $l_o!='V') {
     if ($l_tipo!='WORD') $l_html.=chr(13).'      <tr><td align="right" colspan="2"><br><b><A class="HL" HREF="'.$w_dir.'programa.php?par=Visual&O=T&w_chave='.f($RS,'sq_siw_solicitacao').'&w_tipo=volta&P1=&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do programa.">Exibir todas as informações</a></td></tr>';
   }
-  $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-  if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></div></td></tr>';
-  else                    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano')).'</b></font></div></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></div></td></tr>';
+
+  if (nvl(f($RS,'sq_plano'),'')!='') {
+    if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></td></tr>';
+    else                    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano'),'PITCE').'</b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></td></tr>';
+  } else {
+    // Exibe a vinculação
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>PROGRAMA: ';
+    if($l_tipo!='WORD') $l_html.=chr(13).exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    else                $l_html.=chr(13).exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>SUBPROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></td></tr>';
+  }
+
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do programa
   if ($l_identificacao=='S') {

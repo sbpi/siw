@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php'); 
 // =========================================================================
 // Montagem da seleção dos colaboradores
@@ -13,6 +13,9 @@ function selecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$res
     ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } 
   ShowHTML('          <option value="">---');
+  if(count($RS) && nvl($restricao,'')=='SELAFAST' && $O=='I' && $w_sg_afast !== false){
+    ShowHTML('          <option value="0">Todos');
+  }
   foreach ($RS as $row) {
     if (nvl(f($row,'sq_contrato_colaborador'),0)==nvl($chave,0)) {
       ShowHTML('          <option value="'.f($row,'sq_contrato_colaborador').'" SELECTED>'.f($row,'nome_resumido'));

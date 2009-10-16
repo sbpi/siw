@@ -12,6 +12,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
+include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
@@ -31,6 +32,8 @@ include_once($w_dir_volta.'classes/sp/dml_putProgramaEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putProgramaConc.php');
 include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
 include_once($w_dir_volta.'funcoes/selecaoObjetivoEstrategico.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoFase.php');
@@ -575,10 +578,36 @@ function Geral() {
   $w_chave      = $_REQUEST['w_chave'];
   $w_readonly   = '';
   $w_erro       = '';
+
+  // Recupera os dados do cliente
+  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
+  // Verifica se o cliente tem o módulo de acordos contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'AC');
+  if (count($RS)>0) $w_acordo='S'; else $w_acordo='N'; 
+
+  // Verifica se o cliente tem o módulo viagens contratado
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PD');
+  if (count($RS)>0) $w_viagem='S'; else $w_viagem='N'; 
+
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'IS');
+  if (count($RS)>0) $w_acao='S'; else $w_acao='N'; 
+
+  // Verifica se o cliente tem o módulo de planejamento estratégico
+  $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+  if (count($RS)>0) $w_pe='S'; else $w_pe='N'; 
+
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
+    $w_sq_menu_relac    = $_REQUEST['w_sq_menu_relac'];    
+    if($w_sq_menu_relac=='CLASSIF') {
+      $w_solic_pai      = '';
+    } else {
+      $w_solic_pai      = $_REQUEST['w_solic_pai'];
+    }
+    $w_chave_pai        = $_REQUEST['w_chave_pai'];    
     $w_plano            = $_REQUEST['w_plano'];
     $w_objetivo         = explodeArray($_REQUEST['w_objetivo']);
     $w_codigo           = $_REQUEST['w_codigo'];
@@ -605,6 +634,8 @@ function Geral() {
         $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
       } 
       if (count($RS)>0) {
+        $w_solic_pai        = f($RS,'sq_solic_pai');
+        $w_chave_pai        = f($RS,'sq_solic_pai');        
         $w_plano            = f($RS,'sq_plano');
         $w_codigo           = f($RS,'cd_programa');
         $w_codigo_atual     = f($RS,'cd_programa');
@@ -621,11 +652,15 @@ function Geral() {
         $w_ln_programa      = f($RS,'ln_programa');
         $w_aviso            = f($RS,'aviso_prox_conc');
         $w_dias             = f($RS,'dias_aviso');
+        $w_dados_pai        = explode('|@|',f($RS,'dados_pai'));
+        $w_sq_menu_relac    = $w_dados_pai[3];
         $RS = db_getSolicObjetivo::getInstanceOf($dbms,$w_chave,null,null);
         $RS = SortArray($RS,'nome','asc');
         $w_objetivo = '';
         foreach($RS as $row) { $w_objetivo .= ','.f($row,'sq_peobjetivo'); }
         $w_objetivo = substr($w_objetivo,1);
+
+        if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
       } 
     } 
   } 
@@ -634,6 +669,7 @@ function Geral() {
      $RS_Plano = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_plano,null,null,null,null,null,'REGISTROS');
      foreach ($RS_Plano as $row) {$RS_Plano = $row; break;}
   }
+  if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -648,8 +684,8 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
-    Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
     if(nvl($w_plano,'')!='') {
+      Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
       ShowHTML('  if (theForm["w_objetivo[]"]!=undefined) {');
       ShowHTML('    var i; ');
       ShowHTML('    var w_erro=true; ');  
@@ -662,15 +698,23 @@ function Geral() {
       ShowHTML('    }');
       ShowHTML('  }');
     }
-    ShowHTML('  var i; ');
-    ShowHTML('  var w_erro=true; ');
-    ShowHTML('  for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
-    ShowHTML('    if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
-    ShowHTML('  }');
-    ShowHTML('  if (w_erro) {');
-    ShowHTML('    alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
-    ShowHTML('    return false;');
-    ShowHTML('  }');      
+    if(nvl($w_sq_menu_relac,'')!='') {
+      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+      if ($w_sq_menu_relac=='CLASSIF') {
+        Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+      } else {
+        Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+      }
+    }
+    if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
+      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+      ShowHTML('    theForm.w_plano.focus();');
+      ShowHTML('    return false;');
+    } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
+      ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+      ShowHTML('    theForm.w_plano.focus();');
+      ShowHTML('    return false;');    
+    }
     Validate('w_codigo','Código do programa','1',1,1,20,'1','1');
     Validate('w_titulo','Programa','1',1,5,100,'1','1');
     Validate('w_sq_unidade','Unidade executora','SELECT',1,1,18,'','0123456789');
@@ -749,6 +793,17 @@ function Geral() {
     selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_codigo\'; document.Form.submit();"');
     ShowHTML('      <tr>');
     selecaoObjetivoEstrategico('<u>O</u>bjetivo(s) estratégico(s):', 'P', 'Selecione o(s) objetivo(s) estratégico(s) ao(s) qual(is) o programa está vinculado.', $w_objetivo, $w_plano, 'w_objetivo[]', 'CHECKBOX', null);
+    ShowHTML('          <tr valign="top">');
+    selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+    if(Nvl($w_sq_menu_relac,'')!='') {
+      ShowHTML('          <tr valign="top">');
+      if ($w_sq_menu_relac=='CLASSIF') {
+        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+      } else {
+        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
+      }
+    }
+    $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Código:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_codigo" size="20" maxlength="20" value="'.$w_codigo.'" ></td>');

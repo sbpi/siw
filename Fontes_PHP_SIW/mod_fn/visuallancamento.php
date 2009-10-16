@@ -42,6 +42,20 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';      // Identificação do lançamento
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     
+    // Verifica o segmento do cliente    
+    $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
+    $w_segmento = f($RS1,'segmento');
+    if ($w_mod_pa=='S' && nvl(f($RS,'processo'),'')!='') {
+      if ((!($l_P1==4 || $l_tipo=='WORD')) && nvl(f($RS,'protocolo_siw'),'')!='') {
+        $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td><td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+      } else {
+        $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td><td>'.f($RS,'processo');
+      }
+    } elseif ($w_segmento=='Público') { 
+      $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
+      $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
+    }   
+    
     if (Nvl(f($RS,'cd_acordo'),'')>'') {
       if (!($l_P1==4 || $l_tipo=='WORD')) {
         $l_html.=chr(13).'      <tr><td width="30%"><b>Contrato: </b></td>';
@@ -79,13 +93,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
 */
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
-    // Verifica o segmento do cliente    
-    $RS1 = db_getCustomerData::getInstanceOf($dbms,$w_cliente); 
-    $w_segmento = f($RS1,'segmento');
-    if ($w_segmento=='Público') { 
-      $l_html.=chr(13).'      <tr><td><b>Número do processo: </b></td>';
-      $l_html.=chr(13).'        <td>'.nvl(f($RS,'processo'),'---').' </td></tr>';
-    }   
     if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
       $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
       $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
@@ -415,7 +422,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if ($w_total>0) $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     $l_html.=chr(13).'      <tr valign="top">';
     if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
-      $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan=4><b>Total</b></td>';
     } else {
       $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '4' : '5').'"><b>Total</b></td>';
     }

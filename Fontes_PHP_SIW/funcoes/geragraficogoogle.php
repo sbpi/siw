@@ -53,7 +53,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     //Graph
     $graph->Graph->setType('bar');
     $graph->Graph->setSubtype('vertical_grouped');
-    $graph->Graph->setSize(400,200);
+    $graph->Graph->setSize(450,200);
     $graph->Graph->setAxis(array('x','y')); //no arguments means all on
     $graph->Graph->setGridLines(0, 20, 1, 0);
     
@@ -161,7 +161,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
     //Graph
     $graph->Graph->setType('line');
     $graph->Graph->setSubtype('chart');
-    $graph->Graph->setSize(400, 200);
+    $graph->Graph->setSize(450, 200);
     $graph->Graph->setAxis(array('x','y'));
     $graph->Graph->setGridLines(20, 20, 1, 0);
     

@@ -1999,7 +1999,7 @@ function AbreForm($p_Name,$p_Action,$p_Method,$p_onSubmit,$p_Target,$p_P1,$p_P2,
 // -------------------------------------------------------------------------
 function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  ShowHTML('          <td '.((nvl($hint,'')!='') ? ' colspan="'.$colspan.'" TITLE="'.$hint.'"': '').'>');
+  print('          <td colspan="'.$colspan.'"'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave=='S') ? 'checked' : '').' '.$atributo.'> Sim');
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave!='S') ? 'checked' : '').' '.$atributo.'> Não');
@@ -2010,7 +2010,7 @@ function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
 // -------------------------------------------------------------------------
 function MontaRadioSN($label,$chave,$campo,$hint=null,$restricao=null,$atributo=null,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
-  ShowHTML('          <td '.((nvl($hint,'')!='') ? ' colspan="'.$colspan.'" TITLE="'.$hint.'"': '').'>');
+  print('          <td colspan="'.$colspan.'"'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave!='N') ? 'checked' : '').' '.$atributo.'> Sim');
   ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave=='N') ? 'checked' : '').' '.$atributo.'> Não');
@@ -2803,11 +2803,8 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
 // -------------------------------------------------------------------------
 function Cabecalho() {
   extract($GLOBALS);
-  if ($_SESSION['P_CLIENTE']==6761) {
-    ShowHTML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">');
-    ShowHTML('<HTML xmlns="http://www.w3.org/1999/xhtml">');
-  }
-  else { ShowHTML('<HTML>'); }
+  ShowHTML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">');
+  ShowHTML('<HTML xmlns="http://www.w3.org/1999/xhtml">');
 }
 
 // =========================================================================
@@ -3337,8 +3334,14 @@ function TercaCarnaval($p_ano) {
 // -------------------------------------------------------------------------
 function diaSemana($l_data) {
   if (nvl($l_data,'')>'') {
+  if (strpos($l_data,',')!==false) {
     $l_texto = substr($l_data,strpos($l_data,','));
-    switch (strtoupper(substr($l_data,0,strpos($l_data,',')))) {
+    $teste = (strtoupper(substr($l_data,0,strpos($l_data,',')))); 
+  } else {
+    $l_texto = '';
+    $teste = (strtoupper($l_data)); 
+  }
+  switch ($teste) {
       case 'SUNDAY':    return 'Domingo'.$l_texto;       break;
       case 'MONDAY':    return 'Segunda-feira'.$l_texto; break;
       case 'TUESDAY':   return 'Terça-feira'.$l_texto;   break;

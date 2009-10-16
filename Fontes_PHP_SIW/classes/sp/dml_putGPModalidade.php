@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putGPModalidade {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_descricao, $p_sigla, $_p_ferias, $p_username, $p_passagem, $p_diaria, $p_ativo) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_descricao, $p_sigla, $p_ferias, $p_username, $p_passagem, $p_diaria, $p_horas_extras, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'SP_PUTGPMODALIDADE';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -23,6 +23,7 @@ class dml_putGPModalidade {
                    'p_username'                  =>array(tvl($p_username),                                 B_VARCHAR,         1),
                    'p_passagem'                  =>array(tvl($p_passagem),                                 B_VARCHAR,         1),
                    'p_diaria'                    =>array(tvl($p_diaria),                                   B_VARCHAR,         1),
+                   'p_horas_extras'              =>array(tvl($p_horas_extras),                             B_VARCHAR,         1),     
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

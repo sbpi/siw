@@ -112,6 +112,7 @@ $p_agrega        = strtoupper(nvl($_REQUEST['p_agrega'],'GRPRRESP'));
 $p_tamanho       = strtoupper($_REQUEST['p_tamanho']);
 $p_sqcc          = strtoupper($_REQUEST['p_sqcc']);
 $p_projeto       = strtoupper($_REQUEST['p_projeto']);
+$p_orprior      = strtoupper($_REQUEST['p_orprior']);
 $p_atividade     = strtoupper($_REQUEST['p_atividade']);
 $p_pais          = strtoupper($_REQUEST['p_pais']);
 $p_regiao        = strtoupper($_REQUEST['p_regiao']);
@@ -185,6 +186,8 @@ function Gerencial() {
       $w_linha++; 
       if ($p_servico=='CLASSIF') {
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+      } elseif ($p_servico=='PLANOEST') {
+        $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos vinculados a planos estratégicos</b>]';
       } else {
         $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
         $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
@@ -201,6 +204,12 @@ function Gerencial() {
       $w_linha++; 
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
       $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+    } 
+    if ($p_orprior>'') {
+      $w_linha++; 
+      $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_orprior,null,null,null,null,null,'REGISTROS');
+      foreach ($RS as $row) { $RS = $row; break; }
+      $w_filtro.='<tr valign="top"><td align="right">Plano Estratégico <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_chave>'')  { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Projeto nº <td>[<b>'.$p_chave.'</b>]'; }
     if ($p_prazo>'')  { $w_linha++; $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
@@ -258,7 +267,7 @@ function Gerencial() {
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
         $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
-        $p_atividade, null, null, null, $p_servico);
+        $p_atividade, null, $p_orprior, null, $p_servico);
 
     switch ($p_agrega) {
       case 'GRPRVINC':
@@ -902,6 +911,8 @@ function Gerencial() {
       ShowHTML('          <tr valign="top">');
       if ($p_servico=='CLASSIF') {
         SelecaoSolic('Classificação',null,null,$w_cliente,$p_sqcc,$p_servico,null,'p_sqcc','SIWSOLIC',null);
+      } elseif ($p_servico=='PLANOEST') {
+        SelecaoSolic('Plano Estratégico',null,null,$w_cliente,$p_orprior,$p_servico,null,'p_orprior','SIWSOLIC',null);
       } else {
         SelecaoSolic('Vinculação',null,null,$w_cliente,$p_projeto,$p_servico,f($RS_Menu,'sq_menu'),'p_projeto',f($RS_Relac,'sigla'),null);
       }

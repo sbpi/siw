@@ -3,6 +3,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
+include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 // =========================================================================
 // Montagem da seleção das solicitaçãoes, de acordo com o serviço selecionado
 // -------------------------------------------------------------------------
@@ -11,6 +12,9 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
   if ($chaveAux=='CLASSIF') {
     include_once($w_dir_volta.'funcoes/selecaoCC.php');
     SelecaoCC($label,$accesskey,$hint,$chave,null,$campo,$restricao);
+  } elseif ($chaveAux=='PLANOEST') {
+    include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
+    selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
   } elseif(substr($restricao,0,2)=='IS') {
     $l_RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
     $l_RS = SortArray($l_RS,'titulo','asc');

@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putGPColaborador {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_sq_pessoa, $p_ctps_numero, $p_ctps_serie, $p_ctps_emissor, $p_ctps_emissao, $p_pis_pasep, $p_pispasep_numero, $p_pispasep_cadastr, $p_te_numero, $p_te_zona, $p_te_secao, $p_reservista_numero, $p_reservista_csm, $p_tipo_sangue, $p_doador_sangue, $p_doador_orgaos, $p_observacoes) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql=$strschema.'SP_PUTGPCOLABORADOR';
+     $sql=$strschema.'sp_putGPColaborador';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_sq_pessoa'                 =>array($p_sq_pessoa,                                     B_INTEGER,        32),

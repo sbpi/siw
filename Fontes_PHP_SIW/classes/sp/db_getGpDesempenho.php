@@ -2,20 +2,19 @@
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class db_getGPParametro
+* class db_getGpDesempenho
 *
 * { Description :- 
 *    Recupera os parametros
 * }
 */
 
-class db_getGPParametro {
-   function getInstanceOf($dbms, $p_cliente, $p_chave_aux, $p_restricao) {
+class db_getGpDesempenho {
+   function getInstanceOf($dbms, $p_chave, $p_ano) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql=$strschema.'sp_getGpParametro';
-     $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
-                   'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_INTEGER,        32),
-                   'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        20),
+     $sql=$strschema.'sp_getGpDesempenho';
+     $params=array('p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),     
+                   'p_ano'                       =>array(tvl($p_ano),                                      B_INTEGER,        32),     
                    'p_result'                    =>array(null,                                             B_CURSOR,         -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

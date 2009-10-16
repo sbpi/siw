@@ -105,15 +105,18 @@ $w_mes5    = substr(100+intVal($w_mes)+4,1,2);
 $w_mes6    = substr(100+intVal($w_mes)+5,1,2);
 $w_ano1    = $w_ano;
 $w_ano3    = $w_ano;
+$w_ano4    = $w_ano;
+$w_ano5    = $w_ano;
+$w_ano6    = $w_ano;
 // Ajusta a mudança de ano
 if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano3 = $w_ano+1; }
-if ($w_mes3 > 12)  { $w_mes3 = '01'; $w_mes4 = '02'; $w_mes5 = '03'; $w_mes6 = '04'; $w_ano3 = $w_ano+1; }
-if ($w_mes4 > 12)  { $w_mes4 = '01'; $w_mes5 = '02'; $w_mes6 = '03'; $w_ano3 = $w_ano+1; }
-if ($w_mes5 > 12)  { $w_mes5 = '01'; $w_mes6 = '02'; $w_ano3 = $w_ano+1; }
-if ($w_mes6 > 12)  { $w_mes6 = '01'; $w_ano3 = $w_ano+1; }
+if ($w_mes3 > 12)  { $w_mes3 = '01'; $w_mes4 = '02'; $w_mes5 = '03'; $w_mes6 = '04'; $w_ano3 = $w_ano + 1; $w_ano4 = $w_ano3; $w_ano5 = $w_ano3; $w_ano6 = $w_ano3;}
+if ($w_mes4 > 12)  { $w_mes4 = '01'; $w_mes5 = '02'; $w_mes6 = '03'; $w_ano4 = $w_ano + 1; $w_ano5 = $w_ano4; $w_ano6 = $w_ano4;}
+if ($w_mes5 > 12)  { $w_mes5 = '01'; $w_mes6 = '02'; $w_ano5 = $w_ano + 1; $w_ano6 = $w_ano5; }
+if ($w_mes6 > 12)  { $w_mes6 = '01'; $w_ano6 = $w_ano + 1; }
 
 $w_inicio  = first_day(toDate('01/'.substr(100+(intVal($w_mes1)),1,2).'/'.$w_ano));
-$w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes6)),1,2).'/'.$w_ano3));
+$w_fim     = last_day(toDate('01/'.substr(100+(intVal($w_mes6)),1,2).'/'.$w_ano6));
 
 if ($O=='') $O='L';
 
@@ -626,9 +629,11 @@ function Calendario() {
     
     // Exibe o calendário da organização
     include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
-    for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-      $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
-      $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
+    for ($i=$w_ano1;$i<=$w_ano6;$i++) {
+      if (nvl($i,0)>0 && !(is_array($RS_Ano[$i]))) {
+        $RS_Ano[$i] = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,$i,'S',null,null,null);
+        $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
+      }
     }
 
     // Recupera os dados da unidade de lotação do usuário
@@ -679,15 +684,19 @@ function Calendario() {
     $w_detalhe1 = false;
     $w_detalhe2 = false;
     $w_detalhe3 = false;
+    $w_detalhe4 = false;
+    $w_detalhe5 = false;
+    $w_detalhe6 = false;
+    
     ShowHTML('            <tr valign="top">');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes2.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes4.$w_ano3,$w_datas,$w_cores,&$w_detalhe4).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes5.$w_ano3,$w_datas,$w_cores,&$w_detalhe5).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes6.$w_ano3,$w_datas,$w_cores,&$w_detalhe6).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano4],$w_mes4.$w_ano4,$w_datas,$w_cores,&$w_detalhe4).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano5],$w_mes5.$w_ano5,$w_datas,$w_cores,&$w_detalhe5).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano6],$w_mes6.$w_ano6,$w_datas,$w_cores,&$w_detalhe6).' </td>');
 
-    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3 || $w_detalhe4 || $w_detalhe5 || $w_detalhe6) {
       ShowHTML('            <tr><td colspan=6 bgcolor="'.$conTrBgColor.'">');
       ShowHTML('              <b>Clique sobre o dia em destaque para ver detalhes.</b>');
     }
@@ -695,20 +704,19 @@ function Calendario() {
     // Exibe informações complementares sobre o calendário
     ShowHTML('            <tr valign="top" bgcolor="'.$conTrBgColor.'">');
     ShowHTML('              <td colspan=3 align="center">');
-    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3) {
+    if ($w_detalhe1 || $w_detalhe2 || $w_detalhe3 || $w_detalhe4 || $w_detalhe5 || $w_detalhe6) {
       ShowHTML('                <table width="100%" border="0" cellspacing=1>');
       if (count($RS_Ano)==0) {
         ShowHTML('                  <tr valign="top"><td align="center">&nbsp;');
       } else {
         ShowHTML('                  <tr valign="top"><td align="center"><b>Data<td><b>Ocorrências');
         reset($RS_Ano);
-        for ($i=$w_ano1;$i<=$w_ano3;$i++) {
-          $RS_Ano_Atual = $RS_Ano[$i];
+        foreach($RS_Ano as $RS_Ano_Atual) {
           foreach($RS_Ano_Atual as $row_ano) {
             // Exibe apenas as ocorrências do trimestre selecionado
             if (f($row_ano,'data_formatada') >= $w_inicio && f($row_ano,'data_formatada') <= $w_fim) {
               ShowHTML('                  <tr valign="top">');
-              ShowHTML('                    <td align="center">'.date(d.'/'.m,f($row_ano,'data_formatada')));
+              ShowHTML('                    <td align="center">'.formataDataEdicao(f($row_ano,'data_formatada'),5));
               ShowHTML('                    <td>'.f($row_ano,'nome'));
             }
           }
@@ -751,6 +759,12 @@ function Calendario() {
     }
     
     $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+    if ($p_ordena>'') { 
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+    } else {
+      $RS_Resultado = SortArray($RS_Resultado,'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
+    }
     ShowHTML('<table width="100%">');
     ShowHTML('<tr><td align="right" colspan="2"><hr>');      
     if ($w_embed!='WORD') {

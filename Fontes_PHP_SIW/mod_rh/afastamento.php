@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -84,6 +84,7 @@ exit;
 function Afastamento() {
   extract($GLOBALS);
   Global $w_Disabled;
+  Global $w_sg_afast;
   $w_chave  = $_REQUEST['w_chave'];
   if ($w_troca>'') {
     $w_sq_tipo_afastamento      = $_REQUEST['w_sq_tipo_afastamento'];
@@ -120,6 +121,12 @@ function Afastamento() {
   if (Nvl($w_sq_tipo_afastamento,'')>'' && (!(strpos('IA',$O)===false))) {
       $RS1 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_sq_tipo_afastamento,null,null,null,null,'MODALIDADES');
       foreach($RS1 as $row){$RS1=$row; break;}
+      if(f($RS1,'abate_banco_horas') != 'N'){
+        $w_sg_afast = true;
+      }else{
+        $w_sg_afast = false;
+      }
+      
   } 
   Cabecalho();
   ShowHTML('<HEAD>');

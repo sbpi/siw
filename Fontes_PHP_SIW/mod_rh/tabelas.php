@@ -10,6 +10,7 @@ include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCargo.php');
+include_once($w_dir_volta.'classes/sp/db_getCVAcadForm.php');
 include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 include_once($w_dir_volta.'classes/sp/db_getGPParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
@@ -23,6 +24,7 @@ include_once($w_dir_volta.'classes/sp/dml_putGPParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/dml_putDataEspecial.php');
+include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPosto2.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoData.php');
 include_once($w_dir_volta.'funcoes/selecaoFormacao.php');
@@ -92,7 +94,6 @@ exit;
 // =========================================================================
 // Rotina de modalidade de contratacao 
 // -------------------------------------------------------------------------
-
 function ModalidadeCont() {
   extract($GLOBALS);
   Global $w_Disabled;
@@ -106,14 +107,15 @@ function ModalidadeCont() {
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E') { 
-    $w_nome       = $_REQUEST['w_nome'];
-    $w_descricao  = $_REQUEST['w_descricao'];
-    $w_sigla      = $_REQUEST['w_sigla'];
-    $w_ferias     = $_REQUEST['w_ferias'];
-    $w_username   = $_REQUEST['w_username'];
-    $w_passagem   = $_REQUEST['w_passagem'];
-    $w_diaria     = $_REQUEST['w_diaria'];
-    $w_ativo      = $_REQUEST['w_ativo'];
+    $w_nome         = $_REQUEST['w_nome'];
+    $w_descricao    = $_REQUEST['w_descricao'];
+    $w_sigla        = $_REQUEST['w_sigla'];
+    $w_ferias       = $_REQUEST['w_ferias'];
+    $w_username     = $_REQUEST['w_username'];
+    $w_passagem     = $_REQUEST['w_passagem'];
+    $w_diaria       = $_REQUEST['w_diaria'];
+    $w_horas_extras = $_REQUEST['w_horas_extras'];
+    $w_ativo        = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
@@ -125,15 +127,16 @@ function ModalidadeCont() {
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
-    $w_chave      = f($RS,'chave');
-    $w_nome       = f($RS,'nome');
-    $w_descricao  = f($RS,'descricao');
-    $w_sigla      = f($RS,'sigla');
-    $w_ferias     = f($RS,'ferias');
-    $w_username   = f($RS,'username');
-    $w_passagem   = f($RS,'passagem');
-    $w_diaria     = f($RS,'diaria');
-    $w_ativo      = f($RS,'ativo');
+    $w_chave        = f($RS,'chave');
+    $w_nome         = f($RS,'nome');
+    $w_descricao    = f($RS,'descricao');
+    $w_sigla        = f($RS,'sigla');
+    $w_ferias       = f($RS,'ferias');
+    $w_username     = f($RS,'username');
+    $w_passagem     = f($RS,'passagem');
+    $w_diaria       = f($RS,'diaria');
+    $w_horas_extras = f($RS,'horas_extras');
+    $w_ativo        = f($RS,'ativo');
   } if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -189,6 +192,7 @@ function ModalidadeCont() {
     ShowHTML('          <td><b>'.LinkOrdena('Férias','ferias').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Passagem','passagem').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Diária','diaria').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Horas Extras','horas_extras').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
     ShowHTML('          <td><b> Operações </td>');
     ShowHTML('        </tr>');
@@ -218,6 +222,13 @@ function ModalidadeCont() {
         }
         ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'passagem')).'</td>');
         ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'diaria')).'</td>');
+        if (trim(f($row,'horas_extras'))=='S') {
+          ShowHTML('        <td align="center">Sempre</td>');
+        } elseif (trim(f($row,'horas_extras'))=='N') {
+          ShowHTML('        <td align="center">Nunca</td>');
+        } else {
+          ShowHTML('        <td align="center">Controlar por pessoa</td>');
+        }        
         if (f($row,'ativo')=='N') {
           ShowHTML('        <td align="center"><font color="red">'.RetornaSimNao(f($row,'ativo')).'</td>');
         } else {
@@ -275,6 +286,17 @@ function ModalidadeCont() {
     MontaRadioSN('<b>Modalidade permite pagamento de diárias?</b>',$w_diaria,'w_diaria');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('          <td><b>Esta modalidade permite o cumprimento de horas extras?</b><br>');    
+    if (trim($w_horas_extras)=='N') {
+      ShowHTML('              
+      <input '.$w_Disabled.' type="radio" name="w_horas_extras" value="S"> Sempre <br>
+      <input checked="checked" '.$w_Disabled.' type="radio" name="w_horas_extras" value="N"> Nunca <br>
+      <input '.$w_Disabled.' type="radio" name="w_horas_extras" value="P"> Controlar por pessoa');
+    } elseif (trim($w_horas_extras)=='S') {
+      ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_horas_extras" value="S" checked> Sempre <br><input '.$w_Disabled.' type="radio" name="w_horas_extras" value="N"> Nunca <br><input '.$w_Disabled.' type="radio" name="w_horas_extras" value="P"> Controlar por pessoa');
+    } else { 
+      ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_horas_extras" value="S"> Sempre <br><input '.$w_Disabled.' type="radio" name="w_horas_extras" value="N"> Nunca <br><input '.$w_Disabled.' type="radio" name="w_horas_extras" value="P"  checked> Controlar por pessoa');
+    }
     ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {
@@ -286,7 +308,7 @@ function ModalidadeCont() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_dir.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -327,15 +349,16 @@ function Tipoafast() {
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E') { 
-    $w_nome            = $_REQUEST['w_nome'];
-    $w_sigla           = $_REQUEST['w_sigla'];
-    $w_limite_dias     = $_REQUEST['w_limite_dias'];
-    $w_perc_pag        = $_REQUEST['w_perc_pag'];
-    $w_sexo            = $_REQUEST['w_sexo'];
-    $w_contagem_dias   = $_REQUEST['w_contagem_dias'];
-    $w_periodo         = $_REQUEST['w_periodo'];
-    $w_sobrepoe_ferias = $_REQUEST['w_sobrepoe_ferias'];
-    $w_ativo           = $_REQUEST['w_ativo']; 
+    $w_nome              = $_REQUEST['w_nome'];
+    $w_sigla             = $_REQUEST['w_sigla'];
+    $w_limite_dias       = $_REQUEST['w_limite_dias'];
+    $w_perc_pag          = $_REQUEST['w_perc_pag'];
+    $w_sexo              = $_REQUEST['w_sexo'];
+    $w_contagem_dias     = $_REQUEST['w_contagem_dias'];
+    $w_periodo           = $_REQUEST['w_periodo'];
+    $w_sobrepoe_ferias   = $_REQUEST['w_sobrepoe_ferias'];
+    $w_abate_banco_horas = $_REQUEST['w_abate_banco_horas'];
+    $w_ativo             = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
     if (Nvl($p_ordena,'') > '') {
@@ -347,16 +370,17 @@ function Tipoafast() {
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
-    $w_chave            = f($RS,'chave');
-    $w_nome             = f($RS,'nome');
-    $w_sigla            = f($RS,'sigla');
-    $w_limite_dias      = f($RS,'limite_dias');
-    $w_perc_pag         = number_format(f($RS,'percentual_pagamento'),2,',','.');
-    $w_sexo             = f($RS,'sexo');
-    $w_contagem_dias    = f($RS,'contagem_dias');
-    $w_periodo          = f($RS,'periodo');
-    $w_sobrepoe_ferias  = f($RS,'sobrepoe_ferias');
-    $w_ativo            = f($RS,'ativo');
+    $w_chave             = f($RS,'chave');
+    $w_nome              =  f($RS,'nome');
+    $w_sigla             = f($RS,'sigla');
+    $w_limite_dias       = f($RS,'limite_dias');
+    $w_perc_pag          = number_format(f($RS,'percentual_pagamento'),2,',','.');
+    $w_sexo              = f($RS,'sexo');
+    $w_contagem_dias     = f($RS,'contagem_dias');
+    $w_periodo           = f($RS,'periodo');
+    $w_sobrepoe_ferias   = f($RS,'sobrepoe_ferias');
+    $w_abate_banco_horas = f($RS,'abate_banco_horas');
+    $w_ativo             = f($RS,'ativo');
   } if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -475,7 +499,7 @@ function Tipoafast() {
     ShowHTML('          <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><b><u>L</u>imite de dias:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_limite_dias" class="STI" SIZE="6" MAXLENGTH="6" VALUE="'.$w_limite_dias.'"></td>');
     ShowHTML('          <td><b><u>P</u>ercentual da remuneração a ser pago quando afastado por este tipo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_perc_pag" class="STI" SIZE="18" MAXLENGTH="18" VALUE="'.$w_perc_pag.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
-    ShowHTML('      <tr><td><b>Aplica-se ao sexo:</b><br>');
+    ShowHTML('      <tr valign="top"><td><b>Aplica-se ao sexo:</b><br>');
     if ($w_sexo=='M') {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_sexo" value="F"> Feminino <br><input '.$w_Disabled.' type="radio" name="w_sexo" value="M" checked> Masculino <br><input '.$w_Disabled.' type="radio" name="w_sexo" value="A"> Ambos');
     } elseif ($w_sexo=='F') {
@@ -488,8 +512,10 @@ function Tipoafast() {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="C"> Corridos <br><input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="U" checked> Úteis');
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="C" checked> Corridos <br><input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="U"> Úteis');
-    } 
-    ShowHTML('      <tr><td><b>Informar afastamento em:</b><br>');
+    }
+    ShowHTML('      <tr valign="top">');
+    MontaRadioNS('<b>Abate horas do banco de horas?</b>',$w_abate_banco_horas,'w_abate_banco_horas');
+    ShowHTML('      <tr valign="top"><td><b>Informar afastamento em:</b><br>');
     if ($w_periodo=='D') {  
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_periodo" value="A"> Datas <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="D" checked> Dias <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="H"> Horas');
     } elseif ($w_periodo=='H'){
@@ -827,21 +853,31 @@ function Parametros() {
     $w_ferias_nome          = $_REQUEST['w_ferias_nome'];
     $w_viagem_legenda       = $_REQUEST['w_viagem_legenda'];
     $w_viagem_nome          = $_REQUEST['w_viagem_nome'];
+    $w_dias_atualizacao_cv  = $_REQUEST['w_dias_atualizacao_cv'];
+    $w_aviso_atualizacao_cv = $_REQUEST['w_aviso_atualizacao_cv']; 
+    $w_tipo_tolerancia      = $_REQUEST['w_tipo_tolerancia'];
+    $w_minutos_tolerancia   = $_REQUEST['w_minutos_tolerancia'];
+    $w_vinculacao_contrato  = $_REQUEST['w_vinculacao_contrato'];
   } else {
     $RS = db_getGPParametro::getInstanceOf($dbms,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
     if (count($RS)>0) {
-      $w_sq_unidade_gestao  = f($RS,'sq_unidade_gestao');
-      $w_admissao_texto     = f($RS,'admissao_texto');
-      $w_admissao_destino   = f($RS,'admissao_destino');
-      $w_rescisao_texto     = f($RS,'rescisao_texto');
-      $w_rescisao_destino   = f($RS,'rescisao_destino');
-      $w_feriado_legenda    = f($RS,'feriado_legenda');
-      $w_feriado_nome       = f($RS,'feriado_nome');
-      $w_ferias_legenda     = f($RS,'ferias_legenda');
-      $w_ferias_nome        = f($RS,'ferias_nome');
-      $w_viagem_legenda     = f($RS,'viagem_legenda');
-      $w_viagem_nome        = f($RS,'viagem_nome');
+      $w_sq_unidade_gestao    = f($RS,'sq_unidade_gestao');
+      $w_admissao_texto       = f($RS,'admissao_texto');
+      $w_admissao_destino     = f($RS,'admissao_destino');
+      $w_rescisao_texto       = f($RS,'rescisao_texto');
+      $w_rescisao_destino     = f($RS,'rescisao_destino');
+      $w_feriado_legenda      = f($RS,'feriado_legenda');
+      $w_feriado_nome         = f($RS,'feriado_nome');
+      $w_ferias_legenda       = f($RS,'ferias_legenda');
+      $w_ferias_nome          = f($RS,'ferias_nome');
+      $w_viagem_legenda       = f($RS,'viagem_legenda');
+      $w_viagem_nome          = f($RS,'viagem_nome');
+      $w_dias_atualizacao_cv  = f($RS,'dias_atualizacao_cv');
+      $w_aviso_atualizacao_cv = f($RS,'aviso_atualizacao_cv');
+      $w_tipo_tolerancia      = f($RS,'tipo_tolerancia'); 
+      $w_minutos_tolerancia   = f($RS,'minutos_tolerancia');
+      $w_vinculacao_contrato  = f($RS,'vinculacao_contrato');
     } 
   } 
   Cabecalho();
@@ -855,11 +891,15 @@ function Parametros() {
   Validate('w_admissao_texto','Texto comunicando a entrada de coloborador','1','1','3','1000','1','1');
   Validate('w_rescisao_destino','Destinatários da mensagem de saída','1','1','5','100','1','1');
   Validate('w_rescisao_texto','Texto comunicando a saída de coloborador','1','1','3','1000','1','1');
-  Validate('w_feriado_legenda','Legenda do feriado','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','');
+  Validate('w_feriado_legenda','Legenda do feriado','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
   Validate('w_feriado_nome','Nome do feriado','1','1','3','30','1','1');
-  Validate('w_ferias_legenda','Legenda do ferias','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','');
+  Validate('w_dias_atualizacao_cv','Limite de dias','1','1','1','30','0123456789','1');
+  Validate('w_aviso_atualizacao_cv','Dias de aviso','1','1','1','30','0123456789','1');
+  Validate('w_tipo_tolerancia','Tipo de tolerância','SELECT',1,1,18,'','0123456789');
+  Validate('w_minutos_tolerancia','Minutos de tolerância','1','1','1','30','0123456789','1');
+  Validate('w_ferias_legenda','Legenda do ferias','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
   Validate('w_ferias_nome','Nome do ferias','1','1','3','30','1','1');
-  Validate('w_viagem_legenda','Legenda do viagem','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','');
+  Validate('w_viagem_legenda','Legenda do viagem','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
   Validate('w_viagem_nome','Nome do viagem','1','1','3','30','1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao.disabled=true;');
@@ -881,6 +921,8 @@ function Parametros() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('    <table width="97%" border="0">');
   SelecaoUnidade('<U>U</U>nidade gestora de colaboradores:','U',null,$w_sq_unidade_gestao,null,'w_sq_unidade_gestao',null,null);
+  ShowHTML('          <tr valign="top">');
+  selecaoServico('<U>V</U>incular centros de custo de contratos de trabalho a:', 'S', null, $w_vinculacao_contrato, null, null, 'w_vinculacao_contrato', 'X', null, null, null, null);
   ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Texto de aviso</td></td></tr>');
@@ -890,8 +932,40 @@ function Parametros() {
   ShowHTML('      <tr><td valign="top"><b>D<u>e</u>stinatários da mensagem de saída (separar por ponto-e-vírgula):<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="w_rescisao_destino" size="90" maxlength="100" value="'.$w_rescisao_destino.'"></td>');
   ShowHTML('      <tr><td valign="top"><b>Te<u>x</u>to comunicando a saída de colaborador:</b><br><textarea '.$w_Disabled.' accesskey="X" name="w_rescisao_texto" class="STI" ROWS=5 cols=75 >'.$w_rescisao_texto.'</TEXTAREA></td>');
   ShowHTML('      </table>');
+  
   ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Controle de atualização do CV</td></td></tr>');
+  ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
+  ShowHTML('      <tr><td valign="top"><b>Número limite de dias para o colaborador atualizar seu CV, antes do sistema bloquear seu login:<br>');
+  ShowHTML('          <INPUT class="STI" type="text" name="w_dias_atualizacao_cv" size="4" maxlength="3" value="'.$w_dias_atualizacao_cv.'"></td>');
+  ShowHTML('      </tr>');
+  ShowHTML('      <tr><td valign="top"><b>Número de dias de aviso da necessidade de atualizar o CV:<br>');
+  ShowHTML('          <INPUT class="STI" type="text" name="w_aviso_atualizacao_cv" size="4" maxlength="3" value="'.$w_aviso_atualizacao_cv.'"><br><br></td>');
+  ShowHTML('      </tr>');  
+//  ShowHTML('      </table>');
+  ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('    </table>');
+
+  ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Controle de jornada de trabalho</td></td></tr>');
+  ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
+  ShowHTML('      <tr><td valign="top"><b>Tipo de tolerância no horário de entrada/saída:<br>');
+  ShowHTML('<select name="w_tipo_tolerancia" class="STIO">');
+  ShowHTML('<option value="">---</option>');
+  ShowHTML('<option '.($w_tipo_tolerancia == '1'?'selected':'').' title="Diário" value="1">Diário</option>');
+  ShowHTML('<option '.($w_tipo_tolerancia == '2'?' selected ':'').' title="Período ou turno. ex: manhã, tarde ou noite" value="2">Período</option>');
+  ShowHTML('<option '.($w_tipo_tolerancia == '4'?' selected ':'').'  title="Horário" value="4">Horário</option>');  
+  ShowHTML('</select>');  
+  ShowHTML('      </tr>');
+  ShowHTML('      <tr><td valign="top"><b>Minutos de tolerância:<br>');
+  ShowHTML('          <INPUT class="STI" type="text" name="w_minutos_tolerancia" size="2" maxlength="2" value="'.$w_minutos_tolerancia.'"></td>');
+  ShowHTML('      </tr>');  
+  ShowHTML('      </table>');
+  ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('    </table>');
+    
+
   ShowHTML('      <tr><td valign="top" align="center" bgcolor="#D0D0D0"><font size="2"><b>Dados para o mapa de frequência</td></td></tr>');
   ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
   ShowHTML('      <tr><td valign="top"><b>Evento</td>');
@@ -949,6 +1023,7 @@ function Cargo() {
     $w_salario_piso   = $_REQUEST['w_salario_piso'];
     $w_salario_teto   = $_REQUEST['w_salario_teto'];
     $w_ativo          = $_REQUEST['w_ativo'];
+    $w_sq_area_conhecimento = $_REQUEST['w_sq_area_conhecimento'];
   } elseif ($O=='L') {
     $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,null,$w_sq_tipo,$w_nome,$w_sq_formacao,$w_ativo,null);
     if (Nvl($p_ordena,'') > '') {
@@ -967,6 +1042,13 @@ function Cargo() {
     $w_descricao    = f($RS,'descricao');
     $w_atividades   = f($RS,'atividades');
     $w_competencias = f($RS,'competencias');
+    $w_sq_area_conhecimento = f($RS,'sq_area_conhecimento');
+    if (Nvl(f($RS,'nm_area'),'')=='') {
+      $w_nm_area = '';
+    } else {
+      $w_nm_area = f($RS,'nm_area').' ('.f($RS,'codigo_cnpq').')';
+    }
+    
     if (Nvl(f($RS,'salario_piso'),'')!='' && Nvl(f($RS,'salario_teto'),'')!='') {
       $w_salario_piso = number_format(f($RS,'salario_piso'),2,',','.');
       $w_salario_teto = number_Format(f($RS,'salario_teto'),2,',','.');
@@ -980,6 +1062,7 @@ function Cargo() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_tipo','Tipo','SELECT','1','1','18','','1');
       Validate('w_sq_formacao','Formacao Acadêmica','SELECT','1','1','1000','1','');
+      Validate('w_nm_area','Área do conhecimento','','1','1','92','1','1');
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_descricao','Descrição','1','','5','1000','1','1');
       Validate('w_atividades','Atividades','1','','5','1000','1','1');
@@ -1032,6 +1115,7 @@ function Cargo() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_posto').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('C.B.O.','codigo_cnpq').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Formação','nm_formacao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
@@ -1047,6 +1131,7 @@ function Cargo() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="left" title="'.f($row,'ds_tipo_posto').'">'.f($row,'nm_tipo_posto').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'codigo_cnpq').'</td>');
         ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="left">'.f($row,'nm_formacao').'</td>');
         if (f($row,'ativo')=='N') {
@@ -1080,6 +1165,7 @@ function Cargo() {
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_sq_area_conhecimento" value="'.$w_sq_area_conhecimento.'">');    
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('         <tr><td colspan=2><table width="100%" border="0">');
@@ -1091,6 +1177,14 @@ function Cargo() {
     ShowHTML('         <td colspan=2 width="100%"><table width="100%" border="0">');
     SelecaoFormacao('F<u>o</u>rmação acadêmica:','O','Selecione a formação acadêmica mínima, exigida para a ocupação do cargo.',$w_sq_formacao,'Acadêmica','w_sq_formacao',null,null);
     ShowHTML('            <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('           </table>');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr>');
+    ShowHTML('        <td colspan=2><b>Classificação Brasileira de Ocupações (C.B.O.):</b><br>');
+    ShowHTML('          <input READONLY type="text" name="w_nm_area" class="sti" SIZE="50" VALUE="'.$w_nm_area.'">');    
+    ShowHTML('          [<u onMouseOver="this.style.cursor=\'Hand\'" onMouseOut="this.style.cursor=\'Pointer\'" onClick="window.open(\''.montaURL_JS($w_dir,'cv.php?par='.'BuscaAreaConhecimento&TP='.$TP.'&P1=2').'\',\'SelecaoCargo\',\'top=70,left=100,width=600,height=400,toolbar=yes,status=yes,resizable=yes,scrollbars=yes\');"><b><font color="#0000FF">Procurar</font></b></u>]');
+    ShowHTML('        </td>');
+    ShowHTML('      </tr>');
     ShowHTML('           </table>');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
@@ -1167,7 +1261,7 @@ function Grava() {
           } 
         } 
         dml_putGPModalidade::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
-        $_REQUEST['w_sigla'],$_REQUEST['w_ferias'],$_REQUEST['w_username'],$_REQUEST['w_passagem'],$_REQUEST['w_diaria'],
+        $_REQUEST['w_sigla'],$_REQUEST['w_ferias'],$_REQUEST['w_username'],$_REQUEST['w_passagem'],$_REQUEST['w_diaria'],$_REQUEST['w_horas_extras'],
         $_REQUEST['w_ativo']);
                                 
         ScriptOpen('JavaScript');
@@ -1202,7 +1296,7 @@ function Grava() {
         } 
         
         dml_putGPTipoAfast::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_limite_dias'],
-          $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'],
+          $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'], $_REQUEST['w_abate_banco_horas'],
           $_REQUEST['w_ativo'],explodearray($_REQUEST['w_sq_modalidade']));
         
         ScriptOpen('JavaScript');
@@ -1330,7 +1424,8 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putGPParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_unidade_gestao'],$_REQUEST['w_admissao_texto'],$_REQUEST['w_admissao_destino'],$_REQUEST['w_rescisao_texto'],
         $_REQUEST['w_rescisao_destino'],$_REQUEST['w_feriado_legenda'],$_REQUEST['w_feriado_nome'],$_REQUEST['w_ferias_legenda'],$_REQUEST['w_ferias_nome'],
-        $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome']);
+        $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome'],$_REQUEST['w_dias_atualizacao_cv'],$_REQUEST['w_aviso_atualizacao_cv'],$_REQUEST['w_tipo_tolerancia'],
+        $_REQUEST['w_minutos_tolerancia'],$_REQUEST['w_vinculacao_contrato']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1363,7 +1458,7 @@ function Grava() {
         } 
         dml_putCargo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_sq_tipo'],$_REQUEST['w_sq_formacao'],$_REQUEST['w_nome'],
         $_REQUEST['w_descricao'],$_REQUEST['w_atividades'],$_REQUEST['w_competencias'],$_REQUEST['w_salario_piso'],$_REQUEST['w_salario_teto'],
-        $_REQUEST['w_ativo']);
+        $_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

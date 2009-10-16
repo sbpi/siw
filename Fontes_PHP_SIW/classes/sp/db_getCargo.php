@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class db_getCargo {
    function getInstanceOf($dbms, $p_cliente, $p_chave, $p_tipo, $p_nome, $p_formacao, $p_ativo, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $sql=$strschema.'SP_GETCARGO';
+     $sql=$strschema.'sp_getCargo';
      $params=array('p_cliente'                   =>array($p_cliente,                                       B_INTEGER,        32),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_INTEGER,        32),

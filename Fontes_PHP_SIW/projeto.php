@@ -151,6 +151,7 @@ switch ($O) {
   case 'H': $w_TP=$TP.' - Herança'; break;
   default : $w_TP=$TP.' - Listagem';
 } 
+$p_orprior      = strtoupper($_REQUEST['p_orprior']);
 $p_projeto      = strtoupper($_REQUEST['p_projeto']);
 $p_servico      = strtoupper($_REQUEST['p_servico']);
 $p_atividade    = strtoupper($_REQUEST['p_atividade']);
@@ -226,6 +227,8 @@ function Inicial() {
       } elseif (nvl($p_servico,'')!='') {
         if ($p_servico=='CLASSIF') {
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+        } elseif ($p_servico=='PLANOEST') {
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos vinculados a planos estratégicos</b>]';
         } else {
           $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';
@@ -243,6 +246,12 @@ function Inicial() {
       if ($p_sqcc>'') {
         $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
         $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+      } 
+      if ($p_orprior>'') {
+        $w_linha++; 
+        $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$p_orprior,null,null,null,null,null,'REGISTROS');
+        foreach ($RS as $row) { $RS = $row; break; }
+        $w_filtro.='<tr valign="top"><td align="right">Plano Estratégico <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
@@ -294,13 +303,13 @@ function Inicial() {
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null, null, $p_servico);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, $p_orprior, null, $p_servico);
     } else {
       $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
-          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, null, null, $p_servico);
+          $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, null, $p_orprior, null, $p_servico);
     } 
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));

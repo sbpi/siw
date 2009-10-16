@@ -369,3 +369,12 @@ table ul li{
   border: 1px solid #ffffff;
   font-size: 80%;
 }
+
+.rh_fieldset{
+  background-color: #EFEFEF;
+  border: solid thin #FFFFFF; 
+}
+
+.rh_fieldset LEGEND{
+  font-weight: bold;   
+}

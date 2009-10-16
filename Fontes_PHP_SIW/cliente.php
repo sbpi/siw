@@ -660,7 +660,19 @@ function Enderecos() {
 
   // Recupera os dados do cliente
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,(($P1==1 && nvl($w_cgccpf,'')=='') ? $w_cliente : $w_sq_pessoa));
-  
+  $RS_Tipo = db_getAdressTypeList::getInstanceOf($dbms, '', null, null);
+  $RS_Tipo = SortArray($RS_Tipo,'nm_tipo_pessoa','asc','nome','asc');
+  //print_r($RS_Tipo);
+  foreach($RS_Tipo as $row) {
+    if($w_sq_tipo_endereco == f($row,'sq_tipo_endereco')){
+      if(strtoupper(f($row,'internet'))=='SIM' || strtoupper(f($row,'email'))=='SIM'){
+        $valido = false;
+      }else{
+        $valido = true;
+      }
+    }
+  }
+    
   Cabecalho();
   ShowHTML('<HEAD>');
   Estrutura_CSS($w_cliente);
@@ -677,7 +689,11 @@ function Enderecos() {
       Validate('w_logradouro','Logradouro','1','1','1','60','1','1');
       Validate('w_complemento','complemento','1','','1','20','1','1');
       Validate('w_bairro','Bairro','1','','1','30','1','1');
-      Validate('w_cep','Cep','1','','9','9','','0123456789-');
+      If($valido){
+        Validate('w_cep','Cep','1','1','9','9','','0123456789-');
+      }else{
+        Validate('w_cep','Cep','1','','9','9','','0123456789-');
+      }      
       Validate('w_pais','Pais','SELECT','','1','10','','1');
       Validate('w_uf','UF','SELECT','','1','10','1','1');
       Validate('w_cidade','Cidade','SELECT','1','1','10','','1');
@@ -710,6 +726,11 @@ function Enderecos() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
+    ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+    ShowHTML('        ATENÇÃO:<ul>');
+    ShowHTML('        <li>A cada alteração do <u>endereço residencial</u>, uma cópia do comprovante de residência deve ser enviado ao departamento de Recursos Humanos.');
+    ShowHTML('        </ul></b></font></td>');
+    ShowHTML('      </tr>');  
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_pessoa='.$w_sq_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
@@ -781,7 +802,7 @@ function Enderecos() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="N">Não <input '.$w_Disabled.' class="str" type="radio" name="w_padrao" VALUE="S" checked>Sim');
     } 
-    selecaoTipoEndereco('<u>T</u>ipo:','T','Selecione na lista o tipo deste endereço.',$w_sq_tipo_endereco,$w_tipo_pessoa,'w_sq_tipo_endereco',null,null);
+    selecaoTipoEndereco('<u>T</u>ipo:','T','Selecione na lista o tipo deste endereço.',$w_sq_tipo_endereco,$w_tipo_pessoa,'w_sq_tipo_endereco',null,'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_tipo_endereco\'; document.Form.submit();"',null);
     ShowHTML('          </table>');
     if ($_SESSION['P_PORTAL']=='') {
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');} 

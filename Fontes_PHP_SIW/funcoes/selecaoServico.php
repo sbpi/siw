@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getMenuList.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 // =========================================================================
@@ -8,6 +8,11 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   extract($GLOBALS);
   if(Nvl($restricao,'')=='MENURELAC') {
     $RS = db_getMenuRelac::getInstanceOf($dbms, $chaveAux, $acordo, $acao, $viagem, 'SERVICO');
+
+    // Verifica se o cliente tem o módulo de planejamento estratégico
+    $RS1 = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
+    if (count($RS1)>0) $l_mod_pe='S'; else $l_mod_pe='N';
+
   } elseif(Nvl($restricao,'')=='NUMERADOR') {
     $RS = $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {
@@ -21,7 +26,10 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   }
   ShowHTML('          <option value="">---');
   if (f($RS_Menu,'solicita_cc')=='S') {
-    if (nvl($chave,'')=='CLASSIF') ShowHTML('          <option value="CLASSIF" SELECTED>Classificação');   else ShowHTML('          <option value="CLASSIF">Classificação');
+    ShowHTML('          <option value="CLASSIF" '.((nvl($chave,'')=='CLASSIF') ? 'SELECTED' : '').'>Classificação');
+  }
+  if ($l_mod_pe=='S') {
+    ShowHTML('          <option value="PLANOEST" '.((nvl($chave,'')=='PLANOEST') ? 'SELECTED' : '').'>Plano Estratégico');
   }
   foreach($RS as $row) {
     if (nvl(f($row,'sq_menu'),0)==nvl($chave,0)) {

@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -191,6 +191,8 @@ function inicial(){
       } elseif (nvl($p_servico,'')!='') {
         if ($p_servico=='CLASSIF') {
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos com classificação</b>]';
+        } elseif ($p_servico=='PLANOEST') {
+          $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>Apenas projetos vinculados a planos estratégicos</b>]';
         } else {
           $RS = db_getMenuData::getInstanceOf($dbms,$p_servico);
           $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.f($RS,'nome').'</b>]';

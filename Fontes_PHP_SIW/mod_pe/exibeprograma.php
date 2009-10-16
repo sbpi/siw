@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de exibição dos dados do programa
 // -------------------------------------------------------------------------
@@ -44,31 +44,16 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
   $l_html.=chr(13).'    <table width="100%" border="0">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
   if (nvl(f($RS,'sq_plano'),'')!='') {
-    if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></div></td></tr>';
-    else                 $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size="2">PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano')).'</font></td></tr>';
+    if ($l_tipo=='WORD') $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.f($RS,'nm_plano').'</b></font></td></tr>';
+    else                    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.ExibePlano('../',$w_cliente,f($RS,'sq_plano'),$TP,f($RS,'nm_plano'),'PITCE').'</b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></td></tr>';
+  } else {
+    // Exibe a vinculação
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>PROGRAMA: ';
+    if($l_tipo!='WORD') $l_html.=chr(13).exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+    else                $l_html.=chr(13).exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>SUBPROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</b></font></td></tr>';
   }
-  // Se a classificação foi informada, exibe.
-  if (Nvl(f($RS,'sq_cc'),'')>'') {
-    $l_html .= chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CLASSIFICAÇÃO: '.f($RS,'cc_nome').' </td></tr>';
-  }
-    
-  // Se o acordo foi informado, exibe.
-  if (Nvl(f($RS,'sq_acordo'),'')>'') {
-    if (substr(f($RS,'sg_acordo'),0,3)=='GCC') {
-      if ($l_tipo=='WORD') {
-        $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CONVÊNIO: '.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').'</font></td></tr>';
-      } else {
-        $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CONVÊNIO: <A class="hl" HREF="mod_ac/convenios.php?par=Visual&O=L&w_chave='.f($RS,'sq_acordo').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GCCCAD" title="Exibe as informações do acordo." target="_blank">'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').'</a></font></td></tr>';
-      }
-    } else {
-      if ($l_tipo=='WORD') {
-        $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CONTRATO: '.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').'</font></td></tr>';
-      } else {
-        $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2>CONTRATO: <A class="hl" HREF="mod_ac/contratos.php?par=Visual&O=L&w_chave='.f($RS,'sq_acordo').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=GCCCAD" title="Exibe as informações do acordo." target="_blank">'.f($RS,'cd_acordo').' ('.f($RS,'sq_acordo').') '.f($RS,'nm_acordo').'</a></font></td></tr>';
-      }
-    }
-  }
-  $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><font size=2><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'titulo').'</font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
      
   // Identificação do programa

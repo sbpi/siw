@@ -814,6 +814,7 @@ Fontes_PHP_SIW/classes/sp/db_getGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPTipoAfast.php -text
 Fontes_PHP_SIW/classes/sp/db_getGestor.php -text
+Fontes_PHP_SIW/classes/sp/db_getGpDesempenho.php -text
 Fontes_PHP_SIW/classes/sp/db_getGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getHorizonte_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getHorizonte_PE.php -text
@@ -1188,6 +1189,7 @@ Fontes_PHP_SIW/classes/sp/dml_putGPContrato.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPTipoAfast.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGpDesempenho.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_PE.php -text
@@ -2212,6 +2214,7 @@ Fontes_PHP_SIW/mod_pr/tabelas.php -text
 Fontes_PHP_SIW/mod_rh/afastamento.php -text
 Fontes_PHP_SIW/mod_rh/colaborador.php -text
 Fontes_PHP_SIW/mod_rh/cv.php -text
+Fontes_PHP_SIW/mod_rh/folha.php -text
 Fontes_PHP_SIW/mod_rh/funcoes.php -text
 Fontes_PHP_SIW/mod_rh/tabelas.php -text
 Fontes_PHP_SIW/mod_rh/validaafastamento.php -text

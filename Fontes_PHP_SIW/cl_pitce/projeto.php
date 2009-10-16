@@ -1209,18 +1209,15 @@ function Descritivo() {
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
+    Validate('w_instancia_articulacao','Instância de articulação público-privada','1','',5,500,'1','1');
+    Validate('w_composicao_instancia','Composição da instância','1','',5,500,'1','1');
+    Validate('w_estudos','Estudos','1','',5,2000,'1','1');
     Validate('w_justificativa','Situação inicial','1','',5,2000,'1','1');  
     Validate('w_restricoes','Estratégias','1','',5,2000,'1','1');          
     Validate('w_objetivo_superior','Objetivo superior','1','',5,2000,'1','1');
     Validate('w_descricao','Objetivos estratégicos','1','',5,2000,'1','1');
     Validate('w_exclusoes','Desafios','1','',5,2000,'1','1');
     Validate('w_premissas','Prioridades','1','',5,2000,'1','1');
-    Validate('w_instancia_articulacao','Instância de articulação público-privada','1','',5,500,'1','1');
-    Validate('w_composicao_instancia','Composição da instância','1','',5,500,'1','1');
-    Validate('w_estudos','Estudos','1','',5,500,'1','1');
-  
-
-
   } 
   ValidateClose();
   ScriptClose();

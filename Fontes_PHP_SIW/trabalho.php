@@ -13,6 +13,7 @@ include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_TT.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop_Recurso.php');
 include_once($w_dir_volta.'classes/sp/db_getDeskTop.php');
+include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
 include_once($w_dir_volta.'classes/sp/db_getAlerta.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
@@ -138,6 +139,13 @@ function Mesa() {
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
+
+  // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
+  if (nvl($w_pessoal,'')!='') {
+    //Verifica se o usuário tem contrato de trabalho  
+    $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    if (count($RS1)>0) ShowHTML('      <a href="mod_rh/folha.php?par=inicial&O=L&TP='.$TP.' - Folha de ponto" title="Clique para acessar a folha de ponto." target="folha"><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+  }
 
   // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
   if (f($RS_Cliente,'georeferencia')=='S') {
@@ -431,13 +439,12 @@ function Mesa() {
               ShowHTML('                  </tr>');
             }
           }
-          ShowHTML('                </table><br>');
-          ShowHTML('        <tr><td><font size="1"><b>Legenda:</b><table border=0>'.ExibeImagemSolic('PD',null,null,null,null,null,null,null, null,true).'</table>');
+          ShowHTML('                </table>');
         }
 
         // Exibe afastamentos do usuário logado
         if (count($RS_Afast)>0 && nvl($w_pessoal,'')!='') {
-          ShowHTML('              <tr><td>');
+          ShowHTML('              <tr><td><br>');
           // Mostra os períodos de indisponibilidade
           ShowHTML('                <b>AFASTAMENTOS</b>');
           ShowHTML('                <table width="100%" border="1" cellspacing=0 bgcolor="'.$conTrBgColor.'">');

@@ -361,7 +361,7 @@ function Gerencial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L' || $w_embed == 'WORD') {
     if ($O=='L' && $w_embed != 'WORD') {
-      ShowHTML('<tr><td><font size="1">');
+      ShowHTML('<tr><td>');
       if (MontaFiltro('GET')>'' ) {
         ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
       } else {
@@ -370,7 +370,7 @@ function Gerencial() {
     } 
     ImprimeCabecalho();
     if (count($RS1)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       if ($O=='L' && $w_embed != 'WORD') {
         ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
@@ -743,7 +743,7 @@ function Gerencial() {
       } 
       ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
       ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
-      ShowHTML('          <td><font size="1"><b>Totais</font></td>');
+      ShowHTML('          <td><b>Totais</font></td>');
       ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1,-1);
     } 
     ShowHTML('      </FORM>');
@@ -770,9 +770,9 @@ function Gerencial() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
     // Exibe parâmetros de apresentação
     ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center" valign="top"><table border=0 width="90%" cellspacing=0>');
-    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Parâmetros de Apresentação</td>');
+    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Parâmetros de Apresentação</td>');
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
-    ShowHTML('          <td><font size="1"><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
+    ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
     if (f($RS_Menu,'solicita_cc')=='S') {
       if ($p_agrega==(substr(f($RS_Menu,'sigla'),0,3).'CC'))
         ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'CC" selected>Classificação');
@@ -798,7 +798,7 @@ function Gerencial() {
     MontaRadioNS('<b>Limita tamanho do objeto?</b>',$p_tamanho,'p_tamanho');
     ShowHTML('           </table>');
     ShowHTML('         </tr>');
-    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>Critérios de Busca</td>');
+    ShowHTML('         <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Critérios de Busca</td>');
     if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
         // Se a opção for ligada ao módulo de projetos, permite a seleção do projeto  e da etapa
       ShowHTML('      <tr><td colspan=2><table border=0 width="90%" cellspacing=0><tr valign="top">');
@@ -819,20 +819,21 @@ function Gerencial() {
     }
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',f($RS_Menu_Origem,'sigla'),null);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$p_sq_orprior,null,$w_cliente,'p_sq_orprior',f($RS_Menu_Origem,'sigla'),null,2);
+    ShowHTML('      <tr valign="top">');
     if (f($RS_Menu,'solicita_cc')=='S') {
-      SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC');
+      SelecaoCC('C<u>l</u>assificação:','C','Selecione um dos itens relacionados.',$p_sqcc,null,'p_sqcc','SIWSOLIC',null,2);
     } 
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>Número do c<U>o</U>ntrato:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
-    ShowHTML('          <td><font size="1"><b>O<U>u</U>tra parte:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
+    ShowHTML('          <td><b>Número do c<U>o</U>ntrato:<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="sti" type="text" name="p_chave" size="18" maxlength="18" value="'.$p_chave.'"></td>');
+    ShowHTML('          <td><b>O<U>u</U>tra parte:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo interno:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_palavra" size="18" maxlength="18" value="'.$p_palavra.'"></td>');
-    ShowHTML('          <td><font size="1"><b>Có<U>d</U>igo externo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
+    ShowHTML('          <td><b>Có<U>d</U>igo interno:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_palavra" size="18" maxlength="18" value="'.$p_palavra.'"></td>');
+    ShowHTML('          <td><b>Có<U>d</U>igo externo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_atraso" size="18" maxlength="18" value="'.$p_atraso.'"></td>');
     ShowHTML('      <tr valign="top">');
     if($w_segmento=='Público') {
-      if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><font size="1"><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
-      ShowHTML('          <td><font size="1"><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
+      if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') ShowHTML('          <td><b><U>N</U>úmero do empenho:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_empenho" size="18" maxlength="18" value="'.$p_empenho.'"></td>');
+      ShowHTML('          <td><b><U>N</U>úmero do processo:<br><INPUT ACCESSKEY="D" '.$w_Disabled.' class="sti" type="text" name="p_processo" size="18" maxlength="18" value="'.$p_processo.'"></td>');
     }
     ShowHTML('      <tr valign="top">');
     SelecaoPessoa('Respo<u>n</u>sável:','N','Selecione o responsável na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
@@ -847,11 +848,11 @@ function Gerencial() {
     SelecaoEstado('E<u>s</u>tado:','S',null,$p_uf,$p_pais,$p_regiao,'p_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.target=\'\'; document.Form.w_troca.value=\'p_cidade\'; document.Form.submit();"');
     SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
-    ShowHTML('          <td><font size="1"><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+    ShowHTML('          <td><b>O<U>b</U>jeto:<br><INPUT ACCESSKEY="B" '.$w_Disabled.' class="sti" type="text" name="p_objeto" size="25" maxlength="90" value="'.$p_objeto.'"></td>');
+    ShowHTML('          <td><b>Dias para <U>t</U>érmino da vigência:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="sti" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td><font size="1"><b>Fi<u>m</u> vigência entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
+    ShowHTML('          <td><b>Iní<u>c</u>io vigência entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    ShowHTML('          <td><b>Fi<u>m</u> vigência entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
@@ -889,25 +890,25 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><font size="1"><b>Etapa</font></td>');              break;
-    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><font size="1"><b>Tipo de lançamento</font></td>'); break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><font size="1"><b>Projeto</font></td>');            break;
-    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><font size="1"><b>Outra parte</font></td>');         break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><font size="1"><b>Responsável</font></td>');        break;
-    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><font size="1"><b>Executor</font></td>');           break;
-    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><font size="1"><b>Classificação</font></td>');      break;
-    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><font size="1"><b>Setor responsável</font></td>');  break;
-    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><font size="1"><b>UF</font></td>');                 break;
+    case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':       ShowHTML('          <td><b>Etapa</font></td>');              break;
+    case substr(f($RS_Menu,'sigla'),0,3).'TIPO':        ShowHTML('          <td><b>Tipo de lançamento</font></td>'); break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROJ':        ShowHTML('          <td><b>Projeto</font></td>');            break;
+    case substr(f($RS_Menu,'sigla'),0,3).'PROP':        ShowHTML('          <td><b>Outra parte</font></td>');         break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESP':        ShowHTML('          <td><b>Responsável</font></td>');        break;
+    case substr(f($RS_Menu,'sigla'),0,3).'RESPATU':     ShowHTML('          <td><b>Executor</font></td>');           break;
+    case substr(f($RS_Menu,'sigla'),0,3).'CC':          ShowHTML('          <td><b>Classificação</font></td>');      break;
+    case substr(f($RS_Menu,'sigla'),0,3).'SETOR':       ShowHTML('          <td><b>Setor responsável</font></td>');  break;
+    case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':       ShowHTML('          <td><b>UF</font></td>');                 break;
   } 
-  ShowHTML('          <td><font size="1"><b>Total</font></td>');
-  ShowHTML('          <td><font size="1"><b>Cad.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Exec.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Conc.</font></td>');
-  ShowHTML('          <td><font size="1"><b>Aviso</font></td>');
+  ShowHTML('          <td><b>Total</font></td>');
+  ShowHTML('          <td><b>Cad.</font></td>');
+  ShowHTML('          <td><b>Exec.</font></td>');
+  ShowHTML('          <td><b>Conc.</font></td>');
+  ShowHTML('          <td><b>Aviso</font></td>');
 
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
-    ShowHTML('          <td><font size="1"><b>$ Previsto</font></td>');
-    ShowHTML('          <td><font size="1"><b>$ Liquidado</font></td>');
+    ShowHTML('          <td><b>$ Previsto</font></td>');
+    ShowHTML('          <td><b>$ '.((substr(f($RS_Menu,'sigla'),0,3)=='FNR') ? 'Recebido' : 'Pago').'</font></td>');
   } 
   ShowHTML('        </tr>');
 } 
@@ -919,14 +920,14 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if($p_tipo == 'PDF' || $p_tipo == 'WORD'){
     $w_embed = 'WORD';  
   }
-  if ($w_embed != 'WORD')               ShowHTML('          <td align="right"><font size="1"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</font></td>');     else ShowHTML('          <td align="right"><font size="1">'.number_format($l_solic,0,',','.').'&nbsp;</font></td>');
-  if ($l_cad>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_cad,0,',','.').'</a>&nbsp;</font></td>');        else ShowHTML('          <td align="right"><font size="1">'.number_format($l_cad,0,',','.').'&nbsp;</font></td>');
-  if ($l_tram>0 && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_tram,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.number_format($l_tram,0,',','.').'&nbsp;</font></td>');
-  if ($l_conc>0 && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true"><font size="1">'.number_format($l_conc,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right"><font size="1">'.number_format($l_conc,0,',','.').'&nbsp;</font></td>');
-  if ($l_aviso>0 && $w_embed != 'WORD') ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><font size="1"><b>'.$l_aviso.'&nbsp;</font></td>');
+  if ($w_embed != 'WORD')               ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_solic,0,',','.').'</a>&nbsp;</font></td>');     else ShowHTML('          <td align="right">'.number_format($l_solic,0,',','.').'&nbsp;</font></td>');
+  if ($l_cad>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</font></td>');        else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</font></td>');
+  if ($l_tram>0 && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</font></td>');
+  if ($l_conc>0 && $w_embed != 'WORD')  ShowHTML('          <td align="right"><a class="hl" href="javascript:lista('.$l_chave_aux.', \''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os contratos.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</font></td>');       else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</font></td>');
+  if ($l_aviso>0 && $w_embed != 'WORD') ShowHTML('          <td align="right"><font size="1" color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</font></td>'); else ShowHTML('          <td align="right"><b>'.$l_aviso.'&nbsp;</font></td>');
   if ($_SESSION['INTERNO']=='S' && substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') {
-    ShowHTML('          <td align="right"><font size="1">'.number_format($l_valor,2,',','.').'&nbsp;</font></td>');
-    ShowHTML('          <td align="right"><font size="1">'.number_format($l_custo,2,',','.').'&nbsp;</font></td>');
+    ShowHTML('          <td align="right">'.number_format($l_valor,2,',','.').'&nbsp;</font></td>');
+    ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</font></td>');
   } 
   ShowHTML('        </tr>');
 } 

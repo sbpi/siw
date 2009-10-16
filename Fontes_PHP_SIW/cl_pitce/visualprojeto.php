@@ -182,6 +182,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_cont = 1;
     $l_novo = 'S';
     if (is_array($RS2)) {
+      $w_atual = '';
       foreach($RS2 as $row) {
         if (f($row,'sg_tipo_interessado')!='PDPCES'&&f($row,'sg_tipo_interessado')!='PDPCEGS'&&f($row,'sg_tipo_interessado')!='PDPCECGS') {
           $l_cont = 1;
@@ -196,35 +197,37 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
             $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
           } 
           $l_html.=chr(13).'         <td nowrap>'.f($row,'lotacao').'</td>';
+          $w_atual = f($row,'lotacao');
         }
-        if ($l_cont>2) {
+        if ($l_cont>2 || ($l_cont<=2 && $w_atual!=f($row,'lotacao'))) {
           $l_html.=chr(13).'       <tr valign="top">';
           $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
           $l_html.=chr(13).'         <td nowrap>'.f($row,'lotacao').'</td>';
           $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
+          $w_atual = f($row,'lotacao');
         }
         if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).'</td>';
         else       $l_html.=chr(13).'           <td>'.f($row,'nome').'</td>';
         $l_cont++;
       }    
     }
-    $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#969696" align="center" height=5></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
-    if ($w_exibe1) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
-    if ($w_exibe2) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
-    if ($w_exibe3) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
-    if ($w_exibe4) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
-    $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
-    $l_html.=chr(13).'    <tr valign="top"><td colspan="2"><b>Estratégias:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
-    $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo superior:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
-    $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo estratégicos:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
-    $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Desafios:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
-    //$l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
-    $l_html.=chr(13).'         </table></div></td></tr>';
   } 
+  $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#969696" align="center" height=5></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
+  if ($w_exibe1) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
+  if ($w_exibe2) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
+  if ($w_exibe3) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
+  if ($w_exibe4) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
+  $l_html.=chr(13).'    <tr valign="top"><td colspan="2"><b>Estratégias:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo superior:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo estratégicos:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Desafios:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
+  //$l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
+  $l_html.=chr(13).'         </table></div></td></tr>';
   $l_html.=chr(13).'    </table>';
   
   $l_html.=chr(13).'    <table width="99%" border="0">';

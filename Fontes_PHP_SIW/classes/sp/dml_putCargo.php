@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putCargo {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_tipo, $p_sq_formacao, $p_nome, $p_descricao, $p_atividades, $p_competencias, $p_salario_piso, $p_salario_teto, $p_ativo) {
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_tipo, $p_sq_formacao, $p_nome, $p_descricao, $p_atividades, $p_competencias, $p_salario_piso, $p_salario_teto, $p_area_conhecimento, $p_ativo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'SP_PUTCARGO';
      $params = array('p_operacao'                =>array($operacao,                                        B_VARCHAR,         1),
@@ -24,6 +24,7 @@ class dml_putCargo {
                    'p_competencias'              =>array(tvl($p_competencias),                             B_VARCHAR,      1000),
                    'p_salario_piso'              =>array(toNumber(tvl($p_salario_piso)),                   B_NUMERIC,      18,2),
                    'p_salario_teto'              =>array(toNumber(tvl($p_salario_teto)),                   B_NUMERIC,      18,2),
+                   'p_area_conhecimento'         =>array(tvl($p_area_conhecimento),                        B_INTEGER,        32),     
                    'p_ativo'                     =>array(tvl($p_ativo),                                    B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

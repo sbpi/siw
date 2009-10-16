@@ -229,6 +229,7 @@ function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
 }
 
 function CompHora ($hour1, $DisplayName1, $Operator, $hour2, $DisplayName2) {
+  if(strpos($hour1,'[')===false) $Form = "  theForm."; else $Form = "theForm";
   switch ($Operator) {
     case "==":  $w_Operator=" igual a ";            break;
     case "!=":  $w_Operator=" diferente de ";       break;
@@ -239,9 +240,9 @@ function CompHora ($hour1, $DisplayName1, $Operator, $hour2, $DisplayName2) {
     case "<=":  $w_Operator=" menor ou igual a ";   break;
     case "=<":  $w_Operator=" menor ou igual a ";   break;
   }
-  print "  var D1 = theForm.".$hour1.".value; "."\r\n";
+  print "  var D1 = ".$Form.$hour1.".value; "."\r\n";
   if (strpos("1234567890", substr($hour2,0,1))===false) {
-    print "   var D2 = theForm.".$hour2.".value;"."\r\n";
+    print "   var D2 = ".$Form.$hour2.".value;"."\r\n";
   } else {
     print "   var D2 = '".$hour2."';"."\r\n";
   }
@@ -252,7 +253,7 @@ function CompHora ($hour1, $DisplayName1, $Operator, $hour2, $DisplayName2) {
   print "   h2 = D2.substr(0,2) + D2.substr(3,2); "."\r\n";
   print "   if (!(parseFloat(h1) ".$Operator." parseFloat(h2))) { "."\r\n";
   print "      alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
-  print "      theForm.".$hour1.".focus(); "."\r\n";
+  print "      ".$Form.$hour1.".focus(); "."\r\n";
   print "      return (false); "."\r\n";
   print "   } "."\r\n";
   print " } "."\r\n";
@@ -504,9 +505,9 @@ function FormataHora() {
  print "    tam = vr.length + 1; " ."\r\n";
  print "    if (tecla == 8 ){    tam = tam - 1 ; } " ."\r\n";
  print "    if ( tecla != 9 && tecla != 8 ){ " ."\r\n";
- print "    if ( tecla == 8 || tecla >= 48 && tecla <= 57 || tecla >= 96 && tecla <= 105 ){ " ."\r\n";
+ print "    if ( tam < campo.maxLength && (tecla == 8 || (tecla >= 48 && tecla <= 57) || (tecla >= 96 && tecla <= 105))){ " ."\r\n";
  print "        if ( tam <= 2 ) campo.value = vr ; " ."\r\n";
- print "        if ( tam > 2 ) campo.value = vr.substr( 0, 2 ) + ':' + vr.substr( 2, tam ); " ."\r\n";
+ print "        if ( tam > 2 ) campo.value = vr.substr( 0, tam-2 ) + ':' + vr.substr( tam-2 ); " ."\r\n";
  print "    } " ."\r\n";
  print "  } " ."\r\n";
  print "} " ."\r\n";
@@ -928,19 +929,22 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  } elseif (strtoupper($DataType)=="HORA") {
+  } elseif (strtoupper($DataType)=="HORA" || strtoupper($DataType)=="HORAS") {
     print
     "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
     "    var psj=0;"."\r\n".
-    "    if (checkStr.length != 0) {"."\r\n".
+    "    var tam=checkStr.length;"."\r\n".
+    "    if (tam != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
-    "       {"."\r\n".
-    "           if (checkStr.length != 5) err=1"."\r\n".
-    "            hora = checkStr.substr(0, 2);"."\r\n".
-    "            minuto = checkStr.substr(3, 2);"."\r\n".
-    "            //verificações básicas"."\r\n".
-    "            if (hora<0 || hora>23) err = 2;"."\r\n".
+    "       {"."\r\n";
+    if (strtoupper($DataType)=="HORA") print "           if (tam != 5) err=1"."\r\n";
+    print
+    "            hora = checkStr.substr(0, tam-3);"."\r\n".
+    "            minuto = checkStr.substr(tam-2, 2);"."\r\n".
+    "            //verificações básicas para o tipo ".strtoupper($DataType)."\r\n";
+    if (strtoupper($DataType)=="HORA") print "            if (hora<0 || hora>23) err = 2;"."\r\n";
+    print
     "            if (minuto<0 || minuto>59) err = 3;"."\r\n".
     "       }"."\r\n".
     "       else"."\r\n".
@@ -949,8 +953,10 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err>0){"."\r\n".
-    "       if (err==1) alert('Campo ".$DisplayName." inválido.');"."\r\n".
-    "       if (err==2) alert('Campo ".$DisplayName." inválido. Hora deve ser de 0 a 23');"."\r\n".
+    "       //mensagens para o tipo ".strtoupper($DataType)."\r\n".
+    "       if (err==1) alert('Campo ".$DisplayName." inválido.');"."\r\n";
+    if (strtoupper($DataType)=="HORA") print "       if (err==2) alert('Campo ".$DisplayName." inválido. Hora deve ser de 0 a 23');"."\r\n";
+    print
     "       if (err==3) alert('Campo ".$DisplayName." inválido. Minuto deve ser de 0 a 59');"."\r\n".
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".

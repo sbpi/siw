@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putGPTipoAfast {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_nome, $p_sigla, $p_limite_dias, 
-        $p_sexo, $p_perc_pag, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_ativo, $p_fase) {
+        $p_sexo, $p_perc_pag, $p_contagem_dias, $p_periodo, $p_sobrepoe_ferias, $p_abate_banco_horas, $p_ativo, $p_fase) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'sp_putGPTipoAfast';
      $params=array('p_operacao'           =>array($operacao,                         B_VARCHAR,         1),
@@ -25,9 +25,11 @@ class dml_putGPTipoAfast {
                    'p_contagem_dias'      =>array(tvl($p_contagem_dias),             B_VARCHAR,         1),
                    'p_periodo'            =>array(tvl($p_periodo),                   B_VARCHAR,         1),
                    'p_sobrepoe_ferias'    =>array(tvl($p_sobrepoe_ferias),           B_VARCHAR,         1),
+                   'p_abate_banco_horas'  =>array(tvl($p_abate_banco_horas),         B_VARCHAR,         1),
                    'p_ativo'              =>array(tvl($p_ativo),                     B_VARCHAR,         1),
                    'p_fase'               =>array(tvl($p_fase),                      B_VARCHAR,       200)
                   );
+       
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

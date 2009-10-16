@@ -828,6 +828,7 @@ function Idiomas() {
     ValidateOpen('Validacao');
     if (strpos('I',$O)!==false) {
       Validate('w_chave','Idioma','SELECT','1','1','10','','1');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
@@ -1022,7 +1023,7 @@ function Experiencia() {
       Validate('w_nm_area','Área do conhecimento','','1','1','92','1','1');
       Validate('w_entrada','Data entrada','DATA','1','10','10','','1');      
       Validate('w_saida','Data saída','DATA','','10','10','','1');
-      Validate('w_ultimo_salario','Último salário mensal','VALOR','1','4','15','','0123456789,.');
+      //Validate('w_ultimo_salario','Último salário mensal','VALOR','1','4','15','','0123456789,.');
       CompData('w_entrada','Data entrada','<','w_saida','Data saída');
       ShowHTML('  if (theForm.w_saida.value != \'\' && theForm.w_motivo_saida.value == \'\') {');
       ShowHTML('     alert(\'Informe o motivo da saída!\');');
@@ -1142,7 +1143,7 @@ function Experiencia() {
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr><td valign="top"><b>E<U>n</U>trada:</b></br><INPUT ACCESSKEY="n" '.$w_Disabled.' class="sti" type="text" name="w_entrada" size="10" maxlength="10" value="'.$w_entrada.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     ShowHTML('              <td valign="top"><b><U>S</U>aída:</b></br><INPUT ACCESSKEY="S" '.$w_Disabled.' class="sti" type="text" name="w_saida" size="10" maxlength="10" value="'.$w_saida.'" onKeyDown="FormataData(this, event)" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
-    ShowHTML('              <td valign="top"><b><u>U</u>ltimo salário mensal:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_ultimo_salario" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_ultimo_salario.'" style="text-align:right;" onKeyDown="FormataValor(this,14,2, event)"></td>');
+    ShowHTML('              <td valign="top"><br><input '.$w_Disabled.' accesskey="U" type="hidden" name="w_ultimo_salario" class="sti" SIZE="15" MAXLENGTH="15" VALUE="0.00" style="text-align:right;" onKeyDown="FormataValor(this,14,2, event)"></td>');
     ShowHTML('          </table>');
     ShowHTML('      <tr><td valign="top"><b>Mo<u>t</u>ivo saída:</b><br><textarea '.$w_Disabled.' accesskey="t"  name="w_motivo_saida" class="sti" cols="80" rows="4">'.$w_motivo_saida.'</textarea></td>');
     ShowHTML('      <tr valign="top"><td colspan="2">');
@@ -1454,6 +1455,11 @@ function Escolaridade() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
+    ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+    ShowHTML('        ATENÇÃO:<ul>');
+    ShowHTML('        <li>A cada alteração ou adição de novos cursos, os certificados, diplomas, etc. devem ser encaminhados ao departamento de Recursos Humanos.');
+    ShowHTML('        </ul></b></font></td>');
+    ShowHTML('      </tr>');  
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));

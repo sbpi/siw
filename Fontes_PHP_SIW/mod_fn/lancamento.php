@@ -54,6 +54,7 @@ include_once($w_dir_volta.'funcoes/selecaoCC.php');
 include_once($w_dir_volta.'funcoes/selecaoFase.php');
 include_once($w_dir_volta.'funcoes/selecaoSolicResp.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDocumento.php');
+include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
 include_once($w_dir_volta.'funcoes/selecaoRegiao.php');
 include_once($w_dir_volta.'funcoes/selecaoEstado.php');
@@ -129,6 +130,12 @@ switch ($O) {
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
+
+// Verifica se o cliente tem o módulo de protocolo contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
+
+
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = strtoupper($_REQUEST['p_projeto']);
 $p_ativo        = strtoupper($_REQUEST['p_ativo']);
@@ -704,6 +711,8 @@ function Geral() {
     $w_sqcc                 = $_REQUEST['w_sqcc'];
     $w_tipo_rubrica         = $_REQUEST['w_tipo_rubrica'];
     $w_numero_processo      = $_REQUEST['w_numero_processo'];
+    $w_protocolo            = $_REQUEST['w_protocolo'];
+    $w_protocolo_nm         = $_REQUEST['w_protocolo_nm'];
     $w_qtd_nota             = $_REQUEST['w_qtd_nota'];
     $w_per_ini              = $_REQUEST['w_per_ini'];
     $w_per_fim              = $_REQUEST['w_per_fim'];
@@ -751,6 +760,8 @@ function Geral() {
       $w_valor                = number_format(f($RS,'valor'),2,',','.');
       $w_tipo_rubrica         = f($RS,'tipo_rubrica');
       $w_numero_processo      = f($RS,'processo');      
+      $w_protocolo            = f($RS,'processo');
+      $w_protocolo_nm         = f($RS,'processo');
       $w_nm_tipo_rubrica      = f($RS,'nm_tipo_rubrica');
       $w_qtd_nota             = f($RS,'qtd_nota');
       $w_per_ini              = FormataDataEdicao(f($RS,'referencia_inicio'));
@@ -780,7 +791,11 @@ function Geral() {
   if ($O=='I' || $O=='A') {
     Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
-    if ($w_segmento=='Público') Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
+    if ($w_mod_pa=='S') {
+      Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+    } elseif($w_segmento=='Público') {
+      Validate('w_numero_processo','Número do processo','1','',1,30,'1','1');
+    }
     Validate('w_vencimento','Vencimento','DATA',1,10,10,'','0123456789/');
     Validate('w_tipo_pessoa','Lançamento para pessoa','SELECT',1,1,18,'','0123456789');   
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
@@ -881,7 +896,10 @@ function Geral() {
     ShowHTML('      </tr>');
     if (!(strpos('CONT',substr($SG,3))===false)) ShowHTML('      <tr><td colspan=2>Finalidade:<br><b>'.$w_descricao.'</b></td>');
     else                               ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
-    if($w_segmento=='Público') {
+    if ($w_mod_pa=='S') {
+      ShowHTML('       <tr>');
+      SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+    } elseif($w_segmento=='Público') {
       ShowHTML('       <tr><td colspan="2"><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'" title="OPCIONAL. Informe o número do processo ao qual este lançamento está ligado."></td>');
     }
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
@@ -3109,7 +3127,7 @@ function Concluir() {
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('          <tr>');
-    ShowHTML('              <td><b><u>D</u>ata do pagamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
+    ShowHTML('              <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
     ShowHTML('              <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
     if ($w_sg_forma_pagamento=='DEPOSITO')
       ShowHTML('              <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
@@ -3439,7 +3457,7 @@ function Grava() {
           $_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
-          $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],$_REQUEST['w_numero_processo'],
+          $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
@@ -3707,7 +3725,8 @@ function Grava() {
                 Nvl($_REQUEST['w_valor'][$i],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],
                 $_REQUEST['w_chave_pai'][$i],$_REQUEST['w_sq_acordo_parcela'][$i],$_REQUEST['w_observacao'],$_REQUEST['w_sq_tipo_lancamento'][$i],
                 $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],$_REQUEST['w_vencimento_atual'][$i],
-                $w_tipo,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+                $w_tipo,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
+                $_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento
             $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null,null);
             foreach ($RS as $row) {$RS=$row; break;}
@@ -3728,8 +3747,8 @@ function Grava() {
         dml_putFinanceiroGeral::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_menu'],$_REQUEST['w_sq_unidade'],$_REQUEST['w_solicitante'],$_SESSION['SQ_PESSOA'],
             $_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
             $_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),Nvl($_REQUEST['w_sq_forma_pagamento'],''),
-            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,$_REQUEST['w_numero_processo'],$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
-            $_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
+            $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
       } 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');

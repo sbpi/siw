@@ -707,8 +707,8 @@ function ConfiguraViagem() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
-    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,3);
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,3);
+    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,2);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,5);
     ShowHTML('      <tr valign="top">');
     MontaRadioSN("<b>Diária?</b>",$w_diaria,'w_diaria');
     MontaRadioSN("<b>Hospedagem?</b>",$w_hospedagem,'w_hospedagem');

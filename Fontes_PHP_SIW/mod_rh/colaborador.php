@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -14,13 +14,17 @@ include_once($w_dir_volta.'classes/sp/db_getViagemBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
 include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
+include_once($w_dir_volta.'classes/sp/db_getGPParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
+include_once($w_dir_volta.'classes/sp/db_getGpDesempenho.php');
 include_once($w_dir_volta.'classes/sp/db_getCV.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPColaborador.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPContrato.php');
 include_once($w_dir_volta.'classes/sp/dml_putSiwUsuario.php');
+include_once($w_dir_volta.'classes/sp/dml_putGpDesempenho.php');
 include_once($w_dir_volta.'funcoes/exibeColaborador.php');
+include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoColaborador.php');
 include_once($w_dir_volta.'funcoes/selecaoModalidade.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -86,7 +90,14 @@ switch ($O) {
 $w_cliente=RetornaCliente();
 $w_usuario=RetornaUsuario();
 $w_menu=RetornaMenu($w_cliente,$SG);
+
+// Recupera os parâmetros do módulo de pessoal
+$RS_Parametro = db_getGPParametro::getInstanceOf($dbms,$w_cliente,null,null);
+foreach ($RS_Parametro as $row) {$RS_Parametro = $row; break;}
+if (nvl(f($RS_Parametro,'vinculacao_contrato'),'')!='') $w_exige_cc = true; else $w_exige_cc = false;
+
 Main();
+
 FechaSessao($dbms);
 exit;
 
@@ -457,6 +468,218 @@ function Inicial() {
 } 
 
 // =========================================================================
+// Rotina dos dados de desempenho do colaborador
+// -------------------------------------------------------------------------
+function Desempenho() {
+  extract($GLOBALS);
+  $w_chave               = $_REQUEST['w_chave'];
+
+  //Recupera os dados do contrato
+  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+  if ($w_troca> '' && $O!='E') {
+    $w_ano                 = $_REQUEST['w_ano'];
+    $w_percentual          = $_REQUEST['w_percentual'];  
+  }elseif ($O=='L') {
+    $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave,null);
+    $RS = SortArray($RS,'ano','desc');
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+    $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave, $w_ano);
+    foreach ($RS as $row) {    
+      $w_ano        = f($row,'ano');
+      $w_percentual = f($row,'percentual');
+    }
+  }
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos percentuais de desempenho do colaborador</TITLE>');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  Estrutura_CSS($w_cliente);
+  
+  if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    modulo();
+    checkbranco();
+    formatadata();
+    FormataValor();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_ano','Ano','1','1','4','4','','0123456789/');
+      Validate('w_percentual','Percentual','1','1','1','6','','0123456789,');
+      CompValor('w_percentual','Percentual','>=',0,'zero');
+      CompValor('w_percentual','Percentual','<=',100,'100%');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E' && $w_erro=='') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad=\'document.Form.w_ano.focus();\'');
+  } else if ($O=='E'){
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
+  } else {
+    BodyOpen('onLoad=\'this.focus();\'');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table width="100%" bgcolor="FAEBD7">');
+  ShowHTML('  <tr>');
+  ShowHTML('    <td>');
+  ShowHTML('<table border=1 width="100%">');
+  foreach ($RSContrato as $row) {$RSContrato = $row; break;}
+  ShowHTML('<table border=1 width="100%"><td><table width="100%">');
+  ShowHTML('      <tr><td colspan=2><b><font size="2">'.f($RSContrato,'nome').'</font></b><hr noshade size="1"/>');
+  ShowHTML('      <tr valign="top"><td>Matrícula: <b>'.f($RSContrato,'matricula').'</b>');
+  ShowHTML('      <td>Início da vigência do contrato: <b>'.formataDataEdicao(f($RSContrato,'inicio')).'</b></td>');
+  ShowHTML('</table>');  
+  ShowHTML('</table>');
+  ShowHTML('    </td>');  
+  ShowHTML('  </tr>');  
+  ShowHTML('</table>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    //ShowHTML '    <td><a accesskey=''E'' class=''ss'' href=''' & w_dir & w_Pagina & par & '&w_usuario=' & w_usuario & '&R=' & w_Pagina & par & '&O=E&P1=' & P1 & '&P2=' & P2 & '&P3=' & P3 & '&P4=' & P4 & '&TP=' & TP & '&SG=' & SG & '''><u>E</u>ncerrar</a>&nbsp;'
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td width="10%"><b>'.LinkOrdena('Ano','ano').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Percentual de Desempenho','percentual').'</td>');
+    ShowHTML('          <td width="20%"><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="8" align="center"><b>Não foram encontrados registross.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){
+      //print_r($RS1);
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center" align="left">'.f($row,'ano').'</td>');
+        ShowHTML('        <td align="center" align="left">'.formatNumber(f($row,'percentual'),2).'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_ano='.f($row,'ano').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Alterar registro">AL</A>&nbsp');
+        if (Nvl(f($row,'fim'),'')=='') {
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&O=E&w_ano='.f($row,'ano').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.'CODES'.MontaFiltro('GET').'" Title="Encerrar contrato">EX</A>&nbsp');
+        }
+        //ShowHTML('          <A class="hl" onClick=javascript:window.open("location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas."></A>&nbsp'));
+          //ShowHTML('          <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Desempenho'.'&O=L&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Percentual de desempenho.">PD</a>&nbsp');        
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAV',$O)===false)) {
+    if (!(strpos('V',$O)===false)) {
+      $w_Disabled =' DISABLED ';
+    } elseif (!(strpos('IA',$O)===false)) {
+      $w_ativo = 0;
+      $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,$w_chave,null);
+      if (count($RS)>0) {
+        foreach ($RS as $row) {
+          if ((Nvl(f($row,'fim'),'')=='') && ($w_chave!=f($row,'chave'))) $w_ativo+=1;
+        } 
+      } 
+    } 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'CODES',$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0>');
+    ShowHTML('          <tr>');
+    if($O=='I'){
+      ShowHTML('<td valign="top"><b><u>A</u>no:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_ano" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ano.'"></td>');
+    }elseif($O=='A'){
+      ShowHTML('<td valign="top"><b><u>A</u>no:</b><br><input disabled type="text"class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ano.'"></td>');
+      ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
+    }    
+    ShowHTML('              <td><b><u>P</u>ercentual de desempenho:</b><br><input accesskey="P" type="text" name="w_percentual" class="STI" SIZE="6" MAXLENGTH="6" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" VALUE="'.formatNumber($w_percentual,2).'">');
+    ShowHTML('        </table></td></tr>');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    if ($O=='I') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+    } else {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } elseif (!(strpos('E',$O)===false)) {
+    $w_Disabled =' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'CODES',$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center"><div align="justify">Para efetivar a exclusão do percentual de desempenho, forneça a assinatura eletrônica e clique no botão <i>Excluir</i>.</div><hr>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>P</u>ercentual de desempenho:</b><br><input accesskey="P" '.$w_Disabled.' type="text" name="w_percentual" class="STI" SIZE="3" MAXLENGTH="3" VALUE="'.$w_percentual.'" ></td></tr>');
+        ShowHTML('      <tr valign="top"><td><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('          <input class="stb" type="submit" name="Botao" value="Excluir">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('        </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('  </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);'
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
+// =========================================================================
 // Rotina dos dados de documentação do colaborador
 // -------------------------------------------------------------------------
 function Documentacao() {
@@ -541,15 +764,15 @@ function Documentacao() {
   ShowHTML('    return false;');
   ShowHTML('  }');
   ShowHTML('}');
-  Validate('w_ctps_numero','Número CTPS','1','','2','20','1','1');
-  Validate('w_ctps_serie','Série CTPS','1','','2','5','1','1');
-  Validate('w_ctps_emissor','Emissor CTPS','1','','3','30','1','1');
-  Validate('w_ctps_emissao','Emissão CTPS','DATA','','10','10','','1');
-  Validate('w_pispasep_numero','Número PIS/PASEP','1','','2','20','1','1');
-  Validate('w_pispasep_cadastr','Emissão PIS/PASEP','DATA','','10','10','','1');
-  Validate('w_te_numero','Número título eleitor','1','','3','20','1','1');
-  Validate('w_te_zona','Zona','1','','1','3','1','1');
-  Validate('w_te_secao','Seção','1','','1','4','1','1');
+  Validate('w_ctps_numero','Número CTPS','1','1','2','20','1','1');
+  Validate('w_ctps_serie','Série CTPS','1','1','2','5','1','1');
+  Validate('w_ctps_emissor','Emissor CTPS','1','1','3','30','1','1');
+  Validate('w_ctps_emissao','Emissão CTPS','DATA','1','10','10','','1');
+  Validate('w_pispasep_numero','Número PIS/PASEP','1','1','2','20','1','1');
+  Validate('w_pispasep_cadastr','Emissão PIS/PASEP','DATA','1','10','10','','1');
+  Validate('w_te_numero','Número título eleitor','1','1','3','20','1','1');
+  Validate('w_te_zona','Zona','1','1','1','3','1','1');
+  Validate('w_te_secao','Seção','1','1','1','4','1','1');
   Validate('w_reservista_numero','Certificado reservista','1','','2','15','1','1');
   Validate('w_reservista_csm','CSM','1','','1','4','1','1');
   Validate('w_observacoes','Observações','1','','3','2000','1','1');
@@ -625,6 +848,7 @@ function Documentacao() {
 function Contrato() {
   extract($GLOBALS);
   $w_chave               = $_REQUEST['w_chave'];
+  $w_cc                  = $_REQUEST['w_cc'];
   $w_posto_trabalho      = $_REQUEST['w_posto_trabalho'];
   $w_modalidade_contrato = $_REQUEST['w_modalidade_contrato'];
   $w_unidade_lotacao     = $_REQUEST['w_unidade_lotacao'];
@@ -636,6 +860,17 @@ function Contrato() {
   $w_ativo               = $_REQUEST['w_ativo'];
   $w_sq_tipo_vinculo     = $_REQUEST['w_sq_tipo_vinculo'];
   $w_username_pessoa     = $_REQUEST['w_username_pessoa'];
+  $w_entrada_manha       = $_REQUEST['w_entrada_manha'];
+  $w_saida_manha         = $_REQUEST['w_saida_manha'];
+  $w_entrada_tarde       = $_REQUEST['w_entrada_tarde'];
+  $w_saida_tarde         = $_REQUEST['w_saida_tarde'];  
+  $w_entrada_noite       = $_REQUEST['w_entrada_noite'];
+  $w_saida_noite         = $_REQUEST['w_saida_noite'];  
+  $w_sabado              = $_REQUEST['w_sabado'];
+  $w_domingo             = $_REQUEST['w_domingo'];
+  $w_banco_horas_data    = $_REQUEST['w_banco_horas_data'];
+  $w_banco_horas_saldo   = $_REQUEST['w_banco_horas_saldo'];
+    
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos contratos do colaborador</TITLE>');
@@ -649,6 +884,7 @@ function Contrato() {
     foreach ($RS as $row) {$RS = $row; break;}
     if (count($RS)>0) {
       $w_chave               = f($RS,'chave');
+      $w_cc                  = f($RS,'centro_custo');
       $w_posto_trabalho      = f($RS,'sq_posto_trabalho');
       $w_modalidade_contrato = f($RS,'sq_modalidade_contrato');
       $w_unidade_lotacao     = f($RS,'sq_unidade_lotacao');
@@ -657,7 +893,22 @@ function Contrato() {
       $w_matricula           = f($RS,'matricula');
       $w_dt_ini              = FormataDataEdicao(f($RS,'inicio'));
       $w_dt_fim              = FormataDataEdicao(f($RS,'fim'));
+      $w_username            = f($RS,'trata_username');
+      $w_ferias              = f($RS,'trata_ferias');
+      $w_horas_extras        = f($RS,'trata_extras');
       $w_sq_tipo_vinculo     = f($RS,'sq_tipo_vinculo');
+      $w_entrada_manha       = f($RS,'entrada_manha');
+      $w_saida_manha         = f($RS,'saida_manha');
+      $w_entrada_tarde       = f($RS,'entrada_tarde');
+      $w_saida_tarde         = f($RS,'saida_tarde');  
+      $w_entrada_noite       = f($RS,'entrada_noite');
+      $w_saida_noite         = f($RS,'saida_noite');  
+      $w_sabado              = f($RS,'sabado');
+      $w_domingo             = f($RS,'domingo');
+      $w_minutos_diarios     = f($RS,'minutos_diarios');
+      $w_carga_diaria        = f($RS,'carga_diaria');
+      $w_banco_horas_data    = FormataDataEdicao(f($RS,'banco_horas_data'));
+      $w_banco_horas_saldo   = f($RS,'banco_horas_saldo');      
     } 
     $w_erro=ValidaColaborador($w_cliente,$w_usuario,$w_chave,null);
   } 
@@ -666,17 +917,84 @@ function Contrato() {
     modulo();
     checkbranco();
     formatadata();
+    FormataHora();
     SaltaCampo();
+    ShowHTML('function calculaDia(dia) {');
+    ShowHTML('  var entrada1 = document.Form.w_entrada_manha.value;');
+    ShowHTML('  var saida1 = document.Form.w_saida_manha.value;');
+    ShowHTML('  var entrada2 = document.Form.w_entrada_tarde.value;');
+    ShowHTML('  var saida2 = document.Form.w_saida_tarde.value;');
+    ShowHTML('  var entrada3 = document.Form.w_entrada_noite.value;');
+    ShowHTML('  var saida3 = document.Form.w_saida_noite.value;');
+    ShowHTML('  var saldo1 = 0;');
+    ShowHTML('  var saldo2 = 0;');
+    ShowHTML('  var saldo3 = 0;');
+    ShowHTML('  var saldo4 = 0;');
+    ShowHTML('  var saldo = "00:00";');
+    ShowHTML('  if (entrada1!="" && saida1!="") {');
+    ShowHTML('    var minutos1 = parseInt(entrada1.substring(0,2)*60,10) + parseInt(entrada1.substring(3),10)');
+    ShowHTML('    var minutos2 = parseInt(saida1.substring(0,2)*60,10) + parseInt(saida1.substring(3),10)');
+    ShowHTML('    var saldo1 = minutos2 - minutos1;');
+    ShowHTML('  }');
+    ShowHTML('  if (entrada2!="" && saida2!="") {');
+    ShowHTML('    var minutos1 = parseInt(entrada2.substring(0,2)*60,10) + parseInt(entrada2.substring(3),10)');
+    ShowHTML('    var minutos2 = parseInt(saida2.substring(0,2)*60,10) + parseInt(saida2.substring(3),10)');
+    ShowHTML('    var saldo2 = minutos2 - minutos1;');
+    ShowHTML('  }');
+    ShowHTML('  if (entrada3!="" && saida3!="") {');
+    ShowHTML('    var minutos1 = parseInt(entrada3.substring(0,2)*60,10) + parseInt(entrada3.substring(3),10)');
+    ShowHTML('    var minutos2 = parseInt(saida3.substring(0,2)*60,10) + parseInt(saida3.substring(3),10)');
+    ShowHTML('    var saldo3 = minutos2 - minutos1;');
+    ShowHTML('  }');
+
+    ShowHTML('  if (saldo1!="") saldo4 = saldo4 + saldo1;');
+    ShowHTML('  if (saldo2!="") saldo4 = saldo4 + saldo2;');
+    ShowHTML('  if (saldo3!="") saldo4 = saldo4 + saldo3;');
+
+    ShowHTML('  var horas   = parseInt(saldo4/60,10);');
+    ShowHTML('  var minutos = saldo4 - parseInt(horas*60,10);');
+    ShowHTML('  saldo = String(100+horas).substring(1) + ":" + String(100+minutos).substring(1);');
+    ShowHTML('  ');
+    ShowHTML('  document.Form.w_carga_diaria.value = saldo;');
+    ShowHTML('}');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_posto_trabalho','Cargo','SELECT',1,1,18,'','0123456789');
       Validate('w_modalidade_contrato','Modalidade de contratação','SELECT',1,1,18,'','0123456789');
+      if ($w_exige_cc) Validate('w_cc','Centro de custo','SELECT',1,1,18,1,1);
       Validate('w_unidade_lotacao','Unidade de lotação','SELECT',1,1,18,'','0123456789');
       Validate('w_unidade_exercicio','Unidade de exercício','SELECT',1,1,18,'','0123456789');
       Validate('w_localizacao','Localização','SELECT',1,1,18,'','0123456789');
       Validate('w_sq_tipo_vinculo','Vínculo com a organização','SELECT',1,1,10,'','1');
       Validate('w_matricula','Matrícula','1','1','5','18','1','1');
       Validate('w_dt_ini','Início da vigência','DATA','1','10','10','','0123456789/');
+      Validate('w_entrada_manha','Entrada manhã','HORA','','5','5','','0123456789:');
+      Validate('w_saida_manha','Saída manhã','HORA','','5','5','','0123456789:');
+      Validate('w_entrada_tarde','Entrada tarde','HORA','','5','5','','0123456789:');
+      Validate('w_saida_tarde','Saída tarde','HORA','','5','5','','0123456789:');
+      Validate('w_entrada_noite','Entrada noite','HORA','','5','5','','0123456789:');
+      Validate('w_saida_noite','Saída noite','HORA','','5','5','','0123456789:');
+      ShowHTML('  if ((theForm.w_entrada_manha.value!="" && theForm.w_saida_manha.value=="") || (theForm.w_entrada_manha.value=="" && theForm.w_saida_manha.value!="") || (theForm.w_entrada_tarde.value!="" && theForm.w_saida_tarde.value=="") || (theForm.w_entrada_tarde.value=="" && theForm.w_saida_tarde.value!="") || (theForm.w_entrada_noite.value!="" && theForm.w_saida_noite.value=="") || (theForm.w_entrada_noite.value=="" && theForm.w_saida_noite.value!="")) {');
+      ShowHTML('    alert("Informe ambos os horários de cada turno ou nenhum deles!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_entrada_manha.value!="") {');
+      CompHora('w_entrada_manha','Entrada manhã','<','w_saida_manha','Saída manhã');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_entrada_tarde.value!="") {');
+      CompHora('w_entrada_tarde','Entrada tarde','<','w_saida_tarde','Saída tarde');      
+      ShowHTML('    if (theForm.w_entrada_manha.value!="") {');
+      CompHora('w_saida_manha','Saída manhã','<','w_entrada_tarde','Entrada tarde');
+      ShowHTML('    }');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_entrada_noite.value!="") {');
+      CompHora('w_entrada_noite','Entrada noite','<','w_saida_noite','Saída noite');      
+      ShowHTML('    if (theForm.w_entrada_tarde.value!="") {');
+      CompHora('w_saida_tarde','Saída tarde','<','w_entrada_noite','Entrada noite');
+      ShowHTML('    } else if (theForm.w_entrada_manha.value!="") {');
+      CompHora('w_saida_manha','Saída manhã','<','w_entrada_noite','Entrada noite');
+      ShowHTML('    }');
+      ShowHTML('  }');
       if ($O=='A' && Nvl($w_dt_fim,'')>'') {
         Validate('w_dt_fim','Fim da vigência','DATA','1','10','10','','0123456789/');
       } elseif ($O=='I') {
@@ -685,6 +1003,8 @@ function Contrato() {
         if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
           CompData('w_dt_ini','Início da vigência','<=','w_dt_fim','Fim da vigência');
       } 
+      Validate('w_banco_horas_saldo','Saldo inicial do banco de horas','HORAS','1','5','8','','0123456789-:');
+      Validate('w_banco_horas_data','Data do saldo inicial','DATA','1','10','10','','0123456789/');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && $w_erro=='') {
       Validate('w_dt_fim','Fim da vigência','DATA','','10','10','','0123456789/');
@@ -724,6 +1044,7 @@ function Contrato() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Matrícula','matricula').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</td>');
+    if ($w_exige_cc) ShowHTML('          <td><b>'.LinkOrdena('Centro de Custo','cd_centro_custo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Modalidade','nm_modalidade_contrato').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Exercício','local').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</td>');
@@ -742,6 +1063,7 @@ function Contrato() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center">'.Nvl(f($row,'matricula'),'---').'</td>');
         ShowHTML('        <td align="left">'.ExibeColaborador('',$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'nome_resumido')).'</td>');
+        if ($w_exige_cc) ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'centro_custo'),f($row,'dados_cc')).'</td>');
         ShowHTML('        <td align="left">'.f($row,'nm_modalidade_contrato').'</td>');
         ShowHTML('        <td align="left">'.ExibeUnidade('../',$w_cliente,f($row,'local'),f($row,'sq_unidade_exercicio'),$TP).'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
@@ -750,8 +1072,11 @@ function Contrato() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Alterar registro">AL</A>&nbsp');
         if (Nvl(f($row,'fim'),'')=='') {
-          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Encerrar contrato">Encerrar</A>&nbsp');
-        } 
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Encerrar contrato">CO</A>&nbsp');
+        }
+        //ShowHTML('          <A class="hl" onClick=javascript:window.open("location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas."></A>&nbsp'));
+        $TP = 'Percentual de Desempenho';  
+        ShowHTML('          <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Desempenho'.'&O=L&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Percentual de desempenho.">PD</a>&nbsp');        
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -789,11 +1114,11 @@ function Contrato() {
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_usuario" value="'.$w_usuario.'">');
     ShowHTML('<INPUT type="hidden" name="w_ativo" value="'.$w_ativo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_minutos_diarios" value="'.$w_minutos_diarios.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('        <tr valign="top">');
-    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
     SelecaoCargo('<u>C</u>argo:','C','Selecione o cargo.',$w_posto_trabalho,null,'w_posto_trabalho',null,null);
     SelecaoModalidade('M<u>o</u>dalidade de contratação:','O',null,$w_modalidade_contrato,null,'w_modalidade_contrato',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'\'; document.Form.w_troca.value=\'w_modalidade_contrato\'; document.Form.submit();"');
     if (Nvl($w_modalidade_contrato,'')>'') {
@@ -802,36 +1127,110 @@ function Contrato() {
         if (f($row,'username')=='P') {
           $w_username_pessoa = 'S';
         }
+        if(Nvl(f($row,'ferias'),'') == 'S'){
+          $ferias = 'S';
+        }elseif(Nvl(f($row,'ferias'),'') == 'N'){
+          $ferias = 'N';
+        }else{
+          $ferias = '';
+        }
+        if(trim(Nvl(f($row,'horas_extras'),'')) == 'S'){
+          $extras = 'S';
+        }elseif(trim(Nvl(f($row,'horas_extras'),'')) == 'N'){
+          $extras = 'N';
+        }else{
+          $extras = '';
+        }        
+        if(Nvl(f($row,'username'),'') == 'S'){
+          $username = 'S';
+        }elseif(Nvl(f($row,'username'),'') == 'N'){
+          $username = 'N';
+        }else{
+          $username = '';
+        }   
       } 
     }
-    ShowHTML('        </table></td></tr>');
+    if ($w_exige_cc){ 
+      ShowHTML('        <tr valign="top">');
+      SelecaoProjeto('<u>C</u>entro de Custo:','C','Selecione o centro de custo do contrato na relação.',$w_cc,$_SESSION['SQ_PESSOA'] ,f($RS_Parametro,'vinculacao_contrato'),null,null,null,'w_cc','RHCC',null,2,2);
+    }
     ShowHTML('        <tr valign="top">');
-    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
-    SelecaoUnidade('Unidade de <U>l</U>otação:','L',null,$w_unidade_lotacao,null,'w_unidade_lotacao',null,null);
-    ShowHTML('        </table></td></tr>');
+    SelecaoUnidade('Unidade de <U>l</U>otação:','L',null,$w_unidade_lotacao,null,'w_unidade_lotacao',null,null,3);
     ShowHTML('        <tr valign="top">');
-    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
-    SelecaoUnidade('Unidade de <U>e</U>xercício:','E',null,$w_unidade_exercicio,null,'w_unidade_exercicio',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'&w_usuario='.$w_usuario.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"');
-    ShowHTML('        </table></td></tr>');
+    SelecaoUnidade('Unidade de <U>e</U>xercício:','E',null,$w_unidade_exercicio,null,'w_unidade_exercicio',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'&SG='.$SG.'&O='.$O.'&w_usuario='.$w_usuario.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"',3);
     ShowHTML('        <tr valign="top">');
-    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
-    SelecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_localizacao,Nvl($w_unidade_exercicio,0),'w_localizacao',null);
-    ShowHTML('        </table></td></tr>');
+    SelecaoLocalizacao('Locali<u>z</u>ação:','Z',null,$w_localizacao,Nvl($w_unidade_exercicio,0),'w_localizacao',null,null,3);
+    ShowHTML('        <tr valign="top">');
     if (Nvl($w_dt_fim,'')>'') {
       ShowHTML('<INPUT type="hidden" name="w_sq_tipo_vinculo" value="'.$w_sq_tipo_vinculo.'">');
     } else {
-      ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0><tr>');
-      SelecaoVinculo('<u>T</u>ipo de vínculo:','T',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física','S');
-      ShowHTML('        </table></td></tr>');
+      SelecaoVinculo('<u>T</u>ipo de vínculo:','T',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física','S',null,null,3);
     } 
     ShowHTML('        <tr valign="top">');
-    ShowHTML('        <td colspan="3" valign="top"><table border="0" width="100%" cellpadding=0 cellspacing=0>');
-    ShowHTML('          <tr><td valign="top"><b><u>M</u>atrícula:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_matricula" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_matricula.'"></td>');
-    ShowHTML('              <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I" type="text" name="w_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
+    ShowHTML('          <td><b><u>M</u>atrícula:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_matricula" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_matricula.'"></td>');
+    ShowHTML('          <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I" type="text" name="w_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
       ShowHTML('              <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
     } 
-    ShowHTML('        </table></td></tr>');
+    ShowHTML('<tr><td colspan="3"><table width="100%">');
+    ShowHTML('  <tr><td colspan="4"><br><h3>Jornada de trabalho</td></tr>');
+    ShowHTML('  <tr valign="middle" align="center">');
+    ShowHTML('    <td width="24%"><fieldset class="rh_fieldset"><legend>Manhã</legend>');
+    ShowHTML('      <table><tr>');
+    ShowHTML('      <td width="60%"><b>Entrada:</b><br>');    
+    ShowHTML('      <input class="sti" type="text" id="w_entrada_manha" name="w_entrada_manha" size="5" maxlength="5" onKeyDown="FormataHora(this,event);" value="'.Nvl($w_entrada_manha,'').'" onBlur="calculaDia();"/>');
+    ShowHTML('      <td><b>Saída:</b><br>');
+    ShowHTML('    <input class="sti" type="text" size="5" '.$w_Disabled.' name="w_saida_manha" maxlength="5" value="'.Nvl($w_saida_manha,'').'" onKeyDown="FormataHora(this,event);"/ onBlur="calculaDia();">');    
+    ShowHTML('      </table></fieldset>');
+    ShowHTML('    <td width="24%"><fieldset class="rh_fieldset"><legend>Tarde</legend>');
+    ShowHTML('      <table><tr>');
+    ShowHTML('      <td width="60%"><b>Entrada:</b><br>');    
+    ShowHTML('      <input id="w_entrada_tarde" name="w_entrada_tarde" class="sti" type="text" size="5" maxlength="5" value="'.Nvl($w_entrada_tarde,'').'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia();"/>');
+    ShowHTML('      <td><b>Saída:</b><br>');
+    ShowHTML('      <input id="w_saida_tarde" name="w_saida_tarde" class="sti" type="text" size="5" maxlength="5" value="'.Nvl($w_saida_tarde,'').'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia();"/>');    
+    ShowHTML('      </table></fieldset>');
+    ShowHTML('    <td width="24%"><fieldset class="rh_fieldset"><legend>Noite</legend>');
+    ShowHTML('      <table>');
+    ShowHTML('      <td width="60%"><b>Entrada:</b><br>');    
+    ShowHTML('      <input id="w_entrada_noite" name="w_entrada_noite" class="sti" type="text" size="5" maxlength="5" value="'.Nvl($w_entrada_noite,'').'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia();"/>');
+    ShowHTML('      <td><b>Saída:</b><br>');
+    ShowHTML('      <input id="w_saida_noite" name="w_saida_noite" class="sti" type="text" size="5" maxlength="5" value="'.Nvl($w_saida_noite,'').'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia();"/>');
+    ShowHTML('      </table></fieldset>');
+    ShowHTML('    <td width="24%"><fieldset class="rh_fieldset"><legend>Carga horária diária</legend>');
+    ShowHTML('      <table><tr>');
+    ShowHTML('      <td width="100%">&nbsp;<br><input readonly id="w_carga_diaria" name="w_carga_diaria" class="stih" type="text" size="8" maxlength="8" value="'.Nvl($w_carga_diaria,'00:00').'" style="text-align:center;" onKeyUp="SaltaCampo(this.form.name,this,5,event);" />');
+    ShowHTML('      </table></fieldset>');
+    ShowHTML('  </tr>');
+    ShowHTML('  <tr><td valign="middle" colspan="4"><fieldset class="rh_fieldset"><legend>Fim de semana</legend>');
+    ShowHTML('  <table width="100%"><tr valign="top">');    
+    ShowHTML(MontaRadioNS('<b>O expediente é extendido aos sábados?</b>',$w_sabado,'w_sabado'));
+    ShowHTML(MontaRadioNS('<b>O expediente é extendido aos domingos?</b>',$w_domingo,'w_domingo'));
+    ShowHTML('  </table></fieldset>');    
+    ShowHTML('  </td></tr>');
+    ShowHTML('  <tr><td valign="middle" colspan="4"><fieldset class="rh_fieldset"><legend>Banco de horas</legend>');
+    ShowHTML('  <table width="100%"><tr valign="top">');    
+    ShowHTML('      <td width="50%"><b>Saldo inicial do banco de horas:</b><br><input id="w_banco_horas_saldo" name="w_banco_horas_saldo" class="sti" type="text" size="8" maxlength="8" value="'.Nvl($w_banco_horas_saldo,'').'" onKeyDown="FormataHora(this,event);" />');
+    ShowHTML('      <td width="50%"><b>Data do saldo inicial:</b><br><input id="w_banco_horas_data" name="w_banco_horas_data" class="sti" type="text" size="10" maxlength="10" value="'.Nvl($w_banco_horas_data,'').'" onKeyDown="FormataData(this,event);" />');
+    ShowHTML('  </table></fieldset>');
+    ShowHTML('  </td></tr>');    
+    ShowHTML('</table></td></tr>');
+    ShowHTML('  <tr valign="top">');
+    if(Nvl($username,'')!='S' && Nvl($username,'')!='N'){
+      ShowHTML('          '.MontaRadioSN('<b>Cria e bloqueia username na entrada e saida do colaborador?</b>',$w_username,'w_username'));
+    }else{
+      ShowHTML('<input type="hidden" name="w_username" value="'.$username.'"/>');  
+    }    
+    if(Nvl($ferias,'')!='S' && Nvl($ferias,'')!='N'){
+      ShowHTML('          '.MontaRadioSN('<b>Esta modalidade permite gozo de férias?</b>',$w_ferias,'w_ferias'));
+    }else{
+      ShowHTML('<input type="hidden" name="w_ferias" value="'.$ferias.'"/>');  
+    }
+    if(Nvl($extras,'')!='S' && Nvl($extras,'')!='N'){
+      ShowHTML('      <tr valign="top">');
+      ShowHTML('          <td>'.MontaRadioSN('<b>Esta modalidade permite o cumprimento de horas extras?</b>',$w_horas_extras,'w_horas_extras'));
+    }else{
+      ShowHTML('<input type="hidden" name="w_horas_extras" value="'.$extras.'"/>');  
+    }       
     if ($w_username_pessoa=='S') {
       ShowHTML('        <tr valign="top">');
       ShowHTML('        <td colspan="3" valign="top"><input type="checkbox" name="w_username_pessoa" value="S"><b>Criar username para este colaborador?</b>');
@@ -925,7 +1324,7 @@ function Grava() {
         $_REQUEST['w_reservista_csm'],$_REQUEST['w_tipo_sangue'],$_REQUEST['w_doador_sangue'],$_REQUEST['w_doador_orgaos'],
         $_REQUEST['w_observacoes']);                               
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$montaURL_JS($w_dir,R.'&O=P&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=P&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
@@ -967,9 +1366,9 @@ function Grava() {
             }
           }
           dml_putGPContrato::getInstanceOf($dbms,$O,
-          $w_cliente,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
-          $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
-          $_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],$_REQUEST['w_sq_tipo_vinculo']);                
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_cc'],$w_usuario,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
+              $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
+              $_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],$_REQUEST['w_username'],$_REQUEST['w_ferias'],$_REQUEST['w_horas_extras'],$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_entrada_manha'],$_REQUEST['w_saida_manha'],$_REQUEST['w_entrada_tarde'],$_REQUEST['w_saida_tarde'],$_REQUEST['w_entrada_noite'],$_REQUEST['w_saida_noite'],$_REQUEST['w_sabado'],$_REQUEST['w_domingo'],$_REQUEST['w_banco_horas_saldo'],$_REQUEST['w_banco_horas_data']);                
           if (!(strpos('I',$O)===false)) {
             $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
@@ -992,6 +1391,28 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;
+    case 'CODES':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $RS = db_getGPDesempenho::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);            
+        if(count($RS)>0 && $O=='I') {
+          ScriptOpen('JavaScript');
+          ShowHTML('alert(\'O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
+          ScriptClose();
+          retornaFormulario('w_ano');
+          exit;
+        }
+        dml_putGpDesempenho::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_ano'], $_REQUEST['w_percentual'],$O);                               
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Desempenho'.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;    
     default:
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
@@ -1009,6 +1430,7 @@ function Main() {
   switch ($par)  {
     case 'INICIAL':           Inicial();          break;
     case 'DOCUMENTACAO':      Documentacao();     break;
+    case 'DESEMPENHO':        Desempenho();       break;
     case 'CONTRATO':          Contrato();         break;
     case 'GRAVA':             Grava();            break;
   default:
