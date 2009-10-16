@@ -59,7 +59,6 @@ begin
                   left   join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
                     left join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)
                   left   join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
-                  left   join gp_afastamento            f on (e.sq_contrato_colaborador = f.sq_contrato_colaborador)
                   inner  join eo_posto_trabalho         j on (e.sq_posto_trabalho       = j.sq_posto_trabalho)
                   inner  join eo_unidade                l on (e.sq_unidade_lotacao      = l.sq_unidade)
                   left   join siw_solicitacao           m on (e.centro_custo            = m.sq_siw_solicitacao)
@@ -67,20 +66,36 @@ begin
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_sq_pessoa           is null or (p_sq_pessoa           is not null and a.sq_pessoa               = p_sq_pessoa))
             and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
-            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
-                                                                                                                                                                                                                                  from eo_unidade
-                                                                                                                                                                                                                                start with sq_unidade = p_unidade_lotacao
-                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
-            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade 
-                                                                                                                                                                                                                                  from eo_unidade
-                                                                                                                                                                                                                                start with sq_unidade = p_unidade_exercicio
-                                                                                                                                                                                                                                connect by prior sq_unidade = sq_unidade_pai)))))
-           and (p_afastamento          is null or (p_afastamento         is not null and f.sq_tipo_afastamento in (x_afastamento)))
-           and (p_dt_ini               is null or (p_dt_ini              is not null and ((f.inicio_data           between p_dt_ini      and p_dt_fim)   or
-                                                                                          (Nvl(f.fim_data,sysdate) between p_dt_ini      and p_dt_fim)   or
-                                                                                          (p_dt_ini                between f.inicio_data and Nvl(f.fim_data,sysdate)) or
-                                                                                          (p_dt_fim                between f.inicio_data and Nvl(f.fim_data,sysdate))
+            and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao) or 
+                                                                                          (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
+                                                                                                                                                         from eo_unidade
+                                                                                                                                                       start with sq_unidade = p_unidade_lotacao
+                                                                                                                                                       connect by prior sq_unidade = sq_unidade_pai
+                                                                                                                                                      )
+                                                                                          )
                                                                                          )
+                                                  )
+                )
+            and (p_unidade_exercicio   is null or (p_unidade_exercicio   is not null and ((p_filhos_exercicio is null and e.sq_unidade_exercicio = p_unidade_exercicio) or 
+                                                                                          (p_filhos_exercicio is not null and e.sq_unidade_exercicio in (select sq_unidade 
+                                                                                                                                                           from eo_unidade
+                                                                                                                                                         start with sq_unidade = p_unidade_exercicio
+                                                                                                                                                         connect by prior sq_unidade = sq_unidade_pai
+                                                                                                                                                        )
+                                                                                          )
+                                                                                         )
+                                                  )
+                )
+           and (p_afastamento          is null or (p_afastamento         is not null and 0 < (select count(sq_tipo_afastamento) from gp_afastamento where sq_contrato_colaborador = e.sq_contrato_colaborador and sq_tipo_afastamento in (x_afastamento))))
+           and (p_dt_ini               is null or (p_dt_ini              is not null and 0 < (select count(sq_tipo_afastamento) 
+                                                                                                from gp_afastamento 
+                                                                                               where sq_contrato_colaborador = e.sq_contrato_colaborador
+                                                                                                 and ((inicio_data           between p_dt_ini    and p_dt_fim)   or
+                                                                                                      (Nvl(fim_data,sysdate) between p_dt_ini    and p_dt_fim)   or
+                                                                                                      (p_dt_ini              between inicio_data and Nvl(fim_data,sysdate)) or
+                                                                                                      (p_dt_fim              between inicio_data and Nvl(fim_data,sysdate))
+                                                                                                     )
+                                                                                             )
                                                    )
                 );
    End If;
