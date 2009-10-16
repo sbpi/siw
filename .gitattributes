@@ -688,7 +688,6 @@ Fontes_PHP_SIW/classes/pd4ml/ss_css2.jar -text
 Fontes_PHP_SIW/classes/serverstatus/blank.gif -text
 Fontes_PHP_SIW/classes/serverstatus/class.parse_server_status.php -text
 Fontes_PHP_SIW/classes/serverstatus/inc.config.php -text
-Fontes_PHP_SIW/classes/sp/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/sp/db_VerificaDataEspecial.php -text
 Fontes_PHP_SIW/classes/sp/db_exec.php -text
 Fontes_PHP_SIW/classes/sp/db_get10PercentDays.php -text
