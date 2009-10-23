@@ -13,7 +13,7 @@ begin
       open p_result for 
          select a.sq_tipo_afastamento chave, a.cliente, a.nome, a.sigla,
                 a.limite_dias, a.sexo, a.percentual_pagamento, a.contagem_dias, a.periodo,
-                a.sobrepoe_ferias, a.ativo,
+                a.sobrepoe_ferias, a.abate_banco_horas, a.ativo,
                 case sexo when 'M' then 'Masculino' else case sexo when 'F' then 'Feminino' else 'Ambos' end end nm_sexo
            from gp_tipo_afastamento  a
           where a.cliente = p_cliente
@@ -45,7 +45,7 @@ begin
       open p_result for
          select a.sq_tipo_afastamento chave, a.cliente, a.nome, a.sigla,
                 a.limite_dias, a.sexo, a.percentual_pagamento, a.contagem_dias, a.periodo,
-                a.sobrepoe_ferias, a.ativo, c.nome nm_modalidade, b.sq_modalidade_contrato,
+                a.sobrepoe_ferias, a.abate_banco_horas, a.ativo, c.nome nm_modalidade, b.sq_modalidade_contrato,
                 case contagem_dias when 'C' then 'Corridos' else 'Úteis' end nm_contagem_dias,
                 case sexo when 'M' then 'Masculino' else case sexo when 'F' then 'Feminino' else 'Ambos' end end nm_sexo
            from gp_tipo_afastamento  a

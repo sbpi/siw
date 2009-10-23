@@ -10,6 +10,7 @@ create or replace procedure SP_PutGPTipoAfast
     p_contagem_dias            in  varchar2,
     p_periodo                  in  varchar2,
     p_sobrepoe_ferias          in  varchar2,
+    p_abate_banco_horas        in  varchar2,
     p_ativo                    in  varchar2,
     p_fase                     in varchar2 default null
    ) is
@@ -26,10 +27,10 @@ begin
       -- Insere registro
       insert into gp_tipo_afastamento
         (sq_tipo_afastamento, cliente, nome, sigla, limite_dias, sexo, percentual_pagamento, 
-         contagem_dias, periodo, sobrepoe_ferias, ativo)
+         contagem_dias, periodo, abate_banco_horas, sobrepoe_ferias, ativo)
       values
         (w_chave, p_cliente, trim(p_nome), upper(trim(p_sigla)), p_limite_dias, p_sexo, p_percentual_pagamento, 
-         p_contagem_dias, p_periodo, p_sobrepoe_ferias, p_ativo);
+         p_contagem_dias, p_periodo, p_abate_banco_horas, p_sobrepoe_ferias, p_ativo);
       If p_fase is not null Then
       
       Loop
@@ -56,6 +57,7 @@ begin
              contagem_dias        = p_contagem_dias,
              periodo              = p_periodo,
              sobrepoe_ferias      = p_sobrepoe_ferias,
+             abate_banco_horas    = p_abate_banco_horas,
              ativo                = p_ativo
        where sq_tipo_afastamento = p_chave;
        
