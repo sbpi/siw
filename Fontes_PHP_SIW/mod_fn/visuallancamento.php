@@ -187,7 +187,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       } elseif (substr($w_SG,0,3)=='FND') {
-        $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
+        $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       } else {
         $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
@@ -235,6 +235,24 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'          <td>País:<b><br>'.f($RS,'nm_pais').'</td>';
         } 
       } 
+      // Conta bancária da organização envolvida com o lançamento financeiro
+      // Exibida apenas para gestores
+      if (RetornaGestor($v_chave,$w_usuario)=='S') {
+        if (Nvl(f($RS,'cd_ban_org'),'')!='') {
+          if (substr($w_SG,0,3)=='FNR') {
+            $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Conta crédito</td>';
+          } elseif (substr($w_SG,0,3)=='FND') {
+            $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Conta débito</td>';
+          }
+          $l_html.=chr(13).'          <tr><td><b>Banco:</b></td>';
+          $l_html.=chr(13).'                <td>'.f($RS,'cd_ban_org').' - '.f($RS,'nm_ban_org').'</td></tr>';
+          $l_html.=chr(13).'          <tr><td><b>Agência:</b></td>';
+          $l_html.=chr(13).'              <td>'.f($RS,'cd_age_org').' - '.f($RS,'nm_age_org').'</td></tr>';
+          if (f($RS,'exige_oper_org')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'oper_org'),'---').'</td>';
+          $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
+          $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').'</td></tr>';
+        }
+      }
     } 
     $w_vl_retencao    = Nvl(f($RS,'valor_retencao'),0);
     $w_vl_normal      = Nvl(f($RS,'valor_imposto'),0);

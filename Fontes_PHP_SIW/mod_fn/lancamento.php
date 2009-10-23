@@ -27,6 +27,7 @@ include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoIncid.php');
 include_once($w_dir_volta.'classes/sp/db_getImpostoDoc.php');
+include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
 include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
 include_once($w_dir_volta.'classes/sp/db_getStateData.php');
@@ -46,6 +47,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
+include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordoParcela.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordo.php');
@@ -3040,15 +3042,28 @@ function Concluir() {
     $w_valor_real       = $_REQUEST['w_valor_real'];
     $w_codigo_deposito  = $_REQUEST['w_codigo_deposito'];
     $w_observacao       = $_REQUEST['w_observacao'];
+    $w_conta            = $_REQUEST['w_conta'];
   } 
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   $w_tramite            = f($RS,'sq_siw_tramite');
+  $w_conta              = f($RS,'sq_pessoa_conta');
   $w_valor_real         = number_format(f($RS,'valor'),2,',','.');
   $w_sg_forma_pagamento = f($RS,'sg_forma_pagamento');
   $w_inicio             = FormataDataEdicao(time());
 
+  $RS_Conta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
+  if (count($RS_Conta)>1) { 
+    $w_exige_conta = true; 
+  } else {
+    $w_exige_conta = false;
+    if (count($RS_Conta)==1) {
+      foreach($RS_Conta as $row) $RS_Conta = $row;
+      $w_conta = f($RS_Conta,'sq_pessoa_conta');
+    }
+  }
+  
   // Se pagamento de viagem, recupera os dados da solicitação
   if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
     $RS_Viagem = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'PDINICIAL');
@@ -3073,6 +3088,7 @@ function Concluir() {
     CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
     Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
+    if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
     Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
     if ($P1!=1) {
@@ -3118,23 +3134,27 @@ function Concluir() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   if ($w_erro>'' && substr(Nvl($w_erro,'-'),0,1)=='0') {
-     ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Não é possível registrar o pagamento enquanto as correções listadas não forem feitas.</b></font></td>');
-     ShowHTML('    <tr><td align="center" colspan=4><hr>');
+     ShowHTML('    <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b>Não é possível registrar o pagamento enquanto as correções listadas não forem feitas.</b></font></td>');
+     ShowHTML('    <tr><td colspan="4" align="center" colspan=4><hr>');
      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } else {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.f($RS,'upload_maximo').'/1024. KBytes</b>.</font></td>');
+    ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.f($RS,'upload_maximo').'/1024. KBytes</b>.</font></td>');
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
-    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr>');
-    ShowHTML('              <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
-    ShowHTML('              <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
-    if ($w_sg_forma_pagamento=='DEPOSITO')
-      ShowHTML('              <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
-    ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
-    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
+    ShowHTML('        <td><b>Valo<u>r</u> real:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
+    if ($w_sg_forma_pagamento=='DEPOSITO') {
+      ShowHTML('        <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
+    }
+    if ($w_exige_conta) {
+      SelecaoContaBAnco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$w_conta,null,'w_conta',null,null);
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_conta" value="'.$w_conta.'">');
+    }
+    ShowHTML('      <tr><td colspan="4"><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="4"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+    ShowHTML('      <tr colspan="4"><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     ShowHTML('      <input class="stb" type="submit" name="Botao" value="Gravar">');
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
@@ -3692,7 +3712,8 @@ function Grava() {
             } 
           } 
           dml_putFinanceiroConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_quitacao'],
-            $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+            $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta'],$_REQUEST['w_observacao'],
+            $w_file,$w_tamanho,$w_tipo,$w_nome);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
         } else {

@@ -2670,7 +2670,7 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }else{
+              }elseif(nvl($Field['name'],'')!=''){
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
                 ScriptClose();
@@ -2771,7 +2771,7 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }else{
+              }elseif(nvl($Field['name'],'')!=''){
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
                 ScriptClose();

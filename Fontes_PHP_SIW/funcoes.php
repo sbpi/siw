@@ -3765,4 +3765,37 @@ switch ($data) {
  return $mes;
 
 }
+
+  function minutos2horario($mins) {
+      // Se os minutos estiverem negativos
+      if ($mins < 0)
+          $min = abs($mins); 
+      else
+          $min = $mins; 
+
+      $h = floor($min / 60); 
+      $m = ($min - ($h * 60)) / 100; 
+      $horas = $h + $m; 
+      if ($mins < 0)
+          $horas *= -1; 
+
+      $sep = explode('.', $horas); 
+      $h = $sep[0]; 
+      if (empty($sep[1]))
+          $sep[1] = 00; 
+      $m = $sep[1]; 
+      if (strlen($m) < 2)
+          $m = $m . 0; 
+      return sprintf('%02d:%02d', $h, $m); 
+  }
+
+  function horario2minutos($hora_inicio,$hora_fim){
+    $w_inicio     = Nvl($hora_inicio,'00:00');
+    $w_fim        = Nvl($hora_fim,'24:00');
+    $w_min_inicio = substr($w_inicio,0,2)*60+substr($w_inicio,3,2);
+    $w_min_fim = substr($w_fim,0,2)*60+substr($w_fim,3,2);
+    $minutos = $w_min_fim - $w_min_inicio;
+    return $minutos;   
+  }
+
 ?>

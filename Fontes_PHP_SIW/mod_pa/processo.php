@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -24,9 +24,11 @@ include_once($w_dir_volta.'classes/sp/dml_putDocumentoAutua.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoAnexa.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoJunta.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoDesm.php');
+include_once($w_dir_volta.'classes/sp/dml_putDocumentoArqSet.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
+include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once('visualGR.php');
 
 // =========================================================================
@@ -762,6 +764,8 @@ function Arquivar() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
+  Validate('w_caixa','Caixa para arquivamento','SELECT',1,1,18,'','0123456789');
+  Validate('w_pasta','Pasta','',1,1,20,'1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -792,38 +796,35 @@ function Arquivar() {
   ShowHTML('  </ul></b></font></td>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
-  ShowHTML('    <tr><td colspan=2><b>DADOS DO DOCUMENTO</b></td></tr>');
-  ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%">'.f($RS,'nm_tipo').':<td><b>'.f($RS,'protocolo').'</b></td></tr>');
+  ShowHTML('    <tr><td colspan=3><b>DADOS DO DOCUMENTO</b></td></tr>');
+  ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('    <tr><td width="30%">'.f($RS,'nm_tipo').':<td colspan=2><b>'.f($RS,'protocolo').'</b></td></tr>');
   if (f($RS,'interno')=='S') {
-    ShowHTML('   <tr><td width="30%">Unidade:</td>');
-    ShowHTML('       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>');
+    ShowHTML('   <tr><td width="30%">Unidade:</td><td colspan=2>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>');
   } else {
-    ShowHTML('   <tr><td>Pessoa:</td>');
-    ShowHTML('       <td>'.f($RS,'nm_pessoa_origem').'</td></tr>');
-    ShowHTML('   <tr><td>Interessado principal:</td>');
-    ShowHTML('       <td>'.f($RS,'nm_pessoa_interes').'</td></tr>');
+    ShowHTML('   <tr><td>Pessoa:</td><td colspan=2>'.f($RS,'nm_pessoa_origem').'</td></tr>');
+    ShowHTML('   <tr><td>Interessado principal:</td><td colspan=2>'.f($RS,'nm_pessoa_interes').'</td></tr>');
   }
-  ShowHTML('   <tr><td>Cidade:</td>');
-  ShowHTML('       <td>'.f($RS,'nm_cidade').'</td></tr>');
-  ShowHTML('   <tr><td>Espécie documental:</td>');
-  ShowHTML('       <td>'.f($RS,'nm_especie').'</td></tr>');
-  ShowHTML('   <tr><td>Número:</td>');
-  ShowHTML('       <td>'.f($RS,'numero_original').'</td></tr>');
-  ShowHTML('   <tr><td>Data do documento:</td>');
-  ShowHTML('       <td>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
+  ShowHTML('   <tr><td>Cidade:</td><td colspan=2>'.f($RS,'nm_cidade').'</td></tr>');
+  ShowHTML('   <tr><td>Espécie documental:</td><td colspan=2>'.f($RS,'nm_especie').'</td></tr>');
+  ShowHTML('   <tr><td>Número:</td><td colspan=2>'.f($RS,'numero_original').'</td></tr>');
+  ShowHTML('   <tr><td>Data do documento:</td><td colspan=3>'.formataDataEdicao(f($RS,'inicio')).'</td></tr>');
 
-  ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
-  ShowHTML('    <tr><td colspan=2><b>DADOS DO ARQUIVAMENTO</b></td></tr>');
-  ShowHTML('    <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%">Data do arquivamento:<td><b>'.formataDataEdicao(time()).'</b></td></tr>');
-  $RS_Unid = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
-  ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td><b>'.f($RS_Unid,'nome').'</b></td></tr>');
-  ShowHTML('    <tr><td width="30%">Usuário arquivador:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
-
-  ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
-  ShowHTML('    <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td colspan=2 align="center"><hr>');
+  ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
+  ShowHTML('    <tr><td colspan=3><b>DADOS DO ARQUIVAMENTO</b></td></tr>');
+  ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('    <tr><td width="30%">Data do arquivamento:<td colspan=2><b>'.formataDataEdicao(time()).'</b></td></tr>');
+  $RS_Unid = db_getUorgData::getInstanceOf($dbms,f($RS,'unidade_int_posse'));
+  ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Unid,'nome').'</b></td></tr>');
+  ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
+  ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
+  SelecaoCaixa('<u>C</u>aixa:','C',"Selecione a caixa para arquivamento.",$w_caixa,$w_cliente,nvl(f($RS,'unidade_int_posse'),0),'w_caixa','TRAMITE',null);
+  ShowHTML('      <td><b><U>P</U>asta:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pasta" size="10" maxlength="20" value="'.$w_pasta.'"></td>');
+  ShowHTML('    </table>');
+  
+  ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
+  ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td colspan=3 align="center"><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Arquivar">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
@@ -1099,6 +1100,22 @@ function Grava() {
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Desmembramento realizado com sucesso!\');');
+      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit;
+    } 
+  } elseif ($SG=='PADTRANSF') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      dml_putDocumentoArqSet::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_caixa'],$_REQUEST['w_pasta']);
+
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
       ScriptClose();
     } else {

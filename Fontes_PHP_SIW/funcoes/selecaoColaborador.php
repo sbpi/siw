@@ -3,15 +3,11 @@ include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
 // =========================================================================
 // Montagem da seleção dos colaboradores
 // -------------------------------------------------------------------------
-function selecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoColaborador($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1,$separador='<BR />') {
   extract($GLOBALS);
   $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   $RS = SortArray($RS,'nome_resumido','asc');
-  if (Nvl($hint,'')>'') {
-    ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } else {
-    ShowHTML('          <td colspan="'.$colspan.'" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
-  } 
+  ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
   if(count($RS) && nvl($restricao,'')=='SELAFAST' && $O=='I' && $w_sg_afast !== false){
     ShowHTML('          <option value="0">Todos');

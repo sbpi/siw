@@ -14,7 +14,7 @@ class dml_putGPParametro {
         $p_admissao_destino, $p_rescisao_texto, $p_rescisao_destino, $p_feriado_legenda, 
         $p_feriado_nome, $p_ferias_legenda, $p_ferias_nome, $p_viagem_legenda, 
         $p_viagem_nome,$p_dias_atualizacao_cv,$p_aviso_atualizacao_cv,
-        $p_tipo_tolerancia, $p_minutos_tolerancia, $p_vincula_contrato) {
+        $p_tipo_tolerancia, $p_minutos_tolerancia, $p_vincula_contrato, $p_limite_diario_extras) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'sp_putGpParametro';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
@@ -33,7 +33,8 @@ class dml_putGPParametro {
                    'p_aviso_atualizacao_cv'      =>array(tvl($p_aviso_atualizacao_cv),                     B_INTEGER,        32),
                    'p_tipo_tolerancia'           =>array(tvl($p_tipo_tolerancia),                          B_INTEGER,        32),
                    'p_minutos_tolerancia'        =>array(tvl($p_minutos_tolerancia),                       B_INTEGER,        32),
-                   'p_vincula_contrato'          =>array(tvl($p_vincula_contrato),                         B_INTEGER,        32)     
+                   'p_vincula_contrato'          =>array(tvl($p_vincula_contrato),                         B_INTEGER,        32),
+                   'p_limite_diario_extras'      =>array(tvl($p_limite_diario_extras),                     B_VARCHAR,        5)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

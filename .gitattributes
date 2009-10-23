@@ -1155,6 +1155,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDemandaInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDescontoAgencia.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDicionario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAnexa.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoArqSet.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoDesm.php -text
@@ -1494,6 +1495,7 @@ Fontes_PHP_SIW/funcoes/selecaoCidade.php -text
 Fontes_PHP_SIW/funcoes/selecaoCidadeCentral.php -text
 Fontes_PHP_SIW/funcoes/selecaoClasseMatServ.php -text
 Fontes_PHP_SIW/funcoes/selecaoColaborador.php -text
+Fontes_PHP_SIW/funcoes/selecaoContaBanco.php -text
 Fontes_PHP_SIW/funcoes/selecaoContasCronograma.php -text
 Fontes_PHP_SIW/funcoes/selecaoContinente.php -text
 Fontes_PHP_SIW/funcoes/selecaoCriticidade.php -text
