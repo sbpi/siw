@@ -6,6 +6,7 @@ create or replace procedure SP_PutFinanceiroConc
     p_quitacao            in date,
     p_valor_real          in number,
     p_codigo_deposito     in varchar2  default null,
+    p_conta               in varchar2  default null,
     p_observacao          in varchar2  default null,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
@@ -31,10 +32,11 @@ begin
        'Liquidação do lançamento financeiro');
        
    -- Atualiza o registro da demanda com os dados da conclusão.
-   Update fn_lancamento set
-      quitacao         = p_quitacao,
-      codigo_deposito  = p_codigo_deposito,
-      observacao       = p_observacao
+   Update fn_lancamento a
+      set quitacao         = p_quitacao,
+          codigo_deposito  = p_codigo_deposito,
+          sq_pessoa_conta  = p_conta,
+          observacao       = p_observacao
    Where sq_siw_solicitacao = p_chave;
 
    -- Atualiza a situação da solicitação

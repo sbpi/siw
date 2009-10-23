@@ -499,7 +499,7 @@ begin
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
                 d.tipo tipo_rubrica,  d.processo,                    d.referencia_inicio,
-                d.referencia_fim,
+                d.referencia_fim,     d.sq_pessoa_conta,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
                 d2.nome nm_pessoa, d2.nome_resumido nm_pessoa_resumido,
@@ -513,6 +513,10 @@ begin
                 coalesce(d9.valor,0) valor_nota,
                 coalesce(da.qtd,0) qtd_nota,
                 coalesce(db.existe,0) as notas_parcela,
+                dc.operacao as oper_org, dc.numero as nr_conta_org,
+                dd.codigo as cd_age_org, dd.nome as nm_age_org,
+                de.codigo as cd_ban_org, de.nome as nm_ban_org,
+                de.exige_operacao as exige_oper_org,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
@@ -580,6 +584,9 @@ begin
                                          where y.sq_menu = w_menu
                                         group by x.sq_acordo_parcela
                                        )                    db on (d.sq_acordo_parcela        = db.sq_acordo_parcela)
+                     left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
+                       left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
+                         left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
                    inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                    e1.tipo_respons            = 'T'           and

@@ -4218,6 +4218,7 @@ SP_Oracle92/siw/sp_putConvPreposto.prc -text
 SP_Oracle92/siw/sp_putCronMeta.prc -text
 SP_Oracle92/siw/sp_putCronograma.prc -text
 SP_Oracle92/siw/sp_putDocumentoAnexa.prc -text
+SP_Oracle92/siw/sp_putDocumentoArqSet.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
 SP_Oracle92/siw/sp_putDocumentoDesm.prc -text

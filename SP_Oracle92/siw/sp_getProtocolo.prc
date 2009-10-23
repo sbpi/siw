@@ -104,6 +104,7 @@ begin
                                      from siw_solicitacao
                                 )                    b1 on (b.sq_siw_solicitacao   = b1.sq_siw_solicitacao)
                inner       join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
+               inner       join siw_tramite          b3 on (b.sq_siw_tramite       = b3.sq_siw_tramite)
                inner       join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
                  inner     join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
@@ -146,7 +147,7 @@ begin
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
-              (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null)) or
+              (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null and b3.ativo = 'S')) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null)
