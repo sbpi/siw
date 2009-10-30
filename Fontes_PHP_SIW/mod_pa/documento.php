@@ -35,6 +35,7 @@ include_once($w_dir_volta.'classes/sp/dml_putSolicInter.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoInter.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoAssunto.php');
+include_once($w_dir_volta.'classes/sp/dml_putCaixaEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoReceb.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
@@ -56,6 +57,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once('visualdocumento.php');
 include_once('visualGR.php');
+include_once('visualGT.php');
 // =========================================================================
 //  /documento.php
 // ------------------------------------------------------------------------
@@ -2064,7 +2066,7 @@ function Tramitacao() {
   if ($O=='L') {
     if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) {
       // Recupera caixas para transferência
-      $RS = db_getCaixa::getInstanceOf($dbms, $p_chave, $w_cliente, nvl($w_sq_unidade,$_SESSION['LOTACAO']), null, null, 'TRAMITE');
+      $RS = db_getCaixa::getInstanceOf($dbms, $p_chave, $w_cliente, nvl($w_sq_unidade,$_SESSION['LOTACAO']), null, null, null, null,null, null, null, 'TRAMITE');
       $RS = SortArray($RS,'numero','asc');
       $w_existe = count($RS);
       
@@ -2135,20 +2137,20 @@ function Tramitacao() {
     FormataData();
     SaltaCampo();
     ValidateOpen('Validacao');
-    Validate('w_retorno_limite','Prazo de resposta','DATA','',10,10,'','0123456789/');
-    CompData('w_retorno_limite','Prazo de resposta','>=',FormataDataEdicao(time()),'data atual');
-    Validate('w_dias','Dias para encaminhamento','1','',1,3,'','0123456789');
-    ShowHTML('  if (theForm.w_aviso[0].checked) {');
-    ShowHTML('     if (theForm.w_dias.value == \'\') {');
-    ShowHTML('        alert(\'Informe a partir de quantos dias após o envio você deseja ser avisado!\');');
-    ShowHTML('        theForm.w_dias.focus();');
-    ShowHTML('        return false;');
-    ShowHTML('     }');
-    ShowHTML('  }');
-    ShowHTML('  else {');
-    ShowHTML('     theForm.w_dias.value = \'\';');
-    ShowHTML('  }');
     if ($w_envia_protocolo=='N') {
+      Validate('w_retorno_limite','Prazo de resposta','DATA','',10,10,'','0123456789/');
+      CompData('w_retorno_limite','Prazo de resposta','>=',FormataDataEdicao(time()),'data atual');
+      Validate('w_dias','Dias para encaminhamento','1','',1,3,'','0123456789');
+      ShowHTML('  if (theForm.w_aviso[0].checked) {');
+      ShowHTML('     if (theForm.w_dias.value == \'\') {');
+      ShowHTML('        alert(\'Informe a partir de quantos dias após o envio você deseja ser avisado!\');');
+      ShowHTML('        theForm.w_dias.focus();');
+      ShowHTML('        return false;');
+      ShowHTML('     }');
+      ShowHTML('  }');
+      ShowHTML('  else {');
+      ShowHTML('     theForm.w_dias.value = \'\';');
+      ShowHTML('  }');
       if ($w_interno=='N') {
         Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
         Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
@@ -2189,7 +2191,7 @@ function Tramitacao() {
     ShowHTML('    return false;');
     ShowHTML('  }');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para os documentos selecionados?\')) return false;');
+    ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para '.(($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados').'?\')) return false;');
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
     ScriptClose();
@@ -2230,7 +2232,9 @@ function Tramitacao() {
       ShowHTML('          <td width="1%" nowrap><b>Caixa</td>');
       ShowHTML('          <td width="1%" nowrap><b>Unidade</td>');
       ShowHTML('          <td><b>Assunto</td>');
-      ShowHTML('          <td><b>Descrição</td>');
+      ShowHTML('          <td><b>Data Limite</td>');
+      ShowHTML('          <td><b>Intermediário</td>');
+      ShowHTML('          <td><b>Destinação final</td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
@@ -2252,6 +2256,11 @@ function Tramitacao() {
     ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_despacho" value="'.$p_tipo_despacho.'">');
+    if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) {
+      ShowHTML('<INPUT type="hidden" name="w_arq_central" value="S">');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_arq_central" value="N">');
+    }
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -2264,16 +2273,15 @@ function Tramitacao() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'">');
         if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) {
           ShowHTML('        <td align="center" width="1%" nowrap>'); 
-          ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_caixa').']" value="'.f($row,'unidade_int_posse').'">'); 
-          ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_caixa').']" value="'.f($row,'unidade_autuacao').'">'); 
-          ShowHTML('          <input type="CHECKBOX" '.((nvl($w_marcado[f($row,'sq_caixa')],'')!='') ? 'CHECKED' : '').' name="w_chave[]" value="'.f($row,'sq_solic_pai').'" ></td>'); 
+          ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_caixa').']" value="'.f($row,'sq_unidade').'">'); 
+          ShowHTML('          <input type="CHECKBOX" '.((nvl($w_marcado[f($row,'sq_caixa')],'')!='') ? 'CHECKED' : '').' name="w_chave[]" value="'.f($row,'sq_caixa').'" ></td>'); 
           ShowHTML('        </td>');
-          ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_caixa').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'numero').'/'.f($row,'sg_unidade').'&nbsp;</a>');
+          ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;<A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=WORD&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
           ShowHTML('        <td>'.f($row,'nm_unidade').'</td>');
           ShowHTML('        <td>'.f($row,'assunto').'</td>');
-          if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-          if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-          else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
+          ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_limite')).'</td>');
+          ShowHTML('        <td align="center">'.f($row,'intermediario').'</td>');
+          ShowHTML('        <td>'.f($row,'destinacao_final').'</td>');
         } else {
           ShowHTML('        <td align="center" width="1%" nowrap>'); 
           ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
@@ -2346,7 +2354,7 @@ function Tramitacao() {
     if ($w_desmembrar=='S') {
       ShowHTML('    <tr><td valign="top" colspan=3><b>Protocolos a serem d<u>e</u>smembrados:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Relacione o(s) protocolo(s) a ser(em) desmembrado(s).">'.$w_despacho.'</TEXTAREA></td>');
     } else {
-      ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
+      ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.nvl($w_despacho,(($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) ? 'Arquivar no Arquivo Central.' : '')).'</TEXTAREA></td>');
     }
     ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('   <tr><td align="center" colspan=3><hr>');
@@ -2422,7 +2430,7 @@ function Recebimento() {
 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if ($O=='R') {
+  if ($O=='R' || $O=='T') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -2435,7 +2443,7 @@ function Recebimento() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif ($O=='R') {
+  } elseif ($O=='R' || $O=='T') {
     BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } else {
     BodyOpen('onLoad=\'this.focus()\';');
@@ -2484,10 +2492,14 @@ function Recebimento() {
           ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'phpdt_envio'),3).'</td>');
           ShowHTML('        <td align="top" nowrap>');
-          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
+          if (nvl(f($row,'despacho_arqcentral'),'')=='') {
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
+          } else {
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
+          }
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
-        $w_atual = f($row,'guia_tramite');
+          $w_atual = f($row,'guia_tramite');
         } else {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td>&nbsp;</td>');
@@ -2522,6 +2534,33 @@ function Recebimento() {
     ShowHTML('  ATENÇÃO:<ul>');
     ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
     ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+    ShowHTML('  </ul></b></font></td>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('  <table width="97%" border="0">');
+    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('    <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+    ShowHTML('      </td>');
+    ShowHTML('    </tr>');
+    ShowHTML('  </table>');
+    ShowHTML('  </TD>');
+    ShowHTML('</tr>');
+  } elseif ($O=='T') {
+    ShowHTML('<tr><td align="center" colspan=3>');
+    // Chama a rotina de visualização dos protocolos da guia
+    ShowHTML(VisualGT($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu,'sq_menu'), 'TELA'));
+
+    ShowHTML('<HR>');
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_unid_autua" value="'.$w_unid_autua.'">');
+    ShowHTML('<INPUT type="hidden" name="w_nu_guia" value="'.$w_nu_guia.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ano_guia" value="'.$w_ano_guia.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
+    ShowHTML('  ATENÇÃO:<ul>');
+    ShowHTML('  <li>Verifique cada uma das caixas, pastas e protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
+    ShowHTML('  <li>O recebimento da guia implica no recebimento de todas as suas caixas, pastas e protocolos, não sendo possível o recebimento parcial.');
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
@@ -3081,57 +3120,72 @@ function Grava() {
   } elseif (strpos($SG,'PADTRAM')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      // Se o destino for pessoa jurídica, pede unidade da pessoa
-      if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
-        $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
-        if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
-          ScriptClose();
-          retornaFormulario('w_unidade_externa');
-          exit;
+      if (nvl($_REQUEST['w_arq_central'],'')!='') {
+        for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
+          if (Nvl($_POST['w_chave'][$i],'')>'') {
+            dml_putCaixaEnvio::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
+                $_REQUEST['w_interno'], $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],
+                $_REQUEST['w_tipo_despacho'],$_REQUEST['w_despacho'],
+                &$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+          } 
         }
-      }
-
-      // Se for informado um processo, verifica se ele existe
-      if (nvl($_REQUEST['w_protocolo'],'')!='') {
-        $p_prefixo      = substr($_REQUEST['w_protocolo'],0,5);
-        $p_numero       = substr($_REQUEST['w_protocolo'],6,6);
-        $p_ano          = substr($_REQUEST['w_protocolo'],13,4);
-        $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', $p_chave, $p_chave_aux, 
-            $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, null);
-        $w_existe = 0;
-        foreach($RS as $row) {
-          if (f($row,'processo')=='S') {
-            $w_existe = 1;
-            break;
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Transferência realizada com sucesso!\\nImprima a guia de transferência na próxima tela.\');');
+        ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG=RELPATRANS&TP='.RemoveTP(RemoveTP($TP)).'&p_unidade='.$w_unidade_autuacao.'&p_nu_guia='.$w_nu_guia.'&p_ano_guia='.$w_ano_guia).'\';');
+        ScriptClose();
+      } else {
+        // Se o destino for pessoa jurídica, pede unidade da pessoa
+        if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
+          $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
+          foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
+          if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
+            ScriptClose();
+            retornaFormulario('w_unidade_externa');
+            exit;
           }
         }
-
-        if ($w_existe==0) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert(\'ATENÇÃO: O processo informado não existe!\');');
-          ScriptClose();
-          retornaFormulario('w_protocolo');
-          exit;
+  
+        // Se for informado um processo, verifica se ele existe
+        if (nvl($_REQUEST['w_protocolo'],'')!='') {
+          $p_prefixo      = substr($_REQUEST['w_protocolo'],0,5);
+          $p_numero       = substr($_REQUEST['w_protocolo'],6,6);
+          $p_ano          = substr($_REQUEST['w_protocolo'],13,4);
+          $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, 'EXISTE', $p_chave, $p_chave_aux, 
+              $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, null);
+          $w_existe = 0;
+          foreach($RS as $row) {
+            if (f($row,'processo')=='S') {
+              $w_existe = 1;
+              break;
+            }
+          }
+  
+          if ($w_existe==0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'ATENÇÃO: O processo informado não existe!\');');
+            ScriptClose();
+            retornaFormulario('w_protocolo');
+            exit;
+          }
         }
+  
+        for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
+          if (Nvl($_POST['w_chave'][$i],'')>'') {
+            dml_putDocumentoEnvio::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
+                $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
+                $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],$_REQUEST['w_pessoa_destino'],
+                $_REQUEST['w_tipo_despacho'],$p_prefixo, $p_numero, $p_ano,$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],
+                $_REQUEST['w_dias'],$_REQUEST['w_retorno_limite'],$_REQUEST['w_pessoa_destino_nm'],
+                $_REQUEST['w_unidade_externa'],&$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
+          } 
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
+        ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG=RELPATRAM&TP='.RemoveTP(RemoveTP($TP)).'&p_unidade='.$w_unidade_autuacao.'&p_nu_guia='.$w_nu_guia.'&p_ano_guia='.$w_ano_guia).'\';');
+        ScriptClose();
       }
-
-      for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
-        if (Nvl($_POST['w_chave'][$i],'')>'') {
-          dml_putDocumentoEnvio::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,
-              $_POST['w_tramite'][$_POST['w_chave'][$i]], $_REQUEST['w_interno'],
-              $_POST['w_unid_origem'][$_POST['w_chave'][$i]], $_REQUEST['w_sq_unidade'],$_REQUEST['w_pessoa_destino'],
-              $_REQUEST['w_tipo_despacho'],$p_prefixo, $p_numero, $p_ano,$_REQUEST['w_despacho'],$_REQUEST['w_aviso'],
-              $_REQUEST['w_dias'],$_REQUEST['w_retorno_limite'],$_REQUEST['w_pessoa_destino_nm'],
-              $_REQUEST['w_unidade_externa'],&$w_nu_guia, &$w_ano_guia, &$w_unidade_autuacao);
-        } 
-      }
-      ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Tramitação realizada com sucesso!\\nImprima a guia de tramitação na próxima tela.\');');
-      ShowHTML('  parent.menu.location=\''.montaURL_JS(null,$conRootSIW.'menu.php?par=ExibeDocs&O=L&R='.$R.'&SG=RELPATRAM&TP='.RemoveTP(RemoveTP($TP)).'&p_unidade='.$w_unidade_autuacao.'&p_nu_guia='.$w_nu_guia.'&p_ano_guia='.$w_ano_guia).'\';');
-      ScriptClose();
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

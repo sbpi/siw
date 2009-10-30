@@ -482,9 +482,15 @@ begin
                                   when instr(upper(a.observacao),'ANEXA')>0       then 'ANEXAÇÃO'
                                   when instr(upper(a.observacao),'APENSA')>0      then 'APENSAÇÃO'
                                   when instr(upper(a.observacao),'DESM')>0        then 'DESMEMBRAMENTO'
+                                  when instr(upper(a.observacao),'ARQ')>0         then 'ARQUIVAMENTO'
                                   else 'REGISTRO' 
                              end
-                        else 'TRÂMITE ORIGINAL' 
+                        else case f.sigla
+                                  when 'AS' then 'ARQUIVAMENTO'
+                                  when 'AT' then 'ARQUIVAMENTO CENTRAL'
+                                  when 'EL' then 'ELIMINACAO'
+                                  else 'TRÂMITE ORIGINAL' 
+                             end
                    end as origem,
                    c.sq_unidade as sq_registro, c.sigla nm_registro, l1.sq_unidade as sq_origem, l1.sigla as nm_origem,
                    case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,

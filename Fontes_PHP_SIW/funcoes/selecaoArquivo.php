@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
 // =========================================================================
 // Montagem da seleção de Tipos de Arquivo

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class db_get

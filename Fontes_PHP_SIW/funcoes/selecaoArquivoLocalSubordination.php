@@ -1,32 +1,19 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getArquivo_PA.php');
 // =========================================================================
 // Montagem da seleção de Tipos estratégicos
 // -------------------------------------------------------------------------
-function selecaoArquivoLocalSubordination($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$condicao) {
+function selecaoArquivoLocalSubordination($label,$accesskey,$hint,$chave,$chave_aux,$campo,$restricao,$condicao,$formato=1,$colspan=1,$separador='<BR />') {
   extract($GLOBALS); 
     
   $RS = db_getArquivo_PA::getInstanceOf($dbms, $w_cliente, $chave, $chave_aux, null, 'S', $restricao);  
   $RS = SortArray($RS,'nome','asc'); 
   
-  if (!isset($hint)) {
-    ShowHTML('          <td valign="top"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  } else {
-    ShowHTML('          <td valign="top" title="'.$hint.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.'>');
-  }
-  
+  ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <OPTION VALUE="">---');
   
-  //exit();
   foreach($RS as $row)  {  
-    // Testa se o tipo já tem recursos vinculados. Se tiver, não pode ser pai de nenhum outro tipo
-    // Garante que os recursos sempre estarão ligados no nível folha da tabela de tipos de recurso
-    
-      if (f($row,'chave')==nvl($_REQUEST['pai'],0)) {      
-        ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'nome_completo'));
-      } else {
-        ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'nome_completo'));
-      }
+    ShowHTML('          <option value="'.f($row,'chave').'" '.((f($row,'chave')==nvl($_REQUEST['pai'],0)) ? 'SELECTED' : '').'>'.f($row,'nome_completo'));
   }
   ShowHTML('          </SELECT></td>');
 }

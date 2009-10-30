@@ -1,20 +1,19 @@
 <?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
-* class dml_putDocumentoArqSet
+* class dml_putDocumentoArqCen
 *
 * { Description :- 
-*    Registra a autuação de um documento
+*    Registra o arquivo central de uma caixa
 * }
 */
 
-class dml_putDocumentoArqSet {
-   function getInstanceOf($dbms, $chave, $usuario, $p_caixa, $p_pasta) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoArqSet';
+class dml_putDocumentoArqCen {
+   function getInstanceOf($dbms, $chave, $usuario, $p_local) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoArqCen';
      $params=array('p_chave'              =>array(tvl($chave),                              B_INTEGER,        32),
                    'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
-                   'p_caixa'              =>array(tvl($p_caixa),                            B_INTEGER,        32),
-                   'p_pasta'              =>array(tvl($p_pasta),                            B_VARCHAR,        20)
+                   'p_local'              =>array(tvl($p_local),                            B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

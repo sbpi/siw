@@ -1054,7 +1054,8 @@ begin
                 d.data_autuacao,      d.pessoa_origem,               d.processo,
                 d.circular,           d.copias,                      d.volumes,
                 d.data_recebimento,   d.unidade_int_posse,           d.pessoa_ext_posse,
-                d.tipo_juntada,
+                d.tipo_juntada,       d.sq_caixa,                    d.pasta,
+                d.data_setorial,      d.data_central,
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
@@ -1077,6 +1078,10 @@ begin
                 dd.codigo as cd_assunto_bis, dd.descricao as ds_assunto_bis,
                 df.sq_pessoa as pessoa_interes, df.nome as nm_pessoa_interes,
                 dg.prefixo||'.'||substr(1000000+dg.numero_documento,2,6)||'/'||dg.ano||'-'||substr(100+dg.digito,2,2) as protocolo_pai,
+                dh.numero as nr_caixa, dh.assunto as as_caixa, dh.descricao as ds_caixa, dh.data_limite as dt_caixa, dh.intermediario as in_caixa,
+                dh.destinacao_final as df_caixa, dh.arquivo_data, dh.sq_arquivo_local,
+                montaNomeArquivoLocal(dh.sq_arquivo_local) as nm_arquivo_local,
+                di.sq_unidade as sq_unid_caixa, di.sigla as sg_unid_caixa, di.nome as nm_unid_caixa,
                 b.fim-k.dias_aviso aviso,
                 e.sq_unidade sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
@@ -1128,6 +1133,8 @@ begin
                                                                          )
                           left       join co_pessoa                df on (de.sq_pessoa               = df.sq_pessoa)
                         left         join pa_documento             dg on (d.sq_documento_pai         = dg.sq_siw_solicitacao)
+                        left         join pa_caixa                 dh on (d.sq_caixa                 = dh.sq_caixa)
+                          left       join eo_unidade               di on (dh.sq_unidade              = di.sq_unidade)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and

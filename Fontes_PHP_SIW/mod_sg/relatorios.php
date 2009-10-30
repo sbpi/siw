@@ -518,7 +518,7 @@ function TelaUsuarioRel() {
   ShowHTML('          <td bgColor="#f0f0f0"><div><b>Início</b></div></td>');
   ShowHTML('          </tr>');
   if (count($RS1)==0) {
-    ShowHTML('      <tr><td colspan=3 align="center"><b>Não gerência nenhuma unidade</b></td></tr>');
+    ShowHTML('      <tr><td colspan=3 align="center"><b>Não gerencia nenhuma unidade</b></td></tr>');
   } else {
     $w_cor=$w_TrBgColor;
     foreach($RS1 as $row1) {
@@ -545,7 +545,7 @@ function TelaUsuarioRel() {
   ShowHTML('          </tr>');
   $w_atual = 0;
   if (count($RS1)==0) {
-    ShowHTML('      <tr><td colspan=2 align="center"><b>Não tem visão à nenhum serviço</b></td></tr>');
+    ShowHTML('      <tr><td colspan=2 align="center"><b>Não tem visão a nenhum serviço</b></td></tr>');
   } else {
     $w_cor=$w_TrBgColor;
     foreach($RS1 as $row1) {
@@ -603,7 +603,7 @@ function TelaUsuarioRel() {
   ShowHTML('      <tr><td align="center" colspan="2">');
   ShowHTML('        <table width=100%>');
   if (count($RS)==0) {
-    ShowHTML('      <tr><td colspan=10 align="center"><b>Nenhuma opção de menu para estes usuário</b></td></tr>');
+    ShowHTML('      <tr><td colspan=10 align="center"><b>Nenhuma opção de menu para este usuário</b></td></tr>');
   } else {
     foreach ($RS as $row) {
       if (f($row,'Filho')>0) {

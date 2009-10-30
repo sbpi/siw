@@ -134,14 +134,14 @@ function Inicial() {
   foreach($RSContrato as $row) { $RSContrato = $row; break; }
   //print_r($RSContrato);
   $w_inicio_contrato      = formataDataEdicao(f($RSContrato,'inicio'));
-  $w_minutos_diarios      = f($RSContrato,'minutos_diarios');
+  //$w_minutos_diarios      = f($RSContrato,'minutos_diarios');
+  $w_carga_diaria         = f($RSContrato,'carga_diaria');
   $w_entrada_manha        = f($RSContrato,'entrada_manha');
   $w_saida_manha          = f($RSContrato,'saida_manha');
   $w_entrada_tarde        = f($RSContrato,'entrada_tarde');
   $w_saida_tarde          = f($RSContrato,'saida_tarde');  
   $w_entrada_noite        = f($RSContrato,'entrada_noite');
   $w_saida_noite          = f($RSContrato,'saida_noite');
-  $w_carga_diaria         = f($RSContrato,'carga_diaria');
   $w_sabado               = f($RSContrato,'sabado');    
   $w_domingo              = f($RSContrato,'domingo');
   $w_minutos_tolerancia   = f($RS_Parametro,'minutos_tolerancia');
@@ -156,31 +156,38 @@ function Inicial() {
   $w_limite = minutos2horario(horario2minutos('',$w_carga_diaria) + horario2minutos('',$w_limite_diario_extras)); 
   
   if(Nvl($w_entrada_manha,'')!='' && Nvl($w_saida_manha,'')!='' ){
-    $w_primeiro_turno = 'manha';
+    $w_primeiro_turno         = 'manha';
+    $w_minutos_primeiro_turno = horario2minutos('',$w_saida_manha) - horario2minutos('',$w_entrada_manha);
+      
     if(Nvl($w_entrada_noite,'')!='' && Nvl($w_saida_noite,'')!='' ){
       $w_segundo_turno = 'noite';
+      $w_minutos_segundo_turno = horario2minutos('',$w_saida_noite) - horario2minutos('',$w_entrada_noite);
     }elseif(Nvl($w_entrada_tarde,'')!='' && Nvl($w_saida_tarde,'')!='' ){
       $w_segundo_turno = 'tarde';
+      $w_minutos_segundo_turno = horario2minutos('',$w_saida_tarde) - horario2minutos('',$w_entrada_tarde);
     }else{
       $w_segundo_turno = '';
+      $w_minutos_segundo_turno = 0;
     }  
   }else{
     if(Nvl($w_entrada_tarde,'')!='' && Nvl($w_saida_tarde,'')!='' ){
       $w_primeiro_turno = 'tarde';
+          $w_minutos_primeiro_turno = horario2minutos('',$w_saida_tarde) - horario2minutos('',$w_entrada_tarde);
       if(Nvl($w_entrada_noite,'')!='' && Nvl($w_saida_noite,'')!='' ){
         $w_segundo_turno = 'noite';
+        $w_minutos_segundo_turno = horario2minutos('',$w_saida_noite) - horario2minutos('',$w_entrada_noite);
       }else{
         $w_segundo_turno = '';
+        $w_minutos_segundo_turno = 0;
       }
     }else{
       $w_primeiro_turno = 'noite';
+      $w_minutos_primeiro_turno = horario2minutos('',$w_saida_noite) - horario2minutos('',$w_entrada_noite);
       $w_segundo_turno = '';
+      $w_minutos_segundo_turno = 0;
     }    
   }
-  echo $w_primeiro_turno;
-  echo $w_segundo_turno;
-  //print_r($RS_Parametro);
-  
+  //$w_minutos_diarios = $w_minutos_primeiro_turno + $w_minutos_segundo_turno;
   //Recupera datas especiais do mês
   include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
   $RS_Ano = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,date('Y',$w_dt_inicio),'S',null,null,null);
@@ -253,7 +260,11 @@ function Inicial() {
                 if (date('H',f($row,'phpdt_saida'))>$w_saida_noite){
                   $w_feriados[date('j',$i)]['tipo'] = 'S';
                 }elseif(Nvl($w_primeiro_turno,'')=='manha'){
-                  if (date('H',f($row,'phpdt_saida'))>$w_entrada_tarde) $w_feriados[date('j',$i)]['tipo'] = 'M';
+                  if ((date('H',f($row,'phpdt_saida'))>$w_entrada_noite) || (date('H',f($row,'phpdt_saida'))>$w_saida_manha && date('H',f($row,'phpdt_saida'))<$w_entrada_noite)){
+                    $w_feriados[date('j',$i)]['tipo'] = 'M';
+                  }elseif (date('H',f($row,'phpdt_saida'))<$w_entrada_manha){
+                    $w_feriados[date('j',$i)]['tipo'] = 'N';
+                  }
                 }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
                   if (date('H',f($row,'phpdt_saida'))>$w_entrada_noite) $w_feriados[date('j',$i)]['tipo'] = 'M';
                 }
@@ -273,7 +284,7 @@ function Inicial() {
             
           } elseif ($i==$w_fim_viagem) {
             $w_feriados[date('j',$i)]['nome'] = 'VIAGEM (CHEGADA '.date('H:i',f($row,'phpdt_chegada')).')';
-            echo $w_feriados[date('j',$i)]['chegada'] = date('H:i',f($row,'phpdt_chegada'));
+            $w_feriados[date('j',$i)]['chegada'] = date('H:i',f($row,'phpdt_chegada'));
 
             if(Nvl($w_segundo_turno,'')!=''){
               if(Nvl($w_segundo_turno,'')=='tarde'){
@@ -292,16 +303,15 @@ function Inicial() {
                 if (date('H',f($row,'phpdt_chegada'))>$w_saida_noite){
                   $w_feriados[date('j',$i)]['tipo'] = 'N';
                 }elseif(Nvl($w_primeiro_turno,'')=='manha'){
-                  if (date('H',f($row,'phpdt_chegada'))<$w_entrada_manha && date('H',f($row,'phpdt_chegada'))<$w_entrada_noite ){
-                    $w_feriados[date('j',$i)]['tipo'] = 'T';
-                  }elseif (date('H',f($row,'phpdt_chegada'))<$w_entrada_manha){
+                  if (date('H',f($row,'phpdt_chegada'))<$w_entrada_manha){
                     $w_feriados[date('j',$i)]['tipo'] = 'S';
+                  }elseif(date('H',f($row,'phpdt_chegada'))>$w_entrada_manha && date('H',f($row,'phpdt_chegada'))<$w_saida_noite){
+                    $w_feriados[date('j',$i)]['tipo'] = 'T';
                   }
                 }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
-                var_dump(date('H',f($row,'phpdt_chegada'))<$w_entrada_noite );
                   if (date('H',f($row,'phpdt_chegada'))<$w_entrada_tarde){
                     $w_feriados[date('j',$i)]['tipo'] = 'S';
-                  }elseif (date('H',f($row,'phpdt_chegada'))<$w_entrada_noite ){
+                  }elseif (date('H',f($row,'phpdt_chegada'))<$w_saida_tarde && date('H',f($row,'phpdt_chegada'))>$w_entrada_tarde){
                     $w_feriados[date('j',$i)]['tipo'] = 'T';
                   }
                 }
@@ -334,7 +344,8 @@ function Inicial() {
     $w_ini_afast = f($row,'inicio_data');
     $w_fim_afast = f($row,'fim_data');
     for ($i=$w_ini_afast; $i<=$w_fim_afast; $i=addDays($i,1)) {
-      if (date('m/Y',$i)==$w_mes) {
+    
+      /*if (date('m/Y',$i)==$w_mes) {
         $w_feriados[date('j',$i)]['nome'] = f($row,'nm_tipo_afastamento');
         if($i==$w_ini_afast) {
           if (f($row,'inicio_periodo')=='M') $w_feriados[date('j',$i)]['tipo'] = 'N';
@@ -343,7 +354,124 @@ function Inicial() {
           if (f($row,'fim_periodo')=='T') $w_feriados[date('j',$i)]['tipo'] = 'N';
           else $w_feriados[date('j',$i)]['tipo'] = 'M';
         } else   $w_feriados[date('j',$i)]['tipo'] = 'N';
-      }
+      }*/
+      if (date('m/Y',$i)==$w_mes) {
+        $w_feriados[date('j',$i)]['nome'] = f($row,'nm_tipo_afastamento');
+        $w_feriados[date('j',$i)]['sigla'] = f($row,'sigla');
+        //print_r($row);
+        if($i==$w_ini_afast) {
+        if(substr(f($row,'sigla'),0,1)=='F'){
+          if(f($row,'sigla') == 'FM'){
+            if(Nvl($w_segundo_turno,'')!=''){
+              if(Nvl($w_primeiro_turno,'')=='manha'){
+                $w_feriados[date('j',$i)]['tipo'] = 'T';  
+              }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }          
+            }else{
+              if(Nvl($w_primeiro_turno,'')=='manha'){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';  
+              }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }          
+            }          
+          }elseif(f($row,'sigla') == 'FT'){
+            if(Nvl($w_segundo_turno,'')!=''){
+              if(Nvl($w_primeiro_turno,'')=='manha'){
+                $w_feriados[date('j',$i)]['tipo'] = 'M';  
+              }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }          
+            }else{
+              if(Nvl($w_primeiro_turno,'')=='manha'){
+                $w_feriados[date('j',$i)]['tipo'] = 'S';  
+              }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }          
+            }          
+          }else{
+            $w_feriados[date('j',$i)]['tipo'] = 'N';
+          }        
+        }else{
+          if (f($row,'inicio_periodo')=='M'){
+            if(Nvl($w_primeiro_turno,'')=='manha'){
+              $w_feriados[date('j',$i)]['tipo'] = 'N';
+            }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+              $w_feriados[date('j',$i)]['tipo'] = 'N';
+            }elseif(Nvl($w_primeiro_turno,'')=='noite'){
+              $w_feriados[date('j',$i)]['tipo'] = 'N';
+            }
+          }else{
+            if(Nvl($w_primeiro_turno,'')=='manha'){
+              if(Nvl($w_segundo_turno,'')==''){
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }elseif(Nvl($w_segundo_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'M';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }             
+            }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+              $w_feriados[date('j',$i)]['tipo'] = 'N';
+            }elseif(Nvl($w_primeiro_turno,'')=='noite'){
+              $w_feriados[date('j',$i)]['tipo'] = 'N';
+            }          
+          }
+        }
+
+          //else $w_feriados[date('j',$i)]['tipo'] = 'M';
+        }elseif($i==$w_fim_afast) {
+        //var_dump(f($row,'fim_periodo')=='T');
+          if (f($row,'fim_periodo')=='T'){
+            if(Nvl($w_primeiro_turno,'')=='manha'){
+              if(Nvl($w_segundo_turno,'')==''){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';
+              }elseif(Nvl($w_segundo_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }            
+            }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+              if(Nvl($w_segundo_turno,'')==''){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';
+              }elseif(Nvl($w_segundo_turno,'')=='noite'){
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }
+              //$w_feriados[date('j',$i)]['tipo'] = 'T';
+            }elseif(Nvl($w_primeiro_turno,'')=='noite'){
+              $w_feriados[date('j',$i)]['tipo'] = 'S';
+            }          
+          }else{ // Fim do afastamento é pela manhã (M)
+            if(Nvl($w_primeiro_turno,'')=='manha'){
+              if(Nvl($w_segundo_turno,'')==''){
+                $w_feriados[date('j',$i)]['tipo'] = 'N';
+              }elseif(Nvl($w_segundo_turno,'')=='tarde'){
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'T';
+              }
+            }elseif(Nvl($w_primeiro_turno,'')=='tarde'){
+              if(Nvl($w_segundo_turno,'')==''){
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }else{
+                $w_feriados[date('j',$i)]['tipo'] = 'S';
+              }           
+            }elseif(Nvl($w_primeiro_turno,'')=='noite'){
+              $w_feriados[date('j',$i)]['tipo'] = 'S';
+            }elseif(Nvl($w_primeiro_turno,'')=='noite'){
+              $w_feriados[date('j',$i)]['tipo'] = 'M';
+            }          
+          }//$w_feriados[date('j',$i)]['tipo'] = 'N';
+          //else $w_feriados[date('j',$i)]['tipo'] = 'M';
+        } else   $w_feriados[date('j',$i)]['tipo'] = 'N';
+      }    
     }
   }
 
@@ -369,9 +497,10 @@ function Inicial() {
   ShowHTML('function calculaDia(dia) {');
   ShowHTML('  var entrada1 = document.Form["w_entrada1[]"][dia].value;');
   ShowHTML('  var saida1 = document.Form["w_saida1[]"][dia].value;');
+  ShowHTML('  var minutos_diarios = document.Form["w_minutos_diarios[]"][dia].value;');    
   if(Nvl($w_segundo_turno,'')!=''){
-    ShowHTML('  var entrada2 = document.Form["w_entrada2[]"][dia].value;');
-    ShowHTML('  var saida2 = document.Form["w_saida2[]"][dia].value;');  
+    ShowHTML('  var entrada2        = document.Form["w_entrada2[]"][dia].value;');
+    ShowHTML('  var saida2          = document.Form["w_saida2[]"][dia].value;');  
   }else{
     ShowHTML('  var entrada2 = "00:00"');
     ShowHTML('  var saida2   = "00:00"');
@@ -380,7 +509,6 @@ function Inicial() {
   ShowHTML('  var saldo2 = 0;');
   ShowHTML('  var saldo3 = 0;');
   ShowHTML('  var saldo = "00:00";');
-  ShowHTML('  var minutos_diarios    = '.$w_minutos_diarios.';');
   ShowHTML('  var minutos_tolerancia = '.$w_minutos_tolerancia.';');
   ShowHTML('  var tipo_tolerancia    = '.$w_tipo_tolerancia.';');
   ShowHTML('  var fator              = 0;');
@@ -397,24 +525,24 @@ function Inicial() {
   ShowHTML('  if (saldo1!="" && saldo2!="") saldo3 = saldo1 + saldo2;');
   ShowHTML('  else if (saldo1!="" && saldo2=="") saldo3 = saldo1;');
   ShowHTML('  else if (saldo1=="" && saldo2!="") saldo3 = saldo2;');
-  ShowHTML('  if (saldo3!=""){');
+  ShowHTML('  var saldo4 = parseInt(saldo3-(minutos_diarios),10);');
+  ShowHTML('  if (saldo4!=""){');
   ShowHTML('    if(minutos_diarios > 0 && minutos_diarios > saldo3){');
   ShowHTML('      var diferenca = minutos_diarios - saldo3');
   ShowHTML('      if(diferenca > 0 && diferenca <= minutos_tolerancia){');
-  ShowHTML('        saldo3 = saldo3 + diferenca');
+  ShowHTML('        saldo4 = saldo4 + diferenca');
   ShowHTML('      }else if(diferenca > minutos_tolerancia){');
-  ShowHTML('        saldo3 = saldo3 + minutos_tolerancia;');
+  ShowHTML('        saldo4 = saldo4 + minutos_tolerancia;');
   ShowHTML('      }');  
   ShowHTML('    }else if(minutos_diarios < saldo3){');
   ShowHTML('      var diferenca = minutos_diarios - saldo3');
   ShowHTML('      if(diferenca < 0 && diferenca >= -minutos_tolerancia){');
-  ShowHTML('        saldo3 = saldo3 + diferenca');
+  ShowHTML('        saldo4 = saldo4 + diferenca');
   ShowHTML('      }else if(diferenca < minutos_tolerancia){');
-  ShowHTML('        saldo3 = saldo3 - minutos_tolerancia;');
+  ShowHTML('        saldo4 = saldo4 - minutos_tolerancia;');
   ShowHTML('      }');  
   ShowHTML('    }');
   ShowHTML('  }');
-  ShowHTML('  var saldo4 = parseInt(saldo3-(minutos_diarios),10);');
   ShowHTML('  var horas   = parseInt(saldo3/60,10);');
   ShowHTML('  var minutos = (saldo3) - parseInt(horas*60,10);');
   ShowHTML('  saldo = String(100+horas).substring(1) + ":" + String(100+minutos).substring(1);');  
@@ -440,7 +568,7 @@ function Inicial() {
   ShowHTML('   var tot_atraso = 0;');
   ShowHTML('   var tot_extra = 0;');
   ShowHTML('   var tot_banco = 0;');
-  ShowHTML('  var minutos_diarios = '.$w_minutos_diarios.';');  
+  ShowHTML('   var minutos_diarios;');  
   ShowHTML('   var sinal = "";');
   ShowHTML('   for (i=0; i < theForm["w_trabalhadas[]"].length; i++) {');
   ShowHTML('     if (theForm["w_trabalhadas[]"][i].value!="") {');
@@ -448,11 +576,19 @@ function Inicial() {
   ShowHTML('       horas   = parseInt(tempo.substr(0,2)*60,10);');
   ShowHTML('       minutos = parseInt(tempo.substr(3,2),10);');
   ShowHTML('       tot_trabalho = tot_trabalho + horas + minutos;');
+  ShowHTML('       minutos_diarios = document.Form["w_minutos_diarios[]"][i].value;');
+  ShowHTML('       if (theForm["w_saldo_dia[]"][i].value.substr(0,1)=="-") {');
   // Trata o atraso
-  ShowHTML('       if ((minutos_diarios)>(horas+minutos)) {');
-  ShowHTML('         tot_atraso = tot_atraso + ((horas+minutos)-(minutos_diarios));');
+  ShowHTML('         tempo = theForm["w_saldo_dia[]"][i].value;');
+  ShowHTML('         horas   = parseInt(tempo.substr(1,2)*60,10);');
+  ShowHTML('         minutos = parseInt(tempo.substr(4,2),10);');
+  ShowHTML('         tot_atraso = tot_atraso + horas + minutos;');
   ShowHTML('       } else {');
-  ShowHTML('         tot_extra = tot_extra + ((horas+minutos)-(minutos_diarios));');
+  // Trata a hora extra
+  ShowHTML('         tempo = theForm["w_saldo_dia[]"][i].value;');
+  ShowHTML('         horas   = parseInt(tempo.substr(0,2)*60,10);');
+  ShowHTML('         minutos = parseInt(tempo.substr(3,2),10);');
+  ShowHTML('         tot_extra = tot_extra + horas + minutos;');
   ShowHTML('       }');
   ShowHTML('     }');
   ShowHTML('   }');
@@ -471,7 +607,7 @@ function Inicial() {
   ShowHTML('   trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
   ShowHTML('   theForm.w_extras.value = trabalhadas;');
 
-  ShowHTML('   tot_banco = tot_banco + tot_atraso + tot_extra;');
+  ShowHTML('   tot_banco = tot_banco - tot_atraso + tot_extra;');
   ShowHTML('   if (tot_banco<0) sinal = "-";');
   ShowHTML('   tot_horas = Math.abs(parseInt(tot_banco/60,10));');
   ShowHTML('   tot_minutos = Math.abs(tot_banco) - (tot_horas*60);');
@@ -561,9 +697,10 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_trabalhadas[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_autorizadas[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_saldo_dia[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_minutos_diarios[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_limite" value="'.$w_limite.'">');
     ShowHTML('<tr valign="top" align="center"><td>');
-    ShowHTML('    <TABLE bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('    <TABLE BORDER="0" CELLSPACING="0" id="folhadeponto" CELLPADDING="5" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2 colspan=2><b>DIA</td>');
     ShowHTML('          <td colspan=2><b>TURNO 1</td>');
@@ -582,38 +719,63 @@ function Inicial() {
     }
     ShowHTML('        </tr>');
     for ($i=1; $i <= $w_dia_fim; $i++) {
-      $w_cor = $conTrBgColor; 
+      $w_cor = ($w_cor == '#FFFFFF'?'#EFEFEF':'#FFFFFF'); 
       $w_atual = toDate(substr(100+$i,1,2).'/'.$w_mes);
       if (date('N',$w_atual)==7) {
         if($w_domingo == 'S'){
           $w_fim_semana = false;
         } else { 
-          $w_fim_semana = true; 
+          $w_fim_semana = true;
+          $w_cor = '#F3FFF2'; 
         }          
-        $w_cor = $conTrAlternateBgColor; 
       }elseif (date('N',$w_atual)==6) {
         if($w_sabado == 'S'){
           $w_fim_semana = false;
         } else { 
-          $w_fim_semana = true; 
+          $w_fim_semana = true;
+          $w_cor = '#F3FFF2'; 
         }          
-        $w_cor = $conTrAlternateBgColor; 
       } else { 
         $w_fim_semana = false; 
       }
       if(is_array($w_feriados[$i])) {
         $w_feriado = true;
-        $w_nm_feriado = strtoupper($w_feriados[$i]['nome']);
-        $w_saida[$i]      = $w_feriados[$i]['saida'];
-        $w_chegada[$i]    = $w_feriados[$i]['chegada'];
-        $w_tp_feriado = $w_feriados[$i]['tipo'];
-        $w_cor = $conTrAlternateBgColor; 
+        $w_nm_feriado  = strtoupper($w_feriados[$i]['nome']);
+        $w_saida[$i]   = $w_feriados[$i]['saida'];
+        $w_chegada[$i] = $w_feriados[$i]['chegada'];
+        $w_tp_feriado  = $w_feriados[$i]['tipo'];
+        $w_sigla       = $w_feriados[$i]['sigla'];
+        $w_cor = '#ffffff';
+        
+        /*Verifica as faltas
+         * 
+         * FM : falta no período da manhã
+         * FT : Falta no período da tarde
+         * F  : Falta em todos os períodos
+         * 
+         */
+        
+        if(substr($w_sigla,0,1) == 'F'){
+          $w_minutos_diarios[$i] = $w_minutos_primeiro_turno + $w_minutos_segundo_turno;
+        }else{
+          if($w_tp_feriado == 'M'){
+            $w_minutos_diarios[$i] = $w_minutos_primeiro_turno;
+          }elseif($w_tp_feriado == 'T'){
+            $w_minutos_diarios[$i] = $w_minutos_segundo_turno;
+          }elseif($w_tp_feriado == 'N'){
+            $w_minutos_diarios[$i] = 0;
+          }else{
+            $w_minutos_diarios[$i] = $w_minutos_primeiro_turno + $w_minutos_segundo_turno;
+          }        
+        }
       } else {
+        $w_minutos_diarios[$i] = $w_minutos_primeiro_turno + $w_minutos_segundo_turno;
+        //echo $i.' & '.$w_minutos_diarios[$i].'<br>';
         $w_feriado = false;
         $w_nm_feriado = '';
         $w_tp_feriado = '';
       }
-      echo $w_tp_feriado;
+      //echo $w_tp_feriado;
       ShowHTML('        <tr bgcolor="'.$w_cor.'" align="center">');
       ShowHTML('          <td width="1%" nowrap>&nbsp;'.$i.'&nbsp;</td>');
       ShowHTML('          <td align="left"width="1%" nowrap>&nbsp;'.diaSemana(date('l',$w_atual)).'&nbsp;</td>');
@@ -627,6 +789,7 @@ function Inicial() {
         }
         ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada1[$i].'">');
         ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida1[$i].'">');
+        ShowHTML('          <input type="hidden" name="w_minutos_diarios[]" VALUE="'.$w_minutos_diarios[$i].'">');
         if(Nvl($w_segundo_turno,'')!=''){
           ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada2[$i].'">');
           ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida2[$i].'">');
@@ -635,34 +798,58 @@ function Inicial() {
         ShowHTML('          <input style="display:none;" readonly type="text" name="w_saldo_dia[]" class="stih" SIZE="5" MAXLENGTH="6" VALUE="'.$w_saldo_dia[$i].'">');
       } elseif ($w_feriado && $w_tp_feriado!='S') {
         if ($w_tp_feriado=='M') {
+          ShowHTML('          <input type="hidden" name="w_minutos_diarios[]" VALUE="'.$w_minutos_diarios[$i].'">');
           ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_entrada1[]" class="'.$w_classe.'" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
           ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_saida1[]" class="'.$w_classe.'" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
+          ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada2[$i].'">');
+          ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida2[$i].'">');          
           ShowHTML('          <td colspan=2><b>'.$w_nm_feriado.'</b></td>');
           ShowHTML('          <td><input readonly type="text" name="w_trabalhadas[]" class="stih" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_trabalhadas[$i].'">');
           ShowHTML('          <td><input readonly type="text" name="w_saldo_dia[]" class="stih" style="text-align:center;" SIZE="5" MAXLENGTH="6" VALUE="'.$w_saldo_dia[$i].'">');
         } elseif ($w_tp_feriado=='T') {
+          ShowHTML('          <input type="hidden" name="w_minutos_diarios[]" VALUE="'.$w_minutos_diarios[$i].'">');
           ShowHTML('          <td colspan=2><b>'.$w_nm_feriado.'</b></td>');
           ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_entrada1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
           ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_saida1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
+          ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada2[$i].'">');
+          ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida2[$i].'">');          
           ShowHTML('          <td><input readonly type="text" name="w_trabalhadas[]" class="stih" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_trabalhadas[$i].'">');
           ShowHTML('          <td><input readonly type="text" name="w_saldo_dia[]" class="stih" style="text-align:center;" SIZE="5" MAXLENGTH="6" VALUE="'.$w_saldo_dia[$i].'">');
           
         } else {
-          ShowHTML('          <td colspan="4"><b>'.$w_nm_feriado.'</b></td>');
           if(Nvl($w_segundo_turno,'')!=''){
-            ShowHTML('          <td>&nbsp;</td>');
-            ShowHTML('          <td>&nbsp;</td>');
+            if($w_sigla != 'F'){
+              ShowHTML('          <td colspan="4"><b>'.$w_nm_feriado.'</b></td>');
+              ShowHTML('          <td>&nbsp;</td>');
+              ShowHTML('          <td>&nbsp;</td>');
+            }else{
+              ShowHTML('          <td colspan="2"><b>'.$w_nm_feriado.'</b></td>');
+            }
+          }else{
+            if(substr($w_sigla,0,1) != 'F'){
+              ShowHTML('          <td colspan="4"><b>'.$w_nm_feriado.'</b></td>');
+            }else{
+              ShowHTML('          <td colspan="2"><b>'.$w_nm_feriado.'</b></td>');
+            }            
           }
+          ShowHTML('          <input type="hidden" name="w_minutos_diarios[]" VALUE="'.$w_minutos_diarios[$i].'">');
           ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada1[$i].'">');
           ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida1[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida1[$i].'">');
           if(Nvl($w_segundo_turno,'')!=''){
             ShowHTML('          <input style="display:none;" readonly type="text" name="w_entrada2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada2[$i].'">');
             ShowHTML('          <input style="display:none;" readonly type="text" name="w_saida2[]" class="'.$w_classe.'" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida2[$i].'">');
           }
-          ShowHTML('          <input style="display:none;" readonly type="text" name="w_trabalhadas[]" class="stih" SIZE="5" MAXLENGTH="5" VALUE="'.$w_trabalhadas[$i].'">');
-          ShowHTML('          <input style="display:none;" readonly type="text" name="w_saldo_dia[]" class="stih" SIZE="5" MAXLENGTH="6" VALUE="'.$w_saldo_dia[$i].'">');
+          if(substr($w_sigla,0,1) == 'F'){
+            ShowHTML('          <td><input readonly type="text" name="w_trabalhadas[]" class="stih" SIZE="5" MAXLENGTH="5" VALUE="'.minutos2horario(0).'">');
+            ShowHTML('          <td><input  readonly type="text" name="w_saldo_dia[]" class="stih" SIZE="5" MAXLENGTH="6" VALUE="'.'-'.($w_carga_diaria).'">');          
+          }else{
+            ShowHTML('          <input style="display:none;" readonly type="text" name="w_trabalhadas[]" class="stih" SIZE="5" MAXLENGTH="5" VALUE="'.$w_trabalhadas[$i].'">');
+            ShowHTML('          <input style="display:none;" readonly type="text" name="w_saldo_dia[]" class="stih" SIZE="5" MAXLENGTH="6" VALUE="'.$w_saldo_dia[$i].'">');
+          }
+          
         }
       } else {
+        ShowHTML('          <input type="hidden" name="w_minutos_diarios[]" VALUE="'.$w_minutos_diarios[$i].'">');
         ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_entrada1[]" class="'.$w_classe.'" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_entrada1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
         ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_saida1[]" class="'.$w_classe.'" style="text-align:center;" SIZE="5" MAXLENGTH="5" VALUE="'.$w_saida1[$i].'" onKeyDown="FormataHora(this,event);" onBlur="calculaDia('.$i.');">');
         if(Nvl($w_segundo_turno,'')!=''){
@@ -681,7 +868,7 @@ function Inicial() {
     ShowHTML('      <tr valign="top"><td>Total de Horas Trabalhadas:<td align="center"><input readonly type="text" name="w_total" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="">');
     ShowHTML('      <tr valign="top"><td>Total de Horas Extras (H.E.):<td align="center"><input readonly type="text" name="w_extras" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="">');
     ShowHTML('      <tr valign="top"><td>Total de Atrasos (H.At.):<td align="center"><input readonly type="text" name="w_atrasos" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="">');
-    ShowHTML('      <tr valign="top"><td>Saldo de Banco de horas do mês (H.E. - H.At.):<td align="center"><input readonly type="text" name="w_banco" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="">');
+    ShowHTML('      <tr valign="top"><td>Saldo de Banco de horas do mês<br>(H.E. - H.At.):<td align="center"><input readonly type="text" name="w_banco" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="">');
     ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>JORNADA DIÁRIA');    
     If(nvl($w_entrada_manha,'')!='') ShowHTML('      <tr valign="top"><td>Manhã:<td align="center">&nbsp;'.$w_entrada_manha.'-'.$w_saida_manha.'&nbsp;');
     If(nvl($w_entrada_tarde,'')!='') ShowHTML('      <tr valign="top"><td>Tarde:<td align="center">&nbsp;'.$w_entrada_tarde.'-'.$w_saida_tarde.'&nbsp;');
@@ -839,6 +1026,15 @@ function Inicial() {
 // Procedimento que executa as operações de BD
 // -------------------------------------------------------------------------
 function Grava() {
+  //print_r($_REQUEST);
+  for($i=1;$i<count($_REQUEST['w_trabalhadas']);$i++){
+    if(Nvl($_REQUEST['w_trabalhadas'][$i],'')!=''){
+      $minutos[$i] = horario2minutos('',$_REQUEST['w_trabalhadas'][$i]);
+      //$teste = array_sum($minutos);
+    }
+  }
+  echo minutos2horario(array_sum($minutos));
+  //exit();
   extract($GLOBALS);
   Cabecalho();
   ShowHTML('</HEAD>');  

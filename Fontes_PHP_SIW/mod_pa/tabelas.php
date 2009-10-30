@@ -262,8 +262,8 @@ function TipoDespacho() {
 
 
 function imprimir(){  
-   extract($GLOBALS);   
-   $w_chave  = $_REQUEST['w_chave'];
+  extract($GLOBALS);   
+  $w_chave  = $_REQUEST['w_chave'];
 
   include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
   $RS_Logo = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -272,30 +272,21 @@ function imprimir(){
     $p_logo='img/logo'.substr(f($RS_Logo,'logo'),(strpos(f($RS_Logo,'logo'),'.') ? strpos(f($RS_Logo,'logo'),'.')+1 : 0)-1,30);
   }
   
-  $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
-
-  //var_dump($RS);
-
-
-
-    foreach ($RS as $row) {$RS = $row; break;}
-    
-   
-    $w_unidade        = f($RS,'sq_unidade');
-    $w_assunto        = f($RS,'assunto');
-    $w_descricao      = f($RS,'descricao');
-    $w_destinacao_final    = f($RS,'destinacao_final');
-    $w_intermediario    = f($RS,'intermediario');
-    $w_data_limite      = formataDataEdicao(f($RS,'data_limite'));
-    $w_nome_unidade     = f($RS,'unidade');
-    $w_numero           = str_pad((int) f($RS,'numero'),2,"0",STR_PAD_LEFT);;
+  $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null, null,null, null, null);
+  foreach ($RS as $row) {$RS = $row; break;}
+  $w_unidade        = f($RS,'sq_unidade');
+  $w_assunto        = f($RS,'assunto');
+  $w_descricao      = f($RS,'descricao');
+  $w_destinacao_final    = f($RS,'destinacao_final');
+  $w_intermediario    = f($RS,'intermediario');
+  $w_data_limite      = formataDataEdicao(f($RS,'data_limite'));
+  $w_nome_unidade     = f($RS,'unidade');
+  $w_numero           = str_pad((int) f($RS,'numero'),2,"0",STR_PAD_LEFT);;
   $w_sigla      = f($RS,'sg_unidade');
   Cabecalho();
-    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   bodyOpen(null);
   ShowHTML('<center>');
-
-
   ShowHTML('<div style="width:470px; border: solid 7px #000"><p>&nbsp</p>');
   ShowHTML('<IMG ALIGN="center" SRC="'.LinkArquivo(null,$w_cliente,$p_logo,null,null,null,'EMBED').'"><p>');
   ShowHTML('<table border=1 cellspacing=0 bordercolor=black  style="width:400px;"  >');
@@ -359,7 +350,6 @@ function imprimir(){
   ShowHTML('</table><p>&nbsp;</p>');
   ShowHTML('</div>');
   ShowHTML('</center>');
-
 }
 
 // =========================================================================
@@ -372,29 +362,29 @@ function caixa() {
   
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_chave        = $_REQUEST['w_chave'];
-    $w_assunto      = $_REQUEST['w_assunto'];
-    $w_unidade      = $_REQUEST['w_unidade'];
-    $w_descricao    = $_REQUEST['w_descricao'];
+    $w_chave            = $_REQUEST['w_chave'];
+    $w_assunto          = $_REQUEST['w_assunto'];
+    $w_unidade          = $_REQUEST['w_unidade'];
+    $w_descricao        = $_REQUEST['w_descricao'];
     $w_destinacao_final = $_REQUEST['w_destinacao_final'];
     $w_intermediario    = $_REQUEST['w_intermediario'];
-    $w_data_limite    = $_REQUEST['w_data_limite'];
-  $w_nome_unidade     = $_REQUEST['w_nome_unidade'];
+    $w_data_limite      = $_REQUEST['w_data_limite'];
+    $w_nome_unidade     = $_REQUEST['w_nome_unidade'];
     $w_numero           = $_REQUEST['w_numero'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCaixa::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
+    $RS = db_getCaixa::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null, null,null, null, null);
     $RS = SortArray($RS,'numero','asc');
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
-    $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null);
+    $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null, null,null, null, null);
     foreach ($RS as $row) {$RS = $row; break;}
     
-    $w_cliente        = f($RS,'cliente');
-    $w_unidade        = f($RS,'sq_unidade');
-    $w_assunto        = f($RS,'assunto');
-    $w_descricao      = f($RS,'descricao');
-    $w_destinacao_final    = f($RS,'destinacao_final');
+    $w_cliente          = f($RS,'cliente');
+    $w_unidade          = f($RS,'sq_unidade');
+    $w_assunto          = f($RS,'assunto');
+    $w_descricao        = f($RS,'descricao');
+    $w_destinacao_final = f($RS,'destinacao_final');
     $w_intermediario    = f($RS,'intermediario');
     $w_data_limite      = formataDataEdicao(f($RS,'data_limite'));
     $w_nome_unidade     = f($RS,'nm_unidade');
@@ -475,7 +465,8 @@ function caixa() {
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
-        ShowHTML('          <A   onclick="window.open (\''.montaURL_JS($w_dir,$w_pagina.'IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;">Imprimir</A>&nbsp');
+        ShowHTML('          <A onclick="window.open (\''.montaURL_JS($w_dir,$w_pagina.'IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime o espelho da caixa.">ES</A>&nbsp');
+        ShowHTML('          <A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=WORD&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">LS</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 

@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
@@ -32,10 +32,16 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   }
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   if (f($RS,'processo')=='S') $w_tipo = 'PROCESSO'; else $w_tipo='DOCUMENTO';
-  $l_html.=chr(13).'      <tr><td colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td>';
+  $l_html.=chr(13).'      <tr><td colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='' || f($RS,'ativo')=='N') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td>';
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.$w_tipo_juntada.'</b></font></td>';
-  }
+  } elseif (f($RS,'sg_tramite')=='AS') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'sg_caixa'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO SETORIAL' : 'ARQUIVADO SETORIAL').'</b></font></td>';
+  } elseif (f($RS,'sg_tramite')=='AT') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'sg_arquivo_local'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO CENTRAL' : 'ARQUIVADO CENTRAL').'</b></font></td>';
+  } elseif (f($RS,'sg_tramite')=='EL') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
+  } 
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
   if ($l_identificacao=='S') {
@@ -143,12 +149,54 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   }
   
   if (f($RS,'processo')=='S') {
-    //Dados da Consulta
+    //Dados da autuação
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA AUTUAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data da autuação:</b></td>';
     $l_html.=chr(13).'       <td>'.FormataDataEdicao(f($RS,'data_autuacao')).'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Unidade autuadora:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+  } 
+
+  if (f($RS,'ativo')=='N') {
+    //Dados do arquivamento/eliminação
+    if (nvl(f($RS,'sq_caixa'),'')!='') {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO ARQUIVAMENTO SETORIAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Data do arquivamento:</b></td>';
+      $l_html.=chr(13).'       <td>'.FormataDataEdicao(f($RS,'data_setorial')).'</td></tr>';
+      if ($l_formato=='WORD') {
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade:</b></td>';
+        $l_html.=chr(13).'       <td>'.f($RS,'nm_unid_caixa').'</td></tr>';
+      } else {
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade:</b></td>';
+        $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_caixa'),f($RS,'sq_unid_caixa'),$TP).'</td></tr>';
+      } 
+      $l_html.=chr(13).'   <tr><td><b>Caixa:</b></td>';
+      $l_html.=chr(13).'       <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($RS,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($RS,'nr_caixa').'/'.f($RS,'sg_unid_caixa').'</a></td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Pasta:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'pasta').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Assunto:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'as_caixa').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Descrição:</b></td>';
+      $l_html.=chr(13).'       <td>'.crlf2br(f($RS,'ds_caixa')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Data Limite:</b></td>';
+      $l_html.=chr(13).'       <td>'.formataDataEdicao(f($RS,'dt_caixa')).'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Intermediário:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'in_caixa').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Destinação final:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'df_caixa').'</td></tr>';
+    }
+    if (f($RS,'sg_tramite')=='AT') {
+      if (nvl(f($RS,'sq_arquivo_local'),'')!='') {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DO ARQUIVAMENTO CENTRAL<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        $l_html.=chr(13).'   <tr><td><b>Data do arquivamento:</b></td>';
+        $l_html.=chr(13).'       <td>'.FormataDataEdicao(f($RS,'arquivo_data')).'</td></tr>';
+        $l_html.=chr(13).'   <tr><td><b>Localização:</b></td>';
+        $l_html.=chr(13).'       <td>'.f($RS,'nm_arquivo_local').'</td></tr>';
+      }
+    }
+    if (f($RS,'sg_tramite')=='EL') {
+      $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
+    }
   } 
 
   // Dados da juntada

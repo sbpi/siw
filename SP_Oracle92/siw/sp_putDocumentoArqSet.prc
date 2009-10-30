@@ -6,6 +6,7 @@ create or replace procedure sp_putDocumentoArqSet
    ) is
    
    w_tramite siw_tramite%rowtype;
+   w_data    date := sysdate;
 begin
    -- Recupera os dados do trâmite de arquivamento setorial
    select b.* into w_tramite 
@@ -19,8 +20,9 @@ begin
 
    -- Atualiza a tabela de documentos
    update pa_documento set
-       sq_caixa = p_caixa,
-       pasta    = p_pasta
+       sq_caixa      = p_caixa,
+       pasta         = p_pasta,
+       data_setorial = w_data
     where sq_siw_solicitacao = p_chave;
 
     -- Registra os dados da autuação
@@ -31,7 +33,7 @@ begin
         )
     (Select 
          sq_siw_solic_log.nextval,  p_chave,            p_usuario,
-         a.sq_siw_tramite,          sysdate,            'N',
+         a.sq_siw_tramite,          w_data,             'N',
          'Arquivamento setorial.'
         from siw_solicitacao a
        where a.sq_siw_solicitacao = p_chave

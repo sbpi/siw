@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -15,13 +15,17 @@ include_once($w_dir_volta.'classes/sp/db_getEspecieDocumento_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidade_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getNaturezaDoc_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getCaixa.php');
 include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
+include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once('visualGR.php');
+include_once('visualGT.php');
+include_once('visualCaixa.php');
 
 // =========================================================================
 //  /relatorio.php
@@ -265,6 +269,183 @@ function Tramitacao() {
 }
 
 // =========================================================================
+// Emite guias de transferência
+// -------------------------------------------------------------------------
+function Transferencia() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  // Recupera as variáveis utilizadas na filtragem
+  $p_protocolo    = $_REQUEST['p_protocolo'];
+  $p_chave        = $_REQUEST['p_chave'];
+  $p_unid_autua   = $_REQUEST['p_unid_autua'];
+  $p_nu_guia      = $_REQUEST['p_nu_guia'];
+  $p_ano_guia     = $_REQUEST['p_ano_guia'];
+  $p_ini          = $_REQUEST['p_ini'];
+  $p_fim          = $_REQUEST['p_fim'];
+
+  if ($O=='L') {
+    // Recupera todos os registros para a listagem
+    $RS = db_getCaixa::getInstanceOf($dbms,$p_chave,$w_cliente,null,null,null,$p_unid_autua,$p_nu_guia,$p_ano_guia,$p_ini,$p_fim,$SG);
+    if (Nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
+    } else {
+      $RS = SortArray($RS,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
+    }
+  } 
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  if ($O=='P') {
+    ScriptOpen('JavaScript');
+    FormataProtocolo();
+    FormataData();
+    SaltaCampo();
+    CheckBranco();
+    ValidateOpen('Validacao');
+    Validate('p_ini','Início','DATA','','10','10','','0123456789/');
+    Validate('p_fim','Término','DATA','','10','10','','0123456789/');
+    ShowHTML('  if ((theForm.p_ini.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_ini.value == \'\' && theForm.p_fim.value != \'\')) {');
+    ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+    ShowHTML('     theForm.p_ini.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    CompData('p_ini','Início','<=','p_fim','Término');
+    ShowHTML('  theForm.Botao.disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
+  } elseif ($O=='P') {
+    BodyOpen('onLoad=\'document.Form.p_protocolo.focus()\';');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Selecione a guia desejada para impressão, clicando sobre a operação <i>Emitir</i>.');
+    ShowHTML('  <li>A impressão não ocorre diretamente. Será gerado um arquivo no formato Word, que você poderá enviar para a impressora.');
+    ShowHTML('  <li>ATENÇÃO: recomenda-se salvar o arquivo gerado, ao invés de abri-lo diretamente.');
+    ShowHTML('  </ul></b></font></td>');
+    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td>');
+    if (MontaFiltro('GET')>'') {
+      ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
+    } else {
+      ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
+    } 
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.linkOrdena('Guia','arquivo_guia_numero').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Ano','arquivo_guia_ano').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Caixa','numero').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Assunto','assunto').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Protocolos','qtd').'</td>');
+    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) { 
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      $w_atual = '';
+      foreach ($RS1 as $row) {
+        if ($w_atual=='' || $w_atual!=f($row,'guia_tramite')) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td>'.f($row,'arquivo_guia_numero').'</td>');
+          ShowHTML('        <td>'.f($row,'arquivo_guia_ano').'</td>');
+          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
+          ShowHTML('        <td>'.f($row,'assunto').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
+          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'EmitirGT&R='.$w_pagina.$par.'&O=L&w_unidade='.f($row,'sq_unidade').'&w_formato=WORD&orientacao=PORTRAIT&w_nu_guia='.f($row,'arquivo_guia_numero').'&w_ano_guia='.f($row,'arquivo_guia_ano').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" target="GT">Emitir</A>&nbsp');
+          ShowHTML('        </td>');
+          ShowHTML('      </tr>');
+          $w_atual = f($row,'guia_tramite');
+        } else {
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td>&nbsp;</td>');
+          ShowHTML('        <td>&nbsp;</td>');
+          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
+          ShowHTML('        <td>'.f($row,'assunto').'</td>');
+          ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
+          ShowHTML('        <td>&nbsp;</td>');
+          ShowHTML('      </tr>');
+        }
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
+    ShowHTML('</tr>');
+  } elseif ($O=='P') {
+    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+    ShowHTML('  Orientação:<ul>');
+    ShowHTML('  <li>Informe quaisquer critérios de busca e clique sobre o botão <i>Aplicar filtro</i>.');
+    ShowHTML('  <li>Para pesquisa por período é obrigatório informar as datas de início e término.');
+    ShowHTML('  <li>Clicando sobre o botao <i>Aplicar filtro</i> sem informar nenhum critério de busca, serão exibidas todas as guias que você tem acesso.');
+    ShowHTML('  </ul></b></font></td>');
+    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,'L');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    SelecaoCaixa('<u>C</u>aixa:','C',"Selecione a caixa transferida.",$w_caixa,$w_cliente,null,'w_caixa','TRAMITE',null);
+    ShowHTML('      <tr valign="top">');
+    SelecaoUnidade('<U>U</U>nidade original da caixa:','U','Selecione a unidade que transferiu a caixa.',$p_unidade,null,'p_unidade','MOD_PA',null);
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Perío<u>d</u>o entre:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    ShowHTML('   <input class="STB" type="submit" name="Botao" value="Aplicar filtro">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ScriptClose();
+  } 
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+// =========================================================================
+// Rotina de visualização do conteúdo de uma caixa
+// -------------------------------------------------------------------------
+function ConteudoCaixa () {
+  extract($GLOBALS);
+  $w_chave     = $_REQUEST['w_chave'];
+  $w_formato   = $_REQUEST['w_formato'];
+  
+  if ($w_formato=='WORD') {
+    HeaderWord($_REQUEST['orientacao']); 
+  } else {
+    Cabecalho();
+    BodyOpen(null);
+  }
+  ShowHTML(VisualCaixa($w_chave,$w_formato));
+  Rodape();
+} 
+
+// =========================================================================
 // Emite etiqueta de processo
 // -------------------------------------------------------------------------
 function Etiqueta() {
@@ -464,9 +645,35 @@ function EmitirGR () {
   $w_unidade   = nvl($w_unidade,$_REQUEST['w_unidade']);
   $w_nu_guia   = nvl($w_nu_guia,$_REQUEST['w_nu_guia']);
   $w_ano_guia  = nvl($w_ano_guia,$_REQUEST['w_ano_guia']);
-
-  HeaderWord($_REQUEST['orientacao']);
+  $w_formato   = $_REQUEST['w_formato'];
+  
+  if ($w_formato=='WORD') {
+    HeaderWord($_REQUEST['orientacao']); 
+  } else {
+    Cabecalho();
+    BodyOpen(null);
+  }
   ShowHTML(VisualGR($w_unidade, $w_nu_guia, $w_ano_guia));
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de visualização da guia de transferência
+// -------------------------------------------------------------------------
+function EmitirGT () {
+  extract($GLOBALS);
+  $w_unidade   = nvl($w_unidade,$_REQUEST['w_unidade']);
+  $w_nu_guia   = nvl($w_nu_guia,$_REQUEST['w_nu_guia']);
+  $w_ano_guia  = nvl($w_ano_guia,$_REQUEST['w_ano_guia']);
+  $w_formato   = $_REQUEST['w_formato'];
+  
+  if ($w_formato=='WORD') {
+    HeaderWord($_REQUEST['orientacao']); 
+  } else {
+    Cabecalho();
+    BodyOpen(null);
+  }
+  ShowHTML(VisualGT($w_unidade, $w_nu_guia, $w_ano_guia, $formato));
   Rodape();
 } 
 
@@ -526,8 +733,11 @@ function Main() {
   switch ($par) {
     case 'ETIQUETA':        Etiqueta();        break;
     case 'EMITIRETIQUETA':  EmitirEtiqueta();  break;
+    case 'CONTEUDOCAIXA':   ConteudoCaixa();   break;
     case 'TRAMITE':         Tramitacao();      break;
+    case 'TRANSFERENCIA':   Transferencia();   break;
     case 'EMITIRGR':        EmitirGR();        break;
+    case 'EMITIRGT':        EmitirGT();        break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

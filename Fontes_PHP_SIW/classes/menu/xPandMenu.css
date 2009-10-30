@@ -378,3 +378,22 @@ table ul li{
 .rh_fieldset LEGEND{
   font-weight: bold;   
 }
+
+#folhadeponto{
+ color:#333333; 
+}
+
+#folhadeponto tr:FIRST-CHILD td{
+  background-color:#DFDFDF;
+  border-right: solid 0.01em #CFCFCF;
+}
+
+#folhadeponto td{
+  border: none;
+  border-top: solid 0.01em #DFDFDF;
+  border-right: solid 0.01em #DFDFDF;
+}
+
+#folhadeponto input{
+  border: solid 0.01em #AAAAAA;
+}

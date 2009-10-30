@@ -56,6 +56,7 @@ begin
                                   )                    c4 on (c.sq_siw_solicitacao   = c4.sq_siw_solicitacao)
                    left      join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
                      left    join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
+                       left  join pa_parametro         d7 on (d1.sq_tipo_despacho    = d7.despacho_arqcentral)
                      left    join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
                        left  join pa_unidade           d5 on (d2.sq_unidade          = d5.sq_unidade)
                        left  join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
@@ -75,9 +76,9 @@ begin
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          --and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_unid_posse is null or (p_unid_posse  is not null and c.unidade_int_posse  = p_unid_posse))
-         and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim+1))
+         and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_restricao = 'RELPAETIQ' or 
-              (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null)
+              (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null)
              )
          and (p_tipo       = 1 or
               (p_tipo      = 2 and (b1.acesso > 0 or (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem)))
@@ -147,7 +148,7 @@ begin
          and ((p_restricao = 'PADAUTUA'   and db.cliente is not null and c.data_autuacao is null) or
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
-              (p_restricao = 'PADTRANSF'  and (d4.cliente is not null or d5.cliente is not null and b3.ativo = 'S')) or
+              (p_restricao = 'PADTRANSF'  and (d5.cliente is not null or (d4.cliente is not null and b3.ativo = 'S'))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
               (p_restricao = 'PADEMPREST' and d6.cliente is not null)
@@ -183,6 +184,7 @@ begin
                                   )                    b1 on (b.sq_siw_solicitacao   = b1.sq_siw_solicitacao)
                inner         join eo_unidade           b2 on (b.sq_unidade           = b2.sq_unidade)
                  left        join pa_documento         b3 on (b.sq_solic_pai         = b3.sq_siw_solicitacao)
+               inner         join siw_tramite          b4 on (b.sq_siw_tramite       = b4.sq_siw_tramite)
                inner         join pa_documento         c  on (b.sq_siw_solicitacao   = c.sq_siw_solicitacao)
                  inner       join eo_unidade           c1 on (c.unidade_autuacao     = c1.sq_unidade)
                  inner       join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
@@ -221,18 +223,20 @@ begin
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
-         and (p_despacho   is null or (p_despacho    is not null and ((p_despacho not in (a1.despacho_autuar,
-                                                                                          a1.despacho_anexar,
-                                                                                          a1.despacho_apensar,
-                                                                                          a1.despacho_desmembrar
-                                                                                         ) and
-                                                                       c.sq_documento_pai is null
-                                                                      ) or
-                                                                      (p_despacho = a1.despacho_autuar     and c.processo = 'N') or
-                                                                      (p_despacho = a1.despacho_anexar     and c.sq_documento_pai is null) or
-                                                                      (p_despacho = a1.despacho_apensar    and c.sq_documento_pai is null) or
-                                                                      (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) = 0) 
-                                                                     )
+         and (p_despacho   is null or (p_despacho    is not null and 
+                                       b4.ativo      = 'S' and
+                                       ((p_despacho not in (a1.despacho_autuar,
+                                                            a1.despacho_anexar,
+                                                            a1.despacho_apensar,
+                                                            a1.despacho_desmembrar
+                                                           ) and
+                                         c.sq_documento_pai is null
+                                        ) or
+                                        (p_despacho = a1.despacho_autuar     and c.processo = 'N') or
+                                        (p_despacho = a1.despacho_anexar     and c.sq_documento_pai is null) or
+                                        (p_despacho = a1.despacho_apensar    and c.sq_documento_pai is null) or
+                                        (p_despacho = a1.despacho_desmembrar and c.sq_documento_pai is null and coalesce(c5.qtd,0) = 0) 
+                                       )
                                       )
              )
          and (p_tipo       = 1 or
@@ -257,7 +261,8 @@ begin
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
              d1.nome as nm_despacho,
              case when d.unidade_destino is null then d4.nome_resumido else d2.nome end as nm_unid_origem,    d2.sigla as sg_unid_origem,
-             d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest
+             d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest,
+             d7.despacho_arqcentral
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
                inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
@@ -275,6 +280,7 @@ begin
                                                             d.recebimento          is null
                                                            )
                    inner   join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
+                   left    join pa_parametro         d7 on (d1.sq_tipo_despacho    = d7.despacho_arqcentral)
                    inner   join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
                      inner join pa_unidade           d5 on (d2.sq_unidade          = d5.sq_unidade)
                      inner join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
