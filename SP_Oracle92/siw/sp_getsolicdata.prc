@@ -1055,7 +1055,7 @@ begin
                 d.circular,           d.copias,                      d.volumes,
                 d.data_recebimento,   d.unidade_int_posse,           d.pessoa_ext_posse,
                 d.tipo_juntada,       d.sq_caixa,                    d.pasta,
-                d.data_setorial,      d.data_central,
+                d.data_setorial,      d.data_central,                d.observacao_setorial,
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,

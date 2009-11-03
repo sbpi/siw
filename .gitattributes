@@ -4229,6 +4229,7 @@ SP_Oracle92/siw/sp_putDocumentoArqCen.prc -text
 SP_Oracle92/siw/sp_putDocumentoArqSet.prc -text
 SP_Oracle92/siw/sp_putDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_putDocumentoAutua.prc -text
+SP_Oracle92/siw/sp_putDocumentoCaixa.prc -text
 SP_Oracle92/siw/sp_putDocumentoDesm.prc -text
 SP_Oracle92/siw/sp_putDocumentoEnvio.prc -text
 SP_Oracle92/siw/sp_putDocumentoGeral.prc -text

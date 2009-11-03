@@ -1,8 +1,7 @@
 create or replace procedure sp_putDocumentoArqSet
    (p_chave               in  number,
     p_usuario             in  number,
-    p_caixa               in  number,
-    p_pasta               in varchar2
+    p_observacao          in  varchar2
    ) is
    
    w_tramite siw_tramite%rowtype;
@@ -20,9 +19,8 @@ begin
 
    -- Atualiza a tabela de documentos
    update pa_documento set
-       sq_caixa      = p_caixa,
-       pasta         = p_pasta,
-       data_setorial = w_data
+       observacao_setorial = p_observacao,
+       data_setorial       = w_data
     where sq_siw_solicitacao = p_chave;
 
     -- Registra os dados da autuação
@@ -34,7 +32,7 @@ begin
     (Select 
          sq_siw_solic_log.nextval,  p_chave,            p_usuario,
          a.sq_siw_tramite,          w_data,             'N',
-         'Arquivamento setorial.'
+         'Arquivamento setorial: '||p_observacao
         from siw_solicitacao a
        where a.sq_siw_solicitacao = p_chave
     );

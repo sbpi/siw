@@ -27,7 +27,9 @@ begin
      Update siw_solicitacao set sq_siw_tramite = w_tramite.sq_siw_tramite, conclusao = w_data Where sq_siw_solicitacao = crec.chave;
   
      -- Atualiza a tabela de documentos
-     update pa_documento set data_central  = w_data where sq_siw_solicitacao = crec.chave;
+     update pa_documento 
+        set data_central  = w_data 
+     where sq_siw_solicitacao = crec.chave;
   
      -- Atualiza a tabela de caixas
      update pa_caixa set sq_arquivo_local = p_local, arquivo_data = w_data where sq_caixa = p_chave;
