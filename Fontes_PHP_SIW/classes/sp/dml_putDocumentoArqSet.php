@@ -9,12 +9,11 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 */
 
 class dml_putDocumentoArqSet {
-   function getInstanceOf($dbms, $chave, $usuario, $p_caixa, $p_pasta) {
+   function getInstanceOf($dbms, $chave, $usuario, $p_observacao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putDocumentoArqSet';
      $params=array('p_chave'              =>array(tvl($chave),                              B_INTEGER,        32),
                    'p_usuario'            =>array(tvl($usuario),                            B_INTEGER,        32),
-                   'p_caixa'              =>array(tvl($p_caixa),                            B_INTEGER,        32),
-                   'p_pasta'              =>array(tvl($p_pasta),                            B_VARCHAR,        20)
+                   'p_observacao'         =>array(tvl($p_observacao),                       B_VARCHAR,      2000)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

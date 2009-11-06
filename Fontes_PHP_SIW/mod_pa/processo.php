@@ -924,15 +924,14 @@ function Arquivar() {
 
   // Recupera os dados do documento
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-  if (count($RS)>0) $w_processo           = f($RS,'processo');
+  if (count($RS)>0) $w_processo = f($RS,'processo');
 
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  Validate('w_caixa','Caixa para arquivamento','SELECT',1,1,18,'','0123456789');
-  Validate('w_pasta','Pasta','',1,1,20,'1','1');
+  Validate('w_observacao','Observações sobre o acondicionamento do protocolo','1','1',1,2000,'1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   // Se não for encaminhamento
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -944,7 +943,7 @@ function Arquivar() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } else {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
   }
   ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
   ShowHTML('<HR>');
@@ -984,11 +983,7 @@ function Arquivar() {
   $RS_Unid = db_getUorgData::getInstanceOf($dbms,f($RS,'unidade_int_posse'));
   ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Unid,'nome').'</b></td></tr>');
   ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
-  ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td><table border=0 width="100%" cellpadding=0 cellspacing=0>');
-  SelecaoCaixa('<u>C</u>aixa:','C',"Selecione a caixa para arquivamento.",$w_caixa,$w_cliente,nvl(f($RS,'unidade_int_posse'),0),'w_caixa','TRAMITE',null);
-  ShowHTML('      <td><b><U>P</U>asta:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="w_pasta" size="10" maxlength="20" value="'.$w_pasta.'"></td>');
-  ShowHTML('    </table>');
-  
+  ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
   ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
   ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td colspan=3 align="center"><hr>');
@@ -1364,7 +1359,7 @@ function Grava() {
   } elseif ($SG=='PADTRANSF') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoArqSet::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_caixa'],$_REQUEST['w_pasta']);
+      dml_putDocumentoArqSet::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_observacao']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Arquivamento setorial realizado com sucesso!\');');

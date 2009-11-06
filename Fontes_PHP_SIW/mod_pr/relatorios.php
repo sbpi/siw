@@ -684,7 +684,7 @@ function Rel_Executivo() {
       CabecalhoRelatorio($w_cliente,$dados,4);
       $w_embed = 'HTML';
     }
-    
+    //die($w_embed);
     ShowHTML('<div align="center">');
     ShowHTML('<table width="95%" border="0" cellspacing="3">');
     //ShowHTML('   <tr><td colspan="3"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -705,7 +705,7 @@ function Rel_Executivo() {
               //ShowHTML('<br clear=all style="page-break-before:always">');
               ShowHTML('</table><br clear=all style="page-break-before:always">');
               CabecalhoWord($w_cliente,$dados,$w_pag);
-              ShowHTML('   <table><tr><td colspan="3" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.nomeMes(date("m")).'/'.$w_ano.'</b></td></tr>');
+              ShowHTML('   <table><tr><td colspan="3" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.nomeMes(date("m")-1).'/'.$w_ano.'</b></td></tr>');
             } else {
               ShowHTML('    <tr><td colspan="3"><br style="page-break-after:always"></td></tr>');
             }
@@ -792,7 +792,7 @@ function Rel_Executivo() {
               //if(($w_restricao=='PROPREV'&& $p_prevista=='S')||($w_restricao=='PROREPORT'&& $p_realizada=='S')||($w_restricao=='PROPEND'&& $p_pendente=='S')||($w_restricao=='PROENTR'&& $p_proximo=='S')) {
                 ShowHTML('          <tr><td bgColor="#f0f0f0" colspan="5" height="30"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
                 $RS1 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
-                $RS1 = SortArray($RS1,'cd_ordem','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
+                $RS1 = SortArray($RS1,'ordenacao','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
                 if(count($RS1)==0) {
                   ShowHTML('          <tr><td colspan="5" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
                 } else {
@@ -1086,8 +1086,8 @@ function Rel_Executivo() {
   }
   ShowHTML('</table>');
   ShowHTML('</center>');
-  if     ($w_tipo=='PDF')  RodapePDF();
-  elseif ($w_tipo!='WORD') Rodape();
+  if     ($p_tipo == 'PDF')  RodapePDF();
+  elseif ($p_tipo != 'WORD') Rodape();
 } 
 
 // =========================================================================

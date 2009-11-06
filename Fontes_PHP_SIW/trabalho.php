@@ -144,12 +144,25 @@ function Mesa() {
   if (nvl($w_pessoal,'')!='') {
     //Verifica se o usuário tem contrato de trabalho  
     $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
-    if (count($RS1)>0) ShowHTML('      <a href="mod_rh/folha.php?par=inicial&O=L&TP='.$TP.' - Folha de ponto" title="Clique para acessar a folha de ponto." target="folha"><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    if (count($RS1)>0) {
+      //Verifica se os horários da jornada diária foram preenchidos
+      foreach($RS1 as $row) { $RS1 = $row; break; }
+      if (nvl(f($row,'entrada_manha'),'')=='' && nvl(f($row,'entrada_tarde'),'')=='' && nvl(f($row,'entrada_noite'),'')=='') {
+        $w_erro = true;
+      } else {
+        $w_erro = false;
+      }
+      if ($w_erro) {
+        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="alert(\'Jornada diária não informada no contrato. Entre em contato com os gestores de pessoal!\');" title="Pendente gestores de pessoal informarem jornada diária de trabalho no contrato."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      } else {
+        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_rh/folha.php?par=inicial&O=L&TP='.$TP.' - Folha de ponto').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a folha de ponto."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      }
+    }
   }
 
   // Se o geo-referenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
   if (f($RS_Cliente,'georeferencia')=='S') {
-    ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas geo-referenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
   if ($_SESSION['DBMS']!=5) {

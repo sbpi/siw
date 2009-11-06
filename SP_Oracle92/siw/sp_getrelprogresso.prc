@@ -90,6 +90,7 @@ begin
          select a.sq_projeto_etapa, a.descricao, a.pacote_trabalho, a.ordem, a.titulo nm_etapa, a.sq_pessoa, 
                 a.fim_previsto, a.inicio_previsto, a.situacao_atual, a.perc_conclusao, a.fim_real, a.inicio_real,
                 montaOrdem(a.sq_projeto_etapa) as cd_ordem,
+                montaOrdem(a.sq_projeto_etapa, 'ordenacao') as ordenacao,
                 SolicRestricao(a.sq_siw_solicitacao, a.sq_projeto_etapa) as restricao,
                 b.sq_siw_solicitacao as sq_projeto,b.objetivo_superior, c.codigo_interno, c.titulo as nm_projeto, 
                 c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,

@@ -809,6 +809,8 @@ Fontes_PHP_SIW/classes/sp/db_getFormationList.php -text
 Fontes_PHP_SIW/classes/sp/db_getFuncao_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPColaborador.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPContrato.php -text
+Fontes_PHP_SIW/classes/sp/db_getGPFolhaPontoDiario.php -text
+Fontes_PHP_SIW/classes/sp/db_getGPFolhaPontoMensal.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getGPTipoAfast.php -text
@@ -1160,6 +1162,7 @@ Fontes_PHP_SIW/classes/sp/dml_putDocumentoArqCen.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoArqSet.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAssunto.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoAutua.php -text
+Fontes_PHP_SIW/classes/sp/dml_putDocumentoCaixa.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoDesm.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putDocumentoGeral.php -text
@@ -1192,6 +1195,8 @@ Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPTipoAfast.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGpDesempenho.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGpPontoDiario.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGpPontoMensal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putHorizonte_PE.php -text
