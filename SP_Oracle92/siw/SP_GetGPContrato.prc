@@ -46,6 +46,12 @@ begin
                 e.entrada_tarde, e.saida_tarde, e.entrada_noite, e.saida_noite, e.sabado, e.domingo, e.centro_custo,
                 minutos2horario(e.minutos_diarios) as carga_diaria, e.minutos_diarios, dados_solic(e.centro_custo) as dados_cc,
                 e.banco_horas_saldo, e.banco_horas_data,
+                retornaBancoHoras(e.sq_contrato_colaborador, 
+                                  1, 
+                                  to_char(e.inicio,'yyyymm'), 
+                                  case when to_char(add_months(sysdate,-1),'yyyymm') < to_char(e.inicio,'yyyymm') then to_char(e.inicio,'yyyymm') else to_char(add_months(coalesce(p_dt_fim,sysdate),-1),'yyyymm') end, 
+                                  null
+                                 ) as banco_horas_mensal,
                 h.sigla||' ('||g.nome||')' local, g.ramal, h.nome nm_unidade_exercicio, h.sigla sg_unidade_exercicio,
                 i.nome nm_modalidade_contrato, j.nome nm_posto_trabalho, 
                 l.nome nm_unidade_lotacao, l.sigla sg_unidade_lotacao,

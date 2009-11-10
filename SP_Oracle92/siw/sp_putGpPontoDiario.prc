@@ -3,11 +3,11 @@ create or replace procedure sp_putGpPontoDiario
     p_contrato                 in  number,
     p_data                     in  date,
     p_primeira_entrada         in  varchar2,
-    p_primeira_saida           in  varchar2,
-    p_segunda_entrada          in  varchar2,    
-    p_segunda_saida            in  varchar2,        
-    p_horas_trabalhadas        in  varchar2,            
-    p_saldo_diario             in  varchar2                
+    p_primeira_saida           in  varchar2 default null,
+    p_segunda_entrada          in  varchar2 default null,    
+    p_segunda_saida            in  varchar2 default null,
+    p_horas_trabalhadas        in  varchar2 default null,
+    p_saldo_diario             in  varchar2 default null
    ) is
 begin
     -- Grava as informações de folha de ponto
