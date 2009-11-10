@@ -66,7 +66,7 @@ begin
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (p_restricao = 'RELPAETIQ' or 
-              (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem and b.sq_solic_pai is null)
+              (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or w.sq_pessoa = d.cadastrador) and b.sq_solic_pai is null)
              )
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
@@ -87,7 +87,7 @@ begin
       -- Recupera guias de tramitação
       open p_result for
       select b.inicio, b.fim, b.sq_siw_solicitacao, b.sq_solic_pai, b.descricao,
-             c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial,
+             c.numero_original, c.observacao_setorial, c.sq_caixa, c.pasta, c.data_setorial, c.ano,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,

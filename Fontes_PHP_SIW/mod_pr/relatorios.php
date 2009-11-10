@@ -712,8 +712,8 @@ function Rel_Executivo() {
           }
           ShowHTML('   <tr><td colspan="3"><hr NOSHADE color=#000000 size=2></td></tr>');
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
-          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>'.f($row,'nm_programa').'</big></b></div></td></tr>');
-          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>Projeto: '.f($row,'nm_projeto').'</big></b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>Programa: '.f($row,'sg_programa').' - '.f($row,'nm_programa').'</big></b></div></td></tr>');
+          ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>Projeto: '.f($row,'codigo_interno').' - '.f($row,'nm_projeto').'</big></b></div></td></tr>');
           if ($w_embed!='WORD') {
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade'),f($row,'sq_unidade'),$TP).'</b></div></td></tr>');
@@ -792,7 +792,6 @@ function Rel_Executivo() {
               //if(($w_restricao=='PROPREV'&& $p_prevista=='S')||($w_restricao=='PROREPORT'&& $p_realizada=='S')||($w_restricao=='PROPEND'&& $p_pendente=='S')||($w_restricao=='PROENTR'&& $p_proximo=='S')) {
                 ShowHTML('          <tr><td bgColor="#f0f0f0" colspan="5" height="30"><div align="justify"><font size="2"><b>'.$w_label.'</b></font></div></td>');
                 $RS1 = db_getRelProgresso::getInstanceOf($dbms,$w_cliente,$p_plano, $p_objetivo, $p_programa, f($row,'sq_projeto'),$p_inicio,$p_fim,$w_restricao);
-                $RS1 = SortArray($RS1,'ordenacao','asc','fim_previsto','asc','sq_projeto_etapa','asc','fim','asc','nm_tarefa','asc');
                 if(count($RS1)==0) {
                   ShowHTML('          <tr><td colspan="5" height=30 align="center"><b>Nenhuma '.$w_mensagem.'.</b></font></td>');
                 } else {

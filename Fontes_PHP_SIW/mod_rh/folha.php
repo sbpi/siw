@@ -130,11 +130,12 @@ function Inicial() {
     
   //Recupera os dados do contrato
   if (nvl($w_chave,'')!='') {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,$w_usuario,null,null,null,null,null,null,null,formataDataEdicao($w_dt_fim),null,null);
   } else {
-    $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+    $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,formataDataEdicao($w_dt_fim),null,null);
     $RSContrato = SortArray($RSContrato,'fim','asc');
   }
+  //print_r($RSContrato);
   foreach($RSContrato as $row) { $RSContrato = $row; break; }
   $w_contrato             = f($RSContrato,'chave');
   $w_inicio_contrato      = formataDataEdicao(f($RSContrato,'inicio'));
@@ -148,22 +149,30 @@ function Inicial() {
   $w_saida_noite          = f($RSContrato,'saida_noite');
   $w_sabado               = f($RSContrato,'sabado');    
   $w_domingo              = f($RSContrato,'domingo');
+  $w_saldo_banco          = f($RSContrato,'banco_horas_saldo');
+  $w_saldo_meses          = f($RSContrato,'banco_horas_mensal');
+  $w_trata_extras         = f($RSContrato,'trata_extras');
+  $w_tot_banco            = horario2minutos('',$w_saldo_banco) + horario2minutos('',$w_saldo_meses);
   $w_minutos_tolerancia   = f($RS_Parametro,'minutos_tolerancia');
   $w_tipo_tolerancia      = f($RS_Parametro,'tipo_tolerancia');
-  $w_trata_extras         = f($RS_Parametro,'trata_extras');
+  
   if(Nvl($w_trata_extras,'')!= '' && Nvl($w_trata_extras,'')!= 'N'){
     $w_limite_diario_extras = f($RS_Parametro,'limite_diario_extras'); 
   }else{
     $w_limite_diario_extras = '00:00';
   }
-  $w_limite = minutos2horario(horario2minutos('',$w_carga_diaria) + horario2minutos('',$w_limite_diario_extras)); 
+echo $w_trata_extras.$w_limite_diario_extras;  
+  //Cálculo da tolerância de horas extras  
+  $w_limite = minutos2horario(horario2minutos('',$w_carga_diaria) + $w_minutos_tolerancia + horario2minutos('',$w_limite_diario_extras)); 
   
   
+  //Informações da folha de ponto diária  
   $RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms,$w_contrato,substr($w_mes,3,4).substr($w_mes,0,2));
   foreach ($RSFolha as $row){
     $w_dias[intVal(substr(formataDataEdicao(f($row,'data')),0,2))]=$row;
   }
-  
+
+  //Informações da folha de ponto mensal
   $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms,$w_contrato,substr($w_mes,3,4).substr($w_mes,0,2));
   foreach ($RSMensal as $row) $RSMensal = $row;
   $w_total   = Nvl(f($RSMensal,'horas_trabalhadas'),'00:00');
@@ -203,7 +212,7 @@ function Inicial() {
       $w_minutos_segundo_turno = 0;
     }    
   }
-  //$w_minutos_diarios = $w_minutos_primeiro_turno + $w_minutos_segundo_turno;
+  
   //Recupera datas especiais do mês
   include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
   $RS_Ano = db_getDataEspecial::getInstanceOf($dbms,$w_cliente,null,date('Y',$w_dt_inicio),'S',null,null,null);
@@ -223,35 +232,10 @@ function Inicial() {
     $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
 
     /* Cria arrays com cada dia do período, 
-     * definindo o texto e a cor de fundo para 
-     * exibição na folha de ponto
-     */
-    /*foreach($RS_Viagem as $row) {
-      $w_ini_viagem = f($row,'inicio');
-      $w_fim_viagem = f($row,'fim');
-      for ($i=$w_ini_viagem; $i<=$w_fim_viagem; $i=addDays($i,1)) {
-        if (date('m/Y',$i)==$w_mes) {
-          if ($i==$w_ini_viagem) {
-            $w_feriados[date('j',$i)]['nome']  = 'VIAGEM (SAÍDA '.date('H:i',f($row,'phpdt_saida')).')';
-            $w_feriados[date('j',$i)]['saida'] = date('H:i',f($row,'phpdt_saida'));
-            
-            if (date('H',f($row,'phpdt_saida'))>18) $w_feriados[date('j',$i)]['tipo'] = 'S';
-            elseif (date('H',f($row,'phpdt_saida'))>13) $w_feriados[date('j',$i)]['tipo'] = 'M';
-            else $w_feriados[date('j',$i)]['tipo'] = 'N';
-            
-          } elseif ($i==$w_fim_viagem) {
-            $w_feriados[date('j',$i)]['nome'] = 'VIAGEM (CHEGADA '.date('H:i',f($row,'phpdt_chegada')).')';
-            $w_feriados[date('j',$i)]['chegada'] = date('H:i',f($row,'phpdt_chegada'));            
-            if     (date('H',f($row,'phpdt_chegada'))<18) $w_feriados[date('j',$i)]['tipo'] = 'S';
-            elseif (date('H',f($row,'phpdt_chegada'))<14) $w_feriados[date('j',$i)]['tipo'] = 'T';
-            else $w_feriados[date('j',$i)]['tipo'] = 'N';
-          } else {
-            $w_feriados[date('j',$i)]['nome'] = 'VIAGEM';
-            $w_feriados[date('j',$i)]['tipo'] = 'N';
-          }
-        }
-      }
-    }*/
+    * definindo o texto e a cor de fundo para 
+    * exibição na folha de ponto
+    */
+    
     foreach($RS_Viagem as $row) {
       $w_ini_viagem = f($row,'inicio');
       $w_fim_viagem = f($row,'fim');
@@ -529,18 +513,27 @@ function Inicial() {
   ShowHTML('  var tipo_tolerancia    = '.$w_tipo_tolerancia.';');
   ShowHTML('  var fator              = 0;');
   ShowHTML('  if (entrada1!="" && saida1!="") {');
-  ShowHTML('    var minutos1 = parseInt(entrada1.substring(0,2)*60,10) + parseInt(entrada1.substring(3),10)');
-  ShowHTML('    var minutos2 = parseInt(saida1.substring(0,2)*60,10) + parseInt(saida1.substring(3),10)');
+  ShowHTML('    var minutos1 = parseInt(entrada1.substring(0,2)*60,10) + parseInt(entrada1.substring(3),10);');
+  ShowHTML('    var minutos2 = parseInt(saida1.substring(0,2)*60,10) + parseInt(saida1.substring(3),10);');
   ShowHTML('    var saldo1 = minutos2 - minutos1;');
+  ShowHTML('  } else {');
+  ShowHTML('    var minutos1 = 0;');
+  ShowHTML('    var minutos2 = 0;');
+  ShowHTML('    var saldo1 = 0;');
   ShowHTML('  }');
   ShowHTML('  if (entrada2!="" && saida2!="") {');
   ShowHTML('    var minutos3 = parseInt(entrada2.substring(0,2)*60,10) + parseInt(entrada2.substring(3),10)');
   ShowHTML('    var minutos4 = parseInt(saida2.substring(0,2)*60,10) + parseInt(saida2.substring(3),10)');
   ShowHTML('    var saldo2 = minutos4 - minutos3;');
+  ShowHTML('  } else {');
+  ShowHTML('    var minutos3 = 0;');
+  ShowHTML('    var minutos4 = 0;');
+  ShowHTML('    var saldo2 = 0;');
   ShowHTML('  }');
   ShowHTML('  if (saldo1!="" && saldo2!="") saldo3 = saldo1 + saldo2;');
   ShowHTML('  else if (saldo1!="" && saldo2=="") saldo3 = saldo1;');
   ShowHTML('  else if (saldo1=="" && saldo2!="") saldo3 = saldo2;');
+  ShowHTML('  else saldo3 = 0;');
   ShowHTML('  var saldo4 = parseInt(saldo3-(minutos_diarios),10);');
   ShowHTML('  if (saldo4!=""){');
   ShowHTML('    if(minutos_diarios > 0 && minutos_diarios > saldo3){');
@@ -572,8 +565,11 @@ function Inicial() {
   ShowHTML('  if (saldo1!="" || saldo2!="") {');
   ShowHTML('    document.Form["w_trabalhadas[]"][dia].value = saldo;');
   ShowHTML('    document.Form["w_saldo_dia[]"][dia].value = saldo_dia;');
-  ShowHTML('    calculaMes();');
+  ShowHTML('  } else {');
+  ShowHTML('    document.Form["w_trabalhadas[]"][dia].value = "";');
+  ShowHTML('    document.Form["w_saldo_dia[]"][dia].value = "";');
   ShowHTML('  }');
+  ShowHTML('  calculaMes();');
   ShowHTML('}');
   
   ShowHTML('function calculaMes() {');
@@ -610,25 +606,88 @@ function Inicial() {
   ShowHTML('   }');
   ShowHTML('   tot_horas = parseInt(tot_trabalho/60,10);');
   ShowHTML('   tot_minutos = tot_trabalho - (tot_horas*60);');
-  ShowHTML('   trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   if (tot_horas<10) {');
+  ShowHTML('     trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   } else {');
+  ShowHTML('     trabalhadas = tot_horas + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   }');
   ShowHTML('   theForm.w_total.value = trabalhadas;');
   
   ShowHTML('   tot_horas = Math.abs(parseInt(tot_atraso/60,10));');
   ShowHTML('   tot_minutos = Math.abs(tot_atraso) - (tot_horas*60);');
-  ShowHTML('   trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   if (tot_horas<10) {');
+  ShowHTML('     trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   } else {');
+  ShowHTML('     trabalhadas = tot_horas + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   }');
   ShowHTML('   theForm.w_atrasos.value = trabalhadas;');
 
   ShowHTML('   tot_horas = parseInt(tot_extra/60,10);');
   ShowHTML('   tot_minutos = tot_extra - (tot_horas*60);');
-  ShowHTML('   trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   if (tot_horas<10) {');
+  ShowHTML('     trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   } else {');
+  ShowHTML('     trabalhadas = tot_horas + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   }');
   ShowHTML('   theForm.w_extras.value = trabalhadas;');
 
   ShowHTML('   tot_banco = tot_banco - tot_atraso + tot_extra;');
-  ShowHTML('   if (tot_banco<0) sinal = "-";');
+  ShowHTML('   if (tot_banco<0) sinal = "-"; else sinal = "";');
   ShowHTML('   tot_horas = Math.abs(parseInt(tot_banco/60,10));');
   ShowHTML('   tot_minutos = Math.abs(tot_banco) - (tot_horas*60);');
-  ShowHTML('   trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
-  ShowHTML('   theForm.w_banco.value = sinal + trabalhadas;');
+  ShowHTML('   if (tot_horas<10) {');
+  ShowHTML('     trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   } else {');
+  ShowHTML('     trabalhadas = tot_horas + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   }');
+  if(Nvl($w_trata_extras,'')!= '' && Nvl($w_trata_extras,'')!= 'N'){
+    ShowHTML('   theForm.w_banco.value = sinal + trabalhadas;');
+    ShowHTML('   theForm.w_banco1.value = sinal + trabalhadas;');
+  }else{
+    ShowHTML('   theForm.w_banco.value  = "00:00";');
+    ShowHTML('   theForm.w_banco1.value = "00:00";');  
+  }
+  
+
+  // Controle do banco de horas
+  ShowHTML('   tempo = "'.$w_saldo_banco.'";');
+  ShowHTML('   if (tempo.substr(0,1)=="-") {');
+  ShowHTML('     var array = tempo.substr(1).split(":");');
+  ShowHTML('     horas   = parseInt(array[0]*60,10);');
+  ShowHTML('     minutos = parseInt(array[1],10);');
+  ShowHTML('     sinal = -1;');
+  ShowHTML('   } else {');
+  ShowHTML('     var array = tempo.split(":");');
+  ShowHTML('     horas   = parseInt(array[0]*60,10);');
+  ShowHTML('     minutos = parseInt(array[1],10);');
+  ShowHTML('     sinal = 1;');
+  ShowHTML('   }');
+  ShowHTML('   var saldo_ini = sinal * (horas + minutos);');
+  
+  ShowHTML('   tempo = "'.$w_saldo_meses.'";');
+  ShowHTML('   if (tempo.substr(0,1)=="-") {');
+  ShowHTML('     var array = tempo.substr(1).split(":");');
+  ShowHTML('     horas   = parseInt(array[0]*60,10);');
+  ShowHTML('     minutos = parseInt(array[1],10);');
+  ShowHTML('     sinal = -1;');
+  ShowHTML('   } else {');
+  ShowHTML('     var array = tempo.split(":");');
+  ShowHTML('     horas   = parseInt(array[0]*60,10);');
+  ShowHTML('     minutos = parseInt(array[1],10);');
+  ShowHTML('     sinal = 1;');
+  ShowHTML('   }');
+  ShowHTML('   var saldo_mes = sinal * (horas + minutos);');
+    
+  ShowHTML('   tot_banco = saldo_ini + saldo_mes + tot_banco;');
+  ShowHTML('   if (tot_banco<0) sinal = "-"; else sinal = "";');
+  ShowHTML('   tot_horas = Math.abs(parseInt(tot_banco/60,10));');
+  ShowHTML('   tot_minutos = Math.abs(tot_banco) - (tot_horas*60);');
+  ShowHTML('   if (tot_horas<10) {');
+  ShowHTML('     trabalhadas = String(100+tot_horas).substring(1) + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   } else {');
+  ShowHTML('     trabalhadas = tot_horas + ":" + String(100+tot_minutos).substring(1);');
+  ShowHTML('   }');
+  ShowHTML('   theForm.w_tot_banco.value = sinal + trabalhadas;');
   ShowHTML('}');
   
   ValidateOpen('Validacao1');
@@ -658,7 +717,7 @@ function Inicial() {
     CompHora('["w_entrada2[]"][ind]','Entrada Turno 2','<','["w_saida2[]"][ind]','Saída Turno 2');
     CompHora('["w_entrada1[]"][ind]','Entrada Turno 1','<','["w_saida1[]"][ind]','Saída Turno 1');
   }
-  CompHora('["w_trabalhadas[]"][ind]','Hora extra diária','<=','["w_limite"]',$w_limite_diario_extras);
+  //CompHora('["w_trabalhadas[]"][ind]','Hora extra diária','<=','["w_limite"]',$w_limite_diario_extras);
   //CompHora('w_entrada_manha','Entrada manhã','<','w_saida_manha','Saída manhã');
   ShowHTML('  }');
   Validate('w_assinatura','Assinatura Eletrônica','1','','6','30','1','1');
@@ -739,7 +798,7 @@ function Inicial() {
   for ($i=1; $i <= $w_dia_fim; $i++) {
     $w_cor = ($w_cor == '#FFFFFF'?'#EFEFEF':'#FFFFFF'); 
     $w_atual = toDate(substr(100+$i,1,2).'/'.$w_mes);
-    if (date('N',$w_atual)==7) {
+      if (date('N',$w_atual)==7) {
       if($w_domingo == 'S'){
         $w_fim_semana = false;
       } else { 
@@ -756,9 +815,20 @@ function Inicial() {
     } else { 
       $w_fim_semana = false; 
     }
+    if(toDate($w_inicio_contrato) > $w_atual){
+      $w_fim_semana = true;
+      $w_contratado = true;
+    }else{
+      $w_contratado = false;
+    }
     if(is_array($w_feriados[$i])) {
       $w_feriado = true;
-      $w_nm_feriado  = strtoupper($w_feriados[$i]['nome']);
+      If(!$w_contratado){
+        $w_nm_feriado = strtoupper($w_feriados[$i]['nome']);
+      }else{
+        $w_nm_feriado = '';
+      }
+      
       $w_saida[$i]   = $w_feriados[$i]['saida'];
       $w_chegada[$i] = $w_feriados[$i]['chegada'];
       $w_tp_feriado  = $w_feriados[$i]['tipo'];
@@ -842,7 +912,7 @@ function Inicial() {
               ShowHTML('          <td colspan="4"><b>&nbsp;'.$w_nm_feriado.'&nbsp;</b></td>');
             }            
           }else{
-            ShowHTML('          <td colspan="2"><b>'.$w_nm_feriado.'</b></td>');
+            ShowHTML('          <td colspan="4"><b>'.$w_nm_feriado.'</b></td>');
           }
         }else{
           if(substr($w_sigla,0,1) != 'F'){
@@ -884,10 +954,18 @@ function Inicial() {
   ShowHTML('  </td>');
   ShowHTML('  <td><TABLE  bgcolor="'.$conTableBgColor.'" BORDER="1" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>RESUMO DA FOLHA DE PONTO');
-  ShowHTML('      <tr valign="top"><td>Total de Horas Trabalhadas:<td align="center"><input readonly type="text" name="w_total" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_total.'">');
-  ShowHTML('      <tr valign="top"><td>Total de Horas Extras (H.E.):<td align="center"><input readonly type="text" name="w_extras" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_extras.'">');
-  ShowHTML('      <tr valign="top"><td>Total de Atrasos (H.At.):<td align="center"><input readonly type="text" name="w_atrasos" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_atrasos.'">');
-  ShowHTML('      <tr valign="top"><td>Saldo de Banco de horas do mês<br>(H.E. - H.At.):<td align="center"><input readonly type="text" name="w_banco" class="stih" style="text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_banco.'">');
+  ShowHTML('      <tr valign="top"><td>Total de Horas Trabalhadas:<td align="center"><input readonly type="text" name="w_total" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_total.'">');
+  ShowHTML('      <tr valign="top"><td>Total de Horas Extras (H.E.):<td align="center"><input readonly type="text" name="w_extras" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_extras.'">');
+  ShowHTML('      <tr valign="top"><td>Total de Atrasos (H.At.):<td align="center"><input readonly type="text" name="w_atrasos" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_atrasos.'">');
+  ShowHTML('      <tr valign="top"><td>Saldo de Banco de horas do mês<br>(H.E. - H.At.):<td align="center"><input readonly type="text" name="w_banco" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_banco.'">');
+  
+  ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>BANCO DE HORAS');    
+  ShowHTML('      <tr valign="top"><td>Saldo inicial: (1)<td align="center">&nbsp;'.$w_saldo_banco.'&nbsp;');
+  ShowHTML('      <tr valign="top"><td>Movimentações mensais: (2)<td align="center">&nbsp;'.$w_saldo_meses.'&nbsp;');
+  ShowHTML('      <tr valign="top"><td>Saldo deste mês(3):<td align="center"><input readonly type="text" name="w_banco1" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.$w_banco.'">');
+  $w_tot_banco += horario2minutos('',$w_banco);
+  ShowHTML('      <tr valign="top"><td>Total: (1 + 2 + 3)<td align="center"><input readonly type="text" name="w_tot_banco" class="stih" style="background-color:'.$conTableBgColor.'; border: 0; font:bold; text-align:center;" SIZE="12" MAXLENGTH="12" VALUE="'.minutos2horario($w_tot_banco).'">');
+  
   ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>JORNADA DIÁRIA');    
   If(nvl($w_entrada_manha,'')!='') ShowHTML('      <tr valign="top"><td>Manhã:<td align="center">&nbsp;'.$w_entrada_manha.'-'.$w_saida_manha.'&nbsp;');
   If(nvl($w_entrada_tarde,'')!='') ShowHTML('      <tr valign="top"><td>Tarde:<td align="center">&nbsp;'.$w_entrada_tarde.'-'.$w_saida_tarde.'&nbsp;');
@@ -895,7 +973,9 @@ function Inicial() {
   ShowHTML('      <tr valign="top"><td>Carga horária:<td align="center">&nbsp;'.$w_carga_diaria.'&nbsp;');
   ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>TOLERÂNCIA');
   ShowHTML('      <tr valign="top"><td colspan="2" align="center">&nbsp;'.f($RS_Parametro,'minutos_tolerancia').' minutos '.f($RS_Parametro,'nm_tipo_tolerancia').'&nbsp;');
-  ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>OCORRÊNCIAS');
+  if (count($RS_Viagem)>0 || count($RS_Afast)>0) {
+    ShowHTML('      <tr align="center" bgcolor="'.$conTrAlternateBgColor.'" valign="top"><td colspan="2"><b>OCORRÊNCIAS');
+  }
   // Exibe as viagens a serviço do usuário logado
   if (count($RS_Viagem)>0) {
     ShowHTML('              <tr><td colspan="2">');
@@ -918,7 +998,7 @@ function Inicial() {
         ShowHTML('                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_chegada')),'-').'</td>');
         ShowHTML('                    <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-        ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
+        ShowHTML('                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro." target="viagem">'.f($row,'codigo_interno').'&nbsp;</a>');
         ShowHTML('                    <td nowrap>'.f($row,'trechos').'&nbsp;</td>');
         ShowHTML('                  </tr>');
       }
@@ -991,12 +1071,12 @@ function Grava() {
         $w_mes = substr($w_mes,3,4).substr($w_mes,0,2);
         dml_putGpPontoMensal::getInstanceOf($dbms,'E',$_REQUEST['w_contrato'],$w_mes,null,null,null,null);
         for($i=1; $i < count($_REQUEST['w_trabalhadas']); $i++){
-          if(Nvl($_REQUEST['w_trabalhadas'][$i],'')!=''){
+          if(Nvl($_REQUEST['w_entrada1'][$i],'')!='' || Nvl($_REQUEST['w_entrada2'][$i],'')!=''){
             $w_dia = substr((100+$i),1,2).'/'.$_REQUEST['w_mes'];
             dml_putGpPontoDiario::getInstanceOf($dbms, 'I', $_REQUEST['w_contrato'], $w_dia, 
                                                 $_REQUEST['w_entrada1'][$i], $_REQUEST['w_saida1'][$i], 
                                                 $_REQUEST['w_entrada2'][$i], $_REQUEST['w_saida2'][$i], 
-                                                Nvl($_REQUEST['w_trabalhadas'][$i],'00:00'), Nvl($_REQUEST['w_saldo_dia'][$i],'00:00'));
+                                                $_REQUEST['w_trabalhadas'][$i], $_REQUEST['w_saldo_dia'][$i]);
           }          
         }
         dml_putGpPontoMensal::getInstanceOf($dbms,'I',$_REQUEST['w_contrato'],
@@ -1005,7 +1085,7 @@ function Grava() {
                                              Nvl($_REQUEST['w_atrasos'],'00:00'),
                                              Nvl($_REQUEST['w_banco'],'00:00'));
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ShowHTML('  alert(\'Horário registrado.\');');
         ShowHTML('  window.close();');
         ScriptClose();
         retornaFormulario('w_assinatura');

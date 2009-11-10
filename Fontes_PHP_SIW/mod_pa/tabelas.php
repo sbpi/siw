@@ -290,25 +290,25 @@ function imprimir(){
   ShowHTML('<div style="width:470px; border: solid 7px #000"><p>&nbsp</p>');
   ShowHTML('<IMG ALIGN="center" SRC="'.LinkArquivo(null,$w_cliente,$p_logo,null,null,null,'EMBED').'"><p>');
   ShowHTML('<table border=1 cellspacing=0 bordercolor=black  style="width:400px;"  >');
-  ShowHTML('  <tr valign=top>');
+  ShowHTML('  <tr>');
   ShowHTML('    <td  align="right" width="30%">');
   ShowHTML('      Setor:');  
-  ShowHTML('    <td  style="font-size:20px">');
+  ShowHTML('    <td  style="font-size:18px">');
   ShowHTML(      $w_sigla);
   ShowHTML('    </td>');
   ShowHTML('  </tr>');
 
-  ShowHTML('  <tr valign=top>');
+  ShowHTML('  <tr>');
   ShowHTML('    <td align="right">');
   ShowHTML('      Código e assunto:');
-  ShowHTML('    <td style="font-size:20px">');
+  ShowHTML('    <td style="font-size:14px">');
   ShowHTML(      $w_assunto);
   ShowHTML('  </tr>');
 
   ShowHTML('  <tr valign=top>');
   ShowHTML('    <td align="right">');
   ShowHTML('      Descrição:');
-  ShowHTML('    <td  style="font-size:20px">');
+  ShowHTML('    <td  style="font-size:10px">');
   ShowHTML(      $w_descricao);
 
   ShowHTML('  </tr>');
@@ -316,14 +316,13 @@ function imprimir(){
   ShowHTML('  <tr valign=top>');
   ShowHTML('    <td align="right">');
   ShowHTML('      Data-Limite:');
-  ShowHTML('    <td  style="font-size:20px">');
-  ShowHTML(      $w_data_limite);
+  ShowHTML('    <td  style="font-size:20px">'.nvl($w_data_limite,'&nbsp;'));
   ShowHTML('  </tr>');  
 
   ShowHTML('</table>');
 
   ShowHTML('<p>&nbsp;</p>');
-  ShowHTML('<span style="font-size:160px"><strong>'.$w_numero.'</strong></span>');
+  ShowHTML('<span style="font-size:80px"><strong>'.$w_numero.'</strong></span>');
   ShowHTML('<p>&nbsp;</p>');
   ShowHTML('<p>&nbsp;</p>');
 
@@ -339,10 +338,9 @@ function imprimir(){
   ShowHTML('  </tr>');
   ShowHTML('  <tr>');
   ShowHTML('    <td align="center">');
-  ShowHTML(      'Até '.$w_intermediario);
+  if (nvl($w_intermediario,'')!='') ShowHTML(      $w_intermediario); else ShowHTML('&nbsp;'); 
   ShowHTML('    </td>');
-  ShowHTML('    <td align="center">');
-  ShowHTML(      $w_destinacao_final);
+  ShowHTML('    <td align="center">'.nvl($w_destinacao_final,'&nbsp;'));
   ShowHTML('    </td>');
   ShowHTML('  </tr>');
   ShowHTML('</table>');
@@ -404,9 +402,6 @@ function caixa() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_assunto','Assunto','1','1','4','500','1','1');
       Validate('w_descricao','Descrição','1','1','4','2000','1','1');
-      Validate('w_data_limite','Data limite','DATA',1,10,10,'','0123456789/');
-      Validate('w_intermediario','Intermediario','1','1','1','40','1','1');
-      Validate('w_destinacao_final','Destinação final','1','1','3','40','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -485,6 +480,9 @@ function caixa() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<input type="hidden" name="w_data_limite" value="'.$w_data_limite.'">');
+    ShowHTML('<input type="hidden" name="w_intermediario" value="'.$w_intermediario.'">');
+    ShowHTML('<input type="hidden" name="w_destinacao_final" value="'.$w_destinacao_final.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr valign="top">');
@@ -498,10 +496,6 @@ function caixa() {
     }
     ShowHTML('        <tr><td colspan=3><b>A<u>s</u>sunto:</b><br><textarea '.$w_Disabled.' accesskey="S"  name="w_assunto" rows=5 cols=80  class="sti">'.$w_assunto.'</textarea></td>'); 
     ShowHTML('        <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D"  name="w_descricao" rows=5 cols=80  class="sti">'.$w_descricao.'</textarea></td>'); 
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>Data <u>l</u>imite:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_data_limite" class="sti" SIZE="10" MAXLENGTH="10" onKeyDown="FormataData(this,event);" VALUE="'.$w_data_limite.'"></td>'); 
-    ShowHTML('        <td><b><u>I</u>ntermediario:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_intermediario" class="sti" SIZE="40" MAXLENGTH="40" VALUE="'.$w_intermediario.'"></td>'); 
-    ShowHTML('        <td><b>D<u>e</u>stinação final:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_destinacao_final" class="sti" SIZE="40" MAXLENGTH="40" VALUE="'.$w_destinacao_final.'"></td>'); 
     ShowHTML('      <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td colspan=3 align="center"><hr>');
     if ($O=='E') {                                                                        

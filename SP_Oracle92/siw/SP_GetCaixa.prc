@@ -57,7 +57,7 @@ begin
                 c5.codigo as cd_assunto, c5.descricao as ds_assunto, 
                 c5.fase_corrente_anos, c5.fase_intermed_anos, c5.fase_final_anos,
                 c7.nome as nm_especie,   c7.sigla as sg_natureza,    c7.ativo as st_natureza,
-                d.inicio,
+                d.inicio, retornaLimiteProtocolo(d.sq_siw_solicitacao) as dados_assunto,
                 d1.nome as nm_unid_origem, d1.sigla as sg_unid_origem,
                 case d2.ativo 
                      when 'S' then case c5.fase_corrente_anos when 0 then c6.descricao else to_char(c5.fase_corrente_anos) || ' '  || c6.sigla end

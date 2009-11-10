@@ -97,9 +97,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'       <td align="justify">'.f($RS,'ds_assunto');
       if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
         $l_html.=chr(13).'<br>';
-        if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_bis')).' &rarr; ';
-        if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_avo')).' &rarr; ';
-        if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_pai'));
+        if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_bis').' &rarr; ';
+        if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_avo').' &rarr; ';
+        if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_pai');
       }
       $l_html.=chr(13).'       </td></tr>';
       $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento:</b></td>';

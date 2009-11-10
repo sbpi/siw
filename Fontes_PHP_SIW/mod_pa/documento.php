@@ -779,38 +779,34 @@ function Geral() {
     }
     selecaoNaturezaDocumento('<u>N</u>atureza:','N','Indique a natureza do documento.',$w_natureza_documento,null,'w_natureza_documento',null,null);
     ShowHTML('           <td title="OPCIONAL. Limite para término da tramitação do documento."><b>Data limite:</b><br><input '.$w_Disabled.' type="text" name="w_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
-    if ($_SESSION['LOTACAO']!=f($RS_Parametro,'arquivo_central') && nvl(f($RS_PAUnidade,'sq_unidade_pai'),'')!='') {
-      ShowHTML('<INPUT type="hidden" name="w_assunto" value="'.$w_assunto.'">');
-    } else {
-      ShowHTML('      <tr><td colspan=4><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
-      SelecaoAssuntoRadio('C<u>l</u>assificação:','L','Clique na lupa para selecionar a classificação do documento.',$w_assunto,null,'w_assunto','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"');
-      ShowHTML('           </table>');
-      if (nvl($w_assunto,'')!='') {
-        $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
-        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center">');
-        ShowHTML('          <TABLE WIDTH="100%" BORDER="0">');
-        ShowHTML('            <tr bgcolor="#DADADA">');
-        ShowHTML('              <td><b>Código</td>');
-        ShowHTML('              <td><b>Descrição</td>');
-        ShowHTML('              <td><b>Detalhamento</td>');
-        ShowHTML('              <td><b>Observação</td>');
-        ShowHTML('            </tr>');
-        foreach($RS as $row) {
-          ShowHTML('            <tr valign="top" bgcolor="#DADADA">');
-          ShowHTML('              <td width="1%" nowrap>'.f($row,'codigo').'</td>');
-          ShowHTML('              <td>');
-          ShowHTML('                '.f($row,'descricao'));
-          if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
-            echo '<br>';
-            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
-          }
-          ShowHTML('              <td>'.nvl(f($row,'detalhamento'),'---').'</td>');
-          ShowHTML('              <td>'.nvl(f($row,'observacao'),'---').'</td>');
-        } 
-        ShowHTML('            </table></tr>');
-      }
+    ShowHTML('      <tr><td colspan=4><table border=0 cellpadding=0 cellspacing=0 width="100%"><tr valign="top">');
+    SelecaoAssuntoRadio('C<u>l</u>assificação:','L','Clique na lupa para selecionar a classificação do documento.',$w_assunto,null,'w_assunto','FOLHA','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"');
+    ShowHTML('           </table>');
+    if (nvl($w_assunto,'')!='') {
+      $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_assunto,null,null,null,null,null,null,null,null,'REGISTROS');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center">');
+      ShowHTML('          <TABLE WIDTH="100%" BORDER="0">');
+      ShowHTML('            <tr bgcolor="#DADADA">');
+      ShowHTML('              <td><b>Código</td>');
+      ShowHTML('              <td><b>Descrição</td>');
+      ShowHTML('              <td><b>Detalhamento</td>');
+      ShowHTML('              <td><b>Observação</td>');
+      ShowHTML('            </tr>');
+      foreach($RS as $row) {
+        ShowHTML('            <tr valign="top" bgcolor="#DADADA">');
+        ShowHTML('              <td width="1%" nowrap>'.f($row,'codigo').'</td>');
+        ShowHTML('              <td>');
+        ShowHTML('                '.f($row,'descricao'));
+        if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
+          echo '<br>';
+          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+        }
+        ShowHTML('              <td>'.nvl(f($row,'detalhamento'),'---').'</td>');
+        ShowHTML('              <td>'.nvl(f($row,'observacao'),'---').'</td>');
+      } 
+      ShowHTML('            </table></tr>');
     }
     ShowHTML('      <tr><td colspan="4" title="Descreva de forma objetiva o conteúdo do documento."><b>D<u>e</u>talhamento:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75>'.$w_descricao.'</TEXTAREA></td>');    
     ShowHTML('      <tr><td align="center" colspan="3">');
@@ -1302,13 +1298,14 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     CabecalhoWord($w_cliente,f($RS_Menu,'nome'),0);
     $w_embed = 'WORD';
   } else {
+    $RS_Cab = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PADCAD');
     Cabecalho();
     ShowHTML('<HEAD>');
-    ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
+    ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Cab,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\'; ');
-    if ($w_embed!='WORD') CabecalhoRelatorio($w_cliente,f($RS_Menu,'nome'),4,$w_chave);
+    if ($w_embed!='WORD') CabecalhoRelatorio($w_cliente,f($RS_Cab,'nome'),4,$w_chave);
     $w_embed = 'HTML';
   }
   if ($w_embed!='WORD') ShowHTML('<center><B><font size=1>Clique <a class="hl" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
@@ -2692,7 +2689,7 @@ function Classificacao() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, 
         $p_tipo_despacho);
-    $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    $RS = SortArray($RS,'ano','asc', 'prefixo','asc','protocolo','asc');
     $w_existe = count($RS);
     
     if (count($w_chave) > 0) {
@@ -3593,7 +3590,7 @@ function Grava() {
   } elseif (strpos($SG,'PADTRAM')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      if (nvl($_REQUEST['w_arq_central'],'')!='') {
+      if (nvl($_REQUEST['w_arq_central'],'')=='S') {
         for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
             dml_putCaixaEnvio::getInstanceOf($dbms,f($RS_Menu,'sq_menu'),$_POST['w_chave'][$i],$w_usuario,

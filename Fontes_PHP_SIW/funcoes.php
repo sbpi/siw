@@ -3768,34 +3768,36 @@ switch ($data) {
 
   function minutos2horario($mins) {
       // Se os minutos estiverem negativos
-      if ($mins < 0)
-          $min = abs($mins); 
-      else
-          $min = $mins; 
+      if ($mins < 0) $min = abs($mins); else $min = $mins;
 
       $h = floor($min / 60); 
       $m = ($min - ($h * 60)) / 100; 
       $horas = $h + $m; 
-      if ($mins < 0)
-          $horas *= -1; 
-
+      
       $sep = explode('.', $horas); 
       $h = $sep[0]; 
-      if (empty($sep[1]))
-          $sep[1] = 00; 
+      if (strlen($h)<2) $h = '0'.$h;
+      
+      if (empty($sep[1])) $sep[1] = '00';
       $m = $sep[1]; 
-      if (strlen($m) < 2)
-          $m = $m . 0; 
-      return sprintf('%02d:%02d', $h, $m); 
+      if (strlen($m) < 2) $m = $m . '0'; 
+      return (($mins<0) ? '-' : '').$h.':'.$m; 
   }
 
   function horario2minutos($hora_inicio,$hora_fim){
     $w_inicio     = Nvl($hora_inicio,'00:00');
     $w_fim        = Nvl($hora_fim,'24:00');
+    
+    // Configura o sinal e ajusta os horários informados
+    If (substr($w_inicio,0,1)=='-') { $w_sin_ini = -1; $w_inicio = substr($w_inicio,1); } else { $w_sin_ini = 1; }
+    If (substr($w_fim,0,1)== '-')   { $w_sin_fim = -1; $w_fim    = substr($w_fim,1);    } else { $w_sin_fim = 1; }
+    // Configura o sinal do resultado
+    $w_sinal = $w_sin_ini * $w_sin_fim;
+    
     $w_min_inicio = substr($w_inicio,0,2)*60+substr($w_inicio,3,2);
     $w_min_fim = substr($w_fim,0,2)*60+substr($w_fim,3,2);
     $minutos = $w_min_fim - $w_min_inicio;
-    return $minutos;   
+    return $w_sinal * $minutos;   
   }
 
 ?>
