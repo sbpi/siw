@@ -169,7 +169,8 @@ begin
                    w_fim         between b.inicio_real and b.fim_real
                   )
                  )
-                );            
+                )
+         order by 14;            
   ElsIf p_restricao = 'REL_DET' Then
       open p_result for 
          select distinct a.sq_siw_solicitacao as sq_projeto, a.sq_plano, a.sq_solic_pai,
