@@ -11,16 +11,14 @@ create or replace function pd_retornatrechos(p_chave in number) return varchar2 
       from pd_deslocamento              a
            inner   join co_cidade       b on (a.destino                 = b.sq_cidade)
              inner join co_pais         c on (b.sq_pais                 = c.sq_pais)
-           left    join pd_diaria       d on (a.sq_deslocamento         = d.sq_deslocamento_chegada and
-                                              (d.diaria                 = 'S' or 
-                                               d.hospedagem             = 'S' or 
-                                               d.veiculo                = 'S'
-                                              )
-                                             )
      where a.sq_siw_solicitacao = p_chave
        and a.tipo               = 'S'
-       and d.sq_diaria          is null
+       and 0                    = (select count(x.sq_diaria)
+                                     from pd_diaria x
+                                    where x.sq_siw_solicitacao = a.sq_siw_solicitacao
+                                  )
     UNION
+    -- Caso contrário, recupera as diárias
     select 2 as tipo, b.nome as nm_cidade, d.saida, d.chegada
       from pd_diaria                    a
            inner   join co_cidade       b on (a.sq_cidade               = b.sq_cidade)

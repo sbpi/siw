@@ -25,7 +25,7 @@ begin
               inner join (select sq_menu, count(*) as qtd 
                             from (select c.sq_menu, d.sq_siw_solicitacao, f.acesso
                                     from siw_menu                        c
-                                         inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo and b.sigla <> 'PA') -- O módulo de protocolo não tem intervenções pela mesa de trabalho
+                                         inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
                                            inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
                                          inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
                                          inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
@@ -34,6 +34,7 @@ begin
                                                               inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
                                                       )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    where c.sq_pessoa = p_cliente
+                                     and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                                      and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                                      and (('N'    = c.consulta_opiniao and d.conclusao is null) or
                                           ('S'    = c.consulta_opiniao and d.opiniao is null)
@@ -44,7 +45,7 @@ begin
                          )          y on (v.sq_menu = y.sq_menu)
               left  join (select c.sq_menu, count(*) as qtd 
                             from siw_menu                        c
-                                 inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo and b.sigla <> 'PA') -- O módulo de protocolo não tem intervenções pela mesa de trabalho
+                                 inner   join siw_modulo         b  on (c.sq_modulo          = b.sq_modulo)
                                    inner join siw_cliente_modulo b1 on (b.sq_modulo          = b1.sq_modulo and b1.sq_pessoa=p_cliente)
                                  inner   join siw_tramite        e  on (c.sq_menu            = e.sq_menu)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu and e.sq_siw_tramite = d.sq_siw_tramite)
@@ -53,6 +54,7 @@ begin
                                                       inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
                                               )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                            where c.sq_pessoa = p_cliente
+                             and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and c.tramite   = 'S'
                              and c.ativo     = 'S'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))

@@ -1429,12 +1429,13 @@ begin
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla as sg_unid_origem,
+                b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
                 d.numero_original,    d.data_recebimento,            d.numero_documento,
                 d.ano,                d.prefixo,                     d.digito,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
-                d.volumes,            d.unidade_int_posse,
+                d.volumes,            d.unidade_int_posse,           d.pasta,
                 d.tipo_juntada,
                 case d.interno when 'S' then e.sigla else d2.nome_resumido end as nm_origem_doc,
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
@@ -1452,6 +1453,7 @@ begin
                 d4.sq_assunto,
                 d5.codigo as cd_assunto,                             d5.descricao as ds_assunto,
                 d7.nome as nm_especie,   d7.sigla as sg_natureza,    d7.ativo as st_natureza,
+                d8.numero as nr_caixa, d9.sigla as sg_unid_caixa,
                 cast(b.fim as date)-cast(k.dias_aviso as integer) as aviso,
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
@@ -1483,7 +1485,12 @@ begin
                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       left           join pe_plano                 b4 on (b.sq_plano                 = b4.sq_plano)
-                      inner          join pa_documento             d on (b.sq_siw_solicitacao        = d.sq_siw_solicitacao)
+                      left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim
+                                             from siw_solicitacao               x
+                                                  inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.devolucao is null
+                                          )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
+                      inner          join pa_documento             d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
                           left       join co_tipo_pessoa           d3 on (d2.sq_tipo_pessoa          = d3.sq_tipo_pessoa)
@@ -1492,6 +1499,8 @@ begin
                                                                          )
                           inner      join pa_assunto               d5 on (d4.sq_assunto              = d5.sq_assunto)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
+                        left         join pa_caixa                 d8 on (d.sq_caixa                 = d8.sq_caixa)
+                          left       join eo_unidade               d9 on (d8.sq_unidade              = d9.sq_unidade)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                           e1.tipo_respons            = 'T'           and
@@ -1546,6 +1555,7 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and k.sq_tipo_despacho is not null and k.sq_tipo_despacho = p_prioridade))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
+            and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
                                                                                    from pa_documento_interessado x
                                                                                         inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
@@ -1563,7 +1573,8 @@ begin
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
+                 (p_tipo         = 7     and b1.sigla          = 'AT' and d.data_central is not null and b7.protocolo is null)
                 )
             and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
                  ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 

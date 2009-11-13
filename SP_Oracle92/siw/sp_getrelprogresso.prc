@@ -95,7 +95,7 @@ begin
                 b.sq_siw_solicitacao as sq_projeto,b.objetivo_superior, c.codigo_interno, c.titulo as nm_projeto, 
                 c.inicio as inicio_projeto, c.fim as fim_projeto, c.sq_siw_solicitacao as sq_projeto,
                 c1.sq_pessoa as resp_projeto, c1.nome_resumido as nm_resp_projeto, 
-                c3.titulo as nm_programa,
+                c3.titulo as nm_programa, c3.codigo_interno as sg_programa,
                 c7.nome as nm_cc, 
                 e.sq_siw_solicitacao, 
                 f.assunto as nm_tarefa,

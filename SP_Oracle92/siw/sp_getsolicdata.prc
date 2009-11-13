@@ -1047,6 +1047,7 @@ begin
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla sg_unid_origem,
                 case b5.padrao when 'S' then b4.nome||'-'||b4.co_uf else b4.nome||' ('||b5.nome||')' end as nm_cidade,
+                b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
                 d.numero_original,    d.numero_documento,            d.ano,
                 d.prefixo,            d.digito,                      d.interno,
                 d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
@@ -1073,9 +1074,9 @@ begin
                 case d8.sigla when 'ANOS' then d5.fase_intermed_anos||' '||d8.descricao when 'NAPL' then '---' else d8.descricao end as guarda_intermed,
                 case d9.sigla when 'ANOS' then d5.fase_final_anos   ||' '||d9.descricao when 'NAPL' then '---' else d9.descricao end as guarda_final,
                 da.descricao as destinacao_final,
-                db.codigo as cd_assunto_pai, lower(db.descricao) as ds_assunto_pai,
-                dc.codigo as cd_assunto_avo, lower(dc.descricao) as ds_assunto_avo,
-                dd.codigo as cd_assunto_bis, lower(dd.descricao) as ds_assunto_bis,
+                db.codigo as cd_assunto_pai, db.descricao as ds_assunto_pai,
+                dc.codigo as cd_assunto_avo, dc.descricao as ds_assunto_avo,
+                dd.codigo as cd_assunto_bis, dd.descricao as ds_assunto_bis,
                 df.sq_pessoa as pessoa_interes, df.nome as nm_pessoa_interes,
                 dg.prefixo||'.'||substr(1000000+dg.numero_documento,2,6)||'/'||dg.ano||'-'||substr(100+dg.digito,2,2) as protocolo_pai,
                 dh.numero as nr_caixa, dh.assunto as as_caixa, dh.descricao as ds_caixa, dh.data_limite as dt_caixa, dh.intermediario as in_caixa,
@@ -1113,6 +1114,11 @@ begin
                       inner          join co_cidade                b4 on (b.sq_cidade_origem         = b4.sq_cidade)
                         inner        join co_pais                  b5 on (b4.sq_pais                 = b5.sq_pais)
                       left           join pe_plano                 b6 on (b.sq_plano                 = b6.sq_plano)
+                      left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim
+                                             from siw_solicitacao               x
+                                                  inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                            where y.devolucao is null
+                                          )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)

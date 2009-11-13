@@ -13,7 +13,7 @@ create or replace procedure SP_GetCaixa
     p_result      out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' Then
+   If p_restricao is null or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
       -- Recupera os grupos da caixa
       open p_result for 
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
@@ -32,10 +32,11 @@ begin
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.numero           = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
-            and (coalesce(p_restricao,'null') not in ('TRAMITE','RELPATRANS','PADARQ') or
+            and (coalesce(p_restricao,'null') not in ('TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
                  (p_restricao = 'TRAMITE' and a.arquivo_data is null) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
-                 (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null)
+                 (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null) or
+                 (p_restricao = 'CENTRAL' and a.sq_arquivo_local is not null)
                 );
    Elsif p_restricao = 'PASTA' Then
       -- Recupera o conteúdo da caixa
