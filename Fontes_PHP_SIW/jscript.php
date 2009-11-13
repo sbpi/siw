@@ -160,6 +160,8 @@ function CheckBranco() {
 
 // Rotina de comparação de datas
 function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
+  if(strpos($Date1,'[')===false) $Form1 = "  theForm."; else $Form1 = "theForm";
+  if(strpos($Date2,'[')===false) $Form2 = "  theForm."; else $Form2 = "theForm";
   switch ($Operator) {
     case "==":  $w_Operator=" igual a ";            break;
     case "!=":  $w_Operator=" diferente de ";       break;
@@ -170,9 +172,9 @@ function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
     case "<=":  $w_Operator=" menor ou igual a ";   break;
     case "=<":  $w_Operator=" menor ou igual a ";   break;
   }
-  print "  var D1 = theForm.".$Date1.".value; "."\r\n";
+  print "  var D1 = ".$Form1.$Date1.".value; "."\r\n";
   if (strpos("1234567890",substr($Date2,0,1))===false) {
-     print "  var D2 = theForm.".$Date2.".value;"."\r\n"; }
+     print "  var D2 = ".$Form2.$Date2.".value;"."\r\n"; }
   else {
     print "  var D2 = '".$Date2."';"."\r\n";
   }
@@ -222,7 +224,7 @@ function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
   print "     } "."\r\n";
   print "     if (!(Data1 ".$Operator." Data2)) { "."\r\n";
   print "        alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
-  print "        theForm.".$Date1.".focus(); "."\r\n";
+  print "        ".$Form1.$Date1.".focus(); "."\r\n";
   print "        return (false); "."\r\n";
   print "     } "."\r\n";
   print "  } "."\r\n";

@@ -35,6 +35,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   $l_html.=chr(13).'      <tr><td colspan="'.((nvl(f($RS,'sq_solic_pai'),'')!='' || f($RS,'ativo')=='N') ? 1 : 2).'"  bgcolor="#f0f0f0" align=justify><font size="2"><b>'.$w_tipo.': '.f($RS,'protocolo').'</b></font></td>';
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.$w_tipo_juntada.'</b></font></td>';
+  } elseif (nvl(f($RS,'sq_emprestimo'),'')!='') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>EMPRESTADO ATÉ '.formataDataEdicao(f($RS,'devolucao_prevista')).' (PREVISÃO)</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AS') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_setorial'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO SETORIAL' : 'ARQUIVADO SETORIAL').'</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AT') {
@@ -96,12 +98,12 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'   <tr><td valign="top"><b>Descrição:</b></td>';
       $l_html.=chr(13).'       <td align="justify">'.f($RS,'ds_assunto');
       if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
-        $l_html.=chr(13).'<br>';
+        $l_html.=chr(13).'<br><span style="text-transform:lowercase">';
         if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_bis').' &rarr; ';
         if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_avo').' &rarr; ';
         if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).f($RS,'ds_assunto_pai');
       }
-      $l_html.=chr(13).'       </td></tr>';
+      $l_html.=chr(13).'       </span></td></tr>';
       $l_html.=chr(13).'   <tr><td valign="top"><b>Detalhamento:</b></td>';
       $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'dst_assunto'),'---')).'</td></tr>';
       $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
@@ -300,6 +302,48 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       }
       $l_html.=chr(13).'         </table></td></tr>';
     } 
+
+    include_once($w_dir_volta.'classes/sp/db_getSolicPA.php');
+    $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PAEMP');
+    $RS1 = db_GetSolicPA::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'EMPREST',4,
+        null,null,null,null,null,null,null,null,null,null,null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null,null, null, null, $l_chave);
+    // Empréstimos
+    $RS1 = SortArray($RS1,'devolucao','desc','codigo_interno','asc');
+    if (count($RS1)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EMPRÉSTIMOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" width="1%" nowrap rowspan=2><b>Código</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" rowspan=2><b>Justificativa</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Solicitante</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0" colspan=2><b>Devolução</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      $l_html.=chr(13).'       <tr valign="top" align="center">';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Pessoa</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Setor</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Prevista</b></td>';
+      $l_html.=chr(13).'         <td bgColor="#f0f0f0"><b>Real</b></td>';
+      $l_html.=chr(13).'       </tr>';
+      
+      foreach($RS1 as $row) {
+        $l_html.=chr(13).'       <tr valign="top">';
+        $l_html.=chr(13).'           <td nowrap>'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null).' '.f($row,'codigo_interno').'&nbsp;</td>';
+        $l_html.=chr(13).'           <td>'.htmlspecialchars(f($row,'justificativa')).'</td>';
+        if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'nm_solic').'</td>';
+        else                    $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>';
+        if ($l_formato=='WORD') $l_html.=chr(13).'           <td>'.f($row,'sg_unidade_resp').'</td>';
+        else                    $l_html.=chr(13).'           <td>'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'</td>';
+        $l_html.=chr(13).'           <td align="center">&nbsp;'.formataDataEdicao(f($row,'fim')).'&nbsp;</td>';
+        $l_html.=chr(13).'           <td align="center">&nbsp;'.formataDataEdicao(f($row,'devolucao')).'&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      }
+      $l_html.=chr(13).'         </table></td></tr>';
+    } 
+
+        
+    
   }
 
   // Encaminhamentos

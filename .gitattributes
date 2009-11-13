@@ -880,6 +880,7 @@ Fontes_PHP_SIW/classes/sp/db_getOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrImport.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridade.php -text
 Fontes_PHP_SIW/classes/sp/db_getOrPrioridadeList.php -text
+Fontes_PHP_SIW/classes/sp/db_getPAEmpItem.php -text
 Fontes_PHP_SIW/classes/sp/db_getPDImportacao.php -text
 Fontes_PHP_SIW/classes/sp/db_getPDParametro.php -text
 Fontes_PHP_SIW/classes/sp/db_getPD_Alteracao.php -text
@@ -959,6 +960,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicLog.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicMeta_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicObjetivo.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicPA.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecursos.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
@@ -1235,6 +1237,8 @@ Fontes_PHP_SIW/classes/sp/dml_putOpcaoEstrat_IS.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOrImport.php -text
 Fontes_PHP_SIW/classes/sp/dml_putOrPrioridade.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPAEmpGeral.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPAEmpItem.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPAParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDDiaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPDImportacao.php -text
@@ -2188,14 +2192,20 @@ Fontes_PHP_SIW/mod_or_pub/siafi.php -text
 Fontes_PHP_SIW/mod_or_pub/visualdemanda.php -text
 Fontes_PHP_SIW/mod_or_pub/visualprojeto.php -text
 Fontes_PHP_SIW/mod_pa/documento.php -text
+Fontes_PHP_SIW/mod_pa/emprestimo.php -text
+Fontes_PHP_SIW/mod_pa/gr_emprestimo.php -text
 Fontes_PHP_SIW/mod_pa/gr_protocolo.php -text
 Fontes_PHP_SIW/mod_pa/processo.php -text
 Fontes_PHP_SIW/mod_pa/relatorio.php -text
 Fontes_PHP_SIW/mod_pa/tabelas.php -text
+Fontes_PHP_SIW/mod_pa/validaemprestimo.php -text
 Fontes_PHP_SIW/mod_pa/visualCaixa.php -text
+Fontes_PHP_SIW/mod_pa/visualFE.php -text
+Fontes_PHP_SIW/mod_pa/visualGF.php -text
 Fontes_PHP_SIW/mod_pa/visualGR.php -text
 Fontes_PHP_SIW/mod_pa/visualGT.php -text
 Fontes_PHP_SIW/mod_pa/visualdocumento.php -text
+Fontes_PHP_SIW/mod_pa/visualemprestimo.php -text
 Fontes_PHP_SIW/mod_pd/conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text
@@ -3851,6 +3861,8 @@ SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_PutMetaAnexo.prc -text
 SP_Oracle92/siw/SP_PutMtSituacao.prc -text
+SP_Oracle92/siw/SP_PutPAEmpGeral.prc -text
+SP_Oracle92/siw/SP_PutPAEmpItem.prc -text
 SP_Oracle92/siw/SP_PutPAParametro.prc -text
 SP_Oracle92/siw/SP_PutPDImportacao.prc -text
 SP_Oracle92/siw/SP_PutPDParametro.prc -text
@@ -3972,6 +3984,7 @@ SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getMeioTransporte.prc -text
 SP_Oracle92/siw/sp_getMoeda.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
+SP_Oracle92/siw/sp_getPAEmpItem.prc -text
 SP_Oracle92/siw/sp_getPDImportacao.prc -text
 SP_Oracle92/siw/sp_getPrestacaoContas.prc -text
 SP_Oracle92/siw/sp_getPrograma.prc -text
@@ -4168,6 +4181,7 @@ SP_Oracle92/siw/sp_getsolicgri.prc -text
 SP_Oracle92/siw/sp_getsolicinter.prc -text
 SP_Oracle92/siw/sp_getsoliclist.prc -text
 SP_Oracle92/siw/sp_getsoliclog.prc -text
+SP_Oracle92/siw/sp_getsolicpa.prc -text
 SP_Oracle92/siw/sp_getsolicrecurso.prc -text
 SP_Oracle92/siw/sp_getsolicresp.prc -text
 SP_Oracle92/siw/sp_getsolicrubrica.prc -text

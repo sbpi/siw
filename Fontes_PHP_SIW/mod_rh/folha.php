@@ -161,7 +161,7 @@ function Inicial() {
   }else{
     $w_limite_diario_extras = '00:00';
   }
-echo $w_trata_extras.$w_limite_diario_extras;  
+//echo $w_trata_extras.$w_limite_diario_extras;  
   //Cálculo da tolerância de horas extras  
   $w_limite = minutos2horario(horario2minutos('',$w_carga_diaria) + $w_minutos_tolerancia + horario2minutos('',$w_limite_diario_extras)); 
   
