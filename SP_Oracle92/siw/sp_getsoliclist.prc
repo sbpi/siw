@@ -1430,6 +1430,7 @@ begin
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b3.nome as nm_unid_origem, b3.sigla as sg_unid_origem,
                 b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
+                b8.sq_siw_solicitacao as sq_eliminacao, b8.fim as dt_eliminacao, b8.sigla as sg_tramite_eliminacao,
                 d.numero_original,    d.data_recebimento,            d.numero_documento,
                 d.ano,                d.prefixo,                     d.digito,
                 d.sq_especie_documento, d.sq_natureza_documento,     d.unidade_autuacao,
@@ -1446,12 +1447,14 @@ begin
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 case when d.pessoa_origem is null then b3.sigla else d2.nome_resumido end as nm_origem_resumido,
+                retornaLimiteProtocolo(d.sq_siw_solicitacao) as dados_assunto,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
                 d1.descricao as ds_natureza,                         d1.ativo as st_natureza,
                 d2.nome_resumido as nm_res_pessoa_origem,            d2.nome as nm_pessoa_origem,
                 d3.sq_tipo_pessoa,
                 d4.sq_assunto,
                 d5.codigo as cd_assunto,                             d5.descricao as ds_assunto,
+                d51.sigla as sg_final,
                 d7.nome as nm_especie,   d7.sigla as sg_natureza,    d7.ativo as st_natureza,
                 d8.numero as nr_caixa, d9.sigla as sg_unid_caixa,
                 cast(b.fim as date)-cast(k.dias_aviso as integer) as aviso,
@@ -1488,8 +1491,15 @@ begin
                       left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim
                                              from siw_solicitacao               x
                                                   inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_tramite        z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
                                             where y.devolucao is null
                                           )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
+                      left           join (select y.protocolo, y.sq_siw_solicitacao, x.fim, z.sigla, x.conclusao
+                                             from siw_solicitacao          x
+                                                  inner join pa_eliminacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_tramite   z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                                            where z.ativo = 'S'
+                                          )                        b8 on (b.sq_siw_solicitacao       = b8.protocolo)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
@@ -1498,6 +1508,7 @@ begin
                                                                           d4.principal               = 'S'
                                                                          )
                           inner      join pa_assunto               d5 on (d4.sq_assunto              = d5.sq_assunto)
+                            inner    join pa_tipo_guarda          d51 on (d5.destinacao_final        = d51.sq_tipo_guarda)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         left         join pa_caixa                 d8 on (d.sq_caixa                 = d8.sq_caixa)
                           left       join eo_unidade               d9 on (d8.sq_unidade              = d9.sq_unidade)
@@ -1574,7 +1585,8 @@ begin
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
-                 (p_tipo         = 7     and b1.sigla          = 'AT' and d.data_central is not null and b7.protocolo is null)
+                 (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
+                 (p_tipo         = 8     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null and d51.sigla = 'ELIM') -- Eliminação
                 )
             and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
                  ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 

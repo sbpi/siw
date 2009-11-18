@@ -1048,6 +1048,8 @@ begin
                 b3.nome as nm_unid_origem, b3.sigla sg_unid_origem,
                 case b5.padrao when 'S' then b4.nome||'-'||b4.co_uf else b4.nome||' ('||b5.nome||')' end as nm_cidade,
                 b7.sq_siw_solicitacao as sq_emprestimo, b7.fim as devolucao_prevista,
+                b8.sq_siw_solicitacao as sq_eliminacao, b8.codigo_interno as cd_eliminacao, b8.fim as dt_eliminacao, 
+                b8.sigla as sg_tramite_eliminacao,
                 d.numero_original,    d.numero_documento,            d.ano,
                 d.prefixo,            d.digito,                      d.interno,
                 d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) as protocolo,
@@ -1119,6 +1121,12 @@ begin
                                                   inner join pa_emprestimo_item y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                             where y.devolucao is null
                                           )                        b7 on (b.sq_siw_solicitacao       = b7.protocolo)
+                      left           join (select y.protocolo, x.codigo_interno, y.sq_siw_solicitacao, x.fim, z.sigla, x.conclusao
+                                             from siw_solicitacao          x
+                                                  inner join pa_eliminacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                                  inner join siw_tramite   z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                                            where z.ativo = 'S'
+                                          )                        b8 on (b.sq_siw_solicitacao       = b8.protocolo)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)

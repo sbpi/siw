@@ -78,7 +78,7 @@ begin
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a.envia_dia_util,     a.descricao as pede_descricao, a.justificativa as pede_justificativa,
                 a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
                 a2.sq_tipo_unidade as tp_exec, a2.nome as nm_unidade_exec, a2.informal as informal_exec,
                 a2.vinculada as vinc_exec,a2.adm_central as adm_exec,

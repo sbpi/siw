@@ -3861,6 +3861,8 @@ SP_Oracle92/siw/SP_PutGPParametro.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_PutMetaAnexo.prc -text
 SP_Oracle92/siw/SP_PutMtSituacao.prc -text
+SP_Oracle92/siw/SP_PutPAElimGeral.prc -text
+SP_Oracle92/siw/SP_PutPAElimItem.prc -text
 SP_Oracle92/siw/SP_PutPAEmpGeral.prc -text
 SP_Oracle92/siw/SP_PutPAEmpItem.prc -text
 SP_Oracle92/siw/SP_PutPAParametro.prc -text
@@ -3984,6 +3986,7 @@ SP_Oracle92/siw/sp_getMatServ.prc -text
 SP_Oracle92/siw/sp_getMeioTransporte.prc -text
 SP_Oracle92/siw/sp_getMoeda.prc -text
 SP_Oracle92/siw/sp_getNotaAcordoCancel.prc -text
+SP_Oracle92/siw/sp_getPAElimItem.prc -text
 SP_Oracle92/siw/sp_getPAEmpItem.prc -text
 SP_Oracle92/siw/sp_getPDImportacao.prc -text
 SP_Oracle92/siw/sp_getPrestacaoContas.prc -text
