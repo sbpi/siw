@@ -3812,6 +3812,7 @@ SP_Oracle92/siw/SP_GetGPContrato.prc -text
 SP_Oracle92/siw/SP_GetGPModalidade.prc -text
 SP_Oracle92/siw/SP_GetGPParametro.prc -text
 SP_Oracle92/siw/SP_GetGPTipoAfast.prc -text
+SP_Oracle92/siw/SP_GetGpAlteracaoSalario.prc -text
 SP_Oracle92/siw/SP_GetGpDesempenho.prc -text
 SP_Oracle92/siw/SP_GetMetaAnexo.prc -text
 SP_Oracle92/siw/SP_GetMtSituacao.prc -text
@@ -4266,6 +4267,7 @@ SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
+SP_Oracle92/siw/sp_putGpAlteracaoSalario.prc -text
 SP_Oracle92/siw/sp_putGpDesempenho.prc -text
 SP_Oracle92/siw/sp_putGpPontoDiario.prc -text
 SP_Oracle92/siw/sp_putGpPontoMensal.prc -text
