@@ -25,7 +25,8 @@ create or replace procedure SP_PutGPContrato
     p_sabado                   in  varchar2  default null,
     p_domingo                  in  varchar2  default null,
     p_banco_horas_saldo        in  varchar2  default null,             
-    p_banco_horas_data         in  date      default null
+    p_banco_horas_data         in  date      default null,
+    p_remuneracao_inicial      in  number    default null
    ) is
    
    w_colaborador      number(18);
@@ -49,7 +50,7 @@ begin
               trata_username,                  trata_ferias,           trata_extras,          entrada_manha, 
               saida_manha,                     entrada_tarde,          saida_tarde,           entrada_noite, 
               saida_noite,                     sabado,                 domingo,
-              banco_horas_saldo,               banco_horas_data
+              banco_horas_saldo,               banco_horas_data,       remuneracao_inicial
               )
       (select sq_contrato_colaborador.nextval, p_cliente,              p_sq_pessoa,           p_cc,
               p_sq_posto_trabalho,             p_sq_localizacao,       p_sq_unidade_lotacao,  p_sq_unidade_exercicio, 
@@ -57,7 +58,7 @@ begin
               p_trata_username,                p_trata_ferias,         p_trata_extras,        p_entrada_manha, 
               p_saida_manha,                   p_entrada_tarde,        p_saida_tarde,         p_entrada_noite, 
               p_saida_noite,                   p_sabado,               p_domingo,
-              p_banco_horas_saldo,             p_banco_horas_data
+              p_banco_horas_saldo,             p_banco_horas_data,     p_remuneracao_inicial
          from dual);
        If p_fim is null Then
           update co_pessoa 
@@ -89,7 +90,8 @@ begin
              sabado                 = p_sabado,
              domingo                = p_domingo,
              banco_horas_saldo      = p_banco_horas_saldo,
-             banco_horas_data       = p_banco_horas_data
+             banco_horas_data       = p_banco_horas_data,
+             remuneracao_inicial    = p_remuneracao_inicial
        where sq_contrato_colaborador = p_chave;
 
       update co_pessoa 
