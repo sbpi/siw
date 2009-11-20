@@ -59,6 +59,16 @@ create or replace procedure SP_PutSolicConc
            and x.sq_material         = y.sq_material
            and x.valor               = y.valor;
 
+   cursor c_protocolos is
+       select a.protocolo, a.eliminacao, d.sq_siw_tramite
+         from pa_eliminacao                      a
+              inner     join siw_solicitacao     b  on (a.protocolo   = b.sq_siw_solicitacao)
+                inner   join siw_menu            c  on (b.sq_menu     = c.sq_menu)
+                  inner join siw_tramite         d  on (c.sq_menu     = d.sq_menu and
+                                                        d.sigla       = 'EL'
+                                                       )
+        where a.sq_siw_solicitacao = p_chave;
+
    cursor c_itens is
        select b.sq_solicitacao_item, b.sq_material, 
               coalesce(max(c.valor_unidade),0) as maximo, 
@@ -170,9 +180,10 @@ begin
                        )
    Where sq_siw_solicitacao = p_chave;
 
-   if w_sg_modulo = 'SL' 
-      then update cl_solicitacao  set nota_conclusao = p_nota_conclusao where sq_siw_solicitacao = p_chave;
-      else update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+   if w_sg_modulo = 'SL' then 
+      update cl_solicitacao  set nota_conclusao = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+   elsif w_sg_modulo <> 'PA' then 
+      update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
    end if;
    
    for crec in c_vencedor loop
@@ -219,8 +230,16 @@ begin
    -- Recupera os dados do serviço
    select * into w_menu from siw_menu where sq_menu = p_menu;
 
-   -- Se ABDI e Pedido de compra, gera licitação na fase de cotação de preços
-   If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
+   -- Se eliminação de protocolo, coloca os protocolos da solicitação no tramite correto
+   If w_menu.sigla = 'PAELIM' Then
+      for crec in c_protocolos loop
+         update siw_solicitacao a
+            set a.conclusao    = crec.eliminacao,
+                sq_siw_tramite = crec.sq_siw_tramite
+         where sq_siw_solicitacao = crec.protocolo;
+      end loop;
+   Elsif w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
+      -- Se ABDI e Pedido de compra, gera licitação na fase de cotação de preços
 
       -- Recupera os dados do serviço de licitação
       select * into w_menu_lic from siw_menu where sq_pessoa = w_menu.sq_pessoa and tramite = 'S' and substr(sigla,1,4)='CLLC';

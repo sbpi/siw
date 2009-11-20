@@ -1,8 +1,8 @@
 <?php
 // =========================================================================
-// Rotina de validação dos dados do pedido
+// Rotina de validação dos dados da eliminacao
 // -------------------------------------------------------------------------
-function ValidaEmprestimo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
+function ValidaEliminacao($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   extract($GLOBALS);
   // Se não encontrar erro, esta função retorna cadeia fazia.
   // Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
@@ -32,8 +32,8 @@ function ValidaEmprestimo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tra
   $l_erro='';
   $l_tipo='';  
 
-  // Recupera os itens do pedido de empréstimo
-  $l_rs_item = db_getPAEmpItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null);
+  // Recupera os itens da solicitação
+  $l_rs_item = db_getPAElimItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null);
   
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
@@ -47,7 +47,7 @@ function ValidaEmprestimo($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tra
 
   // Verifica se já foi inserido os itens do pedido
   if (count($l_rs_item)==0) {
-    $l_erro.='<li>Informe pelo um item no pedido de empréstimo.';
+    $l_erro.='<li>Informe pelo um item para a eliminação.';
     $l_tipo=0; 
   } 
 

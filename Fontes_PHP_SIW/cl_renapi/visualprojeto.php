@@ -131,10 +131,10 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   if($l_tipo!='WORD') $l_html.=chr(13).'        <td colspan="4" bgcolor="#f0f0f0" align="center">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
   else                $l_html.=chr(13).'        <td colspan="4" bgcolor="#f0f0f0" align="center">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#f0f0f0" align="center"><b>'.strtoupper(f($RS,'codigo_interno').' - '.f($RS,'titulo')).'</b></td></tr>';
-  $l_html.=chr(13).'      <tr valign="top">';
-  $l_html.=chr(13).'        <td colspan="2" width="50%" align="center"><b>COORDENAÇÃO:';
-  if($l_tipo!='WORD') $l_html.=chr(13).'        '.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
-  else       $l_html.=chr(13).'        '.f($RS,'sg_unidade_resp').'</b></td>';
+  //$l_html.=chr(13).'      <tr valign="top">';
+  //$l_html.=chr(13).'        <td colspan="2" width="50%" align="center"><b>COORDENAÇÃO:';
+  //if($l_tipo!='WORD') $l_html.=chr(13).'        '.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
+  //else       $l_html.=chr(13).'        '.f($RS,'sg_unidade_resp').'</b></td>';
   
   // Recupera coordenadores do macroprograma
   $RS1 = db_getSolicInter::getInstanceOf($dbms,$w_solic_pai,null,'LISTA');
@@ -148,7 +148,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     }
     $l_coord = substr($l_coord,0,-2);
   }
-  $l_html.=chr(13).'          <td colspan="2" width="50%"><b>'.nvl($l_coord,'&nbsp;').'</b></td>';
+  //$l_html.=chr(13).'          <td colspan="2" width="50%"><b>'.nvl($l_coord,'&nbsp;').'</b></td>';
   
   // Direção
   $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
@@ -213,21 +213,21 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     }
   } 
   $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#969696" align="center" height=5></td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
+  /*$l_html.=chr(13).'      <tr><td colspan="4"><b>Instância de articulação público-privada:</b><br>'.Nvl(CRLF2BR(f($RS,'instancia_articulacao')),'---').'</td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="4"><b>Composição da instância:</b><br>'.Nvl(CRLF2BR(f($RS,'composicao_instancia')),'---').'</td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="4"><b>Estudos:</b><br>'.Nvl(CRLF2BR(f($RS,'estudos')),'---').'</td></tr>';
   if ($w_exibe1) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da Secretaria Executiva:</b><br>'.Nvl(CRLF2BR(f($RS,'analise1')),'---').'</td></tr>';
   if ($w_exibe2) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Coordenador:</b><br>'.Nvl(CRLF2BR(f($RS,'analise2')),'---').'</td></tr>';
   if ($w_exibe3) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações do Gestor:</b><br>'.Nvl(CRLF2BR(f($RS,'analise3')),'---').'</td></tr>';
   if ($w_exibe4) $l_html.=chr(13).'      <tr bgColor="#f8f8f8"><td colspan="4"><b>Análise e observações da ABDI:</b><br>'.Nvl(CRLF2BR(f($RS,'analise4')),'---').'</td></tr>';
-  /*$l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#FEFE99"><b>DESCRITIVO</b></td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Situação inicial:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'justificativa')),'---').'</td></tr>';
   $l_html.=chr(13).'    <tr valign="top"><td colspan="2"><b>Estratégias:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'restricoes')),'---').' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo superior:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'objetivo_superior')),'---').' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Objetivo estratégicos:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'descricao')),'---').' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td colspan="2"><b>Desafios:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'exclusoes')),'---').' </td></tr>';
-  //$l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';
-  */$l_html.=chr(13).'         </table></div></td></tr>';
+  //$l_html.=chr(13).'      <tr valign="top" bgcolor="#FECC90"><td colspan="2"><b>Prioridades:</b><td colspan="2">'.Nvl(CRLF2BR(f($RS,'premissas')),'---').' </td></tr>';*/
+  $l_html.=chr(13).'         </table></div></td></tr>';
   $l_html.=chr(13).'    </table>';
   
   $l_html.=chr(13).'    <table width="99%" border="0">';
@@ -280,12 +280,12 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       $l_html.=chr(13).'        <tr valign="top"><td colspan=6><font size="2"><b>Estrutura de uma agenda de ação:</b><br>> Acão<br>&nbsp;&nbsp;&nbsp;> Medida<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;> Atividade ou Etapa ou Projeto';
       $l_html.=chr(13).'        <tr valign="top"><td colspan=6><font size="2"><b>Legenda dos sinalizadores:</b>'.ExibeImagemSolic('ETAPA',null,null,null,null,null,null,null, null,true);
       $l_html.=chr(13).'      </table>';
-      if($l_tipo!='WORD') {
+      /*if($l_tipo!='WORD') {
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        [<A class="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=hier&w_chave='.$l_chave.'" TARGET="EAP" TITLE="Exibe diagrama hierárquico da estrutura analítica do projeto.">DIAGRAMA HIERÁRQUICO</A>]';
         $l_html.=chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'mod_pr/graficos.php?par=gantt&w_chave='.$l_chave.'" TARGET="GANTT" TITLE="Exibe gráfico de Gantt do projeto.">GRÁFICO DE GANTT</A>]';
-        $l_html.=chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'cl_pitce/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
-      }
+        $l_html.=chr(13).'        [<A CLASS="HL" HREF="'.$conRootSIW.'cl_renapi/relatorios.php?par=Rel_Progresso&p_projeto='.$l_chave.'&p_inicio='.formataDataEdicao(first_Day(time())).'&p_fim='.formataDataEdicao(last_Day(time())).'&p_indicador=S&p_indicador=S&p_prevista=S&p_realizada=S&p_pendente=S&p_proximo=S&p_questoes=S&O=L&SG=RELPJPROG&TP=Relatório de progresso " TARGET="GANTT" TITLE="Exibe relatório de progresso do mês corrente.">PROGRESSO NO MÊS</A>]';
+      }*/
       $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'         <table width=100%  border="1" bordercolor="#00000">';
       $l_html.=chr(13).'          <tr><td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Item</b></div></td>';
@@ -295,11 +295,11 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
       //$l_html.=chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução prevista</b></div></td>';
       $l_html.=chr(13).'            <td colspan=2 bgColor="#f0f0f0"><div align="center"><b>Execução</b></div></td>';
       //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Orc.</b></div></td>';
-      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
-	    $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Desafios</b></div></td>';
-      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
+      //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Peso</b></div></td>';
+	    //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Desafios</b></div></td>';
+      //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Conc.</b></div></td>';
       //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Tar.</b></div></td>';
-      $l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>';
+      //$l_html.=chr(13).'            <td rowspan=2 bgColor="#f0f0f0"><div align="center"><b>Arq.</b></div></td>';
       $l_html.=chr(13).'          </tr>';
       $l_html.=chr(13).'          <tr>';
       $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Início</b></div></td>';
@@ -825,7 +825,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   // Encaminhamentos
   if($w_tipo_visao==0 && $O <> 'V') {
     include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html.=exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    //$l_html.=exibeLog($l_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
   }
   
   if($l_tipo!='WORD') $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';

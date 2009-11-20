@@ -486,6 +486,7 @@ function Localizacao() {
     $w_ativo                = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $RS = db_getaddressList::getInstanceOf($dbms,$w_cliente,$w_sq_unidade,'LISTALOCALIZACAO',null);
+    $RS = SortArray($RS,'nome','asc');
   } elseif (($O=='A' || $O=='E')) {
     $w_sq_localizacao       = $_REQUEST['w_sq_localizacao'];
     

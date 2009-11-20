@@ -17,12 +17,14 @@ include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
 include_once($w_dir_volta.'classes/sp/db_getGPParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getGpDesempenho.php');
+include_once($w_dir_volta.'classes/sp/db_getGpAlteracaoSalario.php');
 include_once($w_dir_volta.'classes/sp/db_getCV.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPColaborador.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPContrato.php');
 include_once($w_dir_volta.'classes/sp/dml_putSiwUsuario.php');
 include_once($w_dir_volta.'classes/sp/dml_putGpDesempenho.php');
+include_once($w_dir_volta.'classes/sp/dml_putGpAlteracaoSalario.php');
 include_once($w_dir_volta.'funcoes/exibeColaborador.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoColaborador.php');
@@ -470,6 +472,230 @@ function Inicial() {
 // =========================================================================
 // Rotina dos dados de desempenho do colaborador
 // -------------------------------------------------------------------------
+function Remuneracao() {
+  extract($GLOBALS);
+  $w_chave               = $_REQUEST['w_chave'];
+  $w_chave_aux           = $_REQUEST['w_chave_aux'];
+  //exibeVariaveis();
+  //Recupera os dados do contrato
+  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+  if ($w_troca> '' && $O!='E') {
+    $w_data_alteracao = $_REQUEST['w_data_alteracao'];
+    $w_novo_valor     = $_REQUEST['w_novo_valor'];
+    $w_funcao         = $_REQUEST['w_funcao'];
+    $w_motivo         = $_REQUEST['w_motivo'];  
+  }elseif ($O=='L') {
+    $RS = db_getGpAlteracaoSalario::getInstanceOf($dbms, $w_chave, null, null, null, null);
+    $RS = SortArray($RS,'data_alteracao','desc');
+  } elseif (!(strpos('AEV',$O)===false) || $w_troca > '') {
+    $RS = db_getGpAlteracaoSalario::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null);
+    foreach ($RS as $row) {    
+      $w_data_alteracao       = formataDataEdicao(f($row,'data_alteracao'));
+      $w_novo_valor           = formatNumber(f($row,'novo_valor'),2);
+      $w_funcao               = f($row,'funcao');
+      $w_motivo               = f($row,'motivo');
+      if(f($row,'ultimo')!="S"){
+        $w_Disabled = 'disabled="disabled"';
+      }else{
+        $w_Disabled = '';
+      }
+    }
+  }
+
+  Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos percentuais de desempenho do colaborador</TITLE>');
+  if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
+  Estrutura_CSS($w_cliente);
+  
+  if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    modulo();
+    checkbranco();
+    formatadata();
+    FormataValor();
+    SaltaCampo();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_data_alteracao','Data de alteração','DATA','1','10','10','','0123456789/');
+      Validate('w_novo_valor','Novo valor da remuneração','VALOR','1',4,18,'','0123456789.,');
+      Validate('w_funcao','Função','1','1','','90','1','1');
+      Validate('w_motivo','Motivo da alteração','TEXTAREA','1','','255','1','1');
+      /*CompValor('w_percentual','Percentual','>=',0,'zero');
+      CompValor('w_percentual','Percentual','<=',100,'100%');*/
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E' && $w_erro=='') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus();\'');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad=\'document.Form.w_data_alteracao.focus();\'');
+  } else if ($O=='E'){
+    BodyOpen('onLoad=\'document.Form.w_assinatura.focus();\'');
+  } else {
+    BodyOpen('onLoad=\'this.focus();\'');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table width="100%" bgcolor="FAEBD7">');
+  ShowHTML('  <tr>');
+  ShowHTML('    <td>');
+  ShowHTML('<table border=1 width="100%">');
+  foreach ($RSContrato as $row) {$RSContrato = $row; break;}
+  ShowHTML('<table border=1 width="100%"><td><table width="100%">');
+  ShowHTML('      <tr><td colspan=2><b><font size="2">'.f($RSContrato,'nome').'</font></b><hr noshade size="1"/>');
+  ShowHTML('      <tr valign="top"><td>Matrícula: <b>'.f($RSContrato,'matricula').'</b>');
+  ShowHTML('      <td>Início da vigência do contrato: <b>'.formataDataEdicao(f($RSContrato,'inicio')).'</b></td>');
+  ShowHTML('</table>');  
+  ShowHTML('</table>');
+  ShowHTML('    </td>');  
+  ShowHTML('  </tr>');  
+  ShowHTML('</table>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&w_chave='.$w_chave.'&w_usuario='.$w_usuario.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    //ShowHTML '    <td><a accesskey=''E'' class=''ss'' href=''' & w_dir & w_Pagina & par & '&w_usuario=' & w_usuario & '&R=' & w_Pagina & par & '&O=E&P1=' & P1 & '&P2=' & P2 & '&P3=' & P3 & '&P4=' & P4 & '&TP=' & TP & '&SG=' & SG & '''><u>E</u>ncerrar</a>&nbsp;'
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td width="15%"><b>'.LinkOrdena('Data de alteração','data_alteracao').'</td>');
+    ShowHTML('          <td width="30%"><b>'.LinkOrdena('Função','funcao').'</td>');
+    ShowHTML('          <td width="15%"><b>'.LinkOrdena('Valor da remuneração','novo_valor').'</td>');
+    ShowHTML('          <td width="5%"><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="8" align="center"><b>Não foram encontrados registross.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){
+      //print_r($RS1);
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center" align="left">'.formataDataEdicao(f($row,'data_alteracao')).'</td>');
+        ShowHTML('        <td align="left" align="left">'.f($row,'funcao').'</td>');
+        ShowHTML('        <td align="center" align="left">'.formatNumber(f($row,'novo_valor'),2).'</td>');
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'sq_alteracao_salario').'&w_ano='.f($row,'ano').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Alterar registro">AL</A>&nbsp');
+        if(f($row,'ultimo')=="S"){
+          ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&w_chave_aux='.f($row,'sq_alteracao_salario').'&O=E&w_ano='.f($row,'ano').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.'COREM'.MontaFiltro('GET').'" Title="Encerrar contrato">EX</A>&nbsp');
+        }
+                
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAV',$O)===false)) {
+    
+    //die();
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'COREM',$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td width="43%" valign="top"><b><u>D</u>ata da alteração:</b><br><input '.$w_Disabled.' title="Data da alteração salarial" accesskey="A" type="text" name="w_data_alteracao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_alteracao.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('        <td><b><u>N</u>ovo valor:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_novo_valor" class="STI" SIZE="10" MAXLENGTH="10" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" VALUE="'.$w_novo_valor.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan="2" valign="top"><b><u>F</u>unção:</b><br><input title="Informe se a alteração de função causou a alteração salarial.." accesskey="F" type="text" name="w_funcao" class="sti" SIZE="90" MAXLENGTH="90" VALUE="'.$w_funcao.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan="2" valign="top"><b><u>M</u>otivo:</b><br><textarea title="Motivo da alteração salarial." accesskey="M" type="text" name="w_motivo" class="sti" cols="51" rows="5" MAXLENGTH="255">'.$w_motivo.'</textarea></td>');
+    ShowHTML('      </tr>');    
+    
+    ShowHTML('      <tr><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan="2" align="center"><hr>');
+    if ($O=='I') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+    } else {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } elseif (!(strpos('E',$O)===false)) {
+    $w_Disabled =' DISABLED ';
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'COREM',$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_ano" value="'.$w_ano.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td width="43%" valign="top"><b><u>D</u>ata da alteração:</b><br><input '.$w_Disabled.' title="Data da alteração salarial" accesskey="A" type="text" name="w_data_alteracao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_alteracao.'" onKeyDown="FormataData(this,event);"></td>');
+    ShowHTML('        <td><b><u>N</u>ovo valor:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_novo_valor" class="STI" SIZE="10" MAXLENGTH="10" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" VALUE="'.$w_novo_valor.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan="2" valign="top"><b><u>F</u>unção:</b><br><input '.$w_Disabled.' title="Informe se a alteração de função causou a alteração salarial.." accesskey="F" type="text" name="w_funcao" class="sti" SIZE="90" MAXLENGTH="90" VALUE="'.$w_funcao.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan="2" valign="top"><b><u>M</u>otivo:</b><br><textarea '.$w_Disabled.' title="Motivo da alteração salarial." accesskey="M" type="text" name="w_motivo" class="sti" cols="51" rows="5" MAXLENGTH="255">'.$w_motivo.'</textarea></td>');
+    ShowHTML('      </tr>');    
+    ShowHTML('      <tr valign="top"><td colspan="2"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan="2" align="center"><hr>');
+    ShowHTML('          <input class="stb" type="submit" name="Botao" value="Excluir">');
+    ShowHTML('          <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&w_usuario='.$w_usuario.'&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L').'\';" name="Botao" value="Cancelar">');
+    ShowHTML('        </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('  </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    //ShowHTML ' history.back(1);'
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
+// =========================================================================
+// Rotina dos dados de desempenho do colaborador
+// -------------------------------------------------------------------------
 function Desempenho() {
   extract($GLOBALS);
   $w_chave               = $_REQUEST['w_chave'];
@@ -482,7 +708,7 @@ function Desempenho() {
   }elseif ($O=='L') {
     $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave,null);
     $RS = SortArray($RS,'ano','desc');
-  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+  } elseif (!(strpos('AEV',$O)===false) || $w_troca>'') {
     $RS = db_getGpDesempenho::getInstanceOf($dbms, $w_chave, $w_ano);
     foreach ($RS as $row) {    
       $w_ano        = f($row,'ano');
@@ -870,6 +1096,7 @@ function Contrato() {
   $w_domingo             = $_REQUEST['w_domingo'];
   $w_banco_horas_data    = $_REQUEST['w_banco_horas_data'];
   $w_banco_horas_saldo   = $_REQUEST['w_banco_horas_saldo'];
+  $w_remuneracao_inicial = $_REQUEST['w_remuneracao_inicial'];
     
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -909,6 +1136,7 @@ function Contrato() {
       $w_carga_diaria        = f($RS,'carga_diaria');
       $w_banco_horas_data    = FormataDataEdicao(f($RS,'banco_horas_data'));
       $w_banco_horas_saldo   = f($RS,'banco_horas_saldo');      
+      $w_remuneracao_inicial = formatNumber(f($RS,'remuneracao_inicial'));
     } 
     $w_erro=ValidaColaborador($w_cliente,$w_usuario,$w_chave,null);
   } 
@@ -918,6 +1146,7 @@ function Contrato() {
     checkbranco();
     formatadata();
     FormataHora();
+    FormataValor();
     SaltaCampo();
     ShowHTML('function calculaDia(dia) {');
     ShowHTML('  var entrada1 = document.Form.w_entrada_manha.value;');
@@ -966,6 +1195,7 @@ function Contrato() {
       Validate('w_unidade_exercicio','Unidade de exercício','SELECT',1,1,18,'','0123456789');
       Validate('w_localizacao','Localização','SELECT',1,1,18,'','0123456789');
       Validate('w_sq_tipo_vinculo','Vínculo com a organização','SELECT',1,1,10,'','1');
+      Validate('w_remuneracao_inicial','Remuneração inicial','VALOR','1',4,18,'','0123456789.,');
       Validate('w_matricula','Matrícula','1','1','5','18','1','1');
       Validate('w_dt_ini','Início da vigência','DATA','1','10','10','','0123456789/');
       Validate('w_entrada_manha','Entrada manhã','HORA','','5','5','','0123456789:');
@@ -1077,6 +1307,7 @@ function Contrato() {
         //ShowHTML('          <A class="hl" onClick=javascript:window.open("location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'\',\'Geo\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\')" title="Seleção de coordenadas geográficas."></A>&nbsp'));
         $TP = 'Percentual de Desempenho';  
         ShowHTML('          <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Desempenho'.'&O=L&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Percentual de desempenho.">PD</a>&nbsp');        
+        ShowHTML('          <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS($w_dir,$w_pagina.'Remuneracao'.'&O=L&w_chave='.f($row,'chave').'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Controle de remuneração.">SL</a>&nbsp');        
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
@@ -1166,6 +1397,9 @@ function Contrato() {
     } else {
       SelecaoVinculo('<u>T</u>ipo de vínculo:','T',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física','S',null,null,3);
     } 
+    ShowHTML('        <tr valign="top">');
+    ShowHTML('      <td><b><u>R</u>emuneração inicial:</b><br>');    
+    ShowHTML('      <input accesskey="R" class="sti" type="text" name="w_remuneracao_inicial" size="10" maxlength="10" onKeyDown="FormataValor(this,18,2,event);" value="'.Nvl($w_remuneracao_inicial,'').'""/>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b><u>M</u>atrícula:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_matricula" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_matricula.'"></td>');
     ShowHTML('          <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I" type="text" name="w_dt_ini" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_ini.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
@@ -1368,7 +1602,11 @@ function Grava() {
           dml_putGPContrato::getInstanceOf($dbms,$O,
               $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_cc'],$w_usuario,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
               $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
-              $_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],$_REQUEST['w_username'],$_REQUEST['w_ferias'],$_REQUEST['w_horas_extras'],$_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_entrada_manha'],$_REQUEST['w_saida_manha'],$_REQUEST['w_entrada_tarde'],$_REQUEST['w_saida_tarde'],$_REQUEST['w_entrada_noite'],$_REQUEST['w_saida_noite'],$_REQUEST['w_sabado'],$_REQUEST['w_domingo'],$_REQUEST['w_banco_horas_saldo'],$_REQUEST['w_banco_horas_data']);                
+              $_REQUEST['w_dt_ini'],$_REQUEST['w_dt_fim'],$_REQUEST['w_username'],$_REQUEST['w_ferias'],$_REQUEST['w_horas_extras'],
+              $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_entrada_manha'],$_REQUEST['w_saida_manha'],
+              $_REQUEST['w_entrada_tarde'],$_REQUEST['w_saida_tarde'],$_REQUEST['w_entrada_noite'],$_REQUEST['w_saida_noite'],
+              $_REQUEST['w_sabado'],$_REQUEST['w_domingo'],
+              $_REQUEST['w_banco_horas_saldo'],$_REQUEST['w_banco_horas_data'], $_REQUEST['w_remuneracao_inicial']);                
           if (!(strpos('I',$O)===false)) {
             $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
             if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
@@ -1397,7 +1635,7 @@ function Grava() {
         $RS = db_getGPDesempenho::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);            
         if(count($RS)>0 && $O=='I') {
           ScriptOpen('JavaScript');
-          ShowHTML('alert(\'O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
+          ShowHTML('alert(\'?O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
           ScriptClose();
           retornaFormulario('w_ano');
           exit;
@@ -1412,7 +1650,29 @@ function Grava() {
         ScriptClose();
         retornaFormulario('w_assinatura');
       } 
-      break;    
+      break;
+      case 'COREM':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        //$RS = db_getGPAlteracaoSalario::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);            
+        /*if(count($RS)>0 && $O=='I') {
+          ScriptOpen('JavaScript');
+          ShowHTML('alert(\'O percentual de AlteracaoSalario para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
+          ScriptClose();
+          retornaFormulario('w_ano');
+          exit;
+        }*/
+        dml_putGpAlteracaoSalario::getInstanceOf($dbms, $O, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'], $_REQUEST['w_data_alteracao'], $_REQUEST['w_novo_valor'], $_REQUEST['w_funcao'], $_REQUEST['w_motivo']);                               
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'REMUNERACAO'.'&O=L&w_chave='.$_REQUEST['w_chave'].'&w_usuario='.$w_usuario.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;            
     default:
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Bloco de dados não encontrado: '.$SG.'\');');
@@ -1431,6 +1691,7 @@ function Main() {
     case 'INICIAL':           Inicial();          break;
     case 'DOCUMENTACAO':      Documentacao();     break;
     case 'DESEMPENHO':        Desempenho();       break;
+    case 'REMUNERACAO':       Remuneracao();      break;
     case 'CONTRATO':          Contrato();         break;
     case 'GRAVA':             Grava();            break;
   default:

@@ -89,7 +89,7 @@ include_once($w_dir_volta.'classes/sp/dml_putProjetoEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putAtualizaEtapa.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putProjetoRubrica.php');
-include_once($w_dir_volta.'classes/sp/dml_putProjetoDescritivo.php');
+//include_once($w_dir_volta.'classes/sp/dml_putProjetoDescritivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapa.php');
 include_once($w_dir_volta.'classes/sp/dml_putCronograma.php');
 include_once($w_dir_volta.'classes/sp/dml_putRestricaoEtapaInter.php');
@@ -137,7 +137,7 @@ $O          = strtoupper($_REQUEST['O']);
 $w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
 $w_pagina       = 'projeto.php?par=';
 $w_Disabled     = 'ENABLED';
-$w_dir          = 'cl_pitce/';
+$w_dir          = 'cl_renapi/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = strtoupper($_REQUEST['w_copia']);
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -1044,11 +1044,13 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
       }
     }
-    $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
-    if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');
-    } else {
-      if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');    
+    If(is_array($RS_Relac)){
+      $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
+      if(nvl($w_chave,'')!='' && nvl(f($RS_Relac,'sigla'),'')=='GCCCAD' && nvl($w_solic_pai,'')!='') {
+        if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_pr/tabelas.php?par=CronPrestacao&w_siw_solicitacao='.$w_chave.'&R='.$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&SG='.$SG.'&TP='.$TP.' - Cronograma da prestação de contas&SG=CRONPREST'.MontaFiltro('GET')).'\',\'CronogramaPrestacao\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');
+      } else {
+        if(f($RS_Pai,'prestacao_contas')=='S') ShowHTML('        <a class="SS" HREF="javascript:this.status.value;" onClick="alert(\'Para inserir a prestação de contas, grave este tela primeiro!\'); return false;" title="Informar cronograma para prestação de contas do programa.">Prestação de contas</a>&nbsp');    
+      }    
     }
     ShowHTML('          </td></tr></table></td></tr>');
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0>');
@@ -1151,7 +1153,7 @@ function Geral() {
 // =========================================================================
 // Rotina dos descritivos
 // -------------------------------------------------------------------------
-function Descritivo() {
+/*function Descritivo() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
@@ -1275,7 +1277,7 @@ function Descritivo() {
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();
-} 
+} */
 
 // =========================================================================
 // Rotina de informação das análises do projeto
@@ -1899,7 +1901,7 @@ function Etapas() {
       Validate('w_peso','Peso','1','1','1','2','','0123456789');
       CompValor('w_peso','Peso da etapa','>=',1,'1');
       Validate('w_titulo','Título','','1','2','150','1','1');
-      Validate('w_desafio','Desafios','','','','30','1','1');
+      Validate('w_desafio','Processo','','','','30','1','1');
       Validate('w_descricao','Descricao','','1','2','2000','1','1');
       Validate('w_ordem','Ordem','1','1','1','3','','0123456789');
       Validate('w_chave_pai','Subordinação','SELECT','','1','10','','1');
@@ -1961,13 +1963,13 @@ function Etapas() {
     ShowHTML('          <td rowspan=2><b>Responsável atualização</td>');
     ShowHTML('          <td colspan=2><b>Execução</td>');
     //ShowHTML('          <td rowspan=2><b>Orçamento</td>');
-    ShowHTML('          <td rowspan=2><b>Peso</td>');
-  ShowHTML('          <td rowspan=2><b>Desafios</td>');
-    ShowHTML('          <td rowspan=2><b>Conc.</td>');
+    //ShowHTML('          <td rowspan=2><b>Peso</td>');
+    //ShowHTML('          <td rowspan=2><b>Desafios</td>');
+    //ShowHTML('          <td rowspan=2><b>Conc.</td>');
     /*
     ShowHTML('          <td rowspan=2><b>Tar.</td>');
     */
-    ShowHTML('          <td rowspan=2><b>Arq.</td>');
+    //ShowHTML('          <td rowspan=2><b>Arq.</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -2107,10 +2109,10 @@ function Etapas() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_pacote" value="N">');
     }
-    ShowHTML('        <td colspan=2><b><u>P</u>eso da etapa:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_peso" SIZE=2 MAXLENGTH=2 VALUE="'.nvl($w_peso,1).'" '.$w_Disabled.' title="Informe o peso da etapa no cálculo do percentual de execução."></td>');
+    ShowHTML('        <td colspan=2 style="display:none"><b><u>P</u>eso da etapa:<br><INPUT ACCESSKEY="O" TYPE="TEXT" CLASS="STI" NAME="w_peso" SIZE=2 MAXLENGTH=2 VALUE="'.nvl($w_peso,1).'" '.$w_Disabled.' title="Informe o peso da etapa no cálculo do percentual de execução."></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan=3><b>Tít<u>u</u>lo:</b><br><input '.$w_Disabled.' accesskey="U" type="text" name="w_titulo" class="STI" SIZE="90" MAXLENGTH="150" VALUE="'.$w_titulo.'" title="Informe um título para a etapa."></td>');
-    ShowHTML('      <tr><td colspan=2><b><u>D</u>esafio:<br><INPUT ACCESSKEY="D" TYPE="TEXT" CLASS="STI" NAME="w_desafio" SIZE=30 MAXLENGTH=30 VALUE="'.nvl($w_desafio,'').'" '.$w_Disabled.' title="Informe o desafio da etapa."></td>');
+    ShowHTML('      <tr><td colspan=2><b><u>P</u>rocesso:<br><INPUT ACCESSKEY="P" TYPE="TEXT" CLASS="STI" NAME="w_desafio" SIZE=30 MAXLENGTH=30 VALUE="'.nvl($w_desafio,'').'" '.$w_Disabled.' title="Informe o desafio da etapa."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=75 title="Descreva os objetivos da etapa e os resultados esperados após sua execução.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     SelecaoEtapa('Eta<u>p</u>a superior:','P','Se necessário, indique a etapa superior a esta.',$w_chave_pai,$w_chave,$w_chave_aux,'w_chave_pai','Pesquisa','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_ordem\'; document.Form.submit();"');
@@ -3935,13 +3937,13 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.nvl(formataDataEdicao($l_fim_real,9),'---').'</td>';
   }
   //if (nvl($l_valor,-1)!=-1) $l_html .= chr(13).'        <td nowrap align="right" width="1%" nowrap>'.formatNumber($l_valor).'</td>';
-  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
-  $l_html .= chr(13).'        <td width="1%" nowrap>'.nvl($l_desafio,'&nbsp;').'</td>';
-  if (nvl($l_perc,'')!='') {
-    $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
-  } else {
-    $l_html .= chr(13).'        <td align="center" width="1%" nowrap>---</td>';
-  }
+  //$l_html .= chr(13).'        <td align="center" width="1%" nowrap>'.$l_peso.'</td>';
+  //$l_html .= chr(13).'        <td width="1%" nowrap>'.nvl($l_desafio,'&nbsp;').'</td>';
+  //if (nvl($l_perc,'')!='') {
+  //  $l_html .= chr(13).'        <td align="right" width="1%" nowrap>'.formatNumber($l_perc).' %</td>';
+  //} else {
+  //  $l_html .= chr(13).'        <td align="center" width="1%" nowrap>---</td>';
+  //}
   /*
   if ($l_ativ > 0) {
    if($P4!=1) $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center" title="Número de tarefas ligadas a esta estapa. Clique sobre o número para exibir APENAS as tarefas que você tem acesso."><a class="HL" href="javascript:lista(\''.$l_chave.'\',\''.$l_chave_aux.'\');" onMouseOver="window.status=\'Exibe APENAS as tarefas que você tem acesso.\'; return true;" onMouseOut="window.status=\'\'; return true;">'.$l_ativ.'</a></td>';
@@ -3951,12 +3953,12 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   }
   */
 
-  if (nvl($l_chave_aux,'')!='') {
+  /*if (nvl($l_chave_aux,'')!='') {
     if($l_arquivo>0 && $P4!=1) $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$l_arquivo,$TP,$SG).'</td>';
-    else             $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_arquivo.'</td>';
+    //else             $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">'.$l_arquivo.'</td>';
   } else {
     $l_html = $l_html.chr(13).'        <td width="1%" nowrap align="center">0</td>';
-  }
+  }*/
   if ($l_oper == 'S') {
     $l_html .= chr(13).'        <td align="top" nowrap '.$l_row.'>';
     if (nvl($l_chave_aux,'')!='') {
@@ -4643,8 +4645,8 @@ function Grava() {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
-      dml_putProjetoDescritivo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_instancia_articulacao'], $_REQUEST['w_composicao_instancia'], $_REQUEST['w_estudos'], $_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
-          $_REQUEST['w_exclusoes'],$_REQUEST['w_premissas'], $_REQUEST['w_restricoes'],$_REQUEST['w_justificativa']);
+      //dml_putProjetoDescritivo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_instancia_articulacao'], $_REQUEST['w_composicao_instancia'], $_REQUEST['w_estudos'], $_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
+      //    $_REQUEST['w_exclusoes'],$_REQUEST['w_premissas'], $_REQUEST['w_restricoes'],$_REQUEST['w_justificativa']);
       // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
       $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
       ScriptOpen('JavaScript');
@@ -5245,7 +5247,7 @@ function Main() {
   switch ($par) {
     case 'INICIAL':             Inicial();           break;
     case 'GERAL':               Geral();             break;
-    case 'DESCRITIVO':          Descritivo();        break;   
+    //case 'DESCRITIVO':          Descritivo();        break;   
     case 'INFORMAR':            Informar();        break;   
     case 'RUBRICA':             Rubrica();           break;    
     case 'ATUALIZARUBRICA':     AtualizaRubrica();   break;   

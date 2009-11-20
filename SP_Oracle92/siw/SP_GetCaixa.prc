@@ -58,15 +58,9 @@ begin
                 c5.codigo as cd_assunto, c5.descricao as ds_assunto, 
                 c5.fase_corrente_anos, c5.fase_intermed_anos, c5.fase_final_anos,
                 c7.nome as nm_especie,   c7.sigla as sg_natureza,    c7.ativo as st_natureza,
-                d.inicio, retornaLimiteProtocolo(d.sq_siw_solicitacao) as dados_assunto,
+                ca.sigla as sg_final,    ca.descricao as ds_final,
+                d.inicio, retornaLimiteProtocolo(d.sq_siw_solicitacao) as prazo_guarda,
                 d1.nome as nm_unid_origem, d1.sigla as sg_unid_origem,
-                case d2.ativo 
-                     when 'S' then case c5.fase_corrente_anos when 0 then c6.descricao else to_char(c5.fase_corrente_anos) || ' '  || c6.sigla end
-                     else case d2.sigla
-                               when 'AS' then case c5.fase_intermed_anos when 0 then c8.descricao else to_char(c5.fase_intermed_anos) || ' '  || c8.sigla end
-                               when 'AT' then case c5.fase_final_anos when 0 then c9.descricao else to_char(c5.fase_final_anos) || ' '  || c9.sigla end
-                          end
-                end as data_limite_doc,
                 case d2.ativo 
                      when 'S' then 'CORRENTE'
                      else case d2.sigla
@@ -88,6 +82,7 @@ begin
                       inner join pa_tipo_guarda           c6 on (c5.fase_corrente_guarda    = c6.sq_tipo_guarda)
                       inner join pa_tipo_guarda           c8 on (c5.fase_intermed_guarda    = c8.sq_tipo_guarda)
                       inner join pa_tipo_guarda           c9 on (c5.fase_final_guarda       = c9.sq_tipo_guarda)
+                      inner join pa_tipo_guarda           ca on (c5.destinacao_final        = ca.sq_tipo_guarda)
                   inner     join pa_especie_documento     c7 on (c.sq_especie_documento     = c7.sq_especie_documento)
                   inner     join siw_solicitacao          d on (c.sq_siw_solicitacao        = d.sq_siw_solicitacao)
                     left    join eo_unidade               d1 on (d.sq_unidade               = d1.sq_unidade)

@@ -3200,10 +3200,11 @@ jQuery( window ).bind( 'unload', function(){
 	jQuery(function(){
 		var div = document.createElement("div");
 		div.style.width = div.style.paddingLeft = "1px";
-
-		document.body.appendChild( div );
-		jQuery.boxModel = jQuery.support.boxModel = div.offsetWidth === 2;
-		document.body.removeChild( div ).style.display = 'none';
+        if (document.body!=undefined) {
+  		  document.body.appendChild( div );
+	  	  jQuery.boxModel = jQuery.support.boxModel = div.offsetWidth === 2;
+		  document.body.removeChild( div ).style.display = 'none';
+        }
 	});
 })();
 

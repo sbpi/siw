@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -14,7 +14,7 @@ class dml_putGPContrato {
         $p_sq_modalidade_contrato, $p_sq_unidade_lotacao, $p_sq_unidade_exercicio, $p_sq_localizacao, 
         $p_matricula, $p_inicio, $p_fim, $p_trata_username, $p_trata_ferias, $p_trata_extras, 
         $p_tipo_vinculo,$p_entrada_manha,$p_saida_manha,$p_entrada_tarde,$p_saida_tarde,$p_entrada_noite,
-        $p_saida_noite,$p_sabado, $p_domingo, $p_banco_horas_saldo,$p_banco_horas_data){
+        $p_saida_noite,$p_sabado, $p_domingo, $p_banco_horas_saldo,$p_banco_horas_data,$p_remuneracao_inicial){
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'sp_putGPContrato';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -43,7 +43,8 @@ class dml_putGPContrato {
                    'p_sabado'                    =>array($p_sabado,                                        B_VARCHAR,         1),
                    'p_domingo'                   =>array($p_domingo,                                       B_VARCHAR,         1),
                    'p_banco_horas_saldo'         =>array(tvl($p_banco_horas_saldo),                        B_VARCHAR,         8),     
-                   'p_banco_horas_data'          =>array(tvl($p_banco_horas_data),                         B_DATE,           32)
+                   'p_banco_horas_data'          =>array(tvl($p_banco_horas_data),                         B_DATE,           32),
+                   'p_remuneracao_inicial'       =>array(toNumber(tvl($p_remuneracao_inicial)),            B_NUMERIC,      18,2)     
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

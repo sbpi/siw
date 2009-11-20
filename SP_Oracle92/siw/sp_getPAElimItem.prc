@@ -26,11 +26,11 @@ begin
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 case d.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem_doc,
-                retornaLimiteProtocolo(d.sq_siw_solicitacao) as dados_assunto,
+                retornaLimiteProtocolo(d.sq_siw_solicitacao) as prazo_guarda,
                 d1.nome as nm_especie,
                 d6.numero as nr_caixa, montaNomeArquivoLocal(d6.sq_arquivo_local) as nm_arquivo_local,
                 d7.sigla as sg_unid_caixa,
-                d8.sigla as sg_final
+                d8.sigla as sg_final, d8.descricao as nm_final
            from pa_eliminacao                             a
                 inner       join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                   inner     join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)

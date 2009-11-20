@@ -732,7 +732,7 @@ function Enderecos() {
     ShowHTML('        </ul></b></font></td>');
     ShowHTML('      </tr>');  
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_pessoa='.$w_sq_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
     ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
@@ -754,10 +754,10 @@ function Enderecos() {
         ShowHTML('        <td>'.f($row,'endereco').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padrao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
-        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do endereço?\');">EX</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&w_sq_pessoa_endereco='.f($row,'sq_pessoa_endereco').'&w_handle='.f($row,'sq_pessoa_endereco').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do endereço?\');">EX</A>&nbsp');
         if (f($row,'email')=='N' && f($row,'internet')=='N' && f($RS_Cliente,'georeferencia')=='S') {
-          ShowHTML('          <A class="hl" HREF="mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=ENDERECO&w_sq_pessoa='.$w_sq_pessoa.'&w_chave='.f($row,'sq_pessoa_endereco').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
+          ShowHTML('          <A class="hl" HREF="mod_gr/selecao.php?par=indica&R='.$w_pagina.$par.'&O=I&w_tipo=ENDERECO&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&w_chave='.f($row,'sq_pessoa_endereco').'&w_inicio='.f($row,'google').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Seleção de coordenadas geográficas.">GR</A>&nbsp');
         }
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -782,6 +782,7 @@ function Enderecos() {
     AbreForm('Form',$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cgccpf" value="'.$w_cgccpf.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa_endereco" value="'.$w_sq_pessoa_endereco.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0">');
@@ -816,7 +817,7 @@ function Enderecos() {
         ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
       } 
     } 
-    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_pessoa='.$w_sq_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.$w_pagina.$par.'&w_sq_pessoa='.$w_sq_pessoa.'&w_cgccpf='.$w_cgccpf.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'&O=L\';" name="Botao" value="Cancelar">');
     ShowHTML('          </td>');
     ShowHTML('      </tr>');
     ShowHTML('    </table>');
@@ -1881,7 +1882,7 @@ function Grava() {
             $_REQUEST['w_complemento'],$_REQUEST['w_cidade'],$_REQUEST['w_bairro'],$_REQUEST['w_cep'],$_REQUEST['w_padrao']);
 
         ScriptOpen('JavaScript');
-        ShowHTML('  location.href=\''.$R.'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
+        ShowHTML('  location.href=\''.$R.'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&w_cgccpf='.$_REQUEST['w_cgccpf'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');

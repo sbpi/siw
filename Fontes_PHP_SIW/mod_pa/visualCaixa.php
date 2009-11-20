@@ -51,7 +51,7 @@ function VisualCaixa($l_chave, $l_formato='WORD') {
       $l_html.=chr(13).'       <td>'.f($row,'assunto').'</td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Data Limite:</b></td>';
       $l_html.=chr(13).'       <td>'.formataDataEdicao(f($row,'data_limite')).'</td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Intermediário:</b></td>';
+      $l_html.=chr(13).'   <tr><td width="30%"><b>Prazo guarda:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'intermediario').'</td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Destinação Final:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'destinacao_final').'</td></tr>';
@@ -63,7 +63,7 @@ function VisualCaixa($l_chave, $l_formato='WORD') {
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Protocolo</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Assunto</b></font></td>';
       $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
-      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Intermediário</b></font></td>';
+      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Guarda</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Destinação final</b></font></td>';
       $l_html.=chr(13).'     <tr valign="top" align="center">';
       $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
@@ -86,9 +86,8 @@ function VisualCaixa($l_chave, $l_formato='WORD') {
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'numero_original').'</font></td>';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_origem_resumido').'</font></td>';
-    $w_dados = explode('|@|',f($row,'dados_assunto'));
-    $l_html.=chr(13).'       <td><font size=1>'.$w_dados[1].'</font></td>';
-    $l_html.=chr(13).'       <td><font size=1>'.$w_dados[2].'</font></td>';
+    $l_html.=chr(13).'       <td><font size=1>'.f($row,'prazo_guarda').'</font></td>';
+    $l_html.=chr(13).'       <td title="'.f($row,'ds_final').'"><font size=1>'.f($row,'sg_final').'</font></td>';
     $l_html.=chr(13).'     </tr>';
     $w_linha += 1;
   }

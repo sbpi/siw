@@ -12,6 +12,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicPA.php');
+include_once($w_dir_volta.'classes/sp/db_getPAElimItem.php');
 include_once($w_dir_volta.'classes/sp/db_getPAEmpItem.php');
 include_once($w_dir_volta.'classes/sp/db_getEspecieDocumento_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidade_PA.php');
@@ -28,6 +29,7 @@ include_once($w_dir_volta.'funcoes/selecaoCaixa.php');
 include_once('visualGR.php');
 include_once('visualGT.php');
 include_once('visualFE.php');
+include_once('visualLE.php');
 include_once('visualGF.php');
 include_once('visualCaixa.php');
 
@@ -698,6 +700,24 @@ function EmitirGF () {
 } 
 
 // =========================================================================
+// Rotina de visualização da lista de eliminação
+// -------------------------------------------------------------------------
+function EmitirLE () {
+  extract($GLOBALS);
+  $w_chave     = $_REQUEST['w_chave'];
+  $w_formato   = $_REQUEST['w_formato'];
+  
+  if ($w_formato=='WORD') {
+    HeaderWord($_REQUEST['orientacao']); 
+  } else {
+    Cabecalho();
+    BodyOpen(null);
+  }
+  ShowHTML(VisualLE($w_chave));
+  Rodape();
+} 
+
+// =========================================================================
 // Rotina de visualização da guia de transferência
 // -------------------------------------------------------------------------
 function EmitirGT () {
@@ -780,6 +800,7 @@ function Main() {
     case 'EMITIRGT':        EmitirGT();        break;
     case 'EMITIRGF':        EmitirGF();        break;
     case 'EMITIRFE':        EmitirFE();        break;
+    case 'EMITIRLE':        EmitirLE();        break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

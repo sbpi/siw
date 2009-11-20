@@ -37,12 +37,14 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.$w_tipo_juntada.'</b></font></td>';
   } elseif (nvl(f($RS,'sq_emprestimo'),'')!='') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>EMPRESTADO ATÉ '.formataDataEdicao(f($RS,'devolucao_prevista')).' (PREVISÃO)</b></font></td>';
+  } elseif (nvl(f($RS,'sq_eliminacao'),'')!='' && nvl(f($RS,'dt_eliminacao'),'')=='') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>EM PROCESSO DE ELIMINAÇÃO</b></font></td>';
+  } elseif (f($RS,'sg_tramite')=='EL') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AS') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_setorial'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO SETORIAL' : 'ARQUIVADO SETORIAL').'</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AT') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_central'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO CENTRAL' : 'ARQUIVADO CENTRAL').'</b></font></td>';
-  } elseif (f($RS,'sg_tramite')=='EL') {
-    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
   } 
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
@@ -200,8 +202,12 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
         $l_html.=chr(13).'       <td>'.f($RS,'nm_arquivo_local').'</td></tr>';
       }
     }
-    if (f($RS,'sg_tramite')=='EL') {
-      $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
+    if (f($RS,'sg_tramite')=='EL' || nvl(f($RS,'sq_eliminacao'),'')!='') {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA ELIMINAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Solicitação:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'cd_eliminacao').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Data da eliminação:</b></td>';
+      $l_html.=chr(13).'       <td>'.nvl(FormataDataEdicao(f($RS,'dt_eliminacao')),'Em andamento').'</td></tr>';
     }
   } 
 

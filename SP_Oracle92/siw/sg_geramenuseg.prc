@@ -32,7 +32,12 @@ create or replace procedure SG_GeraMenuSeg(p_cliente_base in number, p_modulo in
        from siw_menu             a
             inner join siw_modulo b on (a.sq_modulo = b.sq_modulo)
       where 0             < instr(p_modulo, b.sigla)
-        and a.ativo       = 'S'
+        and 0             = (select count(*)
+                               from siw_menu x
+                              where x.ativo = 'N'
+                             connect by prior x.sq_menu_pai = x.sq_menu
+                             start with x.sq_menu = a.sq_menu
+                            )
         and a.sq_pessoa   = p_cliente_base
      order by Nvl(a.sq_menu_pai,0),a.ordem;
      

@@ -6,23 +6,17 @@ create or replace function RetornaLimiteProtocolo(p_chave in number) return varc
 * Data      : 10/11/2009, 18:00
 * Parâmetros:
 *    p_chave : chave primária de SIW_SOLICITACAO
-* Retorno: se a solicitação não existir, retorna nulo
-*          se a solicitação existir, retorna string contendo informações sobre ela.
-*          A string contém vários pedaços separados por |@|
-*          1  - data limite do protocolo
-*          2  - data limite na fase intermediária
-*          3  - destinação final do protocolo
+* Retorno: String com data limite na fase corrente ou na fase intermediária.
+*          Pode ser uma data ou um texto
 ***********************************************************************************/
   Result varchar2(32767) := null;
   w_reg  number(18);
 
   cursor c_dados is
-      select max(case a.processo when 'S' then to_char(a.data_autuacao,'dd/mm/yyyy') else to_char(a1.inicio,'dd/mm/yyyy') end) as data_limite,
-             case a2.sigla
+      select case a2.sigla
                   when 'AS' then case d.sigla when 'ANOS' then to_char(a.data_setorial,'dd/mm/')||(to_char(a.data_setorial,'yyyy')+c.fase_corrente_anos) else d.descricao end
                   when 'AT' then case e.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_intermed_anos) else e.descricao end
-             end as intermediario,
-             case f.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_final_anos) else f.descricao end as final
+             end as intermediario
         from pa_documento                        a
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
                inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
@@ -39,7 +33,7 @@ begin
      select count(sq_siw_solicitacao) into w_reg from pa_documento where sq_siw_solicitacao = p_chave;
      if w_reg > 0 then
         for crec in c_dados loop
-            Result := crec.data_limite||'|@|'||crec.intermediario||'|@|'||crec.final;
+            Result := crec.intermediario;
         end loop;
      end if;
   end if;
