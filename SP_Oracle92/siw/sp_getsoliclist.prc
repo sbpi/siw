@@ -1571,8 +1571,8 @@ begin
                                                                                    from pa_documento_interessado x
                                                                                         inner join co_pessoa     y on (x.sq_pessoa = y.sq_pessoa)
                                                                                   where x.sq_siw_solicitacao = d.sq_siw_solicitacao
-                                                                                    and (y.nome_indice       like '%'||p_processo||'%' or
-                                                                                         y.nome_resumido_ind like '%'||p_processo||'%'
+                                                                                    and (acentos(y.nome_indice)       like '%'||acentos(p_processo)||'%' or
+                                                                                         acentos(y.nome_resumido_ind) like '%'||acentos(p_processo)||'%'
                                                                                         )
                                                                                 )
                                              )
@@ -1586,7 +1586,7 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
                  (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
-                 (p_tipo         = 8     and b.sq_solic_pai is null and ((b1.sigla = 'AT' and d.data_central is not null) or (b1.sigla = 'AS' and d52.sigla = 'NAPL' and d.data_setorial is not null)) and b7.protocolo is null and b8.protocolo is null and d51.sigla = 'ELIM') -- Eliminação
+                 (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null and b7.protocolo is null and b8.protocolo is null and d51.sigla = 'ELIM') -- Eliminação
                 )
             and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
                  ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 

@@ -330,7 +330,7 @@ function Gerencial() {
       //Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
       Validate('p_proponente','Origem externa','','','2','90','1','');
       Validate('p_assunto','Detalhamento','','','2','90','1','1');
-      Validate('p_processo','Palavras-chave','','','2','90','1','1');
+      Validate('p_processo','Interessado','','','2','90','1','1');
       Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
       Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');

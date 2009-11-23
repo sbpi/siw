@@ -482,6 +482,7 @@ begin
                                   when instr(upper(a.observacao),'ANEXA')>0       then 'ANEXAÇÃO'
                                   when instr(upper(a.observacao),'APENSA')>0      then 'APENSAÇÃO'
                                   when instr(upper(a.observacao),'DESM')>0        then 'DESMEMBRAMENTO'
+                                  when instr(upper(a.observacao),'INDICAÇÃO')>0   then 'CLASSIFICAÇÃO'
                                   when instr(upper(a.observacao),'ARQ')>0         then 'ARQUIVAMENTO'
                                   else 'REGISTRO' 
                              end
@@ -561,7 +562,9 @@ begin
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
             select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
-                   case when substr(a.observacao,1,9) = 'Anotação:' then substr(a.observacao,13) else a.observacao end as despacho,
+                   case when substr(a.observacao,1,9) = 'Anotação:' then substr(a.observacao,13) 
+                        else a.observacao 
+                   end as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,

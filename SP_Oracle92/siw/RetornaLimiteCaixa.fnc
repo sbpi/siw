@@ -34,7 +34,8 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
                  left  join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
                  left  join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
                  left  join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
-       where a.sq_caixa = p_chave
+       where a.sq_caixa      = p_chave
+         and a1.sq_solic_pai is null
       group by a2.sigla, a.data_setorial, a.data_central, c.fase_corrente_anos, c.fase_intermed_anos, c.fase_final_anos, d.sigla, d.descricao, e.sigla, e.descricao, f.sigla, f.descricao;
 begin
   if p_chave is not null then

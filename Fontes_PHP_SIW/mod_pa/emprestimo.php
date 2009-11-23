@@ -200,13 +200,12 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
-
   if ($O=='L') {
     if ((strpos(strtoupper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
       if ($p_uf>'') {
         $w_linha++;
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
       } 
       if (nvl($p_chave_pai,'')>'') {
         $w_linha++;
@@ -220,20 +219,22 @@ function Inicial() {
         $w_linha++;
         $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
         foreach ($RS as $row) { $RS = $row; break; }
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
       } 
       if ($p_sqcc>'') {
         $w_linha++;
         $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_chave>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
-      if ($p_prazo>'') { $w_linha++; $w_filtro = $w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
+      if ($p_chave>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
+      if ($p_prazo>'') { $w_linha++; $w_filtro.=' <tr valign="top"><td align="right">Prazo de devolução até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
+      if ($p_ini_i>'')      { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Data da solicitação entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
+      if ($p_fim_i>'')      { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Limite para devolução entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
       if ($p_usu_resp>'') {
         $w_linha++;
         $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,$p_usu_resp,$w_cliente,null,null,null,null);
         foreach ($RS as $row) {$RS = $row; break;}
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Espécie documental <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Espécie documental <td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_empenho>'') {
         $w_filtro.='<tr valign="top"><td align="right">Nº documento original <td>[<b>'.$p_empenho.'</b>]';
@@ -241,33 +242,31 @@ function Inicial() {
       if ($p_unidade>'') {
         $w_linha++;
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Origem interna <td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Origem interna <td>[<b>'.f($RS,'nome').'</b>]';
       } 
         if ($p_solicitante>'') {
           $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-          $w_filtro .= '<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+          $w_filtro.='<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
         } 
-      if ($p_unidade>''){
+      if ($p_uorg_resp>''){
         $w_linha++;
-        $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade solicitante<td>[<b>'.f($RS,'nome').'</b>]';
+        $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+        $w_filtro.='<tr valign="top"><td align="right">Unidade solicitante<td>[<b>'.f($RS,'nome').'</b>]';
       } 
       if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
         $w_linha++;
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
       } 
       if ($p_prioridade>''){
         $w_linha++;
         $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
         foreach ($RS as $row) {$RS = $row; break;}
-        $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
       } 
-      if ($p_proponente>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
-      if ($p_assunto>'')    { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
-      if ($p_processo>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
-      if ($p_ini_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data criação/recebimento entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
-      if ($p_fim_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite da tramitação entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
-      if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
+      if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
+      if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
+      if ($p_processo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
+      if ($p_atraso=='S')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
       if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
     } 
  
@@ -389,27 +388,35 @@ function Inicial() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Devolução','fim').'</td>');
       ShowHTML('          <td colspan=2><b>Solicitante</td>');
+      ShowHTML('          <td colspan=3><b>Protocolos</td>');
       if ($P1!=1) ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML('          <td rowspan=2><b>Operações</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>'.LinkOrdena('Pessoa','nm_solic').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Setor','sg_unidade_resp').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Total','qtd_itens').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Procs.','qtd_processo').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Docs.','qtd_documento').'</td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Código</td>');
       ShowHTML('          <td rowspan=2><b>Justificativa</td>');
       ShowHTML('          <td rowspan=2><b>Devolução</td>');
       ShowHTML('          <td colspan=2><b>Solicitante</td>');
+      ShowHTML('          <td colspan=3><b>Protocolos</td>');
       if ($P1!=1) ShowHTML('          <td rowspan=2><b>Fase atual</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('          <td><b>Pessoa</td>');
       ShowHTML('          <td><b>Setor</td>');
+      ShowHTML('          <td><b>Total</td>');
+      ShowHTML('          <td><b>Procs.</td>');
+      ShowHTML('          <td><b>Docs.</td>');
       ShowHTML('        </tr>');
     }
     if (count($RS)<=0) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=12 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       $w_parcial=0;
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -417,12 +424,15 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td width="1%" nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        ShowHTML(ExibeImagemSolic('GD',f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
         ShowHTML('        <td>'.htmlspecialchars(f($row,'justificativa')).'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'fim')).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
+        ShowHTML('        <td align="center">'.(f($row,'qtd_itens')).'</td>');
+        ShowHTML('        <td align="center">'.f($row,'qtd_processo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'qtd_documento').'</td>');
         if ($P1!=1) ShowHTML('        <td>'.f($row,'nm_tramite').'</td>');
         ShowHTML('        <td width="1%" nowrap>');
         if ($P1!=3 && $P1!=5 && $P1!=6) {
@@ -497,7 +507,7 @@ function Inicial() {
       ShowHTML('     <td valign="top"><b>Número do <U>p</U>edido:<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_codigo" size="20" maxlength="60" value="'.$p_codigo.'"></td>');
       ShowHTML('   <tr valign="top">');
       SelecaoPessoa('<u>S</u>olicitante:','N','Selecione o solicitante do pedido na relação.',$p_solicitante,null,'p_solicitante','USUARIOS');
-      SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,null,'p_unidade','CLCP',null);
+      SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_uorg_resp,null,'p_uorg_resp',null,null);
       ShowHTML('   <tr>');
       ShowHTML('     <td valign="top"><b><u>D</u>ata de recebimento e limite para atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
       if ($O!='C') {
@@ -919,7 +929,7 @@ function Itens() {
     selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$p_usu_resp,null,'p_usu_resp',null,null);
     ShowHTML('      <tr>');
     ShowHTML('          <td><b><u>C</u>riado/Recebido entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td><b>Limi<u>t</u>e para tramitação entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
+    //ShowHTML('          <td><b>Limi<u>t</u>e para tramitação entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>O</U>rigem interna:','O',null,$p_unidade,null,'p_unidade',null,null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');

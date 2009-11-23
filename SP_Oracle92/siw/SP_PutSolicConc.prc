@@ -236,7 +236,7 @@ begin
          update siw_solicitacao a
             set a.conclusao    = crec.eliminacao,
                 sq_siw_tramite = crec.sq_siw_tramite
-         where sq_siw_solicitacao = crec.protocolo;
+         where sq_siw_solicitacao = crec.protocolo or a.sq_solic_pai = crec.protocolo;
       end loop;
    Elsif w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
       -- Se ABDI e Pedido de compra, gera licitação na fase de cotação de preços

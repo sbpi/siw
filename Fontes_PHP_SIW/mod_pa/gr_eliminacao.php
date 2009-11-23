@@ -44,9 +44,9 @@ include_once($w_dir_volta.'funcoes/FC_Colors.php');
 //  gr_eliminacao.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
-// Descricao: Consulta à base de eliminação de protocolos
+// Descricao: Consultas do módulo de protocolo
 // Mail     : alex@sbpi.com.br
-// Criacao  : 15/11/2009, 10:00
+// Criacao  : 09/09/2008, 15:00
 // Versao   : 1.0.0.0
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
@@ -174,7 +174,7 @@ function Gerencial() {
     $w_filtro='';
     if ($p_uf>'') {
       $w_linha++;
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Busca por <td>[<b>'.(($p_uf=='S') ? 'Processos' : 'Documentos').'</b>]';
     } 
     if (nvl($p_chave_pai,'')>'') {
       $w_linha++;
@@ -188,20 +188,22 @@ function Gerencial() {
       $w_linha++;
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$p_chave_pai,$p_atividade,'REGISTRO',null);
       foreach ($RS as $row) { $RS = $row; break; }
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Etapa <td>[<b>'.f($RS,'titulo').'</b>]';
     } 
     if ($p_sqcc>'') {
       $w_linha++;
       $RS = db_getCCData::getInstanceOf($dbms,$p_sqcc);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Classificação <td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_chave>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
-    if ($p_prazo>'') { $w_linha++; $w_filtro = $w_filtro.' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
+    if ($p_chave>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Demanda nº <td>[<b>'.$p_chave.'</b>]'; }
+    //if ($p_prazo>'') { $w_linha++; $w_filtro.=' <tr valign="top"><td align="right">Prazo de devolução até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]'; }
+    if ($p_ini_i>'')      { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Data da solicitação entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
+    if ($p_fim_i>'')      { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Eliminação entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
     if ($p_usu_resp>'') {
       $w_linha++;
       $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,$p_usu_resp,$w_cliente,null,null,null,null);
       foreach ($RS as $row) {$RS = $row; break;}
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Espécie documental <td>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Espécie documental <td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_empenho>'') {
       $w_filtro.='<tr valign="top"><td align="right">Nº documento original <td>[<b>'.$p_empenho.'</b>]';
@@ -209,35 +211,33 @@ function Gerencial() {
     if ($p_unidade>'') {
       $w_linha++;
       $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Origem interna <td>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Origem interna <td>[<b>'.f($RS,'nome').'</b>]';
     } 
       if ($p_solicitante>'') {
         $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,$p_solicitante,null,null);
-        $w_filtro .= '<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
+        $w_filtro.='<tr valign="top"><td align="right">Solicitante <td>[<b>'.f($RS,'nome_resumido').'</b>]';
       } 
-    if ($p_unidade>''){
+    if ($p_uorg_resp>''){
       $w_linha++;
-      $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Unidade solicitante<td>[<b>'.f($RS,'nome').'</b>]';
+      $RS = db_getUorgData::getInstanceOf($dbms,$p_uorg_resp);
+      $w_filtro.='<tr valign="top"><td align="right">Unidade solicitante<td>[<b>'.f($RS,'nome').'</b>]';
     } 
     if ($p_pais>'' || $p_regiao>'' || $p_cidade>'') {
       $w_linha++;
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Protocolo <td>[<b>'.(($p_pais>'') ? $p_pais : '*').'.'.(($p_regiao>'') ? str_pad($p_regiao,6,'0',PAD_RIGHT) : '*').'/'.(($p_cidade>'') ? $p_cidade : '*').'</b>]';
     } 
     if ($p_prioridade>''){
       $w_linha++;
       $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,$p_prioridade,$w_cliente,null,null,null,null);
       foreach ($RS as $row) {$RS = $row; break;}
-      $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
+      $w_filtro.='<tr valign="top"><td align="right">Último despacho<td>[<b>'.f($RS,'nome').'</b>]';
     } 
-    if ($p_proponente>'') { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
-    if ($p_assunto>'')    { $w_linha++; $w_filtro = $w_filtro.'<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
-    if ($p_processo>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
-    if ($p_ini_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data criação/recebimento entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
-    if ($p_fim_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite da tramitação entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
-    if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
+    if ($p_proponente>'') { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Origem externa <td>[<b>'.$p_proponente.'</b>]'; }
+    if ($p_assunto>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Assunto <td>[<b>'.$p_assunto.'</b>]'; }
+    if ($p_processo>'')    { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
+    //if ($p_atraso=='S')   { $w_linha++; $w_filtro.='<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
-
+      
     $RS1 = db_getSolicPA::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
         $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
@@ -246,43 +246,43 @@ function Gerencial() {
         $p_empenho, $p_processo);
 
     switch ($p_agrega) {
-      case 'GRPAETAPA':
+      case 'GRELETAPA':
         $w_TP = $TP.' - Por etapa de projeto';
         $RS1 = SortArray($RS1,'cd_ordem','asc');
         break;
-      case 'GRPAPROJ':
+      case 'GRELPROJ':
         $w_TP = $TP.' - Por projeto';
         $RS1 = SortArray($RS1,'nm_projeto','asc');
         break;
-      case 'GRPAPROP':
+      case 'GRELPROP':
         $w_TP = $TP.' - Por procedência externa';
         $RS1  = SortArray($RS1,'proponente','asc');
         break;
-      case 'GRPARESP':
+      case 'GRELRESP':
         $w_TP = $TP.' - Por responsável';
         $RS1  = SortArray($RS1,'nm_solic_ind','asc');
         break;
-      case 'GRPARESPATU':
+      case 'GRELRESPATU':
         $w_TP = $TP.' - Por executor';
         $RS1  = SortArray($RS1,'nm_exec_ind','asc');
         break;
-      case 'GRPACC':
+      case 'GRELCC':
         $w_TP = $TP.' - Por classificação';
         $RS1  = SortArray($RS1,'sg_cc','asc');
         break;
-      case 'GRPASETOR':
+      case 'GRELSETOR':
         $w_TP = $TP.' - Por Unidade Solicitante';
         $RS1  = SortArray($RS1,'nm_unidade_resp','asc');
         break;
-      case 'GRPAPRIO':
+      case 'GRELPRIO':
         $w_TP = $TP.' - Por último despacho';
         $RS1  = SortArray($RS1,'nm_tipo_despacho','asc');
         break;
-      case 'GRPALOCAL':
+      case 'GRELLOCAL':
         $w_TP = $TP.' - Por UF';
         $RS1  = SortArray($RS1,'co_uf','asc');
         break;
-      case 'GRPATIPDEM':
+      case 'GRELTIPDEM':
         $w_TP = $TP.' - Por tipo de demanda';
         $RS1  = SortArray($RS1,'nm_demanda_tipo','asc');
         break;
@@ -326,14 +326,11 @@ function Gerencial() {
         }
       }      
       //Validate('p_chave','Chave','','','1','18','','0123456789');
-      //Validate('p_prazo','Dias para a data limite','','','1','2','','0123456789');
-      Validate('p_proponente','Origem externa','','','2','90','1','');
-      Validate('p_assunto','Detalhamento','','','2','90','1','1');
-      Validate('p_processo','Palavras-chave','','','2','90','1','1');
-      Validate('p_ini_i','Recebimento inicial','DATA','','10','10','','0123456789/');
-      Validate('p_ini_f','Recebimento final','DATA','','10','10','','0123456789/');
+      //Validate('p_prazo','Dias para a devolução','','','1','2','','0123456789');
+      Validate('p_ini_i','Solicitação inicial','DATA','','10','10','','0123456789/');
+      Validate('p_ini_f','Solicitação final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de recebimento ou nenhuma delas!\');');
+      ShowHTML('     alert (\'Informe ambas as datas de solicitação ou nenhuma delas!\');');
       ShowHTML('     theForm.p_ini_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
@@ -346,17 +343,20 @@ function Gerencial() {
       ShowHTML('    alert(\'Você deve informar pelo menos uma fase!\'); ');
       ShowHTML('    return false;');
       ShowHTML('  }');      
-      CompData('p_ini_i','Recebimento inicial','<=','p_ini_f','Recebimento final');
-      Validate('p_fim_i','Conclusão inicial','DATA','','10','10','','0123456789/');
-      Validate('p_fim_f','Conclusão final','DATA','','10','10','','0123456789/');
+      CompData('p_ini_i','Solicitação inicial','<=','p_ini_f','Solicitação final');
+      Validate('p_fim_i','Eliminação inicial','DATA','','10','10','','0123456789/');
+      Validate('p_fim_f','Eliminação final','DATA','','10','10','','0123456789/');
       ShowHTML('  if ((theForm.p_fim_i.value != \'\' && theForm.p_fim_f.value == \'\') || (theForm.p_fim_i.value == \'\' && theForm.p_fim_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas de conclusão ou nenhuma delas!\');');
+      ShowHTML('     alert (\'Informe ambas as datas da eliminação ou nenhuma delas!\');');
       ShowHTML('     theForm.p_fim_i.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      CompData('p_fim_i','Conclusão inicial','<=','p_fim_f','Conclusão final');
+      CompData('p_fim_i','Eliminação inicial','<=','p_fim_f','Eliminação final');
+      Validate('p_proponente','Origem externa','','','2','90','1','');
+      Validate('p_assunto','Detalhamento','','','2','90','1','1');
+      Validate('p_processo','Interessado','','','2','30','1','1');
       if ($SG=='PROJETO') {
-        ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\'GRPAETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
+        ShowHTML('  if (theForm.p_agrega[theForm.p_agrega.selectedIndex].value==\'GRELETAPA\' && theForm.p_chave_pai.selectedIndex==0) {');
         ShowHTML('     alert (\'A agregação por etapa exige a seleção de um projeto!\');');
         ShowHTML('     theForm.p_chave_pai.focus();');
         ShowHTML('     return false;');
@@ -410,27 +410,27 @@ function Gerencial() {
         ShowHTML('  function lista (filtro, cad, exec, conc, atraso) {');
         ShowHTML('    if (filtro != -1) {');
         switch ($p_agrega) {
-          case 'GRPAETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
-          case 'GRPAPROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');      break;
-          case 'GRPAPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
-          case 'GRPARESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
-          case 'GRPARESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
-          case 'GRPACC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
-          case 'GRPASETOR':     ShowHTML('      document.Form.p_unidade.value=filtro;');        break;
-          case 'GRPAPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
-          case 'GRPALOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
+          case 'GRELETAPA':     ShowHTML('      document.Form.p_atividade.value=filtro;');      break;
+          case 'GRELPROJ':      ShowHTML('      document.Form.p_chave_pai.value=filtro;');      break;
+          case 'GRELPROP':      ShowHTML('      document.Form.p_proponente.value=filtro;');     break;
+          case 'GRELRESP':      ShowHTML('      document.Form.p_solicitante.value=filtro;');    break;
+          case 'GRELRESPATU':   ShowHTML('      document.Form.p_usu_resp.value=filtro;');       break;
+          case 'GRELCC':        ShowHTML('      document.Form.p_sqcc.value=filtro;');           break;
+          case 'GRELSETOR':     ShowHTML('      document.Form.p_uorg_resp.value=filtro;');      break;
+          case 'GRELPRIO':      ShowHTML('      document.Form.p_prioridade.value=filtro;');     break;
+          case 'GRELLOCAL':     ShowHTML('      document.Form.p_uf.value=filtro;');             break;
         } 
         ShowHTML('    }');
         switch ($p_agrega) {
-          case 'GRPAETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');       break;
-          case 'GRPAPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');       break;
-          case 'GRPAPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
-          case 'GRPARESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
-          case 'GRPARESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
-          case 'GRPACC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');                 break;
-          case 'GRPASETOR':     ShowHTML('    else document.Form.p_unidade.value=\''.$_REQUEST['p_unidade'].'\';');           break;
-          case 'GRPAPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
-          case 'GRPALOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
+          case 'GRELETAPA':     ShowHTML('    else document.Form.p_atividade.value=\''.$_REQUEST['p_atividade'].'\';');       break;
+          case 'GRELPROJ':      ShowHTML('    else document.Form.p_chave_pai.value=\''.$_REQUEST['p_chave_pai'].'\';');       break;
+          case 'GRELPROP':      ShowHTML('    else document.Form.p_proponente.value=\''.$_REQUEST['p_proponente'].'\';');     break;
+          case 'GRELRESP':      ShowHTML('    else document.Form.p_solicitante.value=\''.$_REQUEST['p_solicitante'].'\';');   break;
+          case 'GRELRESPATU':   ShowHTML('    else document.Form.p_usu_resp.value=\''.$_REQUEST['p_usu_resp'].'\';');         break;
+          case 'GRELCC':        ShowHTML('    else document.Form.p_sqcc.value=\''.$_REQUEST['p_sqcc'].'\';');                 break;
+          case 'GRELSETOR':     ShowHTML('    else document.Form.p_uorg_resp.value=\''.$_REQUEST['p_uorg_resp'].'\';');       break;
+          case 'GRELPRIO':      ShowHTML('    else document.Form.p_prioridade.value=\''.$_REQUEST['p_prioridade'].'\';');     break;
+          case 'GRELLOCAL':     ShowHTML('    else document.Form.p_uf.value=\''.$_REQUEST['p_uf'].'\';');                     break;
         } 
         $RS2 = db_getTramiteList::getInstanceOf($dbms,$P2,null,null,null);
         $RS2  = SortArray($RS2,'ordem','asc');
@@ -444,12 +444,11 @@ function Gerencial() {
             $w_fase_exec = $w_fase_exec.','.f($row,'sq_siw_tramite');
           } 
         } 
-        ShowHTML('    if (cad<0 && exec<0) document.Form.p_tipo.value="";');
-        ShowHTML('    if (cad >= 0) document.Form.p_tipo.value="P";');
-        ShowHTML('    if (exec >= 0) document.Form.p_tipo.value="D";');
+        ShowHTML('    if (cad >= 0) document.Form.p_fase.value='.$w_fase_cad.';');
+        ShowHTML('    if (exec >= 0) document.Form.p_fase.value=\''.substr($w_fase_exec,1,100).'\';');
         ShowHTML('    if (conc >= 0) document.Form.p_fase.value='.$w_fase_conc.';');
         ShowHTML('    if (cad==-1 && exec==-1 && conc==-1) document.Form.p_fase.value=\''.$p_fase.'\'; ');
-        ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
+        //ShowHTML('    if (atraso >= 0) document.Form.p_atraso.value=\'S\'; else document.Form.p_atraso.value=\''.$_REQUEST['p_atraso'].'\'; ');
         ShowHTML('    document.Form.submit();');
         ShowHTML('  }');
         ShowHTML('</SCRIPT>');
@@ -458,16 +457,16 @@ function Gerencial() {
         ShowHTML(MontaFiltro('POST'));
         ShowHTML('<input type="Hidden" name="p_tipo" value="">');
         switch ($p_agrega) {
-          case 'GRPAETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
-          case 'GRPAPROJ':      if ($_REQUEST['p_chave_pai']=='')   ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
-          case 'GRPAPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
-          case 'GRPARESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
-          case 'GRPARESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
-          case 'GRPACC':        if ($_REQUEST['p_sqcc']=='')        ShowHTML('<input type="Hidden" name="p_sqcc" value="">');         break;
-          case 'GRPASETOR':     if ($_REQUEST['p_unidade']=='')     ShowHTML('<input type="Hidden" name="p_unidade" value="">');      break;
-          case 'GRPAPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
-          case 'GRPALOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
-          case 'GRPATIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
+          case 'GRELETAPA':     if ($_REQUEST['p_atividade']=='')   ShowHTML('<input type="Hidden" name="p_atividade" value="">');    break;
+          case 'GRELPROJ':      if ($_REQUEST['p_chave_pai']=='')   ShowHTML('<input type="Hidden" name="p_chave_pai" value="">');    break;
+          case 'GRELPROP':      if ($_REQUEST['p_proponente']=='')  ShowHTML('<input type="Hidden" name="p_proponente" value="">');   break;
+          case 'GRELRESP':      if ($_REQUEST['p_solicitante']=='') ShowHTML('<input type="Hidden" name="p_solicitante" value="">');  break;
+          case 'GRELRESPATU':   if ($_REQUEST['p_usu_resp']=='')    ShowHTML('<input type="Hidden" name="p_usu_resp" value="">');     break;
+          case 'GRELCC':        if ($_REQUEST['p_sqcc']=='')        ShowHTML('<input type="Hidden" name="p_sqcc" value="">');         break;
+          case 'GRELSETOR':     if ($_REQUEST['p_uorg_resp']=='')   ShowHTML('<input type="Hidden" name="p_uorg_resp" value="">');  break;
+          case 'GRELPRIO':      if ($_REQUEST['p_prioridade']=='')  ShowHTML('<input type="Hidden" name="p_prioridade" value="">');   break;
+          case 'GRELLOCAL':     if ($_REQUEST['p_uf']=='')          ShowHTML('<input type="Hidden" name="p_uf" value="">');           break;
+          case 'GRELTIPDEM':    if ($_REQUEST['p_empenho']=='')     ShowHTML('<input type="Hidden" name="p_empenho" value="">');      break;
         } 
       } 
       $w_nm_quebra  = '';
@@ -492,7 +491,7 @@ function Gerencial() {
       $t_totacima   = 0;
       foreach($RS1 as $row) {
         switch ($p_agrega) {
-          case 'GRPAETAPA':
+          case 'GRELETAPA':
             if ($w_nm_quebra!=f($row,'nm_etapa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -516,7 +515,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPAPROJ':
+          case 'GRELPROJ':
             if ($w_nm_quebra!=f($row,'nm_projeto')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -540,7 +539,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPAPROP':
+          case 'GRELPROP':
             if ($w_nm_quebra!=f($row,'nm_pessoa_origem')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -564,7 +563,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPARESP':
+          case 'GRELRESP':
             if ($w_nm_quebra!=f($row,'nm_solic')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -588,7 +587,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPARESPATU': 
+          case 'GRELRESPATU': 
             if ($w_nm_quebra!=f($row,'nm_exec')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -612,7 +611,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPACC':
+          case 'GRELCC':
             if ($w_nm_quebra!=f($row,'sg_cc')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -636,7 +635,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPASETOR':
+          case 'GRELSETOR':
             if ($w_nm_quebra!=f($row,'nm_unidade_resp')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -660,7 +659,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPAPRIO':
+          case 'GRELPRIO':
             if ($w_nm_quebra!=f($row,'nm_tipo_despacho')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -684,7 +683,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPALOCAL':
+          case 'GRELLOCAL':
             if ($w_nm_quebra!=f($row,'co_uf')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -708,7 +707,7 @@ function Gerencial() {
               $t_custo      = 0;
             } 
             break;
-          case 'GRPATIPDEM':
+          case 'GRELTIPDEM':
             if ($w_nm_quebra!=f($row,'nm_demanda_tipo')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave);
@@ -750,20 +749,20 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case 'GRPAETAPA':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_etapa'));          break;
-            case 'GRPAPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_projeto'));        break;
-            case 'GRPAPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_pessoa_origem'));  break;
-            case 'GRPARESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));          break;
-            case 'GRPARESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));           break;
-            case 'GRPACC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));             break;
-            case 'GRPASETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
-            case 'GRPAPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tipo_despacho'));  break;
-            case 'GRPALOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
-            case 'GRPATIPDEM':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_empenho'));        break;
+            case 'GRELETAPA':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_etapa'));          break;
+            case 'GRELPROJ':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_projeto'));        break;
+            case 'GRELPROP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_pessoa_origem'));  break;
+            case 'GRELRESP':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_solic'));          break;
+            case 'GRELRESPATU':     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_exec'));           break;
+            case 'GRELCC':          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'sg_cc'));             break;
+            case 'GRELSETOR':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_unidade_resp'));   break;
+            case 'GRELPRIO':        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'nm_tipo_despacho'));  break;
+            case 'GRELLOCAL':       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_uf'));             break;
+            case 'GRELTIPDEM':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row,'co_empenho'));        break;
           } 
           $w_linha = $w_linha + 1;
         } 
-        if (nvl(f($row,'concluida'),'N')=='N') {
+        if (nvl(f($row,'conclusao'),'')=='') {
           if (Nvl(f($row,'fim'),f($row,'limite_conclusao')) < addDays(time(),-1)) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;
@@ -771,7 +770,7 @@ function Gerencial() {
             $t_aviso    = $t_aviso+1;
             $t_totaviso = $t_totaviso+1;
           }
-          if (f($row,'processo')=='S') {
+          if (f($row,'sg_tramite')=='CI') {
             $t_cad      = $t_cad + 1;
             $t_totcad   = $t_totcad + 1;
           } else {
@@ -781,16 +780,12 @@ function Gerencial() {
         } else {
           $t_conc       = $t_conc + 1;
           $t_totconc    = $t_totconc + 1;
-          if (nvl(f($row,'valor'),0)<nvl(f($row,'custo_real'),0)) {
-            $t_acima    = $t_acima + 1;
-            $t_totacima = $t_totacima + 1;
-          } 
         } 
+        $t_valor        = $t_valor + f($row,'qtd_processo');
+        $t_totvalor     = $t_totvalor + f($row,'qtd_processo');
+        $t_custo        = $t_custo + f($row,'qtd_documento');
+        $t_totcusto     = $t_totcusto + f($row,'qtd_documento');
         $t_solic        = $t_solic + 1;
-        $t_valor        = $t_valor + Nvl(f($row,'valor'),0);
-        $t_custo        = $t_custo + Nvl(f($row,'custo_real'),0);
-        $t_totvalor     = $t_totvalor + Nvl(f($row,'valor'),0);
-        $t_totcusto     = $t_totcusto + Nvl(f($row,'custo_real'),0);
         $t_totsolic     = $t_totsolic + 1;
         $w_qt_quebra    = $w_qt_quebra + 1;
       } 
@@ -798,7 +793,6 @@ function Gerencial() {
       ShowHTML('      <tr bgcolor="#DCDCDC" valign="top" align="right">');
       ShowHTML('          <td><b>Totais</td>');
       ImprimeLinha($t_totsolic,$t_totcad,$t_tottram,$t_totconc,$t_totatraso,$t_totaviso,$t_totvalor,$t_totcusto,$t_totacima,-1);
-//      echo '=>  '.$t_totsolic.'  e '.$t_totcad.'  e '.$t_tottram.'  e '.$t_totconc.'  e '.$t_totatraso.'  e '.$t_totaviso.'  e '.$t_totvalor.'  e '.$t_totcusto.'  e '.$t_totacima;
     } 
     if ($w_embed != 'WORD') ShowHTML('      </FORM>');
     ShowHTML('      </center>');
@@ -806,23 +800,15 @@ function Gerencial() {
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     if (count($RS1)>0 && $p_graf=='N') {
-      if($w_embed != 'WORD'){
-        include_once($w_dir_volta.'funcoes/geragraficoflash2.php');
-        // Coloca o gráfico somente se o usuário desejar
-        ShowHTML('<tr><td align="center" height=20>');
-        //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Barra&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-        ShowHTML('<tr><td align="center" height=20>');
-        barra_flash(array(genero => "M", 
-        "protocolos" =>  $t_totsolic, 
-        "processos" => $t_totcad, 
-        "documentos" => $t_tottram, 
-        "atraso" => $t_totatraso), "barra");
-        if (($t_totcad + $t_tottram)>0) {
-          //ShowHTML('<tr><td align="center"><IMG SRC="'.$conPHP4.'geragrafico.php?p_genero=F&p_objeto='.f($RS_Menu,'nome').'&p_graf='.$SG.'&p_grafico=Pizza&p_tot='.$t_totsolic.'&p_cad='.$t_totcad.'&p_tram='.$t_tottram.'&p_conc='.$t_totconc.'&p_atraso='.$t_totatraso.'&p_aviso='.$t_totaviso.'&p_acima='.$t_totacima.'">');
-          pizza_flash(array(genero => "M", "nome" =>  f($RS_Menu,'nome'), "total" => $t_totsolic, "cadastramento" => $t_totcad, "execucao" => $t_tottram, "concluidos" => $t_totconc, "atrasados" => $t_totatraso, "aviso" => $t_totaviso, "acima" => $t_totacima), "pizza");
-        } 
-      }
-    } 
+      $w_legenda = array('Documentos','Processos','Cadastramento','Em execução','Concluídos','Total');
+      include_once($w_dir_volta.'funcoes/geragraficogoogle.php');
+      ShowHTML('<tr><td align="center"><br>');
+      ShowHTML(geraGraficoGoogle(f($RS_Menu,'nome').' - Resumo',$SG,'bar',
+                                 array($t_totsolic,$t_totconc,$t_tottram,$t_totcad,$t_totvalor,$t_totcusto),
+                                 $w_legenda
+                                )
+              );
+    }    
   } elseif ($O=='P') {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -835,23 +821,23 @@ function Gerencial() {
     ShowHTML('         <tr valign="top"><td colspan=2><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">');
     ShowHTML('          <td><b><U>A</U>gregar por:<br><SELECT ACCESSKEY="O" '.$w_Disabled.' class="STS" name="p_agrega" size="1">');
     //if (f($RS_Menu,'solicita_cc')=='S') {
-    //  if ($p_agrega=='GRPACC')      ShowHTML('          <option value="GRPACC" selected>Classificação');              else ShowHTML('          <option value="GRPACC">Classificação');
+    //  if ($p_agrega=='GRELCC')      ShowHTML('          <option value="GRELCC" selected>Classificação');              else ShowHTML('          <option value="GRELCC">Classificação');
     //} 
     //if ($SG=='PROJETO') {
-    //  if ($p_agrega=='GRPAETAPA')   ShowHTML('          <option value="GRPAETAPA" selected>Etapa de projeto');        else ShowHTML('          <option value="GRPAETAPA">Etapa de projeto');
+    //  if ($p_agrega=='GRELETAPA')   ShowHTML('          <option value="GRELETAPA" selected>Etapa de projeto');        else ShowHTML('          <option value="GRELETAPA">Etapa de projeto');
     //} 
-    //if ($p_agrega=='GRPAPRIO')      ShowHTML('          <option value="GRPAPRIO" selected>Último despacho');                 else ShowHTML('          <option value="GRPAPRIO">Último despacho');
-    //if ($p_agrega=='GRPARESPATU')   ShowHTML('          <option value="GRPARESPATU" selected>Executor');              else ShowHTML('          <option value="GRPARESPATU">Executor');
-    //if ($p_agrega=='GRPAPROP')      ShowHTML('          <option value="GRPAPROP" selected>Procedência externa');              else ShowHTML('          <option value="GRPAPROP">Procedência externa');
+    //if ($p_agrega=='GRELPRIO')      ShowHTML('          <option value="GRELPRIO" selected>Último despacho');                 else ShowHTML('          <option value="GRELPRIO">Último despacho');
+    //if ($p_agrega=='GRELRESPATU')   ShowHTML('          <option value="GRELRESPATU" selected>Executor');              else ShowHTML('          <option value="GRELRESPATU">Executor');
+    //if ($p_agrega=='GRELPROP')      ShowHTML('          <option value="GRELPROP" selected>Procedência externa');              else ShowHTML('          <option value="GRELPROP">Procedência externa');
     //if ($SG=='PROJETO') {
-    //  if ($p_agrega=='GRPAPROJ')    ShowHTML('          <option value="GRPAPROJ" selected>Projeto');                  else ShowHTML('          <option value="GRPAPROJ">Projeto');
+    //  if ($p_agrega=='GRELPROJ')    ShowHTML('          <option value="GRELPROJ" selected>Projeto');                  else ShowHTML('          <option value="GRELPROJ">Projeto');
     //} 
-    if ($p_agrega=='GRPARESP')                       ShowHTML('          <option value="GRPARESP" selected>Solicitante');                else ShowHTML('          <option value="GRPARESP">Solicitante');
-    if (Nvl($p_agrega,'GRPASETOR')=='GRPASETOR')     ShowHTML('          <option value="GRPASETOR" selected>Unidade solicitante');       else ShowHTML('          <option value="GRPASETOR">Unidade solicitante');
+    if ($p_agrega=='GRELRESP')                       ShowHTML('          <option value="GRELRESP" selected>Solicitante');                else ShowHTML('          <option value="GRELRESP">Solicitante');
+    if (Nvl($p_agrega,'GRELSETOR')=='GRELSETOR')     ShowHTML('          <option value="GRELSETOR" selected>Unidade solicitante');       else ShowHTML('          <option value="GRELSETOR">Unidade solicitante');
     //if (substr(f($RS_Menu,'sigla'),0,3)=='GDT') {
-    //  if ($p_agrega=='GRPATIPDEM')  ShowHTML('          <option value="GRPATIPDEM" selected>Tipo da demanda');        else ShowHTML('          <option value="GRPATIPDEM">Tipo da demanda');
+    //  if ($p_agrega=='GRELTIPDEM')  ShowHTML('          <option value="GRELTIPDEM" selected>Tipo da demanda');        else ShowHTML('          <option value="GRELTIPDEM">Tipo da demanda');
     //}
-    //if ($p_agrega=='GRPALOCAL')     ShowHTML('          <option value="GRPALOCAL" selected>UF');                      else ShowHTML('          <option value="GRPALOCAL">UF');
+    //if ($p_agrega=='GRELLOCAL')     ShowHTML('          <option value="GRELLOCAL" selected>UF');                      else ShowHTML('          <option value="GRELLOCAL">UF');
     ShowHTML('          </select></td>');
     MontaRadioNS('<b>Inibe exibição do gráfico?</b>',$p_graf,'p_graf');
     MontaRadioSN('<b>Limita tamanho do assunto?</b>',$p_tamanho,'p_tamanho');
@@ -898,18 +884,17 @@ function Gerencial() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_uf" value="S"> Processo <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="N"> Documento <input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_uf" value="" checked> Ambos');
     }
-    //ShowHTML('          <td><b>Dias para a data limi<U>t</U>e:<br><INPUT ACCESSKEY="T" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
     
     ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do empréstimo na relação.',$p_unidade,null,'p_unidade',null,null);
-    selecaoTipoDespacho('Último des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$p_prioridade,null,'p_prioridade','SELECAO',null);
+    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do empréstimo na relação.',$p_uorg_resp,null,'p_uorg_resp',null,null);
+    //ShowHTML('          <td><b>Dias para a de<U>v</U>olução:<br><INPUT ACCESSKEY="V" '.$w_Disabled.' class="STI" type="text" name="p_prazo" size="2" maxlength="2" value="'.$p_prazo.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('          <td><b>Data da solici<u>t</u>ação entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
+    ShowHTML('          <td><b>E<u>l</u>iminação entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     
     ShowHTML('      <tr valign="top"><td colspan="2"><b>Documento original:</b><table width="100%" cellpadding=0 cellspacing=3 style="border: 1px solid rgb(0,0,0);"><tr><td width="50%"><td></tr><tr valign="top">');
     ShowHTML('          <td><b>Número:<br><INPUT class="STI" type="text" name="p_empenho" size="10" maxlength="30" value="'.$p_empenho.'">');
     selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$p_usu_resp,null,'p_usu_resp',null,null);
-    ShowHTML('      <tr>');
-    ShowHTML('          <td><b><u>C</u>riado/Recebido entre:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_i').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_ini_f').'</td>');
-    ShowHTML('          <td><b>Limi<u>t</u>e para tramitação entre:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr valign="top">');
     SelecaoUnidade('<U>O</U>rigem interna:','O',null,$p_unidade,null,'p_unidade',null,null);
     ShowHTML('          <td><b>Orig<U>e</U>m externa:<br><INPUT ACCESSKEY="E" '.$w_Disabled.' class="STI" type="text" name="p_proponente" size="25" maxlength="90" value="'.$p_proponente.'"></td>');
@@ -924,12 +909,12 @@ function Gerencial() {
     //ShowHTML('      <tr>');
     //SelecaoCidade('<u>C</u>idade:','C',null,$p_cidade,$p_pais,$p_uf,'p_cidade',null,null);
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Apenas empréstimos com data limite excedida?</b><br>');
-    if ($p_atraso=='S') {
-      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
-    } else {
-      ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
-    } 
+    //ShowHTML('          <td><b>Apenas empréstimos com data limite excedida?</b><br>');
+    //if ($p_atraso=='S') {
+    //  ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S" checked> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N"> Não');
+    //} else {
+    //  ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="p_atraso" value="S"> Sim <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="p_atraso" value="N" checked> Não');
+    //} 
     SelecaoFaseCheck('Recuperar fases:','S',null,$p_fase,$P2,'p_fase[]',null,null);
     ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="2">');
@@ -965,28 +950,25 @@ function ImprimeCabecalho() {
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   switch ($p_agrega) {
-    case 'GRPAETAPA':   ShowHTML('          <td><b>Etapa</td>');                break;
-    case 'GRPAPROJ':    ShowHTML('          <td><b>Projeto</td>');              break;
-    case 'GRPAPROP':    ShowHTML('          <td><b>Origem externa</td>');       break;
-    case 'GRPARESP':    ShowHTML('          <td><b>Responsável</td>');          break;
-    case 'GRPARESPATU': ShowHTML('          <td><b>Executor</td>');             break;
-    case 'GRPACC':      ShowHTML('          <td><b>Classificação</td>');        break;
-    case 'GRPASETOR':   ShowHTML('          <td><b>Unidade solicitante</td>');  break;
-    case 'GRPAPRIO':    ShowHTML('          <td><b>Último despacho</td>');      break;
-    case 'GRPALOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
-    case 'GRPATIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
+    case 'GRELETAPA':   ShowHTML('          <td><b>Etapa</td>');                break;
+    case 'GRELPROJ':    ShowHTML('          <td><b>Projeto</td>');              break;
+    case 'GRELPROP':    ShowHTML('          <td><b>Origem externa</td>');       break;
+    case 'GRELRESP':    ShowHTML('          <td><b>Responsável</td>');          break;
+    case 'GRELRESPATU': ShowHTML('          <td><b>Executor</td>');             break;
+    case 'GRELCC':      ShowHTML('          <td><b>Classificação</td>');        break;
+    case 'GRELSETOR':   ShowHTML('          <td><b>Unidade solicitante</td>');  break;
+    case 'GRELPRIO':    ShowHTML('          <td><b>Último despacho</td>');      break;
+    case 'GRELLOCAL':   ShowHTML('          <td><b>UF</td>');                   break;
+    case 'GRELTIPDEM':  ShowHTML('          <td><b>Tipo de demanda</td>');      break;
   } 
-  ShowHTML('          <td><b>Protocolos</td>');
+  ShowHTML('          <td><b>Total</td>');
+  ShowHTML('          <td><b>Cadastramento</td>');
+  ShowHTML('          <td><b>Execução</td>');
+  ShowHTML('          <td><b>Concluído</td>');
+  //ShowHTML('          <td><b>Atraso</td>');
+  //ShowHTML('          <td><b>Aviso</td>');
   ShowHTML('          <td><b>Processos</td>');
   ShowHTML('          <td><b>Documentos</td>');
-  //ShowHTML('          <td><b>Conc.</td>');
-  ShowHTML('          <td><b>Atraso</td>');
-  //ShowHTML('          <td><b>Aviso</td>');
-  //if ($_SESSION['INTERNO']=='S') {
-  //  ShowHTML('          <td><b>$ Prev.</td>');
-  //  ShowHTML('          <td><b>$ Real</td>');
-  //  ShowHTML('          <td><b>Real > Previsto</td>');
-  //} 
   ShowHTML('        </tr>');
 } 
 
@@ -1002,14 +984,11 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($w_embed != 'WORD')                  ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_solic,0).'</a>&nbsp;</td>');                      else ShowHTML('          <td align="center">'.formatNumber($l_solic,0).'&nbsp;</td>');
   if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_cad,0).'</a>&nbsp;</td>');                         else ShowHTML('          <td align="center">'.formatNumber($l_cad,0).'&nbsp;</td>');
   if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_tram,0).'</a>&nbsp;</td>');                        else ShowHTML('          <td align="center">'.formatNumber($l_tram,0).'&nbsp;</td>');
-  //if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_conc,0).'</a>&nbsp;</td>');                         else ShowHTML('          <td align="center">'.formatNumber($l_conc,0).'&nbsp;</td>');
-  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</a>&nbsp;</td>'); else ShowHTML('          <td align="center"><b>'.$l_atraso.'&nbsp;</td>');
+  if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true">'.formatNumber($l_conc,0).'</a>&nbsp;</td>');                         else ShowHTML('          <td align="center">'.formatNumber($l_conc,0).'&nbsp;</td>');
+  //if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe lista.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.formatNumber($l_atraso,0).'</a>&nbsp;</td>'); else ShowHTML('          <td align="center"><b>'.$l_atraso.'&nbsp;</td>');
   //if ($l_aviso>0 && $w_embed != 'WORD')    ShowHTML('          <td align="center"><font color="red"><b>'.formatNumber($l_aviso,0).'&nbsp;</td>');                                                                                                                                                                                     else ShowHTML('          <td align="center"><b>'.$l_aviso.'&nbsp;</td>');
-  //if ($_SESSION['INTERNO']=='S') {
-  //  ShowHTML('          <td align="right">'.formatNumber($l_valor,2).'&nbsp;</td>');
-  //  ShowHTML('          <td align="right">'.formatNumber($l_custo,2).'&nbsp;</td>');
-  //  if ($l_acima>0) ShowHTML('          <td align="right"><font color="red"><b>'.formatNumber($l_acima,0).'&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_acima.'&nbsp;</td>');
-  //} 
+  ShowHTML('          <td align="center">'.$l_valor.'&nbsp;</td>');
+  ShowHTML('          <td align="center">'.$l_custo.'&nbsp;</td>');
   ShowHTML('        </tr>');
 } 
 

@@ -15,13 +15,13 @@ begin
        and a.sq_siw_solicitacao = p_chave;
       
    -- Atualiza a tabela de solicitações
-   Update siw_solicitacao set sq_siw_tramite = w_tramite.sq_siw_tramite Where sq_siw_solicitacao = p_chave;
+   Update siw_solicitacao set sq_siw_tramite = w_tramite.sq_siw_tramite Where sq_siw_solicitacao = p_chave or sq_solic_pai = p_chave;
 
    -- Atualiza a tabela de documentos
    update pa_documento set
        observacao_setorial = p_observacao,
        data_setorial       = w_data
-    where sq_siw_solicitacao = p_chave;
+    where sq_siw_solicitacao in (select sq_siw_solicitacao from siw_solicitacao where sq_siw_solicitacao = p_chave or sq_solic_pai = p_chave);
 
     -- Registra os dados da autuação
     Insert Into siw_solic_log 
@@ -35,6 +35,7 @@ begin
          'Arquivamento setorial: '||p_observacao
         from siw_solicitacao a
        where a.sq_siw_solicitacao = p_chave
+          or a.sq_solic_pai       = p_chave
     );
 end sp_putDocumentoArqSet;
 /

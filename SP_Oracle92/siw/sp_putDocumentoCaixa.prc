@@ -21,7 +21,7 @@ begin
   update pa_documento 
     set sq_caixa      = p_caixa,
         pasta         = p_pasta
-  where sq_siw_solicitacao = p_chave;
+  where sq_siw_solicitacao in (select sq_siw_solicitacao from siw_solicitacao where sq_siw_solicitacao = p_chave or sq_solic_pai = p_chave);
   
   -- Atualiza os dados do arquivamento da caixa
   select retornaLimiteCaixa(p_caixa)||'|@|' into w_dados_caixa from dual;
@@ -75,7 +75,7 @@ begin
             inner join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao),
             pa_caixa                c
             inner join eo_unidade   d on (c.sq_unidade         = d.sq_unidade)
-      where a.sq_siw_solicitacao = p_chave
+      where (a.sq_siw_solicitacao = p_chave or a.sq_solic_pai = p_chave)
         and c.sq_caixa           = p_caixa
   );
 end sp_putDocumentoCaixa;

@@ -807,7 +807,7 @@ function ExibeSolic($l_dir,$l_chave,$l_texto=null,$l_exibe_titulo=null,$l_word=n
 function ExibePessoa($p_dir,$p_cliente,$p_pessoa,$p_tp,$p_nome) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_nome,'')=='') {
-    $l_string='---';
+    $l_string='&nbsp;';
   } else {
     $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUSUARIO&w_cliente='.$p_cliente.'&w_sq_pessoa='.$p_pessoa.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Pessoa\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta pessoa!">'.$p_nome.'</A>';
   }
@@ -895,7 +895,7 @@ function VisualIndicador($p_dir,$p_cliente,$p_sigla,$p_tp,$p_nome) {
 function ExibeUnidade($p_dir,$p_cliente,$p_unidade,$p_sq_unidade,$p_tp) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_unidade,'')=='') {
-    $l_string='---';
+    $l_string='&nbsp;';
   } else {
     $l_string .= '<A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'seguranca.php?par=TELAUNIDADE&w_cliente='.$p_cliente.'&w_sq_unidade='.$p_sq_unidade.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG=').'\',\'Unidade\',\'width=780,height=300,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="Clique para exibir os dados desta unidade!">'.$p_unidade.'</A>';
   }
@@ -1259,13 +1259,13 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         } elseif ($l_tramite=='CI' || $l_restricao=='SEMEXECUCAO') {
           if ($l_fim<addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
-            $l_title  = 'Execução não iniciada. Fim previsto superado.';
+            $l_title  = 'Execução não iniciada.'.(($l_fim) ? '  Fim previsto superado.' : '');;
           } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
             $l_imagem = $conImgAviso;
             $l_title  = 'Execução não iniciada. Fim previsto próximo.';
           } else {
             $l_imagem = $conImgNormal;
-            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+            $l_title  = 'Execução não iniciada.'.(($l_fim) ? '  Prazo final dentro do previsto.' : '');
           }
         } else {
           if ($l_fim<addDays(time(),-1)) {
@@ -1276,7 +1276,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
             $l_title  = 'Em execução. Fim previsto próximo.';
           } else {
             $l_imagem = $conImgStNormal;
-            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+            $l_title  = 'Em execução.'.(($l_fim) ? '  Prazo final dentro do previsto.' : '');
           }
         }
       } else {
@@ -1288,7 +1288,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           $l_title  = 'Execução concluída antes da data prevista.';
         } else {
           $l_imagem = $conImgOkNormal;
-          $l_title  = 'Execução concluída na data prevista.';
+          $l_title  = 'Execução concluída'.(($l_fim) ? ' na data prevista.' : '');
         }
       }
     } elseif (substr($l_tipo,0,2)=='FN') {

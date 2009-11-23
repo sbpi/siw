@@ -51,20 +51,20 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   if ($l_identificacao=='S') {
     if (f($RS,'interno')=='S') {
       if ($l_formato=='WORD') {
-        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade:</b></td>';
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Procedência:</b></td>';
         $l_html.=chr(13).'       <td>'.f($RS,'nm_unid_origem').'</td></tr>';
       } else {
-        $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade:</b></td>';
+        $l_html.=chr(13).'   <tr><td width="30%"><b>Procedência:</b></td>';
         $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>';
       } 
     } else {
-      $l_html.=chr(13).'   <tr><td><b>Pessoa:</b></td>';
+      $l_html.=chr(13).'   <tr><td><b>Procedência:</b></td>';
       $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa_origem').'</td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Interessado principal:</b></td>';
       $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa_interes').'</td></tr>';
+      $l_html.=chr(13).'   <tr><td><b>Cidade:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($RS,'nm_cidade').'</td></tr>';
     }
-    $l_html.=chr(13).'   <tr><td><b>Cidade:</b></td>';
-    $l_html.=chr(13).'       <td>'.f($RS,'nm_cidade').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Espécie documental:</b></td>';
     $l_html.=chr(13).'       <td>'.f($RS,'nm_especie').'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Número:</b></td>';
@@ -413,7 +413,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
             else                    $l_html.=chr(13).'        <td>'.f($row,'nm_destinatario');
           }
         } else {
-          $l_html.=chr(13).'        <td>---</td>';
+          $l_html.=chr(13).'        <td>&nbsp;</td>';
         }
         $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($row,'despacho'),'---')).'</td>';
         $l_html.=chr(13).'      </tr>';
