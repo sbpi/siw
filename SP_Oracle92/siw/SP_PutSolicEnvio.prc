@@ -113,6 +113,19 @@ begin
          select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
             from siw_tramite a
            where a.sq_siw_tramite = p_novo_tramite;
+           
+         If w_menu.sigla = 'PAELIM' Then
+            -- Atualiza os protocolos vinculados a uma lista de exclusão
+            update siw_solicitacao a
+               set a.sq_siw_tramite = (select sq_siw_tramite from siw_tramite x where x.sq_menu = a.sq_menu and x.sigla = 'AT')
+            where a.sq_siw_solicitacao in (select protocolo from pa_eliminacao where sq_siw_solicitacao = p_chave);
+            
+            update pa_eliminacao a set a.eliminacao = null where sq_siw_solicitacao = p_chave;
+         Elsif w_menu.sigla = 'PAEMP' Then
+            -- Atualiza os protocolos vinculados a uma lista de empréstimo
+            update pa_emprestimo_item a set a.devolucao = null where sq_siw_solicitacao = p_chave;
+         End If;
+         
       End If;
    Else
       w_tramite := p_tramite;
@@ -151,8 +164,8 @@ begin
       sq_siw_tramite        = w_tramite,
       conclusao             = null,
       executor              = case coalesce(w_sg_tramite,'--') when 'CI' then null else executor end,
-      observacao            = case substr(w_menu.sigla,1,2) when 'PA' then observacao else null end,
-      valor                 = case substr(w_menu.sigla,1,2) when 'CL' then valor when 'SR' then valor else null end,
+      observacao            = case substr(w_menu.sigla,1,2) when 'FN' then observacao when 'PA' then observacao else null end,
+      valor                 = case substr(w_menu.sigla,1,2) when 'FN' then valor when 'CL' then valor when 'SR' then valor else null end,
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;
 

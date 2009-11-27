@@ -1447,7 +1447,7 @@ begin
                 case when d.pessoa_origem is null then b3.sq_unidade else d2.sq_pessoa end as sq_origem,
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem,
                 case when d.pessoa_origem is null then b3.sigla else d2.nome_resumido end as nm_origem_resumido,
-                retornaLimiteProtocolo(d.sq_siw_solicitacao) as prazo_guarda,
+                b9.prazo_guarda,
                 coalesce(d1.nome,'Irrestrito') as nm_natureza,       d1.sigla as sg_natureza,
                 d1.descricao as ds_natureza,                         d1.ativo as st_natureza,
                 d2.nome_resumido as nm_res_pessoa_origem,            d2.nome as nm_pessoa_origem,
@@ -1485,6 +1485,7 @@ begin
                       inner          join siw_tramite              b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                              from siw_solicitacao
+                                           group by sq_siw_solicitacao
                                           )                        b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       inner          join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
                       left           join pe_plano                 b4 on (b.sq_plano                 = b4.sq_plano)
@@ -1499,6 +1500,10 @@ begin
                                                   inner join pa_eliminacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                                   inner join siw_tramite   z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
                                           )                        b8 on (b.sq_siw_solicitacao       = b8.protocolo)
+                      left           join (select sq_siw_solicitacao, retornaLimiteProtocolo(sq_siw_solicitacao) as prazo_guarda
+                                             from siw_solicitacao
+                                           group by sq_siw_solicitacao
+                                          )                        b9 on (b.sq_siw_solicitacao       = b9.sq_siw_solicitacao)
                       inner          join pa_documento             d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         left         join pa_natureza_documento    d1 on (d.sq_natureza_documento    = d1.sq_natureza_documento)
                         left         join co_pessoa                d2 on (d.pessoa_origem            = d2.sq_pessoa)
@@ -1586,7 +1591,10 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
                  (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
-                 (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null and b7.protocolo is null and b8.protocolo is null and d51.sigla = 'ELIM') -- Eliminação
+                 (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null 
+                                         and b7.protocolo is null and b8.protocolo is null and d51.Sigla='ELIM'
+                                         and to_char(sysdate,'yyyymmyy') > substr(b9.prazo_guarda,7,4)||substr(b9.prazo_guarda,4,2)||substr(b9.prazo_guarda,1,2)
+                 ) -- Eliminação
                 )
             and ((p_restricao <> 'GRPAPROP'    and p_restricao <> 'GRPAPRIO' and p_restricao <> 'GRPARESPATU' and p_restricao <> 'GRPACC' and p_restricao <> 'GRPAVINC') or 
                  ((p_restricao = 'GRPACC'      and b.sq_cc             is not null)   or 

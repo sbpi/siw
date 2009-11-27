@@ -75,6 +75,17 @@ begin
          connect by prior a.sq_tipo_lancamento = a.sq_tipo_lancamento_pai
          start with coalesce(a.sq_tipo_lancamento_pai,0) = coalesce(p_chave_aux,0)
          order by montanomeTipoLancamento(a.sq_tipo_lancamento);
+   Elsif upper(p_restricao) = 'REEMBOLSO' Then
+     -- Se reembolso, recupera classificação inicial
+      open p_result for
+         select a.sq_tipo_lancamento as chave, a.sq_tipo_lancamento_pai,
+                montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo
+           from fn_tipo_lancamento   a
+          where a.cliente                = p_cliente
+            and a.sq_tipo_lancamento_pai is null
+            and a.despesa                = 'S'
+            and a.receita                = 'N'
+         order by a.nome;
    Else
       If length(p_restricao) = 25 Then
          w_menu    := substr(p_restricao,1,4);

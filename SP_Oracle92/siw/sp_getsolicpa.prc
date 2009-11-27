@@ -67,7 +67,7 @@ begin
      l_resp_unid := l_resp_unid ||','''||crec.sq_unidade||'''';
    end loop;
    
- if substr(p_restricao,1,2) = 'PA' or substr(p_restricao,1,4) = 'GREM' Then
+ if p_restricao <> 'PAELIM' and (substr(p_restricao,1,2) = 'PA' or substr(p_restricao,1,4) = 'GREM') Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -206,7 +206,7 @@ begin
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
                 );
- elsif substr(p_restricao,1,4) = 'GREL' Then
+ elsif p_restricao = 'PAELIM' or substr(p_restricao,1,4) = 'GREL' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
@@ -236,6 +236,7 @@ begin
                 b1.sigla as sg_tramite,  b1.ativo,                   b1.envia_mail,
                 b2.acesso,
                 coalesce(b3.qtd,0) as qtd_processo, coalesce(b4.qtd,0) as qtd_documento, coalesce(b5.qtd,0) as qtd_itens,
+                b6.dt_eliminacao,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,        e.informal as informal_resp,
@@ -280,6 +281,12 @@ begin
                                                inner join pa_documento       z on (y.protocolo          = z.sq_siw_solicitacao)
                                         group by x.sq_siw_solicitacao
                                        )                        b5 on (b.sq_siw_solicitacao       = b5.sq_siw_solicitacao)
+                   left           join (select x.sq_siw_solicitacao, max(y.eliminacao) as dt_eliminacao
+                                          from siw_solicitacao               x
+                                               inner join pa_eliminacao      y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                               inner join pa_documento       z on (y.protocolo          = z.sq_siw_solicitacao)
+                                        group by x.sq_siw_solicitacao
+                                       )                        b6 on (b.sq_siw_solicitacao       = b6.sq_siw_solicitacao)
                    inner          join eo_unidade               e  on (b.sq_unidade               = e.sq_unidade)
                      left         join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                        e1.tipo_respons            = 'T'           and

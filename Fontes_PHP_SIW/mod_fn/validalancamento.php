@@ -61,7 +61,8 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   if (count($l_rs1)<=0) {
     $l_existe_rs1=0;
   } else {
-    $l_existe_rs1=count($l_rs1);    
+    $l_existe_rs1=count($l_rs1);
+    $l_item = false;    
     foreach($l_rs1 as $l_row) {
       if (nvl(f($l_rs_solic,'tipo_rubrica'),0)!=4 && nvl(f($l_rs_solic,'tipo_rubrica'),0)!=5) {
         $l_rs2 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null);
@@ -75,6 +76,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
           }          
         }
       } elseif (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
+        if (f($l_row,'detalha_item')=='S') $l_item = true;
         $l_rs2 = db_getLancamentoItem::getInstanceOf($dbms,null,f($l_row,'sq_lancamento_doc'),null,null,null);
         if (count($l_rs2)<=0) $l_existe_rs2=0; else $l_existe_rs2=count($l_rs2);
         if (((f($l_row,'valor')!=f($l_row,'total_item')) && count($l_rs2)!=0) && f($l_rs_tramite,'ativo')=='S') {
@@ -167,20 +169,20 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
 
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
-    if (f($l_rs_tramite,'ordem')>1) {
+  if (f($l_rs_tramite,'ordem')>1 || f($l_rs_solic,'sigla')=='FNDREEMB') {
       $l_erro=$l_erro;
-      if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE') {
+      if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE' || f($l_rs_solic,'sigla')=='FNDREEMB') {
         // 4 - Recupera os documentos associados ao lançamento
         $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
         if (count($l_rs1)<=0) $l_existe_rs1=0; else $l_existe_rs1=count($l_rs1);
         if ($l_existe_rs1==0) {
           // 5 - Verifica se foi informado pelo menos um documento
-          $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Informe pelo menos um.';
+          $l_erro=$l_erro.'<li>Não foram informados documentos para o lançamento. Acesse a operação "Docs" e informe pelo menos um.';
           $l_tipo=0;
         } else {
-          if ($l_existe_rs2==0 && (nvl(f($l_rs_solic,'tipo_rubrica'),'')!='')) {
+          if ($l_item && $l_existe_rs2==0 && nvl(f($l_rs_solic,'tipo_rubrica'),'')!='') {
             // 7 - Verifica se foi informado pelo menos um item no documento
-            $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Informe pelo menos um.';
+            $l_erro=$l_erro.'<li>Não foram informados itens para o documento. Acesse a operação "Itens" do documento e informe pelo menos um.';
             $l_tipo=0;
           } 
         }

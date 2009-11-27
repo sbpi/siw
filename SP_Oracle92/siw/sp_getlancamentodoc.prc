@@ -15,7 +15,7 @@ begin
                 case d.abrange_acrescimo when 'S' then a.valor_excedente else 0 end as valor_excedente, 
                 case d.abrange_reajuste  when 'S' then a.valor_reajuste else 0 end as valor_reajuste,
                 case a.patrimonio when 'S' then 'Sim' else 'Não' end nm_patrimonio,
-                b.nome nm_tipo_documento, b.sigla sg_tipo_documento,
+                b.nome nm_tipo_documento, b.sigla sg_tipo_documento, b.detalha_item,
                 c.total_item,
                 d.sq_acordo_nota,
                 d.numero numero_nota, d.valor valor_nota, d.abrange_inicial, d.abrange_acrescimo,

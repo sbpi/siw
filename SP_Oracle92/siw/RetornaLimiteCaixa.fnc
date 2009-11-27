@@ -20,10 +20,11 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
   w_final         varchar2(4000)  := '';
 
   cursor c_dados is
-      select max(case a.processo when 'S' then to_char(a.data_autuacao,'dd/mm/yyyy') else to_char(a1.inicio,'dd/mm/yyyy') end) as data_limite,
-             case a2.sigla
-                  when 'AS' then case d.sigla when 'ANOS' then to_char(a.data_setorial,'dd/mm/')||(to_char(a.data_setorial,'yyyy')+c.fase_corrente_anos) else d.descricao end
-                  when 'AT' then case e.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_intermed_anos) else e.descricao end
+      select max(case a.processo when 'S' then a.data_autuacao else a1.inicio end) as data_limite,
+             case e.sigla 
+                  when 'ANOS' then (to_char(max(case a.processo when 'S' then a.data_autuacao else a1.inicio end),'yyyy')+c.fase_intermed_anos)||
+                                   to_char(max(case a.processo when 'S' then a.data_autuacao else a1.inicio end),'mmdd')
+                  else null 
              end as intermediario,
              case f.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_final_anos) else f.descricao end as final
         from pa_documento                        a
@@ -43,13 +44,16 @@ begin
      select count(sq_caixa) into w_reg from pa_caixa where sq_caixa = p_chave;
      if w_reg > 0 then
         for crec in c_dados loop
-            If crec.data_limite   is not null Then w_limite := crec.data_limite; End If;
-            If crec.intermediario is not null Then w_intermediario := w_intermediario || ' / '|| crec.intermediario; End If;
+            If crec.data_limite   is not null Then w_limite := to_char(crec.data_limite,'dd/mm/yyyy'); End If;
+            If crec.intermediario is not null and (w_intermediario is null or crec.intermediario > w_intermediario) Then w_intermediario := crec.intermediario; End If;
             If crec.final         is not null Then w_final         := w_final || ' / '|| crec.final; End If;
         end loop;
      end if;
   end if;
-  Result := w_limite||'|@|'||substr(w_intermediario,4)||'|@|'||substr(w_final,4);
+  If w_intermediario is not null Then
+     w_intermediario := substr(w_intermediario,7,2)||'/'||substr(w_intermediario,5,2)||'/'||substr(w_intermediario,1,4);
+  End If;
+  Result := w_limite||'|@|'||w_intermediario||'|@|'||substr(w_final,4);
   return(Result);
 end RetornaLimiteCaixa;
 /

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 // =========================================================================
 // Montagem da seleção do tipo da pessoa

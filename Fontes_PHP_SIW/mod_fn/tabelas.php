@@ -268,6 +268,7 @@ function Documento(){
     // Se for recarga da página
     $w_nome           = $_REQUEST['w_nome'];
     $w_sigla          = $_REQUEST['w_sigla'];
+    $w_item           = $_REQUEST['w_item'];
     $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $RS = db_getTipoDocumento::getInstanceOf($dbms,null,$w_cliente);
@@ -283,6 +284,7 @@ function Documento(){
     $w_chave    = f($RS,'chave');
     $w_nome     = f($RS,'nome');
     $w_sigla    = f($RS,'sigla');
+    $w_item     = f($RS,'detalha_item');
     $w_ativo    = f($RS,'nm_ativo');
   } 
   if (!(strpos('IAE',$O)===false)) {
@@ -326,6 +328,7 @@ function Documento(){
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Detalha itens','detalha_item').'</font></td>');
     ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><font size="1"><b> Operações </font></td>');
     ShowHTML('        </tr>');
@@ -340,6 +343,7 @@ function Documento(){
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="left"><font size="1">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_detalha_item').'</td>');
         ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap><font size="1">');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
@@ -370,6 +374,7 @@ function Documento(){
     ShowHTML('      <tr><td><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr><td><font size="1"><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      <tr>');
+    MontaRadioSN('<b>Detalha itens</b>?',$w_item,'w_item');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
@@ -703,7 +708,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTipoDocumento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-          $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
+          $_REQUEST['w_sigla'],$_REQUEST['w_item'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

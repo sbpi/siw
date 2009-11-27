@@ -28,7 +28,8 @@ begin
                 case when d.pessoa_origem is null then b3.nome else d2.nome end as nm_origem_doc,
                 d1.nome as nm_especie,
                 d6.numero as nr_caixa, montaNomeArquivoLocal(d6.sq_arquivo_local) as nm_arquivo_local,
-                d7.sigla as sg_unid_caixa
+                d7.sigla as sg_unid_caixa,
+                d8.sq_siw_solicitacao as sq_eliminacao, d8.fim as dt_eliminacao, d8.sigla as sg_tramite_eliminacao
            from pa_emprestimo_item                        a
                 inner       join siw_solicitacao          b  on (a.sq_siw_solicitacao       = b.sq_siw_solicitacao)
                   inner     join eo_unidade               b3 on (b.sq_unidade               = b3.sq_unidade)
@@ -42,6 +43,11 @@ begin
                     inner   join pa_assunto               d5 on (d4.sq_assunto              = d5.sq_assunto)
                   left      join pa_caixa                 d6 on (d.sq_caixa                 = d6.sq_caixa)
                     left    join eo_unidade               d7 on (d6.sq_unidade              = d7.sq_unidade)
+                    left    join (select y.protocolo, y.sq_siw_solicitacao, x.fim, z.sigla, x.conclusao
+                                    from siw_solicitacao          x
+                                         inner join pa_eliminacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                                         inner join siw_tramite   z on (x.sq_siw_tramite     = z.sq_siw_tramite and z.sigla <> 'CA')
+                                 )                        d8 on (d.sq_siw_solicitacao       = d8.protocolo)
           where (p_chave         is null or (p_chave         is not null and a.protocolo           = p_chave))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))
             and (p_atraso        is null or (p_atraso        is not null and a.devolucao           is null and b.fim < trunc(sysdate)))

@@ -92,31 +92,49 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação: </b></td><td>'.f($RS,'nm_cc').' </td></tr>';
     }
 */
-    $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
-    if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
-      $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
-      $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+    if (f($RS_Menu,'sigla')!='FNDREEMB' || (f($RS_Menu,'sigla')=='FNDREEMB' && f($RS,'or_tramite')>2)) {
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
     }
-    if (!($l_P1==4 || $l_tipo=='WORD')){
-      $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
-      $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+    if (f($RS_Menu,'sigla')!='FNDREEMB') {
+      if (Nvl(f($RS,'tipo_rubrica'),'')!='') {
+        $l_html.=chr(13).'      <tr><td><b>Tipo de movimentação: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_tipo_rubrica').' </td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Finalidade: </b></td>';
+        $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+      }
+      if (!($l_P1==4 || $l_tipo=='WORD')){
+        $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
+        $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+      } else {
+        $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+      }
     } else {
-      $l_html.=chr(13).'      <tr><td><b>Unidade responsável: </b></td>';
-      $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Justificativa: </b></td>';
+      $l_html.=chr(13).'        <td>'.CRLF2BR(f($RS,'descricao')).'</td></tr>';
+      if (!($l_P1==4 || $l_tipo=='WORD')){
+        $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
+        $l_html.=chr(13).'        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+      } else {
+        $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
+      }
     }
     $l_html.=chr(13).'          <tr><td><b>Forma de pagamento:</b></td>';
     $l_html.=chr(13).'            <td>'.f($RS,'nm_forma_pagamento').' </td></tr>';
-    $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
-    $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
+    if (f($RS_Menu,'sigla')!='FNDREEMB') {
+      $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
+      $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
+    }
     $l_html.=chr(13).'          <tr><td><b>Data prevista:</b></td>';
     $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'vencimento')).' </td></tr>';
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td>';
     $l_html.=chr(13).'            <td>'.formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
-    if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td>';
-      $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
+    if (f($RS_Menu,'sigla')!='FNDREEMB') {
+      if (Nvl(f($RS,'condicoes_pagamento'),'')!='') {
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td>';
+        $l_html.=chr(13).'      <td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
+      }
     }
     
     
@@ -329,10 +347,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Número</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Data</b></td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Série</b></td>';
-    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
-    if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Patrimônio</b></td>';
-    }
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Valor</b></td>';
+    //if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
+    //  $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Patrimônio</b></td>';
+    //}
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_total=0;
@@ -353,10 +371,10 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'            <td>'.f($row,'numero').'</td>';
         $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($row,'data')).'</td>';
         $l_html.=chr(13).'            <td>'.Nvl(f($row,'serie'),'---').'</td>';
-        $l_html.=chr(13).'            <td align="right">'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
-        if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
-          $l_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
-        }
+        $l_html.=chr(13).'            <td align="right" colspan=2>'.formatNumber(f($row,'valor')).'&nbsp;&nbsp;</td>';
+        //if(f($RS_Menu,'sigla')!='FNDVIA' && (Nvl($w_tipo_rubrica,'')==''||Nvl($w_tipo_rubrica,0)==5)) {
+        //  $l_html.=chr(13).'            <td>'.f($row,'nm_patrimonio').'</td>';
+        //}
         $l_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
           if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {

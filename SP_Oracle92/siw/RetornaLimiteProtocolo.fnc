@@ -14,8 +14,9 @@ create or replace function RetornaLimiteProtocolo(p_chave in number) return varc
 
   cursor c_dados is
       select case a2.sigla
-                  when 'AS' then case d.sigla when 'ANOS' then to_char(a.data_setorial,'dd/mm/')||(to_char(a.data_setorial,'yyyy')+c.fase_corrente_anos) else d.descricao end
-                  when 'AT' then case e.sigla when 'ANOS' then to_char(a.data_central,'dd/mm/')||(to_char(a.data_central,'yyyy')+c.fase_intermed_anos) else e.descricao end
+                  when 'AS' then case d.sigla when 'ANOS' then to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+c.fase_corrente_anos) else d.descricao end
+                  when 'AT' then case e.sigla when 'ANOS' then to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+c.fase_intermed_anos) else e.descricao end
+                  when 'EL' then case e.sigla when 'ANOS' then to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'dd/mm/')||(to_char(case a.processo when 'S' then a.data_autuacao else a1.inicio end,'yyyy')+c.fase_intermed_anos) else e.descricao end
              end as intermediario
         from pa_documento                        a
              inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
@@ -25,8 +26,7 @@ create or replace function RetornaLimiteProtocolo(p_chave in number) return varc
                  left  join pa_tipo_guarda       d on (c.fase_corrente_guarda = d.sq_tipo_guarda)
                  left  join pa_tipo_guarda       e on (c.fase_intermed_guarda = e.sq_tipo_guarda)
                  left  join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
-       where a.sq_siw_solicitacao = p_chave
-      group by a2.sigla, a.data_setorial, a.data_central, c.fase_corrente_anos, c.fase_intermed_anos, c.fase_final_anos, d.sigla, d.descricao, e.sigla, e.descricao, f.sigla, f.descricao;
+       where a.sq_siw_solicitacao = p_chave;
 begin
   if p_chave is not null then
      -- Verifica se a solicitação existe e, se existir, recupera seus dados

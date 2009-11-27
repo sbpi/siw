@@ -10,9 +10,10 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_putDocumentoGeral {
    function getInstanceOf($dbms, $operacao, $p_chave, $p_copia, $p_menu, $p_unidade, $p_unid_autua, $p_solicitante, 
-        $p_cadastrador, $p_solic_pai, $p_codigo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, $p_inicio, 
-        $p_volumes, $p_copias, $p_natureza_documento, $p_fim, $p_data_recebimento, $p_interno, $p_pessoa_origem, 
-        $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_chave_nova, $p_codigo_interno) {
+        $p_cadastrador, $p_solic_pai, $p_codigo, $p_processo, $p_circular, $p_especie_documento, $p_doc_original, 
+        $p_inicio, $p_volumes, $p_dt_autuacao, $p_copias, $p_natureza_documento, $p_fim, $p_data_recebimento, 
+        $p_interno, $p_pessoa_origem, $p_pessoa_interes, $p_cidade, $p_assunto, $p_descricao, $p_chave_nova, 
+        $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
      $sql=$strschema.'sp_putDocumentoGeral';
      $params=array('p_operacao'                 =>array($operacao,                                  B_VARCHAR,         1),
@@ -31,6 +32,7 @@ class dml_putDocumentoGeral {
                    'p_doc_original'             =>array(tvl($p_doc_original),                       B_VARCHAR,        30),
                    'p_inicio'                   =>array(tvl($p_inicio),                             B_DATE,           32),
                    'p_volumes'                  =>array(tvl($p_volumes),                            B_INTEGER,        32),
+                   'p_dt_autuacao'              =>array(tvl($p_dt_autuacao),                        B_DATE,           32),
                    'p_copias'                   =>array(tvl($p_copias),                             B_INTEGER,        32),
                    'p_natureza_documento'       =>array(tvl($p_natureza_documento),                 B_INTEGER,        32),
                    'p_fim'                      =>array(tvl($p_fim),                                B_DATE,           32),

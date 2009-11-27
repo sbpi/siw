@@ -3799,5 +3799,21 @@ switch ($data) {
     $minutos = $w_min_fim - $w_min_inicio;
     return $w_sinal * $minutos;   
   }
+  
+  function browser_info($agent=null) {
+    // Lista dos browsers conhecidos
+    $known = array('msie', 'firefox', 'safari', 'webkit', 'opera', 'netscape',
+      'konqueror', 'gecko');
+  
+    $agent = strtolower($agent ? $agent : $_SERVER['HTTP_USER_AGENT']);
+    $pattern = '#(?<browser>' . join('|', $known) .
+      ')[/ ]+(?<version>[0-9]+(?:\.[0-9]+)?)#';
+  
+    //Encontra as frases
+    if (!preg_match_all($pattern, $agent, $matches)) return array();
+  
+    $i = count($matches['browser'])-1;
+    return array($matches['browser'][$i] => $matches['version'][$i]);
+  }  
 
 ?>

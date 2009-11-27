@@ -20,7 +20,7 @@ begin
                 case a.abrange_inicial   when 'S' then 'IN' else null end as sg_inicial,
                 case a.abrange_acrescimo when 'S' then 'EX' else null end as sg_acrescimo,
                 case a.abrange_reajuste  when 'S' then 'RJ' else null end as sg_reajuste,
-                c.nome nm_tipo_documento, c.sigla sg_tipo_documento,
+                c.nome nm_tipo_documento, c.sigla sg_tipo_documento, c.detalha_item,
                 f.nome_resumido nm_outra_parte,
                 e.codigo cd_aditivo, e.sq_cc cc_aditivo,
                 g.sq_cc cc_acordo,

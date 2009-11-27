@@ -66,7 +66,11 @@ begin
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
          and (p_restricao = 'RELPAETIQ' or 
-              (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or w.sq_pessoa = d.cadastrador) and b.sq_solic_pai is null)
+              (p_restricao = 'RELPATRAM' and b.sq_solic_pai is null and (w.sq_unidade = d.unidade_origem or 
+                                                                         w.sq_pessoa  = d.cadastrador or
+                                                                         0            < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)
+                                                                        )
+              )
              )
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
@@ -81,7 +85,7 @@ begin
               (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null)
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and (b1.acesso > 0 or (p_restricao = 'RELPATRAM' and w.sq_unidade = d.unidade_origem)))
+              (p_tipo      = 2 and (b1.acesso > 0 or (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
              );
    Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PACLASSIF, PADTRANSF,PADELIM,PADEMPREST,PAENVCEN,PADDESM', p_restricao) > 0 Then
       -- Recupera guias de tramitação
@@ -152,7 +156,7 @@ begin
                sg_autenticacao                       w
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
-         and (p_restricao = 'PACLASSIF' or (b1.acesso    >= 8 or d.unidade_destino = w.sq_unidade))
+         and (p_restricao = 'PACLASSIF' or (b1.acesso    >= 8 or d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null)))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
@@ -167,7 +171,7 @@ begin
               (p_restricao = 'PADANEXA'   and d8.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADJUNTA'   and d9.cliente is not null and b.sq_solic_pai is null) or
               (p_restricao = 'PADTRANSF'  and (d5.cliente is not null and c.data_setorial is null)) or
-              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and c.data_setorial is not null and c.unidade_int_posse = w.sq_unidade) or
+              (p_restricao = 'PAENVCEN'   and b3.sigla = 'AS' and c.data_setorial is not null and (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))) or
               (p_restricao = 'PADDESM'    and de.cliente is not null and b.sq_solic_pai is null and c.data_desapensacao is null) or
               (p_restricao = 'PACLASSIF'  and (c5.provisorio = 'S' or p_numero is not null)) or
               (p_restricao = 'PADELIM'    and da.cliente is not null) or
@@ -234,7 +238,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
-         and (b1.acesso    >= 8 or (c.unidade_int_posse = w.sq_unidade))
+         and (b1.acesso    >= 8 or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
@@ -310,7 +314,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (b1.acesso     >= 8 or ((d.unidade_destino is not null and d.unidade_destino = w.sq_unidade) or (d.unidade_destino is null and d.unidade_origem = w.sq_unidade)))
+         and (b1.acesso     >= 8 or ((d.unidade_destino is not null and (d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))) or (d.unidade_destino is null and (d.unidade_origem = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
          and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia));
          --and (p_unid_autua is null or (p_unid_autua  is not null and coalesce(c4.sq_unidade_pai,c4.sq_unidade) = coalesce(d5.sq_unidade_pai, d5.sq_unidade)));
    Elsif p_restricao = 'RECEBIDO' Then

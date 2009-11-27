@@ -15,6 +15,7 @@ create or replace procedure sp_putDocumentoGeral
     p_doc_original        in  varchar2 default null,
     p_inicio              in  date     default null,
     p_volumes             in  number   default null,
+    p_dt_autuacao         in  date     default null,
     p_copias              in  number   default null,
     p_natureza_documento  in  number   default null,
     p_fim                 in  date     default null,
@@ -73,11 +74,11 @@ begin
       
       -- Insere registro em pa_documento
       insert into pa_documento
-        (sq_siw_solicitacao,   cliente,          sq_documento_pai, processo,   circular,         numero_original,    interno,   sq_especie_documento, 
-         sq_natureza_documento, pessoa_origem,   copias,           volumes,    unidade_autuacao, data_recebimento,   unidade_int_posse)
+        (sq_siw_solicitacao,   cliente,          sq_documento_pai, processo,   circular,         numero_original,    interno,       sq_especie_documento, 
+         sq_natureza_documento, pessoa_origem,   copias,           volumes,    unidade_autuacao, data_recebimento,   data_autuacao, unidade_int_posse)
       values
-        (w_chave,               w_cliente,       p_solic_pai,      p_processo, p_circular,       p_doc_original,     p_interno, p_especie_documento, 
-         p_natureza_documento,  p_pessoa_origem, p_copias,         p_volumes,  p_unid_autua,     p_data_recebimento, p_unid_autua);
+        (w_chave,               w_cliente,       p_solic_pai,      p_processo, p_circular,       p_doc_original,     p_interno,     p_especie_documento, 
+         p_natureza_documento,  p_pessoa_origem, p_copias,         p_volumes,  p_unid_autua,     p_data_recebimento, p_dt_autuacao, p_unid_autua);
       
       -- Insere o interessado da tela principal na tabela de interessados
       If p_pessoa_interes is not null Then
@@ -148,6 +149,7 @@ begin
           pessoa_origem         = p_pessoa_origem,
           copias                = p_copias,
           volumes               = p_volumes,
+          data_autuacao         = p_dt_autuacao,
           unidade_autuacao      = p_unid_autua
        where sq_siw_solicitacao = p_chave;
 

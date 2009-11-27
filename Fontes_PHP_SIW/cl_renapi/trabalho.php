@@ -2,6 +2,7 @@
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
+
 include_once($w_dir_volta.'constants.inc');
 include_once($w_dir_volta.'jscript.php');
 include_once($w_dir_volta.'funcoes.php');
@@ -53,7 +54,7 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
-
+$browser = browser_info();
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $par        = strtoupper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
@@ -158,6 +159,7 @@ function Mesa() {
   ShowHTML('<HEAD>');
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  ShowHTML('  <link rel="stylesheet" type="text/css" href="cl_renapi/nucleos.css">');
   ShowHTML('<style>');
   ShowHTML('#menu_superior{);');
   ShowHTML('   float:right;');
@@ -180,6 +182,11 @@ function Mesa() {
   ShowHTML('  height: 136px;');
   ShowHTML('  background:url('.$w_dir.'download.gif) no-repeat;');
   ShowHTML('}');
+  if($browser['firefox']){
+    ShowHTML('#mapa{');
+    ShowHTML('  margin-left: -20%;');
+    ShowHTML('}');  
+  }
   
   ShowHTML('</style>');
   ShowHTML('</HEAD>');
@@ -193,7 +200,7 @@ function Mesa() {
   if (f($RS_Cliente,'georeferencia')=='S') {
     ShowHTML('      <a href="mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Geo-referenciamento" title="Clique para visualizar os mapas geo-referenciados." target="_blank"><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
-
+  
   if ($_SESSION['DBMS']!=5) {
     // Exibe, se necessário, sinalizador para alerta
     $RS = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
@@ -290,12 +297,40 @@ function Mesa() {
     $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
     $w_todos = $w_pns + $w_pde + $w_pne1 + $w_pne2 + $w_pne3; 
     ShowHTML('<div id="menu_superior">');
-    ShowHTML('<a href="'.$w_dir.'resultados.php?par=inicial&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
+    ShowHTML('<a href="'.$w_dir.'indicador.php?par=FramesAfericao&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
     ShowHTML('<a title="Consulta a documentos da PDP" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
     ShowHTML('</div>');
-    //<div id="mapa" style="margin-left: 280px; margin-top:-357px;" ><img src="mapa-brasil-certo.png" alt="Mapa do Brasil Vetor - Agrichem Fertilizantes 2009" width="497" height="493" border="0" usemap="#Map" />
-    ShowHTML('<img name="renapi" src="'.$w_dir.'renapi.gif" width="497" height="493" border="0" id="pdp" usemap="#m_pdp" alt="" />');
+    ShowHTML('<div id="mapa">');
+    ShowHTML('<span title="Núcleo instalado no Acre" style="position: relative; top: 38.5%; right: 30.8%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png" id="acre">');
+    ShowHTML('</span>');
+    
+    ShowHTML('<SPAN title="Núcleo instalado em Roraima" style="position: relative; top: 6.5%; right: 9.5%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');
+    
+    ShowHTML('<SPAN title="Núcleo instalado em Rondônia" style="position: relative; top: 46.5%; right: 14.5%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');
+
+    ShowHTML('<SPAN title="Núcleo instalado no Rio Grande do Sul" style="position: relative; top: 95%; left: 2%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');
+    
+    ShowHTML('<SPAN title="Núcleo instalado em Goiás" style="position: relative; top: 60.5%; left: 2%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');    
+    
+    ShowHTML('<SPAN title="Núcleo instalado em Alagoas" style="position: relative; top: 40.2%; left: 35%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');        
+
+    ShowHTML('<SPAN title="Núcleo instalado em Sergipe" style="position: relative; top: 43.2%; left: 27.5%;">');
+    ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
+    ShowHTML('</SPAN> ');        
+        
+    ShowHTML('<img name="renapi" src="'.$w_dir.'renapi.gif" width="100%" border="0" id="pdp" usemap="#m_pdp" alt="" />');
     ShowHTML('<map name="m_pdp" id="m_pdp">');
     ShowHTML('<area style="display:none" shape="poly" coords="129,38,121,41,118,47,104,55,99,53,95,57,81,36,73,42,70,41,68,43,50,43,48,52,56,53,58,57,47,59,47,68,54,80,48,120,41,119,32,122,25,122,13,129,8,143,10,147,2,152,2,156,4,158,8,159,13,163,17,163,24,165,30,167,45,171,61,178,88,190,96,184,101,186,105,183,109,185,112,180,120,180,125,166,136,166,151,177,190,176,192,159,191,151,198,134,216,95,186,75,184,62,170,64,168,68,166,75,160,76,154,74,151,80,151,85,145,79,144,70,140,56,137,45,138,42" href="am.html" alt="Amazonas" />');
     ShowHTML('<area shape="poly" coords="89,192,76,200,67,206,43,205,42,184,33,190,25,192,20,187,9,186,12,180,1,162,1,156,47,171,86,189" href="ac.html" alt="Acre" />');
@@ -327,16 +362,13 @@ function Mesa() {
     ShowHTML('<area shape="poly" coords="341,255,336,252,336,257,332,257,332,263,334,267,327,268,326,275,329,278,324,285,328,289,326,295,321,300,308,299,302,302,291,302,281,317,293,316,302,317,306,321,315,319,323,318,330,321,331,335,336,336,336,344,339,353,343,353,350,350,359,347,369,344,378,343,387,339,389,329,393,328,394,321,399,320,403,310,401,306,401,298,411,291,408,285,417,269,400,266,395,259,379,252,371,252,367,247,353,253,347,258,340,255" href="mg.html" alt="Minas Gerais" />');
     ShowHTML('<area shape="poly" coords="282,310,289,301,301,300,307,297,321,299,325,294,324,285,329,279,325,269,333,267,331,263,331,256,335,256,336,252,343,255,342,246,338,241,338,230,328,233,322,234,313,233,304,230,302,234,291,228,291,224,284,241,281,254,277,257,270,267,261,273,258,279,256,293,263,301" href="go.html" alt="Goi&aacute;s e Distrito Federal" />');
     ShowHTML('</map>');
-    
-    ShowHTML('<table border="0" width="100%">');
-    ShowHTML('      <tr><td colspan=3><p>&nbsp;</p>');
+    ShowHTML('</div>');
   } else {
     ScriptOpen("JavaScript");
     ShowHTML(' alert(\'Opção não disponível\');');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
-  ShowHTML('</table>');
   ShowHTML('</center>');
   ShowHTML('</body>');
   ShowHTML('</html>');
