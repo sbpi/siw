@@ -20,6 +20,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicResultado.php');
+include_once($w_dir_volta.'classes/sp/db_getStateList.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
@@ -182,15 +183,14 @@ function Mesa() {
   ShowHTML('  height: 136px;');
   ShowHTML('  background:url('.$w_dir.'download.gif) no-repeat;');
   ShowHTML('}');
-  if($browser['firefox']){
-    ShowHTML('#mapa{');
-    ShowHTML('  margin-left: -20%;');
-    ShowHTML('}');  
-  }
+  
+ 
+ 
   
   ShowHTML('</style>');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
+  ShowHTML('<style>img div {  behavior: url(iepngfix.htc)}</style>');
   
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
@@ -300,6 +300,67 @@ function Mesa() {
     ShowHTML('<a href="'.$w_dir.'indicador.php?par=FramesAfericao&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
     ShowHTML('<a title="Consulta a documentos da PDP" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
+    ShowHTML('</div>');
+    ShowHTML('<div id="status">');
+    ShowHTML('<div style="width:150px; height:20px; overflow:auto;">');
+    ShowHTML('<table align="left" width="100%" cellpadding="0" cellspacing="0">');
+    ShowHTML('  <tr>');
+    ShowHTML('    <th width="80">UF&nbsp;');
+    ShowHTML('    </th>');
+    ShowHTML('    <th align="center" width="40">PIN');
+    ShowHTML('    </th>');
+    ShowHTML('    <th width="30">PAA');
+    ShowHTML('    </th>');
+    ShowHTML('    <th width="20">&nbsp;');
+    ShowHTML('    </th>');    
+    ShowHTML('  </tr>');
+    ShowHTML('</table>');
+    ShowHTML('</div>');
+    ShowHTML('<div style="width:180px; height:150px; overflow:auto;">');
+    ShowHTML('<table width="100%" cellpadding="0" cellspacing="0">');
+    $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
+    //print_r($RS1);
+    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),5,
+            $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+            $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
+            $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
+            $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
+            $p_atividade, null, $p_orprior, null, $p_servico);
+              
+    $RS1  = SortArray($RS1,'co_uf','asc','codigo_interno','desc');
+    //print_r($RS1);
+    $w_atual = '';
+    foreach($RS1 as $row) {
+        //echo f($row,'sq_regiao');
+      switch (f($row,'sq_regiao')){
+        case 1: $cor = '#B4AB8F'; break;
+        case 2: $cor = '#63BD7B'; break;
+        case 3: $cor = '#B4AB8F'; break;
+        case 4: $cor = '#A1A1A4'; break;                              
+        case 5: $cor = '#EE8583'; break;
+        case 6: $cor = '#E0CB85'; break;
+        default: $cor = '#FFFFFF';
+      }    
+     // $cor = ($cor == '#f5f5f5'?'#ffffff':'#f5f5f5');
+      if(Nvl($w_atual,'')!=f($row,'co_uf')){
+        ShowHTML('  <tr>');
+        ShowHTML('    <td bgcolor="'.$cor.'" align="center" width="80">'.f($row,'co_uf').'</td>');
+        $w_atual = f($row,'co_uf');
+      }      
+      if(substr(f($row,'codigo_interno'),0,3)=='PIN'){
+        ShowHTML('    <td align="center" width="40">'.exibeSmile('IDE',f($row,'ide')).'</td>');
+      }elseif(substr(f($row,'codigo_interno'),0,3)=='PAA'){
+        ShowHTML('    <td align="center" width="40">'.Nvl(exibeSmile('IDE',f($row,'ide')),'&nbsp;').'</td>');
+        //ShowHTML('    <td width="20">&nbsp;</td>');
+      }      
+    }
+    
+    /*ShowHTML('  <tr bgcolor="'.$cor.'">');
+    ShowHTML('    <td colspan="4" align="center" height="5px" width="60%">&nbsp;');
+    ShowHTML('    </td>');
+    ShowHTML('  </tr>');    */
+    ShowHTML('</table>');
+    ShowHTML('</div>');
     ShowHTML('</div>');
     ShowHTML('<div id="mapa">');
     ShowHTML('<span title="Núcleo instalado no Acre" style="position: relative; top: 38.5%; right: 30.8%;">');
