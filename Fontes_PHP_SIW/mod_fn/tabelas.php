@@ -155,32 +155,32 @@ function Imposto() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
     ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Esfera','nm_esfera').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Cálculo','nm_calculo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b> Operações </font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Esfera','nm_esfera').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Cálculo','nm_calculo').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b> Operações </font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.f($row,'sigla').'</td>');
-        ShowHTML('        <td align="left"><font size="1">'.f($row,'descricao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_esfera').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_calculo').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_esfera').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_calculo').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
         ShowHTML('        </td>');
@@ -206,16 +206,16 @@ function Imposto() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td colspan="5"><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('      <tr><td colspan="5"><font size="1"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
+    ShowHTML('      <tr><td colspan="5"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="50" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td colspan="5"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><font size="1"><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('          <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
     SelecaoEsfera('<u>E</u>sfera:','E','Selecione a esfera desejada',$w_chave,$w_esfera,$w_cliente,'w_esfera',null,null);
     SelecaoCalculo('<u>C</u>alculo:','C','Selecione a base de calculo',$w_chave,$w_calculo,$w_cliente,'w_calculo',null,null);
-    ShowHTML('          <td><font size="1"><b>D<u>i</u>a de pagamento:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dia_pagamento" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_dia_pagamento.'"></td>');
+    ShowHTML('          <td><b>D<u>i</u>a de pagamento:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dia_pagamento" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_dia_pagamento.'"></td>');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
-    ShowHTML('      <tr><td colspan=5><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
@@ -321,31 +321,31 @@ function Documento(){
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Detalha itens','detalha_item').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b> Operações </font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Detalha itens','detalha_item').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b> Operações </font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td align="left"><font size="1">'.f($row,'nome').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'sigla').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_detalha_item').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_detalha_item').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
         ShowHTML('        </td>');
@@ -371,12 +371,12 @@ function Documento(){
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
-    ShowHTML('      <tr><td><font size="1"><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      <tr><td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Detalha itens</b>?',$w_item,'w_item');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
-    ShowHTML('      <tr><td align="LEFT" colspan=2><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT" colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=2><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
@@ -485,22 +485,22 @@ function Lancamento() {
   Estrutura_Texto_Abre();
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
-    ShowHTML('          <td><font size="1"><b> Operações </font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Receita','nm_receita').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Despesa','nm_despesa').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Lançamentos','qt_lancamentos').'</font></td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
+    ShowHTML('          <td><b> Operações </font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach ($RS as $row) {
@@ -511,12 +511,12 @@ function Lancamento() {
         } else {
           ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(f($row,'level')-1)).$imagem.'<td>'.$l_destaque.f($row,'nome').' '.'</b></td></tr></table>');
         }
-        ShowHTML('        <td align="left"><font size="1">'.f($row,'descricao').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_receita').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_despesa').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'qt_lancamentos').'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_receita').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_despesa').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'qt_lancamentos').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').' &P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
         ShowHTML('        </td>');
@@ -535,15 +535,15 @@ function Lancamento() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
-    ShowHTML('      <tr><td colspan=3><font size="1"><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="'.$w_nome.'"></td>');
+    ShowHTML('      <tr><td colspan=3><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="75" MAXLENGTH="200" VALUE="'.$w_nome.'"></td>');
     ShowHTML('      <tr>');
     SelecaoTipoLancamento('<u>S</u>ubordinação:','S',null,$w_pai,$w_chave,$w_cliente,'w_pai',(($O=='A') ? 'SUBPARTE' : 'SUBTODOS'),null);
-    ShowHTML('      <tr><td colspan=3><font size="1"><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
+    ShowHTML('      <tr><td colspan=3><b><U>D</U>escricao:<br><TEXTAREA ACCESSKEY="D" '.$w_Disabled.' class="sti" name="w_descricao" rows="5" cols=75>'.$w_descricao.'</textarea></td>');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Receita?</b>',$w_receita,'w_receita');
     MontaRadioNS('<b>Despesa?</b>',$w_despesa,'w_despesa');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
-    ShowHTML('      <tr><td align="LEFT" colspan=3><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="LEFT" colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O=='E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
@@ -594,7 +594,12 @@ function Parametros() {
     $w_ano_corrente      = $_REQUEST['w_ano_corrente'];
     $w_prefixo           = $_REQUEST['w_prefixo'];
     $w_sufixo            = $_REQUEST['w_sufixo'];
-    $w_devolucao         = $_REQUEST['w_devolucao'];    
+    $w_devolucao         = $_REQUEST['w_devolucao'];
+    $w_fundo_valor       = $_REQUEST['w_fundo_valor'];
+    $w_fundo_qtd         = $_REQUEST['w_fundo_qtd'];
+    $w_fundo_util        = $_REQUEST['w_fundo_util'];
+    $w_fundo_contas      = $_REQUEST['w_fundo_contas'];
+    $w_fundo_data        = $_REQUEST['w_fundo_data'];
   } else {
     // Recupera os dados do parâmetro
     $RS = db_getFNParametro::getInstanceOf($dbms,$w_cliente,null,null);
@@ -606,6 +611,11 @@ function Parametros() {
       $w_prefixo            = f($RS,'prefixo');
       $w_sufixo             = f($RS,'sufixo');
       $w_devolucao          = f($RS,'texto_devolucao');
+      $w_fundo_valor        = formatNumber(f($RS,'fundo_fixo_valor'));
+      $w_fundo_qtd          = f($RS,'fundo_fixo_qtd');
+      $w_fundo_util         = f($RS,'fundo_fixo_dias_utilizacao');
+      $w_fundo_contas       = f($RS,'fundo_fixo_dias_contas');
+      $w_fundo_data         = f($RS,'fundo_fixo_data_contas');
     } 
   } 
   Cabecalho();
@@ -614,12 +624,20 @@ function Parametros() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  CheckBranco();
+  FormataValor();
+  FormataDataDM();
   ValidateOpen('Validacao');
   Validate('w_sequencial','Sequencial','1',1,1,18,'','0123456789');
   CompValor('w_sequencial','Sequencial','>=',$w_sequencial_atual,$w_sequencial_atual);
   Validate('w_ano_corrente', 'Ano corrente', '1', 1, 4, 4, '', '0123456789');
   Validate('w_prefixo','Prefixo','1','',1,10,'1','1');
   Validate('w_sufixo','Sufixo','1','',1,10,'1','1');
+  Validate('w_fundo_valor','Valor limite para cada fundo fixo','VALOR','1',4,18,'','0123456789.,');
+  Validate('w_fundo_qtd','Valor limite para cada fundo fixo','VALOR','1',1,4,'','0123456789');
+  Validate('w_fundo_util','Máximo de dias para utilização do fundo fixo','VALOR','1',1,4,'','0123456789');
+  Validate('w_fundo_contas','Máximo de dias para prestação de contas da utilização do fundo fixo','VALOR','1',1,4,'','0123456789');
+  Validate('w_fundo_data','Limite para prestação de contas de fundo fixo utilizado até o fim do exercício anterior','DATADM','1',5,5,'','0123456789/');
   Validate('w_devolucao','Devolução de valores','1','',2,4000,'1','1');  
   ShowHTML('  theForm.Botao.disabled=true;');
   ValidateClose();
@@ -645,16 +663,21 @@ function Parametros() {
   ShowHTML('      <table width="100%" border="0">');
   ShowHTML('      <tr><td align="center" height="2" bgcolor="#000000"></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><font size="1"><b>Parâmetros</td></td></tr>');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0"><b>Parâmetros</td></td></tr>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
   //ShowHTML '      <tr><td><font size=1>Falta definir a explicação.</font></td></tr>'
   //ShowHTML '      <tr><td align=''center'' height=''1'' bgcolor=''#000000''></td></tr>'
   ShowHTML('      </table>');
   ShowHTML('      <table width="100%" border="0">');
-  ShowHTML('      <tr><td><font size="1"><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
+  ShowHTML('      <tr><td><b><u>S</u>equencial:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sequencial" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sequencial.'"></td>');
   ShowHTML('      <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
-  ShowHTML('      <tr><td><font size="1"><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
-  ShowHTML('          <td><font size="1"><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+  ShowHTML('      <tr><td><b><u>P</u>refixo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_prefixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_prefixo.'"></td>');
+  ShowHTML('          <td><b><u>S</u>ufixo:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sufixo" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sufixo.'"></td>');
+  ShowHTML('      <tr><td><b><u>V</u>alor limite para fundo fixo:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_fundo_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_fundo_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor máximo para cada fundo fixo."></td>');
+  ShowHTML('          <td><b><u>Q</u>uantidade de fundos fixos:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_fundo_qtd" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fundo_qtd.'" title="Informe o número máximo de fundos fixo simultâneos."></td>');
+  ShowHTML('      <tr><td><b><u>M</u>áximo de dias para utilização do fundo fixo:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_fundo_util" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fundo_util.'" title="Informe o número máximo de dias para utilização do fundos fixo."></td>');
+  ShowHTML('          <td><b><u>L</u>imite de dias para prestação de contas do fundo fixo:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_fundo_contas" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_fundo_contas.'" title="Informe o prazo em dias para prestação de contas do fundos fixo."></td>');
+  ShowHTML('      <tr><td colspan=2><b><u>D</u>ata limite para prestação de contas do fundo fixo quando for utilizado até o fim do exercício anterior:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fundo_data" class="sti" SIZE="5" MAXLENGTH="5" VALUE="'.$w_fundo_data.'" onKeyDown="FormataDataDM(this,event);" title="Quando a importância do suprimento for utilizada até o final do exercício, a prestação de contas será feita até o dia indicado do exercício seguinte."></td>');
   ShowHTML('      </table>');
   ShowHTML('        <tr><td colspan=2><b><u>T</u>exto padrão para devolução de valores:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_devolucao" class="sti" ROWS="3" COLS="75">'.$w_devolucao.'</textarea></td>');  
   ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -738,7 +761,9 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putFNParametro::getInstanceOf($dbms,$w_cliente,
-           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'], $_REQUEST['w_devolucao']);     
+           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'],$_REQUEST['w_fundo_valor'],
+           $_REQUEST['w_fundo_qtd'],$_REQUEST['w_fundo_util'],$_REQUEST['w_fundo_contas'],$_REQUEST['w_fundo_data'],
+           $_REQUEST['w_devolucao']);     
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

@@ -2216,13 +2216,17 @@ Fontes_PHP_SIW/mod_eo/fornecedor.php -text
 Fontes_PHP_SIW/mod_eo/relatorios.php -text
 Fontes_PHP_SIW/mod_eo/tabelas.php -text
 Fontes_PHP_SIW/mod_eo/visualfornecedor.php -text
+Fontes_PHP_SIW/mod_fn/fundofixo.php -text
+Fontes_PHP_SIW/mod_fn/gr_fundofixo.php -text
 Fontes_PHP_SIW/mod_fn/gr_lancamento.php -text
 Fontes_PHP_SIW/mod_fn/lancamento.php -text
 Fontes_PHP_SIW/mod_fn/rel_contas.php -text
 Fontes_PHP_SIW/mod_fn/rel_fluxo.php -text
 Fontes_PHP_SIW/mod_fn/rel_plano.php -text
 Fontes_PHP_SIW/mod_fn/tabelas.php -text
+Fontes_PHP_SIW/mod_fn/validafundofixo.php -text
 Fontes_PHP_SIW/mod_fn/validalancamento.php -text
+Fontes_PHP_SIW/mod_fn/visualfundofixo.php -text
 Fontes_PHP_SIW/mod_fn/visuallancamento.php -text
 Fontes_PHP_SIW/mod_gr/exibe.php -text
 Fontes_PHP_SIW/mod_gr/selecao.php -text

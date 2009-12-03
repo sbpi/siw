@@ -7,6 +7,8 @@ create or replace procedure SP_PutFinanceiroConc
     p_valor_real          in number,
     p_codigo_deposito     in varchar2  default null,
     p_conta               in varchar2  default null,
+    p_tipo_lancamento     in number    default null,
+    p_rubrica             in number    default null,
     p_observacao          in varchar2  default null,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
@@ -16,6 +18,7 @@ create or replace procedure SP_PutFinanceiroConc
    w_chave         number(18) := null;
    w_chave_dem     number(18) := null;
    w_chave_arq     number(18) := null;
+   w_cont          number(18);
 begin
    -- Recupera a chave do log
    select sq_siw_solic_log.nextval into w_chave_dem from dual;
@@ -33,10 +36,11 @@ begin
        
    -- Atualiza o registro da demanda com os dados da conclusão.
    Update fn_lancamento a
-      set quitacao         = p_quitacao,
-          codigo_deposito  = p_codigo_deposito,
-          sq_pessoa_conta  = p_conta,
-          observacao       = p_observacao
+      set quitacao           = p_quitacao,
+          codigo_deposito    = p_codigo_deposito,
+          sq_pessoa_conta    = p_conta,
+          observacao         = p_observacao,
+          sq_tipo_lancamento = coalesce(p_tipo_lancamento,sq_tipo_lancamento)
    Where sq_siw_solicitacao = p_chave;
 
    -- Atualiza a situação da solicitação
@@ -57,6 +61,22 @@ begin
       Update ac_acordo_parcela 
          set quitacao = p_quitacao 
        where sq_acordo_parcela = w_chave;
+   End If;
+   
+   -- Se foi informada rubrica, cria ou atualiza os itens de documentos
+   If p_rubrica is not null Then
+      for crec in (select x.sq_lancamento_doc, x.valor from fn_lancamento_doc x where x.sq_siw_solicitacao = p_chave) loop
+        select count(*) into w_cont from fn_documento_item a where a.sq_lancamento_doc = crec.sq_lancamento_doc;
+        -- Se o item existe, atualiza a rubrica; caso contrário, insere o item
+        If w_cont > 0 Then
+           update fn_documento_item set sq_projeto_rubrica = p_rubrica where sq_lancamento_doc = crec.sq_lancamento_doc;
+        Else
+           insert into fn_documento_item
+             (sq_documento_item,         sq_lancamento_doc,      sq_projeto_rubrica, ordem, descricao,   quantidade, valor_unitario, valor_total, valor_cotacao)
+           values
+             (sq_documento_item.nextval, crec.sq_lancamento_doc, p_rubrica,          1,     'Reembolso', 1,          crec.valor,     crec.valor,  0);
+        End If;
+      End Loop;
    End If;
     
    -- Se foi informado um arquivo, grava.

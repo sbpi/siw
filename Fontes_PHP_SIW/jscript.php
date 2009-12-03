@@ -652,6 +652,22 @@ function FormataDataHora() {
   print "} "."\r\n";
 }
 
+function FormataDataDM() {
+ print "function FormataDataDM(campo, teclapres) { " ."\r\n";
+ print "    var tecla = teclapres.keyCode; " ."\r\n";
+ print "    vr = campo.value; " ."\r\n";
+ print "    vr = vr.replace( '/', '' ); " ."\r\n";
+ print "    tam = vr.length + 1; " ."\r\n";
+ print "    if (tecla == 8 ){    tam = tam - 1 ; } " ."\r\n";
+ print "    if ( tecla != 9 && tecla != 8 ){ " ."\r\n";
+ print "    if ( tam < campo.maxLength && (tecla == 8 || (tecla >= 48 && tecla <= 57) || (tecla >= 96 && tecla <= 105))){ " ."\r\n";
+ print "        if ( tam <= 2 ) campo.value = vr ; " ."\r\n";
+ print "        if ( tam > 2 ) campo.value = vr.substr( 0, tam-2 ) + '/' + vr.substr( tam-2 ); " ."\r\n";
+ print "    } " ."\r\n";
+ print "  } " ."\r\n";
+ print "} " ."\r\n";
+}
+
 function FormataDataMA() {
   print "function FormataDataMA(campo, teclapres) { "."\r\n";
   print "    var tecla = teclapres.keyCode; "."\r\n";
@@ -969,8 +985,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    var err=0;"."\r\n".
     "    var psj=0;"."\r\n".
     "    if (checkStr.length != 0) {"."\r\n".
-    "       if (!checkbranco(checkStr))"."\r\n".
-    "       {"."\r\n".
+    "       if (!checkbranco(checkStr)) {"."\r\n".
     "           if (checkStr.length != 5) err=1"."\r\n".
     "           dia = checkStr.substring(0, 2);"."\r\n".
     "           barra1 = checkStr.substring(2, 3);"."\r\n".
@@ -983,20 +998,11 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "            // mês com 30 dias"."\r\n".
     "            if (mes==4 || mes==6 || mes==9 || mes==11){"."\r\n".
     "               if (dia==31) err=1;"."\r\n".
+    "            } else if (mes==2) {"."\r\n".
+    "               if (dia>28) err=1;"."\r\n".
     "            }"."\r\n".
-    "            // fevereiro e ano bissexto"."\r\n".
-    "            if (mes==2){"."\r\n".
-    "                var g=parseInt(ano/4);"."\r\n".
-    "                if (isNaN(g)) {"."\r\n".
-    "                    err=1;"."\r\n".
-    "                }"."\r\n".
-    "                if (dia>29) err=1;"."\r\n".
-    "                if (dia==29 && ((ano/4)!=parseInt(ano/4))) err=1;"."\r\n".
-    "            }"."\r\n".
-    "       }"."\r\n".
-    "       else"."\r\n".
-    "       {"."\r\n".
-    "           err=1;"."\r\n".
+    "       } else {"."\r\n".
+    "         err=1;"."\r\n".
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err==1){"."\r\n".

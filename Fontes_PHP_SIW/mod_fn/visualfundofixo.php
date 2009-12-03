@@ -2,7 +2,7 @@
 // =========================================================================
 // Rotina de visualização dos dados do lançamento
 // -------------------------------------------------------------------------
-function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
+function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   extract($GLOBALS);
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';

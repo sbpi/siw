@@ -11,7 +11,7 @@ begin
          select a.sq_documento_item,  a.sq_lancamento_doc, a.descricao, a.sq_projeto_rubrica,
                 a.quantidade, a.valor_unitario, a.valor_total, a.ordem, a.data_cotacao, a.valor_cotacao,
                 b.sq_siw_solicitacao, b.sq_tipo_documento, 
-                c.nome nm_rubrica, c.codigo codigo_rubrica
+                c.nome as nm_rubrica, c.codigo as codigo_rubrica
            from fn_documento_item           a
                 left join fn_lancamento_doc b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
                 left join pj_rubrica        c on (a.sq_projeto_rubrica = c.sq_projeto_rubrica)
@@ -20,9 +20,9 @@ begin
             and (p_chave              is null or (p_chave              is not null and b.sq_siw_solicitacao = p_chave));
    Elsif p_restricao = 'RUBRICA' Then
       open p_result for 
-         select sum(b.valor_total) valor_total, nvl(d.nome,e.nome) nm_rubrica, nvl(d.codigo,e.codigo) codigo_rubrica,
-                case nvl(nvl(d.codigo,e.codigo),'nulo') when 'nulo' then 'Não informado' else nvl(d.codigo,e.codigo)||' - '||nvl(d.nome,e.nome) end rubrica,
-                sum(c.valor) valor_rubrica, nvl(d.sq_projeto_rubrica,e.sq_projeto_rubrica) sq_projeto_rubrica
+         select sum(b.valor_total) as valor_total, coalesce(d.nome,e.nome) as nm_rubrica, coalesce(d.codigo,e.codigo) as codigo_rubrica,
+                case coalesce(coalesce(d.codigo,e.codigo),'nulo') when 'nulo' then 'Não informado' else coalesce(d.codigo,e.codigo)||' - '||coalesce(d.nome,e.nome) end as rubrica,
+                sum(c.valor) as valor_rubrica, coalesce(d.sq_projeto_rubrica,e.sq_projeto_rubrica) as sq_projeto_rubrica
            from fn_lancamento_doc                       a
                 left outer join   fn_documento_item     b on (a.sq_lancamento_doc  = b.sq_lancamento_doc)
                   left outer join pj_rubrica            e on (b.sq_projeto_rubrica = e.sq_projeto_rubrica)
