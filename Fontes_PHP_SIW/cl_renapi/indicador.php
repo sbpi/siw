@@ -460,14 +460,14 @@ function VisualDados() {
   ShowHTML('<center><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if(Nvl($_REQUEST['p_uf'],'')!=''){
     ShowHTML('<tr><td align="center">');
-    ShowHTML('<img border="0" width="97%" src="cl_renapi/'.$_REQUEST['p_uf'].'.gif" usemap="#m_00000001" alt="" />');
+    ShowHTML('<img border="0" width="800px" src="cl_renapi/'.$_REQUEST['p_uf'].'.gif" usemap="#m_00000001" alt="" />');
     ShowHTML('<map name="m_00000001" id="m_00000001">');
-    ShowHTML('<area shape="rect" coords="649,47,725,69" href="'.$w_dir.$w_pagina.'idhlongevidade'.'" alt="" />');
-    ShowHTML('<area shape="rect" coords="649,33,725,55" href="'.$w_dir.$w_pagina.'idhrenda'.'" alt="" />');
-    ShowHTML('<area shape="rect" coords="649,19,725,41" href="'.$w_dir.$w_pagina.'idheducacao'.'" alt="" />');
-    ShowHTML('<area shape="rect" coords="649,4,725,26" href="'.$w_dir.$w_pagina.'idh'.'" alt="" />');
-    ShowHTML('<area shape="circle" coords="300,375, 13" href="'.$w_dir.$w_pagina.'PerCapita'.'" alt=":)" />');
-    ShowHTML('<area shape="circle" coords="300,98, 13" href="'.$w_dir.$w_pagina.'Emergentes'.'" alt=":D" />');
+    ShowHTML('<area shape="rect" coords="649,59,725,69" href="'.$w_dir.$w_pagina.'idhlongevidade'.'" alt="" />');
+    ShowHTML('<area shape="rect" coords="649,41,725,55" href="'.$w_dir.$w_pagina.'idhrenda'.'" alt="" />');
+    ShowHTML('<area shape="rect" coords="649,29,725,41" href="'.$w_dir.$w_pagina.'idheducacao'.'" alt="" />');
+    ShowHTML('<area shape="rect" coords="649,14,725,26" href="'.$w_dir.$w_pagina.'idh'.'" alt="" />');
+    ShowHTML('<area shape="circle" coords="306,394, 13" href="'.$w_dir.$w_pagina.'PerCapita'.'" alt=":)" />');
+    ShowHTML('<area shape="circle" coords="305,105, 15" href="'.$w_dir.$w_pagina.'Emergentes'.'" alt=":D" />');
     ShowHTML('</map>');    
   }  
   ShowHTML('</table></center>');
@@ -476,56 +476,70 @@ function VisualDados() {
 
 function Emergentes(){
   extract($GLOBALS);
+  ShowHTML('<body bgcolor="#F8F8FF" >');  
   ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
   ShowHTML('<tr><td align="center">');
   ShowHTML('<img width="60%" align="center" src="emergentes.gif"/>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');  
+  ShowHTML('</body>');
 }
 
 function Idh(){
   extract($GLOBALS);
-  ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
+  ShowHTML('<body bgcolor="#F8F8FF" >');
+  ShowHTML('<center><table align="center" border="0" cellpadding="0" width="70%" cellspacing="0">');  
   ShowHTML('<tr><td align="center">');
-  ShowHTML('<img width="60%" align="center" src="idh.gif"/>');
+  ShowHTML('<img width="100%" align="center" src="idh.gif"/>');
   ShowHTML('</td></tr>');
-  ShowHTML('</table>');  
+  ShowHTML('</table>');
+  ShowHTML('</body>');  
 }
 
 function idhLongevidade(){
   extract($GLOBALS);
+  ShowHTML('<body bgcolor="#F8F8FF" >');
+  ShowHTML('<center><table align="center" border="0" cellpadding="0" width="70%" cellspacing="0">');
   ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
   ShowHTML('<tr><td align="center">');
   ShowHTML('<img width="75%" align="center" src="idhlongevidade.gif"/>');
   ShowHTML('</td></tr>');
-  ShowHTML('</table>');  
+  ShowHTML('</table>');
+  ShowHTML('</body>');
 }
 
 function idhEducacao(){
   extract($GLOBALS);
+  ShowHTML('<body bgcolor="#F8F8FF" >');
+  ShowHTML('<center><table align="center" border="0" cellpadding="0" width="70%" cellspacing="0">');
   ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
   ShowHTML('<tr><td align="center">');
   ShowHTML('<img width="60%" align="center" src="idheducacao.gif"/>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');  
+  ShowHTML('</body>');
 }
 
 function idhRenda(){
   extract($GLOBALS);
+  ShowHTML('<body bgcolor="#F8F8FF" >');  
   ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
   ShowHTML('<tr><td align="center">');
   ShowHTML('<img width="60%" align="center" src="idhrenda.gif"/>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');  
+  ShowHTML('</body>');
 }
 
 function perCapita(){
   extract($GLOBALS);
+  ShowHTML('<body bgcolor="#F8F8FF" >');  
   ShowHTML('<center><table bgcolor="#F8F8FF" align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');  
   ShowHTML('<tr><td align="center">');
   ShowHTML('<img width="80%" align="center" src="percapita.gif"/>');
   ShowHTML('</td></tr>');
   ShowHTML('</table>');  
+  ShowHTML('</body>');
 }
 // =========================================================================
 // Rotina de cadastramento dos aferidores de um indicador

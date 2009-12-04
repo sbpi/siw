@@ -21,6 +21,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicResultado.php');
 include_once($w_dir_volta.'classes/sp/db_getStateList.php');
+include_once($w_dir_volta.'classes/sp/db_getCountryList.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
@@ -106,12 +107,13 @@ $w_mes4    = substr(100+intVal($w_mes)+3,1,2);
 $w_mes5    = substr(100+intVal($w_mes)+4,1,2);
 $w_mes6    = substr(100+intVal($w_mes)+5,1,2);
 $w_ano1    = $w_ano;
+$w_ano2    = $w_ano;
 $w_ano3    = $w_ano;
 $w_ano4    = $w_ano;
 $w_ano5    = $w_ano;
 $w_ano6    = $w_ano;
 // Ajusta a mudança de ano
-if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano3 = $w_ano+1; }
+if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano2 = $w_ano+1; $w_ano3 = $w_ano2; $w_ano4 = $w_ano2; $w_ano5 = $w_ano2; $w_ano6 = $w_ano2;}
 if ($w_mes3 > 12)  { $w_mes3 = '01'; $w_mes4 = '02'; $w_mes5 = '03'; $w_mes6 = '04'; $w_ano3 = $w_ano + 1; $w_ano4 = $w_ano3; $w_ano5 = $w_ano3; $w_ano6 = $w_ano3;}
 if ($w_mes4 > 12)  { $w_mes4 = '01'; $w_mes5 = '02'; $w_mes6 = '03'; $w_ano4 = $w_ano + 1; $w_ano5 = $w_ano4; $w_ano6 = $w_ano4;}
 if ($w_mes5 > 12)  { $w_mes5 = '01'; $w_mes6 = '02'; $w_ano5 = $w_ano + 1; $w_ano6 = $w_ano5; }
@@ -238,7 +240,7 @@ function Mesa() {
            "       inner join siw_tramite d on (a.sq_siw_tramite = d.sq_siw_tramite and ".$crlf. 
            "                                    d.ativo          = 'S'".$crlf. 
            "                                   ) ".$crlf. 
-           "  where a.codigo_interno='PDE' ";
+           "  where a.codigo_interno='PIN' ";
     $RS = db_exec::getInstanceOf($dbms,$SQL,$recordcount);
     foreach($RS as $row) { $RS = $row; break; }
     $w_plano = f($RS,'sq_plano');
@@ -297,9 +299,9 @@ function Mesa() {
     $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
     $w_todos = $w_pns + $w_pde + $w_pne1 + $w_pne2 + $w_pne3; 
     ShowHTML('<div id="menu_superior">');
-    ShowHTML('<a href="'.$w_dir.'indicador.php?par=FramesAfericao&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da PDP."><div id="resultados"></div></a>');
-    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
-    ShowHTML('<a title="Consulta a documentos da PDP" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
+    ShowHTML('<a href="'.$w_dir.'indicador.php?par=FramesAfericao&TP='.$TP.' - Status&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta ao status da RENAPI."><div id="resultados"></div></a>');
+    ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da RENAPI."><div id="calendario"></div></a>');
+    ShowHTML('<a title="Consulta a documentos da RENAPI" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
     ShowHTML('</div>');
     ShowHTML('<div id="status">');
     ShowHTML('<div style="width:150px; height:20px; overflow:auto;">');
@@ -319,19 +321,18 @@ function Mesa() {
     ShowHTML('<div style="width:180px; height:150px; overflow:auto;">');
     ShowHTML('<table width="100%" cellpadding="0" cellspacing="0">');
     $RS = db_getLinkData :: getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    //print_r($RS1);
     $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),5,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente, 
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, 
             $p_atividade, null, $p_orprior, null, $p_servico);
-              
+             
     $RS1  = SortArray($RS1,'co_uf','asc','codigo_interno','desc');
-    //print_r($RS1);
     $w_atual = '';
+    $f1 = imagecreatefromgif('nucleo.gif');
+    $f2 = imagecreatefromgif('renapi.gif');
     foreach($RS1 as $row) {
-        //echo f($row,'sq_regiao');
       switch (f($row,'sq_regiao')){
         case 1: $cor = '#B4AB8F'; break;
         case 2: $cor = '#63BD7B'; break;
@@ -340,20 +341,52 @@ function Mesa() {
         case 5: $cor = '#EE8583'; break;
         case 6: $cor = '#E0CB85'; break;
         default: $cor = '#FFFFFF';
-      }    
-     // $cor = ($cor == '#f5f5f5'?'#ffffff':'#f5f5f5');
+      }
+      
+      if(substr(f($row,'codigo_interno'),0,3)=='PIN' && f($row,'sg_tramite')=='AT'){
+        switch (f($row,'co_uf')){
+          case 'AC': imagecopy($f2,$f1,30,210,0,0,17,16);  break;
+          case 'AL': imagecopy($f2,$f1,555,220,0,0,17,16); break;
+          case 'AP': imagecopy($f2,$f1,322,37,0,0,17,16);  break;
+          case 'AM': imagecopy($f2,$f1,200,150,0,0,17,16); break;
+          case 'BA': imagecopy($f2,$f1,430,270,0,0,17,16); break;
+          case 'CE': imagecopy($f2,$f1,493,130,0,0,17,16); break;
+          case 'ES': imagecopy($f2,$f1,485,387,0,0,17,16); break;
+          case 'GO': imagecopy($f2,$f1,335,335,0,0,17,16); break;
+          case 'MA': imagecopy($f2,$f1,420,130,0,0,17,16); break;
+          case 'MT': imagecopy($f2,$f1,220,240,0,0,17,16); break;
+          case 'MS': imagecopy($f2,$f1,250,370,0,0,17,16); break;
+          case 'MG': imagecopy($f2,$f1,430,320,0,0,17,16); break;
+          case 'PA': imagecopy($f2,$f1,350,100,0,0,17,16); break;
+          case 'PB': imagecopy($f2,$f1,555,180,0,0,17,16); break;
+          case 'PR': imagecopy($f2,$f1,295,445,0,0,17,16); break;
+          case 'PE': imagecopy($f2,$f1,552,200,0,0,17,16); break;
+          case 'PI': imagecopy($f2,$f1,466,162,0,0,17,16); break;
+          case 'RJ': imagecopy($f2,$f1,445,425,0,0,17,16); break;
+          case 'RN': imagecopy($f2,$f1,550,160,0,0,17,16); break;
+          case 'RS': imagecopy($f2,$f1,290,545,0,0,17,16); break;
+          case 'RO': imagecopy($f2,$f1,155,218,0,0,17,16); break;
+          case 'RR': imagecopy($f2,$f1,175,22,0,0,17,16);  break;
+          case 'SC': imagecopy($f2,$f1,365,505,0,0,17,16); break;
+          case 'SP': imagecopy($f2,$f1,370,430,0,0,17,16); break;
+          case 'SE': imagecopy($f2,$f1,532,238,0,0,17,16); break;
+          case 'TO': imagecopy($f2,$f1,360,250,0,0,17,16); break;
+          case 'DF': imagecopy($f2,$f1,385,321,0,0,17,16); break;
+        }
+      }
+      // $cor = ($cor == '#f5f5f5'?'#ffffff':'#f5f5f5');
       if(Nvl($w_atual,'')!=f($row,'co_uf')){
         ShowHTML('  <tr>');
-        ShowHTML('    <td bgcolor="'.$cor.'" align="center" width="80">'.f($row,'co_uf').'</td>');
+        ShowHTML('    <td bgcolor="'.$cor.'" align="center" width="80"><a style="color: #333333; text-decoration: none;" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf='.f($row,'co_uf').'&SG='.f($RS,'sigla').'">'.f($row,'co_uf').'</a></td>');
         $w_atual = f($row,'co_uf');
       }      
-      if(substr(f($row,'codigo_interno'),0,3)=='PIN'){
-        ShowHTML('    <td align="center" width="40">'.exibeSmile('IDE',f($row,'ide')).'</td>');
-      }elseif(substr(f($row,'codigo_interno'),0,3)=='PAA'){
-        ShowHTML('    <td align="center" width="40">'.Nvl(exibeSmile('IDE',f($row,'ide')),'&nbsp;').'</td>');
-        //ShowHTML('    <td width="20">&nbsp;</td>');
+      if(f($row,'sg_tramite')!='AT'){
+        ShowHTML('    <td align="center" width="40"><A class="HL" href="'.$w_dir.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.exibeSmile('IDE',f($row,'ide')).'</a></td>');
+      } else {
+        ShowHTML('<td align="center" width="40"><A class="HL" href="'.$w_dir.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null).'</a></td>');
       }      
     }
+    imagegif($f2, 'mapa.gif');
     
     /*ShowHTML('  <tr bgcolor="'.$cor.'">');
     ShowHTML('    <td colspan="4" align="center" height="5px" width="60%">&nbsp;');
@@ -363,6 +396,11 @@ function Mesa() {
     ShowHTML('</div>');
     ShowHTML('</div>');
     ShowHTML('<div id="mapa">');
+    
+
+    
+    /*
+    
     ShowHTML('<span title="Núcleo instalado no Acre" style="position: relative; top: 38.5%; right: 30.8%;">');
     ShowHTML('<IMG SRC="cl_renapi/nucleo.png" id="acre">');
     ShowHTML('</span>');
@@ -389,39 +427,45 @@ function Mesa() {
 
     ShowHTML('<SPAN title="Núcleo instalado em Sergipe" style="position: relative; top: 43.2%; left: 27.5%;">');
     ShowHTML('<IMG SRC="cl_renapi/nucleo.png">');
-    ShowHTML('</SPAN> ');        
+    ShowHTML('</SPAN> ');    */    
         
-    ShowHTML('<img name="renapi" src="'.$w_dir.'renapi.gif" width="100%" border="0" id="pdp" usemap="#m_pdp" alt="" />');
+    ShowHTML('<img name="renapi" src="'.$w_dir.'mapa.gif" width="100%" border="0" id="pdp" usemap="#m_pdp" alt="" />');
     ShowHTML('<map name="m_pdp" id="m_pdp">');
-    ShowHTML('<area style="display:none" shape="poly" coords="129,38,121,41,118,47,104,55,99,53,95,57,81,36,73,42,70,41,68,43,50,43,48,52,56,53,58,57,47,59,47,68,54,80,48,120,41,119,32,122,25,122,13,129,8,143,10,147,2,152,2,156,4,158,8,159,13,163,17,163,24,165,30,167,45,171,61,178,88,190,96,184,101,186,105,183,109,185,112,180,120,180,125,166,136,166,151,177,190,176,192,159,191,151,198,134,216,95,186,75,184,62,170,64,168,68,166,75,160,76,154,74,151,80,151,85,145,79,144,70,140,56,137,45,138,42" href="am.html" alt="Amazonas" />');
-    ShowHTML('<area shape="poly" coords="89,192,76,200,67,206,43,205,42,184,33,190,25,192,20,187,9,186,12,180,1,162,1,156,47,171,86,189" href="ac.html" alt="Acre" />');
+    //http://www2.sbpi.com.br/siw/cl_renapi/projeto.php?par=inicial&P1=1&P2=&P3=&P4=&TP=%3Cimg%20src=images/Folder/SheetLittle.gif%20BORDER=0%3EProgramas%20-%20Programa&SG=PJCAD
+    //href="cl_renapi/projeto.php?par=atualizaetapa&R='.$w_pagina.$par.'&O=V&w_chave='.f($row, 'sq_siw_solicitacao').'&w_chave_aux='.f($row, 'sq_projeto_etapa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"
+    $RSPais = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
+    foreach($RSPais as $row){
+      If(Nvl(f($row,'padrao'),'N') == 'S'){
+        $w_pais = f($row,'sq_pais');
+      }
+    }
+    ShowHTML('<area shape="rect" coords="310,259,329,272" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=DF&SG='.f($RS,'sigla').'" alt="Distrito Federal" />');
+    ShowHTML('<area shape="poly" coords="129,38,121,41,118,47,104,55,99,53,95,57,81,36,73,42,70,41,68,43,50,43,48,52,56,53,58,57,47,59,47,68,54,80,48,120,41,119,32,122,25,122,13,129,8,143,10,147,2,152,2,156,4,158,8,159,13,163,17,163,24,165,30,167,45,171,61,178,88,190,96,184,101,186,105,183,109,185,112,180,120,180,125,166,136,166,151,177,190,176,192,159,191,151,198,134,216,95,186,75,184,62,170,64,168,68,166,75,160,76,154,74,151,80,151,85,145,79,144,70,140,56,137,45,138,42" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AM&SG='.f($RS,'sigla').'" alt="Amazonas" />');
+    ShowHTML('<area shape="poly" coords="89,192,76,200,67,206,43,205,42,184,33,190,25,192,20,187,9,186,12,180,1,162,1,156,47,171,86,189" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AC&SG='.f($RS,'sigla').'" alt="Acre" />');
     ShowHTML('<area shape="poly" coords="112,14,137,18,140,14,162,6,169,1,175,17,175,43,183,51,183,63,172,63,165,75,157,73,152,75,150,84,144,77,138,42,129,38,121,35,120,28,119,21,116,19,114,18,113,16,113,15" href="rr.html" alt="Roraima" />');
-    ShowHTML('<area shape="poly" coords="90,190,105,189,105,207,112,220,120,224,134,227,144,233,149,237,162,238,167,233,173,222,170,214,172,209,171,206,153,204,152,178,146,177,136,167,125,167,121,180,112,181,109,185,100,186,88,188,89,189" href="ro.html" alt="Rond&ocirc;nia" />');
-    ShowHTML('<area shape="poly" coords="153,177,153,204,172,206,170,215,173,221,164,238,170,272,191,273,190,279,194,286,200,290,211,286,218,284,231,289,241,288,248,285,247,291,255,293,257,279,260,271,270,267,276,255,280,252,284,238,287,226,284,209,291,190,209,184,200,176,198,168,192,159,191,176,168,177,158,177" href="mt.html" alt="Mato Grosso" />');
-    ShowHTML('');
-    ShowHTML('<area shape="poly" coords="235,35,248,37,259,38,269,21,275,10,280,17,286,38,295,44,293,56,287,60,286,64,271,81,265,79,252,55,237,42" href="ap.html" alt="Amap&aacute;" />');
-    ShowHTML('<area shape="poly" coords="183,50,189,51,193,46,204,41,219,42,225,35,233,34,235,42,247,51,254,58,259,70,266,80,270,81,291,58,300,64,312,68,314,74,327,74,342,80,334,103,324,123,313,130,314,140,311,149,304,152,304,158,301,160,303,168,299,176,293,181,290,190,209,182,201,176,191,152,216,95,186,74" href="pa.html" alt="Par&aacute;" />');
-    ShowHTML('<area shape="poly" coords="200,290,200,298,194,313,195,318,194,321,196,344,212,347,216,345,218,349,224,350,227,368,234,370,241,369,249,360,250,354,260,349,270,340,278,322,281,319,280,315,282,310,263,301,255,293,247,291,247,285,232,289,218,284" href="ms.html" alt="Mato Grosso do Sul" />');
-    ShowHTML('<area shape="poly" coords="240,369,241,378,237,386,240,389,245,389,249,397,256,399,266,399,278,401,281,396,285,396,288,394,291,395,295,394,299,396,304,393,312,393,313,389,317,384,313,380,312,380,311,376,303,376,304,372,300,366,298,358,287,353,285,355,272,352,270,349,265,352,258,352,251,353,246,364" href="pr.html" alt="Paran&aacute;" />');
-    ShowHTML('<area shape="poly" coords="312,394,311,406,313,411,312,416,309,427,298,436,294,434,296,426,287,425,278,416,269,411,260,409,245,408,248,397,257,398,276,402,281,396,287,395,300,396,304,394" href="sc.html" alt="Santa Catarina" />');
-    ShowHTML('<area shape="poly" coords="297,436,289,450,280,462,270,471,264,476,262,483,252,491,250,483,254,478,246,469,233,461,226,456,220,458,218,453,208,445,204,449,201,446,206,440,224,422,244,409,261,409,278,416,284,423,295,427,295,430,295,430" href="rs.html" alt="Rio Grande do Sul" />');
-    ShowHTML('<area shape="poly" coords="319,384,334,370,341,370,344,364,348,366,361,360,364,353,358,348,345,352,344,353,339,354,334,349,337,336,334,334,331,336,329,329,328,320,322,318,314,319,306,321,302,317,288,315,282,319,278,321,270,339,257,351,269,350,285,354,297,358,300,364,302,375,310,377" href="sp.html" alt="S&atilde;o Paulo" />');
-    ShowHTML('<area shape="poly" coords="313,131,326,139,322,157,329,167,337,167,331,172,331,178,334,186,337,193,345,196,335,207,338,213,339,229,332,229,322,233,308,229,303,228,300,233,292,228,291,224,287,226,285,213,291,188,299,175,304,167,301,161,304,155,311,149,314,141,315,136" href="to.html" alt="Tocantins" />');
-    ShowHTML('<area shape="poly" coords="365,359,379,354,391,354,391,350,398,346,405,344,403,337,405,334,398,333,393,328,390,329,388,339,382,342,377,344,371,344,358,348,365,351" href="rj.html" alt="Rio de Janeiro" />');
-    ShowHTML('');
-    ShowHTML('<area shape="poly" coords="405,333,408,328,410,329,419,312,421,297,413,292,402,296,403,302,401,304,405,310,399,321,396,321,394,328,398,332" href="es.html" alt="Esp&iacute;rito Santo" />');
-    ShowHTML('<area shape="poly" coords="447,214,436,203,442,200,443,194,441,190,441,185,453,192,460,198" href="se.html" alt="Sergipe" />');
-    ShowHTML('<area shape="poly" coords="440,185,443,178,453,184,460,182,465,179,475,178,471,186,461,198,452,190" href="al.html" alt="Alagoas" />');
-    ShowHTML('<area shape="poly" coords="475,178,479,168,479,160,472,160,471,163,462,164,453,171,450,165,453,160,450,156,442,164,432,163,427,163,421,158,410,159,409,162,409,168,401,175,409,182,409,185,415,181,422,173,427,176,438,182,443,178,453,183,464,178" href="pe.html" alt="Pernambuco" />');
-    ShowHTML('<area shape="poly" coords="479,160,478,149,465,147,461,145,458,154,454,150,451,151,448,147,452,145,444,144,440,147,434,146,432,152,433,160,432,163,442,164,450,156,453,160,451,164,453,170,461,164,470,163,473,159" href="pb.html" alt="Para&iacute;ba" />');
-    ShowHTML('<area shape="poly" coords="478,149,475,133,469,129,458,130,451,128,444,128,442,135,438,140,435,142,435,146,439,146,448,143,452,145,449,149,453,150,457,153,461,145" href="rn.html" alt="Rio Grande do Norte" />');
-    ShowHTML('<area shape="poly" coords="450,127,436,114,432,111,418,103,401,102,400,111,402,117,401,128,405,133,407,148,410,152,410,160,421,158,428,163,432,161,433,151,435,143,442,132,448,128" href="ce.html" alt="Cear&aacute;" />');
-    ShowHTML('<area shape="poly" coords="342,80,350,85,356,85,364,96,368,96,373,95,384,100,393,101,393,105,390,109,380,119,382,133,379,139,381,146,379,152,374,152,367,152,358,160,349,162,348,169,345,174,344,183,345,195,338,192,331,176,337,168,331,166,323,157,326,139,321,133,313,130,329,115,339,98" href="ma.html" alt="Maranh&atilde;o" />');
+    ShowHTML('<area shape="poly" coords="90,190,105,189,105,207,112,220,120,224,134,227,144,233,149,237,162,238,167,233,173,222,170,214,172,209,171,206,153,204,152,178,146,177,136,167,125,167,121,180,112,181,109,185,100,186,88,188,89,189" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RO&SG='.f($RS,'sigla').'" alt="Rondônia" />');
+    ShowHTML('<area shape="poly" coords="153,177,153,204,172,206,170,215,173,221,164,238,170,272,191,273,190,279,194,286,200,290,211,286,218,284,231,289,241,288,248,285,247,291,255,293,257,279,260,271,270,267,276,255,280,252,284,238,287,226,284,209,291,190,209,184,200,176,198,168,192,159,191,176,168,177,158,177" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=MT&SG='.f($RS,'sigla').'" alt="Mato Grosso" />');
+    ShowHTML('<area shape="poly" coords="235,35,248,37,259,38,269,21,275,10,280,17,286,38,295,44,293,56,287,60,286,64,271,81,265,79,252,55,237,42" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AP&SG='.f($RS,'sigla').'" alt="Amapá" />');
+    ShowHTML('<area shape="poly" coords="183,50,189,51,193,46,204,41,219,42,225,35,233,34,235,42,247,51,254,58,259,70,266,80,270,81,291,58,300,64,312,68,314,74,327,74,342,80,334,103,324,123,313,130,314,140,311,149,304,152,304,158,301,160,303,168,299,176,293,181,290,190,209,182,201,176,191,152,216,95,186,74" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=PA&SG='.f($RS,'sigla').'" alt="Pará" />');
+    ShowHTML('<area shape="poly" coords="200,290,200,298,194,313,195,318,194,321,196,344,212,347,216,345,218,349,224,350,227,368,234,370,241,369,249,360,250,354,260,349,270,340,278,322,281,319,280,315,282,310,263,301,255,293,247,291,247,285,232,289,218,284" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=MS&SG='.f($RS,'sigla').'" alt="Mato Grosso do Sul" />');
+    ShowHTML('<area shape="poly" coords="240,369,241,378,237,386,240,389,245,389,249,397,256,399,266,399,278,401,281,396,285,396,288,394,291,395,295,394,299,396,304,393,312,393,313,389,317,384,313,380,312,380,311,376,303,376,304,372,300,366,298,358,287,353,285,355,272,352,270,349,265,352,258,352,251,353,246,364" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=PR&SG='.f($RS,'sigla').'" alt="Paraná" />');
+    ShowHTML('<area shape="poly" coords="312,394,311,406,313,411,312,416,309,427,298,436,294,434,296,426,287,425,278,416,269,411,260,409,245,408,248,397,257,398,276,402,281,396,287,395,300,396,304,394" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=SC&SG='.f($RS,'sigla').'" alt="Santa Catarina" />');
+    ShowHTML('<area shape="poly" coords="297,436,289,450,280,462,270,471,264,476,262,483,252,491,250,483,254,478,246,469,233,461,226,456,220,458,218,453,208,445,204,449,201,446,206,440,224,422,244,409,261,409,278,416,284,423,295,427,295,430,295,430" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RS&SG='.f($RS,'sigla').'" alt="Rio Grande do Sul" />');
+    ShowHTML('<area shape="poly" coords="319,384,334,370,341,370,344,364,348,366,361,360,364,353,358,348,345,352,344,353,339,354,334,349,337,336,334,334,331,336,329,329,328,320,322,318,314,319,306,321,302,317,288,315,282,319,278,321,270,339,257,351,269,350,285,354,297,358,300,364,302,375,310,377" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=SP&SG='.f($RS,'sigla').'" alt="S&atilde;o Paulo" />');
+    ShowHTML('<area shape="poly" coords="313,131,326,139,322,157,329,167,337,167,331,172,331,178,334,186,337,193,345,196,335,207,338,213,339,229,332,229,322,233,308,229,303,228,300,233,292,228,291,224,287,226,285,213,291,188,299,175,304,167,301,161,304,155,311,149,314,141,315,136" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=TO&SG='.f($RS,'sigla').'" alt="Tocantins" />');
+    ShowHTML('<area shape="poly" coords="365,359,379,354,391,354,391,350,398,346,405,344,403,337,405,334,398,333,393,328,390,329,388,339,382,342,377,344,371,344,358,348,365,351" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RJ&SG='.f($RS,'sigla').'" alt="Rio de Janeiro" />');
+    ShowHTML('<area shape="poly" coords="405,333,408,328,410,329,419,312,421,297,413,292,402,296,403,302,401,304,405,310,399,321,396,321,394,328,398,332" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=ES&SG='.f($RS,'sigla').'" alt="Espírito Santo" />');
+    ShowHTML('<area shape="poly" coords="447,214,436,203,442,200,443,194,441,190,441,185,453,192,460,198" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=SE&SG='.f($RS,'sigla').'" alt="Sergipe" />');
+    ShowHTML('<area shape="poly" coords="440,185,443,178,453,184,460,182,465,179,475,178,471,186,461,198,452,190" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AL&SG='.f($RS,'sigla').'" alt="Alagoas" />');
+    ShowHTML('<area shape="poly" coords="475,178,479,168,479,160,472,160,471,163,462,164,453,171,450,165,453,160,450,156,442,164,432,163,427,163,421,158,410,159,409,162,409,168,401,175,409,182,409,185,415,181,422,173,427,176,438,182,443,178,453,183,464,178" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=PE&SG='.f($RS,'sigla').'" alt="Pernambuco" />');
+    ShowHTML('<area shape="poly" coords="479,160,478,149,465,147,461,145,458,154,454,150,451,151,448,147,452,145,444,144,440,147,434,146,432,152,433,160,432,163,442,164,450,156,453,160,451,164,453,170,461,164,470,163,473,159" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=PB&SG='.f($RS,'sigla').'" alt="Para&iacute;ba" />');
+    ShowHTML('<area shape="poly" coords="478,149,475,133,469,129,458,130,451,128,444,128,442,135,438,140,435,142,435,146,439,146,448,143,452,145,449,149,453,150,457,153,461,145" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RN&SG='.f($RS,'sigla').'" alt="Rio Grande do Norte" />');
+    ShowHTML('<area shape="poly" coords="450,127,436,114,432,111,418,103,401,102,400,111,402,117,401,128,405,133,407,148,410,152,410,160,421,158,428,163,432,161,433,151,435,143,442,132,448,128" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=CE&SG='.f($RS,'sigla').'" alt="Ceará" />');
+    ShowHTML('<area shape="poly" coords="342,80,350,85,356,85,364,96,368,96,373,95,384,100,393,101,393,105,390,109,380,119,382,133,379,139,381,146,379,152,374,152,367,152,358,160,349,162,348,169,345,174,344,183,345,195,338,192,331,176,337,168,331,166,323,157,326,139,321,133,313,130,329,115,339,98" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=MA&SG='.f($RS,'sigla').'" alt="Maranh&atilde;o" />');
     ShowHTML('<area shape="poly" coords="393,100,399,103,399,112,401,118,400,128,403,134,405,148,410,153,408,161,407,167,397,179,383,186,374,182,367,185,369,191,366,199,352,202,347,193,345,196,346,172,349,163,359,159,367,153,379,152,379,139,380,120" href="pi.html" alt="Piau&iacute;" />');
-    ShowHTML('');
-    ShowHTML('<area shape="poly" coords="446,214,442,224,437,229,429,233,429,250,430,266,426,290,421,295,409,285,418,269,414,267,399,265,395,258,379,251,374,253,368,250,367,246,361,247,345,258,342,255,343,248,339,244,338,234,338,214,336,206,347,194,354,202,359,201,366,199,371,193,371,188,373,183,383,186,393,182,400,176,408,181,409,185,421,174,439,181,441,190,443,194,442,199,438,202,442,210" href="ba.html" alt="Bahia" />');
-    ShowHTML('<area shape="poly" coords="341,255,336,252,336,257,332,257,332,263,334,267,327,268,326,275,329,278,324,285,328,289,326,295,321,300,308,299,302,302,291,302,281,317,293,316,302,317,306,321,315,319,323,318,330,321,331,335,336,336,336,344,339,353,343,353,350,350,359,347,369,344,378,343,387,339,389,329,393,328,394,321,399,320,403,310,401,306,401,298,411,291,408,285,417,269,400,266,395,259,379,252,371,252,367,247,353,253,347,258,340,255" href="mg.html" alt="Minas Gerais" />');
-    ShowHTML('<area shape="poly" coords="282,310,289,301,301,300,307,297,321,299,325,294,324,285,329,279,325,269,333,267,331,263,331,256,335,256,336,252,343,255,342,246,338,241,338,230,328,233,322,234,313,233,304,230,302,234,291,228,291,224,284,241,281,254,277,257,270,267,261,273,258,279,256,293,263,301" href="go.html" alt="Goi&aacute;s e Distrito Federal" />');
+    ShowHTML('<area shape="poly" coords="446,214,442,224,437,229,429,233,429,250,430,266,426,290,421,295,409,285,418,269,414,267,399,265,395,258,379,251,374,253,368,250,367,246,361,247,345,258,342,255,343,248,339,244,338,234,338,214,336,206,347,194,354,202,359,201,366,199,371,193,371,188,373,183,383,186,393,182,400,176,408,181,409,185,421,174,439,181,441,190,443,194,442,199,438,202,442,210" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=BA&SG='.f($RS,'sigla').'" alt="Bahia" />');
+    ShowHTML('<area shape="poly" coords="341,255,336,252,336,257,332,257,332,263,334,267,327,268,326,275,329,278,324,285,328,289,326,295,321,300,308,299,302,302,291,302,281,317,293,316,302,317,306,321,315,319,323,318,330,321,331,335,336,336,336,344,339,353,343,353,350,350,359,347,369,344,378,343,387,339,389,329,393,328,394,321,399,320,403,310,401,306,401,298,411,291,408,285,417,269,400,266,395,259,379,252,371,252,367,247,353,253,347,258,340,255" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=MG&SG='.f($RS,'sigla').'" alt="Minas Gerais" />');
+    ShowHTML('<area shape="poly" coords="282,310,289,301,301,300,307,297,321,299,325,294,324,285,329,279,325,269,333,267,331,263,331,256,335,256,336,252,343,255,342,246,338,241,338,230,328,233,322,234,313,233,304,230,302,234,291,228,291,224,284,241,281,254,277,257,270,267,261,273,258,279,256,293,263,301" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=GO&SG='.f($RS,'sigla').'" alt="Goiás" />');
     ShowHTML('</map>');
     ShowHTML('</div>');
   } else {
@@ -638,7 +682,7 @@ function Calendario() {
   extract($GLOBALS);
   
   $p_plano = $_REQUEST['p_plano'];
-  
+
   if ($w_troca>'' && $O!='E') {
     $w_acontecimento = $_REQUEST['w_acontecimento'];
     $w_programa      = $_REQUEST['w_programa'];
@@ -749,7 +793,6 @@ function Calendario() {
         $RS_Ano[$i] = SortArray($RS_Ano[$i],'data_formatada','asc');
       }
     }
-
     // Recupera os dados da unidade de lotação do usuário
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
     $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
@@ -804,7 +847,7 @@ function Calendario() {
     
     ShowHTML('            <tr valign="top">');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes2.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano2],$w_mes2.$w_ano2,$w_datas,$w_cores,&$w_detalhe2).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano4],$w_mes4.$w_ano4,$w_datas,$w_cores,&$w_detalhe4).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano5],$w_mes5.$w_ano5,$w_datas,$w_cores,&$w_detalhe5).' </td>');
@@ -839,12 +882,12 @@ function Calendario() {
       }
     }
     ShowHTML('              <td colspan=3>Legenda:<br><table border=0>');
-    ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;&nbsp;&nbsp;<td>Reuniões da PDP');
+    ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightGreen2.'">&nbsp;&nbsp;&nbsp;<td>Reuniões da RENAPI');
     ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightYellow2.'">&nbsp;&nbsp;&nbsp;<td>Itens de Agendas de Ação');
     ShowHTML('              <tr><td bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;&nbsp;&nbsp;<td>Outros eventos');
     ShowHTML('              <tr><td style="border: 1px solid rgb(0,0,0);">&nbsp;<td>Feriados');
     ShowHTML('              <tr><td style="border: 2px solid rgb(0,0,0);">&nbsp;<td>Data de hoje');
-    ShowHTML('              </table><br>Observação: as reuniões da PDP terão prioridade sobre os demais tipos de eventos.');
+    ShowHTML('              </table><br>Observação: as reuniões da RENAPI terão prioridade sobre os demais tipos de eventos.');
     ShowHTML('          </table>');
     ShowHTML('  </table>');
   }

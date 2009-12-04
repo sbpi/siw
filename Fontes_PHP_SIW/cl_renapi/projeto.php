@@ -494,7 +494,8 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        ShowHTML(exibeSmile('IDE',f($row,'ide')));
+        //ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_tipo!='WORD') {
           ShowHTML('        <A class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.nvl(f($row,'codigo_interno'),f($row,'sq_siw_solicitacao')).'&nbsp;</a>'.exibeImagemRestricao(f($row,'restricao'),'P'));
           // Verifica se foi enviado o parâmetro p_tamanho = N. Se chegou, o assunto deve ser exibido sem corte.
@@ -2403,13 +2404,13 @@ function AtualizaEtapa() {
     ShowHTML('          <td rowspan=2><b>Responsável pela atualização</td>');
     ShowHTML('          <td colspan=2><b>Execução</td>');
     //ShowHTML('          <td rowspan=2><b>Orçamento</td>');
-    ShowHTML('          <td rowspan=2><b>Peso</td>');
-  ShowHTML('          <td rowspan=2><b>Desafios</td>');
-    ShowHTML('          <td rowspan=2><b>Conc.</td>');
+    //ShowHTML('          <td rowspan=2><b>Peso</td>');
+    //ShowHTML('          <td rowspan=2><b>Desafios</td>');
+    //ShowHTML('          <td rowspan=2><b>Conc.</td>');
     /*
     ShowHTML('          <td rowspan=2><b>Tar.</td>');
     */
-    ShowHTML('          <td rowspan=2><b>Arq.</td>');
+    //ShowHTML('          <td rowspan=2><b>Arq.</td>');
     ShowHTML('          <td rowspan=2><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
