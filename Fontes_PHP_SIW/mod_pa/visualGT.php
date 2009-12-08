@@ -21,7 +21,7 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
         $l_html.=chr(13).'    </table>';
         $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
         $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
-        $l_html.=chr(13).'      <td align="center" width=30%>________/________/20______<br><b>Data e hora</b>';
+        $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
         $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
         $l_html.=chr(13).'    </table>';
         $l_html.=chr(13).'  </table>';
@@ -62,10 +62,14 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
       $l_html.=chr(13).'     <tr align="center">';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Caixa</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Pasta</b></font></td>';
+      $l_html.=chr(13).'       <td colspan=2><font size=1><b>Assunto</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Tipo</b></font></td>';
       $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Protocolo</b></font></td>';
       $l_html.=chr(13).'       <td colspan=4><font size=1><b>Documento original</b></font></td>';
+      $l_html.=chr(13).'       <td rowspan=2><font size=1><b>Data Limite</b></font></td>';
       $l_html.=chr(13).'     <tr valign="top" align="center">';
+      $l_html.=chr(13).'       <td><font size=1><b>Código</b></font></td>';
+      $l_html.=chr(13).'       <td><font size=1><b>Descrição</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Espécie</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Nº</b></font></td>';
       $l_html.=chr(13).'       <td><font size=1><b>Data</b></font></td>';
@@ -77,12 +81,15 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
     $l_html.=chr(13).'     <tr valign="top">';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.f($row,'numero').'</font></td>';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.f($row,'pasta').'</font></td>';
+    $l_html.=chr(13).'       <td><font size=1>'.f($row,'cd_assunto').'</font></td>';
+    $l_html.=chr(13).'       <td><font size=1>'.f($row,'ds_assunto').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_tipo').'</font></td>';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.f($row,'protocolo').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_especie').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'numero_original').'</font></td>';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_origem_resumido').'</font></td>';
+    $l_html.=chr(13).'       <td align="center"><font size=1>'.date(d.'/'.m.'/'.y,f($row,'dt_limite')).'</font></td>';
     $l_html.=chr(13).'     </tr>';
     $w_linha += 1;
   }
@@ -90,7 +97,7 @@ function VisualGT($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
   if ($l_formato=='WORD') {
     $l_html.=chr(13).'    <tr><td colspan=2><p>&nbsp;</p>';
     $l_html.=chr(13).'    <tr><td colspan=2><table border=0 width="100%"><tr valign="top">';
-    $l_html.=chr(13).'      <td align="center" width=30%>________/________/20______<br><b>Data e hora</b>';
+    $l_html.=chr(13).'      <td align="center" width=30%>'.formataDataEdicao(time(),6).'<br><b>Data e hora</b>';
     $l_html.=chr(13).'      <td align="center" width=70%>__________________________________________________<br><b>Nome e assinatura</b>';
     $l_html.=chr(13).'    </table>';
   }

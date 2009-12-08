@@ -1437,7 +1437,7 @@ begin
                 d.interno,            d.data_autuacao,               d.pessoa_origem,
                 d.processo,           d.circular,                    d.copias,
                 d.volumes,            d.unidade_int_posse,           d.pasta,
-                d.tipo_juntada,
+                d.tipo_juntada,       d.data_central,
                 case d.interno when 'S' then e.sigla else d2.nome_resumido end as nm_origem_doc,
                 case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
@@ -1571,6 +1571,7 @@ begin
             and (p_prioridade     is null or (p_prioridade  is not null and k.sq_tipo_despacho is not null and k.sq_tipo_despacho = p_prioridade))
             and (p_palavra        is null or (p_palavra     is not null and d.prefixo||'.'||substr(1000000+d.numero_documento,2,6)||'/'||d.ano||'-'||substr(100+d.digito,2,2) = p_palavra))
             and (p_empenho        is null or (p_empenho     is not null and acentos(d.numero_original) like '%'||acentos(p_empenho)||'%'))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and d.data_central is null and b.fim+1-sysdate<0))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_caixa           = p_sq_orprior))
             and (p_processo       is null or (p_processo    is not null and 0 < (select count(*)
                                                                                    from pa_documento_interessado x

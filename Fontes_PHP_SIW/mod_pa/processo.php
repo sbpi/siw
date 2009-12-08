@@ -22,6 +22,7 @@ include_once($w_dir_volta.'classes/sp/db_getCaixa.php');
 include_once($w_dir_volta.'classes/sp/db_getAssunto_PA.php');
 include_once($w_dir_volta.'classes/sp/db_getProtocolo.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/dml_putCaixaDevolucao.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoAutua.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoAnexa.php');
 include_once($w_dir_volta.'classes/sp/dml_putDocumentoJunta.php');
@@ -311,18 +312,6 @@ function Central() {
   $p_fim          = $_REQUEST['p_fim'];
   
   if ($O=='L') {
-    /*
-    // Recupera todos os registros para a listagem
-    $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, $SG, $p_chave, $p_chave_aux, 
-        $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, 
-        $p_ini, $p_fim, 2, null);
-    if (Nvl($p_ordena,'')>'') {
-      $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
-    } else {
-      $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
-    }
-    */
     $RS = db_getCaixa::getInstanceOf($dbms,$p_chave,$w_cliente,null,null,null,$p_unid_autua,$p_nu_guia,$p_ano_guia,$p_ini,$p_fim,$SG);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -330,10 +319,60 @@ function Central() {
     } else {
       $RS = SortArray($RS,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
     }
+    $w_existe = count($RS);
+    
+    if (count($w_chave) > 0) {
+      $i = 0;
+      foreach($w_chave as $k => $v) {
+        foreach ($RS as $row) {
+          if ($w_chave[$i]==f($row,'sq_siw_solicitacao')) {
+            $w_marcado[f($row,'sq_siw_solicitacao')] = 'ok';
+            break;
+          }
+        }
+        $i++;
+      }
+      reset($RS);
+    }
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
-  if ($O=='P') {
+  if ($O=='L') {
+    if ($w_existe) {
+      ScriptOpen('JavaScript');
+      ValidateOpen('Validacao');
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=true; ');
+      ShowHTML('  if (theForm["w_chave[]"].value==undefined) {');
+      ShowHTML('     for (i=0; i < theForm["w_chave[]"].length; i++) {');
+      ShowHTML('       if (theForm["w_chave[]"][i].checked) {');
+      ShowHTML('          w_erro=false; ');
+      ShowHTML('       }');
+      ShowHTML('     }');
+      ShowHTML('  } else {');
+      ShowHTML('     if (theForm["w_chave[]"].checked) w_erro=false;');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Você deve informar pelo menos um protocolo!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');
+      Validate('w_local','Local de arquivamento','SELECT','',1,18,'','0123456789');
+      Validate('w_observacao','Motivo da devolução','1','',1,2000,'1','1');
+      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_local.selectedIndex==0) {');
+      ShowHTML('    alert("Informe o local de armazenamento!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  } else if (theForm.w_envio[1].checked && theForm.w_observacao.value=="") {');
+      ShowHTML('    alert("Informe o motivo da devolução!"); ');
+      ShowHTML('    return false;');
+      ShowHTML('  } ');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para '.(($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados').'?\')) return false;');
+      // Se não for encaminhamento
+      ShowHTML('  theForm.Botao.disabled=true;');
+      ValidateClose();
+      ScriptClose();
+    }
+  } elseif ($O=='P') {
     ScriptOpen('JavaScript');
     FormataData();
     SaltaCampo();
@@ -363,10 +402,9 @@ function Central() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-    ShowHTML('  Orientação:<ul>');
-    ShowHTML('  <li>Selecione o documento desejado, clicando sobre a operação <i>'.$w_nm_operacao.'</i>.');
-    ShowHTML('  </ul></b></font></td>');
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
     if (MontaFiltro('GET')>'') {
@@ -378,13 +416,13 @@ function Central() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td>&nbsp;</td>');
     ShowHTML('          <td><b>'.linkOrdena('Caixa','numero').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Assunto','assunto').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Data Limite','data_limite').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Intermediário','intermediario').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Destinação Final','destinacao_final').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Protocolos','qtd').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
@@ -396,15 +434,22 @@ function Central() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
+        ShowHTML('        <td>');
+        ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
+        ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
+        ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">'); 
+        if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
+          ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_caixa').'" ></td>'); 
+        } else {
+          ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_caixa').'" ></td>'); 
+        }
+        ShowHTML('        </td>');
+        ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
         ShowHTML('        <td>'.f($row,'assunto').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_limite')).'</td>');
         ShowHTML('        <td align="center">'.f($row,'intermediario').'</td>');
         ShowHTML('        <td>'.f($row,'destinacao_final').'</td>');
         ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ArqCentral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Arquivar</A>&nbsp');
-        ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 
     } 
@@ -412,9 +457,30 @@ function Central() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
-    ShowHTML('<tr><td align="center" colspan=3>');
-    MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
-    ShowHTML('</tr>');
+    if ($w_existe) {
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan="2" align="center"><br><br>');
+      ShowHTML('  <tr><td colspan="2" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+      ShowHTML('  Orientação:<ul>');
+      ShowHTML('  <li>Selecione as caixas desejadas, clique sobre a operação a ser executada.');
+      ShowHTML('  <li>Para arquivar a caixa, informe o local de de armazenamento.');
+      ShowHTML('  <li>Para devolver a caixa, informe o motivo da devolução. A caixa será devolvida para o arquivo setorial de origem.');
+      ShowHTML('  <li>Informe sua assinatura eletrônica e clique sobre o botão para confirmar a operação.');
+      ShowHTML('  </ul></b></font></td>');
+      ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan="2" align="center"><br><br>');
+      ShowHTML('  <table width="97%" border="0">');
+      ShowHTML('  <tr><td colspan="2">');
+      ShowHTML('    <tr valign="top"><td width="30%"><input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N" '.((Nvl($w_envio,'N')=='N') ? 'checked' : '').' onClick="document.Form.w_observacao.value=\'\'; document.Form.Botao.value=\'Arquivar\';"> Arquivar:');
+      selecaoArquivoLocalSubordination(null,null,'Informe a localização da caixa no arquivo central.',$w_local,f($RS_Parametro,'arquivo_central'),'w_local','FOLHA',null,null,null,null,null,null);
+      ShowHTML('    <tr valign="top"><td width="30%"><input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="S" '.((Nvl($w_envio,'N')=='N') ? '' : 'checked').'  onClick="document.Form.w_local.selectedIndex=0; document.Form.Botao.value=\'Devolver\';"> Devolver para o Arquivo Setorial:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');    
+      ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
+      ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+      ShowHTML('    <tr><td colspan=3 align="center"><hr>');
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Arquivar">');
+      ShowHTML('      </td>');
+      ShowHTML('    </tr>');
+      ShowHTML('  </table>');
+    }
+      ShowHTML('    </FORM>');
   } elseif ($O=='P') {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
@@ -975,7 +1041,7 @@ function ArqSetorial() {
             break;
           }
         }
-        $i += 1;
+        $i++;
       }
       reset($RS);
     }
@@ -1261,91 +1327,6 @@ function Arquivar() {
 } 
 
 // =========================================================================
-// Rotina de transferência de documentos para o arquivo central
-// -------------------------------------------------------------------------
-function ArqCentral() {
-  extract($GLOBALS);
-  global $w_Disabled;
-  $w_chave = $_REQUEST['w_chave'];
-  $w_local = $_REQUEST['w_local'];
-
-  // Recupera os dados do documento
-  $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null, null,null, null, null);
-  foreach ($RS as $row) {$RS = $row; break;}
-
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  ScriptOpen('JavaScript');
-  ValidateOpen('Validacao');
-  Validate('w_local','Local de arquivamento','SELECT',1,1,18,'','0123456789');
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  // Se não for encaminhamento
-  ShowHTML('  theForm.Botao[0].disabled=true;');
-  ShowHTML('  theForm.Botao[1].disabled=true;');
-  ValidateClose();
-  ScriptClose();
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if ($w_troca>'') {
-    BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } else {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
-  }
-  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
-  ShowHTML('<HR>');
-  ShowHTML('<div align=center><center>');
-  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  // Chama a rotina de visualização dos dados da ação, na opção 'Listagem'
-  ShowHTML('<HR>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
-  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-  ShowHTML('<INPUT type="hidden" name="w_protocolo" value="'.f($RS,'protocolo').'">');
-  ShowHTML('<tr><td bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
-  ShowHTML('  Orientação:<ul>');
-  ShowHTML('  <li>ATENÇÃO: Certifique-se de que realmente deseja arquivar esta caixa.');
-  ShowHTML('  <li>Leia atentamente os dados que serão registrados para este arquivamento e clique no botão "Arquivar" para confirmar a operação ou no botão "Abandonar" para voltar à tela anterior.');
-  ShowHTML('  </ul></b></font></td>');
-  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-  ShowHTML('  <table width="97%" border="0">');
-  ShowHTML('    <tr><td colspan=3><b>DADOS DA CAIXA</b></td></tr>');
-  ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%">Número:<td colspan=2><b><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($RS,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($RS,'numero').'/'.f($RS,'sg_unidade').'</a>&nbsp;</b></td></tr>');
-  ShowHTML('    <tr><td width="30%">Unidade:</td><td colspan=2>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unidade'),f($RS,'sq_unidade'),$TP).'</td></tr>');
-  ShowHTML('    <tr><td>Assunto:</td><td colspan=2>'.f($RS,'assunto').'</td></tr>');
-  ShowHTML('    <tr><td>Descrição:</td><td colspan=2>'.crlf2br(f($RS,'descricao')).'</td></tr>');
-  ShowHTML('    <tr><td>Data Limite:</td><td colspan=2>'.formataDataEdicao(f($RS,'data_limite')).'</td></tr>');
-  ShowHTML('    <tr><td>Intermediário:</td><td colspan=2>'.f($RS,'intermediario').'</td></tr>');
-  ShowHTML('    <tr><td>Destinação final:</td><td colspan=2>'.f($RS,'destinacao_final').'</td></tr>');
-
-  ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
-  ShowHTML('    <tr><td colspan=3><b>DADOS DO ARQUIVAMENTO</b></td></tr>');
-  ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-  ShowHTML('    <tr><td width="30%">Data do arquivamento:<td colspan=2><b>'.formataDataEdicao(time()).'</b></td></tr>');
-  $RS_Unid = db_getUorgData::getInstanceOf($dbms,f($RS_Parametro,'arquivo_central'));
-  ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Unid,'nome').'</b></td></tr>');
-  ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
-  ShowHTML('    <tr valign="top"><td width="30%">Local de arquivamento:');
-  selecaoArquivoLocalSubordination(null,null,'Informe a localização da caixa no arquivo central.',$w_local,f($RS_Parametro,'arquivo_central'),'w_local','FOLHA',null,null,null,null,null,null);
-  
-  ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
-  ShowHTML('    <tr><td colspan=3><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-  ShowHTML('    <tr><td colspan=3 align="center"><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Arquivar">');
-  ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-  ShowHTML('      </td>');
-  ShowHTML('    </tr>');
-  ShowHTML('  </table>');
-  ShowHTML('  </TD>');
-  ShowHTML('</tr>');
-  ShowHTML('</FORM>');
-  ShowHTML('</table>');
-  ShowHTML('</center>');
-  Rodape();
-} 
-
-// =========================================================================
 // Rotina de registro da eliminação de documentos
 // -------------------------------------------------------------------------
 function Eliminar() {
@@ -1540,6 +1521,7 @@ function Emprestar() {
 // -------------------------------------------------------------------------
 function Grava() {
   extract($GLOBALS);
+
   $w_file       = '';
   $w_tamanho    = '';
   $w_tipo       = '';
@@ -1639,12 +1621,29 @@ function Grava() {
   } elseif ($SG=='PADARQ') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoArqCen::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_local']);
-
-      ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'Arquivamento central realizado com sucesso!\');');
-      ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Central&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
-      ScriptClose();
+      if ($_REQUEST['w_envio']=='N') {;
+        // Se arquivamento
+        for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
+          if (Nvl($_POST['w_chave'][$i],'')>'') {
+            dml_putDocumentoArqCen::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_local']);  
+          } 
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Arquivamento central realizado com sucesso!\');');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Central&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        // Se devolução para arquivo setorial
+        for ($i=0; $i<=count($_POST['w_chave']); $i++) {
+          if (Nvl($_POST['w_chave'][$i],'')>'') {
+            dml_putCaixaDevolucao::getInstanceOf($dbms,$_POST['w_chave'][$i],$w_usuario,$_REQUEST['w_observacao']);
+          } 
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Devolução realizada com sucesso!\');');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'Central&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      }
     } else {
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

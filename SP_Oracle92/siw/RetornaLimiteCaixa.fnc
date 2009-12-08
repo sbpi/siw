@@ -12,12 +12,37 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
 *          1  - data limite do protocolo
 *          2  - data limite na fase intermediária
 *          3  - destinação final do protocolo
+*          4  - assuntos dos protocolos contidos na caixa
+*          5  - espécies documentais dos protocolos contidos na caixa
 ***********************************************************************************/
   Result          varchar2(32767) := null;
   w_reg           number(18);
   w_limite        varchar2(255);
   w_intermediario varchar2(4000)  := '';
   w_final         varchar2(4000)  := '';
+  w_assunto       varchar2(4000)  := '';
+  w_especie       varchar2(4000)  := '';
+
+  cursor c_especies is
+      select distinct b.nome
+        from pa_documento                        a
+             inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
+               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
+             inner     join pa_especie_documento b on (a.sq_especie_documento  = b.sq_especie_documento)
+       where a.sq_caixa      = p_chave
+         and a1.sq_solic_pai is null
+      order by acentos(nome);
+
+  cursor c_assuntos is
+      select distinct c.codigo||' - '||c.descricao as nome
+        from pa_documento                        a
+             inner     join siw_solicitacao      a1 on (a.sq_siw_solicitacao   = a1.sq_siw_solicitacao)
+               inner   join siw_tramite          a2 on (a1.sq_siw_tramite      = a2.sq_siw_tramite)
+             inner     join pa_documento_assunto b on (a.sq_siw_solicitacao   = b.sq_siw_solicitacao and b.principal = 'S')
+               inner   join pa_assunto           c on (b.sq_assunto           = c.sq_assunto)
+       where a.sq_caixa      = p_chave
+         and a1.sq_solic_pai is null
+      order by 1;
 
   cursor c_dados is
       select max(case a.processo when 'S' then a.data_autuacao else a1.inicio end) as data_limite,
@@ -37,23 +62,32 @@ create or replace function RetornaLimiteCaixa(p_chave in number) return varchar2
                  left  join pa_tipo_guarda       f on (c.fase_final_guarda    = f.sq_tipo_guarda)
        where a.sq_caixa      = p_chave
          and a1.sq_solic_pai is null
-      group by a2.sigla, a.data_setorial, a.data_central, c.fase_corrente_anos, c.fase_intermed_anos, c.fase_final_anos, d.sigla, d.descricao, e.sigla, e.descricao, f.sigla, f.descricao;
+      group by a.data_central, c.fase_intermed_anos, c.fase_final_anos, e.sigla, e.descricao, f.sigla, f.descricao;
 begin
   if p_chave is not null then
-     -- Verifica se a solicitação existe e, se existir, recupera seus dados
+     -- Verifica se a caixa existe e, se existir, recupera seus dados
      select count(sq_caixa) into w_reg from pa_caixa where sq_caixa = p_chave;
      if w_reg > 0 then
+        -- Recupera data limite, data intermediário e destinação final
         for crec in c_dados loop
             If crec.data_limite   is not null Then w_limite := to_char(crec.data_limite,'dd/mm/yyyy'); End If;
             If crec.intermediario is not null and (w_intermediario is null or crec.intermediario > w_intermediario) Then w_intermediario := crec.intermediario; End If;
-            If crec.final         is not null Then w_final         := w_final || ' / '|| crec.final; End If;
+            If crec.final         is not null and (instr(w_final, crec.final) = 0 or w_reg = 1)                     Then w_final         := w_final || ' / '|| crec.final; w_reg := w_reg + 1; End If;
         end loop;
+        If w_intermediario is not null Then
+           w_intermediario := substr(w_intermediario,7,2)||'/'||substr(w_intermediario,5,2)||'/'||substr(w_intermediario,1,4);
+        End If;
+     
+        -- Retorna assuntos
+        for crec in c_assuntos loop w_assunto := w_assunto || ' / ' || crec.nome; end loop;
+
+        -- Retorna especies documentais
+        for crec in c_especies loop w_especie := w_especie || ' / ' || crec.nome; end loop;
+
+        -- Monta string com os dados
+        Result := w_limite||'|@|'||w_intermediario||'|@|'||substr(w_final,4)||'|@|'||substr(w_assunto,4)||'|@|'||substr(w_especie,4);
      end if;
   end if;
-  If w_intermediario is not null Then
-     w_intermediario := substr(w_intermediario,7,2)||'/'||substr(w_intermediario,5,2)||'/'||substr(w_intermediario,1,4);
-  End If;
-  Result := w_limite||'|@|'||w_intermediario||'|@|'||substr(w_final,4);
   return(Result);
 end RetornaLimiteCaixa;
 /

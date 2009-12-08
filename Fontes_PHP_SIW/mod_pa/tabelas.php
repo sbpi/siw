@@ -299,19 +299,19 @@ function imprimir(){
   ShowHTML('  <tr>');
   ShowHTML('    <td align="right">');
   ShowHTML('      Código e assunto:');
-  ShowHTML('    <td style="font-size:14px">');
+  ShowHTML('    <td style="font-size:10px" valign=top>');
   ShowHTML(      $w_assunto);
   ShowHTML('  </tr>');
 
-  ShowHTML('  <tr valign=top>');
+  ShowHTML('  <tr>');
   ShowHTML('    <td align="right">');
-  ShowHTML('      Descrição:');
-  ShowHTML('    <td  style="font-size:10px">');
+  ShowHTML('      Espécies documentais:');
+  ShowHTML('    <td  style="font-size:10px" valign=top>');
   ShowHTML(      $w_descricao);
 
   ShowHTML('  </tr>');
 
-  ShowHTML('  <tr valign=top>');
+  ShowHTML('  <tr>');
   ShowHTML('    <td align="right">');
   ShowHTML('      Data-Limite:');
   ShowHTML('    <td  style="font-size:20px">'.nvl($w_data_limite,'&nbsp;'));
@@ -350,10 +350,19 @@ function imprimir(){
 // =========================================================================
 // Manter Tabela básica 'Especies do documentos'
 // -------------------------------------------------------------------------
-function caixa() {
+function Caixa() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  
+  // Recupera os parâmetros do módulo
+  $RS = db_getParametro::getInstanceOf($dbms,$w_cliente,'PA',null);
+  foreach($RS as $row){$RS=$row;}
+  if ($_SESSION['LOTACAO']==f($RS,'arquivo_central') || RetornaModMaster($w_cliente, $w_usuario, $w_menu)=='S') {
+    $w_gestor = true;
+  } else {
+    $w_gestor = false;
+  }
   
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -368,8 +377,13 @@ function caixa() {
     $w_numero           = $_REQUEST['w_numero'];
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
-    $RS = db_getCaixa::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null, null,null, null, null);
-    $RS = SortArray($RS,'numero','asc');
+    $RS = db_getCaixa::getInstanceOf($dbms,null,$w_cliente,(($w_gestor) ? null : $_SESSION['LOTACAO']),null,null,null,null, null,null, null, null);
+    if (nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nm_unidade','asc','numero','asc');
+    } else {
+      $RS = SortArray($RS,'nm_unidade','asc','numero','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getCaixa::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null, null,null, null, null);
@@ -435,10 +449,13 @@ function caixa() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Unidade</td>');
-    ShowHTML('          <td><b>Número</td>');
-    ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td><b>Data Limite</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Unidade','nm_unidade').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Número','numero').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Assunto','assunto').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Espécies Documentais','descricao').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Data Limite','data_limite').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Itens','qtd').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Situação','nm_situacao').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -451,14 +468,17 @@ function caixa() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nm_unidade').'</td>');
-        ShowHTML('        <td>'.f($row,'numero').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'numero').'</td>');
+        ShowHTML('        <td>'.f($row,'assunto').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
-        ShowHTML('        <td>'.formataDataEdicao(f($row,'data_limite')).'</td>');
+        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_limite'),5).'</td>');
+        ShowHTML('        <td align="right">'.f($row,'qtd').'&nbsp;</td>');
+        ShowHTML('        <td>'.f($row,'nm_situacao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
         ShowHTML('          <A href="'.montaURL_JS($w_dir,$w_pagina.'IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" class="HL"  title="Imprime o espelho da caixa.">ES</A>&nbsp');
-        ShowHTML('          <A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">LS</A>&nbsp');
+        ShowHTML('          <A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">LS</A>&nbsp');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       } 

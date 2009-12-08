@@ -6,10 +6,12 @@ create or replace procedure sp_putDocumentoCaixa
     p_pasta               in varchar2
    ) is
    w_caixa_atual   number(18);
-   w_dados_caixa   varchar2(255);
+   w_dados_caixa   varchar2(4000);
    w_limite        varchar2(255);
    w_intermediario varchar2(255);
    w_final         varchar2(255);
+   w_assunto       varchar2(1000);
+   w_descricao     varchar2(1000);
    w_cont          number(10) := 0;
    w_texto         varchar2(255);
    
@@ -30,13 +32,17 @@ begin
      w_texto := substr(w_dados_caixa,1,instr(w_dados_caixa,'|@|')-1);
      If    w_cont = 1 Then w_limite        := w_texto;
      Elsif w_cont = 2 then w_intermediario := w_texto;
-     Else                  w_final         := w_texto;
+     Elsif w_cont = 3 then w_final         := w_texto;
+     Elsif w_cont = 4 then w_assunto       := w_texto;
+     Else                  w_descricao     := w_texto;
      End If;
-     If w_cont > 2 Then Exit; End If;
+     If w_cont > 4 Then Exit; End If;
      w_dados_caixa := substr(w_dados_caixa,instr(w_dados_caixa,'|@|')+3);
   End Loop;
   update pa_caixa
-     set data_limite         = w_limite,
+     set assunto             = w_assunto,
+         descricao           = w_descricao,
+         data_limite         = w_limite,
          intermediario       = w_intermediario,
          destinacao_final    = w_final
   where sq_caixa = p_caixa;

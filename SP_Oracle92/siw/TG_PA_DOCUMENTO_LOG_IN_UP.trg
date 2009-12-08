@@ -2,14 +2,14 @@ create or replace trigger TG_PA_DOCUMENTO_LOG_IN_UP
   before insert or update on pa_documento_log  
   for each row
 declare
-   w_ano        number(4);
-   w_sequencial number(18) := 0;
-   w_reg        pa_parametro%rowtype;
-   w_unid       pa_unidade%rowtype;
-   w_unid_pai   number(18);
-   w_sg_tramite siw_menu.sigla%type;
+   w_ano          number(4);
+   w_sequencial   number(18) := 0;
+   w_reg          pa_parametro%rowtype;
+   w_unid         pa_unidade%rowtype;
+   w_unid_pai     number(18);
+   w_sg_tramite   siw_menu.sigla%type;
 begin
-  If INSERTING and :new.nu_guia is null Then
+  If INSERTING and :new.nu_guia is null and :new.recebedor is null Then
      -- Recupera os dados da unidade pai
      select coalesce(sq_unidade_pai,sq_unidade) into w_unid_pai from pa_unidade where sq_unidade = :new.unidade_origem;
     

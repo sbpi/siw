@@ -311,7 +311,7 @@ function Mesa() {
     ShowHTML('    </th>');
     ShowHTML('    <th align="center" width="40">PIN');
     ShowHTML('    </th>');
-    ShowHTML('    <th width="30">PAA');
+    ShowHTML('    <th width="30">&nbsp;&nbsp;&nbsp;&nbsp;PAA');
     ShowHTML('    </th>');
     ShowHTML('    <th width="20">&nbsp;');
     ShowHTML('    </th>');    
@@ -600,7 +600,7 @@ function Arquivos() {
   ShowHTML('   <tr><td colspan="2"><b>Documentos</b></td>');
   if ($p_codigo=='TODOS') {
     ShowHTML('   <tr>');
-    SelecaoUnidade('<u>Á</u>rea', 'A', null, $p_unidade, null, 'p_unidade', 'CL_PITCE', null, null, '<td>');
+    SelecaoUnidade('<u>Á</u>rea', 'A', null, $p_unidade, null, 'p_unidade', 'CL_RENAPI', null, null, '<td>');
     ShowHTML('   </tr>');
   }
   ShowHTML('   <tr>');

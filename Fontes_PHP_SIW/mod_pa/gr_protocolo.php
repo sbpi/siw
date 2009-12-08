@@ -236,7 +236,7 @@ function Gerencial() {
     if ($p_processo>'')    { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Interessado <td>[<b>'.$p_processo.'</b>]'; }
     if ($p_ini_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Data criação/recebimento entre <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]'; }
     if ($p_fim_i>'')      { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Limite da tramitação entre <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]'; }
-    if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasadas</b>]'; }
+    if ($p_atraso=='S')   { $w_linha++; $w_filtro=$w_filtro.'<tr valign="top"><td align="right">Situação <td>[<b>Apenas atrasados</b>]'; }
     if ($w_filtro>'')     { $w_linha++; $w_filtro='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>'; }
 
     $RS1 = db_getSolicList::getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,5,
@@ -764,29 +764,24 @@ function Gerencial() {
           } 
           $w_linha = $w_linha + 1;
         } 
-        if (nvl(f($row,'concluida'),'N')=='N') {
-          if (Nvl(f($row,'fim'),f($row,'limite_conclusao')) < addDays(time(),-1)) {
+        if (nvl(f($row,'data_central'),'')=='') {
+          if (Nvl(f($row,'fim'),time()) < addDays(time(),-1)) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;
           } elseif (f($row,'aviso_prox_conc') == 'S' && (f($row,'aviso') <= addDays(time(),-1))) {
             $t_aviso    = $t_aviso+1;
             $t_totaviso = $t_totaviso+1;
           }
-          if (f($row,'processo')=='S') {
-            $t_cad      = $t_cad + 1;
-            $t_totcad   = $t_totcad + 1;
-          } else {
-            $t_tram     = $t_tram + 1;
-            $t_tottram  = $t_tottram + 1;
-          } 
+        }
+        if (f($row,'processo')=='S') {
+          $t_cad      = $t_cad + 1;
+          $t_totcad   = $t_totcad + 1;
         } else {
-          $t_conc       = $t_conc + 1;
-          $t_totconc    = $t_totconc + 1;
-          if (nvl(f($row,'valor'),0)<nvl(f($row,'custo_real'),0)) {
-            $t_acima    = $t_acima + 1;
-            $t_totacima = $t_totacima + 1;
-          } 
+          $t_tram     = $t_tram + 1;
+          $t_tottram  = $t_tottram + 1;
         } 
+        $t_conc       = $t_conc + 1;
+        $t_totconc    = $t_totconc + 1;
         $t_solic        = $t_solic + 1;
         $t_valor        = $t_valor + Nvl(f($row,'valor'),0);
         $t_custo        = $t_custo + Nvl(f($row,'custo_real'),0);

@@ -2,20 +2,15 @@
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
-function VisualCaixa($l_chave, $l_formato='WORD') {
+function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
   extract($GLOBALS);
-
+  
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
 
   // Recupera os dados da guia
   $RS_Dados = db_getCaixa::getInstanceOf($dbms,$l_chave,$w_cliente,null,null,null,null,null,null,null,null,'PASTA');
-  if (Nvl($p_ordena,'')>'') {
-    $lista = explode(',',str_replace(' ',',',$p_ordena));
-    $RS_Dados = SortArray($RS_Dados,$lista[0],$lista[1],'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
-  } else {
-    $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
-  }
-
+  $RS_Dados = SortArray($RS_Dados,'sg_unidade','asc', 'numero','asc','pasta','asc','cd_assunto','asc','protocolo','asc');
+  
   if ($l_formato=='WORD') $l_html = BodyOpenWord(null); else $l_html = '';
   $w_linha = 99;
   $w_pag   = 1;
@@ -45,15 +40,22 @@ function VisualCaixa($l_chave, $l_formato='WORD') {
       $l_html.=chr(13).'<tr><td colspan="2" align="center">';
       $l_html.=chr(13).'    <table width="100%" border="0" cellspacing="3">';
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-      $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=center><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td></tr>';
+      if ($l_espelho=='N') {
+        $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align="center"><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td></tr>';
+      } else {
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" align="center"><font size="2"><b>CAIXA Nº '.f($row,'numero').'/'.f($row,'sg_unidade').'</b></font></td>';
+        $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align="right"><A class="SS" href="'.montaURL_JS($w_dir,'tabelas.php?par=IMPRIMIR'.'&R='.$w_pagina.'IMPRIMIR'.'&O=V&w_chave='.f($row,'sq_caixa').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'" class="HL"  title="Imprime o espelho da caixa.">Imprimir espelho</A>&nbsp';
+      }
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Assunto:</b></td>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Assunto:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'assunto').'</td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Data Limite:</b></td>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Espécies documentais:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($row,'descricao').'</td></tr>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Data Limite:</b></td>';
       $l_html.=chr(13).'       <td>'.formataDataEdicao(f($row,'data_limite')).'</td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Prazo guarda:</b></td>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Prazo guarda:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'intermediario').'</td></tr>';
-      $l_html.=chr(13).'   <tr><td width="30%"><b>Destinação Final:</b></td>';
+      $l_html.=chr(13).'   <tr valign="top"><td width="30%"><b>Destinação Final:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'destinacao_final').'</td></tr>';
       
       $l_html.=chr(13).'   <tr><td colspan=2><br><b>DOCUMENTOS/PROCESSOS ARQUIVADOS NESTA CAIXA</b></td></tr>';
@@ -80,11 +82,11 @@ function VisualCaixa($l_chave, $l_formato='WORD') {
     }
     $l_html.=chr(13).'     <tr valign="top">';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_tipo').'</font></td>';
-    $l_html.=chr(13).'       <td align="center"><font size=1>'.f($row,'protocolo').'</font></td>';
+    $l_html.=chr(13).'       <td nowrap align="center"><font size=1>'.f($row,'protocolo').'</font></td>';
     $l_html.=chr(13).'       <td align="center"><font size=1>'.f($row,'cd_assunto').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_especie').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'numero_original').'</font></td>';
-    $l_html.=chr(13).'       <td align="center"><font size=1>'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</font></td>';
+    $l_html.=chr(13).'       <td align="center"><font size=1>'.formataDataEdicao(f($row,'inicio'),5).'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'nm_origem_resumido').'</font></td>';
     $l_html.=chr(13).'       <td><font size=1>'.f($row,'prazo_guarda').'</font></td>';
     $l_html.=chr(13).'       <td title="'.f($row,'ds_final').'"><font size=1>'.f($row,'sg_final').'</font></td>';

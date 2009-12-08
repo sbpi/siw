@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados do documento
 // -------------------------------------------------------------------------
@@ -52,6 +52,8 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
       $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=center><font size="2"><b>GUIA DE REMESSA Nº '.f($row,'guia_tramite').'</b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+      $l_html.=chr(13).'   <tr><td width="30%"><b>Responsável pela remessa:</b></td>';
+      $l_html.=chr(13).'       <td>'.f($row,'nm_pessoa_resp').'</td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade de origem:</b></td>';
       $l_html.=chr(13).'       <td>'.f($row,'nm_unid_origem').'</td></tr>';
       if (f($row,'interno')=='S') {

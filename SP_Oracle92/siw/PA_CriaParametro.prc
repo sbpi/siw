@@ -21,12 +21,10 @@ begin
   select * into w_reg from pa_parametro where cliente = w_unid.cliente;
 
   -- Verifica se há necessidade de reinicializar o sequencial em função da troca do ano
-  /*
   If to_char(sysdate,'yyyy') > w_reg.ano_corrente Then
      w_ano        := to_char(sysdate,'yyyy');
      w_sequencial := 1;
   Else
-  */
      w_ano        := w_reg.ano_corrente;
      -- Se já houver documento com o sequencial gerado, incrementa 1 e testa novamente,
      -- até achar um número vago.
@@ -41,7 +39,7 @@ begin
            and a.cliente          = w_cliente;
         if w_existe = 0 then exit; end if;
      end loop;
-  --End If;
+  End If;
 
   -- Atualiza a tabela de parâmetros
   Update pa_parametro Set ano_corrente = w_ano Where cliente = w_unid.cliente;

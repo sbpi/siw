@@ -371,7 +371,7 @@ function Transferencia() {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td>'.f($row,'arquivo_guia_numero').'</td>');
           ShowHTML('        <td>'.f($row,'arquivo_guia_ano').'</td>');
-          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
+          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
           ShowHTML('        <td>'.f($row,'assunto').'</td>');
           ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
           ShowHTML('        <td align="top" nowrap>');
@@ -383,7 +383,7 @@ function Transferencia() {
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
-          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=500,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
+          ShowHTML('        <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
           ShowHTML('        <td>'.f($row,'assunto').'</td>');
           ShowHTML('        <td align="center">'.f($row,'qtd').'</td>');
           ShowHTML('        <td>&nbsp;</td>');
@@ -439,14 +439,15 @@ function ConteudoCaixa () {
   extract($GLOBALS);
   $w_chave     = $_REQUEST['w_chave'];
   $w_formato   = $_REQUEST['w_formato'];
-  
+  $w_espelho   = nvl($_REQUEST['w_espelho'],'N');
+
   if ($w_formato=='WORD') {
     HeaderWord($_REQUEST['orientacao']); 
   } else {
     Cabecalho();
     BodyOpen(null);
   }
-  ShowHTML(VisualCaixa($w_chave,$w_formato));
+  ShowHTML(VisualCaixa($w_chave,$w_formato,$w_espelho));
   Rodape();
 } 
 
@@ -656,7 +657,7 @@ function EmitirGR () {
     HeaderWord($_REQUEST['orientacao']); 
   } else {
     Cabecalho();
-    BodyOpen(null);
+    BodyOpen('onLoad=\'this.focus();\'');
   }
   ShowHTML(VisualGR($w_unidade, $w_nu_guia, $w_ano_guia));
   Rodape();

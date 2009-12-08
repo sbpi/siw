@@ -13,12 +13,16 @@ create or replace procedure SP_GetCaixa
     p_result      out sys_refcursor
    ) is
 begin
-   If p_restricao is null or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
+   If p_restricao is null or p_restricao = 'PREPARA' or p_restricao = 'TRAMITE' or p_restricao = 'RELPATRANS' or p_restricao = 'PADARQ' or p_restricao = 'CENTRAL' Then
       -- Recupera os grupos da caixa
       open p_result for 
          select a.sq_caixa, a.sq_unidade, a.sq_arquivo_local, a.assunto, a.descricao, 
                 a.data_limite, a.numero, a.intermediario, a.destinacao_final, a.arquivo_data, a.arquivo_guia_numero, a.arquivo_guia_ano, 
                 a.elimin_data, a.elimin_guia_numero, a.elimin_guia_ano,
+                case when a.arquivo_guia_numero is not null then 'Arq.Central'
+                     when a.elimin_guia_numero  is not null then 'Eliminado'
+                     else 'Arq.Setorial'
+                end as nm_situacao,
                 b.nome as nm_unidade, b.sigla as sg_unidade,
                 coalesce(c.qtd,0) as qtd
            from pa_caixa              a 
@@ -32,8 +36,9 @@ begin
             and (p_unidade   is null or (p_unidade   is not null and a.sq_unidade       = p_unidade))
             and (p_numero    is null or (p_numero    is not null and a.numero           = p_numero ))
             and (p_assunto   is null or (p_assunto   is not null and acentos(a.assunto) like '%' || acentos(p_assunto) || '%' ))
-            and (coalesce(p_restricao,'null') not in ('TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
-                 (p_restricao = 'TRAMITE' and a.arquivo_data is null) or
+            and (coalesce(p_restricao,'null') not in ('PREPARA','TRAMITE','RELPATRANS','PADARQ','CENTRAL') or
+                 (p_restricao = 'PREPARA' and a.arquivo_data is null) or
+                 (p_restricao = 'TRAMITE' and a.arquivo_data is null and c.qtd > 0) or
                  (p_restricao = 'RELPATRANS' and a.arquivo_guia_numero is not null and a.arquivo_data is null) or
                  (p_restricao = 'PADARQ' and a.arquivo_guia_numero is not null and a.arquivo_data is not null and a.sq_arquivo_local is null) or
                  (p_restricao = 'CENTRAL' and a.sq_arquivo_local is not null)
@@ -50,6 +55,7 @@ begin
                 coalesce(b3.sigla, b.sigla) as sg_unid_dest,
                 c.numero_original,    c.numero_documento,                c.interno,   c.pasta,
                 case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
+                case c.processo when 'S' then c.data_autuacao else d.inicio end as dt_limite,
                 c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
                 a.arquivo_guia_numero||'/'||a.arquivo_guia_ano||'-'||coalesce(b3.sigla,b.sigla) as guia_transferencia, 
                 case when c.pessoa_origem is null then d1.sq_unidade else c1.sq_pessoa end as sq_origem,

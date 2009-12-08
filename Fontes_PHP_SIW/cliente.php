@@ -406,13 +406,7 @@ function Geral() {
   ValidateOpen('Validacao');
   if ($w_cgccpf=='' || (!(strpos($_REQUEST['botao'],'Procurar')===false))) {
     // Se o beneficiário ainda não foi selecionado
-    ShowHTML('  if (theForm.Botao.value == "Procurar") {');
-    Validate('w_nome','Nome','','1','4','20','1','');
-    ShowHTML('  theForm.Botao.value = "Procurar";');
-    ShowHTML('}');
-    ShowHTML('else {');
     Validate('w_cgccpf','CNPJ/Cód. Estrangeiro','CNPJ','1','7','18','','1');
-    ShowHTML('}');
   } else if ($O!='E' && $O!='V') {
     // Se o beneficiário já foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Troca") { return true; }');
@@ -479,7 +473,6 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     if ($w_cgccpf=='' || (!(strpos($_REQUEST['botao'],'Troca')===false))) {
-      $w_nome = $_REQUEST['w_nome'];
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
       ShowHTML('    <table border="0">');
       ShowHTML('        <tr><td colspan=3>Informe os dados abaixo e clique no botão "Selecionar" para continuar.</TD>');

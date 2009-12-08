@@ -1185,6 +1185,7 @@ Fontes_PHP_SIW/classes/sp/dml_putCVIdent.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVIdioma.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCVProducao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCaixa.php -text
+Fontes_PHP_SIW/classes/sp/dml_putCaixaDevolucao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCaixaEnvio.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCargo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putCategoriaDiaria.php -text
@@ -4330,6 +4331,7 @@ SP_Oracle92/siw/sp_putAcordoFornecimento.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
 SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text
+SP_Oracle92/siw/sp_putCaixaDevolucao.prc -text
 SP_Oracle92/siw/sp_putCaixaEnvio.prc -text
 SP_Oracle92/siw/sp_putConfCL.prc -text
 SP_Oracle92/siw/sp_putConfPD.prc -text

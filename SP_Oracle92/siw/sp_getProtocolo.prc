@@ -38,7 +38,8 @@ begin
              d1.sq_tipo_despacho, d1.nome as nm_despacho,
              d2.nome as nm_unid_origem,    d2.sigla as sg_unid_origem,
              d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest,
-             d4.nome as nm_pessoa_dest,    d4.nome_resumido as nm_res_pessoa_dest
+             d4.nome as nm_pessoa_dest,    d4.nome_resumido as nm_res_pessoa_dest,
+             d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp
         from siw_menu                                  a
              inner           join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
                inner         join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
@@ -61,7 +62,8 @@ begin
                        left  join pa_unidade           d5 on (d2.sq_unidade          = d5.sq_unidade)
                        left  join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
                      left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
-                     left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
+                     left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa)
+                     left    join co_pessoa            d8 on (d.cadastrador          = d8.sq_pessoa),
                sg_autenticacao                         w
        where a.sq_menu     = p_menu
          and w.sq_pessoa   = p_pessoa
@@ -85,7 +87,7 @@ begin
               (p_restricao = 'RELPATRAM' and d.sq_documento_log is not null and d.recebimento is null and d1.sq_tipo_despacho is not null and d2.sq_unidade is not null and d7.despacho_arqcentral is null)
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and (b1.acesso > 0 or (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
+              (p_tipo      = 2 and (b1.acesso > 0 or w.sq_pessoa  = d.cadastrador or (p_restricao = 'RELPATRAM' and (w.sq_unidade = d.unidade_origem or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
              );
    Elsif instr('PADAUTUA,PADANEXA,PADJUNTA,PACLASSIF, PADTRANSF,PADELIM,PADEMPREST,PAENVCEN,PADDESM', p_restricao) > 0 Then
       -- Recupera guias de tramitação
@@ -238,17 +240,16 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
-         and (b1.acesso    >= 8 or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
+         and (b1.acesso    >= 8 or p_numero is not null or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
-         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero))
-         and (p_ano        is null or (p_ano         is not null and c.ano                = p_ano))
+         and (p_numero     is null or (p_numero      is not null and c.numero_documento   = p_numero and c.ano = p_ano))
          and (p_nu_guia    is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia))
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_despacho   is null or (p_despacho    is not null and 
-                                       b4.ativo      = 'S' and
+                                       (b4.sigla     = 'AS' or b4.ativo = 'S') and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_anexar,
                                                             a1.despacho_apensar,
@@ -264,7 +265,7 @@ begin
                                       )
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and b1.acesso > 0)
+              (p_tipo      = 2 and (b1.acesso > 0 or p_numero is not null))
              );
    Elsif p_restricao = 'PADRECEB' Then
       -- Recupera guias de tramitação
@@ -286,7 +287,8 @@ begin
              d1.nome as nm_despacho,
              case when d.unidade_destino is null then d4.nome_resumido else d2.nome end as nm_unid_origem,    d2.sigla as sg_unid_origem,
              d3.nome as nm_unid_dest,      d3.sigla as sg_unid_dest,
-             d7.despacho_arqcentral
+             d7.despacho_arqcentral,
+             d8.nome as nm_pessoa_resp,    d8.nome_resumido as nm_res_pessoa_resp
         from siw_menu                                a
              inner         join siw_solicitacao      b  on (a.sq_menu              = b.sq_menu)
                inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) acesso
@@ -309,12 +311,13 @@ begin
                      inner join pa_unidade           d5 on (d2.sq_unidade          = d5.sq_unidade)
                      inner join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
                    left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
-                   left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
+                   left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa)
+                   left    join co_pessoa            d8 on (d.cadastrador          = d8.sq_pessoa),
                sg_autenticacao                       w
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (b1.acesso     >= 8 or ((d.unidade_destino is not null and (d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))) or (d.unidade_destino is null and (d.unidade_origem = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
+         and (b1.acesso     >= 8 or p_nu_guia is not null or ((d.unidade_destino is not null and (d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))) or (d.unidade_destino is null and (d.unidade_origem = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
          and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia));
          --and (p_unid_autua is null or (p_unid_autua  is not null and coalesce(c4.sq_unidade_pai,c4.sq_unidade) = coalesce(d5.sq_unidade_pai, d5.sq_unidade)));
    Elsif p_restricao = 'RECEBIDO' Then

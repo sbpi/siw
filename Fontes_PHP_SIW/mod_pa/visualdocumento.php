@@ -178,7 +178,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
           $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_caixa'),f($RS,'sq_unid_caixa'),$TP).'</td></tr>';
         } 
         $l_html.=chr(13).'   <tr><td><b>Caixa:</b></td>';
-        $l_html.=chr(13).'       <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($RS,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=600, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($RS,'nr_caixa').'/'.f($RS,'sg_unid_caixa').'</a></td></tr>';
+        $l_html.=chr(13).'       <td><A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($RS,'sq_caixa').'&w_formato=HTML&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($RS,'nr_caixa').'/'.f($RS,'sg_unid_caixa').'</a></td></tr>';
         $l_html.=chr(13).'   <tr><td><b>Pasta:</b></td>';
         $l_html.=chr(13).'       <td>'.f($RS,'pasta').'</td></tr>';
         $l_html.=chr(13).'   <tr><td><b>Assunto:</b></td>';
