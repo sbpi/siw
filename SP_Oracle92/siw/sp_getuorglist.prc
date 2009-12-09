@@ -12,7 +12,7 @@ begin
       p_restricao = 'RECURSO'      or p_restricao = 'PLANEJAMENTO'     or p_restricao = 'EXECUCAO' or 
       p_restricao = 'MOD_PA'       or p_restricao = 'MOD_PA_PAI'       or p_restricao = 'EXTERNO' or
       p_restricao = 'MOD_CL_PAI'   or p_restricao = 'MOD_PA_PROT'      or p_restricao = 'MOD_PA_SET' or
-      p_restricao = 'CL_PITCE'
+      p_restricao = 'CL_PITCE'     or p_restricao = 'CL_RENAPI'
    Then
       -- Recupera as unidades organizacionais do cliente
       open p_result for 
@@ -59,7 +59,8 @@ begin
                                                     (p_restricao = 'RECURSO'      and g.sq_unidade is not null and g.gestao_recursos  = 'S') or 
                                                     (p_restricao = 'PLANEJAMENTO' and g.sq_unidade is not null and g.planejamento     = 'S') or 
                                                     (p_restricao = 'EXECUCAO'     and g.sq_unidade is not null and g.execucao         = 'S') or 
-                                                    (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI'))
+                                                    (p_restricao = 'CL_PITCE'     and (a.sigla like 'PDP%' or a.sigla = 'CNDI')) or         
+                                                    (p_restricao = 'CL_RENAPI'    and a.unidade_gestora = 'S')
                                                    )
                                                   )
                 )
