@@ -21,7 +21,7 @@ function VisualGR($l_unidade, $l_nu_guia, $l_ano_guia, $l_menu=null, $l_formato=
       elseif (f($RS_Parametro,'despacho_anexar')==f($row,'sq_tipo_despacho'))  $w_preposicao = ' A ';  
       elseif (f($RS_Parametro,'despacho_apensar')==f($row,'sq_tipo_despacho')) $w_preposicao = ' A ';
       else $w_preposicao = '';  
-      
+
       if (f($RS_Parametro,'despacho_desmembrar')==f($row,'sq_tipo_despacho')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';
       
       if ($w_pag>1 && $l_formato=='WORD') {

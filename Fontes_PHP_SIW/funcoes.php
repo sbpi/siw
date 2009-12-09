@@ -1339,7 +1339,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
           $l_imagem = $conImgCancel;
           $l_title  = 'Registro cancelado.';
         } elseif ($l_tramite=='CI') {
-          if ($l_fim<time()) {
+          if (Nvl($l_fim,time()) < addDays(time(),-1)) {
             $l_imagem = $conImgAtraso;
             $l_title  = 'Execução não iniciada. Fim previsto superado.';
           } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
@@ -1347,10 +1347,10 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
             $l_title  = 'Execução não iniciada. Fim previsto próximo.';
           } else {
             $l_imagem = $conImgNormal;
-            $l_title  = 'Execução não iniciada. Prazo final dentro do previsto.';
+            $l_title  = 'Execução não iniciada. Prazo final não definido ou dentro do previsto.';
           }
         } else {
-          if ($l_fim<time()) {
+          if (Nvl($l_fim,time()) < addDays(time(),-1)) {
             $l_imagem = $conImgStAtraso;
             $l_title  = 'Em execução. Fim previsto superado.';
           } elseif ($l_aviso=='S' && $l_dias_aviso<=time()) {
@@ -1358,7 +1358,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
             $l_title  = 'Em execução. Fim previsto próximo.';
           } else {
             $l_imagem = $conImgStNormal;
-            $l_title  = 'Em execução. Prazo final dentro do previsto.';
+            $l_title  = 'Em execução. Prazo final não definido ou dentro do previsto.';
           }
         }
       } else {

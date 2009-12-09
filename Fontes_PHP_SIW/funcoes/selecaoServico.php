@@ -8,11 +8,19 @@ function selecaoServico($label,$accesskey,$hint,$chave,$chaveAux,$modulo,$campo,
   extract($GLOBALS);
   if(Nvl($restricao,'')=='MENURELAC') {
     $RS = db_getMenuRelac::getInstanceOf($dbms, $chaveAux, $acordo, $acao, $viagem, 'SERVICO');
-
-    // Verifica se o cliente tem o módulo de planejamento estratégico
-    $RS1 = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PE');
-    if (count($RS1)>0) $l_mod_pe='S'; else $l_mod_pe='N';
-
+    // Verifica se deve ser indicada opção para vinculação a plano estratégico
+    $l_mod_pe='N';
+    if (f($RS_Menu,'sg_modulo')!='PE') {    
+      $RS1 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'REGISTROS');
+      foreach ($RS1 as $row1) {
+        $RS2 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,null,null,null,null,'MENU');
+        foreach($RS2 as $row2){
+          if(f($row2,'sq_menu')==$chaveAux && nvl(f($row2,'sq_plano'),'')!=''){
+            $l_mod_pe='S';
+          }
+        }
+      }
+    }
   } elseif(Nvl($restricao,'')=='NUMERADOR') {
     $RS = $RS = db_getMenuList::getInstanceOf($dbms, $w_cliente, $restricao, $chaveAux, $modulo);
   } else {

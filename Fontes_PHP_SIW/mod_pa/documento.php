@@ -1487,7 +1487,7 @@ function Encaminhamento() {
     Validate('w_tipo_despacho','Despacho','SELECT',1,1,18,'','0123456789');
 
 	if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
-      Validate('w_protocolo','ao processo','1','1','20','20','','0123456789./-'); 
+      Validate('w_protocolo_nm','ao processo','hidden','1','20','20','','0123456789./-'); 
     }
 
     Validate('w_despacho','Detalhamento do despacho','','','1','2000','1','1');
@@ -1550,7 +1550,8 @@ function Encaminhamento() {
   ShowHTML('     <tr valign="top">');
   selecaoTipoDespacho('Des<u>p</u>acho:','P','Selecione o despacho desejado.',$w_cliente,$w_tipo_despacho,null,'w_tipo_despacho','SELECAO','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_tipo_despacho\'; document.Form.submit();"');
   if ($w_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $w_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
-    ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+    //ShowHTML('        <td><b>ao <u>p</u>rocesso:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="w_protocolo" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_protocolo.'" onKeyDown="FormataProtocolo(this,event);"></td>');
+    SelecaoProtocolo('ao <U>p</U>rocesso:','U','Selecione o processo ao qual o protocolo será juntado.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
   }
   ShowHTML('           </table>');
   ShowHTML('    <tr><td valign="top" colspan=3><b>Detalhamento do d<u>e</u>spacho:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Detalhe a ação a ser executada pelo destinatário.">'.$w_despacho.'</TEXTAREA></td>');
@@ -2087,7 +2088,6 @@ function Tramitacao() {
   $RS_Arq = $RS = db_getUorgData::getInstanceOf($dbms,f($RS_Parametro,'arquivo_central'));
   
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_autuar') || 
-      $p_tipo_despacho==f($RS_Parametro,'despacho_anexar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') ||  
       $p_tipo_despacho==f($RS_Parametro,'despacho_eliminar') || 

@@ -100,6 +100,9 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,'PADCAD');
 $w_ano      = RetornaAno();
 
+$RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'PA',null);
+foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
+
 $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 
 Main();

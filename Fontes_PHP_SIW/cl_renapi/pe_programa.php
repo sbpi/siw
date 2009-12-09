@@ -802,7 +802,9 @@ function Geral() {
         SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
       }
     }
-    $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
+    if(nvl(f($RS_Relac,'sigla'),'')!=''){
+      $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_solic_pai,f($RS_Relac,'sigla'));
+    }    
     ShowHTML('      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     ShowHTML('        <tr valign="top">');
     ShowHTML('          <td><b>Código:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_codigo" size="20" maxlength="20" value="'.$w_codigo.'" ></td>');

@@ -113,7 +113,9 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 o.nome_resumido_ind nm_solic_ind,
                 p.nome_resumido nm_exec, p.nome_resumido_ind nm_exec_ind,
-                'S' as aviso_prox_conc, 1 as dias_aviso, trunc(b.fim)-1 as aviso
+                case when b.fim is null then 'N'  else 'S' end as aviso_prox_conc,
+                case when b.fim is null then  0   else  1  end as dias_aviso, 
+                case when b.fim is null then null else trunc(b.fim)-1 end as aviso
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -169,7 +171,7 @@ begin
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and b.fim-sysdate+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and (trunc(b.fim)        between p_ini_i and p_ini_f)))
             and (p_fim_i          is null or (p_fim_i       is not null and (trunc(b.conclusao)  between p_fim_i and p_fim_f)))
-            and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and b.conclusao          is null and b.fim-sysdate<0))
+            and (Nvl(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and b.conclusao          is null and coalesce(b.fim,sysdate)<(sysdate-1)))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or

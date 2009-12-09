@@ -240,7 +240,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
-         and (b1.acesso    >= 8 or p_numero is not null or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
+         and (p_numero is not null or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)))
          and (p_chave      is null or (p_chave       is not null and b.sq_siw_solicitacao = p_chave))
          and (p_chave_aux  is null or (p_chave_aux   is not null and d.sq_documento_log   = p_chave_aux))
          and (p_prefixo    is null or (p_prefixo     is not null and c.prefixo            = p_prefixo))
@@ -317,7 +317,7 @@ begin
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and b.sq_solic_pai is null
-         and (b1.acesso     >= 8 or p_nu_guia is not null or ((d.unidade_destino is not null and (d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))) or (d.unidade_destino is null and (d.unidade_origem = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
+         and (p_nu_guia is not null or ((d.unidade_destino is not null and (d.unidade_destino = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_destino and fim is null))) or (d.unidade_destino is null and (d.unidade_origem = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = d.unidade_origem and fim is null)))))
          and (p_nu_guia     is null or (p_nu_guia     is not null and d.nu_guia            = p_nu_guia and d.ano_guia = p_ano_guia));
          --and (p_unid_autua is null or (p_unid_autua  is not null and coalesce(c4.sq_unidade_pai,c4.sq_unidade) = coalesce(d5.sq_unidade_pai, d5.sq_unidade)));
    Elsif p_restricao = 'RECEBIDO' Then

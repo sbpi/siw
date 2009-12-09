@@ -439,7 +439,7 @@ function Inicial() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td nowrap>');
-        ShowHTML(ExibeImagemSolic(f($row,'sigla'),nvl(f($row,'phpdt_inicio'),f($row,'phpdt_inclusao')),f($row,'phpdt_programada'),f($row,'phpdt_inicio'),f($row,'phpdt_conclusao'),'S',addDays(f($row,'fim'),-1),f($row,'sg_tramite'), null));
+        ShowHTML(ExibeImagemSolic(f($row,'sigla'),nvl(f($row,'phpdt_inicio'),f($row,'phpdt_inclusao')),f($row,'phpdt_programada'),f($row,'phpdt_inicio'),f($row,'phpdt_conclusao'),f($row,'aviso_prox_conc'),addDays(f($row,'fim'),-1),f($row,'sg_tramite'), null));
         if ($w_embed!='WORD') {
           ShowHTML('        <A class="HL" href="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'sq_siw_solicitacao').'</a>');
         } else {
