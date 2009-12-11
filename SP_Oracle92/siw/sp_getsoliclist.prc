@@ -1727,7 +1727,10 @@ begin
                                                                        then substr(replace(i.assunto,chr(13)||chr(10),' '),1,50)||'...'
                                                                        else replace(i.assunto,chr(13)||chr(10),' ')
                                                                   end
-                                                             else null
+                                                             else case when b.codigo_interno is not null
+                                                                       then b.codigo_interno
+                                                                       else null
+                                                                  end
                                                         end
                                               end
                                     end
@@ -1777,6 +1780,7 @@ begin
                  (a1.sigla = 'AC' and b3.sigla = 'PR' and d.vincula_contrato = 'S') or
                  (a1.sigla = 'PD' and b3.sigla = 'PR' and d.vincula_viagem   = 'S') or
                  (a1.sigla = 'FN' and b3.sigla = 'AC') or
+                 (a1.sigla = 'FN' and b3.sigla = 'PR') or
                  (a1.sigla = 'DM' and b3.sigla = 'PR') or
                  (a1.sigla = 'CO' and b3.sigla = 'PR') or
                  (a1.sigla = b3.sigla) or

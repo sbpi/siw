@@ -533,68 +533,6 @@ function BuscaColaborador() {
   Estrutura_Texto_Fecha();
 } 
 
-// =========================================================================
-// Rotina de tela de exibição do colaborador
-// -------------------------------------------------------------------------
-function TelaColaborador() {
-  extract($GLOBALS);
-  Global $w_Disabled;
-  $w_sq_pessoa  =  $_REQUEST['w_sq_pessoa'];
-  $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-  foreach ($RS as $row) {$RS = $row; break;}
-  Cabecalho();
-  ShowHTML('<HEAD>');
-  Estrutura_CSS($w_cliente);
-  ShowHTML('<TITLE>Colaborador</TITLE>');
-  ShowHTML('</HEAD>');
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  BodyOpen('onLoad=this.focus();');
-  $TP = 'Dados coloborador';
-  Estrutura_Texto_Abre();
-  ShowHTML('<table border="0" width="100%">');
-  ShowHTML('<tr><td>');
-  ShowHTML('    <table width="99%" border="0">');
-  ShowHTML('      <tr><td><b>Nome:</b></td>');
-  ShowHTML('        <td><font size=2>'.f($RS,'nome').' </td></tr>');
-  ShowHTML('      <tr><td><b>Nome resumido:</td>');
-  ShowHTML('        <td><font size=2>'.f($RS,'nome_resumido').'</td></tr>');
-  if (Nvl(f($RS,'email'),'')>'') {
-    ShowHTML('    <tr><td><b>e-Mail:</b></td>');
-    ShowHTML('      <td><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></td></tr>');
-  } else {
-    ShowHTML('    <tr><td><b>e-Mail:</b></td>');
-    ShowHTML('      <td>---</td></tr>');
-  } 
-  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>LOTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-
-  ShowHTML('      <tr><td><b>Unidade:</b></td>');
-  ShowHTML('        <td>'.f($RS,'unidade').' ('.f($RS,'sigla').')</td></tr>');
-  if (Nvl(f($RS,'email_unidade'),'')>'') {
-    ShowHTML('    <tr><td><b>e-Mail da unidade:</b></td>');
-    ShowHTML('      <td><A class="hl" HREF="mailto:'.f($RS,'email_unidade').'">'.f($RS,'email_unidade').'</a></b></td>');
-  } else {
-    ShowHTML('    <tr><td><b>e-Mail da unidade:</b></td>');
-    ShowHTML('      <td>---</td></tr>');
-  } 
-  ShowHTML('      <tr><td><b>Localização:</b></td>');
-  ShowHTML('        <td>'.f($RS,'localizacao').' </td></tr>');
-  ShowHTML('      <tr><td><b>Endereço:</b></td>');
-  ShowHTML('        <td>'.f($RS,'endereco').'</td></tr>');
-  ShowHTML('      <tr><td><b>Cidade:</b></td>');
-  ShowHTML('        <td>'.f($RS,'cidade').'</td></tr>');
-  ShowHTML('      <tr><td><b>Telefone:</b></td>');
-  ShowHTML('        <td>'.Nvl(f($RS,'telefone'),'---').' </td></tr>');
-  ShowHTML('      <tr><td><b>Ramal:</b></td>');
-  ShowHTML('        <td>'.Nvl(f($RS,'ramal'),'---').'</td></tr>');
-  ShowHTML('      <tr><td><b>Telefone 2:</b></td>');
-  ShowHTML('        <td>'.Nvl(f($RS,'telefone2'),'---').'</td></tr>');
-  ShowHTML('      <tr><td><b>Fax:</b></td>');
-  ShowHTML('        <td>'.Nvl(f($RS,'fax'),'---').'</td></tr>');
-  ShowHTML('  </td>');
-  ShowHTML('</tr>');
-  ShowHTML('</table>');
-  Estrutura_Texto_Fecha();
-} 
 
 // =========================================================================
 // Procedimento que executa as operações de BD
@@ -653,7 +591,6 @@ function Main() {
   switch ($par) {
     case 'AFASTAMENTO':        Afastamento();       break;
     case 'BUSCACOLABORADOR':   BuscaColaborador();  break;
-    case 'TELACOLABORADOR':    TelaColaborador();   break;
     case 'GRAVA':              Grava();             break;
   default:
     Cabecalho();

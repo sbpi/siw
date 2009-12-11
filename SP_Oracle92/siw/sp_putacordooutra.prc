@@ -38,7 +38,8 @@ create or replace procedure SP_PutAcordoOutra
      p_cidade_estrang      in varchar2  default null,
      p_informacoes         in varchar2  default null,
      p_codigo_deposito     in varchar2  default null,
-     p_pessoa_atual        in number    default null
+     p_pessoa_atual        in number    default null,
+     p_conta               in number    default null
    ) is
    
    w_sg_modulo       varchar2(10);
@@ -525,6 +526,12 @@ begin
             set sq_agencia     = p_sq_agencia,
                 operacao_conta = p_op_conta,
                 numero_conta   = p_nr_conta
+         where sq_siw_solicitacao = p_chave;
+      Elsif w_forma_pagamento = 'CHEQUE' Then
+         update fn_lancamento 
+            set sq_pessoa_conta = p_conta,
+                sq_agencia      = (select a.sq_agencia from co_pessoa_conta a where a.sq_pessoa_conta = p_conta),
+                numero_conta    = p_nr_conta
          where sq_siw_solicitacao = p_chave;
       Elsif w_forma_pagamento = 'ORDEM' Then
          update fn_lancamento 
