@@ -122,7 +122,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'          <tr><td><b>Forma de pagamento:</b></td>';
     $l_html.=chr(13).'            <td>'.f($RS,'nm_forma_pagamento').' </td></tr>';
-    if (f($RS_Menu,'sigla')!='FNDREEMB') {
+    if (nvl(f($RS,'referencia_inicio'),'')!='') {
       $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
       $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
     }
@@ -164,51 +164,58 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      '.f($row,'cnpj').'</b></td></tr>';
       } 
       if (f($RS,'sq_tipo_pessoa')==1) {
-        $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($RS_Query,'nm_sexo').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Data de nascimento:</b></td><td>'.Nvl(FormataDataEdicao(f($RS_Query,'nascimento')),'---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($RS_Query,'rg_numero').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($RS_Query,'rg_emissao'),'---')).'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($RS_Query,'rg_emissor').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.Nvl(f($RS_Query,'passaporte_numero'),'---').'</td></tr>';
-        $l_html.=chr(13).'      <tr><td><b>País emissor:</b></td><td>'.Nvl(f($RS_Query,'nm_pais_passaporte'),'---').'</td></tr>';
+        if (nvl(f($RS_Query,'nm_sexo'),'')!='') $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($RS_Query,'nm_sexo').'</td></tr>';
+        if (nvl(f($RS_Query,'nascimento'),'')!='') $l_html.=chr(13).'      <tr><td><b>Data de nascimento:</b></td><td>'.Nvl(FormataDataEdicao(f($RS_Query,'nascimento')),'---').'</td></tr>';
+        if (nvl(f($RS_Query,'rg_numero'),'')!='') $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($RS_Query,'rg_numero').'</td></tr>';
+        if (nvl(f($RS_Query,'rg_emissao'),'')!='') $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($RS_Query,'rg_emissao'),'---')).'</td></tr>';
+        if (nvl(f($RS_Query,'rg_emissor'),'')!='') $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($RS_Query,'rg_emissor').'</td></tr>';
+        if (nvl(f($RS_Query,'passaporte_numero'),'')!='') $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.Nvl(f($RS_Query,'passaporte_numero'),'---').'</td></tr>';
+        if (nvl(f($RS_Query,'nm_pais_passaporte'),'')!='') $l_html.=chr(13).'      <tr><td><b>País emissor:</b></td><td>'.Nvl(f($RS_Query,'nm_pais_passaporte'),'---').'</td></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td><b>Inscrição estadual:</b></td>';
-        $l_html.=chr(13).'           <td>'.Nvl(f($RS_Query,'inscricao_estadual'),'---').'</td></tr>';
+        if (nvl(f($RS_Query,'inscricao_estadual'),'')!='') {
+          $l_html.=chr(13).'      <tr><td><b>Inscrição estadual:</b></td><td>'.Nvl(f($RS_Query,'inscricao_estadual'),'---').'</td></tr>';
+        } else {
+          $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
+        }
       } 
-      if (f($RS,'sq_tipo_pessoa')==1) {
-        $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Endereço comercial, Telefones e e-Mail</td>';
+      if (nvl(f($RS_Query,'ddd'),'')!='' || nvl(f($RS_Query,'logradouro'),'')!='') {
+        if (f($RS,'sq_tipo_pessoa')==1) {
+          $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Endereço comercial, Telefones e e-Mail</td>';
+        } else {
+          $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Endereço principal, Telefones e e-Mail</td>';
+        }
+        $l_html.=chr(13).'      <tr><td width="30%"><b>Telefone:</b></td><td>'.((nvl(f($row,'ddd'),'')!='') ? '('.f($row,'ddd').') '.f($row,'nr_telefone') : '---').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Fax:</b></td><td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Celular:</b></td><td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Endereço:</b></td><td>'.f($row,'logradouro').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Complemento:</b></td><td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr><td><b>Bairro:</b></td><td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
+        if (f($row,'pd_pais')=='S') {
+          $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
+        } else {
+          $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
+        } 
+        $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';        
       } else {
-        $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Endereço principal, Telefones e e-Mail</td>';
+        $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Telefone:</b></td><td>('.f($row,'ddd').') '.f($row,'nr_telefone').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Fax:</b></td><td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Celular:</b></td><td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Endereço:</b></td><td>'.f($row,'logradouro').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Complemento:</b></td><td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td><b>Bairro:</b></td><td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
-      if (f($row,'pd_pais')=='S') {
-        $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
-      } else {
-        $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
-      } 
-      $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';        
-      if (Nvl(f($row,'email'),'nulo')!='nulo') {
+      if (nvl(f($RS_Query,'email'),'')!='') {
         if (!$l_tipo=='WORD') {
           $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</td></tr>';
         } else {
           $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>'.f($row,'email').'</td></tr>';
         } 
       } else {
-        $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>---</td></tr>';
+        $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
       } 
       if (substr($w_SG,0,3)=='FNR') {
-        $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
+        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       } elseif (substr($w_SG,0,3)=='FND') {
-        $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
+        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       } else {
-        $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
+        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
         $l_html.=chr(13).'      <tr><td><b>Forma de pagamento/recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
       }
       if (substr($w_SG,0,3)!='FNR' || Nvl(f($RS,'numero_conta'),'')!='') {

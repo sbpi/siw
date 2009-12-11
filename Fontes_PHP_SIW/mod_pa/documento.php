@@ -1895,7 +1895,7 @@ function BuscaAssunto() {
   ShowHTML('     window.close();');
   ShowHTML('     opener.focus();');
   ShowHTML('   }');
-  if (count($RS)>100 || ($w_nome>'' || $w_codigo>'')) {
+  if (count($RS)>200 || ($w_nome>'' || $w_codigo>'')) {
     ValidateOpen('Validacao');
     Validate('w_nome','Nome','1','','4','30','1','1');
     Validate('w_codigo','codigo','1','','2','10','1','1');
@@ -1911,7 +1911,7 @@ function BuscaAssunto() {
   ScriptClose();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
-  if (count($RS)>100 || ($w_nome>'' || $w_codigo>'')) {
+  if (count($RS)>200 || ($w_nome>'' || $w_codigo>'')) {
     BodyOpen('onLoad=\'document.Form.w_nome.focus();\'');
   } else {
     BodyOpen('onLoad=this.focus();');
@@ -1920,7 +1920,7 @@ function BuscaAssunto() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('    <table width="100%" border="0">');
-  if (count($RS)>100 || ($w_nome>'' || $w_codigo>'')) {
+  if (count($RS)>200 || ($w_nome>'' || $w_codigo>'')) {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="chaveaux" value="'.$chaveaux.'">');
@@ -2002,18 +2002,25 @@ function BuscaAssunto() {
         ShowHTML('            <td><b>Corrente</td>');
         ShowHTML('            <td><b>Intermediária</td>');
         ShowHTML('          </tr>');
+        $w_atual = '';
         foreach($RS as $row) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          if ($w_atual!=nvl(f($row,'ds_assunto_pai'),'')) { 
+            $w_cor = $w_cor=$conTrAlternateBgColor;
+            ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+            ShowHTML('            <td><b>'.f($row,'cd_assunto_pai').'</b></td>');
+            ShowHTML('            <td colspan="7"><b>');
+            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(f($row,'ds_assunto_bis').' &rarr; ');
+            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(f($row,'ds_assunto_avo').' &rarr; ');
+            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(f($row,'ds_assunto_pai'));
+            ShowHTML('            </b></td>');
+            ShowHTML('      </tr>');
+            $w_atual = f($row,'ds_assunto_pai');
+          }
+          $w_cor = $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">'.f($row,'codigo').'</a></td>');
-          ShowHTML('            <td>');
-          ShowHTML('                '.f($row,'descricao'));
-          if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
-            echo '<br>';
-            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
-          }
+          ShowHTML('            <td>'.f($row,'descricao'));
           ShowHTML('            </td>');
           ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
           ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');

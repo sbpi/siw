@@ -150,6 +150,8 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
     if (substr(f($l_rs_solic,'sigla'),0,3)=='FND') {
       if (!(strpos('CREDITO,DEPOSITO',f($l_rs_solic,'sg_forma_pagamento'))===false)) {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
+      } elseif (f($l_rs_solic,'sg_forma_pagamento')=='CHEQUE') {
+        if (nvl(f($l_rs_solic,'sq_pessoa_conta'),'')=='' || nvl(f($l_rs_solic,'numero_conta'),'')=='') $l_erro_banco = 1;
       } elseif (f($l_rs_solic,'sg_forma_pagamento')=='ORDEM') {
         if (nvl(f($l_rs_solic,'sq_agencia'),'')=='') $l_erro_banco = 1;
       } elseif (f($l_rs_solic,'sg_forma_pagamento')=='EXTERIOR') {
@@ -169,7 +171,8 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
 
   // Este bloco faz verificações em solicitações que estão em fases posteriores ao
   // cadastramento inicial
-  if (f($l_rs_tramite,'ordem')>1 || f($l_rs_solic,'sigla')=='FNDREEMB') {
+  /*
+    if (f($l_rs_tramite,'ordem')>1 || f($l_rs_solic,'sigla')=='FNDREEMB') {
       $l_erro=$l_erro;
       if (Nvl(f($l_rs_tramite,'sigla'),'---')=='EE' || f($l_rs_solic,'sigla')=='FNDREEMB') {
         // 4 - Recupera os documentos associados ao lançamento
@@ -196,7 +199,8 @@ function ValidaFundoFixo($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tram
         }
       }
     } 
-  } 
+  */ 
+  }
   $l_erro=$l_tipo.$l_erro;
   //-----------------------------------------------------------------------------------
   // Após as verificações feitas, devolve cadeia vazia se não encontrou erros, ou string

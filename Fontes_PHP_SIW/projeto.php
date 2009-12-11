@@ -1175,7 +1175,6 @@ function Descritivo() {
       } 
     } 
   }
-  if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   cabecalho();
   ShowHTML('<HEAD>');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,

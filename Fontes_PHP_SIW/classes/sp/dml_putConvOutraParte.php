@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -16,7 +16,7 @@ class dml_putConvOutraParte {
         $p_nr_celular, $p_email, $p_sq_agencia, $p_op_conta, $p_nr_conta, $p_sq_pais_estrang, $p_aba_code, $p_swift_code, 
         $p_endereco_estrang, $p_banco_estrang, $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito, 
         $p_pessoa_atual) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCONVOUTRAPARTE';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putConvOutraParte';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
                    'p_sq_acordo_outra_parte'     =>array(tvl($p_sq_acordo_outra_parte),                    B_INTEGER,        32),

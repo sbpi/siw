@@ -16,7 +16,7 @@ class dml_putLancamentoOutra  {
         $p_complemento, $p_bairro, $p_sq_cidade, $p_cep, $p_ddd, $p_nr_telefone, 
         $p_nr_fax, $p_nr_celular, $p_email, $p_sq_agencia, $p_op_conta, $p_nr_conta, 
         $p_sq_pais_estrang, $p_aba_code, $p_swift_code, $p_endereco_estrang, $p_banco_estrang, 
-        $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito, $p_pessoa_atual) {
+        $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito, $p_pessoa_atual, $p_conta) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putAcordoOutra';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
@@ -57,7 +57,8 @@ class dml_putLancamentoOutra  {
                    'p_cidade_estrang'            =>array(tvl($p_cidade_estrang),                           B_VARCHAR,        60),
                    'p_informacoes'               =>array(tvl($p_informacoes),                              B_VARCHAR,       200),
                    'p_codigo_deposito'           =>array(tvl($p_codigo_deposito),                          B_VARCHAR,        50),
-                   'p_pessoa_atual'              =>array(tvl($p_pessoa_atual),                             B_INTEGER,        32)
+                   'p_pessoa_atual'              =>array(tvl($p_pessoa_atual),                             B_INTEGER,        32),
+                   'p_conta'                     =>array(tvl($p_conta),                                    B_INTEGER,        32)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

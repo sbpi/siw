@@ -47,7 +47,6 @@ include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoTermo.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoParc.php');
-include_once($w_dir_volta.'classes/sp/dml_putAcordoOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoPreposto.php');
 include_once($w_dir_volta.'classes/sp/dml_putAcordoRep.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');

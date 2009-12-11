@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getFormaPagamento.php');
 // =========================================================================
 // Montagem da seleção da forma de pagamento
