@@ -2835,11 +2835,11 @@ function Classificacao() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>&nbsp;</td>');
+    ShowHTML('          <td rowspan=2><b>Resumo</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Assunto</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
-    ShowHTML('          <td rowspan=2><b>Resumo</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>Espécie</td>');
@@ -2861,7 +2861,7 @@ function Classificacao() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_unidade = f($row,'sq_unidade_posse');
-        ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center" width="1%" nowrap>'); 
         if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
           ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'">'); 
@@ -2869,6 +2869,9 @@ function Classificacao() {
           ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'">'); 
         }
         ShowHTML('        </td>');
+        if (strlen(Nvl(f($row,'descricao'),'-'))>500) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,500).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
+        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+        else                            ShowHTML('        <td width="50%" title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'">'.htmlspecialchars($w_titulo).'</td>');
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
         ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'cd_assunto').'</td>');
@@ -2876,9 +2879,6 @@ function Classificacao() {
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'numero_original').'</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
-        if (strlen(Nvl(f($row,'descricao'),'-'))>50) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,50).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-        else                            ShowHTML('        <td width="50%" title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
         ShowHTML('      </tr>');
         $i += 1;
       } 
