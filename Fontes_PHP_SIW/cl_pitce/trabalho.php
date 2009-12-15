@@ -691,7 +691,7 @@ function Calendario() {
     
     ShowHTML('            <tr valign="top">');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano1],$w_mes1.$w_ano1,$w_datas,$w_cores,&$w_detalhe1).' </td>');
-    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano],$w_mes2.$w_ano,$w_datas,$w_cores,&$w_detalhe2).' </td>');
+    ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano2],$w_mes2.$w_ano2,$w_datas,$w_cores,&$w_detalhe2).' </td>');    
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano3],$w_mes3.$w_ano3,$w_datas,$w_cores,&$w_detalhe3).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano4],$w_mes4.$w_ano4,$w_datas,$w_cores,&$w_detalhe4).' </td>');
     ShowHTML('              <td align="center">'.montaCalendario($RS_Ano[$w_ano5],$w_mes5.$w_ano5,$w_datas,$w_cores,&$w_detalhe5).' </td>');
