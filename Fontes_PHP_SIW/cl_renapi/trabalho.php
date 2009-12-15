@@ -607,7 +607,7 @@ function Arquivos() {
   SelecaoTipoArquivoTab('Ti<u>p</u>o:','P',null,$p_tipo,null,'p_tipo',null,null,null,'<td>');
   ShowHTML('   </tr>');
   ShowHTML('   <tr><td><b>Pesquisa por <u>t</u>exto</b></td>');
-  ShowHTML('   <td><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_texto" value="'. $p_texto .'"></td>');
+  ShowHTML('   <td><input class="STI" accesskey="T" type="text" size="50" maxlength="50" name="p_titulo" value="'.$p_titulo.'"></td>');
   ShowHTML('   </tr>');
   ShowHTML('   <tr><td>&nbsp;</td>');
   ShowHTML('       <td>');
