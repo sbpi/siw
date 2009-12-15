@@ -104,12 +104,13 @@ $w_mes4    = substr(100+intVal($w_mes)+3,1,2);
 $w_mes5    = substr(100+intVal($w_mes)+4,1,2);
 $w_mes6    = substr(100+intVal($w_mes)+5,1,2);
 $w_ano1    = $w_ano;
+$w_ano2    = $w_ano;
 $w_ano3    = $w_ano;
 $w_ano4    = $w_ano;
 $w_ano5    = $w_ano;
 $w_ano6    = $w_ano;
 // Ajusta a mudança de ano
-if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano3 = $w_ano+1; }
+if ($w_mes2 > 12)  { $w_mes2 = '01'; $w_mes3 = '02'; $w_mes4 = '03'; $w_mes5 = '04'; $w_mes6 = '05'; $w_ano2 = $w_ano+1; $w_ano3 = $w_ano2; $w_ano4 = $w_ano2; $w_ano5 = $w_ano2; $w_ano6 = $w_ano2;}
 if ($w_mes3 > 12)  { $w_mes3 = '01'; $w_mes4 = '02'; $w_mes5 = '03'; $w_mes6 = '04'; $w_ano3 = $w_ano + 1; $w_ano4 = $w_ano3; $w_ano5 = $w_ano3; $w_ano6 = $w_ano3;}
 if ($w_mes4 > 12)  { $w_mes4 = '01'; $w_mes5 = '02'; $w_mes6 = '03'; $w_ano4 = $w_ano + 1; $w_ano5 = $w_ano4; $w_ano6 = $w_ano4;}
 if ($w_mes5 > 12)  { $w_mes5 = '01'; $w_mes6 = '02'; $w_ano5 = $w_ano + 1; $w_ano6 = $w_ano5; }
