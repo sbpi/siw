@@ -685,7 +685,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   if (nvl($l_pagina,'')!='') {
     $l_form .= AbreForm('RetornaDados',$l_dir.$l_pagina.$l_par,'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
   } else {
-    $l_form .= AbreForm('RetornaDados',nvl($w_dir.$_POST['R'],$_SERVER['HTTP_REFERER']),'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
+    $l_form .= AbreForm('RetornaDados',nvl(montaURL_JS($w_dir,$_POST['R']),$_SERVER['HTTP_REFERER']),'POST',null,null,nvl($l_p1,$_POST['P1']),nvl($l_p2,$_POST['P2']),nvl($l_p3,$_POST['P3']),nvl($l_p4,$_POST['P4']),nvl($l_tp,$_POST['TP']),nvl($l_sg,$_POST['SG']),nvl($l_r,$_POST['R']),nvl($l_o,$_POST['O']),'texto');
   }
   if (nvl($l_troca,'')!='') $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_troca" VALUE="'.$l_troca.'">';
   if (nvl($l_menu,'')!='')  $l_form .= chr(13).'<INPUT TYPE="HIDDEN" NAME="w_menu" VALUE="'.$l_menu.'">';
@@ -721,6 +721,7 @@ function RetornaFormulario($l_troca=null,$l_sg=null,$l_menu=null,$l_o=null,$l_di
   }
   ShowHTML('  document.forms["RetornaDados"].submit();');
   ScriptClose();
+  exit();
 }
 // =========================================================================
 // Exibe o conteúdo da querystring, do formulário e das variáveis de sessão

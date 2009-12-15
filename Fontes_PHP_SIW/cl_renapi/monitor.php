@@ -2057,7 +2057,7 @@ function Etapas() {
       $w_total_tarefa    = 0;
       $w_total_anexo     = 0;
       foreach($RS as $row) {
-        ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),'S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida')));
+        ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),'S','PROJETO',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida'),f($row,'pacote_trabalho')));
         if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
         if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
         if (nvl(f($row,'inicio_real'),'')!='' && ($w_real_menor=='' || $w_real_menor > f($row,'inicio_real'))) $w_real_menor = f($row,'inicio_real');
@@ -2069,7 +2069,7 @@ function Etapas() {
         $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
         $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
       } 
-      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo,null));
+      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo,null,'N'));
       ShowHTML('</FORM>');
     } 
     ShowHTML('      </center>');
@@ -2432,9 +2432,9 @@ function AtualizaEtapa() {
              Nvl(f($row,'executor'),0)   == $w_usuario
             )
           ) {
-          ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),$w_fase,'ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida')));
+          ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),$w_fase,'ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida'),f($row,'pacote_trabalho')));
         } else {
-          ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),'N','ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida')));
+          ShowHtml(EtapaLinha($w_chave,f($row,'sq_projeto_etapa'),f($row,'titulo'),f($row,'nm_resp'),f($row,'sg_setor'),f($row,'inicio_previsto'),f($row,'fim_previsto'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'perc_conclusao'),f($row,'qt_ativ'),((nvl(f($row,'sq_etapa_pai'),'')=='') ? '<b>' : ''),'N','ETAPA',f($row,'sq_pessoa'),f($row,'sq_unidade'),f($row,'pj_vincula_contrato'),f($row,'qt_contr'),f($row,'orcamento'),(f($row,'level')-1),f($row,'restricao'),f($row,'peso'),f($row,'qt_anexo'),f($row,'unidade_medida'),f($row,'pacote_trabalho')));
         } 
         if ($w_previsto_menor=='' || $w_previsto_menor > f($row,'inicio_previsto')) $w_previsto_menor = f($row,'inicio_previsto');
         if ($w_previsto_maior=='' || $w_previsto_maior < f($row,'fim_previsto'))    $w_previsto_maior = f($row,'fim_previsto');
@@ -2447,7 +2447,7 @@ function AtualizaEtapa() {
         $w_total_tarefa      += nvl(f($row,'qt_ativ'),0);
         $w_total_anexo       += nvl(f($row,'qt_anexo'),0);
       } 
-      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo,null));
+      ShowHTML(EtapaLinha($w_chave,null,null,null,null,$w_previsto_menor,$w_previsto_maior,$w_real_menor,$w_real_maior,$w_ige,$w_total_tarefa,'','S','PROJETO',null,null,'N',null,$w_total_orcamento,0,null,$w_total_peso,$w_total_anexo,null,'N'));
       ShowHTML('      </FORM>');
     } 
     /*
@@ -3818,7 +3818,7 @@ function Concluir() {
 // =========================================================================
 // Gera uma linha de apresentação da tabela de etapas
 // -------------------------------------------------------------------------
-function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_arquivo=0, $l_desafio='') {
+function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_arquivo=0, $l_desafio='',$l_pacote='N') {
   extract($GLOBALS);
   global $w_cor;
   $l_recurso = '';
@@ -3846,7 +3846,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   $grupo = MontaOrdemEtapa($l_chave_aux);
   
   if ($P4!=1) {
-    if ($P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
+    if ($P4!=1 && $l_pacote=='N') $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
     $fechado = 'style="display:none"';
 

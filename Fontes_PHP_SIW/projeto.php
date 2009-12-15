@@ -4573,10 +4573,12 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
   
   
   $grupo = MontaOrdemEtapa($l_chave_aux);
-  
   if ($P4!=1) {
+  
+  
     if ($l_destaque!='<b>' && $P4!=1) $imagem = '<td width="10" nowrap>'.montaArvore($l_chave.'_'.$grupo).'</td>'; else $imagem='<td width="10"></td>';
   
+    //$fechado = 'style="display:none"';
     $fechado = 'style="display:none"';
 
     if(strpos($grupo,'.')===false) $fechado = '';
@@ -4599,6 +4601,7 @@ function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$
     if($P4!=1) $l_html .= chr(13).' '.ExibeEtapa('V',$l_chave,$l_chave_aux,'Volta',10,$grupo,$TP,$SG).$l_img.'</td>';
     else       $l_html .= chr(13).' '.$grupo.$l_img.'</td>';
     if (nvl($l_nivel,0)==0) {
+      var_dump($imagem);    
       $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.$imagem.'<td>'.$l_destaque.$l_titulo.'</b></td></tr></table>';
     } else {
       $l_html .= chr(13).'        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',($l_nivel)).$imagem.'<td>'.$l_destaque.$l_titulo.' '.'</b></td></tr></table>';
@@ -5363,12 +5366,32 @@ function Grava() {
           exit();          
         }
       }
-      dml_putProjetoEtapa::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_chave_pai'],
-          $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
-          $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],$_REQUEST['w_sq_pessoa'],
-          $_REQUEST['w_sq_unidade'],$_REQUEST['w_vincula_atividade'],$_REQUEST['w_vincula_contrato'],$w_usuario,$_REQUEST['w_programada'],
-          $_REQUEST['w_cumulativa'],$_REQUEST['w_quantidade'],null,$_REQUEST['w_pacote'],$_REQUEST['w_base'],
-          $_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],$_REQUEST['w_cidade'],$_REQUEST['w_peso']);
+      //Verifica se existe um número de ordem repetido
+      if (strpos('IA',$O)!==false) {
+        $RS = db_getEtapaOrder::getInstanceOf($dbms, $w_chave, $w_chave_aux, $w_chave_pai);
+        $RS = db_getEtapaOrder::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_chave_pai']);
+        foreach($RS as $row) {
+          if(nvl($_REQUEST['w_chave_aux'],0)!=f($row,'sq_projeto_etapa') && $_REQUEST['w_ordem'] == f($row,'ordena')){
+            $erro = true;            
+          }
+        }
+      }else{
+        $erro = false;
+      }
+      
+      if($erro){
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Número de ordem repetido('.$_REQUEST['w_ordem'].'). Verifique os outros itens de mesma subordinação.\');');
+        ScriptClose();
+        retornaFormulario('w_ordem');        
+      }else{      
+        dml_putProjetoEtapa::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_chave_pai'],
+            $_REQUEST['w_titulo'],$_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_inicio'],
+            $_REQUEST['w_fim'],$_REQUEST['w_perc_conclusao'],$_REQUEST['w_orcamento'],$_REQUEST['w_sq_pessoa'],
+            $_REQUEST['w_sq_unidade'],$_REQUEST['w_vincula_atividade'],$_REQUEST['w_vincula_contrato'],$w_usuario,$_REQUEST['w_programada'],
+            $_REQUEST['w_cumulativa'],$_REQUEST['w_quantidade'],null,$_REQUEST['w_pacote'],$_REQUEST['w_base'],
+            $_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'],$_REQUEST['w_cidade'],$_REQUEST['w_peso']);
+      }
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
       $RS = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);

@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de exibição dos dados do programa
 // -------------------------------------------------------------------------
@@ -402,7 +402,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
             $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Até</b></div></td>';
             $l_html .= chr(13).'          </tr>';
             //Se for visualização normal, irá visualizar somente as etapas
-            foreach($RS_Etapa as $row1)$l_html .= chr(13).EtapaLinha($w_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),'N','PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),'N',f($row1,'qt_contr'),f($row1,'orcamento'),0,f($row1,'restricao'));
+            foreach($RS_Etapa as $row1)$l_html .= chr(13).EtapaLinha($w_chave,f($row1,'sq_projeto_etapa'),f($row1,'titulo'),f($row1,'nm_resp'),f($row1,'sg_setor'),f($row1,'inicio_previsto'),f($row1,'fim_previsto'),f($row1,'inicio_real'),f($row1,'fim_real'),f($row1,'perc_conclusao'),f($row1,'qt_ativ'),((f($row1,'pacote_trabalho')=='S') ? '<b>' : ''),'N','PROJETO',f($row1,'sq_pessoa'),f($row1,'sq_unidade'),'N',f($row1,'qt_contr'),f($row1,'orcamento'),0,f($row1,'restricao'),f($row1,'pacote_trabalho'));
           }
         }
       } 
@@ -820,7 +820,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
 // =========================================================================
 // Gera uma linha de apresentação da tabela de etapas
 // -------------------------------------------------------------------------
-function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$_l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1') {
+function EtapaLinha($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_perc,$l_ativ,$l_destaque,$l_oper,$_l_tipo,$l_sq_resp,$l_sq_setor,$l_vincula_contrato,$l_contr, $l_valor=null,$l_nivel=0,$l_restricao='N',$l_peso='1',$l_pacote='N) {
   extract($GLOBALS);
   global $w_cor;
   $l_recurso = '';
