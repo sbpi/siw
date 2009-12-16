@@ -21,6 +21,7 @@ include_once($w_dir_volta.'classes/sp/db_getAddressList.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/db_getCVAcadForm.php');
 include_once($w_dir_volta.'classes/sp/db_getIdiomList.php');
+include_once($w_dir_volta.'classes/sp/db_getGPContrato.php');
 include_once($w_dir_volta.'classes/sp/db_getKnowArea.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoPostoList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
@@ -2097,22 +2098,48 @@ function Grava() {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
           ScriptClose();
-        }            
+        }
+        $w_username = 'N';            
         //Se for inclusão de colaborador, deve incluir o contrato
         if (Nvl($P1,0)==1 && Nvl($_REQUEST['w_sq_contrato_colaborador'],'')=='') {
-          dml_putGPContrato::getInstanceOf($dbms,$O,
-          $w_cliente,$_REQUEST['w_sq_contrato_colaborador'],$w_chave_nova,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
-          $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
-          $_REQUEST['w_dt_ini'],null,$_REQUEST['w_sq_tipo_vinculo']);
-          $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
-          foreach($RS as $row){$RS=$row; break;}
-          if ((Nvl(f($RS,'username'),'')=='S') || (Nvl(f($RS,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
-            dml_putSiwUsuario::getInstanceOf($dbms,'I',
-                $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
-                $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-                $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B');
-            dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-          } 
+          if (Nvl($_REQUEST['w_modalidade_contrato'],'')!='') {
+            $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_modalidade_contrato'],null,null,null,null,null);
+            foreach ($RS as $row){
+              if(Nvl(f($row,'ferias'),'') == 'S'){
+                $ferias = 'S';
+              }elseif(Nvl(f($row,'ferias'),'') == 'N'){
+                $ferias = 'N';
+              }else{
+                $ferias = 'S';
+              }
+              if(trim(Nvl(f($row,'horas_extras'),'')) == 'S'){
+                $extras = 'S';
+              }elseif(trim(Nvl(f($row,'horas_extras'),'')) == 'N'){
+                $extras = 'N';
+              }else{
+                $extras = 'S';
+              }        
+            }
+            //Decide pela criação de username 
+            if ((Nvl(f($row,'username'),'')=='S') || (Nvl(f($row,'username'),'')=='P' && $_REQUEST['w_username_pessoa']=='S')) {
+              $w_username = 'S';
+            }
+            //Grava os dados do contrato
+            dml_putGPContrato::getInstanceOf($dbms,$O,
+                $w_cliente,$_REQUEST['w_sq_contrato_colaborador'],null,$w_chave_nova,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
+                $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
+                $_REQUEST['w_dt_ini'],null,$w_username,$ferias,$extras,
+                $_REQUEST['w_sq_tipo_vinculo'],null,null,null,null,null,null,'N','N','00:00',formataDataEdicao(time()),'0,00'
+            );
+            //Cria a conta para o usuário
+            if ($w_username == 'S') {
+              dml_putSiwUsuario::getInstanceOf($dbms,'I',
+                  $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
+                  $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
+                  $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B');
+              dml_putSiwUsuario::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+            } 
+          }
         } 
         ScriptOpen('JavaScript');
         if ($_SESSION['PORTAL']>'' && $O=='I') {
