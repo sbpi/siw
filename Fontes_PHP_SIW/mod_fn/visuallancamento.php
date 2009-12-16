@@ -120,8 +120,16 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       }
     }
-    $l_html.=chr(13).'          <tr><td><b>Forma de pagamento:</b></td>';
-    $l_html.=chr(13).'            <td>'.f($RS,'nm_forma_pagamento').' </td></tr>';
+    if (substr($w_SG,0,3)=='FNR') {
+      if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
+      $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+    } elseif (substr($w_SG,0,3)=='FND') {
+      if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
+      $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+    } else {
+      if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
+      $l_html.=chr(13).'      <tr><td><b>Forma de pagamento/recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
+    }
     if (nvl(f($RS,'referencia_inicio'),'')!='') {
       $l_html.=chr(13).'          <tr><td><b>Período de referência:</b></td>';
       $l_html.=chr(13).'            <td>'.FormataDataEdicao(f($RS,'referencia_inicio')).' a '.FormataDataEdicao(f($RS,'referencia_fim')).'</td></tr>';
@@ -157,12 +165,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr><td colspan=2 align=center><font size=1>Outra parte não informada';
     } else {
       $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
-      $l_html.=chr(13).'          '.f($RS_Query,'nm_pessoa').' ('.f($RS_Query,'nome_resumido').') - ';
-      if (Nvl(f($RS,'sq_tipo_pessoa'),0)==1) {
-        $l_html.=chr(13).'      '.f($row,'cpf').'</b></td></tr>';
-      } else {
-        $l_html.=chr(13).'      '.f($row,'cnpj').'</b></td></tr>';
-      } 
+      $l_html.=chr(13).'          '.f($RS_Query,'nm_pessoa').' ('.f($RS_Query,'nome_resumido').') - '.f($RS_Query,'identificador_primario').'</b></td></tr>';
       if (f($RS,'sq_tipo_pessoa')==1) {
         if (nvl(f($RS_Query,'nm_sexo'),'')!='') $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($RS_Query,'nm_sexo').'</td></tr>';
         if (nvl(f($RS_Query,'nascimento'),'')!='') $l_html.=chr(13).'      <tr><td><b>Data de nascimento:</b></td><td>'.Nvl(FormataDataEdicao(f($RS_Query,'nascimento')),'---').'</td></tr>';
@@ -174,8 +177,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         if (nvl(f($RS_Query,'inscricao_estadual'),'')!='') {
           $l_html.=chr(13).'      <tr><td><b>Inscrição estadual:</b></td><td>'.Nvl(f($RS_Query,'inscricao_estadual'),'---').'</td></tr>';
-        } else {
-          $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
         }
       } 
       if (nvl(f($RS_Query,'ddd'),'')!='' || nvl(f($RS_Query,'logradouro'),'')!='') {
@@ -196,8 +197,6 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'      <tr><td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
         } 
         $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';        
-      } else {
-        $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
       }
       if (nvl(f($RS_Query,'email'),'')!='') {
         if (!$l_tipo=='WORD') {
@@ -205,19 +204,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         } else {
           $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>'.f($row,'email').'</td></tr>';
         } 
-      } else {
-        $l_html.=chr(13).'      <tr><td>&nbsp;</td></tr>';
       } 
-      if (substr($w_SG,0,3)=='FNR') {
-        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento</td>';
-        $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
-      } elseif (substr($w_SG,0,3)=='FND') {
-        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento</td>';
-        $l_html.=chr(13).'      <tr><td><b>Forma de pagamento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
-      } else {
-        if (f($RS,'sg_forma_pagamento')!='ESPECIE') $l_html.=chr(13).'      <tr><td colspan=2 align="center" style="border: 1px solid rgb(0,0,0);"><b>Dados para pagamento/recebimento</td>';
-        $l_html.=chr(13).'      <tr><td><b>Forma de pagamento/recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
-      }
       if (substr($w_SG,0,3)!='FNR' || Nvl(f($RS,'numero_conta'),'')!='') {
         if (!(strpos('CREDITO,DEPOSITO',f($RS,'sg_forma_pagamento'))===false)) {
           if (Nvl(f($RS,'cd_banco'),'')>'') {

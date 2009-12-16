@@ -6,7 +6,6 @@ include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 function selecaoTipoPessoa($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $RS = db_getKindPersonList::getInstanceOf($dbms, null);
-  if ($restricao>'') { $RS->Filter=$restricao; }
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   } else {

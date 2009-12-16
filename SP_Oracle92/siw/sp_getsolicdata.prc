@@ -502,7 +502,7 @@ begin
                 d.referencia_fim,     d.sq_pessoa_conta,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
-                d2.nome nm_pessoa, d2.nome_resumido nm_pessoa_resumido,
+                d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 coalesce(d3.valor,0) valor_doc,
                 d4.nome nm_forma_pagamento, d4.sigla sg_forma_pagamento, d4.ativo st_forma_pagamento,
                 d5.codigo cd_agencia, d5.nome nm_agencia,

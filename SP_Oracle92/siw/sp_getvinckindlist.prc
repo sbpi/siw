@@ -10,7 +10,7 @@ begin
    open p_result for 
       select a.sq_tipo_vinculo, a.nome, a.padrao,
              a.interno, a.contratado, a.envia_mail_tramite, a.envia_mail_alerta,
-             a.ativo, b.nome sq_tipo_pessoa
+             a.ativo, b.nome as sq_tipo_pessoa
         from co_tipo_vinculo a, 
              co_tipo_pessoa  b
        where a.sq_tipo_pessoa = b.sq_tipo_pessoa
@@ -21,4 +21,4 @@ begin
          and ((p_interno     is null) or (p_interno     is not null and a.interno = p_interno))
      order by a.interno desc, b.nome, a.ordem;
 end SP_GetVincKindList;
-
+/

@@ -2739,7 +2739,12 @@ function Classificacao() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, 
         $p_tipo_despacho);
-    $RS = SortArray($RS,'ano','asc', 'prefixo','asc','protocolo','asc');
+    if (Nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'inicio','asc','ano','asc', 'prefixo','asc','protocolo','asc');
+     } else {
+      $RS = SortArray($RS,'inicio','asc','ano','asc', 'prefixo','asc','protocolo','asc');
+    }
     $w_existe = count($RS);
     
     if (count($w_chave) > 0) {
@@ -2835,17 +2840,17 @@ function Classificacao() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2 width="1%" nowrap><b>&nbsp;</td>');
-    ShowHTML('          <td rowspan=2><b>Resumo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Assunto</td>');
+    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Resumo','descricao').'</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Tipo','nm_tipo').'</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Protocolo','protocolo').'</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Assunto','cd_assunto').'</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Espécie</td>');
-    ShowHTML('          <td><b>Nº</td>');
-    ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Procedência</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Espécie','nm_especie').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nº','numero_original').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Data','inicio').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Procedência','nm_origem_doc').'</td>');
     ShowHTML('        </tr>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<input type="hidden" name="w_chave[]" value="">');
@@ -2870,15 +2875,15 @@ function Classificacao() {
         }
         ShowHTML('        </td>');
         if (strlen(Nvl(f($row,'descricao'),'-'))>500) $w_titulo=substr(Nvl(f($row,'descricao'),'-'),0,500).'...'; else $w_titulo=Nvl(f($row,'descricao'),'-');
-        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td width="50%" title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
-        else                            ShowHTML('        <td width="50%" title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'">'.htmlspecialchars($w_titulo).'</td>');
+        if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
+        else                            ShowHTML('        <td title="'.((strlen(Nvl(f($row,'descricao'),'-'))>500) ? htmlspecialchars(f($row,'descricao')) : '').'">'.htmlspecialchars($w_titulo).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_tipo').'</td>');
+        ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
+        ShowHTML('        <td>'.f($row,'numero_original').'</td>');
+        ShowHTML('        <td>'.formataDataEdicao(f($row,'inicio'),5).'</td>');
+        ShowHTML('        <td>'.f($row,'nm_origem_doc').'</td>');
         ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
-        ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'cd_assunto').'</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_especie').'</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'numero_original').'</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.formataDataEdicao(f($row,'inicio'),5).'&nbsp;</td>');
-        ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_origem_doc').'</td>');
+        ShowHTML('        <td>'.f($row,'cd_assunto').'</td>');
         ShowHTML('      </tr>');
         $i += 1;
       } 

@@ -104,8 +104,7 @@ begin
          set fim = p_fim
        where sq_contrato_colaborador = p_chave;
       update co_pessoa 
-         set sq_tipo_vinculo = null,
-             funcionario     = 'N'
+         set funcionario     = 'N'
        where sq_pessoa = p_sq_pessoa;  
       update sg_autenticacao
          set ativo = 'N'

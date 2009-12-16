@@ -2172,12 +2172,15 @@ function TelaUsuario() {
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
         ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
         ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('          <td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('          <td>'.((f($row1,'tipo_pessoa')==1) ? 'CPF' : 'CNPJ').':<br><b>'.nvl(f($row1,'identificador_primario'),'---'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {
-          ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
+          ShowHTML('          <td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
         } else {
-          ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
+          ShowHTML('          <td>e-Mail:<b><br>---</td>');
         } 
         if (f($row1,'sq_tipo_pessoa')==1) {
           ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');

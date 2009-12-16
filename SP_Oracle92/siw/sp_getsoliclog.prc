@@ -472,7 +472,7 @@ begin
          -- Recupera os encaminhamentos de um programa
          open p_result for 
             select h.sq_documento_log as chave_log, a.sq_siw_solic_log, a.sq_siw_tramite,a.data, 
-                   coalesce(m.nome,a.observacao) as despacho,
+                   coalesce(m.nome,a.observacao)||case when h.resumo is not null then ': '||h.resumo else '' end as despacho,
                    case when h.sq_documento_log is null then a1.sq_pessoa else n.sq_pessoa end as sq_pessoa_resp,
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
                    h.recebedor, h1.nome_resumido as nm_recebedor,

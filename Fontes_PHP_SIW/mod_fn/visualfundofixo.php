@@ -249,30 +249,56 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   }
     
   // Pagamentos vinculados
-  $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNDEVENT');
-  $RS = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),4,
+  $RS1 = db_getLinkData::getInstanceOf($dbms,$w_cliente,'FNDFUNDO');
+  $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,f($RS1,'sigla'),4,
          null,null,null,null,null,null,null,null,null,null,null,null,null,null,
          null,null,null,null,null,null,null,null,$v_chave,null,null,null);
-  $RS = SortArray($RS,'fim','asc');
-  if (count($RS)>0) {
+  $RS1 = SortArray($RS1,'fim','asc');
+  if (count($RS1)>0) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>LANÇAMENTOS VINCULADOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-    $l_html.=chr(13).'            <td><b>Código</td>';
-    $l_html.=chr(13).'            <td><b>Pessoa</td>';
-    $l_html.=chr(13).'            <td><b>Finalidade</td>';
-    $l_html.=chr(13).'            <td><b>Vencimento</td>';
-    $l_html.=chr(13).'            <td><b>Valor</td>';
-    $l_html.=chr(13).'            <td><b>Saldo</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
+    $l_html.=chr(13).'            <td colspan="3"><b>Comprovante</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Pessoa</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Finalidade</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Crédito</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Débito</td>';
+    $l_html.=chr(13).'            <td rowspan="2"><b>Saldo</td>';
+    $l_html.=chr(13).'          </tr>';
+    $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+    $l_html.=chr(13).'            <td><b>Data</td>';
+    $l_html.=chr(13).'            <td><b>Tipo</td>';
+    $l_html.=chr(13).'            <td><b>Número</td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$w_TrBgColor;
     $w_atual = $w_inicial;
-    $w_total=0;
-    foreach ($RS as $row) {
+    $w_total = 0;
+    $i       = 0;
+    foreach ($RS1 as $row) {
+      if ($i==0) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td align="center">'.ExibeImagemSolic(f($RS,'sigla'),f($RS,'inicio'),f($RS,'vencimento'),f($RS,'inicio'),f($RS,'quitacao'),f($RS,'aviso_prox_conc'),f($RS,'aviso'),f($RS,'sg_tramite'), null).' '.f($RS,'codigo_interno').'</td>';
+        $l_html.=chr(13).'        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($RS,'inicio'),5),'-').'</td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'nm_forma_pagamento').'</td>';
+        $l_html.=chr(13).'        <td>'.f($RS,'numero_conta').'</td>';
+        $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($RS,'valor')).'</td>';
+        $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber(f($RS,'valor')).'</td>';
+      }
+      // Recupera o comprovante ligado ao pagamento.
+      // Pagamentos de fundo fixo só podem ter um comprovante ligados a eles
+      $RS2 = db_getLancamentoDoc::getInstanceOf($dbms,f($row,'sq_siw_solicitacao'),null,'DOCS');
+      $RS2 = SortArray($RS2,'data','asc');
+      foreach($RS2 as $row2) { $RS2 = $row2; break; }
       $l_html.=chr(13).'      <tr valign="top">';
       $l_html.=chr(13).'        <td align="center">'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
-      if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
+      if ($w_tipo!='WORD') $l_html.=chr(13).'        <A class="hl" HREF="'.$w_dir.'lancamento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>';
       else                 $l_html.=chr(13).'        '.f($row,'codigo_interno').'';
+      $l_html.=chr(13).'        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($RS2,'data'),5),'-').'</td>';
+      $l_html.=chr(13).'        <td>'.f($RS2,'nm_tipo_documento').'</td>';
+      $l_html.=chr(13).'        <td>'.f($RS2,'numero').'</td>';
       if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
         if ($w_tipo!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa_resumido')).'</td>';
         else                 $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_resumido').'</td>';
@@ -280,14 +306,15 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="center">---</td>';
       }
       $l_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
-      $l_html.=chr(13).'        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($row,'vencimento'),5),'-').'</td>';
-      $l_html.=chr(13).'        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;</td>';
+      $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+      $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
       $w_total += Nvl(f($row,'valor'),0);
       $w_atual -= Nvl(f($row,'valor'),0);
-      $l_html.=chr(13).'        <td align="right">'.number_format($w_atual,2,',','.').'&nbsp;</td>';
+      $l_html.=chr(13).'        <td align="right">'.formatNumber($w_atual).'</td>';
+      $i++;
     } 
     $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-    $l_html.=chr(13).'        <td align="right" colspan=4><b>Total das despesas</b></td>';
+    $l_html.=chr(13).'        <td align="right" colspan=7><b>Total das despesas</b></td>';
     $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
     $l_html.=chr(13).'        <td align="right"><b>&nbsp;</b></td>';
     $l_html.=chr(13).'      </tr>';
