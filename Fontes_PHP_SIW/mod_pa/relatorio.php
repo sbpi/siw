@@ -603,8 +603,8 @@ function Etiqueta() {
       else
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_origem')).'</font>');
       ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
-      if (strlen(Nvl(f($RS,'descricao'),'-'))>100) 
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');
+      if (strlen(Nvl(f($RS,'descricao'),'-'))>1000) 
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,1000).'...</font>');
       else
         ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
       ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(str_replace('/','',str_replace('-','',str_replace('.','',f($RS,'protocolo'))))));
