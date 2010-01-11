@@ -30,10 +30,10 @@ function VisualCaixa($l_chave, $l_formato='WORD',$l_espelho) {
         $l_html.=chr(13).'<tr><td colspan="2">';
         $l_html.=chr(13).'  <table width="100%" border=0>';
         $l_html.=chr(13).'    <tr valign="top">';
-        $l_html.=chr(13).'      <td><font size=1><b>'.strtoupper(f($RS,'nome').' - '.f($RS,'nome_resumido')).'</b></font></td>';
+        $l_html.=chr(13).'      <td><font size=1><b>'.upper(f($RS,'nome').' - '.f($RS,'nome_resumido')).'</b></font></td>';
         $l_html.=chr(13).'      <td align="right"><font size=1><b>Pág. '.$w_pag.'</b></td></font></tr>';
         $l_html.=chr(13).'    <tr valign="top">';
-        $l_html.=chr(13).'      <td><font size=1><b>'.strtoupper($conSgSistema.' - Módulo de '.f($RS_Menu,'nm_modulo')).'</b></font></td>';
+        $l_html.=chr(13).'      <td><font size=1><b>'.upper($conSgSistema.' - Módulo de '.f($RS_Menu,'nm_modulo')).'</b></font></td>';
         $l_html.=chr(13).'      <td align="right"><font size=1><b>'.datahora().'</b></td></font></tr>';
         $l_html.=chr(13).'  </table>';
       }

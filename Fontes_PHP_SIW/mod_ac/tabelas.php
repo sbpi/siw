@@ -66,22 +66,22 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = $_REQUEST['P1'];
 $P2             = $_REQUEST['P2'];
 $P3             = nvl($_REQUEST['P3'],1);
 $P4             = nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
+$SG             = upper($_REQUEST['SG']);
 $R              = $_REQUEST['R'];
-$O              = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O              = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
-$p_ordena       = strtolower(trim($_REQUEST['p_ordena']));
+$p_ordena       = lower(trim($_REQUEST['p_ordena']));
 
 if ($O=='') $O = 'L';
 
@@ -1804,7 +1804,7 @@ function Grava() {
   switch ($SG) {
     case 'TIPOACORDO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
@@ -1816,7 +1816,7 @@ function Grava() {
             break;
           } 
           // Testa a existência do sigla
-          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,strtoupper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
+          $RS = db_getAgreeType::getInstanceOf($dbms,$_REQUEST['w_sq_tipo_acordo'],null,$w_cliente,null,upper(Nvl($_REQUEST['w_sigla'],'')),'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de acordo com esta sigla!\');');
@@ -1842,7 +1842,7 @@ function Grava() {
       break;
     case 'FORMAPAG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {  
         if (!(strpos('IAE',$O)===false))  {
           dml_putFormaPagamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
                $_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
@@ -1868,7 +1868,7 @@ function Grava() {
       break;
     case 'ACPARAM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putACParametro::getInstanceOf($dbms,$w_cliente,
            $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'],
            $_REQUEST['w_numeracao'],$_REQUEST['w_dias_pagamento'],$_REQUEST['w_texto_pagamento']);     
@@ -1884,7 +1884,7 @@ function Grava() {
       break;
     case 'ACMODAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCModalidade::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, 'EXISTE');
@@ -1896,7 +1896,7 @@ function Grava() {
             break;
           } 
           // Testa a existência do sigla
-          $RS = db_getLCModalidade::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, null ,strtoupper(Nvl($_REQUEST['w_sigla'],'')),null, 'EXISTE');
+          $RS = db_getLCModalidade::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, null ,upper(Nvl($_REQUEST['w_sigla'],'')),null, 'EXISTE');
           if (count($RS)>0) {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'Já existe tipo de modalidade com esta sigla!\');');
@@ -1906,7 +1906,7 @@ function Grava() {
           } 
         }  
         dml_putLCModalidade::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
-           $_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],$_REQUEST['w_fundamentacao'],
+           $_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),$_REQUEST['w_descricao'],$_REQUEST['w_fundamentacao'],
            $_REQUEST['w_minimo_pesquisas'],$_REQUEST['w_minimo_participantes'],$_REQUEST['w_propostas_validas'],
            $_REQUEST['w_certame'],$_REQUEST['w_enquadramento_inicial'],$_REQUEST['w_enquadramento_final'],
            $_REQUEST['w_contrato'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);       
@@ -1922,7 +1922,7 @@ function Grava() {
       break;
     case 'ACFONTE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCFonteRecurso::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
@@ -1949,7 +1949,7 @@ function Grava() {
       break;
     case 'CT_ESPEC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {    
         dml_putCTEspecificacao::getInstanceOf($dbms, $O, $_REQUEST['w_cliente'],
             $_REQUEST['w_chave'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_cc'],$_REQUEST['w_ano'],
             $_REQUEST['w_codigo'],$_REQUEST['w_nome'],$_REQUEST['w_valor'],
@@ -1966,7 +1966,7 @@ function Grava() {
       break;                   
     case 'ACPREST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getPrestacaoContas::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_chave_pai'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');

@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Montagem da seleção de vinculações de recurso.
 // -------------------------------------------------------------------------
@@ -6,7 +6,7 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
   extract($GLOBALS);
   
   if (nvl($restricao,'')=='') {
-    $l_chave = strtoupper($chave);
+    $l_chave = upper($chave);
     include_once($w_dir_volta.'classes/sp/db_getSiwCliModLis.php');
     
     // Verifica se o cliente tem o módulo de recursos logísticos contratado
@@ -25,7 +25,7 @@ function selecaoVinculoRecurso($label,$accesskey,$hint,$chave,$chaveAux,$campo,$
     if ($w_mod_sr!='') if (nvl($l_chave,'')=='VEÍCULO') ShowHTML('          <option value="VEÍCULO" SELECTED>Vinculado a veículo'); else ShowHTML('          <option value="VEÍCULO">Vinculado a veículo');
     ShowHTML('          </select>');
   } else {
-    $l_chave = strtoupper($chaveAux);
+    $l_chave = upper($chaveAux);
     // Se restrição for informado, chama exibe seleção do objeto
     switch ($l_chave) {
       case 'PESSOA': 

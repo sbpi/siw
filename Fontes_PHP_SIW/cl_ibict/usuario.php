@@ -48,17 +48,17 @@ $w_dir = 'cl_ibict/';
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],0);
 $P4         = nvl($_REQUEST['P4'],0);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $w_cliente  = 9234;
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'usuario.php?par=';
 $w_Disabled     = false;
 if ($O =='') $O = 'I';

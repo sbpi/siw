@@ -53,22 +53,22 @@ if ($_SESSION['LOGON'] != 'Sim') {
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par = strtoupper($_REQUEST['par']);
+$par = upper($_REQUEST['par']);
 $P1 = $_REQUEST['P1'];
 $P2 = $_REQUEST['P2'];
 $P3 = $_REQUEST['P3'];
 $P4 = $_REQUEST['P4'];
 $TP = $_REQUEST['TP'];
-$SG = strtoupper($_REQUEST['SG']);
+$SG = upper($_REQUEST['SG']);
 $R = $_REQUEST['R'];
-$O = strtoupper($_REQUEST['O']);
+$O = upper($_REQUEST['O']);
 
 $p_programa    = $_REQUEST['p_programa'];
 $p_projeto     = $_REQUEST['p_projeto'];
-$p_solicitante = strtoupper($_REQUEST['p_solicitante']);
-$p_unidade     = strtoupper($_REQUEST['p_unidade']);
+$p_solicitante = upper($_REQUEST['p_solicitante']);
+$p_unidade     = upper($_REQUEST['p_unidade']);
 $p_texto       = $_REQUEST['p_texto'];
-$p_ordena      = strtolower($_REQUEST['p_ordena']);
+$p_ordena      = lower($_REQUEST['p_ordena']);
 $p_atrasado    = $_REQUEST['p_atrasado'];
 $p_adiantado   = $_REQUEST['p_adiantado'];
 $p_concluido   = $_REQUEST['p_concluido'];
@@ -81,7 +81,7 @@ $p_conc_atraso = $_REQUEST['p_conc_atraso'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina = 'resultados.php?par=';
 $w_Disabled = 'ENABLED';
 $w_dir = 'cl_pitce/';

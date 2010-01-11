@@ -60,18 +60,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = Nvl($_REQUEST['P1'],0);
 $P2             = Nvl($_REQUEST['P2'],0);
 $P3             = Nvl($_REQUEST['P3'],1);
 $P4             = Nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
-$R              = strtolower($_REQUEST['R']);
-$O              = strtoupper($_REQUEST['O']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$w_troca        = strtolower($_REQUEST['w_troca']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$SG             = upper($_REQUEST['SG']);
+$R              = lower($_REQUEST['R']);
+$O              = upper($_REQUEST['O']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$w_troca        = lower($_REQUEST['w_troca']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'colaborador.php?par=';
 $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
@@ -110,21 +110,21 @@ exit;
 function Inicial() {
   extract($GLOBALS);
   Global $w_Disabled;
-  $p_contrato_colaborador   = strtoupper($_REQUEST['p_contrato_colaborador']);
-  $p_modalidade_contrato    = strtoupper($_REQUEST['p_modalidade_contrato']);
-  $p_unidade_lotacao        = strtoupper($_REQUEST['p_unidade_lotacao']);
-  $p_filhos_lotacao         = strtoupper($_REQUEST['p_filhos_lotacao']);
-  $p_unidade_exercicio      = strtoupper($_REQUEST['p_unidade_exercicio']);
-  $p_filhos_exercicio       = strtoupper($_REQUEST['p_filhos_exercicio']);
+  $p_contrato_colaborador   = upper($_REQUEST['p_contrato_colaborador']);
+  $p_modalidade_contrato    = upper($_REQUEST['p_modalidade_contrato']);
+  $p_unidade_lotacao        = upper($_REQUEST['p_unidade_lotacao']);
+  $p_filhos_lotacao         = upper($_REQUEST['p_filhos_lotacao']);
+  $p_unidade_exercicio      = upper($_REQUEST['p_unidade_exercicio']);
+  $p_filhos_exercicio       = upper($_REQUEST['p_filhos_exercicio']);
   $p_afastamento            = explodeArray($_REQUEST['p_afastamento']);
-  $p_dt_ini                 = strtoupper($_REQUEST['p_dt_ini']);
-  $p_dt_fim                 = strtoupper($_REQUEST['p_dt_fim']);
-  $p_ferias                 = strtoupper($_REQUEST['p_ferias']);
-  $p_viagem                 = strtoupper($_REQUEST['p_viagem']);
-  $w_sq_pessoa              = strtoupper($_REQUEST['w_sq_pessoa']);
-  $w_nome                   = strtoupper($_REQUEST['w_nome']);
-  $w_cpf                    = strtoupper($_REQUEST['w_cpf']);
-  $w_botao                  = strtoupper($_REQUEST['w_botao']);
+  $p_dt_ini                 = upper($_REQUEST['p_dt_ini']);
+  $p_dt_fim                 = upper($_REQUEST['p_dt_fim']);
+  $p_ferias                 = upper($_REQUEST['p_ferias']);
+  $p_viagem                 = upper($_REQUEST['p_viagem']);
+  $w_sq_pessoa              = upper($_REQUEST['w_sq_pessoa']);
+  $w_nome                   = upper($_REQUEST['w_nome']);
+  $w_cpf                    = upper($_REQUEST['w_cpf']);
+  $w_botao                  = upper($_REQUEST['w_botao']);
   if ($O=='L') {
     $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$p_contrato_colaborador,null,null,$p_modalidade_contrato,$p_unidade_lotacao,$p_filhos_lotacao,$p_unidade_exercicio,$p_filhos_exercicio,$p_afastamento,$p_dt_ini,$p_dt_fim,$p_ferias,$p_viagem,null,'COLABORADOR');
     if ($p_ordena>'') {
@@ -1531,7 +1531,7 @@ function Contrato() {
 function Visual() {
   extract($GLOBALS);
   $w_chave  = $_REQUEST['w_chave'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($w_tipo=='PDF') {
     headerpdf('Ficha funcional',$w_pag);
     $w_embed = 'WORD';
@@ -1633,7 +1633,7 @@ function Grava() {
   switch ($SG) {
     case 'COINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putGPColaborador::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_pessoa'],null,null,null,
             null,null,null,null,null,null,null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
@@ -1648,7 +1648,7 @@ function Grava() {
       break;
     case 'CODOCUM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putGPColaborador::getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_ctps_numero'],$_REQUEST['w_ctps_serie'],$_REQUEST['w_ctps_emissor'],
         $_REQUEST['w_ctps_emissao'],$_REQUEST['w_pis_pasep'],$_REQUEST['w_pispasep_numero'],$_REQUEST['w_pispasep_cadastr'],
         $_REQUEST['w_te_numero'],$_REQUEST['w_te_zona'],$_REQUEST['w_te_secao'],$_REQUEST['w_reservista_numero'],
@@ -1666,7 +1666,7 @@ function Grava() {
       break;
     case 'COCONTR':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (Nvl($_REQUEST['w_ativo'],0)>0 && Nvl($_REQUEST['w_dt_fim'],'')=='') {
           ScriptOpen('JavaScript');
           ShowHTML('alert(\'Já existe contrato ativo para este colaborador, não sendo possível uma nova inclusão\');');
@@ -1728,7 +1728,7 @@ function Grava() {
       break;
     case 'CODES':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $RS = db_getGPDesempenho::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);            
         if(count($RS)>0 && $O=='I') {
           ScriptOpen('JavaScript');
@@ -1750,7 +1750,7 @@ function Grava() {
       break;
       case 'COREM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //$RS = db_getGPAlteracaoSalario::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);            
         /*if(count($RS)>0 && $O=='I') {
           ScriptOpen('JavaScript');

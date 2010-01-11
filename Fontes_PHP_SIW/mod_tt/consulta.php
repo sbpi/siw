@@ -51,22 +51,22 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
-$par       = strtoupper($_REQUEST['par']);
+$par       = upper($_REQUEST['par']);
 $P1        = nvl($_REQUEST['P1'],0);
 $P2        = nvl($_REQUEST['P2'],0);
 $P3        = nvl($_REQUEST['P3'],1);
 $P4        = nvl($_REQUEST['P4'],$conPageSize);
 $TP        = $_REQUEST['TP'];
-$SG        = strtoupper($_REQUEST['SG']);
+$SG        = upper($_REQUEST['SG']);
 $R         = $_REQUEST['R'];
-$O         = strtoupper($_REQUEST['O']);
+$O         = upper($_REQUEST['O']);
 
-$w_assinatura    = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura    = upper($_REQUEST['w_assinatura']);
 $w_pagina        = 'consulta.php?par=';
 $w_dir           = 'mod_tt/';
 $w_Disabled      = 'ENABLED';
 
-$p_ordena  = strtolower($_REQUEST['p_ordena']);
+$p_ordena  = lower($_REQUEST['p_ordena']);
 
 if ($O=='') {
   if ($par=='PARTICULAR') $O='R';
@@ -130,28 +130,28 @@ function LigacaoParticular(){
   extract($GLOBALS);
   global $w_Disabled;
 
-  $w_sq_ligacao          = strtoupper($_REQUEST['w_sq_ligacao']);
-  $w_nome_usuario        = strtoupper($_REQUEST['w_nome_usuario']);
-  $p_sq_cc               = strtoupper($_REQUEST['p_sq_cc']);
-  $p_outra_parte_contato = strtoupper($_REQUEST['p_outra_parte_contato']);
-  $p_ativo               = strtoupper($_REQUEST['p_ativo']);
-  $p_inicio              = strtoupper($_REQUEST['p_inicio']);
-  $p_fim                 = strtoupper($_REQUEST['p_fim']);
-  $p_numero              = strtoupper($_REQUEST['p_numero']);
+  $w_sq_ligacao          = upper($_REQUEST['w_sq_ligacao']);
+  $w_nome_usuario        = upper($_REQUEST['w_nome_usuario']);
+  $p_sq_cc               = upper($_REQUEST['p_sq_cc']);
+  $p_outra_parte_contato = upper($_REQUEST['p_outra_parte_contato']);
+  $p_ativo               = upper($_REQUEST['p_ativo']);
+  $p_inicio              = upper($_REQUEST['p_inicio']);
+  $p_fim                 = upper($_REQUEST['p_fim']);
+  $p_numero              = upper($_REQUEST['p_numero']);
   if ($w_troca>'') {
-    $w_sq_ligacao          = strtoupper($_REQUEST['w_sq_ligacao']);
-    $p_sq_cc               = strtoupper($_REQUEST['p_sq_cc']);
-    $w_sq_acordo           = strtoupper($_REQUEST['w_sq_acordo']); 
-    $w_assunto             = strtoupper($_REQUEST['w_assunto']);
-    $p_ativo               = strtoupper($_REQUEST['p_ativo']);
-    $w_imagem              = strtoupper($_REQUEST['w_imagem']);
-    $w_fax                 = strtoupper($_REQUEST['w_fax']); 
-    $w_trabalho            = strtoupper($_REQUEST['w_trabalho']);
-    $p_outra_parte_contato = strtoupper($_REQUEST['p_outra_parte_contato']);
+    $w_sq_ligacao          = upper($_REQUEST['w_sq_ligacao']);
+    $p_sq_cc               = upper($_REQUEST['p_sq_cc']);
+    $w_sq_acordo           = upper($_REQUEST['w_sq_acordo']); 
+    $w_assunto             = upper($_REQUEST['w_assunto']);
+    $p_ativo               = upper($_REQUEST['p_ativo']);
+    $w_imagem              = upper($_REQUEST['w_imagem']);
+    $w_fax                 = upper($_REQUEST['w_fax']); 
+    $w_trabalho            = upper($_REQUEST['w_trabalho']);
+    $p_outra_parte_contato = upper($_REQUEST['p_outra_parte_contato']);
     if ($p_ordena==''){ 
       if ($P1==3) $RS = SortArray(f($row,'phpdt_ordem','desc')); else $RS = SortArray(f($row,'phpdt_ordem','asc')); 
     } else {
-      $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+      $lista = explode(',',str_replace(' ',',',lower($_REQUEST['p_ordena'])));
       if ($P1==3) $RS = SortArray(f($RS,$lista[0],$lista[1],'phpdt_ordem','desc')); else $RS = SortArray(f($RS,$lista[0],$lista[1],'phpdt_ordem','asc')); 
     }
   }

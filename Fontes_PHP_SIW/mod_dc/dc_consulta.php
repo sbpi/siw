@@ -55,22 +55,22 @@ include_once($w_dir_volta.'classes/sp/db_getArquivo.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'dc_consulta.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
 $w_troca        = $_REQUEST['w_troca'];
-$w_copia        = strtoupper($_REQUEST['w_copia']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
+$w_copia        = upper($_REQUEST['w_copia']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
@@ -281,7 +281,7 @@ function Tabela() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        </td>');
@@ -355,15 +355,15 @@ function Tabela() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'RELACIONAMENTO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&w_sq_relacionamento='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_relacionamento')).'</A>&nbsp');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'RELACIONAMENTO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&w_sq_relacionamento='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_relacionamento')).'</A>&nbsp');
         if ($w_sq_tabela==f($row,'tabela_filha'))
           ShowHTML('        <td nowrap>'.f($row,'nm_usuario_tab_filha').'.'.f($row,'nm_tabela_filha').'</td>');
         else
-          ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario_tab_filha').'.'.f($row,'nm_tabela_filha')).'</A>&nbsp');
+          ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario_tab_filha').'.'.f($row,'nm_tabela_filha')).'</A>&nbsp');
         if ($w_sq_tabela==f($row,'tabela_pai'))
           ShowHTML('        <td nowrap>'.f($row,'nm_usuario_tab_pai').'.'.f($row,'nm_tabela_pai').'</td>');
         else
-          ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_pai').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario_tab_pai').'.'.f($row,'nm_tabela_pai')).'</A>&nbsp');
+          ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_pai').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario_tab_pai').'.'.f($row,'nm_tabela_pai')).'</A>&nbsp');
         ShowHTML('      </tr>'); 
       } 
     } 
@@ -396,7 +396,7 @@ function Tabela() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_sp_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('      </tr>');
@@ -478,7 +478,7 @@ function Trigger() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>'.f($row,'nm_trigger').'</td>');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
         if (f($row,'eventos')>'') ShowHTML('        <td>'.f($row,'eventos').'</td>');
         else                     ShowHTML('        <td align="center">---</td>');
         ShowHTML('        <td>'.f($row,'ds_trigger').'</td>');
@@ -530,7 +530,7 @@ function StoredProcedure() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_sp_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'ds_sp').'</td>');
         ShowHTML('        </td>');
@@ -746,10 +746,10 @@ function Indice() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.strtolower(f($row,'nm_indice')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.lower(f($row,'nm_indice')).'</A></td>');
         ShowHTML('        <td>'.f($row,'nm_indice_tipo').'</td>');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
-        ShowHTML('        <td>'.Nvl(strtolower(f($row,'colunas')),'---'));
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
+        ShowHTML('        <td>'.Nvl(lower(f($row,'colunas')),'---'));
         ShowHTML('        <td>'.f($row,'ds_indice').'</td>');
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
@@ -810,10 +810,10 @@ function Coluna() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_coluna')).'</A>&nbsp');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_coluna')).'</A>&nbsp');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
         ShowHTML('        <td nowrap>'.f($row,'nm_coluna_tipo').' (');
-        if (strtoupper(f($row,'nm_coluna_tipo'))=='NUMERIC')
+        if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC')
           ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
         else
           ShowHTML(f($row,'tamanho'));
@@ -885,9 +885,9 @@ function Coluna() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor; 
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.strtolower(f($row,'nm_indice')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.lower(f($row,'nm_indice')).'</A></td>');
         ShowHTML('        <td nowrap>'.f($row,'nm_indice_tipo').'</td>');
-        ShowHTML('       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
+        ShowHTML('       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp');
         ShowHTML('        <td nowrap>'.f($row,'colunas').'</td>');
         ShowHTML('        <td>'.f($row,'ds_indice').'</td>');
         ShowHTML('        </td>');
@@ -936,7 +936,7 @@ function Arquivo() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_arquivo')).'</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_arquivo')).'</A>&nbsp');
         if (f($row,'diretorio')!='')
           ShowHTML('      <td>'.f($row,'diretorio').'</td>');
         else
@@ -1057,7 +1057,7 @@ function Procedure() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'PROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_procedure='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_procedure')).'</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'PROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_procedure='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_procedure')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_sp_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'nm_arquivo').'</td>');
         ShowHTML('        <td>'.f($row,'ds_procedure').'</td>');
@@ -1300,7 +1300,7 @@ function ExibeTabela($l_sq_usuario,$l_sq_tabela,$l_ordena) {
     foreach ($RS as $row) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-      $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp';
+      $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A>&nbsp';
       $w_html.='        <td nowrap>'.f($row,'nm_tipo').'</td>';
       $w_html.='        <td>'.f($row,'descricao').'</td>';
       $w_html.='        </td>';
@@ -1339,18 +1339,18 @@ function ExibeColuna($l_sq_usuario,$l_sq_tabela,$l_ordena) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
         $w_html.='        <td align="top" nowrap>';
-        $w_html.='          <A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.strtolower(f($row,'nm_coluna'));
+        $w_html.='          <A class="HL" HREF="'.$w_dir.$w_pagina.'COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome">'.lower(f($row,'nm_coluna'));
         if (Nvl(f($row,'sq_relacionamento'),'nulo')!='nulo')
           $w_html.='          (FK)';
         $w_html.='          </A>&nbsp';
         $w_html.='        <td nowrap>'.f($row,'nm_coluna_tipo').' (';
-        if (strtoupper(f($row,'nm_coluna_tipo'))=='NUMERIC')
+        if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC')
           $w_html.=Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0);
         else
           $w_html.=f($row,'tamanho');
         $w_html.=')</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
         $w_html.='        <td align="center">'.f($row,'obrigatorio').'</td>';
         if (f($row,'valor_padrao')!='')
           $w_html.='      <td>'.f($row,'valor_padrao').'</td>';
@@ -1394,10 +1394,10 @@ function ExibeIndice($l_sq_usuario,$l_sq_tabela,$l_ordena) {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_indice')).'</A></td>';
+        $w_html.='        <td><A class="HL" HREF="'.$w_dir.$w_pagina.'INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_indice')).'</A></td>';
         $w_html.='        <td nowrap>'.f($row,'nm_indice_tipo').'</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
         $w_html.='        <td nowrap>'.f($row,'colunas').'</td>';
         $w_html.='        <td>'.f($row,'ds_indice').'</td>';
         $w_html.='        </td>';
@@ -1437,7 +1437,7 @@ function ExibeTrigger($l_sistema,$l_sq_usuario,$l_sq_tabela,$l_ordena) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;$w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
         $w_html.='        <td align="top" nowrap>'.f($row,'nm_trigger').'</td>';
         if (Nvl($l_sq_tabela,'nulo')=='nulo')
-          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
+          $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A>&nbsp';
         if (f($row,'eventos')!='')
           $w_html.='        <td align="center">'.f($row,'eventos').'</td>';
         else
@@ -1477,7 +1477,7 @@ function ExibeSP($l_sistema,$l_sq_usuario,$l_sq_sp,$l_ordena) {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         $w_html.='      <tr bgcolor="'.$w_cor.'" valign="top">';
-        $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp';
+        $w_html.='       <td nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Stored procedure">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp';
         $w_html.='        <td>'.f($row,'nm_sp_tipo').'</td>';
         $w_html.='        <td>'.f($row,'ds_sp').'</td>';
         $w_html.='        </td>';

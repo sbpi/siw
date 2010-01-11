@@ -42,16 +42,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'rel_contas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
@@ -84,11 +84,11 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_troca      = $_REQUEST['w_troca'];
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_dt_ini     = strtoupper(trim($_REQUEST['p_dt_ini']));
-  $p_dt_fim     = strtoupper(trim($_REQUEST['p_dt_fim']));
-  $p_nome       = strtoupper(trim($_REQUEST['p_nome']));
-  $w_sq_pessoa  = strtoupper(trim($_REQUEST['w_sq_pessoa']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_dt_ini     = upper(trim($_REQUEST['p_dt_ini']));
+  $p_dt_fim     = upper(trim($_REQUEST['p_dt_fim']));
+  $p_nome       = upper(trim($_REQUEST['p_nome']));
+  $w_sq_pessoa  = upper(trim($_REQUEST['w_sq_pessoa']));
   $p_ordena     = $_REQUEST['p_ordena'];
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -96,7 +96,7 @@ function Inicial() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     // Recupera todos os registros para a listagem
     $RS = db_getLancamento::getInstanceOf($dbms,$w_cliente,substr($SG,0,3),$p_dt_ini,$p_dt_fim,$w_sq_pessoa,'EE,ER');
-    $RS = SortArray($RS,strtolower($p_ordena),'asc');
+    $RS = SortArray($RS,lower($p_ordena),'asc');
   } 
   if ($w_tipo_rel=='WORD') {
     HeaderWord($_REQUEST['orientacao']);

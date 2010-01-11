@@ -41,16 +41,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'rel_fluxo.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
@@ -85,9 +85,9 @@ exit;
 function Inicial(){
   extract($GLOBALS);
   global $w_Disabled;
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_mes_fluxo  = strtoupper(trim($_REQUEST['p_mes_fluxo']));
-  $p_ano_fluxo  = strtoupper(trim($_REQUEST['p_ano_fluxo']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_mes_fluxo  = upper(trim($_REQUEST['p_mes_fluxo']));
+  $p_ano_fluxo  = upper(trim($_REQUEST['p_ano_fluxo']));
   if ($O=='L') {
     $p_dt_ini = First_Day(toDate('01/'.$p_mes_fluxo.'/'.$p_ano_fluxo));
     $p_dt_fim = Last_Day(toDate('27/'.$p_mes_fluxo.'/'.$p_ano_fluxo));

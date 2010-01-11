@@ -5,7 +5,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
 
   //Create Object
   $graph = new GoogleGraph();
-  if (strtolower($l_grafico)=='bar') {
+  if (lower($l_grafico)=='bar') {
     //Graph
     $graph->Graph->setType('bar');
     $graph->Graph->setSubtype('horizontal_grouped');
@@ -49,7 +49,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
 
     //Output Debug
     //$graph->debug();
-  } elseif (strtolower($l_grafico)=='barind') {
+  } elseif (lower($l_grafico)=='barind') {
     //Graph
     $graph->Graph->setType('bar');
     $graph->Graph->setSubtype('vertical_grouped');
@@ -114,7 +114,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
 
     //Output Debug
     //$graph->debug();
-  } elseif (strtolower($l_grafico)=='pie') {
+  } elseif (lower($l_grafico)=='pie') {
     //Graph
     $graph->Graph->setType('pie');
     $graph->Graph->setSubtype('2d');
@@ -157,7 +157,7 @@ function geraGraficoGoogle($l_titulo, $l_sigla, $l_grafico, $l_x, $l_y, $l_encod
 
     //Output Debug
     //$graph->debug();
-  } elseif (strtolower($l_grafico)=='line') {
+  } elseif (lower($l_grafico)=='line') {
     //Graph
     $graph->Graph->setType('line');
     $graph->Graph->setSubtype('chart');

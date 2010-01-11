@@ -404,7 +404,7 @@ function VisualConvenio($l_chave,$l_O,$l_usuario,$l_P1,$l_P4) {
          null,null,null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null);
   $RS1 = SortArray($RS1,'titulo','asc','prioridade','asc');
   if (count($RS1) > 0) {
-    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.strtoupper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>'.upper(f($RS,'nome')).' ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
     $l_html.=chr(13).'       <tr align="center">';

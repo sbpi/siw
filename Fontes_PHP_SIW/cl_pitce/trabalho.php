@@ -55,15 +55,15 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = $_REQUEST['P3'];
 $P4         = $_REQUEST['P4'];
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
 $p_agenda      = $_REQUEST['p_agenda'];
 $p_programa    = $_REQUEST['p_programa'];
@@ -76,7 +76,7 @@ $p_ordena     = $_REQUEST['p_ordena'];
 $p_descricao   = $_REQUEST['p_descricao'];
 $p_situacao    = $_REQUEST['p_situacao'];
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'trabalho.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_pitce/';
@@ -134,7 +134,7 @@ switch ($O) {
 $RS_Usuario = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_usuario,null,null);
   
 // Identifica se o vínculo do usuário é com a a Secretaria executiva
-if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+if (upper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
   $w_usuario_se = true;
 } else {
   $w_usuario_se = false;
@@ -474,7 +474,7 @@ function Arquivos() {
     if (count($RS)==0) {
       ShowHTML('<tr><td colspan=2>Registro não encontrado');
     } else {
-      ShowHTML('<tr><td colspan="2"><b>'.strtoupper(f($row,'titulo')).'</b>');
+      ShowHTML('<tr><td colspan="2"><b>'.upper(f($row,'titulo')).'</b>');
       ShowHTML('<tr><td align="center" colspan=2>');
       ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

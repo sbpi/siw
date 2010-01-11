@@ -60,17 +60,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca    = $_REQUEST['w_troca'];
 $w_copia    = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pe/';
@@ -177,10 +177,10 @@ function Rel_Executivo() {
       foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
         if ($w_embed == 'WORD'){
-            ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.strtoupper(f($row,'titulo')).'</b></font></div></td></tr>');
+            ShowHTML('<tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.upper(f($row,'titulo')).'</b></font></div></td></tr>');
         }    
         else{
-            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo'))).'</b></td></tr>');
+            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>'.ExibePlano('../',$w_cliente,f($row,'chave'),$TP,upper(f($row,'titulo'))).'</b></td></tr>');
         }
         
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
@@ -201,9 +201,9 @@ function Rel_Executivo() {
               if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
                 //Programas
                 if (nvl(f($row1,'sq_solic_pai'),'')=='') {
-                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>PROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>PROGRAMA: '.upper(f($row1,'cd_programa')).' - '.upper(f($row1,'titulo')).'</b></td></tr>');
                 } else {
-                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'</b></td></tr>');
+                  ShowHTML('        <tr><td colspan="15" height=30 valign="center"><font size="2"><b>SUBPROGRAMA: '.upper(f($row1,'cd_programa')).' - '.upper(f($row1,'titulo')).'</b></td></tr>');
                 }
                 ShowHTML('          <tr align="center">');
                 ShowHTML('            <td rowspan=2 bgColor="#f0f0f0"><b>Código</b></td>');
@@ -326,7 +326,7 @@ function Rel_Executivo() {
             foreach($RS1 as $row1) {
               if ((f($row1,'valor')-nvl($l_previsto[$w_cont],0))<0) $w_cor = '<font color="#FF0000">'; else $w_cor='';
               ShowHTML('          <tr valign="top">');
-              ShowHTML('            <td>'.strtoupper(f($row1,'cd_programa')));
+              ShowHTML('            <td>'.upper(f($row1,'cd_programa')));
               ShowHTML('            <td>'.f($row1,'titulo').'</td>');
               ShowHTML('            <td align="right">'.formatNumber(f($row1,'valor')).'</td>');
               ShowHTML('            <td align="right">'.formatNumber(nvl($l_previsto[$w_cont],0)).'</td>');

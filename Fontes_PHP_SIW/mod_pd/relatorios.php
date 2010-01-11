@@ -47,17 +47,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
@@ -84,7 +84,7 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -119,12 +119,12 @@ exit;
 function Rel_Limite() {
   extract($GLOBALS);
 
-  $p_sq_unidade = strtoupper(trim($_REQUEST['p_sq_unidade']));
-  $p_projeto    = strtoupper(trim($_REQUEST['p_projeto']));
-  $p_atividade  = strtoupper(trim($_REQUEST['p_atividade']));
-  $p_sqcc       = strtoupper(trim($_REQUEST['p_sqcc']));
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $w_det_pcd    = strtoupper(trim($_REQUEST['w_det_pcd']));
+  $p_sq_unidade = upper(trim($_REQUEST['p_sq_unidade']));
+  $p_projeto    = upper(trim($_REQUEST['p_projeto']));
+  $p_atividade  = upper(trim($_REQUEST['p_atividade']));
+  $p_sqcc       = upper(trim($_REQUEST['p_sqcc']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $w_det_pcd    = upper(trim($_REQUEST['w_det_pcd']));
 
   $w_cont                   = 0;
   $w_diaria_limite          = 0;
@@ -350,7 +350,7 @@ function Rel_Limite() {
       ShowHTML('        <td align="right"><b>'.number_format(Nvl($w_tot_diaria_utilizado,0),2,',','.').'</b></td>');
       ShowHTML('        <td align="right"><b>'.number_format((Nvl($w_tot_diaria_limite,0)-Nvl($w_tot_diaria_utilizado,0)),2,',','.').'</b></td>');
       ShowHTML('</table>');
-      if (strtoupper($w_det_pcd)==strtoupper('sim')) {
+      if (upper($w_det_pcd)==upper('sim')) {
         ShowHTML('<br><br><br><tr><td colspan="2"><div align="center"><font size="3"><b>DETALHAMENTO DAS PCD\'S</b></font></div></td></tr>');
         Reset($RS);
         $w_unidade_atual        = '';

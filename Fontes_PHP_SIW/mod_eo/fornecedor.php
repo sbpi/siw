@@ -53,19 +53,19 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
-$O              = strtoupper($_REQUEST['O']);
-$SG             = strtoupper($_REQUEST['SG']);
+$par            = upper($_REQUEST['par']);
+$O              = upper($_REQUEST['O']);
+$SG             = upper($_REQUEST['SG']);
 $w_pagina       = 'fornecedor.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_eo/';
 $w_troca        = $_REQUEST['w_troca'];
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_nome         = strtoupper($_REQUEST['p_nome']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_nome         = upper($_REQUEST['p_nome']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
 $p_ordena       = $_REQUEST['p_ordena'];
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -80,7 +80,7 @@ $P3           = nvl($_REQUEST['P3'],1);
 $P4           = nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
 $R            = $_REQUEST['R'];
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 
 if ($SG=='CLGERAL' && $O=='L') {
   $O='A';
@@ -288,7 +288,7 @@ function Geral() {
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
   $w_tipo_pessoa    = $_REQUEST['w_tipo_pessoa'];
 
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   $p_cpf            = $_REQUEST['p_cpf'];
   $p_cnpj           = $_REQUEST['p_cnpj'];
   $p_restricao      = $_REQUEST['p_restricao'];
@@ -618,7 +618,7 @@ function Grava() {
   switch ($SG) {
     case 'CLGERAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado

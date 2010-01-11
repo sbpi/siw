@@ -66,17 +66,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
@@ -105,7 +105,7 @@ $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Recupera os dados do cliente
 $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -1543,7 +1543,7 @@ function Grava() {
   
   if (!(strpos($SG,'PDDESC')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         if ($_REQUEST['w_ativo']=='S') {
           //$RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
@@ -1607,7 +1607,7 @@ function Grava() {
   }
   if (!(strpos($SG,'PDCIA')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         if ($_REQUEST['w_padrao']=='S') {
           $RS = db_getCiaTrans::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'S',null,$_REQUEST['w_chave'],null);
@@ -1643,7 +1643,7 @@ function Grava() {
     } 
   } elseif (!(strpos($SG,'PDCATDIA')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
           $RS = db_getCategoriaDiaria::getInstanceOf($dbms,$w_cliente,null,$_REQUEST['w_nome'],null,null);
           if (count($RS)>0) {
@@ -1672,7 +1672,7 @@ function Grava() {
   } elseif (!(strpos($SG,'PDMEIO')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
 
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         //if ($_REQUEST['w_padrao']=='S') {
           /*$RS = db_getMeioTransporte::getInstanceOf($dbms,$w_cliente,null,null,null);
@@ -1711,7 +1711,7 @@ function Grava() {
   } elseif (!(strpos($SG,'PDVALDIA')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
 
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (!(strpos('IA',$O)===false)) {
         $w_erro = false;
         $RS = db_getValorDiaria::getInstanceOf($dbms, $w_cliente, null);
@@ -1750,7 +1750,7 @@ function Grava() {
     } 
   } elseif (!(strpos($SG,'PDPARAM')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putPDParametro::getInstanceOf($dbms,$w_cliente,
           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],
           $_REQUEST['w_sufixo'],$_REQUEST['w_dias_antecedencia'],$_REQUEST['w_dias_anteced_int'],
@@ -1767,7 +1767,7 @@ function Grava() {
     } 
   } elseif (!(strpos($SG,'PDUNIDADE')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
         $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'VIAGEM',null,null,null);
         if (count($RS)==0) {
@@ -1795,7 +1795,7 @@ function Grava() {
     } 
   } elseif (!(strpos($SG,'PDUNIDLIM')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
         $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],'PDUNIDLIM',null,null,$_REQUEST['w_ano']);
         if (count($RS)==0) {
@@ -1823,7 +1823,7 @@ function Grava() {
     } 
   } elseif (!(strpos($SG,'PDUSUARIO')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='I') {
         $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
         if (count($RS)>0) {

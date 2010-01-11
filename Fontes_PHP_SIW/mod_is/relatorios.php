@@ -64,17 +64,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_is/';
@@ -121,13 +121,13 @@ function Gerencial() {
   extract($GLOBALS);
   $w_imagem = $conRootSIW.'images/icone/GotoTop.gif';
   $w_img_link = '<img src="'.$conRootSIW.'images/Folder/hlp.gif" border=0 width=15 height=15>';
-  $p_sq_unidade = strtoupper(trim($_REQUEST['p_sq_unidade']));
-  $p_cd_programa= strtoupper(trim($_REQUEST['p_cd_programa']));
-  $p_cd_acao    = strtoupper(trim($_REQUEST['p_acao']));
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_preenchida = strtoupper(trim($_REQUEST['p_preenchida']));
-  $p_meta_ppa   = strtoupper(trim($_REQUEST['p_meta_ppa']));
-  $p_exequivel  = strtoupper(trim($_REQUEST['p_exequivel']));
+  $p_sq_unidade = upper(trim($_REQUEST['p_sq_unidade']));
+  $p_cd_programa= upper(trim($_REQUEST['p_cd_programa']));
+  $p_cd_acao    = upper(trim($_REQUEST['p_acao']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_preenchida = upper(trim($_REQUEST['p_preenchida']));
+  $p_meta_ppa   = upper(trim($_REQUEST['p_meta_ppa']));
+  $p_exequivel  = upper(trim($_REQUEST['p_exequivel']));
 
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -571,16 +571,16 @@ function Gerencial() {
 function Rel_PPA() {
   extract($GLOBALS);
   $w_chave      = $_REQUEST['w_chave'];
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_codigo     = strtoupper(trim($_REQUEST['p_codigo']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_codigo     = upper(trim($_REQUEST['p_codigo']));
   if ($_REQUEST['p_cd_programa']>'' && $p_codigo=='') $p_cd_programa = $_REQUEST['p_cd_programa'];
   else                                                $p_cd_programa = substr($p_codigo,0,4);
   $p_cd_acao            = substr($p_codigo,4,4);
   $p_sq_unidade_resp    = $_REQUEST['p_sq_unidade_resp'];
-  $p_prioridade         = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_selecionada_mp     = strtoupper(trim($_REQUEST['p_selecionada_mp']));
-  $p_selecionada_se     = strtoupper(trim($_REQUEST['p_selecionada_se']));
-  $p_tarefas_atraso     = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $p_prioridade         = upper(trim($_REQUEST['p_prioridade']));
+  $p_selecionada_mp     = upper(trim($_REQUEST['p_selecionada_mp']));
+  $p_selecionada_se     = upper(trim($_REQUEST['p_selecionada_se']));
+  $p_tarefas_atraso     = upper(trim($_REQUEST['p_tarefas_atraso']));
   if(is_array($_REQUEST['p_campos'])) $p_campos = explodeArray($_REQUEST['p_campos']);
   else                                $p_campos = $_REQUEST['p_campos'];
   $p_tarefas            = $_REQUEST['p_tarefas'];
@@ -1081,13 +1081,13 @@ function Rel_PPA() {
 function Rel_Projeto(){
   extract($GLOBALS);
   $w_chave          = $_REQUEST['w_chave'];
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_sq_isprojeto   = strtoupper(trim($_REQUEST['p_sq_isprojeto']));
-  $p_prioridade     = strtoupper(trim($_REQUEST['p_prioridade']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_sq_isprojeto   = upper(trim($_REQUEST['p_sq_isprojeto']));
+  $p_prioridade     = upper(trim($_REQUEST['p_prioridade']));
   $p_sq_unidade_resp= $_REQUEST['p_sq_unidade_resp'];
-  $p_selecao_mp     = strtoupper(trim($_REQUEST['p_selecao_mp']));
-  $p_selecao_se     = strtoupper(trim($_REQUEST['p_selecao_se']));
-  $p_tarefas_atraso = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $p_selecao_mp     = upper(trim($_REQUEST['p_selecao_mp']));
+  $p_selecao_se     = upper(trim($_REQUEST['p_selecao_se']));
+  $p_tarefas_atraso = upper(trim($_REQUEST['p_tarefas_atraso']));
   if(is_array($_REQUEST['p_campos'])) $p_campos = explodeArray($_REQUEST['p_campos']);
   else                                $p_campos = $_REQUEST['p_campos'];
   $p_tarefas        = $_REQUEST['p_tarefas'];
@@ -1795,18 +1795,18 @@ function Rel_Programa() {
 function Rel_Sintetico_PR() {
   extract($GLOBALS);
   $w_chave          = $_REQUEST['w_chave'];
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
   $p_sq_isprojeto   = $_REQUEST['p_sq_isprojeto'];
   $p_siw_solic      = $_REQUEST['p_siw_solic'];
-  $p_prioridade     = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_sq_unidade_resp= strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_selecao_mp     = strtoupper(trim($_REQUEST['p_selecao_mp']));
-  $p_selecao_se     = strtoupper(trim($_REQUEST['p_selecao_se']));
-  $p_programada     = strtoupper(trim($_REQUEST['p_programada']));
-  $p_exequivel      = strtoupper(trim($_REQUEST['p_exequivel']));
-  $p_fim_previsto   = strtoupper(trim($_REQUEST['p_fim_previsto']));
-  $p_atraso         = strtoupper(trim($_REQUEST['p_atraso']));
-  $p_tarefas_atraso = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $p_prioridade     = upper(trim($_REQUEST['p_prioridade']));
+  $p_sq_unidade_resp= upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_selecao_mp     = upper(trim($_REQUEST['p_selecao_mp']));
+  $p_selecao_se     = upper(trim($_REQUEST['p_selecao_se']));
+  $p_programada     = upper(trim($_REQUEST['p_programada']));
+  $p_exequivel      = upper(trim($_REQUEST['p_exequivel']));
+  $p_fim_previsto   = upper(trim($_REQUEST['p_fim_previsto']));
+  $p_atraso         = upper(trim($_REQUEST['p_atraso']));
+  $p_tarefas_atraso = upper(trim($_REQUEST['p_tarefas_atraso']));
   $w_cont = 0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -2104,20 +2104,20 @@ function Rel_Sintetico_PPA() {
   extract($GLOBALS);
   $w_chave      = $_REQUEST['w_chave'];
   $w_troca      = $_REQUEST['w_troca'];
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_codigo     = strtoupper(trim($_REQUEST['p_codigo']));
-  if (strtoupper(trim($_REQUEST['p_cd_programa']))>'' && $p_codigo=='') $p_cd_programa = strtoupper(trim($_REQUEST['p_cd_programa']));
-  else                                                                  $p_cd_programa = strtoupper(trim(substr($p_codigo,0,4)));
-  $p_cd_acao        = strtoupper(trim(substr($p_codigo,4,4)));
-  $p_sq_unidade_resp= strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_prioridade     = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_selecao_mp     = strtoupper(trim($_REQUEST['p_selecao_mp']));
-  $p_selecao_se     = strtoupper(trim($_REQUEST['p_selecao_se']));
-  $p_programada     = strtoupper(trim($_REQUEST['p_programada']));
-  $p_exequivel      = strtoupper(trim($_REQUEST['p_exequivel']));
-  $p_fim_previsto   = strtoupper(trim($_REQUEST['p_fim_previsto']));
-  $p_atraso         = strtoupper(trim($_REQUEST['p_atraso']));
-  $p_tarefas_atraso = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_codigo     = upper(trim($_REQUEST['p_codigo']));
+  if (upper(trim($_REQUEST['p_cd_programa']))>'' && $p_codigo=='') $p_cd_programa = upper(trim($_REQUEST['p_cd_programa']));
+  else                                                                  $p_cd_programa = upper(trim(substr($p_codigo,0,4)));
+  $p_cd_acao        = upper(trim(substr($p_codigo,4,4)));
+  $p_sq_unidade_resp= upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_prioridade     = upper(trim($_REQUEST['p_prioridade']));
+  $p_selecao_mp     = upper(trim($_REQUEST['p_selecao_mp']));
+  $p_selecao_se     = upper(trim($_REQUEST['p_selecao_se']));
+  $p_programada     = upper(trim($_REQUEST['p_programada']));
+  $p_exequivel      = upper(trim($_REQUEST['p_exequivel']));
+  $p_fim_previsto   = upper(trim($_REQUEST['p_fim_previsto']));
+  $p_atraso         = upper(trim($_REQUEST['p_atraso']));
+  $p_tarefas_atraso = upper(trim($_REQUEST['p_tarefas_atraso']));
   $p_opcao          = $_REQUEST['p_opcao'];
   $p_opcao_ant      = $_REQUEST['p_opcao'];
   if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
@@ -2469,15 +2469,15 @@ function Rel_Sintetico_Prog() {
   extract($GLOBALS);
   $w_chave          = $_REQUEST['w_chave'];
   $w_troca          = $_REQUEST['w_troca'];
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_cd_programa    = strtoupper(trim($_REQUEST['p_cd_programa']));
-  $p_sq_unidade_resp= strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_prioridade     = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_selecao_mp     = strtoupper(trim($_REQUEST['p_selecao_mp']));
-  $p_selecao_se     = strtoupper(trim($_REQUEST['p_selecao_se']));
-  $p_loa            = strtoupper(trim($_REQUEST['p_loa']));
-  $p_exequivel      = strtoupper(trim($_REQUEST['p_exequivel']));
-  $p_atraso         = strtoupper(trim($_REQUEST['p_atraso']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_cd_programa    = upper(trim($_REQUEST['p_cd_programa']));
+  $p_sq_unidade_resp= upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_prioridade     = upper(trim($_REQUEST['p_prioridade']));
+  $p_selecao_mp     = upper(trim($_REQUEST['p_selecao_mp']));
+  $p_selecao_se     = upper(trim($_REQUEST['p_selecao_se']));
+  $p_loa            = upper(trim($_REQUEST['p_loa']));
+  $p_exequivel      = upper(trim($_REQUEST['p_exequivel']));
+  $p_atraso         = upper(trim($_REQUEST['p_atraso']));
   $p_opcao          = $_REQUEST['p_opcao'];
   $p_opcao_ant      = $_REQUEST['p_opcao'];
   if($_REQUEST['p_opcao_ant']!=$_REQUEST['p_opcao']) {
@@ -2744,7 +2744,7 @@ function Rel_Sintetico_Prog() {
 function Rel_Gerencial_Acao() {
   extract($GLOBALS);
   $p_codigo = $_REQUEST['p_codigo'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -2828,7 +2828,7 @@ function Rel_Gerencial_Acao() {
 function Rel_Gerencial_Prog() {
   extract($GLOBALS);
   $p_cd_programa    = $_REQUEST['p_cd_programa'];
-  $w_tipo           = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo           = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -2913,7 +2913,7 @@ function Rel_Gerencial_Tarefa() {
   extract($GLOBALS);
   $p_acao   = $_REQUEST['p_acao'];
   $w_chave  = $_REQUEST['w_chave'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -2990,13 +2990,13 @@ function Rel_Gerencial_Tarefa() {
 // -------------------------------------------------------------------------
 function Rel_Metas() {
   extract($GLOBALS);
-  $p_sq_unidade = strtoupper(trim($_REQUEST['p_sq_unidade']));
-  $p_cd_programa= strtoupper(trim($_REQUEST['p_cd_programa']));
-  $p_cd_acao    = strtoupper(trim($_REQUEST['p_acao']));
-  $w_tipo_rel   = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_preenchida = strtoupper(trim($_REQUEST['p_preenchida']));
-  $p_meta_ppa   = strtoupper(trim($_REQUEST['p_meta_ppa']));
-  $p_exequivel  = strtoupper(trim($_REQUEST['p_exequivel']));
+  $p_sq_unidade = upper(trim($_REQUEST['p_sq_unidade']));
+  $p_cd_programa= upper(trim($_REQUEST['p_cd_programa']));
+  $p_cd_acao    = upper(trim($_REQUEST['p_acao']));
+  $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_preenchida = upper(trim($_REQUEST['p_preenchida']));
+  $p_meta_ppa   = upper(trim($_REQUEST['p_meta_ppa']));
+  $p_exequivel  = upper(trim($_REQUEST['p_exequivel']));
   $w_cont=0;
   $w_total_ppa=0;
   $w_total_sisplam=0;
@@ -3505,14 +3505,14 @@ function Rel_Metas() {
 // -------------------------------------------------------------------------
 function Rel_Det_Tarefa() {
   extract($GLOBALS);
-  $p_sq_unidade     = strtoupper(trim($_REQUEST['p_sq_unidade']));
-  $p_cd_programa    = strtoupper(trim($_REQUEST['p_cd_programa']));
-  $p_cd_acao        = strtoupper(trim($_REQUEST['p_cd_acao']));
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $w_identificacao  = strtoupper(trim($_REQUEST['w_identificacao']));
-  $w_responsavel    = strtoupper(trim($_REQUEST['w_responsavel']));
-  $w_anexo          = strtoupper(trim($_REQUEST['w_anexo']));
-  $w_ocorrencia     = strtoupper(trim($_REQUEST['w_ocorrencia']));
+  $p_sq_unidade     = upper(trim($_REQUEST['p_sq_unidade']));
+  $p_cd_programa    = upper(trim($_REQUEST['p_cd_programa']));
+  $p_cd_acao        = upper(trim($_REQUEST['p_cd_acao']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $w_identificacao  = upper(trim($_REQUEST['w_identificacao']));
+  $w_responsavel    = upper(trim($_REQUEST['w_responsavel']));
+  $w_anexo          = upper(trim($_REQUEST['w_anexo']));
+  $w_ocorrencia     = upper(trim($_REQUEST['w_ocorrencia']));
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -3724,17 +3724,17 @@ function Rel_Det_Acao() {
   $p_sq_unidade     = $_REQUEST['p_sq_unidade'];
   $p_cd_programa    = $_REQUEST['p_cd_programa'];
   $p_cd_acao        = $_REQUEST['p_cd_acao'];
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $w_identificacao  = strtoupper(trim($_REQUEST['w_identificacao']));
-  $w_responsavel    = strtoupper(trim($_REQUEST['w_responsavel']));
-  $w_qualitativa    = strtoupper(trim($_REQUEST['w_qualitativa']));
-  $w_orcamentaria   = strtoupper(trim($_REQUEST['w_orcamentaria']));
-  $w_meta           = strtoupper(trim($_REQUEST['w_meta']));
-  $w_restricao      = strtoupper(trim($_REQUEST['w_restricao']));
-  $w_tarefa         = strtoupper(trim($_REQUEST['w_tarefa']));
-  $w_interessado    = strtoupper(trim($_REQUEST['w_interessado']));
-  $w_anexo          = strtoupper(trim($_REQUEST['w_anexo']));
-  $w_ocorrencia     = strtoupper(trim($_REQUEST['w_ocorrencia']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $w_identificacao  = upper(trim($_REQUEST['w_identificacao']));
+  $w_responsavel    = upper(trim($_REQUEST['w_responsavel']));
+  $w_qualitativa    = upper(trim($_REQUEST['w_qualitativa']));
+  $w_orcamentaria   = upper(trim($_REQUEST['w_orcamentaria']));
+  $w_meta           = upper(trim($_REQUEST['w_meta']));
+  $w_restricao      = upper(trim($_REQUEST['w_restricao']));
+  $w_tarefa         = upper(trim($_REQUEST['w_tarefa']));
+  $w_interessado    = upper(trim($_REQUEST['w_interessado']));
+  $w_anexo          = upper(trim($_REQUEST['w_anexo']));
+  $w_ocorrencia     = upper(trim($_REQUEST['w_ocorrencia']));
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -3961,19 +3961,19 @@ function Rel_Det_Acao() {
 // -------------------------------------------------------------------------
 function Rel_Det_Prog() {
   extract($GLOBALS);
-  $p_sq_unidade     = strtoupper(trim($_REQUEST['p_sq_unidade']));
-  $p_cd_programa    = strtoupper(trim($_REQUEST['p_cd_programa']));
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $w_identificacao  = strtoupper(trim($_REQUEST['w_identificacao']));
-  $w_responsavel    = strtoupper(trim($_REQUEST['w_responsavel']));
-  $w_qualitativa    = strtoupper(trim($_REQUEST['w_qualitativa']));
-  $w_orcamentaria   = strtoupper(trim($_REQUEST['w_orcamentaria']));
-  $w_indicador      = strtoupper(trim($_REQUEST['w_indicador']));
-  $w_restricao      = strtoupper(trim($_REQUEST['w_restricao']));
-  $w_acao           = strtoupper(trim($_REQUEST['w_acao']));
-  $w_interessado    = strtoupper(trim($_REQUEST['w_interessado']));
-  $w_anexo          = strtoupper(trim($_REQUEST['w_anexo']));
-  $w_ocorrencia     = strtoupper(trim($_REQUEST['w_ocorrencia']));
+  $p_sq_unidade     = upper(trim($_REQUEST['p_sq_unidade']));
+  $p_cd_programa    = upper(trim($_REQUEST['p_cd_programa']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $w_identificacao  = upper(trim($_REQUEST['w_identificacao']));
+  $w_responsavel    = upper(trim($_REQUEST['w_responsavel']));
+  $w_qualitativa    = upper(trim($_REQUEST['w_qualitativa']));
+  $w_orcamentaria   = upper(trim($_REQUEST['w_orcamentaria']));
+  $w_indicador      = upper(trim($_REQUEST['w_indicador']));
+  $w_restricao      = upper(trim($_REQUEST['w_restricao']));
+  $w_acao           = upper(trim($_REQUEST['w_acao']));
+  $w_interessado    = upper(trim($_REQUEST['w_interessado']));
+  $w_anexo          = upper(trim($_REQUEST['w_anexo']));
+  $w_ocorrencia     = upper(trim($_REQUEST['w_ocorrencia']));
   $w_cont=0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -4206,8 +4206,8 @@ function Rel_Limite() {
   $p_sq_unidade     = $_REQUEST['p_sq_unidade'];
   $p_cd_programa    = $_REQUEST['p_cd_programa'];
   $p_cd_acao        = $_REQUEST['p_cd_acao'];
-  $w_tipo_rel       = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $w_det_tarefa     = strtoupper(trim($_REQUEST['w_det_tarefa']));
+  $w_tipo_rel       = upper(trim($_REQUEST['w_tipo_rel']));
+  $w_det_tarefa     = upper(trim($_REQUEST['w_det_tarefa']));
   $w_cont           = 0;
   $w_utilizado      = 0;
   $w_tot_utilizado  = 0;
@@ -4384,7 +4384,7 @@ function Rel_Limite() {
       ShowHTML('        <td align="right"><b>'.number_format(Nvl($w_tot_utilizado,0),2,',','.').'</b></td>');
       ShowHTML('        <td align="right"><b>'.number_format((Nvl($w_tot_limite,0)-Nvl($w_tot_utilizado,0)),2,',','.').'</b></td>');
       ShowHTML('</table>');
-      if (strtoupper($w_det_tarefa)==strtoupper('sim')) {
+      if (upper($w_det_tarefa)==upper('sim')) {
         ShowHTML('<br><br><br><tr><td colspan="2"><div align="center"><font size="3"><b>DETALHAMENTO DAS TAREFAS</b></font></div></td></tr>');
         $RS1 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
         $RS = db_getSolicList_IS::getInstanceOf($dbms,f($RS1,'sq_menu'),$w_usuario,'ISTCAD',4,
@@ -4591,7 +4591,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_valor_ref,$l_valor_pr
     // Se for listagem de indicadores no cadastramento do programa, exibe operações de alteração e exclusão
     if ($l_tipo=='PROJETO') {
       $l_html .=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar">Alt</A>&nbsp';
-        if ((strtoupper(substr($l_titulo,0,13))==strtoupper('NAO INFORMADO')) || (strtoupper(substr($l_titulo,0,13))!=strtoupper('NAO INFORMADO') && $l_loa=='Não')) 
+        if ((upper(substr($l_titulo,0,13))==upper('NAO INFORMADO')) || (upper(substr($l_titulo,0,13))!=upper('NAO INFORMADO') && $l_loa=='Não')) 
           $l_html .=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">Excl</A>&nbsp';
           // Caso contrário, é listagem de atualização do indicador. Neste caso, coloca apenas a opção de alteração
     } else {

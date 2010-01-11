@@ -11,8 +11,10 @@ begin
       -- Recupera as espécies do documento
       open p_result for 
          select a.sq_especie_documento as chave, a.cliente, a.nome, a.sigla, a.ativo,
-                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo
+                case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
+                b.sq_assunto, b.codigo as cd_assunto, b.descricao as ds_assunto
            from pa_especie_documento a
+                left join pa_assunto b on (a.sq_assunto = b.sq_assunto)
           where ((p_chave   is null) or (p_chave   is not null and a.sq_especie_documento = p_chave))
             and ((p_cliente is null) or (p_cliente is not null and a.cliente              = p_cliente))
             and ((p_nome    is null) or (p_nome    is not null and upper(a.nome)          like '%'||upper(p_nome)||'%'))

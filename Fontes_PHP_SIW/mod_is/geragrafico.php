@@ -1,9 +1,10 @@
 <?php
- $w_dir_volta='../classes/';
- include ($w_dir_volta.'jpgraph/jpgraph.php');
- include ($w_dir_volta.'jpgraph/jpgraph_bar.php');
- include ($w_dir_volta.'jpgraph/jpgraph_pie.php'); 
- include ($w_dir_volta.'jpgraph/jpgraph_pie3d.php');
+ $w_dir_volta='../';
+ include ($w_dir_volta.'funcoes.php');
+ include ($w_dir_volta.'classes/jpgraph/jpgraph.php');
+ include ($w_dir_volta.'classes/jpgraph/jpgraph_bar.php');
+ include ($w_dir_volta.'classes/jpgraph/jpgraph_pie.php'); 
+ include ($w_dir_volta.'classes/jpgraph/jpgraph_pie3d.php');
 
  main();
 
@@ -42,7 +43,7 @@
      $graph->Set90AndMargin(180, 60, 30, 60);
 
      $titulo = $p_objeto.' - Resumo';
-     $graph->title->Set(strtoupper($titulo));
+     $graph->title->Set(upper($titulo));
      //$graph->title->SetAlign('left','center');
 
      $graph->SetMarginColor('#DCDCDC');
@@ -152,7 +153,7 @@
     $bplot->SetWidth(0.3);
 
     $graph->title->SetFont(FF_FONT1,FS_BOLD,12);
-    $graph->title->Set(strtoupper('Análise de '.$p_objeto.' em andamento'));
+    $graph->title->Set(upper('Análise de '.$p_objeto.' em andamento'));
 
     $graph->yaxis->title->SetFont(FF_FONT1,FS_BOLD);
     $graph->yaxis->title->Set('Quantidade(%)');
@@ -189,7 +190,7 @@
     $graph->SetShadow(); 
 
     $titulo = 'Análise de '.$p_objeto.' em andamento';
-    $graph->title->Set(strtoupper($titulo));
+    $graph->title->Set(upper($titulo));
     $graph->title->SetPos(1, 1);
     $graph->title->SetFont(FF_FONT1, FS_BOLD, 10);
 
@@ -215,7 +216,7 @@
 
  function main() {
 
-     $p_grafico = strtolower($_REQUEST['p_grafico']);
+     $p_grafico = lower($_REQUEST['p_grafico']);
 
      switch($p_grafico) {
          case 'barra' : barra(); break;

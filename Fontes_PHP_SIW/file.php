@@ -140,7 +140,7 @@ function GetExtension($strName,&$Extension) {
   extract($GLOBALS);
 
   //return whether binary or not, put type into second parameter
-  switch (strtolower($strName)) {
+  switch (lower($strName)) {
     case 'video/x-ms-asf':                  $Extension='.asf';      return true;   break;
     case 'video/avi':                       $Extension='.avi';      return true;   break;
     case 'application/msword':              $Extension='.doc';      return true;   break;
@@ -167,7 +167,7 @@ function GetExtension($strName,&$Extension) {
 } 
 
 function GetContentType($strName) {
-  switch (strtolower($strName)) {
+  switch (lower($strName)) {
     case '.asf':    return 'video/x-ms-asf';                break;
     case '.avi':    return 'video/avi';                     break;
     case '.doc':    return 'application/msword';            break;

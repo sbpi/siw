@@ -55,16 +55,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = Nvl($_REQUEST['P1'],0);
 $P2             = Nvl($_REQUEST['P2'],0);
 $P3             = Nvl($_REQUEST['P3'],1);
 $P4             = Nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
-$R              = strtolower($_REQUEST['R']);
-$O              = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$SG             = upper($_REQUEST['SG']);
+$R              = lower($_REQUEST['R']);
+$O              = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'or_tabelas.php?par=';
 $w_dir          = 'mod_or_pub/';
 $w_dir_volta    = '../';
@@ -468,15 +468,15 @@ function Rel_PPA() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave                  = $_REQUEST['w_chave'];
-  $w_tipo_rel               = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_sq_acao_ppa_pai        = strtoupper(trim($_REQUEST['p_sq_acao_ppa_pai']));
-  $p_sq_acao_ppa            = strtoupper(trim($_REQUEST['p_sq_acao_ppa']));
-  $p_responsavel            = strtoupper(trim($_REQUEST['p_responsavel']));
-  $p_sq_unidade_resp        = strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_prioridade             = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_selecionada_mpog       = strtoupper(trim($_REQUEST['p_selecionada_mpog']));
-  $p_selecionada_relevante  = strtoupper(trim($_REQUEST['p_selecionada_relevante']));
-  $p_tarefas_atraso         = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $w_tipo_rel               = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_sq_acao_ppa_pai        = upper(trim($_REQUEST['p_sq_acao_ppa_pai']));
+  $p_sq_acao_ppa            = upper(trim($_REQUEST['p_sq_acao_ppa']));
+  $p_responsavel            = upper(trim($_REQUEST['p_responsavel']));
+  $p_sq_unidade_resp        = upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_prioridade             = upper(trim($_REQUEST['p_prioridade']));
+  $p_selecionada_mpog       = upper(trim($_REQUEST['p_selecionada_mpog']));
+  $p_selecionada_relevante  = upper(trim($_REQUEST['p_selecionada_relevante']));
+  $p_tarefas_atraso         = upper(trim($_REQUEST['p_tarefas_atraso']));
   $p_campos                 = explodeArray($_REQUEST['p_campos']);
   $p_tarefas                = $_REQUEST['p_tarefas'];
   $p_metas                  = $_REQUEST['p_metas'];
@@ -995,14 +995,14 @@ function Rel_PPA() {
 function Rel_Iniciativa() {
   extract($GLOBALS);
   $w_chave                  = $_REQUEST['w_chave'];
-  $w_tipo_rel               = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_sq_orprioridade        = strtoupper(trim($_REQUEST['p_sq_orprioridade']));
-  $p_responsavel            = strtoupper(trim($_REQUEST['p_responsavel']));
-  $p_prioridade             = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_sq_unidade_resp        = strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_selecionada_mpo        = strtoupper(trim($_REQUEST['p_selecionada_mpog']));
-  $p_selecionada_relevante  = strtoupper(trim($_REQUEST['p_selecionada_relevante']));
-  $p_tarefas_atraso         = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $w_tipo_rel               = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_sq_orprioridade        = upper(trim($_REQUEST['p_sq_orprioridade']));
+  $p_responsavel            = upper(trim($_REQUEST['p_responsavel']));
+  $p_prioridade             = upper(trim($_REQUEST['p_prioridade']));
+  $p_sq_unidade_resp        = upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_selecionada_mpo        = upper(trim($_REQUEST['p_selecionada_mpog']));
+  $p_selecionada_relevante  = upper(trim($_REQUEST['p_selecionada_relevante']));
+  $p_tarefas_atraso         = upper(trim($_REQUEST['p_tarefas_atraso']));
   $p_campos                 = explodeArray($_REQUEST['p_campos']);
   $p_tarefas                = $_REQUEST['p_tarefas'];
   $p_metas                  = $_REQUEST['p_metas'];
@@ -1482,18 +1482,18 @@ function Rel_Sintetico_IP() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave                  = $_REQUEST['w_chave'];
-  $w_tipo_rel               = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_sq_orprioridade        = strtoupper(trim($_REQUEST['p_sq_orprioridade']));
-  $p_responsavel            = strtoupper(trim($_REQUEST['p_responsavel']));
-  $p_prioridade             = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_sq_unidade_resp        = strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_selecionada_mpog       = strtoupper(trim($_REQUEST['p_selecionada_mpog']));
-  $p_selecionada_relevante  = strtoupper(trim($_REQUEST['p_selecionada_relevante']));
-  $p_programada             = strtoupper(trim($_REQUEST['p_programada']));
-  $p_exequivel              = strtoupper(trim($_REQUEST['p_exequivel']));
-  $p_fim_previsto           = strtoupper(trim($_REQUEST['p_fim_previsto']));
-  $p_atraso                 = strtoupper(trim($_REQUEST['p_atraso']));
-  $p_tarefas_atraso         = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $w_tipo_rel               = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_sq_orprioridade        = upper(trim($_REQUEST['p_sq_orprioridade']));
+  $p_responsavel            = upper(trim($_REQUEST['p_responsavel']));
+  $p_prioridade             = upper(trim($_REQUEST['p_prioridade']));
+  $p_sq_unidade_resp        = upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_selecionada_mpog       = upper(trim($_REQUEST['p_selecionada_mpog']));
+  $p_selecionada_relevante  = upper(trim($_REQUEST['p_selecionada_relevante']));
+  $p_programada             = upper(trim($_REQUEST['p_programada']));
+  $p_exequivel              = upper(trim($_REQUEST['p_exequivel']));
+  $p_fim_previsto           = upper(trim($_REQUEST['p_fim_previsto']));
+  $p_atraso                 = upper(trim($_REQUEST['p_atraso']));
+  $p_tarefas_atraso         = upper(trim($_REQUEST['p_tarefas_atraso']));
   $w_cont = 0;
   if ($O=='L') {
     // Recupera o logo do cliente a ser usado nas listagens
@@ -1873,19 +1873,19 @@ function Rel_Sintetico_PPA() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave                   = $_REQUEST['w_chave'];
-  $w_tipo_rel                = strtoupper(trim($_REQUEST['w_tipo_rel']));
-  $p_sq_acao_ppa_pai         = strtoupper(trim($_REQUEST['p_sq_acao_ppa_pai']));
-  $p_sq_acao_ppa             = strtoupper(trim($_REQUEST['p_sq_acao_ppa']));
-  $p_responsavel             = strtoupper(trim($_REQUEST['p_responsavel']));
-  $p_sq_unidade_resp         = strtoupper(trim($_REQUEST['p_sq_unidade_resp']));
-  $p_prioridade              = strtoupper(trim($_REQUEST['p_prioridade']));
-  $p_selecionada_mpog        = strtoupper(trim($_REQUEST['p_selecionada_mpog']));
-  $p_selecionada_relevante   = strtoupper(trim($_REQUEST['p_selecionada_relevante']));
-  $p_programada              = strtoupper(trim($_REQUEST['p_programada']));
-  $p_exequivel               = strtoupper(trim($_REQUEST['p_exequivel']));
-  $p_fim_previsto            = strtoupper(trim($_REQUEST['p_fim_previsto']));
-  $p_atraso                  = strtoupper(trim($_REQUEST['p_atraso']));
-  $p_tarefas_atraso          = strtoupper(trim($_REQUEST['p_tarefas_atraso']));
+  $w_tipo_rel                = upper(trim($_REQUEST['w_tipo_rel']));
+  $p_sq_acao_ppa_pai         = upper(trim($_REQUEST['p_sq_acao_ppa_pai']));
+  $p_sq_acao_ppa             = upper(trim($_REQUEST['p_sq_acao_ppa']));
+  $p_responsavel             = upper(trim($_REQUEST['p_responsavel']));
+  $p_sq_unidade_resp         = upper(trim($_REQUEST['p_sq_unidade_resp']));
+  $p_prioridade              = upper(trim($_REQUEST['p_prioridade']));
+  $p_selecionada_mpog        = upper(trim($_REQUEST['p_selecionada_mpog']));
+  $p_selecionada_relevante   = upper(trim($_REQUEST['p_selecionada_relevante']));
+  $p_programada              = upper(trim($_REQUEST['p_programada']));
+  $p_exequivel               = upper(trim($_REQUEST['p_exequivel']));
+  $p_fim_previsto            = upper(trim($_REQUEST['p_fim_previsto']));
+  $p_atraso                  = upper(trim($_REQUEST['p_atraso']));
+  $p_tarefas_atraso          = upper(trim($_REQUEST['p_tarefas_atraso']));
   $w_cont = 0;
   $w_teste_pai=0;
   if ($O=='L') {
@@ -2252,7 +2252,7 @@ function Grava() {
   switch ($SG) {
     case 'ORTBINIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
         dml_putOrPrioridade::getInstanceOf($dbms,$O,
         $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
         $_REQUEST['w_responsavel'],$_REQUEST['w_telefone'],$_REQUEST['w_email'],
@@ -2269,7 +2269,7 @@ function Grava() {
       break;
     case 'ORTBPPA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putAcaoPPA::getInstanceOf($dbms,$O,
           $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_acao_ppa_pai'],
           $_REQUEST['w_codigo'],$_REQUEST['w_nome'],

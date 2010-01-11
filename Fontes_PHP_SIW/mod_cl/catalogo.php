@@ -59,16 +59,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'catalogo.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_cl/';
@@ -85,7 +85,7 @@ $p_invalida      = $_REQUEST['p_invalida'];
 $p_valida        = $_REQUEST['p_valida'];
 $p_branco        = $_REQUEST['p_branco'];
 $p_ordena        = $_REQUEST['p_ordena'];
-$p_volta         = strtoupper($_REQUEST['p_volta']);
+$p_volta         = upper($_REQUEST['p_volta']);
 
 if ($SG=='CLMATSERV' || $SG=='CLPESQUISA') {
   if ($O=='') $O='P';
@@ -516,8 +516,8 @@ function PesquisaPreco() {
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
   $w_tipo_pessoa    = $_REQUEST['w_tipo_pessoa'];
   
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
-  $p_forn           = strtoupper($_REQUEST['p_forn']);
+  $p_nome           = upper($_REQUEST['p_nome']);
+  $p_forn           = upper($_REQUEST['p_forn']);
   $p_cpf            = $_REQUEST['p_cpf'];
   $p_cnpj           = $_REQUEST['p_cnpj'];
   $p_restricao      = $_REQUEST['p_restricao'];
@@ -1262,7 +1262,7 @@ function Grava() {
   switch ($SG) {
     case 'CLMATSERV':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
@@ -1319,7 +1319,7 @@ function Grava() {
       break;
     case 'CLPESQUISA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_tipo_pessoa']==1) {
             // Verifica se já existe pessoa física com o CPF informado

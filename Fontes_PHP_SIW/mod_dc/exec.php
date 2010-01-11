@@ -41,17 +41,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'exec.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
@@ -255,7 +255,7 @@ function ResultSql() {
       if (nvl($v,'')=='') continue;
       ShowHTML('<p><b>'.($k+1).'===>'.$v.'</b></p>');
     
-      $command = strtoupper(substr(trim($v),0,strpos(trim($v),' ')));
+      $command = upper(substr(trim($v),0,strpos(trim($v),' ')));
       if ($command=='SELECT') {
         $RS = db_exec::getInstanceOf($conObj, $v, &$numRows);
         if (count($RS) > 0) {
@@ -263,7 +263,7 @@ function ResultSql() {
            ShowHTML('<table border="1">');
            ShowHTML('<tr valign="top">');
            foreach ($RS as $row) {
-              foreach ($row as $key => $val) ShowHTML('<td>'.strtolower($key).'&nbsp;</td>'); 
+              foreach ($row as $key => $val) ShowHTML('<td>'.lower($key).'&nbsp;</td>'); 
               break;
            }
            ShowHTML('</tr>');
@@ -312,7 +312,7 @@ function ResultSql() {
              ShowHTML('<tr valign="top">');
              foreach ($results as $sup => $reg) {
                foreach ($reg as $key => $val) {
-                 ShowHTML('<td>'.strtolower($key).'</td>');
+                 ShowHTML('<td>'.lower($key).'</td>');
                }
                break;
              }

@@ -50,15 +50,15 @@ include_once('classes/sp/db_getCustomerSite.php');
 
 if (count($_POST) > 0) {
     $wTipoLogin  = $_POST['tipoLogin'];
-    $wNoUsuario  = strtoupper($_POST['Login']);
+    $wNoUsuario  = upper($_POST['Login']);
     
     if($wTipoLogin == 1){
-        $wDsSenha    = strtoupper($_POST['Password']);
+        $wDsSenha    = upper($_POST['Password']);
     }else{
         $wDsSenha    = $_POST['Password'];
     }
     
-    $wBotao      = strtoupper($_POST['Botao']);
+    $wBotao      = upper($_POST['Botao']);
     $par         = $_POST['par'];
 }
 
@@ -223,7 +223,7 @@ function Valida() {
         $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
         $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
         $w_html .= '    <table width="97%" border="0">'.$crlf;
-        $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.strtoupper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
+        $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.upper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
         $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
         $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
         if ($w_tipo=='B') {

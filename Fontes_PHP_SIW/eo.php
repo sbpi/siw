@@ -56,17 +56,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'eo.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -987,8 +987,8 @@ function BuscaUnidade() {
   global $w_Disabled;
 
   $w_ano        = $_REQUEST['w_ano'];
-  $w_nome       = strtoupper($_REQUEST['w_nome']);
-  $w_sigla      = strtoupper($_REQUEST['w_sigla']);
+  $w_nome       = upper($_REQUEST['w_nome']);
+  $w_sigla      = upper($_REQUEST['w_sigla']);
   $w_cliente    = $_REQUEST['w_cliente'];
   $chaveaux     = $_REQUEST['chaveaux'];
   $restricao    = $_REQUEST['restricao'];
@@ -1137,7 +1137,7 @@ function Grava() {
   switch ($SG) {
     case 'EOUORG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E'){
           $RS = db_getUorgResp::getInstanceOf($dbms,$_REQUEST['w_sq_unidade']);
           foreach ($RS as $row) {
@@ -1176,7 +1176,7 @@ function Grava() {
           break;
     case 'LUORG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_EoLocal::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_localizacao'],$_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_unidade'],
             $_REQUEST['w_nome'],$_REQUEST['w_fax'],$_REQUEST['w_telefone'],$_REQUEST['w_ramal'],
@@ -1193,7 +1193,7 @@ function Grava() {
       break;
     case 'RESPONSAVEL':  //CADASTRO DE REPONSÁVEL
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_EOResp::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_unidade'],$_REQUEST['w_fim_substituto'],$_REQUEST['w_sq_pessoa_substituto'],$_REQUEST['w_inicio_substituto'],
             $_REQUEST['w_fim_titular'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_inicio_titular']);
@@ -1209,7 +1209,7 @@ function Grava() {
       break;
     case 'DOCS':  //CADASTRO DE DOCUMENTOS
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {

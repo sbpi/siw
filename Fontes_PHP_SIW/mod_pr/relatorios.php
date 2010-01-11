@@ -66,17 +66,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca    = $_REQUEST['w_troca'];
 $w_copia    = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pr/';
@@ -233,8 +233,8 @@ function Rel_Progresso() {
           }
           ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>');
           if (nvl(f($row,'nm_plano'),'')!='') {
-            if ($w_embed=='WORD') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.strtoupper(f($row,'nm_plano')).'</font></div></td></tr>');
-            else                  ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,strtoupper(f($row,'nm_plano'))).'</font></div></td></tr>');
+            if ($w_embed=='WORD') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.upper(f($row,'nm_plano')).'</font></div></td></tr>');
+            else                  ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Plano Estratégico: '.ExibePlano('../',$w_cliente,f($row,'sq_plano'),$TP,upper(f($row,'nm_plano'))).'</font></div></td></tr>');
           }
           if (nvl(f($row,'nm_objetivo'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Objetivo: '.f($row,'nm_objetivo').'</font></div></td></tr>'); //.f($row,'nm_plano').
           if (nvl(f($row,'nm_programa'),'')!='') ShowHTML('   <tr><td colspan="2" bgcolor="#f0f0f0"><div align=justify><font size="2">Programa: '.f($row,'nm_programa').'</font></div></td></tr>');
@@ -371,7 +371,7 @@ function Rel_Progresso() {
                        ShowHTML('  '.f($row1,'sq_tarefa').' ');
                       }
                       $l_assunto = 'COMPLETO';
-                      if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
+                      if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && upper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
                       else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row1,'nm_tarefa')),'-'));
                       if ($w_embed!='WORD') {
                         ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_resp_tarefa')).'</td>');
@@ -818,7 +818,7 @@ function Rel_Executivo() {
                       if (f($row1,'pacote_trabalho')=='S' || substr(nvl(f($row1,'restricao'),'-'),0,1)=='S') {
                         ShowHTML(' '.exibeImagemRestricao(f($row1,'restricao')));
                       }
-                      if(strtoupper(f($row1,'pacote_trabalho'))=='S'){
+                      if(upper(f($row1,'pacote_trabalho'))=='S'){
                         ShowHTML('        <td><table border=0 width="100%" cellpadding=0 cellspacing=0><tr valign="top">'.str_repeat('<td width="3%"></td>',(null)).'<td><b>'.f($row1,'nm_etapa').'</b></tr></table>');
                         ShowHTML('        <td>'.f($row1,'descricao').'</b>');
                         ShowHTML('        <td nowrap align="right">'.f($row1,'perc_conclusao').' %</td>');
@@ -840,7 +840,7 @@ function Rel_Executivo() {
                        // ShowHTML('  '.f($row1,'sq_tarefa').' ');
                       // }
                       // $l_assunto = 'COMPLETO';
-                      // if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
+                      // if (strlen(Nvl(f($row1,'nm_tarefa'),'-'))>50 && upper($l_assunto)!='COMPLETO') ShowHTML(' - '.substr(Nvl(f($row1,'nm_tarefa'),'-'),0,50).'...');
                       // else                                                                                ShowHTML(' - '.Nvl(crlf2br(f($row1,'nm_tarefa')),'-'));
                       // if ($w_embed!='WORD') {
                         // ShowHTML('     <td>'.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_resp_tarefa')).'</td>');
@@ -1365,7 +1365,7 @@ function Rel_Projeto() {
       elseif (strpos(f($row,'sigla'),'INDSOLIC')!==false)  if ($_REQUEST['p_indicador']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_indicador" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_indicador" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'METASOLIC')!==false) if ($_REQUEST['p_meta']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_meta" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_meta" value="S"> '.f($row,'nome').'</td>');
       elseif (strpos(f($row,'sigla'),'RECSOLIC')!==false)  if ($_REQUEST['p_recurso']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_recurso" value="S"> '.f($row,'nome').'</td>');
-      //else if ($_REQUEST['p_'.strtolower(f($row,'sigla'))]) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_'.strtolower(f($row,'sigla')).'" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_'.strtolower(f($row,'sigla')).'" value="S"> '.f($row,'nome').'</td>');
+      //else if ($_REQUEST['p_'.lower(f($row,'sigla'))]) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_'.lower(f($row,'sigla')).'" value="S"> '.f($row,'nome').'</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_'.lower(f($row,'sigla')).'" value="S"> '.f($row,'nome').'</td>');
     }
     if ($_REQUEST['p_tramite']) ShowHTML('          <tr><td colspan=2><INPUT checked type="CHECKBOX" name="p_tramite" value="S"> Ocorrências e anotações</td>'); else ShowHTML('          <tr><td colspan=2><INPUT type="CHECKBOX" name="p_tramite" value="S"> Ocorrências e anotações</td>');
     if ($_REQUEST['p_sinal']) {

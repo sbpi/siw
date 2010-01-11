@@ -42,16 +42,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_dm/';
@@ -254,7 +254,7 @@ function Grava() {
   switch ($SG) {
     case 'GDTIPO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E') {
           $RS = db_getTipoDemanda::getInstanceOf($dbms,$_REQUEST['w_chave'],$w_cliente,null,null,null,null,'VINCULADO');
           foreach($RS as $row) { $RS = $row; break; }

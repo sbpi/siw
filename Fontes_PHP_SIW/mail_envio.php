@@ -87,7 +87,7 @@ function Principal() {
   // Abre o arquivo de log
   $w_log     = @fopen($w_arquivo, 'w');
 
-  if (trim(strtoupper($w_opcao))=='GERA') {
+  if (trim(upper($w_opcao))=='GERA') {
     // Recupera solicitações a serem listadas
     $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'S', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');

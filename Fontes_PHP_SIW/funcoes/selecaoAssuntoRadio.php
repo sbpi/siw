@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Montagem da seleção de assuntos
 // -------------------------------------------------------------------------
@@ -9,7 +9,7 @@ function selecaoAssuntoRadio($label,$accesskey,$hint,$chave,$chaveAux,$campo,$re
   if ($chave>'') {
     $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,'REGISTROS');
     foreach ($RS as $row) { $RS = $row; break; }
-    $l_assunto = strtolower(f($row,'codigo').' - '.f($row,'descricao'));
+    $l_assunto = lower(f($row,'codigo').' - '.f($row,'descricao'));
   }
 
   ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador);

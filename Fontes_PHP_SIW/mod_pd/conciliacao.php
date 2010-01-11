@@ -49,22 +49,22 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'conciliacao.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
 $w_troca        = $_REQUEST['w_troca'];
 // Configura o caminho para gravação física de arquivos<u></u>
-$p_responsavel  = strtoupper($_REQUEST['p_responsavel']);
+$p_responsavel  = upper($_REQUEST['p_responsavel']);
 $p_dt_ini       = $_REQUEST['p_dt_ini'];
 $p_dt_fim       = $_REQUEST['p_dt_fim'];
 $p_imp_ini      = $_REQUEST['p_imp_ini'];
@@ -539,7 +539,7 @@ function Grava() {
   switch ($SG) {
     case 'PDFATURA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
@@ -694,7 +694,7 @@ function Grava() {
                 $faturas[$w_fatura]['valor'] = $w_valor_fat;
               }
               
-              $w_cia        = trim(strtoupper($row[6]));
+              $w_cia        = trim(upper($row[6]));
               // Valida o campo cia aérea
               $w_result = fValidate(1,$w_cia,'cia aérea','',1,2,20,'1','1');
               if ($w_result>'') { 

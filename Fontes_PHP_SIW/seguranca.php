@@ -70,21 +70,21 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
-$p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
-$p_lotacao      = strtoupper($_REQUEST['p_lotacao']);
-$p_nome         = strtoupper($_REQUEST['p_nome']);
-$p_gestor       = strtoupper($_REQUEST['p_gestor']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$p_localizacao  = upper($_REQUEST['p_localizacao']);
+$p_lotacao      = upper($_REQUEST['p_lotacao']);
+$p_nome         = upper($_REQUEST['p_nome']);
+$p_gestor       = upper($_REQUEST['p_gestor']);
 $p_ordena       = $_REQUEST['p_ordena'];
 
 $w_pagina       = 'seguranca.php?par=';
@@ -134,20 +134,20 @@ function Usuarios() {
   global $w_Disabled;
 
   $w_troca            = $_REQUEST['w_troca'];
-  $p_localizacao      = strtoupper($_REQUEST['p_localizacao']);
-  $p_lotacao          = strtoupper($_REQUEST['p_lotacao']);
-  $p_endereco         = strtoupper($_REQUEST['p_endereco']);
-  $p_nome             = strtoupper($_REQUEST['p_nome']);
-  $p_gestor_seguranca = strtoupper($_REQUEST['p_gestor_seguranca']);
-  $p_gestor_sistema   = strtoupper($_REQUEST['p_gestor_sistema']);
-  $p_ordena           = strtolower($_REQUEST['p_ordena']);
-  $p_uf               = strtoupper($_REQUEST['p_uf']);
-  $p_modulo           = strtoupper($_REQUEST['p_modulo']);
-  $p_ativo            = strtoupper($_REQUEST['p_ativo']);
-  $p_interno          = strtoupper($_REQUEST['p_interno']);
-  $p_contratado       = strtoupper($_REQUEST['p_contratado']);
-  $p_visao_especial   = strtoupper($_REQUEST['p_visao_especial']);
-  $p_dirigente        = strtoupper($_REQUEST['p_dirigente']);
+  $p_localizacao      = upper($_REQUEST['p_localizacao']);
+  $p_lotacao          = upper($_REQUEST['p_lotacao']);
+  $p_endereco         = upper($_REQUEST['p_endereco']);
+  $p_nome             = upper($_REQUEST['p_nome']);
+  $p_gestor_seguranca = upper($_REQUEST['p_gestor_seguranca']);
+  $p_gestor_sistema   = upper($_REQUEST['p_gestor_sistema']);
+  $p_ordena           = lower($_REQUEST['p_ordena']);
+  $p_uf               = upper($_REQUEST['p_uf']);
+  $p_modulo           = upper($_REQUEST['p_modulo']);
+  $p_ativo            = upper($_REQUEST['p_ativo']);
+  $p_interno          = upper($_REQUEST['p_interno']);
+  $p_contratado       = upper($_REQUEST['p_contratado']);
+  $p_visao_especial   = upper($_REQUEST['p_visao_especial']);
+  $p_dirigente        = upper($_REQUEST['p_dirigente']);
 
   
   $RS = db_getMenuData::getInstanceOf($dbms, $w_menu);
@@ -2041,7 +2041,7 @@ function NovaSenha() {
   $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
   $w_html .= '<tr bgcolor="'.$conTrBgcolor.'"><td align="center">'.$crlf;
   $w_html .= '    <table width="97%" border="0">'.$crlf;
-  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.strtoupper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
+  $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>REINICIALIZAÇÃO DE '.upper($w_texto_mail).'</b></font><br><br><td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO</font>: Esta é uma mensagem de envio automático. Não responda esta mensagem.</b></font><br><br><td></tr>'.$crlf;
   $w_html .= '      <tr valign="top"><td><font size=2>'.$crlf;
   if ($w_tipo=='B') {
@@ -2519,11 +2519,11 @@ function Grava() {
   BodyOpen('onLoad="this.focus();"');
   switch ($SG) {
     case "MENU":
-      $p_sq_endereco_unidade = strtoupper($_REQUEST['p_sq_endereco_unidade']);
-      $p_modulo              = strtoupper($_REQUEST['p_modulo']);
+      $p_sq_endereco_unidade = upper($_REQUEST['p_sq_endereco_unidade']);
+      $p_modulo              = upper($_REQUEST['p_modulo']);
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwMenu::getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_menu'], $_REQUEST['w_sq_menu_pai'], $_REQUEST['w_link'], $_REQUEST['w_p1'], 
             $_REQUEST['w_p2'], $_REQUEST['w_p3'], $_REQUEST['w_p4'], $_REQUEST['w_sigla'], $_REQUEST['w_imagem'], 
@@ -2549,7 +2549,7 @@ function Grava() {
       break;
     case "ACESSOS":
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SgPesMod::getInstanceOf($dbms, $O, 
             $_REQUEST['w_sq_pessoa'], $w_cliente, $_REQUEST['w_sq_modulo'], $_REQUEST['w_sq_pessoa_endereco']);
         ScriptOpen('JavaScript');
@@ -2564,7 +2564,7 @@ function Grava() {
       break;
     case "VISAO":
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as permissões existentes para depois incluir
         dml_PutSiwPesCC::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], $_REQUEST['w_sq_menu'], null);
 
@@ -2583,7 +2583,7 @@ function Grava() {
       break;
     case 'EMAIL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Elimina todas as configurações existentes para depois incluir
         dml_PutSiwPessoaMail::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_pessoa'], null, null, null, null, null);
         $w_teste = '';

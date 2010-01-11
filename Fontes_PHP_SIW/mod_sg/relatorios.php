@@ -52,17 +52,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_sg/';
@@ -108,20 +108,20 @@ function Rel_Permissao() {
   extract($GLOBALS);
   $w_tipo             = $_REQUEST['w_tipo'];
   $w_troca            = $_REQUEST['w_troca'];
-  $p_localizacao      = strtoupper($_REQUEST['p_localizacao']);
-  $p_lotacao          = strtoupper($_REQUEST['p_lotacao']);
-  $p_endereco         = strtoupper($_REQUEST['p_endereco']);
-  $p_nome             = strtoupper($_REQUEST['p_nome']);
-  $p_gestor_seguranca = strtoupper($_REQUEST['p_gestor_seguranca']);
-  $p_gestor_sistema   = strtoupper($_REQUEST['p_gestor_sistema']);
-  $p_ordena           = strtolower($_REQUEST['p_ordena']);
-  $p_uf               = strtoupper($_REQUEST['p_uf']);
-  $p_modulo           = strtoupper($_REQUEST['p_modulo']);
-  $p_ativo            = strtoupper($_REQUEST['p_ativo']);
-  $p_interno          = strtoupper($_REQUEST['p_interno']);
-  $p_contratado       = strtoupper($_REQUEST['p_contratado']);
-  $p_visao_especial   = strtoupper($_REQUEST['p_visao_especial']);
-  $p_dirigente        = strtoupper($_REQUEST['p_dirigente']);
+  $p_localizacao      = upper($_REQUEST['p_localizacao']);
+  $p_lotacao          = upper($_REQUEST['p_lotacao']);
+  $p_endereco         = upper($_REQUEST['p_endereco']);
+  $p_nome             = upper($_REQUEST['p_nome']);
+  $p_gestor_seguranca = upper($_REQUEST['p_gestor_seguranca']);
+  $p_gestor_sistema   = upper($_REQUEST['p_gestor_sistema']);
+  $p_ordena           = lower($_REQUEST['p_ordena']);
+  $p_uf               = upper($_REQUEST['p_uf']);
+  $p_modulo           = upper($_REQUEST['p_modulo']);
+  $p_ativo            = upper($_REQUEST['p_ativo']);
+  $p_interno          = upper($_REQUEST['p_interno']);
+  $p_contratado       = upper($_REQUEST['p_contratado']);
+  $p_visao_especial   = upper($_REQUEST['p_visao_especial']);
+  $p_dirigente        = upper($_REQUEST['p_dirigente']);
   
 
   if ($O=='L') {

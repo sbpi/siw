@@ -45,17 +45,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_ac/';
@@ -136,7 +136,7 @@ function Demonstrativo() {
       foreach ($RS_Solic as $row) {
         if($w_acordo_atual==0 || $w_acordo_atual<>f($row,'sq_siw_solicitacao')) {
           ShowHTML('<tr><td colspan="4"><hr NOSHADE color=#000000 size=4></td></tr>');
-          ShowHTML('<tr><td bgcolor="#f0f0f0" colspan="2"><b>'.strtoupper(f($row,'nome')).': '.f($row,'codigo_interno').' - '.f($row,'titulo').' ('.f($row,'sq_siw_solicitacao').')');
+          ShowHTML('<tr><td bgcolor="#f0f0f0" colspan="2"><b>'.upper(f($row,'nome')).': '.f($row,'codigo_interno').' - '.f($row,'titulo').' ('.f($row,'sq_siw_solicitacao').')');
           ShowHTML('    <td bgcolor="#f0f0f0" colspan="2" align=right><b>PROCESSO: </b>'.nvl(f($row,'processo'),'---'));
           ShowHTML('<tr><td colspan="4"><hr NOSHADE color=#000000 size=4></td></tr>');
           $RS_Outra = db_getConvOutraParte::getInstanceOf($dbms,null,f($row,'sq_siw_solicitacao'),null,null);

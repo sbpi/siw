@@ -40,15 +40,15 @@ if ($_SESSION['LOGON'] !='Sim') EncerraSessao();
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = $_REQUEST['P3'];
 $P4         = $_REQUEST['P4'];
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
-$R          = strtolower($_REQUEST['R']);
-$O          = strtoupper($_REQUEST['O']);
+$SG         = upper($_REQUEST['SG']);
+$R          = lower($_REQUEST['R']);
+$O          = upper($_REQUEST['O']);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];
@@ -616,7 +616,7 @@ function Grava() {
 
   switch ($SG) {
   case 'SGSENHA':
-    if (VerificaSenhaAcesso($_SESSION['USERNAME'],strtoupper($_REQUEST['w_atual']))) {
+    if (VerificaSenhaAcesso($_SESSION['USERNAME'],upper($_REQUEST['w_atual']))) {
        db_updatePassword::getInstanceOf($dbms,$w_cliente,$_SESSION["SQ_PESSOA"],$_REQUEST["w_nova"],'PASSWORD');
        ScriptOpen('JavaScript');
        ShowHTML('  alert(\'Senha de Acesso alterada com sucesso!\');');
@@ -628,7 +628,7 @@ function Grava() {
        retornaFormulario('w_atual');
     } break;
   case 'SGASSINAT':
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_atual']))) {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_atual']))) {
        db_updatePassword::getInstanceOf($dbms,$w_cliente,$_SESSION["SQ_PESSOA"],$_REQUEST["w_nova"],'SIGNATURE');
        ScriptOpen('JavaScript');
        ShowHTML('  alert(\'Assinatura Eletrônica alterada com sucesso!\');');
@@ -641,7 +641,7 @@ function Grava() {
     } break;
   case "SIWMENURELAC":
     // Verifica se a Assinatura Eletrônica é válida
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Elimina todas as permissões existentes para depois incluir
       dml_PutMenuRelac::getInstanceOf($dbms, 'E', $_REQUEST['w_sq_menu'],$_REQUEST['w_sq_menu_fornec'], null);
       for ($i=0; $i<=count($_POST['w_sq_tramite'])-1; $i=$i+1)   {

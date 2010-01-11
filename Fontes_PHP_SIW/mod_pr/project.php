@@ -51,18 +51,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
 $p_projeto    = $_REQUEST['p_projeto'];
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'project.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pr/';
@@ -323,11 +323,11 @@ function Grava() {
   switch ($SG) {
   case 'IMPPROJ':
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Trata o recebimento de upload ou dados 
       ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/relogio.gif" align="center"> <b>Aguarde: Importação em andamento...</b><br><br><br><br><br><br><br><br><br><br></center></div>');
       flush();
-      if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
+      if ((false!==(strpos(upper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(upper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
         // Se foi feito o upload de um arquivo 
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];

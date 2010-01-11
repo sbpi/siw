@@ -14,16 +14,16 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   //Recupera as informações do sub-menu
   $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, 'PJCAD');
   foreach ($RS as $row) {
-    if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'AREAS')!==false)    $l_nome_menu['AREAS'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'QUALIT')!==false)   $l_nome_menu['QUALIT'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'ETAPA')!==false)    $l_nome_menu['ETAPA'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'INTERES')!==false)  $l_nome_menu['INTERES'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'RESP')!==false)     $l_nome_menu['RESP'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'RECURSO')!==false)  $l_nome_menu['RECURSO'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'RUBRICA')!==false)  $l_nome_menu['RUBRICA'] = strtoupper(f($row,'nome'));
-    else $l_nome_menu[f($row,'sigla')] = strtoupper(f($row,'nome'));
+    if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'AREAS')!==false)    $l_nome_menu['AREAS'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'QUALIT')!==false)   $l_nome_menu['QUALIT'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'ETAPA')!==false)    $l_nome_menu['ETAPA'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'INTERES')!==false)  $l_nome_menu['INTERES'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'RESP')!==false)     $l_nome_menu['RESP'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'RECURSO')!==false)  $l_nome_menu['RECURSO'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'RUBRICA')!==false)  $l_nome_menu['RUBRICA'] = upper(f($row,'nome'));
+    else $l_nome_menu[f($row,'sigla')] = upper(f($row,'nome'));
   }
   $l_html='';
   // Verifica se o cliente tem o módulo de acordos contratado
@@ -57,7 +57,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   $w_exibe4 = false; // Análise e observações da ABDI
   
   // Vínculo da ABDI vê todas as análises
-  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
+  if (upper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
     $w_exibe1 = true;
     $w_exibe2 = true;
     $w_exibe3 = true;
@@ -65,7 +65,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   }
 
   // Vínculo da Secretaria executiva só não vê a análise da ABDI
-  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+  if (upper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
     $w_exibe1 = true;
     $w_exibe2 = true;
     $w_exibe3 = true;
@@ -130,7 +130,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
   $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';
   if($l_tipo!='WORD') $l_html.=chr(13).'        <td colspan="4" bgcolor="#f0f0f0" align="center">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
   else                $l_html.=chr(13).'        <td colspan="4" bgcolor="#f0f0f0" align="center">'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-  $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#f0f0f0" align="center"><b>'.strtoupper(f($RS,'codigo_interno').' - '.f($RS,'titulo')).'</b></td></tr>';
+  $l_html.=chr(13).'      <tr><td colspan="4" bgcolor="#f0f0f0" align="center"><b>'.upper(f($RS,'codigo_interno').' - '.f($RS,'titulo')).'</b></td></tr>';
   $l_html.=chr(13).'      <tr valign="top">';
   $l_html.=chr(13).'        <td colspan="2" width="50%" align="center"><b>COORDENAÇÃO:';
   if($l_tipo!='WORD') $l_html.=chr(13).'        '.ExibeUnidade(null,$w_cliente,f($RS,'sg_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
@@ -143,7 +143,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
     $l_coord = '';
     foreach($RS1 as $row) {
       if (f($row,'sg_tipo_interessado')=='MPGCO') {
-        $l_coord.=ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).', ';
+        $l_coord.=ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,upper(f($row,'nome'))).', ';
       }
     }
     $l_coord = substr($l_coord,0,-2);
@@ -206,7 +206,7 @@ function VisualProjeto($l_chave,$operacao,$l_usuario,$l_tipo=null) {
           $l_html.=chr(13).'         <td nowrap>&nbsp;</td>';
           $w_atual = f($row,'lotacao');
         }
-        if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,strtoupper(f($row,'nome'))).'</td>';
+        if($l_tipo!='WORD') $l_html.=chr(13).'           <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa'),$TP,upper(f($row,'nome'))).'</td>';
         else       $l_html.=chr(13).'           <td>'.f($row,'nome').'</td>';
         $l_cont++;
       }    

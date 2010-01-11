@@ -50,17 +50,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'carga_arquivos.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
@@ -429,7 +429,7 @@ function Grava() {
   switch ($SG) {
     case 'DCINICIAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $cont = 0;
         if ($w_opcao=='links') {
           // Carrega array com todos os arquivos do diretório raiz, para poder testar nomes inválidos
@@ -470,7 +470,7 @@ function Grava() {
             $arquivos = retrieveTree($_REQUEST['w_dir'][$i]);
             foreach($arquivos as $k => $v) {
               // verifica se a extensão do arquivo é uma das selecionadas
-              if ((false!==strpos($v,'.')) && (false!==strpos($_REQUEST['w_extensao'],strtoupper(substr($v,strpos($v,'.')+1))))) {
+              if ((false!==strpos($v,'.')) && (false!==strpos($_REQUEST['w_extensao'],upper(substr($v,strpos($v,'.')+1))))) {
                 if ($w_opcao=='atualiza') { $cont += 1; ShowHTML('<DD>'.$cont.' - '.basename($v)); }
                 $arquivo = $v;
                 $file = analisa_arquivo($arquivo, $w_opcao, $base);
@@ -580,23 +580,23 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
       // com o mesmo nome que são referenciados
       if ($opcao=='nomes') {
         // Verifica se está sendo incluído um arquivo existente
-        if ((strpos(strtolower($buffer),'include(')!==false) ||
-            (strpos(strtolower($buffer),'include_once(')!==false) ||
-            (strpos(strtolower($buffer),'require(')!==false) ||
-            (strpos(strtolower($buffer),'require_once(')!==false)
+        if ((strpos(lower($buffer),'include(')!==false) ||
+            (strpos(lower($buffer),'include_once(')!==false) ||
+            (strpos(lower($buffer),'require(')!==false) ||
+            (strpos(lower($buffer),'require_once(')!==false)
            ) {
           // Configura o nome do arquivo que está sendo incluído
-          if (strpos(strtolower($buffer),'include(')!==false) {
+          if (strpos(lower($buffer),'include(')!==false) {
             $arq_inclusao = substr($buffer,strpos($buffer,'include(')+8);
-          } elseif (strpos(strtolower($buffer),'include_once(')!==false) {
+          } elseif (strpos(lower($buffer),'include_once(')!==false) {
             $arq_inclusao = substr($buffer,strpos($buffer,'include_once(')+13);
-          } elseif (strpos(strtolower($buffer),'require(')!==false) {
+          } elseif (strpos(lower($buffer),'require(')!==false) {
             $arq_inclusao = substr($buffer,strpos($buffer,'require(')+8);
-          } elseif (strpos(strtolower($buffer),'require_once(')!==false) {
+          } elseif (strpos(lower($buffer),'require_once(')!==false) {
             $arq_inclusao = substr($buffer,strpos($buffer,'require_once(')+13);
           }
           // Ajusta o nome do arquivo
-          if (strpos(strtolower($arq_inclusao),'"')!==false) {
+          if (strpos(lower($arq_inclusao),'"')!==false) {
             $arq_inclusao = substr($arq_inclusao,strpos($arq_inclusao,'"')+1);
             $arq_inclusao = str_replace('../','',substr($arq_inclusao,0,strpos($arq_inclusao,'"')));
           } else {
@@ -612,27 +612,27 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
         } elseif 
            (substr(trim($buffer),0,2)!='//' &&
             (false===strpos(str_replace(' ','',trim($buffer)),'$w_pagina=')) &&
-            ((strpos(strtolower($buffer),'.php')!==false && strpos(strtolower($buffer),'\'.php')===false && strpos(strtolower($buffer),'(.php')===false) ||
-             (strpos(strtolower($buffer),'.htm')!==false && strpos(strtolower($buffer),'\'.htm')===false && strpos(strtolower($buffer),'.html')===false) ||
-             (strpos(strtolower($buffer),'.jpg')!==false && strpos(strtolower($buffer),'\'.jpg')===false) ||
-             (strpos(strtolower($buffer),'.jpeg')!==false && strpos(strtolower($buffer),'\'.jpeg')===false) ||
-             (strpos(strtolower($buffer),'.gif')!==false && strpos(strtolower($buffer),'\'.gif')===false)
+            ((strpos(lower($buffer),'.php')!==false && strpos(lower($buffer),'\'.php')===false && strpos(lower($buffer),'(.php')===false) ||
+             (strpos(lower($buffer),'.htm')!==false && strpos(lower($buffer),'\'.htm')===false && strpos(lower($buffer),'.html')===false) ||
+             (strpos(lower($buffer),'.jpg')!==false && strpos(lower($buffer),'\'.jpg')===false) ||
+             (strpos(lower($buffer),'.jpeg')!==false && strpos(lower($buffer),'\'.jpeg')===false) ||
+             (strpos(lower($buffer),'.gif')!==false && strpos(lower($buffer),'\'.gif')===false)
             )
            ) {
           // Verifica se está sendo referenciado um arquivo existente
   
           // Configura o nome do arquivo que está sendo referenciado
-          if (strpos(strtolower($buffer),'.php')!==false) {
+          if (strpos(lower($buffer),'.php')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.php')+4));
-          } elseif (strpos(strtolower($buffer),'.htm')!==false) {
+          } elseif (strpos(lower($buffer),'.htm')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.htm')+4));
-          } elseif (strpos(strtolower($buffer),'.html')!==false) {
+          } elseif (strpos(lower($buffer),'.html')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.html')+5));
-          } elseif (strpos(strtolower($buffer),'.jpg')!==false) {
+          } elseif (strpos(lower($buffer),'.jpg')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpg')+4));
-          } elseif (strpos(strtolower($buffer),'.gif')!==false) {
+          } elseif (strpos(lower($buffer),'.gif')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.gif')+4));
-          } elseif (strpos(strtolower($buffer),'.jpe')!==false) {
+          } elseif (strpos(lower($buffer),'.jpe')!==false) {
             $arq_inclusao = strrev(substr($buffer,0,strpos($buffer,'.jpeg')+5));
           } 
          
@@ -657,9 +657,9 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
         // Identificação dos dados necessários à atualização do banco de dados
   
         // guarda a descrição da página, a partir dos padrões "// Descricao:"
-        if (!(strpos(strtoupper($buffer),'// DESCRICAO:')===false) ||
-            ($i < 10 && !(strpos(strtoupper($buffer),'// ')===false) && (strpos($buffer,'// ===')===false) && (strpos($buffer,'// ---')===false)) ||
-            (!(strpos(strtoupper($line),'* { DESCRIPTION :-')===false))
+        if (!(strpos(upper($buffer),'// DESCRICAO:')===false) ||
+            ($i < 10 && !(strpos(upper($buffer),'// ')===false) && (strpos($buffer,'// ===')===false) && (strpos($buffer,'// ---')===false)) ||
+            (!(strpos(upper($line),'* { DESCRIPTION :-')===false))
            ) {
           if (false!==strpos($buffer,':')) {
             $l_array['descricao'] = trim(substr($buffer,strpos($buffer,':')+1));
@@ -676,13 +676,13 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
         }
 
         // guarda o nome das funções da página, a partir do padrão "function"
-        if ((false!==strpos(strtoupper($buffer),'FUNCTION ')) && 
-            (false===strpos(strtoupper($buffer),'SHOWHTML')) && 
-            (false===strpos(strtoupper($buffer),'W_HTML')) && 
-            (false===strpos(strtoupper($buffer),'PRINT'))
+        if ((false!==strpos(upper($buffer),'FUNCTION ')) && 
+            (false===strpos(upper($buffer),'SHOWHTML')) && 
+            (false===strpos(upper($buffer),'W_HTML')) && 
+            (false===strpos(upper($buffer),'PRINT'))
            ) {
           $linha = trim($buffer);
-          $pos = (strpos(strtoupper($linha),'FUNCTION')+9);
+          $pos = (strpos(upper($linha),'FUNCTION')+9);
           $funcao = substr($linha,$pos);
           if     (false!==strpos($funcao,'(')) $funcao = trim(substr($funcao,0,strpos($funcao, '(')));
           elseif (false!==strpos($funcao,' ')) $funcao = trim(substr($funcao,0,strpos($funcao, ' ')));

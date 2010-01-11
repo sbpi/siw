@@ -227,7 +227,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
     else                                $l_html.=chr(13).'   <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>AÇÃO: '.f($RS1,'titulo').'</b></div></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação da ação
-    if (strtoupper($l_identificacao)==strtoupper('sim')) {
+    if (upper($l_identificacao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO DA AÇÃO<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       // Se a ação no PPA for informada, exibe.
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
@@ -307,7 +307,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       $l_html.=chr(13).'       <td>'.Nvl(f($RS1,'nm_tramite'),'-').'</td></tr>';
     } 
     // Responsaveis
-    if (strtoupper($l_responsavel)==strtoupper('sim')) {
+    if (upper($l_responsavel)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESPONSÁVEIS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       if (f($RS1,'nm_gerente_programa')>'' || f($RS1,'nm_gerente_executivo')>'' || f($RS1,'nm_gerente_adjunto')>'' || f($RS1,'resp_ppa')>'' || f($RS1,'resp_pri')>'') {
         if (Nvl(f($RS1,'nm_gerente_programa'),'')>'') {
@@ -355,7 +355,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     } 
     // Dados da conclusão da ação, se ela estiver nessa situação
-    if (strtoupper($l_conclusao)==strtoupper('sim')) {
+    if (upper($l_conclusao)==upper('sim')) {
       if (f($RS1,'concluida')=='S' && Nvl(f($RS1,'data_conclusao'),'')>'') {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO DA AÇÃO<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
         $l_html.=chr(13).'   <tr><td><b>Recurso Executado:</b></td>';
@@ -365,7 +365,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     } 
     // Programação Qualitativa
-    if (strtoupper($l_qualitativa)==strtoupper('sim')) {
+    if (upper($l_qualitativa)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO QUALITATIVA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
         $l_html.=chr(13).'   <tr><td valign="top"><b>Descrição da Ação:</b></td>';
@@ -403,7 +403,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       $l_html.=chr(13).'       <td><div align="justify">'.Nvl(f($RS1,'justificativa'),'-').'</div></td></tr>';
     } 
     // Programação orçamentaria
-    if (strtoupper($l_orcamentaria)==strtoupper('sim')){
+    if (upper($l_orcamentaria)==upper('sim')){
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO ORÇAMENTÁRIA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       if (Nvl(f($RS1,'cd_acao'),'')>'') {
         if (f($RS1,'cd_tipo_acao')!=3) {
@@ -522,7 +522,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     } 
     // Listagem das metas da ação
-    if (strtoupper($l_meta)==strtoupper('sim')) {
+    if (upper($l_meta)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>METAS FÍSICAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS2 = db_getSolicMeta_IS::getInstanceOf($dbms,$w_cliente,$l_chave,null,'LSTNULL',null,null,null,null,null,null,null);
       $RS2 = SortArray($RS2,'ordem','asc');
@@ -719,7 +719,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     } 
     // Listagem das restrições da ação
-    if (strtoupper($l_restricao)==strtoupper('sim')) {
+    if (upper($l_restricao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS2 = db_getRestricao_IS::getInstanceOf($dbms,'ISACRESTR',$l_chave,null);
       $RS2 = SortArray($RS2,'inclusao','desc');
@@ -741,7 +741,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       }
     }
     // Listagem das tarefas na visualização da ação, rotina adquirida apartir da rotina exitente na Tarefas.php para listagem das tarefas
-    if ($l_tarefa==strtoupper('sim')) {
+    if ($l_tarefa==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>TAREFAS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS2 = db_getLinkData::getInstanceOf($dbms,RetornaCliente(),'ISTCAD');
     $RS2 = db_getSolicList_IS::getInstanceOf($dbms,f($RS2,'sq_menu'),RetornaUsuario(),'ISTCAD',3,
@@ -877,7 +877,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       }
     } 
     // Interessados na execução da ação
-    if (strtoupper($l_interessado)==strtoupper('sim')) {
+    if (upper($l_interessado)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS1 = SortArray($RS1,'nome_resumido','asc');
@@ -889,7 +889,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     }
     // Arquivos vinculados
-    if (strtoupper($l_anexo)==strtoupper('sim')) {
+    if (upper($l_anexo)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS1 = SortArray($RS1,'nome','asc');
@@ -914,7 +914,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
       } 
     } 
     // Encaminhamentos
-    if (strtoupper($l_ocorrencia)==strtoupper('sim')) {
+    if (upper($l_ocorrencia)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
@@ -950,7 +950,7 @@ function VisualAcao($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_responsav
         $l_html.=chr(13).'         </table></div></td></tr>';
       } 
     } 
-    if (strtoupper($l_dados_consulta)==strtoupper('sim')) {
+    if (upper($l_dados_consulta)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONSULTA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Consulta Realizada por:</b></td>';
       $l_html.=chr(13).'       <td>'.$_SESSION['NOME_RESUMIDO'].'</td></tr>';

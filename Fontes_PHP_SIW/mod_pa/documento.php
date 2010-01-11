@@ -86,22 +86,22 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'documento.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pa/';
 $w_troca        = $_REQUEST['w_troca'];
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$w_SG           = strtoupper($_REQUEST['w_SG']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$w_SG           = upper($_REQUEST['w_SG']);
 if (strpos('PADOCANEXO,PAINTERESS,PADOCASS',$SG)!==false) {
   if ($O!='I' && $O!='E' && nvl($_REQUEST['w_chave_aux'],$_REQUEST['w_sq_pessoa'])=='') $O='L';
 } elseif ($SG=='PADENVIO') {
@@ -128,34 +128,34 @@ $w_usuario      = RetornaUsuario();
 $w_menu         = RetornaMenu($w_cliente,$SG);
 $w_ano          = RetornaAno();
 $w_copia        = $_REQUEST['w_copia'];
-$p_numero_doc   = strtoupper($_REQUEST['p_numero_doc']);
-$p_atividade    = strtoupper($_REQUEST['p_atividade']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_proponente   = strtoupper($_REQUEST['p_proponente']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_assunto      = strtoupper($_REQUEST['p_assunto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_tipo         = strtoupper($_REQUEST['p_tipo']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_internas     = strtoupper($_REQUEST['p_internas']);
-$p_palavra      = strtoupper($_REQUEST['p_palavra']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
+$p_numero_doc   = upper($_REQUEST['p_numero_doc']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_proponente   = upper($_REQUEST['p_proponente']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_tipo         = upper($_REQUEST['p_tipo']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_internas     = upper($_REQUEST['p_internas']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_processo     = strtoupper($_REQUEST['p_processo']);
-$p_empenho      = strtoupper($_REQUEST['p_empenho']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
+$p_processo     = upper($_REQUEST['p_processo']);
+$p_empenho      = upper($_REQUEST['p_empenho']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -191,7 +191,7 @@ function Inicial() {
   global $p_uf;
   $w_tipo=$_REQUEST['w_tipo'];
   if ($O=='L') {
-    if (!(strpos(strtoupper($R),'GR_')===false)) {
+    if (!(strpos(upper($R),'GR_')===false)) {
       $w_filtro='';
       if ($p_uf>'' || $p_tipo>'') {
         if ($p_tipo>'') $p_uf = (($p_tipo=='P') ? 'S' : 'N');
@@ -325,7 +325,7 @@ function Inicial() {
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
     if($w_embed!='WORD') {
-      if ((strpos(strtoupper($R),'GR_'))===false) {
+      if ((strpos(upper($R),'GR_'))===false) {
         Estrutura_Texto_Abre();
       } else {
         CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
@@ -350,7 +350,7 @@ function Inicial() {
           ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
         } 
       } 
-      if ((strpos(strtoupper($R),'GR_')===false)) {
+      if ((strpos(upper($R),'GR_')===false)) {
         if ($w_copia>'') {
           // Se for cópia
           if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
@@ -362,7 +362,7 @@ function Inicial() {
       } 
     }
     ShowHTML('    <td align="right">');
-    if ($w_embed!='WORD' && strpos(strtoupper($R),'GR_')===false) {
+    if ($w_embed!='WORD' && strpos(upper($R),'GR_')===false) {
       ShowHTML('     <IMG ALIGN="CENTER" TITLE="Imprimir" SRC="images/impressora.jpg" onClick="window.print();">');
       ShowHTML('     &nbsp;&nbsp;<a href="'.$w_dir.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.count($RS).'&TP='.$TP.'&SG='.$SG.'&w_tipo=WORD'.MontaFiltro('GET').'"><IMG border=0 ALIGN="CENTER" TITLE="Gerar word" SRC="images/word.gif"></a>');
     } 
@@ -664,13 +664,15 @@ function Geral() {
     if (f($RS,'sigla')=='PROC') {
       $w_processo = 'S';
       $w_circular = 'N';
-    } elseif (strpos(strtoupper(f($RS,'nome')),'CIRCULAR')!==false) {
+    } elseif (strpos(upper(f($RS,'nome')),'CIRCULAR')!==false) {
       $w_processo = 'N';
       $w_circular = 'S';
     } else {
       $w_processo = 'N';
       $w_circular = 'N';
     }
+    // Carrega assunto padrão do documento
+    $w_assunto = f($RS,'sq_assunto');
   }
   
   if (nvl($w_assunto,'')=='') {
@@ -823,9 +825,9 @@ function Geral() {
         ShowHTML('                '.f($row,'descricao'));
         if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
           echo '<br>';
-          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(lower(f($row,'ds_assunto_bis')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(lower(f($row,'ds_assunto_avo')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(lower(f($row,'ds_assunto_pai')));
         }
         ShowHTML('              <td>'.nvl(f($row,'detalhamento'),'---').'</td>');
         ShowHTML('              <td>'.nvl(f($row,'observacao'),'---').'</td>');
@@ -1052,12 +1054,12 @@ function Assuntos() {
         ShowHTML('                '.f($row,'descricao'));
         if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
           echo '<br>';
-          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(lower(f($row,'ds_assunto_bis')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(lower(f($row,'ds_assunto_avo')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(lower(f($row,'ds_assunto_pai')));
         }
-        ShowHTML('        <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
-        ShowHTML('        <td>'.nvl(strtolower(f($row,'observacao')),'---').'</td>');
+        ShowHTML('        <td>'.nvl(lower(f($row,'detalhamento')),'---').'</td>');
+        ShowHTML('        <td>'.nvl(lower(f($row,'observacao')),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave_aux').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma desvinculação do assunto ao documento?\');">Desvincular</A>&nbsp');
         ShowHTML('        </td>');
@@ -1095,9 +1097,9 @@ function Assuntos() {
         ShowHTML('                '.f($row,'descricao'));
         if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
           echo '<br>';
-          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+          if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(lower(f($row,'ds_assunto_bis')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(lower(f($row,'ds_assunto_avo')).' &rarr; ');
+          if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(lower(f($row,'ds_assunto_pai')));
         }
         ShowHTML('              <td>'.nvl(f($row,'detalhamento'),'---').'</td>');
         ShowHTML('              <td>'.nvl(f($row,'observacao'),'---').'</td>');
@@ -1284,32 +1286,32 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_meta=null,$w_ocorrencia=null,$w_consulta=null) {
   extract($GLOBALS);
   $w_chave    = nvl($w_chave,$_REQUEST['w_chave']);
-  $w_tipo     = nvl($w_tipo,strtoupper(trim($_REQUEST['w_tipo'])));
-  $w_formato  = nvl($w_formato,strtoupper(trim($_REQUEST['w_formato'])));
+  $w_tipo     = nvl($w_tipo,upper(trim($_REQUEST['w_tipo'])));
+  $w_formato  = nvl($w_formato,upper(trim($_REQUEST['w_formato'])));
   if ($O=='T') {
-    $w_identificacao    = strtoupper(nvl($w_identificacao,'S'));
-    $w_responsavel      = strtoupper(nvl($w_responsavel,'S'));
-    $w_assunto_princ    = strtoupper(nvl($w_qualitativa,'S'));
-    $w_orcamentaria     = strtoupper(nvl($w_orcamentaria,'S'));
-    $w_indicador        = strtoupper(nvl($w_indicador,'S'));
-    $w_recurso          = strtoupper(nvl($w_recurso,'S'));
-    $w_interessado      = strtoupper(nvl($w_interessado,'S'));
-    $w_anexo            = strtoupper(nvl($w_anexo,'S'));
-    $w_meta             = strtoupper(nvl($w_meta,'S'));
-    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'S'));
-    $w_consulta         = strtoupper(nvl($w_consulta,'N'));
+    $w_identificacao    = upper(nvl($w_identificacao,'S'));
+    $w_responsavel      = upper(nvl($w_responsavel,'S'));
+    $w_assunto_princ    = upper(nvl($w_qualitativa,'S'));
+    $w_orcamentaria     = upper(nvl($w_orcamentaria,'S'));
+    $w_indicador        = upper(nvl($w_indicador,'S'));
+    $w_recurso          = upper(nvl($w_recurso,'S'));
+    $w_interessado      = upper(nvl($w_interessado,'S'));
+    $w_anexo            = upper(nvl($w_anexo,'S'));
+    $w_meta             = upper(nvl($w_meta,'S'));
+    $w_ocorrencia       = upper(nvl($w_ocorrencia,'S'));
+    $w_consulta         = upper(nvl($w_consulta,'N'));
   } else {
-    $w_identificacao    = strtoupper(nvl($w_identificacao,'S'));
-    $w_responsavel      = strtoupper(nvl($w_responsavel,'N'));
-    $w_assunto_princ    = strtoupper(nvl($w_qualitativa,'S'));
-    $w_orcamentaria     = strtoupper(nvl($w_orcamentaria,'N'));
-    $w_indicador        = strtoupper(nvl($w_indicador,'N'));
-    $w_recurso          = strtoupper(nvl($w_recurso,'N'));
-    $w_interessado      = strtoupper(nvl($w_interessado,'N'));
-    $w_anexo            = strtoupper(nvl($w_anexo,'N'));
-    $w_meta             = strtoupper(nvl($w_meta,'N'));
-    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'S'));
-    $w_consulta         = strtoupper(nvl($w_consulta,'N'));
+    $w_identificacao    = upper(nvl($w_identificacao,'S'));
+    $w_responsavel      = upper(nvl($w_responsavel,'N'));
+    $w_assunto_princ    = upper(nvl($w_qualitativa,'S'));
+    $w_orcamentaria     = upper(nvl($w_orcamentaria,'N'));
+    $w_indicador        = upper(nvl($w_indicador,'N'));
+    $w_recurso          = upper(nvl($w_recurso,'N'));
+    $w_interessado      = upper(nvl($w_interessado,'N'));
+    $w_anexo            = upper(nvl($w_anexo,'N'));
+    $w_meta             = upper(nvl($w_meta,'N'));
+    $w_ocorrencia       = upper(nvl($w_ocorrencia,'S'));
+    $w_consulta         = upper(nvl($w_consulta,'N'));
   }
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -1437,7 +1439,7 @@ function Encaminhamento() {
 
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave,f($RS_Menu,'sigla'));
   
-  if (strpos(strtoupper(f($RS_Solic,'nm_especie')),'CIRCULAR')!==false) {
+  if (strpos(upper(f($RS_Solic,'nm_especie')),'CIRCULAR')!==false) {
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     BodyOpenClean('onLoad=\'this.focus()\';');
@@ -1874,8 +1876,8 @@ function BuscaAssunto() {
   global $w_Disabled;
 
   $w_ano        = $_REQUEST['w_ano'];
-  $w_nome       = strtoupper($_REQUEST['w_nome']);
-  $w_codigo     = strtoupper($_REQUEST['w_codigo']);
+  $w_nome       = upper($_REQUEST['w_nome']);
+  $w_codigo     = upper($_REQUEST['w_codigo']);
   $w_cliente    = $_REQUEST['w_cliente'];
   $chaveaux     = $_REQUEST['chaveaux'];
   $restricao    = $_REQUEST['restricao'];
@@ -1965,12 +1967,12 @@ function BuscaAssunto() {
           ShowHTML('                '.f($row,'descricao'));
           if (nvl(f($row,'ds_assunto_pai'),'')!='') { 
             echo '<br>';
-            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_bis')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_avo')).' &rarr; ');
-            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(strtolower(f($row,'ds_assunto_pai')));
+            if (nvl(f($row,'ds_assunto_bis'),'')!='') ShowHTML(lower(f($row,'ds_assunto_bis')).' &rarr; ');
+            if (nvl(f($row,'ds_assunto_avo'),'')!='') ShowHTML(lower(f($row,'ds_assunto_avo')).' &rarr; ');
+            if (nvl(f($row,'ds_assunto_pai'),'')!='') ShowHTML(lower(f($row,'ds_assunto_pai')));
           }
           ShowHTML('            </td>');
-          ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
+          ShowHTML('            <td>'.nvl(lower(f($row,'detalhamento')),'---').'</td>');
           ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');
           ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">Selecionar</a>');
         } 
@@ -2022,7 +2024,7 @@ function BuscaAssunto() {
           ShowHTML('            <td><a class="ss" HREF="javascript:this.status.value;" onClick="javascript:volta(\''.f($row,'codigo').'\', \''.f($row,'descricao').'\', '.f($row,'chave').');">'.f($row,'codigo').'</a></td>');
           ShowHTML('            <td>'.f($row,'descricao'));
           ShowHTML('            </td>');
-          ShowHTML('            <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>');
+          ShowHTML('            <td>'.nvl(lower(f($row,'detalhamento')),'---').'</td>');
           ShowHTML('            <td>'.nvl(f($row,'observacao'),'---').'</td>');
           if (f($row,'sg_corrente_guarda')=='NAPL') ShowHTML('            <td align="center">---</td>'); else ShowHTML('            <td align="center" '.((f($row,'sg_corrente_guarda')!='ANOS') ? 'title="'.f($row,'ds_corrente_guarda').'"' : '').'>'.f($row,'guarda_corrente').'</td>');
           if (f($row,'sg_intermed_guarda')=='NAPL') ShowHTML('            <td align="center">---</td>'); else ShowHTML('            <td align="center" '.((f($row,'sg_intermed_guarda')!='ANOS') ? 'title="'.f($row,'ds_intermed_guarda').'"' : '').'>'.f($row,'guarda_intermed').'</td>');
@@ -2095,10 +2097,8 @@ function Tramitacao() {
   $RS_Arq = $RS = db_getUorgData::getInstanceOf($dbms,f($RS_Parametro,'arquivo_central'));
   
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_autuar') || 
-      $p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || 
       $p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') ||  
-      $p_tipo_despacho==f($RS_Parametro,'despacho_eliminar') || 
-      $p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')
+      $p_tipo_despacho==f($RS_Parametro,'despacho_eliminar') 
      ) $w_envia_protocolo = 'S'; else $w_envia_protocolo = 'N';  
 
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) $w_envia_arquivo = 'S'; else $w_envia_arquivo = 'N';  
@@ -2371,11 +2371,11 @@ function Tramitacao() {
       ShowHTML('<INPUT type="hidden" name="w_dias" value="0">');
     }
     if ($w_envia_arquivo=='S') {
-      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: '.strtoupper(f($RS_Arq,'nome')).'</b></font></td></tr>');
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: '.upper(f($RS_Arq,'nome')).'</b></font></td></tr>');
       ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.f($RS_Arq,'sq_unidade').'">');
       ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
     } elseif ($w_envia_protocolo=='S') {
-      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: '.strtoupper(f($RS_Prot,'nome')).'</b></font></td></tr>');
+      ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO: '.upper(f($RS_Prot,'nome')).'</b></font></td></tr>');
       ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.f($RS_Prot,'sq_unidade').'">');
       ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
     } else {
@@ -3153,39 +3153,39 @@ function BuscaProtocolo() {
   $restricao    = $_REQUEST['restricao'];
   $campo        = $_REQUEST['campo'];
 
-  $l_exibe         = strtoupper($_REQUEST['exibe']);
-  $l_tipo          = strtoupper($_REQUEST['l_tipo']);
-  $l_chave_pai     = strtoupper($_REQUEST['l_chave_pai']);
-  $l_atividade     = strtoupper($_REQUEST['l_atividade']);
-  $l_graf          = strtoupper($_REQUEST['l_graf']);
-  $l_ativo         = strtoupper($_REQUEST['l_ativo']);
-  $l_solicitante   = strtoupper($_REQUEST['l_solicitante']);
-  $l_prioridade    = strtoupper($_REQUEST['l_prioridade']);
-  $l_unidade       = strtoupper($_REQUEST['l_unidade']);
-  $l_proponente    = strtoupper($_REQUEST['l_proponente']);
-  $l_ordena        = strtolower($_REQUEST['l_ordena']);
-  $l_ini_i         = strtoupper($_REQUEST['l_ini_i']);
-  $l_ini_f         = strtoupper($_REQUEST['l_ini_f']);
-  $l_fim_i         = strtoupper($_REQUEST['l_fim_i']);
-  $l_fim_f         = strtoupper($_REQUEST['l_fim_f']);
-  $l_atraso        = strtoupper($_REQUEST['l_atraso']);
-  $l_chave         = strtoupper($_REQUEST['l_chave']);
-  $l_assunto       = strtoupper($_REQUEST['l_assunto']);
-  $l_pais          = strtoupper($_REQUEST['l_pais']);
-  $l_regiao        = strtoupper($_REQUEST['l_regiao']);
-  $l_uf            = strtoupper($_REQUEST['l_uf']);
-  $l_cidade        = strtoupper($_REQUEST['l_cidade']);
-  $l_usu_resp      = strtoupper($_REQUEST['l_usu_resp']);
-  $l_uorg_resp     = strtoupper($_REQUEST['l_uorg_resp']);
-  $l_processo       = strtoupper($_REQUEST['l_processo']);
-  $l_prazo         = strtoupper($_REQUEST['l_prazo']);
+  $l_exibe         = upper($_REQUEST['exibe']);
+  $l_tipo          = upper($_REQUEST['l_tipo']);
+  $l_chave_pai     = upper($_REQUEST['l_chave_pai']);
+  $l_atividade     = upper($_REQUEST['l_atividade']);
+  $l_graf          = upper($_REQUEST['l_graf']);
+  $l_ativo         = upper($_REQUEST['l_ativo']);
+  $l_solicitante   = upper($_REQUEST['l_solicitante']);
+  $l_prioridade    = upper($_REQUEST['l_prioridade']);
+  $l_unidade       = upper($_REQUEST['l_unidade']);
+  $l_proponente    = upper($_REQUEST['l_proponente']);
+  $l_ordena        = lower($_REQUEST['l_ordena']);
+  $l_ini_i         = upper($_REQUEST['l_ini_i']);
+  $l_ini_f         = upper($_REQUEST['l_ini_f']);
+  $l_fim_i         = upper($_REQUEST['l_fim_i']);
+  $l_fim_f         = upper($_REQUEST['l_fim_f']);
+  $l_atraso        = upper($_REQUEST['l_atraso']);
+  $l_chave         = upper($_REQUEST['l_chave']);
+  $l_assunto       = upper($_REQUEST['l_assunto']);
+  $l_pais          = upper($_REQUEST['l_pais']);
+  $l_regiao        = upper($_REQUEST['l_regiao']);
+  $l_uf            = upper($_REQUEST['l_uf']);
+  $l_cidade        = upper($_REQUEST['l_cidade']);
+  $l_usu_resp      = upper($_REQUEST['l_usu_resp']);
+  $l_uorg_resp     = upper($_REQUEST['l_uorg_resp']);
+  $l_processo       = upper($_REQUEST['l_processo']);
+  $l_prazo         = upper($_REQUEST['l_prazo']);
   $l_fase          = explodeArray($_REQUEST['l_fase']);
-  $l_sqcc          = strtoupper($_REQUEST['l_sqcc']);
-  $l_agrega        = strtoupper($_REQUEST['l_agrega']);
-  $l_tamanho       = strtoupper($_REQUEST['l_tamanho']);
-  $l_sq_menu_relac = strtoupper($_REQUEST['l_sq_menu_relac']);
-  $l_chave_pai     = strtoupper($_REQUEST['l_chave_pai']);
-  $l_empenho       = strtolower($_REQUEST['l_empenho']);
+  $l_sqcc          = upper($_REQUEST['l_sqcc']);
+  $l_agrega        = upper($_REQUEST['l_agrega']);
+  $l_tamanho       = upper($_REQUEST['l_tamanho']);
+  $l_sq_menu_relac = upper($_REQUEST['l_sq_menu_relac']);
+  $l_chave_pai     = upper($_REQUEST['l_chave_pai']);
+  $l_empenho       = lower($_REQUEST['l_empenho']);
   
   // Se juntada, busca somente processos
   if ($restricao=='JUNTADA') $l_uf = 'S';
@@ -3453,7 +3453,7 @@ function Grava() {
   BodyOpen(null);
   if ($SG=='PADGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='E') {
         $RS = db_getSolicLog::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'LISTA');
         // Mais de um registro de log significa que deve ser cancelada, e não excluída.
@@ -3501,7 +3501,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADOCANEXO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se foi feito o upload de um arquivo  
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
@@ -3582,7 +3582,7 @@ function Grava() {
     } 
   } elseif ($SG=='PAINTERESS') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putDocumentoInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_principal']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -3595,7 +3595,7 @@ function Grava() {
     }  
   } elseif ($SG=='PADOCASS') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putDocumentoAssunto::getInstanceOf($dbms,$O,null,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_principal']);
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -3608,12 +3608,12 @@ function Grava() {
     }  
   } elseif (strpos($SG,'ENVIO')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se o destino for pessoa jurídica, pede unidade da pessoa
       if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
         $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
         foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
-        if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
+        if (upper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
           ScriptOpen('JavaScript');
           ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
           ScriptClose();
@@ -3676,7 +3676,7 @@ function Grava() {
     }  
   } elseif (strpos($SG,'PADTRAM')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (nvl($_REQUEST['w_arq_central'],'')=='S') {
         for ($i=1; $i<count($_POST['w_chave']); $i++) {
           if (Nvl($_POST['w_chave'][$i],'')>'') {
@@ -3695,7 +3695,7 @@ function Grava() {
         if (nvl($_REQUEST['w_pessoa_destino'],'')!='') {
           $RS_Destino = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_pessoa_destino'],null,null,null,null,null,null,null,null,null,null,null,null);
           foreach ($RS_Destino as $row) { $RS_Destino = $row; break; }
-          if (strtoupper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
+          if (upper(f($RS_Destino,'nm_tipo_pessoa'))=='JURÍDICA' && nvl($_REQUEST['w_unidade_externa'],'')=='') {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: Unidade externa é obrigatória quando o destino é uma pessoa jurídica!\');');
             ScriptClose();
@@ -3750,7 +3750,7 @@ function Grava() {
     } 
   } elseif ($SG=='PAENVCEN') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Verifica se é necessário criar uma nova caixa
       $w_caixa = $_REQUEST['w_caixa'];
       if ($w_caixa==0) {
@@ -3777,7 +3777,7 @@ function Grava() {
     } 
   } elseif ($SG=='PACLASSIF') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       for ($i=1; $i<count($_POST['w_chave']); $i++) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
           $RS_Assunto = db_getSolicData::getInstanceOf($dbms,$_POST['w_chave'][$i],'PADCAD');
@@ -3798,7 +3798,7 @@ function Grava() {
     } 
   } elseif (strpos($SG,'RECEB')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null, 
                 $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null);
       if (count($RS)>0) {
@@ -3823,7 +3823,7 @@ function Grava() {
     }  
   } elseif (strpos($SG,'CONC')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite'] || nvl(f($RS,'unidade_int_posse'),'')!=nvl($_REQUEST['w_unidade_posse'],'') || nvl(f($RS,'pessoa_ext_posse'),'')!=nvl($_REQUEST['w_pessoa_posse'],'')) {
         ScriptOpen('JavaScript');

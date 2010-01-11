@@ -62,18 +62,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = Nvl($_REQUEST['P1'],0);
 $P2             = Nvl($_REQUEST['P2'],0);
 $P3             = Nvl($_REQUEST['P3'],1);
 $P4             = Nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
-$R              = strtolower($_REQUEST['R']);
-$O              = strtoupper($_REQUEST['O']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$w_troca        = strtolower($_REQUEST['w_troca']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$SG             = upper($_REQUEST['SG']);
+$R              = lower($_REQUEST['R']);
+$O              = upper($_REQUEST['O']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$w_troca        = lower($_REQUEST['w_troca']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'folha.php?par=';
 $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
@@ -780,9 +780,9 @@ function Inicial() {
   ShowHTML('    <TABLE BORDER="0" CELLSPACING="0" id="folhadeponto" CELLPADDING="5" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
   ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
   ShowHTML('          <td rowspan=2 colspan=2><b>DIA</td>');
-  ShowHTML('          <td colspan=2><b>'.strtoupper($w_primeiro_turno).'</td>');
+  ShowHTML('          <td colspan=2><b>'.upper($w_primeiro_turno).'</td>');
   if(Nvl($w_segundo_turno,'')!=''){
-    ShowHTML('          <td colspan=2><b>'.strtoupper($w_segundo_turno).'</td>');
+    ShowHTML('          <td colspan=2><b>'.upper($w_segundo_turno).'</td>');
   }
   ShowHTML('          <td rowspan=2><b>Horas Trabalhadas</td>');
   ShowHTML('          <td rowspan=2><b>Saldo Diário</td>');
@@ -824,7 +824,7 @@ function Inicial() {
     if(is_array($w_feriados[$i])) {
       $w_feriado = true;
       If(!$w_contratado){
-        $w_nm_feriado = strtoupper($w_feriados[$i]['nome']);
+        $w_nm_feriado = upper($w_feriados[$i]['nome']);
       }else{
         $w_nm_feriado = '';
       }
@@ -1066,7 +1066,7 @@ function Grava() {
     case 'COINICIAL':
     //exibeVariaveis();
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_mes = $_REQUEST['w_mes'];
         $w_mes = substr($w_mes,3,4).substr($w_mes,0,2);
         dml_putGpPontoMensal::getInstanceOf($dbms,'E',$_REQUEST['w_contrato'],$w_mes,null,null,null,null);

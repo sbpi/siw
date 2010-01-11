@@ -43,15 +43,15 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 $w_dir          = 'mod_sf/';
 $w_pagina       = 'sicof.php?par=';
 
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = $_REQUEST['P3'];
 $P4         = $_REQUEST['P4'];
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
-$R          = strtoupper($_REQUEST['R']);
-$O          = strtoupper($_REQUEST['O']);
+$SG         = upper($_REQUEST['SG']);
+$R          = upper($_REQUEST['R']);
+$O          = upper($_REQUEST['O']);
 
 $p_cliente  = $_SESSION['P_CLIENTE'];
 $sq_pessoa  = $_SESSION['SQ_PESSOA'];
@@ -214,7 +214,7 @@ function ConsultaDoc() {
     ShowHTML('      <tr><td align="center" colspan="2">Clique <a accesskey="F" class="SS" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();">aqui</a> para fechar esta janela.');
 
     //CONTRATOS
-    if ($_POST["p_sq_pessoa"]>"" || $_POST["p_cpf"]>"" || $_POST["p_cnpj"] || ($_POST["p_documento"]=="" && $_POST["p_inicio"]>"") || ($_POST["p_documento"]>"" && substr(strtoupper($_POST["p_documento"]),0,3)=='SA-')) {
+    if ($_POST["p_sq_pessoa"]>"" || $_POST["p_cpf"]>"" || $_POST["p_cnpj"] || ($_POST["p_documento"]=="" && $_POST["p_inicio"]>"") || ($_POST["p_documento"]>"" && substr(upper($_POST["p_documento"]),0,3)=='SA-')) {
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Contratos</td>');
@@ -270,7 +270,7 @@ function ConsultaDoc() {
 
 
     //PAGAMENTOS
-    if (($_POST['p_comprovante']>"") || $_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(strtoupper($_POST['p_documento']),0,3)=="SP-")) {
+    if (($_POST['p_comprovante']>"") || $_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(upper($_POST['p_documento']),0,3)=="SP-")) {
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Pagamentos</td>');
@@ -329,7 +329,7 @@ function ConsultaDoc() {
     } 
 
     //VIAGENS A SERVIÇO
-    if ($_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(strtoupper($_POST['p_documento']),0,3)=="SPD")) {
+    if ($_POST['p_sq_pessoa']>"" || $_POST['p_cpf']>"" || $_POST['p_cnpj']>"" || ($_POST['p_documento']=="" && $_POST['p_inicio']>"") || ($_POST['p_documento']>"" && substr(upper($_POST['p_documento']),0,3)=="SPD")) {
       ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
       ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
       ShowHTML('      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0"><b>Passagens e Diárias</td>');

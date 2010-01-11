@@ -75,17 +75,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'indicador.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pe/';
@@ -332,8 +332,8 @@ function FramesAfericao() {
 function VisualAfericao() {
   extract($GLOBALS);
   Global $p_Disabled;
-  $p_pesquisa       = strtoupper($_REQUEST['p_pesquisa']);
-  $p_volta          = strtoupper($_REQUEST['p_volta']);
+  $p_pesquisa       = upper($_REQUEST['p_pesquisa']);
+  $p_volta          = upper($_REQUEST['p_volta']);
   $p_tipo_indicador = $_REQUEST['p_tipo_indicador'];
   $p_indicador      = $_REQUEST['p_indicador'];
   $p_base           = $_REQUEST['p_base'];
@@ -703,7 +703,7 @@ function VisualDados() {
     foreach ($RS as $row) { $RS = $row; break; }
     ShowHTML('<table border=1 width="100%" bgcolor="#FAEBD7">');
     ShowHTML('  <tr valign="top">');
-    ShowHTML('    <td valign="middle"><font size="1"><b><font class="SS">'.strtoupper(f($RS,'nome')).'</font></b></td>');
+    ShowHTML('    <td valign="middle"><font size="1"><b><font class="SS">'.upper(f($RS,'nome')).'</font></b></td>');
     ShowHTML('    <td nowrap>Sigla:<br><b><font size=1 class="hl">'.f($RS,'sigla').'</font></b></td>');
     ShowHTML('    <td nowrap>Tipo:<br><b><font size=1 class="hl">'.f($RS,'nm_tipo_indicador').'</font></b></td>');
     ShowHTML('    <td nowrap>Unidade de medida:<br><b><font size=1 class="hl">'.f($RS,'sg_unidade_medida').' ('.f($RS,'nm_unidade_medida').')'.'</font></b></td>');
@@ -972,7 +972,7 @@ function AferidorPerm() {
   ShowHTML('        <tr><td colspan=2><font size="1">Usuário:<br><b><font size=1 class="hl">'.$_SESSION['NOME'].'</font></b></td>');
   ShowHTML('        <tr valign="top">');
   ShowHTML('          <td><font size="1">Gestor do Sistema:<br><b><font size=1 class="hl">'.retornaSimNao($w_gestor_sistema).'</font></b></td>');
-  ShowHTML('          <td><font size="1">Gestor do módulo de '.strtolower(f($RS_Menu,'nm_modulo')).':<br><b><font size=1 class="hl">'.retornaSimNao($w_gestor_modulo).'</font></b></td>');
+  ShowHTML('          <td><font size="1">Gestor do módulo de '.lower(f($RS_Menu,'nm_modulo')).':<br><b><font size=1 class="hl">'.retornaSimNao($w_gestor_modulo).'</font></b></td>');
   ShowHTML('    </TABLE>');
   ShowHTML('</TABLE><BR>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
@@ -1150,7 +1150,7 @@ function Afericao() {
   if ($O=='L') {
     ShowHTML('<tr><td colspan=3 bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
     ShowHTML('  Orientação:<ul>');
-    ShowHTML('    <li>Se você é gestor do sistema ou gestor do módulo de '.strtolower(f($RS_Menu,'nm_modulo')).', a listagem exibirá todas as aferições de todos os indicadores.');
+    ShowHTML('    <li>Se você é gestor do sistema ou gestor do módulo de '.lower(f($RS_Menu,'nm_modulo')).', a listagem exibirá todas as aferições de todos os indicadores.');
     ShowHTML('    <li>Caso contrário, a listagem estará restrita aos períodos em que você foi definido como aferidor.');
     ShowHTML('    <li>Clique <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'AferidorPerm&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Permissões&SG='.$SG.'\',\'AferidorPerm\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe suas permissões de aferição de indicadores.">aqui</A> para verificar suas permissões de aferição.');
     ShowHTML('    </ul></b></font></td>');
@@ -1219,7 +1219,7 @@ function Afericao() {
     if (strpos('IA',$O)!==false) {
       ShowHTML('      <tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
       ShowHTML('        ATENÇÃO:<ul>');
-      ShowHTML('        <li>Se você é gestor do sistema ou gestor do módulo de '.strtolower(f($RS_Menu,'nm_modulo')).', é permitido o registro da aferição de qualquer indicador, em qualquer período de referência.');
+      ShowHTML('        <li>Se você é gestor do sistema ou gestor do módulo de '.lower(f($RS_Menu,'nm_modulo')).', é permitido o registro da aferição de qualquer indicador, em qualquer período de referência.');
       ShowHTML('        <li>Caso contrário, os indicadores disponíveis serão aqueles nos quais você tem permissão na data de hoje. Além disso, o período de referência deve estar contido em um dos períodos nos quais você foi indicado como aferidor.');
       ShowHTML('        <li>Clique <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.$w_dir.$w_pagina.'AferidorPerm&R='.$w_pagina.$par.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Permissões&SG='.$SG.'\',\'AferidorPerm\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Exibe suas permissões de aferição de indicadores.">aqui</A> para verificar suas permissões de aferição.');
       ShowHTML('        </ul></b></font></td>');
@@ -2173,7 +2173,7 @@ function TelaIndicador() {
   foreach ($RS as $row) { $RS = $row; break; }
   ShowHTML('<table border=1 width="100%" bgcolor="#FAEBD7">');
   ShowHTML('  <tr valign="top">');
-  ShowHTML('    <td valign="middle"><font size="1"><b><font class="SS">'.strtoupper(f($RS,'nome')).'</font></b></td>');
+  ShowHTML('    <td valign="middle"><font size="1"><b><font class="SS">'.upper(f($RS,'nome')).'</font></b></td>');
   ShowHTML('    <td nowrap>Sigla:<br><b><font size=1 class="hl">'.f($RS,'sigla').'</font></b></td>');
   ShowHTML('    <td nowrap>Tipo:<br><b><font size=1 class="hl">'.f($RS,'nm_tipo_indicador').'</font></b></td>');
   ShowHTML('    <td nowrap>Unidade de medida:<br><b><font size=1 class="hl">'.f($RS,'sg_unidade_medida').' ('.f($RS,'nm_unidade_medida').')'.'</font></b></td>');
@@ -2608,7 +2608,7 @@ function Grava() {
   switch ($SG) {
     case 'PEINDIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Verifica se já existe indicador com o nome informado
           $RS = db_getIndicador::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,$_REQUEST['w_nome'],null,null,null,null,null,null,null,null,null,null,null,null,'EXISTE');
@@ -2646,7 +2646,7 @@ function Grava() {
       break;
     case 'EOINDAFR':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Verifica se já existe indicador com o nome informado
           $RS = db_getIndicador_Aferidor::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_pessoa'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
@@ -2673,7 +2673,7 @@ function Grava() {
       break;
     case 'EOINDAFC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //exibevariaveis();
         if ($O=='I' || $O=='A') {
           // Verifica se o usuário pode registrar aferições no período de referencia informado
@@ -2728,7 +2728,7 @@ function Grava() {
       break;
     case 'INDSOLIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_indicador'])-1; $i=$i+1) {
             if (Nvl($_POST['w_indicador'][$i],'')>'') {
@@ -2750,7 +2750,7 @@ function Grava() {
       break;
     case 'METASOLIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (nvl($_REQUEST['w_exequivel'],'')=='' && ($O=='I' || $O=='A')) {
           $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_plano'],null,null,null,$_REQUEST['w_indicador'],null,null,$_REQUEST['w_base'],$_REQUEST['w_pais'],$_REQUEST['w_regiao'],$_REQUEST['w_uf'], $_REQUEST['w_cidade'],null,null,$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTEMETA');
           if (count($RS)>0) {
@@ -2786,7 +2786,7 @@ function Grava() {
       break;
     case 'CRONMETA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Recupera os dados da meta
           $RS = db_getSolicMeta::getInstanceOf($dbms,$w_cliente,$w_usuario,null,$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
@@ -2826,7 +2826,7 @@ function Grava() {
       break;
     case 'DOCS':  //CADASTRO DE DOCUMENTOS
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {

@@ -81,19 +81,19 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
-$O              = strtoupper($_REQUEST['O']);
-$SG             = strtoupper($_REQUEST['SG']);
+$par            = upper($_REQUEST['par']);
+$O              = upper($_REQUEST['O']);
+$SG             = upper($_REQUEST['SG']);
 $w_pagina       = 'cliente.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = '';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_nome         = strtoupper($_REQUEST['p_nome']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_nome         = upper($_REQUEST['p_nome']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
 $p_ordena       = $_REQUEST['p_ordena'];
 
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
@@ -106,11 +106,11 @@ $P3           = nvl($_REQUEST['P3'],1);
 $P4           = nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
 $R            = $_REQUEST['R'];
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 
-if ($O=='L' && (strtoupper($_REQUEST['par'])=='GERAL' || strtoupper($_REQUEST['par'])=='CONFIGURACAO')) {
+if ($O=='L' && (upper($_REQUEST['par'])=='GERAL' || upper($_REQUEST['par'])=='CONFIGURACAO')) {
   $O='A';
-} elseif ($O=='' && strtoupper($_REQUEST['par'])=='CONFIGURACAO') {
+} elseif ($O=='' && upper($_REQUEST['par'])=='CONFIGURACAO') {
   $O='A';
 } elseif ($O=='') {
   $O='L';
@@ -295,15 +295,15 @@ function Geral() {
   $w_erro           = '';
   $w_troca          = $_REQUEST['w_troca'];
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
-  $p_data_inicio    = strtoupper($_REQUEST['p_data_inicio']);
-  $p_data_fim       = strtoupper($_REQUEST['p_data_fim']);
-  $p_solicitante    = strtoupper($_REQUEST['p_solicitante']);
-  $p_numero         = strtoupper($_REQUEST['p_numero']);
+  $p_data_inicio    = upper($_REQUEST['p_data_inicio']);
+  $p_data_fim       = upper($_REQUEST['p_data_fim']);
+  $p_solicitante    = upper($_REQUEST['p_solicitante']);
+  $p_numero         = upper($_REQUEST['p_numero']);
   $p_ordena         = $_REQUEST['p_ordena'];
-  $p_localizacao    = strtoupper($_REQUEST['p_localizacao']);
-  $p_lotacao        = strtoupper($_REQUEST['p_lotacao']);
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
-  $p_gestor         = strtoupper($_REQUEST['p_gestor']);
+  $p_localizacao    = upper($_REQUEST['p_localizacao']);
+  $p_lotacao        = upper($_REQUEST['p_lotacao']);
+  $p_nome           = upper($_REQUEST['p_nome']);
+  $p_gestor         = upper($_REQUEST['p_gestor']);
   $w_cgccpf         = $_REQUEST['w_cgccpf'];
 
   // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -658,7 +658,7 @@ function Enderecos() {
   //print_r($RS_Tipo);
   foreach($RS_Tipo as $row) {
     if($w_sq_tipo_endereco == f($row,'sq_tipo_endereco')){
-      if(strtoupper(f($row,'internet'))=='SIM' || strtoupper(f($row,'email'))=='SIM'){
+      if(upper(f($row,'internet'))=='SIM' || upper(f($row,'email'))=='SIM'){
         $valido = false;
       }else{
         $valido = true;
@@ -1826,7 +1826,7 @@ function Grava() {
   switch ($SG) {
     case 'CLCAD':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //exibevariaveis();
         dml_putSiwCliente::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa'],$_SESSION['P_CLIENTE'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
@@ -1869,7 +1869,7 @@ function Grava() {
           } 
         } 
       } 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesEnd::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_logradouro'],
             $_REQUEST['w_complemento'],$_REQUEST['w_cidade'],$_REQUEST['w_bairro'],$_REQUEST['w_cep'],$_REQUEST['w_padrao']);
@@ -1902,7 +1902,7 @@ function Grava() {
           } 
         } 
       } 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesTel::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_telefone'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_telefone'],
             $_REQUEST['w_cidade'],$_REQUEST['w_ddd'],$_REQUEST['w_numero'],$_REQUEST['w_padrao']);
@@ -1948,7 +1948,7 @@ function Grava() {
           retornaFormulario($w_volta);
         } 
       } 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCoPesConBan::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_tipo_conta'],
             $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],
@@ -1965,7 +1965,7 @@ function Grava() {
       } 
       break;
     case 'CLMODULO':
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSiwCliMod::getInstanceOf($dbms,$O,$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_pessoa']);
 
         ScriptOpen('JavaScript');
@@ -1980,7 +1980,7 @@ function Grava() {
       break;
     case 'CLCONFIG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // O tratamento deste tipo de gravação é diferenciado, em função do uso do objeto upload
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = (100*1024);

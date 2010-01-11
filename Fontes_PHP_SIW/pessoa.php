@@ -54,16 +54,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],0);
 $P4         = nvl($_REQUEST['P4'],0);
 $TP         = nvl($_REQUEST['TP'],$_REQUEST['p_tp']);
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'pessoa.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -119,15 +119,15 @@ function Benef() {
     $w_erro           = '';
     $w_troca          = $_REQUEST['w_troca'];
     $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
-    $p_data_inicio    = strtoupper($_REQUEST['p_data_inicio']);
-    $p_data_fim       = strtoupper($_REQUEST['p_data_fim']);
-    $p_solicitante    = strtoupper($_REQUEST['p_solicitante']);
-    $p_numero         = strtoupper($_REQUEST['p_numero']);
+    $p_data_inicio    = upper($_REQUEST['p_data_inicio']);
+    $p_data_fim       = upper($_REQUEST['p_data_fim']);
+    $p_solicitante    = upper($_REQUEST['p_solicitante']);
+    $p_numero         = upper($_REQUEST['p_numero']);
     $p_ordena         = $_REQUEST['p_ordena'];
-    $p_localizacao    = strtoupper($_REQUEST['p_localizacao']);
-    $p_lotacao        = strtoupper($_REQUEST['p_lotacao']);
-    $p_nome           = strtoupper($_REQUEST['p_nome']);
-    $p_gestor         = strtoupper($_REQUEST['p_gestor']);
+    $p_localizacao    = upper($_REQUEST['p_localizacao']);
+    $p_lotacao        = upper($_REQUEST['p_lotacao']);
+    $p_nome           = upper($_REQUEST['p_nome']);
+    $p_gestor         = upper($_REQUEST['p_gestor']);
     $w_sq_solicitacao = $_REQUEST['w_sq_solicitacao'];
     $w_cpf            = $_REQUEST['w_cpf'];
     // Verifica se há necessidade de recarregar os dados da tela a partir
@@ -840,8 +840,8 @@ function CadastraPessoa() {
 function BuscaUsuario() {
     extract($GLOBALS);
     global $w_Disabled;
-    $w_nome       = strtoupper($_REQUEST['w_nome']);
-    $w_sg_unidade = strtoupper($_REQUEST['w_sg_unidade']);
+    $w_nome       = upper($_REQUEST['w_nome']);
+    $w_sg_unidade = upper($_REQUEST['w_sg_unidade']);
     $w_cliente    = $_REQUEST['w_cliente'];
     $ChaveAux     = $_REQUEST['ChaveAux'];
     $restricao    = $_REQUEST['restricao'];
@@ -942,7 +942,7 @@ function BuscaUsuario() {
 function BuscaPessoa() {
     extract($GLOBALS);
     global $w_Disabled;
-    $p_nome       = strtoupper($_REQUEST['p_nome']);
+    $p_nome       = upper($_REQUEST['p_nome']);
     $p_cpf        = $_REQUEST['p_cpf'];
     $p_cnpj       = $_REQUEST['p_cnpj'];
     $w_pessoa     = $_REQUEST['w_pessoa'];
@@ -1065,7 +1065,7 @@ function Grava() {
     BodyOpen('onLoad=this.focus();');
     if ($SG=='SGUSU' || $SG=='CLUSUARIO') { // Identifica, a partir do tamanho da variável w_username, se é pessoa física, jurídica ou estrangeiro
         // Verifica se a Assinatura Eletrônica é válida
-        if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
             if (strlen($_REQUEST['w_username'])<=14 || $SG=='SGUSU') $w_tipo='Física'; else $w_tipo='Jurídica';
             if (strpos('ED',$O)===false) {
               // Se não for exclusão nem desativação de usuários, verifica se o nome de usuário já existe
@@ -1274,7 +1274,7 @@ function Grava() {
         }
     } elseif ($SG=='PESSOA') {
         // Verifica se a Assinatura Eletrônica é válida
-        if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
             if ($O=='I' || $O=='A') {
                 if ($_REQUEST['w_tipo_pessoa']==1) {
                     // Verifica se já existe pessoa física com o CPF informado

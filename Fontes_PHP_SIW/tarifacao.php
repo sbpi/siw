@@ -62,18 +62,18 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 //exibevariaveis();
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],1);
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $w_troca    = $_REQUEST['w_troca'];
 
-$w_assinatura    = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura    = upper($_REQUEST['w_assinatura']);
 $w_pagina        = 'tarifacao.php?par=';
 $w_Disabled      = 'ENABLED';
 $w_cor_fonte     = 'color="#000000';
@@ -114,15 +114,15 @@ function Informar(){
   global $w_Disabled;
 
   $w_titulo              = '';
-  $w_sq_ligacao          = strtoupper($_REQUEST['w_sq_ligacao']);
-  $p_sq_cc               = strtoupper($_REQUEST['p_sq_cc']);
-  $p_outra_parte_contato = strtoupper($_REQUEST['p_outra_parte_contato']);
-  $p_ativo               = strtoupper($_REQUEST['p_ativo']);
-  $p_inicio              = strtoupper($_REQUEST['p_inicio']);
-  $p_fim                 = strtoupper($_REQUEST['p_fim']);
-  $p_numero              = strtoupper($_REQUEST['p_numero']);
-  $p_ordena              = strtolower($_REQUEST['p_ordena']);
-  $p_assunto             = strtoupper($_REQUEST['p_assunto']);
+  $w_sq_ligacao          = upper($_REQUEST['w_sq_ligacao']);
+  $p_sq_cc               = upper($_REQUEST['p_sq_cc']);
+  $p_outra_parte_contato = upper($_REQUEST['p_outra_parte_contato']);
+  $p_ativo               = upper($_REQUEST['p_ativo']);
+  $p_inicio              = upper($_REQUEST['p_inicio']);
+  $p_fim                 = upper($_REQUEST['p_fim']);
+  $p_numero              = upper($_REQUEST['p_numero']);
+  $p_ordena              = lower($_REQUEST['p_ordena']);
+  $p_assunto             = upper($_REQUEST['p_assunto']);
   // Se for a tela de pesquisa do módulo gerencial, configura a busca inicial para os últimos trinta dias
   if ($O =='P' && $P1 == 3){
     if ($p_inicio==''){
@@ -145,7 +145,7 @@ function Informar(){
     if ($p_ordena==''){ 
       if ($P1==3) $RS = SortArray($RS,'phpdt_ordem','desc'); else $RS = SortArray($RS,'phpdt_ordem','asc'); 
     } else {
-      $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+      $lista = explode(',',str_replace(' ',',',lower($_REQUEST['p_ordena'])));
       if ($P1==3) $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','desc'); else $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_ordem','asc'); 
     }
   } elseif ($O=='I' || $O=='A' || $O=='E'){
@@ -885,7 +885,7 @@ function Grava() {
   switch ($SG) {
     case 'LIGACAO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         db_putCall::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_ligacao'],$_REQUEST['w_destino'], $_REQUEST['w_sq_cc'], $_REQUEST['w_outra_parte_contato'],
             $_REQUEST['w_assunto'], $w_usuario, $_REQUEST['w_fax'], $_REQUEST['w_trabalho']);

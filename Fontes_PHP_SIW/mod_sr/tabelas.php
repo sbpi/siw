@@ -48,18 +48,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par          = strtoupper($_REQUEST['par']);
+$par          = upper($_REQUEST['par']);
 $P1           = Nvl($_REQUEST['P1'],0);
 $P2           = Nvl($_REQUEST['P2'],0);
 $P3           = Nvl($_REQUEST['P3'],1);
 $P4           = nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
-$SG           = strtoupper($_REQUEST['SG']);
+$SG           = upper($_REQUEST['SG']);
 $R            = $_REQUEST['R'];
-$O            = strtoupper($_REQUEST['O']);
+$O            = upper($_REQUEST['O']);
 $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
 $w_dir        = 'mod_sr/';
 $w_dir_volta  = '../';
@@ -998,7 +998,7 @@ function Grava() {
   switch ($SG) {
     case 'SRABAST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putAbastecimento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $_REQUEST['w_data'], $_REQUEST['w_hodometro'], $_REQUEST['w_litros'],
           $_REQUEST['w_valor'], $_REQUEST['w_local']);
         ScriptOpen('JavaScript');
@@ -1013,10 +1013,10 @@ function Grava() {
       break;        
     case 'SRGRUPO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          if (strtoupper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
-            $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, strtoupper($_REQUEST['w_sigla']),'S');
+          if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
+            $RS = db_getGrupoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),'S');
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe grupo de veículo com esta sigla!\');');
@@ -1035,7 +1035,7 @@ function Grava() {
             exit();
           }  
         }
-        dml_putGrupoVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),
+        dml_putGrupoVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),
           $_REQUEST['w_descricao'], $_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1049,7 +1049,7 @@ function Grava() {
       break;
     case 'SROPINIAO':
       // Verifica se a Assinatura Eletrônica é válida 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($_REQUEST['w_nome']!= $_REQUEST['w_nome_ant']) {  
             $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, $_REQUEST['w_nome'],null,null);
@@ -1061,8 +1061,8 @@ function Grava() {
               exit();
             }
           }          
-          if (strtoupper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {  
-            $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, null, strtoupper($_REQUEST['w_sigla']),null);
+          if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {  
+            $RS = db_getOpiniao::getInstanceOf($dbms, null, $w_cliente, null, upper($_REQUEST['w_sigla']),null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe sigla com este nome!\');');
@@ -1080,7 +1080,7 @@ function Grava() {
             ScriptClose(); 
           } */
         } 
-        dml_putOpiniao::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente, $_REQUEST['w_nome'],strtoupper($_REQUEST['w_sigla']),$_REQUEST['w_ordem']);
+        dml_putOpiniao::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente, $_REQUEST['w_nome'],upper($_REQUEST['w_sigla']),$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1093,10 +1093,10 @@ function Grava() {
       break;
     case 'SRTIPOVEI':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          if (strtoupper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
-            $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, strtoupper($_REQUEST['w_sigla']),null);
+          if (upper($_REQUEST['w_sigla'])!= $_REQUEST['w_sigla_ant']) {           
+            $RS = db_getTipoVeiculo::getInstanceOf($dbms, null, $w_cliente, null, null, upper($_REQUEST['w_sigla']),null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe sigla com este nome!\');');
@@ -1128,10 +1128,10 @@ function Grava() {
       break;    
     case 'SRVEICULO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
-          if (strtoupper($_REQUEST['w_placa'])!= $_REQUEST['w_placa_ant']) {           
-            $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, strtoupper($_REQUEST['w_placa']), null, null, null, null, null, null);
+          if (upper($_REQUEST['w_placa'])!= $_REQUEST['w_placa_ant']) {           
+            $RS = db_getVeiculo::getInstanceOf($dbms, null, null, $w_cliente, upper($_REQUEST['w_placa']), null, null, null, null, null, null);
             if (count($RS)>0) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Já existe placa com este número!\');');
@@ -1149,7 +1149,7 @@ function Grava() {
             ScriptClose(); 
           }  
         }
-        dml_putVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $w_cliente, strtoupper($_REQUEST['w_placa']),$_REQUEST['w_marca'],
+        dml_putVeiculo::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''), Nvl($_REQUEST['w_chave_aux'],''), $w_cliente, upper($_REQUEST['w_placa']),$_REQUEST['w_marca'],
           $_REQUEST['w_modelo'],$_REQUEST['w_combustivel'],$_REQUEST['w_tipo'],$_REQUEST['w_potencia'],$_REQUEST['w_cilindrada'],$_REQUEST['w_ano_modelo'],$_REQUEST['w_ano_fabricacao'],
           $_REQUEST['w_renavam'],$_REQUEST['w_chassi'],$_REQUEST['w_alugado'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');

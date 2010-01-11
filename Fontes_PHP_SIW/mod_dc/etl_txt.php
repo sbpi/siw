@@ -79,7 +79,7 @@ function Principal() {
   // Varre cada um dos esquemas e gera arquivo de script com todos eles
   if ($dir = @opendir($w_raiz_conf)) { 
     while (false !== ($element = readdir($dir))) { 
-      if ($element!= '.' && $element!= '..' && (strpos(strtolower($element),'.php')!==false)) { 
+      if ($element!= '.' && $element!= '..' && (strpos(lower($element),'.php')!==false)) { 
         // Defino o nome do arquivo de trabalho
         $w_arq_conf       = $w_raiz_conf.$element;
         $arq_conf['nome'] = $w_arq_conf;
@@ -99,7 +99,7 @@ function Principal() {
             $arq_conf['status'] = '[OK] Arquivo de configuração aberto.';
           
             // Configura o diretório raiz dos arquivos de dados
-            $w_raiz_arq  = $conFilePhysical.$w_cliente.'/etl_arquivos/'.strtolower($esq['nome']).'/';
+            $w_raiz_arq  = $conFilePhysical.$w_cliente.'/etl_arquivos/'.lower($esq['nome']).'/';
 
             // Monta o nome do arquivo de execução e de log
             $w_arquivo_script = tempnam($w_raiz_scr,'etl_');
@@ -632,7 +632,7 @@ function monta_valor_map($p_valor, $p_linha) {
     switch ($l_tipo) {
       case B_VARCHAR: $l_valor = 'substr(\''.$l_valor.'\',1,'.$l_tamanho.')'; break;
       case B_DATE:    
-        if (strpos(strtoupper($l_formato),'HH24')!==false) $l_tam = strlen($l_tamanho) - 2; else $l_tam = strlen($l_tamanho);
+        if (strpos(upper($l_formato),'HH24')!==false) $l_tam = strlen($l_tamanho) - 2; else $l_tam = strlen($l_tamanho);
         $l_valor = 'to_date('.'substr(\''.$l_valor.'\',0,'.$l_tam.')'.',\''.$l_formato.'\')';
         break;
       default:        $l_valor = $l_valor;

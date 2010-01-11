@@ -687,12 +687,12 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
   extract($GLOBALS);
   global $w_campo_obrigatorio;
   if(strpos($VariableName,'[')===false) $Form = "  theForm."; else $Form = "theForm";
-  if (strtoupper($DataType)!="SELECT" && strtoupper($DataType)!="HIDDEN") {
+  if (upper($DataType)!="SELECT" && upper($DataType)!="HIDDEN") {
     print "  ".$Form.$VariableName.".value = Trim(".$Form.$VariableName.".value);"."\r\n"; 
   }
   if ($ValueRequired>"") {
     $w_campo_obrigatorio[$VariableName]='"STIO"';
-    if (strtoupper($DataType)=="SELECT") { 
+    if (upper($DataType)=="SELECT") { 
       print "  if (".$Form.$VariableName.".selectedIndex == 0)"."\r\n"; 
     } else { 
       print "  if (".$Form.$VariableName.".value == '')"."\r\n"; 
@@ -700,7 +700,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
 
     print "  {"."\r\n";
     print "    alert('Favor informar um valor para o campo ".$DisplayName."');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
+    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
@@ -710,7 +710,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  if (".$Form.$VariableName.".value.length < ".$MinimumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
     print "  {"."\r\n";
     print "    alert('Favor digitar pelo menos ".$MinimumLength." posições no campo ".$DisplayName."');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
+    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
@@ -720,7 +720,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     print "  if (".$Form.$VariableName.".value.length > ".$MaximumLength." && ".$Form.$VariableName.".value != '')"."\r\n";
     print "  {"."\r\n";
     print "    alert('Favor digitar no máximo ".$MaximumLength." posições no campo ".$DisplayName.".\\nForam digitadas ' + ".$Form.$VariableName.".value.length + ' posições.');"."\r\n";
-    if (strtoupper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
+    if (upper($DataType)!="HIDDEN") { print "    ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
     print "\r\n";
@@ -767,12 +767,12 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
       }
     } elseif ($AllowLetters=="" && $AllowDigits>"") { print "    alert('Favor digitar apenas números no campo ".$DisplayName.".');"."\r\n"; }
 
-    if (strtoupper($DataType)!="HIDDEN") { print "   ".$Form.$VariableName.".focus();"."\r\n"; }
+    if (upper($DataType)!="HIDDEN") { print "   ".$Form.$VariableName.".focus();"."\r\n"; }
     print "    return (false);"."\r\n";
     print "  }"."\r\n";
   }
 
-  if (strtoupper($DataType)=="CGC" || strtoupper($DataType)=="CNPJ") {
+  if (upper($DataType)=="CGC" || upper($DataType)=="CNPJ") {
     $checkOK="";
     print
     "    var allValid = true;"."\r\n".
@@ -808,7 +808,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       return (false);"."\r\n".
     "    }"."\r\n";
   }
-  elseif (strtoupper($DataType)=="CPF") {
+  elseif (upper($DataType)=="CPF") {
     $checkOK="";
     print
     "    var igual = 0;"."\r\n".
@@ -853,7 +853,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       return (false);"."\r\n".
     "    }"."\r\n";
   }
-  elseif (strtoupper($DataType)=="DATA") {
+  elseif (upper($DataType)=="DATA") {
     print
     "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
@@ -898,7 +898,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  } elseif (strtoupper($DataType)=="DATAHORA") {
+  } elseif (upper($DataType)=="DATAHORA") {
     print
     "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
@@ -947,7 +947,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  } elseif (strtoupper($DataType)=="HORA" || strtoupper($DataType)=="HORAS") {
+  } elseif (upper($DataType)=="HORA" || upper($DataType)=="HORAS") {
     print
     "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
@@ -956,12 +956,12 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "    if (tam != 0) {"."\r\n".
     "       if (!checkbranco(checkStr))"."\r\n".
     "       {"."\r\n";
-    if (strtoupper($DataType)=="HORA") print "           if (tam != 5) err=1"."\r\n";
+    if (upper($DataType)=="HORA") print "           if (tam != 5) err=1"."\r\n";
     print
     "            hora = checkStr.substr(0, tam-3);"."\r\n".
     "            minuto = checkStr.substr(tam-2, 2);"."\r\n".
-    "            //verificações básicas para o tipo ".strtoupper($DataType)."\r\n";
-    if (strtoupper($DataType)=="HORA") print "            if (hora<0 || hora>23) err = 2;"."\r\n";
+    "            //verificações básicas para o tipo ".upper($DataType)."\r\n";
+    if (upper($DataType)=="HORA") print "            if (hora<0 || hora>23) err = 2;"."\r\n";
     print
     "            if (minuto<0 || minuto>59) err = 3;"."\r\n".
     "       }"."\r\n".
@@ -971,15 +971,15 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       }"."\r\n".
     "    }"."\r\n".
     "    if (err>0){"."\r\n".
-    "       //mensagens para o tipo ".strtoupper($DataType)."\r\n".
+    "       //mensagens para o tipo ".upper($DataType)."\r\n".
     "       if (err==1) alert('Campo ".$DisplayName." inválido.');"."\r\n";
-    if (strtoupper($DataType)=="HORA") print "       if (err==2) alert('Campo ".$DisplayName." inválido. Hora deve ser de 0 a 23');"."\r\n";
+    if (upper($DataType)=="HORA") print "       if (err==2) alert('Campo ".$DisplayName." inválido. Hora deve ser de 0 a 23');"."\r\n";
     print
     "       if (err==3) alert('Campo ".$DisplayName." inválido. Minuto deve ser de 0 a 59');"."\r\n".
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  } elseif (strtoupper($DataType)=="DATADM") {
+  } elseif (upper($DataType)=="DATADM") {
     print
     "    var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "    var err=0;"."\r\n".
@@ -1010,7 +1010,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "       ".$Form.$VariableName.".focus();"."\r\n".
     "       return (false);"."\r\n".
     "    }"."\r\n";
-  } elseif (strtoupper($DataType)=="DATAMA") {
+  } elseif (upper($DataType)=="DATAMA") {
     print
     "var checkStr = ".$Form.$VariableName.".value;"."\r\n".
     "var err=0;"."\r\n".
@@ -1036,7 +1036,7 @@ function Validate($VariableName,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     "   ".$Form.$VariableName.".focus();"."\r\n".
     "   return (false);"."\r\n".
     "}"."\r\n";
-  } elseif (strtoupper($DataType)=="VALOR") {
+  } elseif (upper($DataType)=="VALOR") {
     print "  var V1 = ".$Form.$VariableName.".value;"."\r\n"; 
     print "  V1 = V1.toString().replace(/\\$|\\./g,''); "."\r\n";
     print "  V1 = V1.toString().replace(',','.'); "."\r\n";

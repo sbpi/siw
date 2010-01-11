@@ -43,14 +43,14 @@ if (nvl($_POST['sqlStr'],'')=='') {
     $stmt = oci_parse($conObj, $v);
     oci_execute($stmt);
 
-    $command = strtoupper(substr(trim($v),0,strpos(trim($v),' ')));
+    $command = upper(substr(trim($v),0,strpos(trim($v),' ')));
     if ($command=='SELECT') {
       $nrows = oci_fetch_all($stmt, $results);
       if ($nrows > 0) {
          ShowHTML('<table border="1">');
          ShowHTML('<tr>');
          foreach ($results as $key => $val) {
-            ShowHTML('<td>'.strtolower($key).'</td>');
+            ShowHTML('<td>'.lower($key).'</td>');
          }
          ShowHTML('</tr>');
    

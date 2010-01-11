@@ -46,17 +46,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_troca        = $_REQUEST['w_troca'];
 $w_pagina       = 'tabela1.php?par=';
 $w_Disabled     = 'ENABLED';
@@ -91,7 +91,7 @@ function TipoVinculo() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome               = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome               = trim(upper($_REQUEST['p_nome']));
   $p_ativo              = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_vinculo    = $_REQUEST['w_sq_tipo_vinculo'];
 
@@ -603,7 +603,7 @@ function Grava() {
   switch ($SG) {
     case 'COTPVINC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTipoVinc::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_sq_tipo_pessoa'],$w_cliente,
             $_REQUEST['w_nome'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_padrao'],
@@ -621,7 +621,7 @@ function Grava() {
       break;
     case 'PARSEG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSiwCliConf::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tamanho_minimo_senha'],$_REQUEST['w_tamanho_maximo_senha'],
             $_REQUEST['w_maximo_tentativas'],$_REQUEST['w_dias_vigencia_senha'],
             $_REQUEST['w_dias_aviso_expiracao'],null,null,null,null,null,null,null,
@@ -638,7 +638,7 @@ function Grava() {
       break;
     case 'INTEGR':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCodigoExterno::getInstanceOf($dbms, $w_cliente,$_REQUEST['w_tabela'],$_REQUEST['w_codigo_interno'], $_REQUEST['w_codigo_externo'],null);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');

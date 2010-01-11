@@ -1,7 +1,8 @@
 <?php
 
 include_once("../constants.inc");
-$p_tipo = strtoupper($_REQUEST['p_tipo']);
+include_once("../funcoes.php");
+$p_tipo = upper($_REQUEST['p_tipo']);
 header("Cache-Control: no-cache, must-revalidate",false);
 ?>
 <script src="js/jquery.js"></script>

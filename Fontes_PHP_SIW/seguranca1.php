@@ -55,26 +55,26 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'seguranca1.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 
-$p_localizacao  = strtoupper($_REQUEST['p_localizacao']);
-$p_lotacao      = strtoupper($_REQUEST['p_lotacao']);
-$p_pessoa       = strtoupper($_REQUEST['p_pessoa']);
-$p_nome         = strtoupper($_REQUEST['p_nome']);
-$p_gestor       = strtoupper($_REQUEST['p_gestor']);
+$p_localizacao  = upper($_REQUEST['p_localizacao']);
+$p_lotacao      = upper($_REQUEST['p_lotacao']);
+$p_pessoa       = upper($_REQUEST['p_pessoa']);
+$p_nome         = upper($_REQUEST['p_nome']);
+$p_gestor       = upper($_REQUEST['p_gestor']);
 $p_ordena       = $_REQUEST['p_ordena'];
 
 if ($O=='' && $SG=='CIDADE') $O='P'; elseif ($O=='' && $SG!='CIDADE') $O='L';
@@ -208,7 +208,7 @@ function AcessoTramite() {
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
     $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
-    ShowHTML('          <td align="right"><font size="1">Usuário:<br><b>'.f($RS1,'NOME').' ('.strtoupper(f($RS1,'USERNAME')).')</font></td>');
+    ShowHTML('          <td align="right"><font size="1">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
 
   ShowHTML('    </TABLE>');
@@ -678,7 +678,7 @@ function AcessoMenu() {
   if ($w_sq_pessoa>'') {
     // Recupera o nome do usuário selecionado
     $RS1 = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
-    ShowHTML('          <td align="right"><font size="1">Usuário:<br><b>'.f($RS1,'NOME').' ('.strtoupper(f($RS1,'USERNAME')).')</font></td>');
+    ShowHTML('          <td align="right"><font size="1">Usuário:<br><b>'.f($RS1,'NOME').' ('.upper(f($RS1,'USERNAME')).')</font></td>');
   } 
   ShowHTML('    </TABLE>');
   ShowHTML('</TABLE>');
@@ -1045,7 +1045,7 @@ function Grava() {
   switch ($SG) {
     case 'ACESSOTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
             dml_putSgTraPes::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_siw_tramite'],null);
@@ -1066,7 +1066,7 @@ function Grava() {
       break;
     case 'SIWTRAMITE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $RS = db_getTramiteList::getInstanceOf($dbms,$_REQUEST['w_sq_menu'],null,null,null);
         if(count($RS)>0) {
           foreach ($RS as $row) {
@@ -1106,7 +1106,7 @@ function Grava() {
       break;
     case 'ACESSOMENU':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa'])-1; $i=$i+1) {
             dml_SgPesMen::getInstanceOf($dbms,$O,$_POST['w_sq_pessoa'][$i],$_REQUEST['w_sq_menu'],null);
@@ -1128,7 +1128,7 @@ function Grava() {
       break;
     case 'ACESSOMENUPERFIL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_pessoa_endereco'])-1; $i=$i+1) {
             for ($j=0; $j<=count($_POST['w_sq_tipo_vinculo'])-1; $j=$j+1) {
@@ -1152,7 +1152,7 @@ function Grava() {
       break;
     case 'ENDERECO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Inicialmente, desativa a opção em todos os endereços
         dml_SiwMenEnd::getInstanceOf($dbms,'E',$_REQUEST['w_sq_menu'],null);
         // Em seguida, ativa apenas para os endereços selecionados

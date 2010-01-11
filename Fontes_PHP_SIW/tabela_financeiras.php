@@ -53,24 +53,24 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_financeiras.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
 $w_troca        = $_REQUEST['w_troca'];
 $p_ordena       = $_REQUEST['p_ordena'];
 $p_codigo       = $_REQUEST['p_codigo'];
-$p_nome         = trim(strtoupper($_REQUEST['p_nome']));
+$p_nome         = trim(upper($_REQUEST['p_nome']));
 $p_ativo        = $_REQUEST['p_ativo'];
 
 if ($O=='') $O='L';
@@ -431,7 +431,7 @@ function CentroCusto() {
 function Agencia() {
   extract($GLOBALS);
   global $w_Disabled;
-  $p_sq_banco = strtoupper($_REQUEST['p_sq_banco']);
+  $p_sq_banco = upper($_REQUEST['p_sq_banco']);
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -1061,7 +1061,7 @@ function Grava() {
   switch ($SG) {
     case 'CT_CC':
     // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CtCC::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_cc'],$_REQUEST['w_sq_cc_pai'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_descricao'],$_REQUEST['w_sigla'],$_REQUEST['w_receita'],$_REQUEST['w_regular'],
@@ -1077,13 +1077,13 @@ function Grava() {
       } 
       break;
     case 'COBANCO':
-      $p_nome   = strtoupper($_REQUEST['p_nome']);
-      $p_codigo = strtoupper($_REQUEST['p_codigo']);
-      $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-      $p_exige  = strtoupper($_REQUEST['p_exige']);      
+      $p_nome   = upper($_REQUEST['p_nome']);
+      $p_codigo = upper($_REQUEST['p_codigo']);
+      $p_ativo  = upper($_REQUEST['p_ativo']);
+      $p_exige  = upper($_REQUEST['p_exige']);      
       $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if  ($_REQUEST['w_codigo']!= nvl($_REQUEST['w_codigo_atual'],'')) {
           if ($O=='I' || $O =='A') {
             // Verifica se já existe o código do banco informado
@@ -1111,12 +1111,12 @@ function Grava() {
       } 
       break;
     case 'COAGENCIA': 
-      $p_nome       = strtoupper($_REQUEST['p_nome']);
-      $p_sq_banco   = strtoupper($_REQUEST['p_sq_banco']);
-      $p_ativo      = strtoupper($_REQUEST['p_ativo']);
+      $p_nome       = upper($_REQUEST['p_nome']);
+      $p_sq_banco   = upper($_REQUEST['p_sq_banco']);
+      $p_ativo      = upper($_REQUEST['p_ativo']);
       $p_ordena     = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoAgencia::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_agencia'],$_REQUEST['w_sq_banco'],$_REQUEST['w_nome'],
             $_REQUEST['w_codigo'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1132,7 +1132,7 @@ function Grava() {
       break;
     case 'COMOEDA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoMoeda::getInstanceOf($dbms,$O,
             $_REQUEST['w_chave'],$_REQUEST['w_codigo'],$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_simbolo'],$_REQUEST['w_tipo'],

@@ -68,13 +68,13 @@ $w_copia=$_REQUEST['w_copia'];
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 
-$par          = strtoupper($_REQUEST['par']);
+$par          = upper($_REQUEST['par']);
 $w_pagina     = 'cv.php?par=';
 $w_dir        = 'mod_rh_pub/';
 $w_dir_volta  = '../';
 $w_Disabled   = 'ENABLED';
-$SG           = strtoupper($_REQUEST['SG']);
-$O            = strtoupper($_REQUEST['O']);
+$SG           = upper($_REQUEST['SG']);
+$O            = upper($_REQUEST['O']);
 $w_cliente    = RetornaCliente();
 $w_usuario    = RetornaUsuario();
 $P1           = Nvl($_REQUEST['P1'],0);
@@ -82,8 +82,8 @@ $P2           = Nvl($_REQUEST['P2'],0);
 $P3           = Nvl($_REQUEST['P3'],1);
 $P4           = Nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
-$R            = strtoupper($_REQUEST['R']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$R            = upper($_REQUEST['R']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
   
 if ($_SESSION['PORTAL'] >'') $_SESSION['SQ_PESSOA'] = $w_usuario;
 
@@ -137,7 +137,7 @@ function Inicial() {
   global $w_Disabled;
   $p_sq_idioma      = $_REQUEST['p_sq_idioma'];
   $p_sexo           = $_REQUEST['p_sexo'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   $p_sq_formacao    = $_REQUEST['p_sq_formacao'];
   if ($O=='L') {
     // Recupera os currículos existentes na base de dados
@@ -1674,7 +1674,7 @@ function Grava() {
   switch ($SG) {
     case 'CVIDENT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Recupera os dados do currículo a partir da chave
         $RS = db_getCV_Pessoa::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_cpf']);
         if ($O=='I' && count($RS)>0) {
@@ -1732,7 +1732,7 @@ function Grava() {
       break;
     case 'CVIDIOMA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVIdioma::getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_leitura'],$_REQUEST['w_escrita'],
           $_REQUEST['w_compreensao'],$_REQUEST['w_conversacao']);
@@ -1748,7 +1748,7 @@ function Grava() {
       break;
     case 'CVEXPPER':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVExperiencia::getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_cidade'],$_REQUEST['w_sq_eo_tipo_posto'],
           $_REQUEST['w_sq_tipo_vinculo'],$_REQUEST['w_empregador'],$_REQUEST['w_entrada'],$_REQUEST['w_saida'],
@@ -1765,7 +1765,7 @@ function Grava() {
       break;
     case 'CVCARGOS':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVCargo::getInstanceOf($dbms,$O,$_REQUEST['w_sq_cvpescargo'],
           $_REQUEST['w_sq_cvpesexp'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_especialidades'],
           $_REQUEST['w_inicio'],$_REQUEST['w_fim']);
@@ -1781,7 +1781,7 @@ function Grava() {
       break;
     case 'CVESCOLA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVEscola::getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_pais'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
@@ -1797,7 +1797,7 @@ function Grava() {
       break;
     case 'CVCURSO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVCurso::getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_instituicao'],$_REQUEST['w_carga_horaria'],$_REQUEST['w_conclusao']);
@@ -1813,7 +1813,7 @@ function Grava() {
       break;
     case 'CVTECNICA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCVProducao::getInstanceOf($dbms,$O,$w_usuario,
           $_REQUEST['w_chave'],$_REQUEST['w_sq_area_conhecimento'],$_REQUEST['w_sq_formacao'],
           $_REQUEST['w_nome'],$_REQUEST['w_meio'],$_REQUEST['w_data']);

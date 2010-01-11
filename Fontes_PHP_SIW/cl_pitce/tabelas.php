@@ -70,16 +70,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'cl_pitce/';
@@ -2518,7 +2518,7 @@ function Grava() {
   switch ($SG) {
     case 'PEPLANO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Se for um plano vinculado a um maior, 
         // verifica se o plano respeita o período do pai e se não há nenhum plano "irmão" no mesmo período
         if (strpos('IA',$O)!==false && nvl($_REQUEST['w_chave_pai'],'nulo')!='nulo') {
@@ -2569,7 +2569,7 @@ function Grava() {
       break;
     case 'PEPLANOMENU':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
         dml_putPlano_Menu::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
@@ -2591,7 +2591,7 @@ function Grava() {
       break;
     case 'PENATUREZA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putNatureza_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2605,7 +2605,7 @@ function Grava() {
       break;
     case 'PEHORIZONT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putHorizonte_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2619,7 +2619,7 @@ function Grava() {
       break;
     case 'PEOBJETIVO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='T') {
           for ($i=0; $i<=count($_POST['w_objetivo'])-1; $i=$i+1)   {
             dml_putObjetivo_pe::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_POST['w_objetivo'][$i],$w_cliente,null,null,null,null);
@@ -2639,7 +2639,7 @@ function Grava() {
       break;
     case 'PEARQUIVO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK===0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
@@ -2718,7 +2718,7 @@ function Grava() {
       break;
     case 'PETIPINT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getTipoInteressado::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_servico'],''),Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
@@ -2763,7 +2763,7 @@ function Grava() {
       break;
     case 'PETIPREC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getTipoRecurso::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_nome'],''),null,null,null,'EXISTE');
@@ -2808,7 +2808,7 @@ function Grava() {
       break;
     case 'EOTIPIND':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,'EXISTE');
@@ -2842,7 +2842,7 @@ function Grava() {
       break;
     case 'PEUNIMED':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getUnidadeMedida::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
@@ -2887,7 +2887,7 @@ function Grava() {
       break;
     case 'PEUNIDADE':
       // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null,null);
           if (count($RS)==0) {

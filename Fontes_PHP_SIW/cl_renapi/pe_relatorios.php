@@ -60,17 +60,17 @@ $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
 $w_troca    = $_REQUEST['w_troca'];
 $w_copia    = $_REQUEST['w_copia'];
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 $p_ordena   = $_REQUEST['p_ordena'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'pe_relatorios.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_renapi/';
@@ -179,9 +179,9 @@ function Rel_Executivo() {
       foreach ($RS as $row) {
         ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
         if($w_embed == 'WORD'){
-            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>' . strtoupper(f($row,'titulo')) . '</b></td></tr>');
+            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>' . upper(f($row,'titulo')) . '</b></td></tr>');
         }else{
-            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>' . ExibePlano('../',$w_cliente,f($row,'chave'),$TP,strtoupper(f($row,'titulo')),'PITCE').'</b></td></tr>');
+            ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>' . ExibePlano('../',$w_cliente,f($row,'chave'),$TP,upper(f($row,'titulo')),'PITCE').'</b></td></tr>');
         }
         ShowHTML('   <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>');
         //$RS1 = db_getPrograma::getInstanceOf($dbms,f($row,'chave'),$w_cliente);     
@@ -200,9 +200,9 @@ function Rel_Executivo() {
             if ($p_projeto=='S' && f($row1,'sq_plano')==$p_plano) {
               if($w_embed != 'WORD'){
               //Programas
-                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic_completo')).'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.upper(f($row1,'cd_programa')).' - '.upper(f($row1,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row1,'sg_unidade_resp'),f($row1,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row1,'solicitante'),$TP,f($row1,'nm_solic_completo')).'</b></td></tr>');
               }else{
-                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.strtoupper(f($row1,'cd_programa')).' - '.strtoupper(f($row1,'titulo')).'<br>Coordenação: '.f($row1,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row1,'nm_solic_completo').'</b></td></tr>');
+                ShowHTML('        <tr><td colspan="10" height=30 valign="center"><font size="2"><b>MACROPROGRAMA: '.upper(f($row1,'cd_programa')).' - '.upper(f($row1,'titulo')).'<br>Coordenação: '.f($row1,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row1,'nm_solic_completo').'</b></td></tr>');
               }
               ShowHTML('          <tr align="center">');
               ShowHTML('            <td bgColor="#f0f0f0"><b>Código</b></td>');
@@ -233,9 +233,9 @@ function Rel_Executivo() {
                       ShowHTML('          <tr valign="top">');
                       //ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'SUBPROGRAMA: '.f($row3,'titulo').'</td>');
                       if ($w_embed !='WORD'){
-                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic_completo')).'</b></td></tr>');
+                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.upper(f($row3,'codigo_interno')).' - '.upper(f($row3,'titulo')).'<br>Coordenação: '.ExibeUnidade($w_dir_volta,$w_cliente,f($row3,'sg_unidade_resp'),f($row3,'sq_unidade_resp'),$TP).'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.ExibePessoa(null,$w_cliente,f($row3,'solicitante'),$TP,f($row3,'nm_solic_completo')).'</b></td></tr>');
                       } else {
-                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.strtoupper(f($row3,'codigo_interno')).' - '.strtoupper(f($row3,'titulo')).'<br>Coordenação: '.f($row3,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row3,'nm_solic').'</b></td></tr>');                      
+                        ShowHTML('            <td align="left" colspan="9">'.str_repeat('&nbsp;',(3*(f($row3,'level')-1))).'<b>SUBPROGRAMA: '.upper(f($row3,'codigo_interno')).' - '.upper(f($row3,'titulo')).'<br>Coordenação: '.f($row3,'sg_unidade_resp').'&nbsp;&nbsp;&nbsp;&nbsp;Coordenador: '.f($row3,'nm_solic').'</b></td></tr>');                      
                       }
                     } else {
                       ShowHTML('          <tr valign="top">');
@@ -312,7 +312,7 @@ function Rel_Executivo() {
             foreach($RS1 as $row1) {
               if ((f($row1,'valor')-nvl($l_previsto[$w_cont],0))<0) $w_cor = '<font color="#FF0000">'; else $w_cor='';
               ShowHTML('          <tr valign="top">');
-              ShowHTML('            <td>'.strtoupper(f($row1,'cd_programa')));
+              ShowHTML('            <td>'.upper(f($row1,'cd_programa')));
               ShowHTML('            <td>'.f($row1,'titulo').'</td>');
               ShowHTML('            <td align="right">'.formatNumber(f($row1,'valor')).'</td>');
               ShowHTML('            <td align="right">'.formatNumber(nvl($l_previsto[$w_cont],0)).'</td>');

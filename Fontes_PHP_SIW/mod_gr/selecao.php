@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -45,16 +45,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'selecao.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_gr/';
@@ -280,7 +280,7 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen('onLoad="this.focus();"');
   // Verifica se a Assinatura Eletrônica é válida
-  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+  if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
     dml_putSiwCoordenada::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_tipo'],$_REQUEST['w_nome'],$_REQUEST['w_latitude'],$_REQUEST['w_longitude'],
         $_REQUEST['w_icone']);

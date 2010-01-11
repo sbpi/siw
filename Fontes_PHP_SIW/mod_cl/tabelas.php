@@ -58,22 +58,22 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = $_REQUEST['P1'];
 $P2             = $_REQUEST['P2'];
 $P3             = nvl($_REQUEST['P3'],1);
 $P4             = nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
+$SG             = upper($_REQUEST['SG']);
 $R              = $_REQUEST['R'];
-$O              = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O              = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_cl/';
 $w_troca        = $_REQUEST['w_troca'];
 $w_copia        = $_REQUEST['w_copia'];
-$p_ordena       = strtolower(trim($_REQUEST['p_ordena']));
+$p_ordena       = lower(trim($_REQUEST['p_ordena']));
 
 if ($O=='') $O = 'L';
 
@@ -1137,7 +1137,7 @@ function Grava() {
   switch ($SG) {
     case 'CLTIPMATSE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getTipoMatServ::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,Nvl($_REQUEST['w_nome'],''),null,null,null,null,'EXISTE');
@@ -1182,7 +1182,7 @@ function Grava() {
       break;
     case 'COCRITJULG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCCriterio::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
@@ -1209,7 +1209,7 @@ function Grava() {
       break;
     case 'COSITCERT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
          if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getLCSituacao::getInstanceOf($dbms,$_REQUEST['w_chave'], $w_cliente, Nvl($_REQUEST['w_nome'],''), null, null, null, null, 'EXISTE');
@@ -1236,7 +1236,7 @@ function Grava() {
       break;
     case 'CLPARAM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCLParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_ano_corrente'],$_REQUEST['w_dias_validade_pesquisa'],$_REQUEST['w_dias_aviso_pesquisa'],
             $_REQUEST['w_percentual_acrescimo'],$_REQUEST['w_compra_central'],$_REQUEST['w_pesquisa_central'],$_REQUEST['w_contrato_central'],
             $_REQUEST['w_banco_ata_central'],$_REQUEST['w_banco_preco_central'],$_REQUEST['w_codificacao_central'],
@@ -1254,7 +1254,7 @@ function Grava() {
       break;      
     case 'CLUNIDADE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($O=='I') {
             $RS = db_getUnidade_CL::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null);
@@ -1284,7 +1284,7 @@ function Grava() {
       break;
     case 'CLUSUARIO':      
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$SG,null,null,null,null);
           if (count($RS)>0) {

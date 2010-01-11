@@ -70,22 +70,22 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'pe_programa.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_renapi/';
 $w_troca        = $_REQUEST['w_troca'];
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$w_SG           = strtoupper($_REQUEST['w_SG']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$w_SG           = upper($_REQUEST['w_SG']);
 if (strpos($SG,'RESP')!==false || strpos($SG,'ANEXO')!==false) {
   if ($O!='I' && $O!='E' && nvl($_REQUEST['w_chave_aux'],$_REQUEST['w_sq_pessoa'])=='') $O='L';
 } elseif (strpos($SG,'ENVIO')!==false) {
@@ -111,31 +111,31 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 $w_copia        = $_REQUEST['w_copia'];
-$p_programa     = strtoupper($_REQUEST['p_programa']);
-$p_atividade    = strtoupper($_REQUEST['p_atividade']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_parcerias   = strtoupper($_REQUEST['p_parcerias']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_assunto      = strtoupper($_REQUEST['p_assunto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_internas      = strtoupper($_REQUEST['p_internas']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
+$p_programa     = upper($_REQUEST['p_programa']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_parcerias   = upper($_REQUEST['p_parcerias']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_internas      = upper($_REQUEST['p_internas']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_cd_programa  = strtoupper($_REQUEST['p_cd_programa']);
-$p_ativo = strtoupper($_REQUEST['p_ativo']);
+$p_cd_programa  = upper($_REQUEST['p_cd_programa']);
+$p_ativo = upper($_REQUEST['p_ativo']);
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 if (count($RS)>0) {
@@ -164,7 +164,7 @@ function Inicial() {
   extract($GLOBALS);
   $w_tipo=$_REQUEST['w_tipo'];
   if ($O=='L') {
-    if (!(strpos(strtoupper($R),'GR_')===false)) {
+    if (!(strpos(upper($R),'GR_')===false)) {
       $w_filtro='';
       if ($p_prazo>'') $w_filtro=$w_filtro.' <tr valign="top"><td align="right">Data de término<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
       if ($p_solicitante>'') {
@@ -286,7 +286,7 @@ function Inicial() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   if($w_tipo!='WORD') {
-    if ((strpos(strtoupper($R),'GR_'))===false) {
+    if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
@@ -308,7 +308,7 @@ function Inicial() {
         if ($w_tipo!='WORD') ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
-    if ((strpos(strtoupper($R),'GR_')===false)) {
+    if ((strpos(upper($R),'GR_')===false)) {
       if ($w_tipo!='WORD'){
         if ($w_copia>'') {
           // Se for cópia
@@ -1273,33 +1273,33 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
     $w_meta=null,$w_ocorrencia=null,$w_consulta=null) {
   extract($GLOBALS);
   $w_chave    = nvl($w_chave,$_REQUEST['w_chave']);
-  $w_tipo     = nvl($w_tipo,strtoupper(trim($_REQUEST['w_tipo'])));
-  $w_formato  = nvl($w_formato,strtoupper(trim($_REQUEST['w_formato'])));
+  $w_tipo     = nvl($w_tipo,upper(trim($_REQUEST['w_tipo'])));
+  $w_formato  = nvl($w_formato,upper(trim($_REQUEST['w_formato'])));
   if ($O=='T') {
-    $w_identificacao    = strtoupper(nvl($w_identificacao,'S'));
-    $w_responsavel      = strtoupper(nvl($w_responsavel,'S'));
-    $w_qualitativa      = strtoupper(nvl($w_qualitativa,'S'));
-    $w_orcamentaria     = strtoupper(nvl($w_orcamentaria,'S'));
-    $w_indicador        = strtoupper(nvl($w_indicador,'S'));
-    $w_recurso          = strtoupper(nvl($w_recurso,'S'));
-    $w_interessado      = strtoupper(nvl($w_interessado,'S'));
-    $w_anexo            = strtoupper(nvl($w_anexo,'S'));
-    $w_meta             = strtoupper(nvl($w_meta,'S'));
-    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'S'));
-    $w_consulta         = strtoupper(nvl($w_consulta,'N'));
+    $w_identificacao    = upper(nvl($w_identificacao,'S'));
+    $w_responsavel      = upper(nvl($w_responsavel,'S'));
+    $w_qualitativa      = upper(nvl($w_qualitativa,'S'));
+    $w_orcamentaria     = upper(nvl($w_orcamentaria,'S'));
+    $w_indicador        = upper(nvl($w_indicador,'S'));
+    $w_recurso          = upper(nvl($w_recurso,'S'));
+    $w_interessado      = upper(nvl($w_interessado,'S'));
+    $w_anexo            = upper(nvl($w_anexo,'S'));
+    $w_meta             = upper(nvl($w_meta,'S'));
+    $w_ocorrencia       = upper(nvl($w_ocorrencia,'S'));
+    $w_consulta         = upper(nvl($w_consulta,'N'));
     $w_o                = $O;
   } else {
-    $w_identificacao    = strtoupper(nvl($w_identificacao,'S'));
-    $w_responsavel      = strtoupper(nvl($w_responsavel,'N'));
-    $w_qualitativa      = strtoupper(nvl($w_qualitativa,'N'));
-    $w_orcamentaria     = strtoupper(nvl($w_orcamentaria,'N'));
-    $w_indicador        = strtoupper(nvl($w_indicador,'N'));
-    $w_recurso          = strtoupper(nvl($w_recurso,'N'));
-    $w_interessado      = strtoupper(nvl($w_interessado,'N'));
-    $w_anexo            = strtoupper(nvl($w_anexo,'N'));
-    $w_meta             = strtoupper(nvl($w_meta,'N'));
-    $w_ocorrencia       = strtoupper(nvl($w_ocorrencia,'S'));
-    $w_consulta         = strtoupper(nvl($w_consulta,'N'));
+    $w_identificacao    = upper(nvl($w_identificacao,'S'));
+    $w_responsavel      = upper(nvl($w_responsavel,'N'));
+    $w_qualitativa      = upper(nvl($w_qualitativa,'N'));
+    $w_orcamentaria     = upper(nvl($w_orcamentaria,'N'));
+    $w_indicador        = upper(nvl($w_indicador,'N'));
+    $w_recurso          = upper(nvl($w_recurso,'N'));
+    $w_interessado      = upper(nvl($w_interessado,'N'));
+    $w_anexo            = upper(nvl($w_anexo,'N'));
+    $w_meta             = upper(nvl($w_meta,'N'));
+    $w_ocorrencia       = upper(nvl($w_ocorrencia,'S'));
+    $w_consulta         = upper(nvl($w_consulta,'N'));
     $w_o                = $O;
   }
   if ($w_o!='V') {
@@ -1682,7 +1682,7 @@ function Indicadorlinha($l_chave,$l_chave_aux,$l_titulo,$l_apuracao,$l_indice,$l
     // Se for listagem de indicadores no cadastramento do programa, exibe operações de alteração e exclusão
     if ($l_tipo=='PROJETO') {
       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="AL">Alt</A>&nbsp';
-      if ((strtoupper(substr($l_titulo,0,13))==strtoupper('NAO INFORMADO')) || (strtoupper(substr($l_titulo,0,13))!=strtoupper('NAO INFORMADO') && $l_loa=='Não')) $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">Excl</A>&nbsp';
+      if ((upper(substr($l_titulo,0,13))==upper('NAO INFORMADO')) || (upper(substr($l_titulo,0,13))!=upper('NAO INFORMADO') && $l_loa=='Não')) $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');" title="Excluir">Excl</A>&nbsp';
        // Caso contrário, é listagem de atualização do indicador. Neste caso, coloca apenas a opção de alteração
     } else {
       $l_html.=chr(13).'          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$l_chave.'&w_chave_aux='.$l_chave_aux.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Atualiza dados do indicador">Atualizar</A>&nbsp';
@@ -1819,7 +1819,7 @@ function Grava() {
   BodyOpen(null);
   if ($SG=='PEPRGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($O=='E') {
         $RS = db_getSolicLog::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'LISTA');
         // Mais de um registro de log significa que deve ser cancelada, e não excluída.
@@ -1865,7 +1865,7 @@ function Grava() {
     } 
   } elseif ($SG=='PEQUALIT') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putProgramaQualit::getInstanceOf($dbms,
         $_REQUEST['w_chave'],$_REQUEST['w_descricao'],$_REQUEST['w_justificativa'], $_REQUEST['w_publico_alvo'],
         $_REQUEST['w_estrategia'],$_REQUEST['w_observacao']);
@@ -1882,7 +1882,7 @@ function Grava() {
     } 
   } elseif (strpos($SG,'RESP')!==false) {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putSolicInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_tipo_interessado'],$_REQUEST['w_envia_email'],$_REQUEST['w_tipo_visao']);
       ScriptOpen('JavaScript');
       // Recupera a sigla do serviço pai, para fazer a chamada ao menu
@@ -1897,7 +1897,7 @@ function Grava() {
     } 
   } elseif ($SG=='PEPRANEXO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se foi feito o upload de um arquivo  
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
@@ -1976,7 +1976,7 @@ function Grava() {
     } 
   } elseif ($SG=='PEPRENVIO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
         ScriptOpen('JavaScript');
@@ -2019,7 +2019,7 @@ function Grava() {
     }  
   } elseif ($SG=='PEPRCONC') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],f($RS_Menu,'sigla'));
       if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
         ScriptOpen('JavaScript');

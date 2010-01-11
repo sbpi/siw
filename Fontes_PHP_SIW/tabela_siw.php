@@ -52,17 +52,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_siw.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -97,7 +97,7 @@ function SegmentoVinc() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome                   = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome                   = trim(upper($_REQUEST['p_nome']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_segmento            = $_REQUEST['w_sq_segmento'];
   $w_sq_segmento_vinculo    = $_REQUEST['w_sq_segmento_vinculo'];
@@ -300,7 +300,7 @@ function SegmentoMenu() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome        = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome        = trim(upper($_REQUEST['p_nome']));
   $p_ativo       = trim($_REQUEST['p_ativo']);
   $w_sq_segmento = $_REQUEST['w_sq_segmento'];
   $w_sq_modulo   = $_REQUEST['w_sq_modulo'];
@@ -473,7 +473,7 @@ function SegmentoModulo() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_objetivo_especifico    = trim(strtoupper($_REQUEST['p_objetivo_especifico']));
+  $p_objetivo_especifico    = trim(upper($_REQUEST['p_objetivo_especifico']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_segmento            = $_REQUEST['w_sq_segmento'];
   $w_sq_modulo              = $_REQUEST['w_sq_modulo'];
@@ -662,7 +662,7 @@ function Modulos() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome       = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome       = trim(upper($_REQUEST['p_nome']));
   $p_sigla      = trim($_REQUEST['p_sigla']);
   $w_sq_modulo  = $_REQUEST['w_sq_modulo'];
   $w_ordem      = $_REQUEST['w_ordem'];
@@ -815,7 +815,7 @@ function Segmento() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome        = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome        = trim(upper($_REQUEST['p_nome']));
   $p_ativo       = trim($_REQUEST['p_ativo']);
   $w_sq_segmento = $_REQUEST['w_sq_segmento'];
 
@@ -996,7 +996,7 @@ function Grava() {
   switch ($SG) {
     case 'SEGVINC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_DmSegVinc::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_segmento_vinculo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_sq_tipo_pessoa'],
             $_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_interno'],$_REQUEST['w_contratado'],$_REQUEST['w_ordem']);
@@ -1012,7 +1012,7 @@ function Grava() {
       break;
     case 'SEGMOD':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwModSeg::getInstanceOf($dbms, $O,
             $_REQUEST['w_objetivo_especifico'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_sq_segmento'],$_REQUEST['w_comercializar'],
             $_REQUEST['w_ativo']);
@@ -1028,7 +1028,7 @@ function Grava() {
       break;
     case 'COTPMODULO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_SiwModulo::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_objetivo_geral'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
@@ -1043,7 +1043,7 @@ function Grava() {
       break;
     case 'COTPSEG':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoSegmento::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_segmento'],$_REQUEST['w_nome'],$_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');

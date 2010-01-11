@@ -125,21 +125,21 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'monitor.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'cl_pitce/';
 $w_troca        = $_REQUEST['w_troca'];
-$w_copia        = strtoupper($_REQUEST['w_copia']);
+$w_copia        = upper($_REQUEST['w_copia']);
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
@@ -168,37 +168,37 @@ switch ($O) {
   case 'H': $w_TP=$TP.' - Herança'; break;
   default : $w_TP=$TP.' - Listagem';
 } 
-$p_projeto      = strtoupper($_REQUEST['p_projeto']);
-$p_servico      = strtoupper($_REQUEST['p_servico']);
-$p_atividade    = strtoupper($_REQUEST['p_atividade']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_proponente   = strtoupper($_REQUEST['p_proponente']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_assunto      = strtoupper($_REQUEST['p_assunto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
+$p_projeto      = upper($_REQUEST['p_projeto']);
+$p_servico      = upper($_REQUEST['p_servico']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_proponente   = upper($_REQUEST['p_proponente']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
 if (strpos($p_uf,',')!==false) {
   $p_temp = explode(',',$p_uf);
   $p_pais = $p_temp[0];
   $p_uf   = $p_temp[1];
 }
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_palavra      = strtoupper($_REQUEST['p_palavra']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
+$p_sqcc         = upper($_REQUEST['p_sqcc']);
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 if ($SG!='ETAPAREC') $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
 else $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$_REQUEST['w_SG']);
@@ -233,7 +233,7 @@ function Inicial() {
   if (count($RS)>0) $w_financeiro='S'; else $w_financeiro='N';
 
   if ($O=='L') {
-    if ((strpos(strtoupper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
+    if ((strpos(upper($R),'GR_')!==false) || ($w_tipo=='WORD')) {
       $w_filtro='';
 
       if (nvl($p_projeto,'')!='') {
@@ -399,7 +399,7 @@ function Inicial() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   if($w_tipo!='WORD') {
-    if ((strpos(strtoupper($R),'GR_'))===false) {
+    if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
@@ -423,7 +423,7 @@ function Inicial() {
         if ($w_tipo!='WORD') ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       } 
     } 
-    if ((strpos(strtoupper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
+    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_tipo!='WORD') {
       if ($w_copia > '') {
         // Se for cópia
         if (MontaFiltro('GET')>'') ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=C&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
@@ -1305,7 +1305,7 @@ function Informar() {
   $w_exibe4 = true; // Análise e observações da ABDI
   
   // Vínculo da ABDI vê todas as análises
-  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
+  if (upper(f($RS_Usuario,'nome_vinculo'))=='ABDI') {
     $w_exibe1 = true;
     $w_exibe2 = true;
     $w_exibe3 = true;
@@ -1313,7 +1313,7 @@ function Informar() {
   }
 
   // Vínculo da Secretaria executiva só não vê a análise da ABDI
-  if (strtoupper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
+  if (upper(f($RS_Usuario,'nome_vinculo'))=='SECRETARIA EXECUTIVA') {
     $w_exibe1 = true;
     $w_exibe2 = true;
     $w_exibe3 = true;
@@ -3406,7 +3406,7 @@ function Pacote() {
 function Visual() {
   extract($GLOBALS);
   $w_chave  = $_REQUEST['w_chave'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($w_tipo=='PDF') {
     headerpdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
     $w_embed = 'WORD';
@@ -4098,7 +4098,7 @@ function EtapaLinhaAtiv($l_chave,$l_chave_aux,$l_titulo,$l_resp,$l_setor,$l_inic
       $l_ativ .= chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
       if($P4!=1) $l_ativ .= chr(13).'  <A class="HL" HREF="projetoativ.php?par=Visual&R=projetoativ.php?par=Visual&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=&P1='.$P1.'&P2='.f($row,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="_blank">'.f($row,'sq_siw_solicitacao').'</a>';
       else       $l_ativ .= chr(13).'  '.f($row,'sq_siw_solicitacao');
-      if (strlen(Nvl(f($row,'assunto'),'-'))>50 && strtoupper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
+      if (strlen(Nvl(f($row,'assunto'),'-'))>50 && upper($l_assunto)!='COMPLETO') $l_ativ .= ' - '.substr(Nvl(f($row,'assunto'),'-'),0,50).'...';
       else                                                                             $l_ativ .= ' - '.Nvl(f($row,'assunto'),'-');
       if($P4!=1) $l_ativ .= chr(13).'     <td>'.ExibePessoa(null,$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_resp')).'</td>';
       else       $l_ativ .= chr(13).'     <td>'.f($row,'nm_resp').'</td>';
@@ -4216,9 +4216,9 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= '<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
     $w_html .= '<tr><td align="center">'.$crlf;
     $w_html .= '    <table width="97%" border="0">'.$crlf;
-    if ($p_tipo==1)       $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-    elseif ($p_tipo==2)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
-    elseif ($p_tipo==3)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.strtoupper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+    if ($p_tipo==1)       $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>INCLUSÃO DE '.upper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+    elseif ($p_tipo==2)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>TRAMITAÇÃO DE '.upper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
+    elseif ($p_tipo==3)   $w_html .= '      <tr valign="top"><td align="center"><font size=2><b>CONCLUSÃO DE '.upper(f($RS_Menu,'nome')).'</b><br><br><td></tr>'.$crlf;
     $w_html .= '      <tr valign="top"><td><b><font size=2 color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
     $w_nome =  f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')';
     $w_html .= $crlf.'<tr><td align="center">';
@@ -4419,7 +4419,7 @@ function EtapaMail($p_solic) {
     $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>'.f($RSM,'nome').': '.f($RSM,'titulo').' ('.f($RSM,'sq_siw_solicitacao').')</b></font></div></td></tr>';
     $w_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>';
     $w_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><b>VOCÊ É RESPONSÁVEL POR PELO MENOS UM DOS ITENS DESTA AGENDA DE AÇÃO. LEIA COM ATENÇÃO AS ORIENTAÇÕES SEGUINTES:<UL>';
-    $w_html.=chr(13).'        <LI>ACESSE O SISTEMA, CONSULTE SUA MESA DE TRABALHO E CLIQUE NA COLUNA "INTERVIR" DO SERVIÇO '.strToUpper(f($RSM,'nome')).';';
+    $w_html.=chr(13).'        <LI>ACESSE O SISTEMA, CONSULTE SUA MESA DE TRABALHO E CLIQUE NA COLUNA "INTERVIR" DO SERVIÇO '.Upper(f($RSM,'nome')).';';
     $w_html.=chr(13).'        <LI>CLIQUE NA OPERAÇÃO <I>EA</I> (ESTRUTURA ANALÍTICA) PARA ATUALIZAR O ANDAMENTO DOS ITENS QUE ESTÃO SOB SUA RESPONSABILIDADE;';
     $w_html.=chr(13).'        <LI>EM CASO DE DÚVIDAS SOBRE A PERIODICIDADE DA ATUALIZAÇÃO, CONSULTE O RESPONSÁVEL PELA AGENDA DE AÇÃO.';
     $w_html.=chr(13).'        </UL></td></tr>';
@@ -4574,7 +4574,7 @@ function Grava() {
   BodyOpenClean('onLoad=this.focus();');
   if($SG=='PJMGERAL' || $SG=='PJBGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
       if ($O=='E') {
         $RS = db_getSolicLog::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'LISTA');
@@ -4625,7 +4625,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMQUALIT' || $SG=='PJBQUALIT') {   
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
       dml_putProjetoDescritivo::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_instancia_articulacao'], $_REQUEST['w_composicao_instancia'], $_REQUEST['w_estudos'], $_REQUEST['w_objetivo_superior'],$_REQUEST['w_descricao'],
           $_REQUEST['w_exclusoes'],$_REQUEST['w_premissas'], $_REQUEST['w_restricoes'],$_REQUEST['w_justificativa']);
@@ -4642,7 +4642,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMANALISE') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {   
       // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
       dml_putProjetoAnalise::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_analise1'], $_REQUEST['w_analise2'], $_REQUEST['w_analise3'], $_REQUEST['w_analise4']);
       // Aqui deve ser usada a variável de sessão para evitar erro na recuperação do link
@@ -4658,7 +4658,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMETAPA' || $SG=='PJBETAPA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getSolicEtapa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],'REGISTRO',null);
       if ($O=='E'){
         foreach($RS as $row) { $RS = $row; break;}
@@ -4689,7 +4689,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMCRONOGRAMA'){  
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if($O=='V') {
         // Insere os valor real  
         for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
@@ -4744,7 +4744,7 @@ function Grava() {
     }
   } elseif($SG=='PJMPREST'){  
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putContasRegistro::getInstanceOf($dbms,'E',null,$_REQUEST['w_contas_cronograma'],null,null,null,null);
       for ($i=1; $i<=count($_POST['w_prestacao_contas'])-1; $i=$i+1) {
         if (Nvl($_POST['w_prestacao_contas'][$i],'')>'') {
@@ -4764,7 +4764,7 @@ function Grava() {
     }     
   } elseif($SG=='PJMRUBRICA'){  
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Garante que há apenas uma rubrica de aplicação financeira para o projeto.
       if($_REQUEST['w_aplicacao_financeira']=='S') {
         $RS = db_getsolicRubrica::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'S',$_REQUEST['w_chave_aux'],null,'S',null,null,null);
@@ -4815,7 +4815,7 @@ function Grava() {
    } 
   } elseif($SG=='PJMON' || $SG=='PJMONBOLSA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putAtualizaEtapa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$w_usuario,
           $_REQUEST['w_perc_conclusao'],$_REQUEST['w_inicio_real'],$_REQUEST['w_fim_real'],
           $_REQUEST['w_situacao_atual'],$_REQUEST['w_exequivel'],null,null);
@@ -4832,7 +4832,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMRECURSO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putProjetoRec::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
           $_REQUEST['w_tipo'],$_REQUEST['w_descricao'],$_REQUEST['w_finalidade']);
       ScriptOpen('JavaScript');
@@ -4848,7 +4848,7 @@ function Grava() {
     } 
   } elseif($SG=='ETAPAREC') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Inicialmente, desativa a opção em todos os endereços
       dml_putSolicEtpRec::getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
       // Em seguida, ativa apenas para os endereços selecionados
@@ -4870,7 +4870,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMINTERESS' || $SG=='PJBINTERES') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putProjetoInter::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
           $_REQUEST['w_tipo_visao'],$_REQUEST['w_envia_email']);
       ScriptOpen('JavaScript');
@@ -4886,7 +4886,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMAREAS' || $SG=='PJBAREAS') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if($O=='I') {
         $RS = db_getSolicAreas::getInstanceOf($dbms,$_REQUEST['w_chave'],null,'LISTA');
         foreach ($RS as $row) {
@@ -4914,7 +4914,7 @@ function Grava() {
     } 
   } elseif ($SG=='PACOTE') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Remove os registros existentes
       dml_putRestricaoEtapaInter::getInstanceOf($dbms,'E',$_REQUEST['w_chave_aux'],null);
       // Insere apenas os itens marcados
@@ -4935,7 +4935,7 @@ function Grava() {
     }     
   } elseif($SG=='PJMANEXO' || $SG=='PJBANEXO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {
@@ -5013,7 +5013,7 @@ function Grava() {
     }
   } elseif($SG=='PJMETAPAARQ') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {
@@ -5091,9 +5091,9 @@ function Grava() {
     }    
   } elseif($SG=='PJMENVIO' || $SG=='PJBENVIO') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       // Trata o recebimento de upload ou dados 
-      if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
+      if ((false!==(strpos(upper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(upper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
         // Se foi feito o upload de um arquivo 
         if (UPLOAD_ERR_OK==0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
@@ -5191,7 +5191,7 @@ function Grava() {
     } 
   } elseif($SG=='PJMCONC' || $SG=='PJBCONC') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PJMGERAL');
       if (f($RS,'sq_siw_tramite') != $_REQUEST['w_tramite']){
         ScriptOpen('JavaScript');

@@ -65,16 +65,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'processo.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pa/';
@@ -951,7 +951,7 @@ function Desmembrar() {
         }
         ShowHTML('        </td>');
         ShowHTML('        <td align="center">'.f($row,'nm_tipo').'</td>');
-        ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+        ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
         ShowHTML('        <td>'.f($row,'nm_especie').'</td>');
         ShowHTML('        <td>'.f($row,'numero_original').'</td>');
         ShowHTML('        <td align="center">'.date(d.'/'.m.'/'.y,f($row,'inicio')).'</td>');
@@ -1171,7 +1171,7 @@ function ArqSetorial() {
             ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
           }
           ShowHTML('        </td>');
-          ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
+          ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_especie').'</td>');
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'numero_original').'</td>');
@@ -1532,7 +1532,7 @@ function Grava() {
   BodyOpen(null);
   if ($SG=='PADAUTUA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putDocumentoAutua::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['LOTACAO'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao']);
 
       ScriptOpen('JavaScript');
@@ -1548,7 +1548,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADANEXA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putDocumentoAnexa::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
 
       ScriptOpen('JavaScript');
@@ -1564,7 +1564,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADJUNTA') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       dml_putDocumentoJunta::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['SQ_PESSOA']);
 
       ScriptOpen('JavaScript');
@@ -1580,7 +1580,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADDESM') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
           dml_putDocumentoDesm::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA']);
@@ -1600,7 +1600,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADTRANSF') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {
         if (Nvl($_POST['w_chave'][$i],'')>'') {
           dml_putDocumentoArqSet::getInstanceOf($dbms,$_POST['w_chave'][$i],$_SESSION['SQ_PESSOA'],$_REQUEST['w_observacao']);
@@ -1620,7 +1620,7 @@ function Grava() {
     } 
   } elseif ($SG=='PADARQ') {
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if ($_REQUEST['w_envio']=='N') {;
         // Se arquivamento
         for ($i=0; $i<=count($_POST['w_chave'])-1; $i=$i+1) {

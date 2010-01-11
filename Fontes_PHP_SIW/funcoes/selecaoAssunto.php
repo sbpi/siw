@@ -15,9 +15,9 @@ function selecaoAssunto($label,$accesskey,$hint,$chave,$chaveAux,$campo,$descric
   ShowHTML('          <option value="">---');
   foreach($RS as $row) {
     if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'codigo').' - '.strtolower(f($row,'descricao')));
+       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'codigo').' - '.lower(f($row,'descricao')));
     } else {
-       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'codigo').' - '.strtolower(f($row,'descricao')));
+       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'codigo').' - '.lower(f($row,'descricao')));
     }
   }
   ShowHTML('          </select>');

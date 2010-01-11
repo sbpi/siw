@@ -9,11 +9,11 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   //Recupera as informações do sub-menu
   $RS = db_getLinkSubMenu::getInstanceOf($dbms, $w_cliente, f($RS_Menu,'sigla'));
   foreach ($RS as $row) {
-    if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'INTERES')!==false)  $l_nome_menu['INTERES'] = strtoupper(f($row,'nome'));
-    elseif (strpos(f($row,'sigla'),'ASS')!==false)      $l_nome_menu['ASSUNTO'] = strtoupper(f($row,'nome'));
-    else $l_nome_menu[f($row,'sigla')] = strtoupper(f($row,'nome'));
+    if     (strpos(f($row,'sigla'),'ANEXO')!==false)    $l_nome_menu['ANEXO'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'GERAL')!==false)    $l_nome_menu['GERAL'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'INTERES')!==false)  $l_nome_menu['INTERES'] = upper(f($row,'nome'));
+    elseif (strpos(f($row,'sigla'),'ASS')!==false)      $l_nome_menu['ASSUNTO'] = upper(f($row,'nome'));
+    else $l_nome_menu[f($row,'sigla')] = upper(f($row,'nome'));
   }
 
   $l_html='';
@@ -114,9 +114,9 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'       <td align="justify"><table border=1>';
       $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
       $l_html.=chr(13).'         <tr valign="top">';
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
       $l_html.=chr(13).'         </table>';
     } 
 
@@ -139,13 +139,13 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
         $l_html.=chr(13).'           <td>'.nvl(f($row,'descricao'),'---');
         if (nvl(f($RS,'ds_assunto_pai'),'')!='') { 
           $l_html.=chr(13).'<br>';
-          if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_bis')).' &rarr; ';
-          if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_avo')).' &rarr; ';
-          if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).strtolower(f($RS,'ds_assunto_pai'));
+          if (nvl(f($RS,'ds_assunto_bis'),'')!='') $l_html.=chr(13).lower(f($RS,'ds_assunto_bis')).' &rarr; ';
+          if (nvl(f($RS,'ds_assunto_avo'),'')!='') $l_html.=chr(13).lower(f($RS,'ds_assunto_avo')).' &rarr; ';
+          if (nvl(f($RS,'ds_assunto_pai'),'')!='') $l_html.=chr(13).lower(f($RS,'ds_assunto_pai'));
         }
         $l_html.=chr(13).'           </td>';
-        $l_html.=chr(13).'           <td>'.nvl(strtolower(f($row,'detalhamento')),'---').'</td>';
-        $l_html.=chr(13).'           <td>'.nvl(strtolower(f($row,'observacao')),'---').'</td>';
+        $l_html.=chr(13).'           <td>'.nvl(lower(f($row,'detalhamento')),'---').'</td>';
+        $l_html.=chr(13).'           <td>'.nvl(lower(f($row,'observacao')),'---').'</td>';
         $l_html.=chr(13).'      </tr>';
       }
       $l_html.=chr(13).'         </table></td></tr>';

@@ -37,6 +37,7 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoDespacho.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoGuarda.php');
 include_once($w_dir_volta.'funcoes/selecaoAssunto.php');
+include_once($w_dir_volta.'funcoes/selecaoAssuntoRadio.php');
 include_once($w_dir_volta.'funcoes/selecaoLocalizacao.php');
 include_once($w_dir_volta.'funcoes/selecaoArquivoLocalSubordination.php');
 
@@ -69,16 +70,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pa/';
@@ -550,10 +551,13 @@ function EspecieDocumento() {
   $w_chave  = $_REQUEST['w_chave'];
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_chave    = $_REQUEST['w_chave'];
-    $w_nome     = $_REQUEST['w_nome'];
-    $w_sigla    = $_REQUEST['w_sigla'];
-    $w_ativo    = $_REQUEST['w_ativo'];
+    $w_chave      = $_REQUEST['w_chave'];
+    $w_nome       = $_REQUEST['w_nome'];
+    $w_sigla      = $_REQUEST['w_sigla'];
+    $w_ativo      = $_REQUEST['w_ativo'];
+    $w_nm_assunto = $_REQUEST['w_nm_assunto'];
+    $w_assunto    = $_REQUEST['w_assunto'];
+    
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,null,$w_cliente,null,null,null,null);
@@ -572,6 +576,7 @@ function EspecieDocumento() {
     $w_nome     = f($RS,'nome');
     $w_sigla    = f($RS,'sigla');
     $w_ativo    = f($RS,'ativo');
+    $w_assunto  = f($RS,'sq_assunto');
   } 
   Cabecalho();
   ShowHTML('<HEAD>');
@@ -581,6 +586,7 @@ function EspecieDocumento() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_sigla','Sigla','1','1','1','10','1','1');
+      Validate('w_assunto','Classificação','HIDDEN',1,1,18,'','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
@@ -617,6 +623,7 @@ function EspecieDocumento() {
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.linkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Assunto','cd_assunto').'</td>');
     ShowHTML('          <td><b>'.linkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -631,6 +638,7 @@ function EspecieDocumento() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'sigla').'</td>');
+        ShowHTML('        <td width="50" title="'.f($row,'ds_assunto').'">&nbsp;'.ExibeAssunto('../',$w_cliente,f($row,'cd_assunto'),f($row,'sq_assunto'),$TP).'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -658,6 +666,8 @@ function EspecieDocumento() {
     ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0><tr valign="top">');
     ShowHTML('           <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>'); 
     ShowHTML('           <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_sigla.'"></td>'); 
+    ShowHTML('        <tr valign="top">');
+    SelecaoAssuntoRadio('A<u>s</u>sunto vinculado à espécie: (usado para classificação automática de protocolos)','L','Clique na lupa para selecionar a classificação vinculada à espécie documental. Se indicado o assunto, documentos criados nesta espécie serão automaticamente vinculados ao assunto.',$w_assunto,null,'w_assunto','FOLHA',null);
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('           </table>');
@@ -1673,9 +1683,9 @@ function TelaAssunto() {
   $l_html.=chr(13).'       <td align="justify"><table border=1>';
   $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
   $l_html.=chr(13).'         <tr valign="top">';
-  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
-  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
-  $l_html.=chr(13).'           '.((strpos(strtoupper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+  $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+  $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+  $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
   $l_html.=chr(13).'         </table>';
   $l_html.=chr(13).'    </table>';
   
@@ -1697,9 +1707,9 @@ function TelaAssunto() {
       $l_html.=chr(13).'       <tr valign="top">';
       $l_html.=chr(13).'           <td nowrap>&nbsp;'.ExibeAssunto('../',$w_cliente,f($row,'codigo'),f($row,'sq_assunto'),$TP).'</td>';
       $l_html.=chr(13).'           <td>'.nvl(f($row,'descricao'),'---');
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_corrente').'</td>';
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_intermed').'</td>';
-      $l_html.=chr(13).'           '.((strpos(strtoupper(f($row,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($row,'guarda_final').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($row,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_corrente').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($row,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($row,'guarda_intermed').'</td>';
+      $l_html.=chr(13).'           '.((strpos(upper(f($row,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($row,'guarda_final').'</td>';
       $l_html.=chr(13).'      </tr>';
     }
     $l_html.=chr(13).'         </table></td></tr>';
@@ -1722,7 +1732,7 @@ function Grava() {
   switch ($SG) {
    case 'PACAIXA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
                                                 
         dml_putCaixa::getInstanceOf($dbms,trim($O),$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_unidade'],null,$_REQUEST['w_assunto'],$_REQUEST['w_descricao'],$_REQUEST['w_data_limite'],null,$_REQUEST['w_intermediario'],$_REQUEST['w_destinacao_final'],null,null,null,null,null,null,null);
         ScriptOpen('JavaScript');
@@ -1738,7 +1748,7 @@ function Grava() {
       break;
     case 'PARENUM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Testa a existência do novo protocolo
         $RS_Menu = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PADCAD');
         // Verifica se o protocolo atual existe
@@ -1788,7 +1798,7 @@ function Grava() {
       break;
     case 'PATPDESPAC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getTipoDespacho_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_chave'],''),$w_cliente,Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
@@ -1831,7 +1841,7 @@ function Grava() {
       break;
     case 'PAESPECIE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getEspecieDocumento_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_chave'],''),$w_cliente,Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
@@ -1862,7 +1872,7 @@ function Grava() {
             break;
           } 
         } 
-        dml_putEspecieDocumento_PA::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_ativo']);
+        dml_putEspecieDocumento_PA::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_assunto'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1875,7 +1885,7 @@ function Grava() {
       break;
     case 'PAUNIDADE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           if ($O=='I') {
             $RS = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,null);
@@ -1913,7 +1923,7 @@ function Grava() {
       break;
     case 'PANATUREZA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getNaturezaDoc_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_chave'],''),$w_cliente,Nvl($_REQUEST['w_nome'],''),null,null,'EXISTE');
@@ -1957,7 +1967,7 @@ function Grava() {
       break;
     case 'PATPGUARDA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           // Testa a existência da desrcricao
           $RS = db_getTipoGuarda_PA::getInstanceOf($dbms,Nvl($_REQUEST['w_chave'],''),$w_cliente,null,Nvl($_REQUEST['w_descricao'],''),null,null,null,null,null,'EXISTE');
@@ -2002,7 +2012,7 @@ function Grava() {
       break;
     case 'PAPARAM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPAParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_despacho_arqcentral'],$_REQUEST['w_despacho_emprestimo'],
             $_REQUEST['w_despacho_devolucao'],$_REQUEST['w_despacho_autuar'],$_REQUEST['w_despacho_arqsetorial'],
             $_REQUEST['w_despacho_anexar'],$_REQUEST['w_despacho_apensar'],$_REQUEST['w_despacho_eliminar'],
@@ -2020,7 +2030,7 @@ function Grava() {
       break;
     case 'PAASSUNTO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='E') {
           $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,null,null,null,null,null,null,null,'VINCULADO');
           if (nvl(f($RS,'existe'),0)>0) {
@@ -2064,7 +2074,7 @@ function Grava() {
         }
       break;
     case 'PAARQUIV':
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
           if (!(strpos('IA',$O)===false)) {
               $RS = db_getArquivo_PA::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_nome'],null,null,'OUTROS');
               if (count($RS)>0) {
@@ -2090,7 +2100,7 @@ function Grava() {
         }
     break;    
     case 'PDLOCAIS':
-    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
           if ($O=='I') {
       
             $RS = db_getArquivo_PA::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],null,$_REQUEST['w_nome'],null,null,null);

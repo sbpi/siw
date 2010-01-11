@@ -109,7 +109,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     } 
   } 
   if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);
-  if (strtoupper($DataType)=='CGC' || strtoupper($DataType)=='CNPJ') {
+  if (upper($DataType)=='CGC' || upper($DataType)=='CNPJ') {
     $checkOK='';
     $allValid=true;
     $D1=0;
@@ -131,7 +131,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     if (($D2>9)) $D2=0;
     if ($D1!=substr($checkStr,12,1)||$D2!=substr($checkStr,13,1))   $w_erro=$w_erro.'; dígito verificador inválido';
     if ($w_erro>'' && $Tipo==0)   return str_replace('; ','',$w_erro);
-  } elseif (strtoupper($DataType)=='CPF') {
+  } elseif (upper($DataType)=='CPF') {
     $checkOK    = '';
     $allValid   = true;
     $D1         = 0;
@@ -156,7 +156,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     if (($D2>9)) $D1=0;
     if ($D1!=substr($checkStr,9,1) || $D2!=substr($checkStr,10,1))  $w_erro=$w_erro.'; dígito verificador inválido';
     if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);
-  } elseif (strtoupper($DataType)=='DATA') {
+  } elseif (upper($DataType)=='DATA') {
     $err=0;
     $psj=0;
     if (strlen($Value)>0) {
@@ -191,7 +191,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     } 
     if ($err==1) $w_erro = $w_erro.'; data inválida';
     if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);
-  } elseif (strtoupper($DataType)=='DATADM') {
+  } elseif (upper($DataType)=='DATADM') {
     $err=0;
     $psj=0;
     if (strlen($Value)>0) {
@@ -214,7 +214,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     } 
     if ($err==1) $w_erro=$w_erro.'; data inválida';
     if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);
-  } elseif (strtoupper($DataType)=='DATAMA') {
+  } elseif (upper($DataType)=='DATAMA') {
     $err=0;
     $psj=0;
     if (strlen($Value)>0) {

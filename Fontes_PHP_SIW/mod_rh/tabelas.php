@@ -58,18 +58,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par          = strtoupper($_REQUEST['par']);
+$par          = upper($_REQUEST['par']);
 $P1           = Nvl($_REQUEST['P1'],0);
 $P2           = Nvl($_REQUEST['P2'],0);
 $P3           = Nvl($_REQUEST['P3'],1);
 $P4           = nvl($_REQUEST['P4'],$conPageSize);
 $TP           = $_REQUEST['TP'];
-$SG           = strtoupper($_REQUEST['SG']);
+$SG           = upper($_REQUEST['SG']);
 $R            = $_REQUEST['R'];
-$O            = strtoupper($_REQUEST['O']);
+$O            = upper($_REQUEST['O']);
 $w_troca      = $_REQUEST['w_troca'];
 $p_ordena     = $_REQUEST['p_ordena'];
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'tabelas.php?par=';
 $w_dir        = 'mod_rh/';
 $w_dir_volta  = '../';
@@ -1250,7 +1250,7 @@ function Grava() {
   switch ($SG) {
     case 'GPMODALCON':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           $RS = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
           if (f($RS,'existe')>0) {
@@ -1284,7 +1284,7 @@ function Grava() {
       break;
     case 'GPTPAFAST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_sigla'],$_REQUEST['w_nome'],null,null,'VERIFICASIGLANOME');
           if (f($RS,'existe')>0) {
@@ -1319,7 +1319,7 @@ function Grava() {
       break;
     case 'EODTESP':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='G') {
           // Instancia os arquivos
           for ($w_ano=strftime('%Y',(time()))-2; $w_ano<=strftime('%Y',(time()))+3; $w_ano += 1) {
@@ -1429,7 +1429,7 @@ function Grava() {
       break;
     case 'GPPARAM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putGPParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_unidade_gestao'],$_REQUEST['w_admissao_texto'],$_REQUEST['w_admissao_destino'],$_REQUEST['w_rescisao_texto'],
         $_REQUEST['w_rescisao_destino'],$_REQUEST['w_feriado_legenda'],$_REQUEST['w_feriado_nome'],$_REQUEST['w_ferias_legenda'],$_REQUEST['w_ferias_nome'],
         $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome'],$_REQUEST['w_dias_atualizacao_cv'],$_REQUEST['w_aviso_atualizacao_cv'],$_REQUEST['w_tipo_tolerancia'],
@@ -1446,7 +1446,7 @@ function Grava() {
       break;
     case 'EOTIPPOS':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           $RS = db_getCargo::getInstanceOf($dbms,$w_cliente,Nvl($_REQUEST['w_chave'],''),null,$_REQUEST['w_nome'],null,null,'VERIFICANOME');
           if (f($RS,'existe')>0) {

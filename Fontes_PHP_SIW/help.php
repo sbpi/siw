@@ -42,19 +42,19 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = $_REQUEST['P3'];
 $P4         = $_REQUEST['P4'];
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
-$R          = strtoupper($_REQUEST['R']);
-$O          = strtoupper($_REQUEST['O']);
-$w_troca    = strtoupper($_REQUEST['w_troca']);
+$SG         = upper($_REQUEST['SG']);
+$R          = upper($_REQUEST['R']);
+$O          = upper($_REQUEST['O']);
+$w_troca    = upper($_REQUEST['w_troca']);
 $w_menu     = $_REQUEST['w_menu'];
 
-$w_Assinatura   = strtoupper(${"w_Assinatura"});
+$w_Assinatura   = upper(${"w_Assinatura"});
 $w_pagina       = "help.php?par=";
 $w_Disabled     = "ENABLED";
 
@@ -346,7 +346,7 @@ function Pagina() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
 
   ShowHTML('      <tr valign="top"><td colspan=2>');
-  ShowHTML('         <font face="Arial" size="3"><b>'.strtoupper(f($RS_Menu,'nome')).'</font></b><hr>');
+  ShowHTML('         <font face="Arial" size="3"><b>'.upper(f($RS_Menu,'nome')).'</font></b><hr>');
   ShowHTML('         <font size="2"><DL><DT><b>Finalidade:</b><DD>'.f($RS_Menu,'finalidade').'</DD></DT>');
   if (f($RS_Menu,'tramite')=='S') ShowHTML('        <DT><br><b>Como funciona:</b><DD>'.crlf2br(f($RS_Menu,'como_funciona')));
   ShowHTML('      </td></tr>');

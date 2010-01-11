@@ -70,22 +70,22 @@ include_once($w_dir_volta.'funcoes/selecaoSP.php');
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'dc_dicionario.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
 $w_troca        = $_REQUEST['w_troca'];
-$w_copia        = strtoupper($_REQUEST['w_copia']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
+$w_copia        = upper($_REQUEST['w_copia']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
@@ -167,7 +167,7 @@ function Arquivos() {
     $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_chave,null,null,null,null);
     foreach ($RS as $row) {
       $w_sq_sistema   = f($row,'sq_sistema');
-      $w_nome         = strtolower(f($row,'nm_arquivo'));
+      $w_nome         = lower(f($row,'nm_arquivo'));
       $w_descricao    = f($row,'descricao');
       $w_tipo         = f($row,'tipo');
       $w_diretorio    = f($row,'diretorio');
@@ -344,7 +344,7 @@ function Colunas() {
   $w_chave          = $_REQUEST['w_chave'];
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   $p_sq_dado_tipo   = $_REQUEST['p_sq_dado_tipo'];
   $p_sq_tabela      = $_REQUEST['p_sq_tabela'];
   $p_ordem_nome     = $_REQUEST['p_ordem_nome'];
@@ -472,12 +472,12 @@ function Colunas() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="coluna">'.strtolower(f($row,'nm_coluna')));
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=COLUNA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_coluna='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="coluna">'.lower(f($row,'nm_coluna')));
         if (Nvl(f($row,'sq_relacionamento'),'nulo')!='nulo') ShowHTML('          (FK)');
         ShowHTML('          </A>&nbsp');
         ShowHTML('        <td nowrap>'.f($row,'nm_coluna_tipo').' (');
-        if (strtoupper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
+        if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
         else                                              ShowHTML(f($row,'tamanho'));
         ShowHTML(')</td>');
         ShowHTML('        <td align="center">'.f($row,'obrigatorio').'</td>');
@@ -588,7 +588,7 @@ function Procedure() {
   $p_sq_arquivo     = $_REQUEST['p_sq_arquivo'];
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
   $p_sq_sp_tipo     = $_REQUEST['p_sq_sp_tipo'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_arquivo   = $_REQUEST['w_sq_arquivo'];
@@ -685,9 +685,9 @@ function Procedure() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_arquivo').'">'.strtolower(f($row,'nm_arquivo')).'</A>&nbsp');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=ARQUIVO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_arquivo='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_arquivo').'">'.lower(f($row,'nm_arquivo')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_sp_tipo').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=PROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_procedure='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_procedure').'">'.strtolower(f($row,'nm_procedure')).'</A>&nbsp');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=PROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_procedure='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_procedure').'">'.lower(f($row,'nm_procedure')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'ds_procedure').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         if ($P1==0) {
@@ -782,7 +782,7 @@ function Relacionamento() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   $p_sq_tabela      = $_REQUEST['p_sq_tabela'];
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
@@ -885,13 +885,13 @@ function Relacionamento() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=RELACIONAMENTO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&w_sq_relacionamento='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Relacionamento" target="'.f($row,'nm_relacionamento').'">'.strtolower(f($row,'nm_relacionamento')).'</A>&nbsp');
+        ShowHTML('        <td nowrap><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=RELACIONAMENTO&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'tabela_filha').'&w_sq_relacionamento='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Relacionamento" target="'.f($row,'nm_relacionamento').'">'.lower(f($row,'nm_relacionamento')).'</A>&nbsp');
         if (f($row,'sq_tabela_filha')==$p_sq_tabela) $w_destaque='<b>';
         else                                             $w_destaque='';
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela_filha').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela filha" target="'.f($row,'nm_tabela_filha').'">'.$w_destaque.strtolower(f($row,'nm_usuario_tab_filha').'.'.f($row,'nm_tabela_filha')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela_filha').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela filha" target="'.f($row,'nm_tabela_filha').'">'.$w_destaque.lower(f($row,'nm_usuario_tab_filha').'.'.f($row,'nm_tabela_filha')).'</A></td>');
         if (f($row,'sq_tabela_pai')==$p_sq_tabela) $w_destaque='<b>';
         else                                           $w_destaque=''; 
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela_pai').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela pai" target="'.f($row,'nm_tabela_pai').'">'.$w_destaque.strtolower(f($row,'nm_usuario_tab_pai').'.'.f($row,'nm_tabela_pai')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela_pai').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela pai" target="'.f($row,'nm_tabela_pai').'">'.$w_destaque.lower(f($row,'nm_usuario_tab_pai').'.'.f($row,'nm_tabela_pai')).'</A></td>');
         if ($P1==0) {
           ShowHTML('        <td align="top" nowrap>');
           ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">AL</A>&nbsp');
@@ -1061,7 +1061,7 @@ function Sistema() {
       foreach ($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=USUARIO&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Sistema" target="'.f($row,'nome').'">'.strtolower(f($row,'sigla')).'</A>&nbsp');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=USUARIO&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Sistema" target="'.f($row,'nome').'">'.lower(f($row,'sigla')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nome').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         if ($P1==0) {
@@ -1125,7 +1125,7 @@ function StoredProcedure() {
   $p_sq_sp_tipo     = $_REQUEST['p_sq_sp_tipo'];
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_sp_tipo   = $_REQUEST['w_sq_sp_tipo'];
@@ -1220,7 +1220,7 @@ function StoredProcedure() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_sp').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=STOREDPROCEDURE&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_sp='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Nome" target="'.f($row,'nm_sp').'">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_sp')).'</A>&nbsp');
         ShowHTML('        <td>'.f($row,'nm_sp_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'ds_sp').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -1318,7 +1318,7 @@ function Tabela() {
   $w_chave          = $_REQUEST['w_chave'];
   $p_sq_tabela_tipo = $_REQUEST['p_sq_tabela_tipo'];
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
   if ($w_troca>'') {
     // Se for recarga da página
@@ -1415,7 +1415,7 @@ function Tabela() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nome').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nome').'">'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</A></td>');
         ShowHTML('        <td>'.f($row,'nm_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         if ($P1==0) {
@@ -1512,7 +1512,7 @@ function Trigger() {
   $p_sq_sistema     = $_REQUEST['p_sq_sistema'];
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
   $p_sq_tabela      = $_REQUEST['p_sq_tabela'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_tabela    = $_REQUEST['w_sq_tabela'];
@@ -1608,8 +1608,8 @@ function Trigger() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td title="'.f($row,'nm_sistema').'">'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TRIGGER&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_trigger='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="TRIGGERS" target="'.f($row,'nm_trigger').'">'.strtolower(f($row,'nm_trigger')).'</A></td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TRIGGER&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_trigger='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="TRIGGERS" target="'.f($row,'nm_trigger').'">'.lower(f($row,'nm_trigger')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
         ShowHTML('        <td>'.Nvl(f($row,'eventos'),'---').'</td>');
         ShowHTML('        <td>'.f($row,'ds_trigger').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -1781,7 +1781,7 @@ function Usuario() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=USUARIO&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_usuario= '.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Usuario" target="'.f($row,'nome').'">'.strtolower(f($row,'nome')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=USUARIO&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_sistema').'&w_sq_usuario= '.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Usuario" target="'.f($row,'nome').'">'.lower(f($row,'nome')).'</A></td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         if ($P1==0) {
           ShowHTML('        <td align="top" nowrap>');
@@ -1847,7 +1847,7 @@ function Indice() {
   $p_sq_usuario     = $_REQUEST['p_sq_usuario'];
   $p_sq_indice_tipo = $_REQUEST['p_sq_indice_tipo'];
   $p_sq_tabela      = $_REQUEST['p_sq_tabela'];
-  $p_nome           = strtoupper($_REQUEST['p_nome']);
+  $p_nome           = upper($_REQUEST['p_nome']);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_sq_indice_tipo   = $_REQUEST['w_sq_indice_tipo'];
@@ -1947,8 +1947,8 @@ function Indice() {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.strtolower(f($row,'nm_indice')).'</A></td>');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.strtolower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=INDICE&R='.$w_pagina.$par.'&O=l&w_chave='.f($row,'sq_sistema').'&w_sq_indice='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_indice').'">'.lower(f($row,'nm_indice')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.lower(f($row,'nm_usuario').'.'.f($row,'nm_tabela')).'</A></td>');
         ShowHTML('        <td>'.f($row,'nm_indice_tipo').'</td>');
         ShowHTML('        <td>'.f($row,'ds_indice').'</td>');
         if ($P1==0) {
@@ -2215,7 +2215,7 @@ function SPTabs() {
       foreach ($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.strtolower(f($row,'nm_usuario_tabela').'.'.f($row,'nm_tabela')).'</A></td>');
+        ShowHTML('        <td><A class="HL" HREF="'.$w_dir.'dc_consulta.php?par=TABELA&R='.$w_pagina.$par.'&O=NIVEL2&w_chave='.f($row,'sq_sistema').'&w_sq_tabela='.f($row,'sq_tabela').'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"  Title="Tabela" target="'.f($row,'nm_tabela').'">'.lower(f($row,'nm_usuario_tabela').'.'.f($row,'nm_tabela')).'</A></td>');
         ShowHTML('        <td>'.f($row,'ds_tabela').'</td>');
         if ($P1==0) {
           ShowHTML('        <td align="top" nowrap>');
@@ -2638,7 +2638,7 @@ function Grava() {
   switch ($SG) {
     case 'DCCDSIST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSistema::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],
            $_REQUEST['w_sigla'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
@@ -2653,7 +2653,7 @@ function Grava() {
       break;
     case 'DCCDUSU':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='V') {
           Cabecalho();
           ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2686,7 +2686,7 @@ function Grava() {
       break;
     case 'DCCDARQV':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putArquivo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_sistema'],
           $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],$_REQUEST['w_diretorio']);
         ScriptOpen('JavaScript');
@@ -2701,7 +2701,7 @@ function Grava() {
       break;
     case 'DCCDTAB':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTabela::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_tabela_tipo'],$_REQUEST['w_sq_usuario'],
           $_REQUEST['w_sq_sistema'],$_REQUEST['w_nome'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
@@ -2716,7 +2716,7 @@ function Grava() {
       break;
     case 'DCCDCOL':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putColuna::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_tabela'],$_REQUEST['w_sq_dado_tipo'],$_REQUEST['w_nome'],
           $_REQUEST['w_descricao'],$_REQUEST['w_ordem'],$_REQUEST['w_tamanho'],$_REQUEST['w_precisao'],
           $_REQUEST['w_escala'],$_REQUEST['w_obrigatorio'],$_REQUEST['w_valor_padrao']);
@@ -2732,7 +2732,7 @@ function Grava() {
       break;
     case 'DCCDPROC':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putProcedure::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_arquivo'],$_REQUEST['w_sq_sistema'],
           $_REQUEST['w_sq_sp_tipo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
@@ -2747,7 +2747,7 @@ function Grava() {
       break;
     case 'DCCDTRIG':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTrigger::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_tabela'],$_REQUEST['w_sq_usuario'],
           $_REQUEST['w_sq_sistema'],$_REQUEST['w_nome'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
@@ -2762,7 +2762,7 @@ function Grava() {
       break;
     case 'DCCDSP':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putStoredProcedure::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_sp_tipo'],$_REQUEST['w_sq_usuario'],
           $_REQUEST['w_sq_sistema'],$_REQUEST['w_nome'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
@@ -2777,7 +2777,7 @@ function Grava() {
       break;
     case 'DCSPTAB':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSPTabs::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET')).'\';');
@@ -2791,7 +2791,7 @@ function Grava() {
       break;
     case 'DCSPSP':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($_REQUEST['w_filha']=='S') {
           dml_putSPSP::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux']);
         } else {
@@ -2809,7 +2809,7 @@ function Grava() {
       break;
     case 'DCSPPARAM':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putSPParametro::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_sq_dado_tipo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],$_REQUEST['w_ordem']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$_REQUEST['w_sg'].MontaFiltro('GET')).'\';');
@@ -2823,7 +2823,7 @@ function Grava() {
       break;
     case 'DCCDREL':
       //VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putRelacionamento::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
           $_REQUEST['w_sq_tabela_pai'],$_REQUEST['w_sq_tabela_filha'],$_REQUEST['w_sq_sistema']);
         ScriptOpen('JavaScript');
@@ -2838,7 +2838,7 @@ function Grava() {
       break;
     case 'DCCDIND':
       // VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putIndice::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_indice_tipo'],$_REQUEST['w_sq_usuario'],$_REQUEST['w_sq_sistema'],$_REQUEST['w_nome'],$_REQUEST['w_descricao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -2852,7 +2852,7 @@ function Grava() {
       break;
     case 'TRIGEVENTO':
       // VerIfica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         //Inicialmente, desativa a opção em todos os Endereços
         dml_putTrigEvento::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
         //Em seguida, ativa apenas para os Endereços selecionados

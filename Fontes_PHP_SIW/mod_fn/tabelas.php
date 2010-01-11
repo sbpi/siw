@@ -44,16 +44,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_fn/';
@@ -713,7 +713,7 @@ function Grava() {
   switch ($SG) {
     case 'FNIMPOSTO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putImposto::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],
           $_REQUEST['w_sigla'],$_REQUEST['w_esfera'],$_REQUEST['w_calculo'],$_REQUEST['w_dia_pagamento'],
           $_REQUEST['w_ativo']);
@@ -729,7 +729,7 @@ function Grava() {
       break;
     case 'FNTPDOC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTipoDocumento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
           $_REQUEST['w_sigla'],$_REQUEST['w_item'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -744,7 +744,7 @@ function Grava() {
       break;
     case 'FNTPLANC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTipoLancamento::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_pai'],$_REQUEST['w_cliente'],
           $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_receita'],$_REQUEST['w_despesa'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -759,7 +759,7 @@ function Grava() {
       break;
     case 'FNPARAM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putFNParametro::getInstanceOf($dbms,$w_cliente,
            $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],$_REQUEST['w_sufixo'],$_REQUEST['w_fundo_valor'],
            $_REQUEST['w_fundo_qtd'],$_REQUEST['w_fundo_util'],$_REQUEST['w_fundo_contas'],$_REQUEST['w_fundo_data'],

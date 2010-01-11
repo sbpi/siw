@@ -1,12 +1,11 @@
-<?
+<?php
 session_start();
 $w_dir_volta     = '../';
 include_once('../constants.inc');
 include_once('../jscript.php');
 include_once('../funcoes.php');
 include_once('../classes/sp/db_getRamalUsuarioAtivo.php');
-?>
-<? 
+
 // =========================================================================
 // Rotina de visualização de Lista Telefônica
 // -------------------------------------------------------------------------
@@ -20,7 +19,7 @@ function VisualListaTel($p_cliente){
   if ($p_ordena==''){ 
     $RS = SortArray($RS,'nm_usuario_completo','asc');
   } else {
-    $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+    $lista = explode(',',str_replace(' ',',',lower($_REQUEST['p_ordena'])));
     $RS = SortArray($RS,$lista[0],$lista[1],'nm_usuario_completo','asc');
   }
   ShowHTML(' <tr><td align="center" colspan="2">');

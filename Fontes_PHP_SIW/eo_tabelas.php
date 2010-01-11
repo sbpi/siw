@@ -46,17 +46,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'eo_tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -90,8 +90,8 @@ exit;
 function AreaAtuacao(){
   extract($GLOBALS);
   global $w_Disabled;
-  $p_nome   = strtoupper($_REQUEST['p_nome']);
-  $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+  $p_nome   = upper($_REQUEST['p_nome']);
+  $p_ativo  = upper($_REQUEST['p_ativo']);
   $p_ordena = $_REQUEST['p_ordena'];
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -281,8 +281,8 @@ function AreaAtuacao(){
 function TipoUnidade() {
   extract($GLOBALS);
   global $w_Disabled;
-  $p_nome   = strtoupper($_REQUEST['p_nome']);
-  $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+  $p_nome   = upper($_REQUEST['p_nome']);
+  $p_ativo  = upper($_REQUEST['p_ativo']);
   $p_ordena = $_REQUEST['p_ordena'];
  
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
@@ -632,11 +632,11 @@ function Grava() {
   BodyOpen('onLoad=this.focus();');
   switch ($SG) {
     case 'EOTPUNID':
-      $p_nome   = strtoupper($_REQUEST['p_nome']);
-      $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+      $p_nome   = upper($_REQUEST['p_nome']);
+      $p_ativo  = upper($_REQUEST['p_ativo']);
       $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEOTipoUni::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_unidade'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_ativo']);
@@ -651,11 +651,11 @@ function Grava() {
       } 
       break;
     case 'EOAREAATU':
-      $p_nome   = strtoupper($_REQUEST['p_nome']);
-      $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+      $p_nome   = upper($_REQUEST['p_nome']);
+      $p_ativo  = upper($_REQUEST['p_ativo']);
       $p_ordena = $_REQUEST['p_ordena'];
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEOAAtuac::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_area_atuacao'],$w_cliente,$_REQUEST['w_nome'],
             $_REQUEST['w_ativo']);
@@ -671,7 +671,7 @@ function Grava() {
       break;
     case 'EOTPPOSTO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEOTipoPosto::getInstanceOf($dbms, $O,
             $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_sigla'],
             $_REQUEST['w_descricao'],$_REQUEST['w_ativo'],$_REQUEST['w_padrao']);

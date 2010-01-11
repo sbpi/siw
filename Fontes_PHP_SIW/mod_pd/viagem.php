@@ -124,17 +124,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'viagem.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pd/';
@@ -168,33 +168,33 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 
 $w_copia        = $_REQUEST['w_copia'];
-$p_projeto      = strtoupper($_REQUEST['p_projeto']);
-$p_atividade    = strtoupper($_REQUEST['p_atividade']);
-$p_ativo        = strtoupper($_REQUEST['p_ativo']);
-$p_solicitante  = strtoupper($_REQUEST['p_solicitante']);
-$p_prioridade   = strtoupper($_REQUEST['p_prioridade']);
-$p_unidade      = strtoupper($_REQUEST['p_unidade']);
-$p_proponente   = strtoupper($_REQUEST['p_proponente']);
-$p_sq_prop      = strtoupper($_REQUEST['p_sq_prop']);
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
-$p_ini_i        = strtoupper($_REQUEST['p_ini_i']);
-$p_ini_f        = strtoupper($_REQUEST['p_ini_f']);
-$p_fim_i        = strtoupper($_REQUEST['p_fim_i']);
-$p_fim_f        = strtoupper($_REQUEST['p_fim_f']);
-$p_atraso       = strtoupper($_REQUEST['p_atraso']);
-$p_codigo       = strtoupper($_REQUEST['p_codigo']);
-$p_chave        = strtoupper($_REQUEST['p_chave']);
-$p_assunto      = strtoupper($_REQUEST['p_assunto']);
-$p_pais         = strtoupper($_REQUEST['p_pais']);
-$p_regiao       = strtoupper($_REQUEST['p_regiao']);
-$p_uf           = strtoupper($_REQUEST['p_uf']);
-$p_cidade       = strtoupper($_REQUEST['p_cidade']);
-$p_usu_resp     = strtoupper($_REQUEST['p_usu_resp']);
-$p_uorg_resp    = strtoupper($_REQUEST['p_uorg_resp']);
-$p_palavra      = strtoupper($_REQUEST['p_palavra']);
-$p_prazo        = strtoupper($_REQUEST['p_prazo']);
+$p_projeto      = upper($_REQUEST['p_projeto']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_proponente   = upper($_REQUEST['p_proponente']);
+$p_sq_prop      = upper($_REQUEST['p_sq_prop']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_codigo       = upper($_REQUEST['p_codigo']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
 $p_fase         = explodeArray($_REQUEST['p_fase']);
-$p_sqcc         = strtoupper($_REQUEST['p_sqcc']);
+$p_sqcc         = upper($_REQUEST['p_sqcc']);
 
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
 $RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
@@ -233,7 +233,7 @@ function Inicial() {
   $w_tipo=$_REQUEST['w_tipo'];
   
   if ($O=='L') {
-    if (strpos(strtoupper($R),'GR_')!==false || strpos(strtoupper($R),'PROJETO')!==false) {
+    if (strpos(upper($R),'GR_')!==false || strpos(upper($R),'PROJETO')!==false) {
       $w_filtro='';
       if ($p_projeto>'') {
         $RS = db_getSolicData::getInstanceOf($dbms,$p_projeto,'PJGERAL');
@@ -385,7 +385,7 @@ function Inicial() {
     Estrutura_Topo_Limpo();
     Estrutura_Menu();
     Estrutura_Corpo_Abre();
-    if ((strpos(strtoupper($R),'GR_'))===false) {
+    if ((strpos(upper($R),'GR_'))===false) {
       Estrutura_Texto_Abre();
     } else {
       CabecalhoRelatorio($w_cliente,'Consulta de '.f($RS_Menu,'nome'),4);
@@ -407,7 +407,7 @@ function Inicial() {
         ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>I</u>ncluir</a>&nbsp;');
       }
     }
-    if ((strpos(strtoupper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
+    if ((strpos(upper($R),'GR_'))===false && $P1!=6 && $w_embed!='WORD') {
       if ($w_copia>'') {
         // Se for cópia
         if (MontaFiltro('GET')>'') {
@@ -4942,7 +4942,7 @@ function Visual() {
   global $w_Disabled;
 
   $w_chave  = $_REQUEST['w_chave'];
-  $w_tipo   = strtoupper(trim($_REQUEST['w_tipo']));
+  $w_tipo   = upper(trim($_REQUEST['w_tipo']));
 
   if ($w_tipo=='PDF') {
     headerpdf('Visualização de '.f($RS_Menu,'nome'),$w_pag);
@@ -7117,7 +7117,7 @@ function Grava() {
   switch ($SG) {
     case 'PDIDENT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putViagemGeral::getInstanceOf($dbms,$O,$w_cliente,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_sq_unidade_resp'],
             $_REQUEST['w_sq_prop'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_tipo_missao'],$_REQUEST['w_descricao'],
@@ -7155,7 +7155,7 @@ function Grava() {
       break;
     case 'PDOUTRA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putViagemOutra::getInstanceOf($dbms,$O,$SG,
         $_REQUEST['w_chave'],              $_REQUEST['w_chave_aux'],          $_REQUEST['w_sq_pessoa'],
         $_REQUEST['w_cpf'],                $_REQUEST['w_nome'],               $_REQUEST['w_nome_resumido'],
@@ -7179,7 +7179,7 @@ function Grava() {
       break;
     case 'PDDIARIA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($_POST['w_sq_diaria']>'') $w_operacao = 'A'; else $w_operacao = 'I';
 
         dml_putPD_Diaria::getInstanceOf($dbms,$w_operacao,$_REQUEST['w_chave'],$_POST['w_sq_diaria'],
@@ -7207,7 +7207,7 @@ function Grava() {
       break;
     case 'PDTRECHO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Deslocamento::getInstanceOf($dbms,$O,
               $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
               $_REQUEST['w_cidade_orig'],$_REQUEST['w_data_saida'],$_REQUEST['w_hora_saida'],
@@ -7234,7 +7234,7 @@ function Grava() {
       break;
     case 'INFBIL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Bilhete::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
             $_REQUEST['w_cia_aerea'],null,null,$_REQUEST['w_data'],$_REQUEST['w_numero'],$_REQUEST['w_trecho'],
             $_REQUEST['w_rloc'],$_REQUEST['w_classe'],$_REQUEST['w_valor_cheio'],$_REQUEST['w_valor_bil'],$_REQUEST['w_valor_tax'],
@@ -7253,7 +7253,7 @@ function Grava() {
       break;
     case 'PDVINC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_demanda'])-1; $i=$i+1) {
             if (Nvl($_POST['w_demanda'][$i],'')>'') {
@@ -7275,7 +7275,7 @@ function Grava() {
       break;
     case 'DADFIN':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Missao::getInstanceOf($dbms,null,$_REQUEST['w_chave'],Nvl($_REQUEST['w_vlr_alimentacao'],0),Nvl($_REQUEST['w_vlr_transporte'],0),Nvl($_REQUEST['w_adicional'],0),
         Nvl($_REQUEST['w_desc_alimentacao'],0),Nvl($_REQUEST['w_desc_trasnporte'],0),null,null,null,null);
         for ($i=0; $i<=count($_POST['w_sq_diaria'])-1; $i=$i+1) {
@@ -7299,7 +7299,7 @@ function Grava() {
       break;
     case 'INFPASS':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putPD_Missao::getInstanceOf($dbms,null,$_REQUEST['w_chave'],null,null,null,
         null,null,$_REQUEST['w_pta'],$_REQUEST['w_emissao_bilhete'],$_REQUEST['w_valor_passagem'],$SG);
         for ($i=0; $i<=count($_POST['w_sq_deslocamento'])-1; $i=$i+1) {
@@ -7318,7 +7318,7 @@ function Grava() {
       break;
     case 'COTPASS':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         for ($i=1; $i<=count($_POST['w_sq_deslocamento']); $i++) {
           dml_putPD_Deslocamento::getInstanceOf($dbms,'C', $_REQUEST['w_chave'],$_POST['w_sq_deslocamento'][$i], null,null,null,null,null,null,
           $_POST['w_sq_cia_transporte'][$i],Nvl($_POST['w_codigo_voo'][$i],0),null,null,Nvl($_POST['w_valor_trecho'][$i],0),null,null,null,null);
@@ -7335,7 +7335,7 @@ function Grava() {
       break;
     case 'PDANEXO' :
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK===0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         $w_tamanho = 0;
@@ -7415,7 +7415,7 @@ function Grava() {
       break;
     case 'PDCONTAS' :
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK===0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
@@ -7507,7 +7507,7 @@ function Grava() {
       break;
     case 'PDALTERA' :
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (UPLOAD_ERR_OK===0) {
           $w_maximo = $_REQUEST['w_upload_maximo'];
           foreach ($_FILES as $Chv => $Field) {
@@ -7584,7 +7584,7 @@ function Grava() {
       break;
     case 'PDREEMB' :
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Grava dados do reembolso
         dml_putPD_Reembolso::getInstanceOf($dbms,
             $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],
@@ -7604,7 +7604,7 @@ function Grava() {
       break;
     case 'PDVALRB' :
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Verifica se a moeda indicada já foi informada em outro lançamento
         $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null);
         foreach($RS_Reembolso as $row) {
@@ -7642,8 +7642,8 @@ function Grava() {
       break;
     case 'PDENVIO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        if ((false!==(strpos(strtoupper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(strtoupper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ((false!==(strpos(upper($_SERVER['HTTP_CONTENT_TYPE']),'MULTIPART/FORM-DATA'))) || (false!==(strpos(upper($_SERVER['CONTENT_TYPE']),'MULTIPART/FORM-DATA')))) {
           // Verifica se outro usuário já enviou a solicitação
           $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PDINICIAL');
           if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
@@ -7772,7 +7772,7 @@ function Grava() {
       break;
     case 'PDCONC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],$SG);
         if (f($RS,'concluida')=='S') {
           ScriptOpen('JavaScript');

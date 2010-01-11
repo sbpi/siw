@@ -61,16 +61,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'relatorio.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pa/';
@@ -599,14 +599,14 @@ function Etiqueta() {
       else
         ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
       if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_pessoa_interes')).'</font>');
       else
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_origem')).'</font>');
-      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_origem')).'</font>');
+      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.upper(f($RS,'ds_assunto')).'</font>');
       if (strlen(Nvl(f($RS,'descricao'),'-'))>1000) 
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,1000).'...</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(upper(nvl(f($RS,'descricao'),'---')),0,1000).'...</font>');
       else
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.upper(nvl(f($RS,'descricao'),'---')).'</font>');
       ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(str_replace('/','',str_replace('-','',str_replace('.','',f($RS,'protocolo'))))));
       ShowHTML('  </table>');
       ShowHTML('<br></td></tr>');
@@ -754,14 +754,14 @@ function EmitirEtiqueta () {
       else
         ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
       if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_pessoa_interes')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_pessoa_interes')).'</font>');
       else
-        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.strtoupper(f($RS,'nm_origem')).'</font>');
-      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.strtoupper(f($RS,'ds_assunto')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_origem')).'</font>');
+      ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.upper(f($RS,'ds_assunto')).'</font>');
       if (strlen(Nvl(f($RS,'descricao'),'-'))>100) 
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(strtoupper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(upper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');
       else
-        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.strtoupper(nvl(f($RS,'descricao'),'---')).'</font>');
+        ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.upper(nvl(f($RS,'descricao'),'---')).'</font>');
       ShowHTML('    <tr><td colspan=2 align="right">'.geraCB(str_replace('/','',str_replace('-','',str_replace('.','',f($RS,'protocolo'))))));
       ShowHTML('  </table>');
       ShowHTML('<br></td></tr>');

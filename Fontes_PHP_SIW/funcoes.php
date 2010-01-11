@@ -110,10 +110,10 @@ function LinkArquivo ($v_classe, $v_cliente, $v_arquivo, $v_target, $v_hint, $v_
   If (Nvl($v_target,'') > '') $l_target = ' target="' . $v_target . '" '; Else $l_target = '';
   If (Nvl($v_hint,'')   > '') $l_hint   = ' title="' . $v_hint . '" ';    Else $l_hint   = '';
 
-  If (strtoupper(Nvl($v_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
+  If (upper(Nvl($v_retorno,'')) == 'WORD') { // Se for geraçao de Word, dispensa sessão ativa
      // Montagem da tag anchor
      $l_link = $v_descricao;
-  } ElseIf (strtoupper(Nvl($v_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
+  } ElseIf (upper(Nvl($v_retorno,'')) <> 'EMBED') { // Se não for objeto incorporado, monta tag anchor
      // Montagem da tag anchor
      $l_link = '<a'.$l_classe.'href="'.str_replace('force=false','force=true',$l_link).'"'.$l_target.$l_hint.'>'.$v_descricao.'</a>';
   }
@@ -169,7 +169,7 @@ function montaURL_JS ($p_dir, $p_link) {
 // -------------------------------------------------------------------------
 function geraCB ($l_valor, $l_tamanho=6, $l_fator=0.6, $l_formato='C39') {
   extract($GLOBALS);
-  if (strtoUpper($l_formato)=='C39') {
+  if (Upper($l_formato)=='C39') {
     include_once($w_dir_volta.'classes/graph_barcode/C39Barcode_class.php');
     $cb = new c39Barcode('cb1',$l_valor);
  } else {
@@ -223,7 +223,7 @@ function headerWord($p_orientation='LANDSCAPE') {
   ShowHTML('<!-- ');
   ShowHTML(' /* Style Definitions */ ');
   ShowHTML('@page Section1 ');
-  if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
+  if (upper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
      ShowHTML('    {size:8.5in 11.0in; ');
      ShowHTML('    mso-page-orientation:portrait; ');
      ShowHTML('    margin:2.0cm 2.0cm 2.0cm 2.0cm; ');
@@ -315,7 +315,7 @@ function headerExcel($p_orientation='LANDSCAPE') {
   ShowHTML('<!-- ');
   ShowHTML(' /* Style Definitions */ ');
   ShowHTML('@page Section1 ');
-  if (strtoupper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
+  if (upper(Nvl($p_orientation,'LANDSCAPE'))=='PORTRAIT') {
      ShowHTML('    {size:8.5in 11.0in; ');
      ShowHTML('    mso-page-orientation:portrait; ');
      ShowHTML('    margin:2.0cm 2.0cm 2.0cm 2.0cm; ');
@@ -367,9 +367,9 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
 function LinkOrdena($p_label,$p_campo) {
   extract($GLOBALS);
   foreach($_POST as $chv => $vlr) {
-    if (nvl($vlr,'')>'' && (strtoupper(substr($chv,0,2))=="W_" || strtoupper(substr($chv,0,2))=="P_")) {
-      if (strtoupper($chv)=="P_ORDENA") {
-        $l_ordena=strtoupper($vlr);
+    if (nvl($vlr,'')>'' && (upper(substr($chv,0,2))=="W_" || upper(substr($chv,0,2))=="P_")) {
+      if (upper($chv)=="P_ORDENA") {
+        $l_ordena=upper($vlr);
       } else {
         if(is_array($vlr))
           $l_string .= '&'.$chv."=".explodeArray($vlr);
@@ -379,9 +379,9 @@ function LinkOrdena($p_label,$p_campo) {
     }
   }
   foreach($_GET as $chv => $vlr) {
-    if (nvl($vlr,'')>'' && (strtoupper(substr($chv,0,2))=="W_" || strtoupper(substr($chv,0,2))=="P_")) {
-      if (strtoupper($chv)=="P_ORDENA") {
-        $l_ordena=strtoupper($vlr);
+    if (nvl($vlr,'')>'' && (upper(substr($chv,0,2))=="W_" || upper(substr($chv,0,2))=="P_")) {
+      if (upper($chv)=="P_ORDENA") {
+        $l_ordena=upper($vlr);
       } else {
         if(is_array($vlr))
           $l_string .= '&'.$chv."=".explodeArray($vlr);
@@ -390,8 +390,8 @@ function LinkOrdena($p_label,$p_campo) {
       }
     }
   }
-  if (strtoupper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',strtoupper($l_ordena)))) {
-    if (strpos(strtoupper($l_ordena),' DESC') !== false) {
+  if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
+    if (strpos(upper($l_ordena),' DESC') !== false) {
       $l_string .= '&p_ordena='.$p_campo.' asc&';
       $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
     } else {
@@ -632,18 +632,18 @@ function corrigeCar($str) {
 // -------------------------------------------------------------------------
 function MontaFiltro($p_method) {
   extract($GLOBALS);
-  if (strtoupper($p_method)=='GET' || strtoupper($p_method)=='POST') {
+  if (upper($p_method)=='GET' || upper($p_method)=='POST') {
     $l_string='';
     foreach ($_POST as $l_Item => $l_valor) {
       if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
-        if (strtoupper($p_method)=='GET') {
+        if (upper($p_method)=='GET') {
           if (is_array($_POST[$l_Item])) {
             $l_string .= '&'.$l_Item.'='.explodeArray($_POST[$l_Item]);
           } else {
             $l_string .= '&'.$l_Item.'='.$l_valor;
           }
         }
-        elseif (strtoupper($p_method)=='POST') {
+        elseif (upper($p_method)=='POST') {
           if (is_array($_POST[$l_Item])) {
             $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_POST[$l_Item]).'">';
           } else {
@@ -654,14 +654,14 @@ function MontaFiltro($p_method) {
     }
     foreach ($_GET as $l_Item => $l_valor) {
       if (substr($l_Item,0,2)=='p_' && $l_valor>'') {
-        if (strtoupper($p_method)=='GET') {
+        if (upper($p_method)=='GET') {
           if (is_array($_GET[$l_Item])) {
             $l_string .= '&'.$l_Item.'='.explodeArray($_GET[$l_Item]);
           } else {
             $l_string .= '&'.$l_Item.'='.$l_valor;
           }
         }
-        elseif (strtoupper($p_method)=='POST') {
+        elseif (upper($p_method)=='POST') {
           if (is_array($_GET[$l_Item])) {
             $l_string .= '<INPUT TYPE="HIDDEN" NAME="'.$l_Item.'" VALUE="'.explodeArray($_GET[$l_Item]).'">';
           } else {
@@ -734,11 +734,11 @@ function ExibeVariaveis() {
   ShowHTML('</table></DT><br>');
 
   ShowHTML('<DT><b>Dados do formulário:</b><table border=0>');
-  foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); }
+  foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura') ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); }
   ShowHTML('</table></DT><br>');
 
   ShowHTML('<DT><b>Variáveis de sessão:</b><table border=0>');
-  foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); } }
+  foreach($_SESSION as $chv => $vlr) { if (strpos(upper($chv),'SENHA') !== true) { ShowHTML('<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'); } }
   ShowHTML('</table></DT><br>');
   
   ShowHTML('<DT><b>Variáveis do servidor:</b><table border=0>');
@@ -1030,7 +1030,7 @@ function ExibeImagemRestricao($l_tipo,$l_imagem=null,$l_legenda=0) {
 // -------------------------------------------------------------------------
 function ExibeSmile($l_tipo,$l_andamento,$l_legenda=0) {
   extract($GLOBALS);
-  $l_tipo       = trim(strtoupper($l_tipo));
+  $l_tipo       = trim(upper($l_tipo));
   $l_andamento  = nvl($l_andamento,0);
   if ($l_legenda) {
     if ($l_tipo=='IDE') {
@@ -1115,7 +1115,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
   $l_string = '';
   $l_imagem = '';
   $l_title  = '';
-  $l_tipo = strtoupper($l_tipo);
+  $l_tipo = upper($l_tipo);
   if ($l_legenda) {
     if ($l_tipo=='ETAPA') {
       // Etapas de projeto
@@ -1546,7 +1546,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
 function ExibeIconeSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l_aviso,$l_dias_aviso,$l_tramite, $l_perc, $l_legenda=0, $l_restricao=null) {
   extract($GLOBALS);
   $l_imagem = '';
-  $l_tipo = strtoupper($l_tipo);
+  $l_tipo = upper($l_tipo);
     if ($l_tipo=='ETAPA') {
       // Etapas de projeto
       if ($l_perc<100) {
@@ -1870,6 +1870,28 @@ function MontaOrdemEspec($l_chave) {
     }
   }
   return substr($w_texto,0,strlen($w_texto)-1);
+}
+
+// =========================================================================
+// Ajusta acentos na utilização de strtoupper
+// -------------------------------------------------------------------------
+function upper ($str) {
+  $LATIN_UC_CHARS = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ";
+  $LATIN_LC_CHARS = "àáâãäåæçèéêëìíîïðñòóôõöøùúûüý";
+  $str = strtr ($str, $LATIN_LC_CHARS, $LATIN_UC_CHARS);
+  $str = strtoupper($str);
+  return $str;
+}
+
+// =========================================================================
+// Ajusta acentos na utilização de strtolower
+// -------------------------------------------------------------------------
+function lower ($str) {
+  $LATIN_UC_CHARS = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ";
+  $LATIN_LC_CHARS = "àáâãäåæçèéêëìíîïðñòóôõöøùúûüý";
+  $str = strtr ($str, $LATIN_UC_CHARS, $LATIN_LC_CHARS);
+  $str = strtolower($str);
+  return $str;
 }
 
 // =========================================================================
@@ -2459,7 +2481,7 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
     $error = $email_message->Send();
     if (strcmp($error,'')) {
       // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
-      if (strtoupper(PHP_OS)!='SUNOS') {
+      if (upper(PHP_OS)!='SUNOS') {
         enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.$email_message->smtp_host.'] Porta ['.$email_message->smtp_port.'] Conta ['.$email_message->smtp_user.'/'.$email_message->smtp_password.']');
         return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.$email_message->smtp_host.']\nPorta ['.$email_message->smtp_port.']\nConta ['.$email_message->smtp_user.'/'.$email_message->smtp_password.']\n'.$error;
       } else {
@@ -2580,7 +2602,7 @@ function EnviaMailAlternative($w_subject,$w_mensagem,$w_recipients,$from,$w_atta
   if ($conEnviaMail) {
     if (!$mail->Send()) {
       // Solaris (SunOS) sempre retorna falso, mesmo enviando a mensagem.
-      if (strtoupper(PHP_OS)!='SUNOS') {
+      if (upper(PHP_OS)!='SUNOS') {
         enviaSyslog('RI','RECURSO INDISPONÍVEL','SMTP ['.$mail->smtp_host.'] Porta ['.$mail->smtp_port.'] Conta ['.$mail->smtp_user.'/'.$mail->smtp_password.']');
         return 'ERRO: ocorreu algum erro no envio da mensagem.\\SMTP ['.$mail->Host.']\nPorta ['.$mail->Port.']\nConta ['.$mail->Username.'/'.$mail->Password.']\n'.$mail->ErrorInfo;
       } else {
@@ -2773,11 +2795,11 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     $w_html .= chr(10).'</table></DT><br>';
 
     $w_html .= chr(10).'<DT>Dados do formulário:<table border=0>';
-    foreach($_POST as $chv => $vlr) { if (strtolower($chv)!='w_assinatura') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
+    foreach($_POST as $chv => $vlr) { if (lower($chv)!='w_assinatura') $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; }
     $w_html .= chr(10).'</table></DT><br>';
 
     $w_html .= chr(10).'<DT>Variáveis de sessão:<table border=0>';
-    foreach($_SESSION as $chv => $vlr) { if (strpos(strtoupper($chv),'SENHA') !== true) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
+    foreach($_SESSION as $chv => $vlr) { if (strpos(upper($chv),'SENHA') !== true) { $w_html .= chr(10).'<tr valign="top"><td align="right">'.$chv.'=><td>['.$vlr.']'; } }
     $w_html .= chr(10).'</table></DT>';
     
     $w_html .= chr(10).'</FONT></TD></TR></TABLE><BLOCKQUOTE>';
@@ -3177,17 +3199,17 @@ function f($rs, $fld) {
   if (is_array($rs)) {
     $rs =  array_change_key_case($rs,CASE_LOWER);
   }
-  if (isset($rs[Strtolower($fld)])) {
-    if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtolower($fld)])));
-    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[Strtolower($fld)]));
-  } elseif (isset($rs[Strtoupper($fld)])) {
-    if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[Strtoupper($fld)])));
-    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[Strtoupper($fld)]));
+  if (isset($rs[lower($fld)])) {
+    if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[lower($fld)])));
+    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[lower($fld)]));
+  } elseif (isset($rs[upper($fld)])) {
+    if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[upper($fld)])));
+    } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[upper($fld)]));
   } elseif (isset($rs[$fld])) {
-    if (strpos(strtoupper($rs[Strtoupper($fld)]),'/SCRIPT')!==false) {
-      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',strtoupper($rs[$fld])));
+    if (strpos(upper($rs[upper($fld)]),'/SCRIPT')!==false) {
+      return str_replace('"','&quot;',str_replace('/SCRIPT','/ SCRIPT',upper($rs[$fld])));
     } else return str_replace('"','&quot;',str_replace('.asp','.php',$rs[$fld]));
   } else return null;
 }
@@ -3337,10 +3359,10 @@ function diaSemana($l_data) {
   if (nvl($l_data,'')>'') {
   if (strpos($l_data,',')!==false) {
     $l_texto = substr($l_data,strpos($l_data,','));
-    $teste = (strtoupper(substr($l_data,0,strpos($l_data,',')))); 
+    $teste = (upper(substr($l_data,0,strpos($l_data,',')))); 
   } else {
     $l_texto = '';
-    $teste = (strtoupper($l_data)); 
+    $teste = (upper($l_data)); 
   }
   switch ($teste) {
       case 'SUNDAY':    return 'Domingo'.$l_texto;       break;
@@ -3361,7 +3383,7 @@ function diaSemana($l_data) {
 function mesAno($l_data, $l_formato=null) {
   if (nvl($l_data,'')>'') {
     if (nvl($l_formato,'nulo')=='nulo') {
-      switch (strtoupper($l_data)) {
+      switch (upper($l_data)) {
         case 'JANUARY':   return 'Janeiro';   break;
         case 'FEBRUARY':  return 'Fevereiro'; break;
         case 'MARCH':     return 'Março';     break;
@@ -3376,7 +3398,7 @@ function mesAno($l_data, $l_formato=null) {
         case 'DECEMBER':  return 'Dezembro';  break;
       }
     } else {
-      switch (strtoupper($l_data)) {
+      switch (upper($l_data)) {
         case 'JANUARY':   return 'Jan'; break;
         case 'FEBRUARY':  return 'Fev'; break;
         case 'MARCH':     return 'Mar'; break;
@@ -3605,7 +3627,7 @@ function retornaNomePeriodo($p_inicio, $p_fim) {
 // -------------------------------------------------------------------------
 function retornaSimNao($chave,$formato=null) {
   extract($GLOBALS);
-  if(strtoupper($formato)=='IMAGEM') {
+  if(upper($formato)=='IMAGEM') {
     switch ($chave) {
       case 'S': return '<img src="'.$conImgOkNormal.'" border=0 width=15 height=15 align="center">';  break;
       default:  return '&nbsp;';
@@ -3654,7 +3676,7 @@ function BodyOpen($cProperties) {
 
    if ($_SESSION['P_CLIENTE']=='6761') { ShowHTML('<body Text="'.$conBodyText.'" '.$wProperties.'> '); }
    else {
-      ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
+     ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
             'Vlink="'.$conBodyVLink.'" Bgcolor="'.$conBodyBgColor.'" Background="'.$conBodyBackground.'" ' .
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
             'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
@@ -3806,7 +3828,7 @@ switch ($data) {
     $known = array('msie', 'firefox', 'safari', 'webkit', 'opera', 'netscape',
       'konqueror', 'gecko');
   
-    $agent = strtolower($agent ? $agent : $_SERVER['HTTP_USER_AGENT']);
+    $agent = lower($agent ? $agent : $_SERVER['HTTP_USER_AGENT']);
     $pattern = '#(?<browser>' . join('|', $known) .
       ')[/ ]+(?<version>[0-9]+(?:\.[0-9]+)?)#';
   

@@ -13,7 +13,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
   $l_html.=chr(13).'      <tr><td colspan=\'2\'  bgcolor=\'#f0f0f0\'><div align=justify><font size=\'2\'><b>TAREFA: '.f($RS1,'sq_siw_solicitacao').' - '.f($RS1,'titulo').'</b></font></div></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan=\'2\'><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação da tarefa
-  if (strtoupper($l_identificacao)==strtoupper('sim')) {
+  if (upper($l_identificacao)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>IDENTIFICAÇÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (Nvl(f($RS1,'nm_projeto'),'')>'') {
       // Recupera os dados da ação
@@ -66,7 +66,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     $l_html.=chr(13).'       <td><font size=\'1\'>'.Nvl(f($RS1,'nm_tramite'),'-').'</font></td></tr>';
   }
   // Dados da conclusão do programa, se ela estiver nessa situação
-  if (strtoupper($l_conclusao)==strtoupper('sim')) {
+  if (upper($l_conclusao)==upper('sim')) {
     if (f($RS1,'concluida')=='S' && Nvl(f($RS1,'data_conclusao'),'')>'') {
       $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>DADOS DA CONCLUSÃO DA TAREFA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (Nvl(f($RS2,'cd_acao'),'')=='') {
@@ -82,7 +82,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     } 
   } 
   //Responsável
-  if (strtoupper($l_responsavel)==strtoupper('sim')) {
+  if (upper($l_responsavel)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>RESPONSÁVEIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     if (f($RS1,'nm_responsavel')>'') {
       $l_html.=chr(13).'   <tr><td><font size=\'1\'><b>Responsável pela Tarefa:</b></font></td>';
@@ -96,7 +96,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     } 
   } 
   // Arquivos vinculados ao programa
-  if (strtoupper($l_anexo)==strtoupper('sim')) {
+  if (upper($l_anexo)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan=\'2\'><br><font size=\'2\'><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $RS2 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
     $RS2 = SortArray($RS2,'nome','asc');
@@ -121,7 +121,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
     } 
   } 
   // Encaminhamentos
-  if (strtoupper($l_ocorrencia)==strtoupper('sim')) {
+  if (upper($l_ocorrencia)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
     $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
@@ -161,7 +161,7 @@ function VisualTarefa($l_chave,$O,$l_usuario,$P4,$l_identificacao,$l_conclusao,$
       $l_html.=chr(13).'         </table></div></td></tr>';
     } 
   } 
-  if (strtoupper($l_dados_consulta)==strtoupper('sim')) {
+  if (upper($l_dados_consulta)==upper('sim')) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONSULTA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Consulta Realizada por:</b></td>';
     $l_html.=chr(13).'       <td>'.$_SESSION['NOME_RESUMIDO'].'</td></tr>';

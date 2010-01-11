@@ -55,17 +55,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_localizacao.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -103,11 +103,11 @@ function Cidade() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
 
-  $p_sq_pais    = strtoupper($_REQUEST['p_sq_pais']);
-  $p_co_uf      = strtoupper($_REQUEST['p_co_uf']);
-  $p_nome       = strtoupper($_REQUEST['p_nome']);
-  $p_ativo      = strtoupper($_REQUEST['p_ativo']);
-  $p_ordena     = strtolower($_REQUEST['p_ordena']);
+  $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
+  $p_co_uf      = upper($_REQUEST['p_co_uf']);
+  $p_nome       = upper($_REQUEST['p_nome']);
+  $p_ativo      = upper($_REQUEST['p_ativo']);
+  $p_ordena     = lower($_REQUEST['p_ordena']);
 
 
   if ($O!='I' && $p_sq_pais.$p_co_uf.$p_nome=='') $O='P';
@@ -343,10 +343,10 @@ function Estado() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_sq_pais    = strtoupper($_REQUEST['p_sq_pais']);
-  $p_sq_regiao  = strtoupper($_REQUEST['p_sq_regiao']);
-  $p_ativo      = strtoupper($_REQUEST['p_ativo']);
-  $p_ordena     = strtolower($_REQUEST['p_ordena']);
+  $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
+  $p_sq_regiao  = upper($_REQUEST['p_sq_regiao']);
+  $p_ativo      = upper($_REQUEST['p_ativo']);
+  $p_ordena     = lower($_REQUEST['p_ordena']);
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -589,9 +589,9 @@ function Regiao() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome       = strtoupper($_REQUEST['p_nome']);
-  $p_sq_pais    = strtoupper($_REQUEST['p_sq_pais']);
-  $p_ordena     = strtolower($_REQUEST['p_ordena']);
+  $p_nome       = upper($_REQUEST['p_nome']);
+  $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
+  $p_ordena     = lower($_REQUEST['p_ordena']);
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -787,10 +787,10 @@ function Pais() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome   = strtoupper($_REQUEST['p_nome']);
-  $p_ativo  = strtoupper($_REQUEST['p_ativo']);
-  $p_sigla  = strtoupper($_REQUEST['p_sigla']);
-  $p_ordena = strtolower($_REQUEST['p_ordena']);
+  $p_nome   = upper($_REQUEST['p_nome']);
+  $p_ativo  = upper($_REQUEST['p_ativo']);
+  $p_sigla  = upper($_REQUEST['p_sigla']);
+  $p_ordena = lower($_REQUEST['p_ordena']);
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -1015,13 +1015,13 @@ function Grava() {
 
   switch ($SG) {
     case 'COCIDADE':
-      $p_nome    = strtoupper($_REQUEST['p_nome']);
-      $p_sq_pais = strtoupper($_REQUEST['p_sq_pais']);
-      $p_co_uf   = strtoupper($_REQUEST['p_co_uf']);
+      $p_nome    = upper($_REQUEST['p_nome']);
+      $p_sq_pais = upper($_REQUEST['p_sq_pais']);
+      $p_co_uf   = upper($_REQUEST['p_co_uf']);
       $p_ordena  = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
         $RS = db_getCityList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],$_REQUEST['w_co_uf'],null,null);
         foreach($RS as $row) {
@@ -1051,12 +1051,12 @@ function Grava() {
       } 
       break;
     case 'COPAIS':
-      $p_nome   = strtoupper($_REQUEST['p_nome']);
-      $p_codigo = strtoupper($_REQUEST['p_codigo']);
-      $p_ativo  = strtoupper($_REQUEST['p_ativo']);
+      $p_nome   = upper($_REQUEST['p_nome']);
+      $p_codigo = upper($_REQUEST['p_codigo']);
+      $p_ativo  = upper($_REQUEST['p_ativo']);
       $p_ordena = $_REQUEST['p_ordena'];
 
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
         $RS = db_getCountryList::getInstanceOf($dbms,null,null,null,null);
         foreach($RS as $row) {
@@ -1087,12 +1087,12 @@ function Grava() {
       } 
       break;
     case 'COREGIAO': 
-      $p_nome    = strtoupper($_REQUEST['p_nome']);
-      $p_sq_pais = strtoupper($_REQUEST['p_sq_pais']);
+      $p_nome    = upper($_REQUEST['p_nome']);
+      $p_sq_pais = upper($_REQUEST['p_sq_pais']);
       $p_ordena  = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoRegiao::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_regiao'],$_REQUEST['w_sq_pais'],$_REQUEST['w_nome'],
             $_REQUEST['w_sigla'],$_REQUEST['w_ordem']);
@@ -1107,13 +1107,13 @@ function Grava() {
       } 
       break;
     case 'COUF':
-      $p_sq_pais    = strtoupper($_REQUEST['p_sq_pais']);
-      $p_sq_regiao  = strtoupper($_REQUEST['p_sq_regiao']);
-      $p_ativo      = strtoupper($_REQUEST['p_ativo']);
+      $p_sq_pais    = upper($_REQUEST['p_sq_pais']);
+      $p_sq_regiao  = upper($_REQUEST['p_sq_regiao']);
+      $p_ativo      = upper($_REQUEST['p_ativo']);
       $p_ordena     = $_REQUEST['p_ordena'];
 
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
         $RS = db_getStateList::getInstanceOf($dbms,$_REQUEST['w_sq_pais'],null,null,null);
         foreach($RS as $row) {

@@ -44,18 +44,18 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par            = strtoupper($_REQUEST['par']);
+$par            = upper($_REQUEST['par']);
 $P1             = Nvl($_REQUEST['P1'],0);
 $P2             = Nvl($_REQUEST['P2'],0);
 $P3             = Nvl($_REQUEST['P3'],1);
 $P4             = Nvl($_REQUEST['P4'],$conPageSize);
 $TP             = $_REQUEST['TP'];
-$SG             = strtoupper($_REQUEST['SG']);
-$R              = strtolower($_REQUEST['R']);
-$O              = strtoupper($_REQUEST['O']);
+$SG             = upper($_REQUEST['SG']);
+$R              = lower($_REQUEST['R']);
+$O              = upper($_REQUEST['O']);
 $p_ordena       = $_REQUEST['p_ordena'];
 $w_troca        = $_REQUEST['w_troca'];
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'afastamento.php?par=';
 $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
@@ -176,7 +176,7 @@ function Afastamento() {
             ShowHTML('     if (theForm.w_fim_periodo[1].checked) Days = Days + 0.5; ');
             ShowHTML('  }');
             ShowHTML('  if (Days > '.f($RS1,'limite_dias').') {');
-            ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.strtolower(f($RS1,'nm_contagem_dias')).'!\');');
+            ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.lower(f($RS1,'nm_contagem_dias')).'!\');');
             ShowHTML('     theForm.w_inicio_data.focus();');
             ShowHTML('     return false;');
             ShowHTML('  }');
@@ -185,7 +185,7 @@ function Afastamento() {
           Validate('w_dias','Dias','','1','1','4','','0123456789');
           CompValor('w_dias','Dias','>',0,'zero');
           ShowHTML('  if (parseInt(theForm.w_dias.value) > '.f($RS1,'limite_dias').') {');
-          ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.strtolower(f($RS1,'nm_contagem_dias')).'!\');');
+          ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.lower(f($RS1,'nm_contagem_dias')).'!\');');
           ShowHTML('     theForm.w_dias.focus();');
           ShowHTML('     return false;');
           ShowHTML('  }');
@@ -210,7 +210,7 @@ function Afastamento() {
             ShowHTML('     if (theForm.w_fim_periodo[1].checked) Days = Days + 0.5; ');
             ShowHTML('  }');
             ShowHTML('  if (Days > '.f($RS1,'limite_dias').') {');
-            ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.strtolower(f($RS1,'nm_contagem_dias')).'\');');
+            ShowHTML('     alert(\''.f($RS1,'nome').' tem limite de '.f($RS1,'limite_dias').' dias '.lower(f($RS1,'nm_contagem_dias')).'\');');
             ShowHTML('     theForm.w_inicio_data.focus();');
             ShowHTML('     return false;');
             ShowHTML('  }');
@@ -443,7 +443,7 @@ function Afastamento() {
 function BuscaColaborador() {
   extract($GLOBALS);
   Global $w_disabled;
-  $w_nome       = strtoupper($_REQUEST['w_nome']);
+  $w_nome       = upper($_REQUEST['w_nome']);
   $w_cliente    = $_REQUEST['w_cliente'];
   $w_chave      = $_REQUEST['w_chave'];
   $chaveAux     = $_REQUEST['ChaveAux'];
@@ -547,7 +547,7 @@ function Grava() {
   switch ($SG) {
     case 'GPAFAST':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (!(strpos('AI',$O)===false)) {
           $w_erro = ValidaAfastamento($w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_sq_contrato_colaborador'],$_REQUEST['w_inicio_data'],$_REQUEST['w_fim_data'],$_REQUEST['w_inicio_periodo'],$_REQUEST['w_fim_periodo'],$_REQUEST['w_dias']);
           if ($w_erro >'') {

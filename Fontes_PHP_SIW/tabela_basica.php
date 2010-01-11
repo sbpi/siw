@@ -65,17 +65,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabela_basica.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir_volta    = '';
@@ -110,7 +110,7 @@ function TipoEndereco() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome               = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome               = trim(upper($_REQUEST['p_nome']));
   $p_ativo              = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_endereco   = $_REQUEST['w_sq_tipo_endereco'];
 
@@ -319,7 +319,7 @@ function TipoTelefone() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome=trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome=trim(upper($_REQUEST['p_nome']));
   $p_ativo=trim($_REQUEST['p_ativo']);
   $w_sq_tipo_telefone=$_REQUEST['w_sq_tipo_telefone'];
 
@@ -506,7 +506,7 @@ function TipoPessoa() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome           = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_pessoa = $_REQUEST['w_sq_tipo_pessoa'];
 
@@ -698,7 +698,7 @@ function Deficiencia() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome           = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_deficiencia = $_REQUEST['w_sq_deficiencia'];
 
@@ -892,8 +892,8 @@ function GrupoDeficiencia() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome                   = trim(strtoupper($_REQUEST['p_nome']));
-  $p_codigo_externo         = trim(strtoupper($_REQUEST['p_codigo_externo']));
+  $p_nome                   = trim(upper($_REQUEST['p_nome']));
+  $p_codigo_externo         = trim(upper($_REQUEST['p_codigo_externo']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_grupo_deficiencia   = $_REQUEST['w_sq_grupo_deficiencia'];
 
@@ -1073,7 +1073,7 @@ function Idioma() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome       = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome       = trim(upper($_REQUEST['p_nome']));
   $p_ativo      = trim($_REQUEST['p_ativo']);
   $w_sq_idioma  = $_REQUEST['w_sq_idioma'];
 
@@ -1430,7 +1430,7 @@ function Formacao() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome           = trim(strtoupper($_REQUEST['p_nome']));
+  $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_formacao    = $_REQUEST['w_sq_formacao'];
 
@@ -1623,7 +1623,7 @@ function Grava() {
   switch ($SG) {
     case 'COTPENDER':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpEnder::getInstanceOf($dbms,$O, 
           $_REQUEST['w_sq_tipo_endereco'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
           $_REQUEST['w_padrao'],$_REQUEST['w_ativo'],$_REQUEST['w_email'],$_REQUEST['w_internet']);
@@ -1640,7 +1640,7 @@ function Grava() {
       break;
     case 'COTPFONE':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpFone::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_telefone'],$_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1656,7 +1656,7 @@ function Grava() {
       break;
     case 'COTPPESSOA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpPessoa::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_tipo_pessoa'],$_REQUEST['w_nome'],
             $_REQUEST['w_padrao'],$_REQUEST['w_ativo']);
@@ -1672,7 +1672,7 @@ function Grava() {
       break;
     case 'COTPDEF': 
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoTpDef::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_deficiencia'],$_REQUEST['w_sq_grupo_deficiencia'],$_REQUEST['w_codigo'],
             $_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
@@ -1688,13 +1688,13 @@ function Grava() {
       break;
     case 'COGRDEF':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if (!(strpos('IA',$O)===false)) { 
             $RS = db_getDeficGroupList::getInstanceOf($dbms, $_REQUEST['w_nome'], null, null);
             if (count($RS)>0) {
               $w_erro = false;
               foreach($RS as $row) { 
-                if(strtoupper($_REQUEST['w_nome']) == strtoupper(f($row,'nome')) && ($O=='I' || ($O=='A' && $_REQUEST['w_sq_grupo_deficiencia']!=f($row,'sq_grupo_defic') ))){
+                if(upper($_REQUEST['w_nome']) == upper(f($row,'nome')) && ($O=='I' || ($O=='A' && $_REQUEST['w_sq_grupo_deficiencia']!=f($row,'sq_grupo_defic') ))){
                   $w_erro = true;
                 }                
               }
@@ -1738,7 +1738,7 @@ function Grava() {
       break;
     case 'COIDIOMA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_cont = 0;
         $RS = db_getIdiomList::getInstanceOf($dbms,null,null);
         foreach($RS as $row) {
@@ -1769,7 +1769,7 @@ function Grava() {
       break;
     case 'COETNIA':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoEtnia::getInstanceOf($dbms, $O,
             $_REQUEST['w_sq_etnia'],$_REQUEST['w_nome'],$_REQUEST['w_codigo_siape'],
             $_REQUEST['w_ativo']);
@@ -1785,7 +1785,7 @@ function Grava() {
       break;
     case 'COFORM':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_CoForm::getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_formacao'],$_REQUEST['w_tipo'],$_REQUEST['w_nome'],
             $_REQUEST['w_ordem'],$_REQUEST['w_ativo']);

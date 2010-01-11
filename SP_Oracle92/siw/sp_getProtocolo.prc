@@ -268,7 +268,7 @@ begin
                                       )
              )
          and (p_tipo       = 1 or
-              (p_tipo      = 2 and (b1.acesso > 0 or p_numero is not null))
+              (p_tipo      = 2 and (b1.acesso > 0 or p_numero is not null or (c.unidade_int_posse = w.sq_unidade or 0 < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null))))
              );
    Elsif p_restricao = 'PADRECEB' Then
       -- Recupera guias de tramitação

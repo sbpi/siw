@@ -60,16 +60,16 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura = upper($_REQUEST['w_assinatura']);
 $w_pagina     = 'recurso.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pe/';
@@ -82,7 +82,7 @@ $p_codigo       = $_REQUEST['p_codigo'];
 $p_nome         = $_REQUEST['p_nome'];
 $p_ativo        = $_REQUEST['p_ativo'];
 $p_ordena       = $_REQUEST['p_ordena'];
-$p_volta        = strtoupper($_REQUEST['p_volta']);
+$p_volta        = upper($_REQUEST['p_volta']);
 
 if ($SG=='RECSOLIC') {
   if ($O!='I' && $_REQUEST['w_chave_aux']=='') $O='L';
@@ -167,7 +167,7 @@ function Inicial	() {
   } elseif (strpos('MCAEV',$O)!==false) {
     $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
-    $w_tp_vinculo      = strtoupper(f($RS,'tp_vinculo'));
+    $w_tp_vinculo      = upper(f($RS,'tp_vinculo'));
     $w_ch_vinculo      = f($RS,'ch_vinculo');
     $w_tipo_recurso    = f($RS,'sq_tipo_recurso');
     $w_unidade_medida  = f($RS,'sq_unidade_medida');
@@ -182,7 +182,7 @@ function Inicial	() {
 
   // Se o recurso tiver vinculação a algum objeto, retorna os dados desse objeto
   if (nvl($w_ch_vinculo,'')!='') {
-    switch (strtoupper($w_tp_vinculo)) {
+    switch (upper($w_tp_vinculo)) {
       case 'PESSOA': 
         include_once($w_dir_volta.'classes/sp/db_getBenef.php');
         include_once($w_dir_volta.'classes/sp/db_getGPColaborador.php');
@@ -1696,7 +1696,7 @@ function Grava() {
   switch ($SG) {
     case 'PERECURSO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Testa a existência do nome
           $RS = db_getRecurso::getInstanceOf($dbms,$w_cliente,$w_usuario,Nvl($_REQUEST['w_chave'],''),null,null,null,$_REQUEST['w_nome'],null,'EXISTE');
@@ -1760,7 +1760,7 @@ function Grava() {
       break;
     case 'PERECDISP':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           if (nvl($_REQUEST['w_inicio'],'nulo')!='nulo') {
             // Evita sobreposição de períodos para o recurso
@@ -1809,7 +1809,7 @@ function Grava() {
       break;
     case 'PERECINDISP':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='C' || $O=='I' || $O=='A') {
           // Evita sobreposição de períodos para o recurso
           $RS = db_getRecurso_Indisp::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],'EXISTE');
@@ -1836,7 +1836,7 @@ function Grava() {
       break;
     case 'PERECMENU':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Remove os registros existentes
         dml_putRecurso_Menu::getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null);
 
@@ -1858,7 +1858,7 @@ function Grava() {
       break;
     case 'RECSOLIC':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O!='E') {
           // Evita que o mesmo recurso seja gravado duas vezes
           $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],
@@ -1915,7 +1915,7 @@ function Grava() {
       break;
     case 'SOLICPER':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O!='E') {
           // Evita sobreposição de períodos para o recurso
           $RS = db_getSolicRecursos::getInstanceOf($dbms,$w_cliente,$w_usuario, $_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],

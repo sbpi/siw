@@ -61,17 +61,17 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = $_REQUEST['P1'];
 $P2         = $_REQUEST['P2'];
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
+$O          = upper($_REQUEST['O']);
 
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'tabelas.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_tt/';
@@ -155,7 +155,7 @@ function centralTel() {
     $w_recupera_bilhetes  = $_REQUEST['w_recupera_bilhetes'];
   } elseif ($O=='L') {
     $RS = db_getCentralTel::getInstanceOf($dbms,null,$w_cliente,$p_sq_pessoa_endereco,null,null);
-    $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
+    $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc');
   } elseif ((!(strpos('AEV',$O)===false)) && $w_Troca=='') {
     $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,$w_sq_pessoa_endereco,null,null);
     foreach ($RS as $row) {
@@ -343,7 +343,7 @@ function Troncos() {
 
   // Recupera sempre todos os registros
   $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
-  $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc');
+  $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc');
   Cabecalho();
   ShowHTML('<HEAD>');
   ShowHTML('<TITLE>SIW - Troncos da Central</TITLE>');
@@ -873,7 +873,7 @@ function RamalUsr() {
   if ($O=='L') {
     $RS = db_getTTRamal::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'USER');
     if (nvl($_REQUEST['p_ordena'],'')>'') {
-      $lista = explode(',',str_replace(' ',',',strtolower($_REQUEST['p_ordena'])));
+      $lista = explode(',',str_replace(' ',',',lower($_REQUEST['p_ordena'])));
       $RS = SortArray($RS,$lista[0],$lista[1],'inicio','desc','dt_fim','desc');
     } else {
       $RS = SortArray($RS,'inicio','desc','dt_fim','desc', 'nm_usuario', 'desc');
@@ -1022,7 +1022,7 @@ function prefixo() {
   } elseif ($O=='L') {
     $RS = db_getPrefixo::getInstanceOf($dbms,null,$p_prefixo,$p_uf);
     if ($_REQUEST['p_ordena']>'') {
-       $RS = SortArray($RS,strtolower($_REQUEST['p_ordena']),'asc','prefixo','asc');
+       $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc','prefixo','asc');
     } else {
        $RS = SortArray($RS,'prefixo','asc','localidade','asc');
     }
@@ -1315,7 +1315,7 @@ function Grava() {
   switch ($SG) {
     case 'TTCENTRAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
             $_REQUEST['w_sq_pessoa_endereco'],$_REQUEST['w_arquivo_bilhetes'],$_REQUEST['w_recupera_bilhetes']);
         ScriptOpen('JavaScript');
@@ -1330,7 +1330,7 @@ function Grava() {
       break;
     case 'TTTRONCO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTTronco::getInstanceOf($dbms,$O,$_REQUEST['w_chaveAux'],$_REQUEST['w_cliente'],
             $_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa_telefone'],$_REQUEST['w_codigo'],$_REQUEST['w_ativo']);
         ScriptOpen('JavaScript');
@@ -1345,7 +1345,7 @@ function Grava() {
       break;
     case 'TTRAMAL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTRamal::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
@@ -1359,7 +1359,7 @@ function Grava() {
       break;
     case 'TTPREFIXO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTPrefixo::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_prefixo'],
             $_REQUEST['w_localidade'],$_REQUEST['w_sigla'],$_REQUEST['w_uf'],$_REQUEST['w_ddd'],$_REQUEST['w_controle'],
             $_REQUEST['w_degrau']);
@@ -1375,7 +1375,7 @@ function Grava() {
       break;
     case 'TTUSUCTRL':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTUsuarioCentral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_cliente,
             $_REQUEST['w_usuario'],$_REQUEST['w_sq_central_fone'],$_REQUEST['w_codigo']);
         ScriptOpen('JavaScript');
@@ -1390,7 +1390,7 @@ function Grava() {
       break;
     case 'RAMUSR':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putTTRamalUsuario::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],
             $_REQUEST['w_chaveAux'],$_REQUEST['w_chaveAux2'],$_REQUEST['w_inicio'],$_REQUEST['w_fim']);
         ScriptOpen('JavaScript');
@@ -1405,7 +1405,7 @@ function Grava() {
       break;
     case 'TTCLASSIF':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         $w_sq_cc = '';
         $w_sq_cc = $_REQUEST['w_sq_cc'][1];
         for ($i=2; $i<=count($_POST['w_sq_cc'])-1; $i=$i+1) {

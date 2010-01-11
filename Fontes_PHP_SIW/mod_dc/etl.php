@@ -57,31 +57,31 @@ if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
 $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = strtoupper($_REQUEST['par']);
+$par        = upper($_REQUEST['par']);
 $P1         = nvl($_REQUEST['P1'],0);
 $P2         = nvl($_REQUEST['P2'],0);
 $P3         = nvl($_REQUEST['P3'],1);
 $P4         = nvl($_REQUEST['P4'],$conPageSize);
 $TP         = $_REQUEST['TP'];
-$SG         = strtoupper($_REQUEST['SG']);
+$SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
-$O          = strtoupper($_REQUEST['O']);
-$w_assinatura   = strtoupper($_REQUEST['w_assinatura']);
+$O          = upper($_REQUEST['O']);
+$w_assinatura   = upper($_REQUEST['w_assinatura']);
 $w_pagina       = 'etl.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_dc/';
 $w_troca        = $_REQUEST['w_troca'];
-$p_ordena       = strtolower($_REQUEST['p_ordena']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
 // Se receber o código do cliente do SIW, o cliente será determinado por parâmetro;
 // caso contrário, o cliente será a empresa ao qual o usuário logado está vinculado.
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
-$p_nome         = strtoupper($_REQUEST['p_nome']);
-$p_tipo         = strtoupper($_REQUEST['p_tipo']);
-$p_formato      = strtoupper($_REQUEST['p_formato']);
-$p_sq_modulo    = strtoupper($_REQUEST['p_sq_modulo']);
+$p_nome         = upper($_REQUEST['p_nome']);
+$p_tipo         = upper($_REQUEST['p_tipo']);
+$p_formato      = upper($_REQUEST['p_formato']);
+$p_sq_modulo    = upper($_REQUEST['p_sq_modulo']);
 $p_dt_ini       = $_REQUEST['p_dt_ini'];
 $p_dt_fim       = $_REQUEST['p_dt_fim'];
 $p_ref_ini      = $_REQUEST['p_ref_ini'];
@@ -714,7 +714,7 @@ function Tabela() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="center"><input type="checkbox" name="w_sq_tabela[]" value="'.f($row,'chave').'" onClick="valor('.$w_cont.');">');
         ShowHTML('        <td>'.f($row,'sg_sistema').'</td>');
-        ShowHTML('        <td>'.strtolower(f($row,'nm_usuario').'.'.f($row,'nome')).'</td>');
+        ShowHTML('        <td>'.lower(f($row,'nm_usuario').'.'.f($row,'nome')).'</td>');
         ShowHTML('        <td>'.f($row,'descricao').'</td>');
         ShowHTML('        <td><input disabled type="text" name="w_elemento[]" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_elemento.'"></td>');
         ShowHTML('        <td><input disabled type="text" name="w_ordem[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
@@ -989,14 +989,14 @@ function Mapeamento() {
         $w_title .= ' Descrição: '.f($row,'descricao');
         ShowHTML('        <td title="'.$w_title.'">'.f($row,'nm_coluna').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'nm_coluna_tipo').' (');
-        if (strtoupper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
+        if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
         else                                                 ShowHTML(f($row,'tamanho'));
         ShowHTML(')</td>');
         ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_campo_externo[]" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_campo_externo.'"></td>');
         ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_ordem[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ordem.'"></td>');
         if($w_formato=='T')  {
           ShowHTML('<INPUT type="hidden" name="w_tipo_coluna[]" value="'.f($row,'nm_coluna_tipo').'">');
-          if (strtoupper(f($row,'nm_coluna_tipo'))=='DATE')  ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_mascara_data[]" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_mascara_data.'"></td>');
+          if (upper(f($row,'nm_coluna_tipo'))=='DATE')  ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_mascara_data[]" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_mascara_data.'"></td>');
           else                                               ShowHTML('<td>&nbsp;</td><INPUT type="hidden" name="w_mascara_data[]" value="-1">');
           ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_valor_default[]" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_valor_default.'"></td>');
         }        
@@ -1310,7 +1310,7 @@ function Registro() {
         $w_title .= ' Descrição: '.f($row,'descricao');
         ShowHTML('        <td title="'.$w_title.'">'.f($row,'nm_coluna').'</td>');
         ShowHTML('        <td nowrap>'.f($row,'nm_coluna_tipo').' (');
-        if (strtoupper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
+        if (upper(f($row,'nm_coluna_tipo'))=='NUMERIC') ShowHTML(Nvl(f($row,'precisao'),f($row,'tamanho')).','.Nvl(f($row,'escala'),0));
         else                                                 ShowHTML(f($row,'tamanho'));
         ShowHTML(')</td>');
         ShowHTML('        <td>'.f($row,'or_coluna').'</td>');
@@ -1597,7 +1597,7 @@ function Grava() {
   switch ($SG) {
     case 'TIMPORT':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEsquema::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_sq_esquema'],$_REQUEST['w_sq_modulo'],$_REQUEST['w_nome'],$_REQUEST['w_descricao'],$_REQUEST['w_tipo'],
                 $_REQUEST['w_ativo'],$_REQUEST['w_formato'],$_REQUEST['w_ws_servidor'],$_REQUEST['w_ws_url'],
                 $_REQUEST['w_ws_acao'],$_REQUEST['w_ws_mensagem'],$_REQUEST['w_no_raiz'],$_REQUEST['w_bd_hostname'],$_REQUEST['w_bd_username'],
@@ -1615,7 +1615,7 @@ function Grava() {
     break;
     case 'ISSIGTAB':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_tabela'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_tabela'][$i]>'') {
@@ -1640,12 +1640,12 @@ function Grava() {
     break;
     case 'ISSIGMAP':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putEsquemaAtributo::getInstanceOf($dbms,'E',null,$_REQUEST['w_sq_esquema_tabela'],null,null,null,null,null);
         if ($O=='I') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
             if ($_REQUEST['w_sq_coluna'][$i]>'') {
-              if (strtoupper($_REQUEST['w_tipo_coluna'][$i])=='DATE') $w_valor_mascara = $_REQUEST['w_mascara_data'][$i]; else $w_valor_mascara = '';
+              if (upper($_REQUEST['w_tipo_coluna'][$i])=='DATE') $w_valor_mascara = $_REQUEST['w_mascara_data'][$i]; else $w_valor_mascara = '';
               dml_putEsquemaAtributo::getInstanceOf($dbms,$O,null,$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_campo_externo'][$i],$w_valor_mascara,$_REQUEST['w_valor_default'][$i]);
             }
           }
@@ -1662,7 +1662,7 @@ function Grava() {
     break;
     case 'TIREGISTRO':
       // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
           for ($i=0; $i<=count($_POST['w_sq_coluna'])-1; $i=$i+1) {
               dml_putEsquemaInsert::getInstanceOf($dbms,$O,$_REQUEST['w_sq_esquema_insert'][$i],$_REQUEST['w_sq_esquema_tabela'],$_REQUEST['w_sq_coluna'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_valor'][$i],null);
@@ -1682,7 +1682,7 @@ function Grava() {
    break;  
    case 'TISCRIPT':
     // Verifica se a Assinatura Eletrônica é válida
-    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       if (UPLOAD_ERR_OK==0) {
         $w_maximo = $_REQUEST['w_upload_maximo'];
         foreach ($_FILES as $Chv => $Field) {
@@ -1756,7 +1756,7 @@ function Grava() {
    break;
    case 'IMPTXT':
      // Verifica se a Assinatura Eletrônica é válida
-     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],strtoupper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
 
        //$handle = popen($_REQUEST['w_comando'], 'r');
        //pclose($handle);
@@ -1947,10 +1947,10 @@ function Grava() {
           $l_arquivo .= '?>'.$crlf;
         
           // Define o nome do arquivo que contém a configuração do esquema
-          $w_arq_conf  = $w_raiz_conf.strtolower(f($row_esquema,'nome')).'.php';
+          $w_arq_conf  = $w_raiz_conf.lower(f($row_esquema,'nome')).'.php';
 
           // Se o diretório de dados do esquema não existir, tenta criá-lo.
-          if (!is_dir($w_raiz_arq.strtolower(f($row_esquema,'nome'))))  mkdir($w_raiz_arq.strtolower(f($row_esquema,'nome')));
+          if (!is_dir($w_raiz_arq.lower(f($row_esquema,'nome'))))  mkdir($w_raiz_arq.lower(f($row_esquema,'nome')));
         
           // Grava o arquivo de configuração para o esquema
           if (!$handle = fopen($w_arq_conf,'w')) {

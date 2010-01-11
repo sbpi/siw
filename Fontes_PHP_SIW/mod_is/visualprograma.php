@@ -175,7 +175,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>PROGRAMA: '.f($RS,'cd_programa').' - '.f($RS,'ds_programa').'</b></font></div></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     // Identificação do programa
-    if (strtoupper($l_identificacao)==strtoupper('sim')) {
+    if (upper($l_identificacao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>IDENTIFICAÇÃO DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td width="30%"><b>Unidade Orçamentária:</b></td>';
       $l_html.=chr(13).'       <td><div align="justify"><b>'.f($RS,'nm_orgao').'</b></div></td></tr>';
@@ -229,7 +229,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       $l_html.=chr(13).'       <td>'.Nvl(f($RS,'nm_tramite'),'-').'</td></tr>';
     } 
     // Responsaveis
-    if (strtoupper($l_responsavel)==strtoupper('sim')) {
+    if (upper($l_responsavel)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESPONSÁVEIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (f($RS,'nm_gerente_programa')>'' || f($RS,'nm_gerente_executivo')>'' || f($RS,'nm_gerente_adjunto')>'') {
         if (Nvl(f($RS,'nm_gerente_programa'),'')>'') {
@@ -260,7 +260,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
         $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">Nenhum responsável cadastrado</div></td>';
       } 
     } 
-    if (strtoupper($l_identificacao)==strtoupper('sim')) {
+    if (upper($l_identificacao)==upper('sim')) {
       // Dados da conclusão do programa, se ela estiver nessa situação
       if (f($RS,'concluida')=='S' && Nvl(f($RS,'data_conclusao'),'')>'') {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -271,7 +271,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Programação Qualitativa
-    if (strtoupper($l_qualitativa)==strtoupper('sim')) {
+    if (upper($l_qualitativa)==upper('sim')) {
       $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO QUALITATIVA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'   <tr><td valign="top"><b>Objetivo:</b></td>';
       $l_html.=chr(13).'       <td><div align="justify">'.Nvl(f($RS,'objetivo'),'-').'</div></td></tr>';
@@ -295,7 +295,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       $l_html.=chr(13).'       <td><div align="justify">'.Nvl(f($RS,'justificativa'),'-').'</div></td></tr>';
     } 
     // Programação orçamentaria
-    if (strtoupper($l_orcamentaria)==strtoupper('sim')) {
+    if (upper($l_orcamentaria)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROGRAMAÇÃO ORÇAMENTÁRIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_cont=1;
       $RS1 = db_getPPADadoFinanc_IS::getInstanceOf($dbms,f($RS,'cd_programa'),null,$w_ano,$w_cliente,'VALORFONTE');
@@ -337,7 +337,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Indicadores do programa
-    if (strtoupper($l_indicador)==strtoupper('sim')) {
+    if (upper($l_indicador)==upper('sim')) {
       // Recupera todos os registros para a listagem     
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INDICADORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS1 = db_getSolicIndic_IS::getInstanceOf($dbms,$l_chave,null,'LISTA',null,null);
@@ -410,7 +410,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Listagem das restrições do programa
-    if (strtoupper($l_restricao)==strtoupper('sim')) {
+    if (upper($l_restricao)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>RESTRIÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS1 = db_getRestricao_IS::getInstanceOf($dbms,'ISPRRESTR',$l_chave,null);
       $RS1 = SortArray($RS1,'phpdt_inclusao','desc');
@@ -432,7 +432,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Interessados na execução do programa
-    if (strtoupper($l_interessado)==strtoupper('sim')) {
+    if (upper($l_interessado)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>INTERESSADOS NA EXECUÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS1 = db_getSolicInter::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS1 = SortArray($RS1,'nome_resumido','asc');
@@ -444,7 +444,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Arquivos vinculados ao programa
-    if (strtoupper($l_anexo)==strtoupper('sim')) {
+    if (upper($l_anexo)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
       $RS1 = SortArray($RS1,'nome','asc');
@@ -469,7 +469,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Ações do programa
-    if (strtoupper($l_acao)==strtoupper('sim')) {
+    if (upper($l_acao)==upper('sim')) {
       // Recupera todos os registros para a listagem
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AÇÕES DO PROGRAMA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS1 = db_getAcaoPPA_IS::getInstanceOf($dbms,$w_cliente,$w_ano,f($RS,'cd_programa'),null,null,null,null,null,null,null,null);
@@ -500,7 +500,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     // Encaminhamentos
-    if (strtoupper($l_ocorrencia)==strtoupper('sim')) {
+    if (upper($l_ocorrencia)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc');
@@ -532,7 +532,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
       } 
     } 
     //Dados da Consulta
-    if (strtoupper($l_consulta)==strtoupper('sim')) {
+    if (upper($l_consulta)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONSULTA<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
       $l_html.=chr(13).'   <tr><td><b>Consulta Realizada por:</b></td>';
       $l_html.=chr(13).'       <td>'.$_SESSION['NOME_RESUMIDO'].'</td></tr>';
