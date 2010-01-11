@@ -96,7 +96,7 @@ $conNmSistema   = 'Solução Integrada Web';
 $conRootSIW     = 'http://www2.sbpi.com.br/siw/';
 $conDiretorio   = '/var/www/siw/';
 $conFontPath    = $conDiretorio.'fonts/linux/';
-$conFileVirtual = '/siw/files/';
+$conFileVirtual = '/siw_files/';
 $conFilePhysical= '/var/www/siw_files/'; // Formato Linux
 //$conFilePhysical= 'c:/inetpub/wwwroot/siw_Files/'; // Formato Windows (IIS)
 

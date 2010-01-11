@@ -2174,7 +2174,7 @@ function RetornaMarcado($p_menu,$p_usuario,$p_endereco,$p_tramite) {
 }
 
 // =========================================================================
-// Função que retorna S/N indicando se o usuário informado é gestor do módulo
+
 // a opção do menu pertence
 // -------------------------------------------------------------------------
 function RetornaModMaster($p_cliente, $p_usuario, $p_menu) {

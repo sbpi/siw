@@ -109,12 +109,12 @@ function Mesa() {
     // Verifica se o cliente tem o módulo de telefonia contratado
     $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'TT');
     foreach ($RS as $row) $w_telefonia = f($row,'nome');
-
     // Apenas para usuários internos da organização
     if ($_SESSION['INTERNO']=='S') {
       // Verifica se o cliente tem o módulo de colaboradores contratado
       $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'GP');
       foreach ($RS as $row) $w_pessoal = f($row,'nome');
+      
 
       // Verifica se o cliente tem o módulo de viagens
       $RS = db_getSiwCliModLis::getInstanceOf($dbms, $w_cliente, null, 'PD');
@@ -139,11 +139,11 @@ function Mesa() {
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');
-
   // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
   if (nvl($w_pessoal,'')!='') {
     //Verifica se o usuário tem contrato de trabalho  
     $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+
     if (count($RS1)>0) {
       //Verifica se os horários da jornada diária foram preenchidos
       foreach($RS1 as $row) { $RS1 = $row; break; }

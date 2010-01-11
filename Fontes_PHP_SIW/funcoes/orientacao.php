@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 include_once("../constants.inc");
 $p_tipo = strtoupper($_REQUEST['p_tipo']);
 header("Cache-Control: no-cache, must-revalidate",false);
