@@ -1,6 +1,6 @@
 create or replace procedure sp_getGPFolhaPontoMensal
    (p_contrato       in number,
-    p_mes            in varchar2,
+    p_mes            in varchar2 default null,
     p_restricao      in varchar2 default null,
     p_result         out sys_refcursor) is
 begin  
@@ -14,7 +14,7 @@ begin
          d.horas_banco
   from gp_folha_ponto_mensal d
  where d.sq_contrato_colaborador = p_contrato
-   and mes = p_mes;
+   and (p_mes   is null or (p_mes is not null and d.mes = p_mes));
   
 end sp_getGPFolhaPontoMensal;
 /
