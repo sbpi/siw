@@ -149,6 +149,23 @@ begin
                  (c.sigla    = 'SR' and f.fim < trunc(sysdate))
                 ) 
           ) lista where 0 < lista.acesso;
+   Elsif p_restricao = 'HORAS' Then
+      open p_result for
+         select a.sq_pessoa_pai as cliente, a.sq_pessoa as sq_usuario, 
+                retornaBancoHoras(b.sq_contrato_colaborador, 1, null, null, 'TOTAL') as horas
+           from co_pessoa                          a
+                inner join gp_contrato_colaborador b on (a.sq_pessoa = b.sq_pessoa and
+                                                         b.fim       is null
+                                                        )
+          where a.sq_pessoa_pai = p_cliente
+            and (p_usuario   is null or (p_usuario is not null and a.sq_pessoa = p_usuario))
+            and 0 < (select count(*)
+                       from sg_pessoa_mail x
+                      where x.sq_pessoa = a.sq_pessoa
+                        and (p_mail              = 'N' or
+                             (p_mail             = 'S' and x.alerta_diario = 'S')
+                            )
+                    );
    Elsif p_restricao = 'PACOTE' Then
       -- Recupera a lista de solicitações da mesa de trabalho do usuário
       open p_result for
