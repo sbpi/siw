@@ -189,7 +189,7 @@ begin
                 )
          UNION
          select 'EVENTO' as tipo, null as sq_projeto_etapa, i.sq_siw_solicitacao, null as sq_etapa_pai, null as ordem, i.titulo, 
-                i.descricao, null as inicio_previsto, null as fim_previsto, null as inicio_real, null as fim_real, null as perc_conclusao, 
+                i.descricao, i.inicio as inicio_previsto, i.fim as fim_previsto, null as inicio_real, null as fim_real, null as perc_conclusao, 
                 null as orcamento, null as sq_unidade, null as sq_pessoa, null as vincula_atividade, null as sq_pessoa_atualizacao,
                 null as ultima_atualizacao, null as situacao_atual, null as unidade_medida, null as quantidade, null as cumulativa, null as programada, null as exequivel,
                 null as justificativa_inexequivel, null as outras_medidas, null as vincula_contrato, null as peso, null as pacote_trabalho,
