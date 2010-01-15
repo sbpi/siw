@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização do currículo
 // -------------------------------------------------------------------------
@@ -20,13 +20,13 @@ function visualCurriculo($p_cliente,$p_usuario,$O,$p_formato=0) {
       $html.=chr(13).'      <tr><td align="center" colspan="3"><font size=4><b>'.f($RS,'nome').'</b></font></td></tr>';
       $html.=chr(13).'      <table width="99%" border="0">';
       $html.=chr(13).'      <tr><td colspan="3"><br><font size="2"><b>IDENTIFICACÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>'; 
-      $html.=chr(13).'      <tr><td><b>Nome:</b></td>';
+      $html.=chr(13).'      <tr valign="top"><td><b>Nome:</b></td>';
       $html.=chr(13).'        <td>'.f($RS,'nome').' </td>';
       if (nvl(f($RS,'sq_siw_arquivo'),'nulo')!='nulo') {
         if ($p_formato==0) {
-          $html.=chr(13).'          <td rowspan=8>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 length=80 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
+          $html.=chr(13).'          <td rowspan=8>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_siw_arquivo'),'_blank',null,'<img title="clique para ver em tamanho original." border=1 width=100 src="'.LinkArquivo(null,$w_cliente,f($RS,'sq_siw_arquivo'),null,null,null,'EMBED').'">',null).'</td>';
         } else {
-          $html.=chr(13).'          <td rowspan=8><img border=1 width=100 length=80 src="'.$conFileVirtual.$p_cliente.'/'.f($RS,'sq_siw_arquivo').'"></td>';
+          $html.=chr(13).'          <td rowspan=8><img border=1 width=100 height=133 src="'.$conFileVirtual.$p_cliente.'/'.f($RS,'ln_foto').'"></td>';
         } 
       }
       $html.=chr(13).'      <tr><td><b>Nome resumido:</b></td>';

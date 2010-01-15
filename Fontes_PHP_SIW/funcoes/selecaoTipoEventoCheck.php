@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getTipoEvento.php');
 // =========================================================================
 // Montagem da seleção da tipos de evento de uma solicitação

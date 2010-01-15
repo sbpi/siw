@@ -22,7 +22,6 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoPrograma.php');
-include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  trabalho.php
 // ------------------------------------------------------------------------

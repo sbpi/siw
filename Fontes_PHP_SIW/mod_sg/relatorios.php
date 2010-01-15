@@ -668,7 +668,7 @@ function TelaUsuarioRel() {
   $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_sq_pessoa, 'DOCUMENTOS', 'N', null);
   $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
 
-  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, $RS_Pacote));
+  ShowHTML(VisualAlerta($w_cliente, $w_sq_pessoa, 'TELAUSUARIO', $RS_Solic, null, null));
 
   ShowHTML('      </table>');
 

@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
 echo phpinfo(INFO_GENERAL);
@@ -112,6 +112,18 @@ function Principal() {
       $i++;
     }
     
+    // Recupera banco de horas
+    $RS_Horas = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'S', null);
+    $RS_Horas = SortArray($RS_Horas, 'cliente', 'asc', 'usuario', 'asc');
+    $i = 0;
+    foreach ($RS_Horas as $row) {
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['chave'] = f($row,'sq_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['nome'] = f($row,'nm_usuario');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['mail'] = f($row,'email');
+      $RS_Usuario[f($row,'cliente')][f($row,'usuario')]['horas'][$i] = $row;
+      $i++;
+    }
+    
     if (count($RS_Usuario) > 0) {
       foreach($RS_Usuario as $Cliente => $Usuario) {
         foreach($Usuario as $chave => $registros) {
@@ -124,7 +136,7 @@ function Principal() {
           $w_msg.='<table border="0" cellpadding="0" cellspacing="0" width="100%">'.$crlf;
           $w_msg.='<tr><td align="center">'.$crlf;
           $w_msg.='  <table width="100%" border="0">'.$crlf;
-          $w_msg.=VisualAlerta($w_cliente, $registros['chave'], 'MAIL', $registros['solic'], $registros['pacote']);
+          $w_msg.=VisualAlerta($w_cliente, $registros['chave'], 'MAIL', $registros['solic'], $registros['pacote'], $registros['horas']);
           $w_msg.='  </table>'.$crlf;
           $w_msg.='</table>'.$crlf;
           $w_msg.='</BODY>'.$crlf;

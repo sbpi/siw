@@ -1,15 +1,22 @@
-<?
+<?php
 // =========================================================================
 // Rotina de exibição dos alertas de atraso e proximidade da data de conclusão
 // -------------------------------------------------------------------------
-function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote) {
+function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, $l_rs_horas) {
   extract($GLOBALS);
   
   $l_blocos = 0;
 
+  if (count($l_rs_horas)) {
+    foreach($l_rs_horas as $row) { $l_rs_horas = $row; break; }
+    $l_blocos = 1;
+    $l_html = '<tr><td><b>SALDO ATUAL DO BANCO DE HORAS: '.f($l_rs_horas,'horas');
+  }
+
   if (count($l_rs_solic)) {
     $l_blocos = 1;
-    $l_html = '<tr>'.chr(13).chr(10);
+    if ($l_blocos) $l_html .= '<tr><td colspan=2><p><hr noshade color=#000000 size=4></p></td></tr>'.chr(13).chr(10);
+    $l_html .= '<tr>'.chr(13).chr(10);
     if ($l_tipo!='TELAUSUARIO') {
       $l_html .= '    <td><b>DOCUMENTOS EM ATRASO OU ALERTA: '.chr(13).chr(10);
     } else {

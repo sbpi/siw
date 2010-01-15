@@ -1998,7 +1998,7 @@ function Visualizar() {
   extract($GLOBALS);
   global $w_Disable;
   if ($P2==1) {
-    HeaderWord($_REQUEST['orientacao']);
+    HeaderWord('PORTRAIT');
   } else {
     cabecalho();
   } 

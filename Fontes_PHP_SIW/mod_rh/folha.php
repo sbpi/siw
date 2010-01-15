@@ -174,7 +174,7 @@ function Inicial() {
 
   //Informações da folha de ponto mensal
   $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms,$w_contrato,substr($w_mes,3,4).substr($w_mes,0,2));
-  foreach ($RSMensal as $row) $RSMensal = $row;
+  foreach ($RSMensal as $row) {$RSMensal = $row; break;}
   $w_total   = Nvl(f($RSMensal,'horas_trabalhadas'),'00:00');
   $w_extras   = Nvl(f($RSMensal,'horas_extras'),'00:00');
   $w_atrasos = Nvl(f($RSMensal,'horas_atrasos'),'00:00');

@@ -858,6 +858,12 @@ function Geral() {
         }
       }
     }
+    if ($w_chave_pai>'' && $w_passagem=='S') {
+      if (count($RS_Financ)>1) {
+        Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','1');
+        Validate('w_lancamento','Tipo de lançamento','SELECT',1,1,18,'','1');
+      }
+    }
   }
   ValidateClose();
   ScriptClose();
@@ -1003,7 +1009,7 @@ function Geral() {
         ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr valign="top">');
         SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave_pai,'B','w_rubrica','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null);
+        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','PDSV'.str_pad($w_chave_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'B',null,3);
       } elseif (count($RS_Financ)==1) {
         foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
         ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');

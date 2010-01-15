@@ -703,6 +703,7 @@ function Desempenho() {
 
   //Recupera os dados do contrato
   $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RSContrato as $row) {$RSContrato = $row; break;}
   if ($w_troca> '' && $O!='E') {
     $w_ano                 = $_REQUEST['w_ano'];
     $w_percentual          = $_REQUEST['w_percentual'];  
@@ -733,6 +734,7 @@ function Desempenho() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_ano','Ano','1','1','4','4','','0123456789/');
+      CompValor('w_ano','Ano','>=',date('Y',f($RSContrato,'inicio')),'ano inicial da vigência');
       Validate('w_percentual','Percentual','1','1','1','6','','0123456789,');
       CompValor('w_percentual','Percentual','>=',0,'zero');
       CompValor('w_percentual','Percentual','<=',100,'100%');
@@ -767,7 +769,6 @@ function Desempenho() {
   ShowHTML('  <tr>');
   ShowHTML('    <td>');
   ShowHTML('<table border=1 width="100%">');
-  foreach ($RSContrato as $row) {$RSContrato = $row; break;}
   ShowHTML('<table border=1 width="100%"><td><table width="100%">');
   ShowHTML('      <tr><td colspan=2><b><font size="2">'.f($RSContrato,'nome').'</font></b><hr noshade size="1"/>');
   ShowHTML('      <tr valign="top"><td>Matrícula: <b>'.f($RSContrato,'matricula').'</b>');
@@ -1530,7 +1531,7 @@ function Contrato() {
 // -------------------------------------------------------------------------
 function Visual() {
   extract($GLOBALS);
-  $w_chave  = $_REQUEST['w_chave'];
+  $w_chave  = nvl($_REQUEST['w_chave'],$_REQUEST['w_sq_pessoa']);
   $w_tipo   = upper(trim($_REQUEST['w_tipo']));
   if ($w_tipo=='PDF') {
     headerpdf('Ficha funcional',$w_pag);
@@ -1551,7 +1552,7 @@ function Visual() {
   }
   if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   // Chama a rotina de visualização dos dados do projeto, na opção 'Listagem'
-  ShowHTML(VisualFicha($w_cliente,$w_usuario,'L',$w_embed));
+  ShowHTML(VisualFicha($w_cliente,$w_chave,'L',$w_embed));
   if ($w_embed!='WORD') ShowHTML('<center><font size="1"><B>Clique <a class="HL" href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</b></center>');
   if     ($w_tipo=='PDF')  RodapePDF();
   elseif ($w_tipo!='WORD') Rodape();

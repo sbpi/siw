@@ -514,7 +514,7 @@ function Alerta() {
   ShowHTML('<center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
-    // Recupera solicitações a serem listadas
+  // Recupera solicitações a serem listadas
     $RS_Solic = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
     $RS_Solic = SortArray($RS_Solic, 'cliente', 'asc', 'usuario', 'asc', 'nm_modulo','asc', 'nm_servico', 'asc', 'titulo', 'asc');
 
@@ -522,7 +522,10 @@ function Alerta() {
     $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
 
-    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote));
+    // Recupera banco de horas
+    $RS_Horas = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'N', null);
+    
+    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, $RS_Horas));
   } else {
     ScriptOpen("JavaScript");
     ShowHTML(' alert(\'Opção não disponível\');');

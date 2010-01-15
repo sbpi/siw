@@ -311,7 +311,7 @@ function Mesa() {
     ShowHTML('    </th>');
     ShowHTML('    <th align="center" width="40">PIN');
     ShowHTML('    </th>');
-    ShowHTML('    <th width="30">&nbsp;&nbsp;&nbsp;&nbsp;PAA');
+    ShowHTML('    <th width="30">&nbsp;&nbsp;&nbsp;&nbsp;ADI');
     ShowHTML('    </th>');
     ShowHTML('    <th width="20">&nbsp;');
     ShowHTML('    </th>');    
@@ -379,6 +379,9 @@ function Mesa() {
         ShowHTML('  <tr>');
         ShowHTML('    <td bgcolor="'.$cor.'" align="center" width="80"><a style="color: #333333; text-decoration: none;" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf='.f($row,'co_uf').'&SG='.f($RS,'sigla').'">'.f($row,'co_uf').'</a></td>');
         $w_atual = f($row,'co_uf');
+        if(substr(f($row,'codigo_interno'),0,3)!='PIN'){
+          ShowHTML('    <td align="center" width="40">&nbsp;</td>');
+        }
       }      
       if(f($row,'sg_tramite')!='AT'){
         ShowHTML('    <td align="center" width="40"><A class="HL" href="'.$w_dir.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.exibeSmile('IDE',f($row,'ide')).'</a></td>');
@@ -509,7 +512,7 @@ function Alerta() {
     $RS_Pacote = db_getAlerta::getInstanceOf($dbms, $w_cliente, $w_usuario, 'PACOTE', 'N', null);
     $RS_Pacote = SortArray($RS_Pacote, 'cliente', 'asc', 'usuario', 'asc', 'nm_projeto','asc', 'cd_ordem', 'asc');
 
-    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote));
+    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, null));
   } else {
     ScriptOpen("JavaScript");
     ShowHTML(' alert(\'Opção não disponível\');');
