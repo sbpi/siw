@@ -3,6 +3,7 @@ create or replace procedure SP_GetSolicResultado
     p_programa    in number   default null,
     p_projeto     in number   default null,
     p_unidade     in number   default null,
+    p_chave       in number   default null,
     p_solicitante in number   default null,
     p_texto       in varchar2 default null,
     p_inicio      in date     default null,
@@ -171,6 +172,7 @@ begin
                   inner        join eo_unidade      g  on (a.sq_unidade          = g.sq_unidade)
           where j.sq_pessoa    = p_cliente
             and coalesce(p_agenda,'N') = 'S'
+            and (p_chave       is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
             and (p_programa    is null or (p_programa    is not null and (i.sq_solic_pai      = p_programa or i3.sq_solic_pai = p_programa)))
             and (p_projeto     is null or (p_projeto     is not null and i.sq_siw_solicitacao = p_projeto))
             and (p_unidade     is null or (p_unidade     is not null and a.sq_unidade         = p_unidade))
@@ -219,6 +221,7 @@ begin
                 inner        join siw_tipo_evento k  on (i.sq_tipo_evento      = k.sq_tipo_evento)
                   inner      join eo_unidade      g  on (i.sq_unidade          = g.sq_unidade)
           where j.sq_pessoa    = p_cliente
+            and (p_chave       is null or (p_chave       is not null and i.sq_siw_solicitacao = p_chave))
             and p_tipo_evento  is not null 
             and 0              < InStr(x_tipo,k.sq_tipo_evento)
             and (p_programa    is null or (p_programa    is not null and (i3.sq_solic_pai      = p_programa or i4.sq_solic_pai = p_programa)))
