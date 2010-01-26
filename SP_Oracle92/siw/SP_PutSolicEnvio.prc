@@ -164,7 +164,7 @@ begin
       sq_siw_tramite        = w_tramite,
       conclusao             = null,
       executor              = case coalesce(w_sg_tramite,'--') when 'CI' then null else executor end,
-      observacao            = case substr(w_menu.sigla,1,2) when 'FN' then observacao when 'PA' then observacao else null end,
+      observacao            = case substr(w_menu.sigla,1,2) when 'FN' then observacao when 'PA' then observacao when 'CL' then observacao else null end,
       valor                 = case substr(w_menu.sigla,1,2) when 'FN' then valor when 'CL' then valor when 'SR' then valor else null end,
       opiniao               = null
    Where sq_siw_solicitacao = p_chave;

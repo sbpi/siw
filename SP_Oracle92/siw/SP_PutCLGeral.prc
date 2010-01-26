@@ -71,14 +71,16 @@ begin
         from cl_vinculo_financeiro a
        where a.sq_siw_solicitacao = p_solic_pai
          and a.sq_projeto_rubrica = p_rubrica
-         and a.sq_tipo_lancamento = p_lancamento;
+         and a.sq_tipo_lancamento = p_lancamento
+         and a.sq_menu            = p_menu;
       -- Prepara variável para gravação se encontrou um, e apenas um registro.
       If w_existe = 1 Then
          select sq_clvinculo_financeiro into w_financeiro
            from cl_vinculo_financeiro a
           where a.sq_siw_solicitacao = p_solic_pai
             and a.sq_projeto_rubrica = p_rubrica
-            and a.sq_tipo_lancamento = p_lancamento;
+            and a.sq_tipo_lancamento = p_lancamento
+            and a.sq_menu            = p_menu;
       End If;
    End If;
    

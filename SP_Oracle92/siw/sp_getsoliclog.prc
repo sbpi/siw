@@ -477,13 +477,14 @@ begin
                    case when h.sq_documento_log is null then a1.nome_resumido else n.nome_resumido end as nm_pessoa_resp,
                    h.recebedor, h1.nome_resumido as nm_recebedor,
                    case when h.sq_documento_log is null 
-                        then case when instr(upper(a.observacao),'AUTUA')>0       then 'AUTUAÇÃO DE PROCESSO'
-                                  when instr(upper(a.observacao),'RENUMERAÇÃO')>0 then 'RENUMERAÇÃO'
-                                  when instr(upper(a.observacao),'ANEXA')>0       then 'ANEXAÇÃO'
-                                  when instr(upper(a.observacao),'APENSA')>0      then 'APENSAÇÃO'
-                                  when instr(upper(a.observacao),'DESM')>0        then 'DESMEMBRAMENTO'
-                                  when instr(upper(a.observacao),'INDICAÇÃO')>0   then 'CLASSIFICAÇÃO'
-                                  when instr(upper(a.observacao),'ARQ')>0         then 'ARQUIVAMENTO'
+                        then case when instr(upper(a.observacao),'AUTUA')>0             then 'AUTUAÇÃO DE PROCESSO'
+                                  when instr(upper(a.observacao),'*** NOVA VERSÃO')>0   then 'ALTERAÇÃO DE DADOS'
+                                  when instr(upper(a.observacao),'RENUMERAÇÃO')>0       then 'RENUMERAÇÃO'
+                                  when instr(upper(a.observacao),'ANEXA')>0             then 'ANEXAÇÃO'
+                                  when instr(upper(a.observacao),'APENSA')>0            then 'APENSAÇÃO'
+                                  when instr(upper(a.observacao),'DESM')>0              then 'DESMEMBRAMENTO'
+                                  when instr(upper(a.observacao),'INDICAÇÃO')>0         then 'CLASSIFICAÇÃO'
+                                  when instr(upper(a.observacao),'ARQ')>0               then 'ARQUIVAMENTO'
                                   else 'REGISTRO' 
                              end
                         else case f.sigla
@@ -521,6 +522,11 @@ begin
                   pa_parametro                      p
              where a.sq_siw_solicitacao = p_chave
                and p.cliente            = a1.sq_pessoa_pai
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                              )
+                                      )
+                   )
             UNION
             select b.sq_documento_log as chave_log, b.sq_siw_solic_log, 0, b.data_inclusao, 
                    case when b.resumo is null
@@ -555,7 +561,8 @@ begin
                    inner    join siw_solicitacao      g  on (b.sq_siw_solicitacao = g.sq_siw_solicitacao)
                      inner  join siw_tramite          f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
              where b.sq_siw_solic_log   is null
-               and b.sq_siw_solicitacao = p_chave;
+               and b.sq_siw_solicitacao = p_chave
+               and (p_tipo is null or (p_tipo is not null and (p_tipo <>  2)));
       End If;
    Elsif w_modulo = 'PA' Then -- Se for o módulo de protocolo
       If p_restricao = 'LISTA' Then

@@ -248,9 +248,20 @@ begin
                 inner     join cl_parametro        f  on (b.cliente             = f.cliente)
                 inner     join siw_solicitacao     g  on (a.sq_siw_solicitacao  = g.sq_siw_solicitacao)
                   inner   join siw_tramite         h  on (g.sq_siw_tramite      = h.sq_siw_tramite and
-                                                          'AT'                  = coalesce(h.sigla,'-'))
+                                                          'AT'                  = coalesce(h.sigla,'-')
+                                                         )
+                  inner   join siw_menu            i  on (g.sq_menu             = i.sq_menu and
+                                                          i.sigla               = 'CLPCCAD'
+                                                         )
           where a.quantidade_autorizada > 0
-            and a.sq_solicitacao_item   not in (select x.item_pedido from cl_solicitacao_item_vinc x);
+            and a.sq_solicitacao_item   not in (select x.item_pedido 
+                                                 from cl_solicitacao_item_vinc             x
+                                                        inner     join cl_solicitacao_item y on (x.item_licitacao     = y.sq_solicitacao_item)
+                                                          inner   join siw_solicitacao     z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                                            inner join siw_tramite         w on (z.sq_siw_tramite     = w.sq_siw_tramite and
+                                                                                                 w.sigla             <> 'CA'
+                                                                                                )
+                                               );
    ElsIf p_restricao = 'ARPITEM' Then
       -- Recupera materiais e serviços
       open p_result for 

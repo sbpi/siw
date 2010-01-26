@@ -114,21 +114,29 @@ begin
         unidade_origem,          unidade_destino,            pessoa_destino,            cadastrador,                data_inclusao,
         resumo,                  envio,                      emite_aviso,               dias_aviso,                 retorno_limite,
         retorno_unidade,         pessoa_externa,             unidade_externa,           quebra_sequencia,           nu_guia,
-        ano_guia)
+        ano_guia,                recebedor)
      values
        (w_chave_dem,             crec.chave,                 w_chave,                   p_tipo_despacho,            p_interno, 
         p_unidade_origem,        p_unidade_destino,          p_pessoa_destino,          p_pessoa,                   sysdate,
         p_despacho,              sysdate,                    p_emite_aviso,             coalesce(p_dias_aviso,0),   p_retorno_limite,
         w_retorno_unid,          p_pessoa_externa,           p_unidade_externa,         'N',                        p_nu_guia,
-        p_ano_guia);
+        p_ano_guia,              case p_unidade_origem when p_unidade_destino then p_pessoa else null end);
      
-     -- Recupera o número e o ano da guia de remessa de documentos
-     select a.nu_guia, a.ano_guia, coalesce(c.sq_unidade_pai, sq_unidade)
-       into p_nu_guia, p_ano_guia, p_unidade_autuacao 
-      from pa_documento_log          a 
-           inner   join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-             inner join pa_unidade   c on (b.unidade_autuacao   = c.sq_unidade)
-     where sq_documento_log = w_chave_dem;
+     If p_unidade_origem = p_unidade_destino Then
+        -- Se o envio for para a própria unidade, não emite guia de tramitação e já registra o recebimento
+        update pa_documento_log set recebimento = sysdate where sq_documento_log = w_chave_dem;
+        p_nu_guia          := null;
+        p_ano_guia         := null;
+        p_unidade_autuacao := null;
+     Else
+        -- Recupera o número e o ano da guia de remessa de documentos
+        select a.nu_guia, a.ano_guia, coalesce(c.sq_unidade_pai, sq_unidade)
+          into p_nu_guia, p_ano_guia, p_unidade_autuacao 
+         from pa_documento_log          a 
+              inner   join pa_documento b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                inner join pa_unidade   c on (b.unidade_autuacao   = c.sq_unidade)
+        where sq_documento_log = w_chave_dem;
+     End If;
   end loop;
    
 end sp_putDocumentoEnvio;

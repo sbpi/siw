@@ -172,7 +172,7 @@ create or replace procedure SP_PutViagemEnvio
                                       inner join fn_lancamento_doc  d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                                       inner join fn_tipo_lancamento e on (c.sq_tipo_lancamento = e.sq_tipo_lancamento)
                             )                 z on (x.sq_siw_solicitacao  = z.sq_solic_pai and 
-                                                     (x5.sigla <> 'EE' or (x5.sigla = 'EE' and instr(lower(z.descricao),'adiantamento')=0 and instr(lower(z.descricao),'diferença')=0))
+                                                     (x5.sigla <> 'EE' or (x5.sigla = 'EE' and instr(lower(z.descricao),'adiantamento')>0 and instr(lower(z.descricao),'diferença')=0))
                                                     ),
              fn_tipo_documento             y
        where w.sq_pessoa          = w_cliente
@@ -191,7 +191,6 @@ create or replace procedure SP_PutViagemEnvio
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      b.sigla as sg_moeda, b.nome as nm_moeda, b.simbolo as sb_moeda
                 from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite              = a2.sq_siw_tramite and a2.sigla = 'EE')
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao          = a1.sq_siw_solicitacao and
                                                                  a1.ressarcimento              = 'S'
                                                                 )
@@ -441,7 +440,10 @@ begin
 
          If w_ressarcimento = 'S' Then
             -- Recupera a conta bancária utilizada para devolução de valores
-            select * into w_conta from co_pessoa_conta where sq_pessoa = w_cliente;
+            select count(*) into w_existe from co_pessoa_conta where sq_pessoa = w_cliente and devolucao_valor = 'S' and ativo = 'S';
+            if w_existe = 1 then
+               select * into w_conta from co_pessoa_conta where sq_pessoa = w_cliente and devolucao_valor = 'S' and ativo = 'S';
+            end if;
 
              -- Cria/atualiza lançamento financeiro para a devolução de valores
             for crec in c_ressarcimento_geral loop
@@ -472,22 +474,40 @@ begin
                                   p_codigo_interno     => w_cd_financ
                                  );
                 For drec in c_missao Loop
-                   -- Atualiza os dados do beneficiário
-                   update fn_lancamento set
-                      pessoa           = w_cliente,
-                      sq_agencia       = w_conta.sq_agencia,
-                      operacao_conta   = w_conta.operacao,
-                      numero_conta     = w_conta.numero,
-                      sq_pais_estrang  = null,
-                      aba_code         = null,
-                      swift_code       = null,
-                      endereco_estrang = null,
-                      banco_estrang    = null,
-                      agencia_estrang  = null,
-                      cidade_estrang   = null,
-                      informacoes      = null,
-                      codigo_deposito  = drec.codigo_deposito
-                    where sq_siw_solicitacao = w_sq_financ;
+                    -- Atualiza os dados do beneficiário e da conta bancária
+                    if w_existe > 0 then
+                       update fn_lancamento set
+                          pessoa           = w_cliente,
+                          sq_agencia       = w_conta.sq_agencia,
+                          operacao_conta   = w_conta.operacao,
+                          numero_conta     = w_conta.numero,
+                          sq_pais_estrang  = null,
+                          aba_code         = null,
+                          swift_code       = null,
+                          endereco_estrang = null,
+                          banco_estrang    = null,
+                          agencia_estrang  = null,
+                          cidade_estrang   = null,
+                          informacoes      = null,
+                          codigo_deposito  = drec.codigo_deposito
+                        where sq_siw_solicitacao = w_sq_financ;
+                    else
+                       update fn_lancamento set
+                          pessoa           = w_cliente,
+                          sq_agencia       = null,
+                          operacao_conta   = null,
+                          numero_conta     = null,
+                          sq_pais_estrang  = null,
+                          aba_code         = null,
+                          swift_code       = null,
+                          endereco_estrang = null,
+                          banco_estrang    = null,
+                          agencia_estrang  = null,
+                          cidade_estrang   = null,
+                          informacoes      = null,
+                          codigo_deposito  = drec.codigo_deposito
+                        where sq_siw_solicitacao = w_sq_financ;
+                    end if;
                 End Loop;
                 sp_putlancamentodoc(
                                   p_operacao           => case when crec.sq_documento is null then 'I' else 'A' end,
