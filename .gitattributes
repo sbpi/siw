@@ -3497,6 +3497,7 @@ SP_Oracle92/siw/SP_PutGPColaborador.prc -text
 SP_Oracle92/siw/SP_PutGPContrato.prc -text
 SP_Oracle92/siw/SP_PutGPModalidade.prc -text
 SP_Oracle92/siw/SP_PutGPParametro.prc -text
+SP_Oracle92/siw/SP_PutGPPensionista.prc -text
 SP_Oracle92/siw/SP_PutGPTipoAfast.prc -text
 SP_Oracle92/siw/SP_PutMetaAnexo.prc -text
 SP_Oracle92/siw/SP_PutMtSituacao.prc -text
@@ -3535,6 +3536,7 @@ SP_Oracle92/siw/SP_PutValorDiaria.prc -text
 SP_Oracle92/siw/SP_PutViagemEnvio.prc -text
 SP_Oracle92/siw/SP_PutViagemGeral.prc -text
 SP_Oracle92/siw/SP_PutViagemOutra.prc -text
+SP_Oracle92/siw/SP_getGPPensionista.prc -text
 SP_Oracle92/siw/SP_putTipoMovimentacao.prc -text
 SP_Oracle92/siw/SolicRestricao.fnc -text
 SP_Oracle92/siw/TG_FN_DOCUMENTO_ITEM.trg -text
