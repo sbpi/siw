@@ -8,9 +8,13 @@ begin
     -- Recupera as folhas de ponto baseado no contrato e mês
     open p_result for 
     select a.sq_pessoa, 
-           d.sq_contrato_colaborador, d.mes, d.horas_trabalhadas, d.horas_extras, d.horas_atrasos, d.horas_banco
-      from gp_contrato_colaborador          a
-           inner join gp_folha_ponto_mensal d on (a.sq_contrato_colaborador = d.sq_contrato_colaborador)
+           d.sq_contrato_colaborador, d.mes, d.horas_trabalhadas, d.horas_extras, d.horas_atrasos, d.horas_banco, 
+           d.horas_autorizadas, d.ciencia_gestor, d.ciencia_data,
+           to_char(d.ciencia_data,'dd/mm/yyyy, hh24:mi:ss') as php_ciencia_data,
+           e.nome as nm_gestor, e.nome_resumido as nm_resumido_gestor
+      from gp_contrato_colaborador            a
+           inner   join gp_folha_ponto_mensal d on (a.sq_contrato_colaborador = d.sq_contrato_colaborador)
+             left  join co_pessoa             e on (d.ciencia_gestor          = e.sq_pessoa)
      where d.sq_contrato_colaborador = p_contrato
        and (p_mes   is null or (p_mes is not null and d.mes = p_mes));
   Elsif p_restricao = 'APROVACAO' Then
@@ -33,7 +37,8 @@ begin
                                                           )
                                                          )
                inner   join eo_unidade              d on (c.sq_unidade_exercicio    = d.sq_unidade)
-               inner   join gp_folha_ponto_mensal   e on (c.sq_contrato_colaborador = e.sq_contrato_colaborador)
+               inner   join gp_folha_ponto_mensal   e on (c.sq_contrato_colaborador = e.sq_contrato_colaborador and
+                                                          e.mes                     = p_mes)
                inner   join co_pessoa               f on (c.sq_pessoa               = f.sq_pessoa)
      where a.sq_pessoa = p_contrato;
   End If;

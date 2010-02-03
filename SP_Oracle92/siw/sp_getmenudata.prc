@@ -13,7 +13,8 @@ begin
              a.numeracao_automatica, a.servico_numerador, a.sequencial, a.ano_corrente, a.prefixo, a.sufixo,
              case coalesce(b.qtd,0) when 0 then 'N' else 'S' end as solicita_cc, 
              case coalesce(f.qtd,0) when 0 then 'N' else 'S' end as mail_tramite, 
-             c.sigla as sg_modulo, c.nome as nm_modulo, e.sq_cidade
+             c.sigla as sg_modulo, c.nome as nm_modulo, e.sq_cidade,
+             d.nome as nm_unidade, d.sigla as sg_unidade
       from siw_menu                               a
              left    join (select x.sq_menu, count(sq_siw_tramite) as qtd
                              from siw_tramite x

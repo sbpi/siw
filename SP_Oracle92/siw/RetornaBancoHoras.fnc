@@ -21,12 +21,12 @@ begin
   Else
      for crec in c_dados loop
          If p_restricao = 'TOTAL' Then
-            select coalesce(horario2minutos(null,a.banco_horas_saldo),0)+crec.minutos_banco
+            select coalesce(horario2minutos(null,a.banco_horas_saldo),0)+crec.minutos_autorizados
               into Result
               from gp_contrato_colaborador a
             where a.sq_contrato_colaborador = p_contrato;
          Else
-            Result := crec.minutos_banco;
+            Result := crec.minutos_autorizados;
          End If;
      end loop;
   End If;
