@@ -873,6 +873,7 @@ Fontes_PHP_SIW/classes/sp/db_getGPTipoAfast.php -text
 Fontes_PHP_SIW/classes/sp/db_getGestor.php -text
 Fontes_PHP_SIW/classes/sp/db_getGpAlteracaoSalario.php -text
 Fontes_PHP_SIW/classes/sp/db_getGpDesempenho.php -text
+Fontes_PHP_SIW/classes/sp/db_getGpPensionista.php -text
 Fontes_PHP_SIW/classes/sp/db_getGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getHorizonte_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getHorizonte_PE.php -text
@@ -1123,6 +1124,7 @@ Fontes_PHP_SIW/classes/sp/dml_DmSegVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_EoLocal.php -text
 Fontes_PHP_SIW/classes/sp/dml_EoResp.php -text
 Fontes_PHP_SIW/classes/sp/dml_EoUnidade.php -text
+Fontes_PHP_SIW/classes/sp/dml_PutGPPensionista.php -text
 Fontes_PHP_SIW/classes/sp/dml_PutSiwPesCC.php -text
 Fontes_PHP_SIW/classes/sp/dml_SgPerMen.php -text
 Fontes_PHP_SIW/classes/sp/dml_SgPesMen.php -text
@@ -1697,6 +1699,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoMatServSubord.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoOutraParte.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPCD.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoParam.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoPensao.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPessoa.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoPosto2.php -text
@@ -1834,6 +1837,7 @@ Fontes_PHP_SIW/mod_pa/gr_protocolo.php -text
 Fontes_PHP_SIW/mod_pa/processo.php -text
 Fontes_PHP_SIW/mod_pa/relatorio.php -text
 Fontes_PHP_SIW/mod_pa/tabelas.php -text
+Fontes_PHP_SIW/mod_pa/validadocumento.php -text
 Fontes_PHP_SIW/mod_pa/validaeliminacao.php -text
 Fontes_PHP_SIW/mod_pa/validaemprestimo.php -text
 Fontes_PHP_SIW/mod_pa/visualCaixa.php -text

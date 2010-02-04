@@ -218,6 +218,24 @@ $w_pe = 'N'; // Trava para evitar exibição dos dados do módulo de planejamento e
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_pa='S'; else $w_pa='N'; 
 
+// Verifica se é possível vincular o certame
+$w_vincula = false;
+$RS = db_getMenuRelac::getInstanceOf($dbms, $w_menu, 'S', 'S', 'S', 'SERVICO');
+if (count($RS)) $w_vincula = true;
+elseif (f($RS_Menu,'solicita_cc')=='S') $w_vincula = true; 
+else {
+  // Verifica se deve ser indicada opção para vinculação a plano estratégico
+  $RS1 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'REGISTROS');
+  foreach ($RS1 as $row1) {
+    $RS2 = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,f($row1,'chave'),null,null,null,null,null,'MENU');
+    foreach($RS2 as $row2){
+      if(f($row2,'sq_menu')==$chaveAux && nvl(f($row2,'sq_plano'),'')!=''){
+        $w_vincula = true;
+      }
+    }
+  }
+}
+
 Main();
 
 FechaSessao($dbms);
@@ -423,7 +441,8 @@ function Inicial() {
     if ($w_tipo!='WORD') {
       ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
-      if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
+      if ($w_pa=='S' || $w_segmento=='Público') ShowHTML ('          <td><b>'.LinkOrdena('Processo','processo').'</td>');
+      //if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
       //ShowHTML('          <td><b>'.LinkOrdena('Data limite','fim').'</td>');
       if ($P1!=1) {
@@ -458,10 +477,19 @@ function Inicial() {
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),null,null,f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         ShowHTML('        <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>');
         ShowHTML('        <td>'.htmlspecialchars(f($row,'justificativa')).'</td>');
+        if ($w_pa=='S') {
+          if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
+            ShowHTML('        <td align="center" nowrap><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'processo').'&nbsp;</a>');
+          } else {
+            ShowHTML('        <td align="center" nowrap>'.f($row,'processo'));
+          }
+        } elseif ($w_segmento=='Público') ShowHTML('        <td align="center">'.f($row,'processo').'</td>');        
+        /*
         if ($_SESSION['INTERNO']=='S') {
           if (Nvl(f($row,'dados_pai'),'')!='') ShowHTML('        <td>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
           else                                 ShowHTML('        <td>---</td>');
         } 
+        */
         //ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibePessoa('../',$w_cliente,f($row,'solicitante'),$TP,f($row,'nm_solic')).'&nbsp;</td>');
         ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_resp'),f($row,'sq_unidade'),$TP).'&nbsp;</td>');
         //ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;'.FormataDataEdicao(f($row,'fim'),5).'&nbsp;</td>');
@@ -631,7 +659,7 @@ function Geral() {
     foreach($RS as $row) { $RS = $row; break; }
     if (count($RS)==0 ||(count($RS)>0 && f($RS,'solicita_compra')!='S')) {
       ScriptOpen('JavaScript');
-      ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para registrar licitações. Entre em contato com os gestores do sistema!\');');
+      ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!\');');
       ShowHTML('  history.back(1);');
       ScriptClose();
       exit;
@@ -642,35 +670,39 @@ function Geral() {
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_sq_menu_relac            = $_REQUEST['w_sq_menu_relac'];    
+    $w_sq_menu_relac      = $_REQUEST['w_sq_menu_relac'];    
     if($w_sq_menu_relac=='CLASSIF') {
-      $w_solic_pai              = '';
+      $w_solic_pai        = '';
     } else {
-      $w_solic_pai              = $_REQUEST['w_solic_pai'];
+      $w_solic_pai        = $_REQUEST['w_solic_pai'];
     }
-    $w_codigo                   = $_REQUEST['w_codigo'];
-    $w_chave_pai                = $_REQUEST['w_chave_pai'];    
-    $w_plano                    = $_REQUEST['w_plano'];
-    $w_sqcc                     = $_REQUEST['w_sqcc'];
-    $w_objetivo                 = explodeArray($_REQUEST['w_objetivo']);
-    $w_prioridade               = $_REQUEST['w_prioridade'];
-    $w_aviso                    = $_REQUEST['w_aviso'];
-    $w_dias                     = $_REQUEST['w_dias'];
-    $w_chave_aux                = $_REQUEST['w_chave_aux'];
-    $w_sq_menu                  = $_REQUEST['w_sq_menu'];
-    $w_sq_unidade               = $_REQUEST['w_sq_unidade'];
-    $w_sq_tramite               = $_REQUEST['w_sq_tramite'];
-    $w_solicitante              = $_REQUEST['w_solicitante'];
-    $w_cadastrador              = $_REQUEST['w_cadastrador'];
-    $w_executor                 = $_REQUEST['w_executor'];
-    $w_inicio                   = $_REQUEST['w_inicio'];
-    $w_fim                      = $_REQUEST['w_fim'];
-    $w_inclusao                 = $_REQUEST['w_inclusao'];
-    $w_ultima_alteracao         = $_REQUEST['w_ultima_alteracao'];
-    $w_justificativa            = $_REQUEST['w_justificativa'];
-    $w_observacao               = $_REQUEST['w_observacao'];
-    $w_cidade                   = $_REQUEST['w_cidade'];
-    $w_arp                      = $_REQUEST['w_arp'];
+    $w_codigo             = $_REQUEST['w_codigo'];
+    $w_chave_pai          = $_REQUEST['w_chave_pai'];    
+    $w_plano              = $_REQUEST['w_plano'];
+    $w_sqcc               = $_REQUEST['w_sqcc'];
+    $w_objetivo           = explodeArray($_REQUEST['w_objetivo']);
+    $w_prioridade         = $_REQUEST['w_prioridade'];
+    $w_aviso              = $_REQUEST['w_aviso'];
+    $w_dias               = $_REQUEST['w_dias'];
+    $w_chave_aux          = $_REQUEST['w_chave_aux'];
+    $w_sq_menu            = $_REQUEST['w_sq_menu'];
+    $w_sq_unidade         = $_REQUEST['w_sq_unidade'];
+    $w_sq_tramite         = $_REQUEST['w_sq_tramite'];
+    $w_solicitante        = $_REQUEST['w_solicitante'];
+    $w_cadastrador        = $_REQUEST['w_cadastrador'];
+    $w_executor           = $_REQUEST['w_executor'];
+    $w_inicio             = $_REQUEST['w_inicio'];
+    $w_fim                = $_REQUEST['w_fim'];
+    $w_inclusao           = $_REQUEST['w_inclusao'];
+    $w_ultima_alteracao   = $_REQUEST['w_ultima_alteracao'];
+    $w_justificativa      = $_REQUEST['w_justificativa'];
+    $w_observacao         = $_REQUEST['w_observacao'];
+    $w_cidade             = $_REQUEST['w_cidade'];
+    $w_arp                = $_REQUEST['w_arp'];
+    $w_sq_lcmodalidade    = $_REQUEST['w_sq_lcmodalidade'];
+    $w_numero_processo    = $_REQUEST['w_numero_processo'];
+    $w_protocolo          = $_REQUEST['w_protocolo'];
+    $w_protocolo_nm       = $_REQUEST['w_protocolo_nm'];
   } else {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
@@ -717,6 +749,10 @@ function Geral() {
         $w_arp              = f($RS,'arp');
         $w_ultima_alteracao = f($RS,'ultima_alteracao');
         if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
+        $w_sq_lcmodalidade  = f($RS,'sq_lcmodalidade');
+        $w_numero_processo  = f($RS,'processo');
+        $w_protocolo        = f($RS,'processo');
+        $w_protocolo_nm     = f($RS,'processo');
       } 
     } 
   } 
@@ -747,47 +783,50 @@ function Geral() {
     if(nvl(f($RS_Menu,'numeracao_automatica'),0)==0) {
       Validate('w_codigo','Código interno','','1',1,60,'1','1');
     }
+    
     // Trata as possíveis vinculações da solicitação
-    if($w_pe=='S') {
-      if(nvl($w_plano,'')!='') {
-        Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
-      }
-      ShowHTML('  if (theForm["w_objetivo[]"]!=undefined) {');
-      ShowHTML('    var i; ');
-      ShowHTML('    var w_erro=true; ');  
-      ShowHTML('    for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
-      ShowHTML('      if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
-      ShowHTML('    }');
-      ShowHTML('    if (w_erro) {');
-      ShowHTML('      alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
-      ShowHTML('      return false;');
-      ShowHTML('    }');
-      ShowHTML('  }');
-
-      if(nvl($w_sq_menu_relac,'')!='') {
-        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-        if ($w_sq_menu_relac=='CLASSIF') {
-          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-        } else {
-          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+    if ($w_vincula) {
+      if($w_pe=='S') {
+        if(nvl($w_plano,'')!='') {
+          Validate('w_plano','Plano estratégico','SELECT',1,1,18,1,1);
         }
-      }
-      if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
-        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
-        ShowHTML('    theForm.w_plano.focus();');
-        ShowHTML('    return false;');
-      } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
-        ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
-        ShowHTML('    theForm.w_plano.focus();');
-        ShowHTML('    return false;');    
-      }
-    } else {
-      Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
-      if(nvl($w_sq_menu_relac,'')!='') {
-        if ($w_sq_menu_relac=='CLASSIF') {
-          Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
-        } else {
-          Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+        ShowHTML('  if (theForm["w_objetivo[]"]!=undefined) {');
+        ShowHTML('    var i; ');
+        ShowHTML('    var w_erro=true; ');  
+        ShowHTML('    for (i=0; i < theForm["w_objetivo[]"].length; i++) {');
+        ShowHTML('      if (theForm["w_objetivo[]"][i].checked) w_erro=false;');
+        ShowHTML('    }');
+        ShowHTML('    if (w_erro) {');
+        ShowHTML('      alert(\'Você deve informar pelo menos um objetivo estratégico!\'); ');
+        ShowHTML('      return false;');
+        ShowHTML('    }');
+        ShowHTML('  }');
+  
+        if(nvl($w_sq_menu_relac,'')!='') {
+          Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+          if ($w_sq_menu_relac=='CLASSIF') {
+            Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+          } else {
+            Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+          }
+        }
+        if(nvl($w_sq_menu_relac,'')!='' && nvl($w_plano,'')!='') {
+          ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação. Você não pode escolher ambos!\');');
+          ShowHTML('    theForm.w_plano.focus();');
+          ShowHTML('    return false;');
+        } elseif(nvl($w_sq_menu_relac,'')=='' && nvl($w_plano,'')=='') {
+          ShowHTML('    alert(\'Informe um plano estratégico ou uma vinculação!\');');
+          ShowHTML('    theForm.w_plano.focus();');
+          ShowHTML('    return false;');    
+        }
+      } else {
+        Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+        if(nvl($w_sq_menu_relac,'')!='') {
+          if ($w_sq_menu_relac=='CLASSIF') {
+            Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+          } else {
+            Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+          }
         }
       }
     }
@@ -799,6 +838,12 @@ function Geral() {
     if($w_cadgeral=='S') {
       Validate('w_solicitante','Solicitante','HIDDEN',1,1,18,'','0123456789');
       Validate('w_sq_unidade','Setor solicitante','HIDDEN',1,1,18,'','0123456789');
+    }
+    Validate('w_sq_lcmodalidade','Modalidade','SELECT','1',1,18,'','0123456789');
+    if ($w_pa=='S') {
+      Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
+    } elseif($w_segmento=='Público') {
+      Validate('w_numero_processo','Número do processo','1','1',1,30,'1','1');
     }
     Validate('w_justificativa','Justificativa','','1',3,2000,'1','1');
     Validate('w_observacao','Observação','','',3,2000,'1','1');
@@ -863,20 +908,23 @@ function Geral() {
     if(nvl(f($RS_Menu,'numeracao_automatica'),0)==0) {
       ShowHTML('      <tr><td><b><U>C</U>ódigo interno:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo" size="18" maxlength="60" value="'.$w_codigo.'"></td>');
     }
-    if ($w_pe=='S') {
+    // Verifica as possibilidades de vinculação
+    if ($w_vincula) {
+      if ($w_pe=='S') {
+        ShowHTML('          <tr valign="top">');
+        selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
+        ShowHTML('          <tr valign="top">');    
+        selecaoObjetivoEstrategico('<u>O</u>bjetivo(s) estratégico(s):', 'P', 'Selecione o(s) objetivo(s) estratégico(s) ao(s) qual(is) o programa está vinculado.', $w_objetivo, $w_plano, 'w_objetivo[]', 'CHECKBOX', null);
+      }
       ShowHTML('          <tr valign="top">');
-      selecaoPlanoEstrategico('<u>P</u>lano estratégico:', 'P', 'Selecione o plano ao qual o programa está vinculado.', $w_plano, $w_chave, 'w_plano', 'ULTIMO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"');
-      ShowHTML('          <tr valign="top">');    
-      selecaoObjetivoEstrategico('<u>O</u>bjetivo(s) estratégico(s):', 'P', 'Selecione o(s) objetivo(s) estratégico(s) ao(s) qual(is) o programa está vinculado.', $w_objetivo, $w_plano, 'w_objetivo[]', 'CHECKBOX', null);
-    }
-    ShowHTML('          <tr valign="top">');
-    selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
-    if(Nvl($w_sq_menu_relac,'')!='') {
-      ShowHTML('          <tr valign="top">');
-      if ($w_sq_menu_relac=='CLASSIF') {
-        SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
-      } else {
-        SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
+      selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+      if(Nvl($w_sq_menu_relac,'')!='') {
+        ShowHTML('          <tr valign="top">');
+        if ($w_sq_menu_relac=='CLASSIF') {
+          SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
+        } else {
+          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai);
+        }
       }
     }
     ShowHTML('          <tr><td colspan=2><table border=0 colspan=0 cellspan=0 width="100%">');
@@ -893,7 +941,7 @@ function Geral() {
     }
     ShowHTML ('         </table>');
     ShowHTML('          <tr valign="top">');
-    SelecaoPessoa('<u>S</u>olicitante:','S','Selecione o solicitante do pedido na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
+    SelecaoPessoa('<u>S</u>olicitante:','S','Selecione o solicitante do pedido na relação.',nvl($w_solicitante,$w_usuario),null,'w_solicitante','USUARIOS');
     // Recupera todos os registros para a listagem
     $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],'CLUNID',null,null,$w_ano);
     if (count($RS)>0) {
@@ -902,17 +950,24 @@ function Geral() {
         $w_sq_unidade = f($RS,'sq_unidade');
         ShowHTML('<INPUT type="hidden" name="w_sq_unidade" value="'.$w_sq_unidade.'">');
       } else {
-        SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP',null);
+        SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',nvl($w_sq_unidade,$_SESSION['LOTACAO']),null,'w_sq_unidade','CLCP',null);
       } 
     } else {
       if ($w_cadgeral=='N') {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'ATENÇÃO: Sua lotação não está ligada a nenhuma unidade proponente. Entre em contato com os gestores do sistema!\');');
+        ShowHTML('  alert(\'ATENÇÃO: Sua lotação não tem permissão para realizar compras/licitações. Entre em contato com os gestores do sistema!\');');
         ShowHTML('  history.back(1);');
         ScriptClose();
       } else {
         SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP',null);
       } 
+    }
+    ShowHTML('          <tr>');
+    SelecaoLCModalidade('<u>M</u>odalidade:','M','Selecione na lista a modalidade do certame.',$w_sq_lcmodalidade,null,'w_sq_lcmodalidade',null,null);
+    if ($w_pa=='S') {
+      SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+    } elseif($w_segmento=='Público') {
+      ShowHTML('          <td><b>N<u>ú</u>mero do protocolo:</b><br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="sti" type="text" name="w_numero_processo" size="30" maxlength="30" value="'.$w_numero_processo.'" title="Número do processo de compra/contratação."></td>');
     }
     ShowHTML('      <tr><td colspan=2><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=2><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
@@ -1136,14 +1191,14 @@ function Itens() {
     ShowHTML('    <b>Registros: '.count($RS));        
     ShowHTML('<tr><td align="center" colspan=3>');  
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
-    ShowHTML('            <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center" valign="top">');
+    ShowHTML('          <td NOWRAP><font size="2"><input type="checkbox" name="marca" value="" onClick="javascript:MarcaTodos();" TITLE="Marca/desmarca todos os itens da relação">');
     ShowHTML('          <td><b>'.LinkOrdena('Tipo','nm_tipo_material_pai').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Un.','sg_unidade_medida').'</td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Pedido','dados_solic').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Qtd.','quantidade').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Pedido','dados_solic').'</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -1161,8 +1216,9 @@ function Itens() {
         ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');        
         ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
         ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
-        ShowHTML('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic')).'</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>');
+        ShowHTML('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic')).'</td>');
+        ShowHTML('      </tr>');
       }
     } 
     ShowHTML('      </center>');
@@ -1923,46 +1979,56 @@ function PesquisaPreco() {
     FormataValor();
     if ($O=='I' || $O=='A') {
       ShowHTML('  function valor(p_indice) {');
-      ShowHTML('    if (document.Form["w_chave_aux[]"][p_indice].checked) { ');
-      ShowHTML('       document.Form["w_valor[]"][p_indice].disabled=false; ');
-      ShowHTML('       document.Form["w_inicio[]"][p_indice].disabled=false; ');
-      ShowHTML('       document.Form["w_dias[]"][p_indice].disabled=false; ');
-      ShowHTML('       document.Form["w_fabricante[]"][p_indice].disabled=false; ');
-      ShowHTML('       document.Form["w_marca_modelo[]"][p_indice].disabled=false; ');
-      ShowHTML('       document.Form["w_embalagem[]"][p_indice].disabled=false; ');      
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=false; ');
+      ShowHTML('    var theForm = document.Form; ');
+      ShowHTML('    if (theForm["w_chave_aux[]"][p_indice].checked) { ');
+      ShowHTML('       theForm["w_valor[]"][p_indice].disabled=false; ');
+      ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=false; ');
+      ShowHTML('       theForm["w_dias[]"][p_indice].disabled=false; ');
+      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
+      ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=false; ');
+      ShowHTML('         theForm["w_marca_modelo[]"][p_indice].disabled=false; ');
+      ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=false; ');      
+      if($w_pesquisa=='N') ShowHTML('         theForm["w_fator[]"][p_indice].disabled=false; ');
+      ShowHTML('       }');
       ShowHTML('    } else {');
-      ShowHTML('       document.Form["w_valor[]"][p_indice].disabled=true; ');
-      ShowHTML('       document.Form["w_inicio[]"][p_indice].disabled=true; ');
-      ShowHTML('       document.Form["w_dias[]"][p_indice].disabled=true; ');
-      ShowHTML('       document.Form["w_fabricante[]"][p_indice].disabled=true; ');
-      ShowHTML('       document.Form["w_marca_modelo[]"][p_indice].disabled=true; ');
-      ShowHTML('       document.Form["w_embalagem[]"][p_indice].disabled=true; ');
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][p_indice].disabled=true; ');
+      ShowHTML('       theForm["w_valor[]"][p_indice].disabled=true; ');
+      ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=true; ');
+      ShowHTML('       theForm["w_dias[]"][p_indice].disabled=true; ');
+      ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
+      ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=true; ');
+      ShowHTML('         theForm["w_marca_modelo[]"][p_indice].disabled=true; ');
+      ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=true; ');
+      if($w_pesquisa=='N') ShowHTML('         theForm["w_fator[]"][p_indice].disabled=true; ');
+      ShowHTML('       }');
       ShowHTML('    }');
       ShowHTML('  }');    
       ShowHTML('  function MarcaTodos() {');
-      ShowHTML('    if (document.Form["marca"].checked) {');
-      ShowHTML('       for (i=1; i < document.Form["w_chave_aux[]"].length; i++) {');
-      ShowHTML('         document.Form["w_chave_aux[]"][i].checked=true;');
-      ShowHTML('         document.Form["w_valor[]"][i].disabled=false; ');
-      ShowHTML('         document.Form["w_inicio[]"][i].disabled=false; ');
-      ShowHTML('         document.Form["w_dias[]"][i].disabled=false; ');
-      ShowHTML('         document.Form["w_fabricante[]"][i].disabled=false; ');
-      ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=false; ');
-      ShowHTML('         document.Form["w_embalagem[]"][i].disabled=false; ');
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][i].disabled=false; ');
+      ShowHTML('    var theForm = document.Form; ');
+      ShowHTML('    if (theForm["marca"].checked) {');
+      ShowHTML('       for (i=1; i < theForm["w_chave_aux[]"].length; i++) {');
+      ShowHTML('         theForm["w_chave_aux[]"][i].checked=true;');
+      ShowHTML('         theForm["w_valor[]"][i].disabled=false; ');
+      ShowHTML('         theForm["w_inicio[]"][i].disabled=false; ');
+      ShowHTML('         theForm["w_dias[]"][i].disabled=false; ');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
+      ShowHTML('           theForm["w_fabricante[]"][i].disabled=false; ');
+      ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=false; ');
+      ShowHTML('           theForm["w_embalagem[]"][i].disabled=false; ');
+      if($w_pesquisa=='N') ShowHTML('         theForm["w_fator[]"][i].disabled=false; ');
+      ShowHTML('         }');
       ShowHTML('       } ');
       ShowHTML('    } else { ');
-      ShowHTML('       for (i=1; i < document.Form["w_chave_aux[]"].length; i++) {');
-      ShowHTML('         document.Form["w_chave_aux[]"][i].checked=false;');
-      ShowHTML('         document.Form["w_valor[]"][i].disabled=true; ');
-      ShowHTML('         document.Form["w_inicio[]"][i].disabled=true; ');
-      ShowHTML('         document.Form["w_dias[]"][i].disabled=true; ');
-      ShowHTML('         document.Form["w_fabricante[]"][i].disabled=true; ');
-      ShowHTML('         document.Form["w_marca_modelo[]"][i].disabled=true; ');
-      ShowHTML('         document.Form["w_embalagem[]"][i].disabled=true; ');
-      if($w_pesquisa=='N') ShowHTML('       document.Form["w_fator[]"][i].disabled=true; ');
+      ShowHTML('       for (i=1; i < theForm["w_chave_aux[]"].length; i++) {');
+      ShowHTML('         theForm["w_chave_aux[]"][i].checked=false;');
+      ShowHTML('         theForm["w_valor[]"][i].disabled=true; ');
+      ShowHTML('         theForm["w_inicio[]"][i].disabled=true; ');
+      ShowHTML('         theForm["w_dias[]"][i].disabled=true; ');
+      ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
+      ShowHTML('           theForm["w_fabricante[]"][i].disabled=true; ');
+      ShowHTML('           theForm["w_marca_modelo[]"][i].disabled=true; ');
+      ShowHTML('           theForm["w_embalagem[]"][i].disabled=true; ');
+      if($w_pesquisa=='N') ShowHTML('         theForm["w_fator[]"][i].disabled=true; ');
+      ShowHTML('         }');
       ShowHTML('       } ');
       ShowHTML('    }');
       ShowHTML('  }');
@@ -2095,8 +2161,9 @@ function PesquisaPreco() {
       if ($w_pesquisa=='S') Validate('["w_inicio[]"][ind]','Pesq. preço','DATA',1,10,10,'','0123456789/');
       else                  Validate('["w_inicio[]"][ind]','Proposta','DATA',1,10,10,'','0123456789/');
       Validate('["w_dias[]"][ind]','Dias de Validade','',1,1,10,'','0123456789');
-      Validate('["w_valor[]"][ind]','Valor da pesquisa de preço','VALOR','1',6,18,'','0123456789.,');
-      CompValor('["w_valor[]"][ind]','Valor da pesquisa de preço','>','0','zero');
+      Validate('["w_valor[]"][ind]','Valor','VALOR','1',6,18,'','0123456789.,');
+      CompValor('["w_valor[]"][ind]','Valor','>','0','zero');
+      ShowHTML('      if(theForm["w_classe[]"][ind].value==3) {');
       if ($w_pesquisa=='S') {
         // Campos opcionais na cotação
         Validate('["w_fabricante[]"][ind]','Fabricante','1','',2,50,'1','1');
@@ -2110,6 +2177,7 @@ function PesquisaPreco() {
         Validate('["w_fator[]"][ind]','Embalagem','1','1',1,4,'','0123456789');
         CompValor('["w_fator[]"][ind]','Fator de embalagem','>','0','0');
       }
+      ShowHTML('      }');
       ShowHTML('    }');
       ShowHTML('  }');
       ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -2272,6 +2340,7 @@ function PesquisaPreco() {
     ShowHTML('<INPUT type="hidden" name="w_fornecedor" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pesquisa" value="'.$w_pesquisa.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_classe[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_valor[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_inicio[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_dias[]" value="">');
@@ -2342,7 +2411,7 @@ function PesquisaPreco() {
     ShowHTML('              <td colspan=3 title="Se informar um e-mail institucional, informe-o neste campo."><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
     ShowHTML('          </table>');    
     //Campos com os dados da pesquisa
-    if($w_pesquisa=='S') {
+    if ($w_pesquisa=='S') {
       $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,'FORNECEDORC');
       $RS = SortArray($RS,'nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc','dados_pai','asc');    
     } else {
@@ -2350,7 +2419,7 @@ function PesquisaPreco() {
       $RS = SortArray($RS,'ordem','asc','nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc','dados_pai','asc');    
     }
     
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan="2">');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -2366,7 +2435,7 @@ function PesquisaPreco() {
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      ShowHTML('<tr><td colspan="6" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+      ShowHTML('<tr><td colspan="7" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
       ShowHTML('  Orientação:<ul>');
       ShowHTML('  <li>Selecione os itens propostos pelo fornecedor e, para cada um deles, informe os dados solicitados.');
       ShowHTML('  <li>O campo valor deve ser informado com quatro casas decimais. Ex: se valor for "25", informe "25,0000", digitando apenas os números.');
@@ -2383,6 +2452,7 @@ function PesquisaPreco() {
       }
       ShowHTML('            <td><b>Código</td>');
       ShowHTML('            <td><b>Nome</td>');
+      ShowHTML('            <td><b>U.M.</td>');
       if ($w_pesquisa=='S') ShowHTML('            <td><b>Dt.Pesq.</td>'); else ShowHTML('            <td><b>Dt.Prop.</td>'); 
       ShowHTML('            <td><b>Dias Valid.</td>');
       ShowHTML('            <td><b>Valor</td>');
@@ -2400,8 +2470,10 @@ function PesquisaPreco() {
             ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
             $w_Disabled = 'DISABLED';
           }
+          ShowHTML('        <INPUT type="hidden" name="w_classe[]" value="'.f($row,'classe').'">');
           ShowHTML('        <td>'.f($row,'codigo_interno').'</td>');
           ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
+          ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
           $w_item_lic   = 0;
@@ -2417,15 +2489,17 @@ function PesquisaPreco() {
             ShowHTML('        <td><input type="text" '.$w_Disabled.' name="w_valor[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor[$i],'').'" style="text-align:right;" onKeyDown="FormataValor(this,18,4,event);" title="Informe o valor unitário do item."></td>');
           }
           ShowHTML('        </tr>');
-          ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="6">');
-          ShowHTML('          <TABLE WIDTH="100%" border=0>');
-          ShowHTML('            <tr valign="top">');
-          ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_fabricante[$i],f($row,'fabricante')).'"></td>');
-          ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_marca_modelo[$i],f($row,'marca_modelo')).'"></td>');
-          ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem[]" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.nvl($w_embalagem[$i],f($row,'embalagem')).'"></td>');
-          if ($w_pesquisa=='N') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
-          ShowHTML('        </table>');
-          ShowHTML('        </tr>');
+          if (f($row,'classe')==3) {
+            ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
+            ShowHTML('          <TABLE WIDTH="100%" border=0>');
+            ShowHTML('            <tr valign="top">');
+            ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_fabricante[$i],f($row,'fabricante')).'"></td>');
+            ShowHTML('              <td><b>Marca/Modelo: </b><input '.$w_Disabled.' type="text" name="w_marca_modelo[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_marca_modelo[$i],f($row,'marca_modelo')).'"></td>');
+            ShowHTML('              <td><b>Embalagem: </b><input '.$w_Disabled.' type="text" name="w_embalagem[]" class="sti" SIZE="15" MAXLENGTH="20" VALUE="'.nvl($w_embalagem[$i],f($row,'embalagem')).'"></td>');
+            if ($w_pesquisa=='N') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
+            ShowHTML('        </table>');
+            ShowHTML('        </tr>');
+          }
           $i += 1;
         }
       }
@@ -3827,6 +3901,11 @@ function Grava() {
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',null,null,
           $_REQUEST['w_arp'],'N',null,null,null,null,null,&$w_chave_nova,$_REQUEST['w_copia']);        
 
+        dml_putCLDados::getInstanceOf($dbms,'PROT',$w_chave_nova,$_REQUEST['w_sq_lcmodalidade'],
+          $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_numero_certame'],
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+          $_REQUEST['w_protocolo'],null,null);
+          
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

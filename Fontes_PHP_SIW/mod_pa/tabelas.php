@@ -586,7 +586,7 @@ function EspecieDocumento() {
     if (!(strpos('IA',$O)===false)) {
       Validate('w_nome','Nome','1','1','4','30','1','1');
       Validate('w_sigla','Sigla','1','1','1','10','1','1');
-      Validate('w_assunto','Classificação','HIDDEN',1,1,18,'','0123456789');
+      Validate('w_assunto','Classificação','HIDDEN','',1,18,'','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');

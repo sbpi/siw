@@ -240,7 +240,7 @@ function Inicial() {
   
     if ($w_embed=='WORD') ShowHTML($w_legenda);
     
-    $RS_Resultado = db_getSolicResultado::getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,
+    $RS_Resultado = db_getSolicResultado::getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,
         formataDataEdicao($w_inicio),formataDataEdicao($w_fim), $p_atrasado, $p_adiantado, $p_concluido,$p_nini_atraso, $p_nini_prox, 
         $p_nini_normal, $p_ini_prox, $p_ini_normal, $p_conc_atraso,null,null,'LISTA');
     if ($p_ordena>'') { 

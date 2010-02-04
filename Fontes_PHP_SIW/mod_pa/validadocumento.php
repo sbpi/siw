@@ -1,9 +1,8 @@
 <?php
 // =========================================================================
-// Rotina de validação dos dados do pedido
+// Rotina de validação dos dados da eliminacao
 // -------------------------------------------------------------------------
-
-function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
+function ValidaDocumento($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   extract($GLOBALS);
   // Se não encontrar erro, esta função retorna cadeia fazia.
   // Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
@@ -22,10 +21,7 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   // compõem a solicitação
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
-  $l_rs_solic = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $l_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
+  $l_rs_solic = db_getSolicData::getInstanceOf($dbms,$l_chave,'PADCAD');
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
@@ -33,9 +29,6 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   $l_erro='';
   $l_tipo='';  
 
-  // Recupera os itens do pedido de compra
-  $l_rs_item = db_getCLSolicItem::getInstanceOf($dbms,null,$l_chave,null,null,null,null,null,null,null,null,null,null,null);
-  
   //-----------------------------------------------------------------------------------
   // O bloco abaixo faz as validações na solicitação que não são possíveis de fazer
   // através do JavaScript por envolver mais de uma tela
@@ -46,18 +39,10 @@ function ValidaPedido($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite
   // um encaminhamento.
   //-----------------------------------------------------------------------------
 
-  // Verifica se já foi inserido os itens do pedido
-  if (count($l_rs_item)==0) {
-    $l_erro.='<li>Informe pelo um item no pedido de compra.';
+  // Protocolos em trâmite não podem ser enviados com espécie documental "DEFINIR"
+  if (f($l_rs_solic,'sg_tramite')!='CI' and f($l_rs_solic,'ativo')=='S' and f($l_rs_solic,'sg_especie')=='DEFINIR') {
+    $l_erro.='<li>Necessário definir a espécie documental.';
     $l_tipo=0; 
-  } else {
-    // Verifica se foi indicado o proposto
-    foreach ($l_rs_item as $row) {
-      if (f($row,'exibe_catalogo')=='N' || f($row,'ativo')=='N') {
-        $l_erro .= '<li>'.f($row,'nome').' ('.nvl(f($row,'codigo_interno'),'---').') não está disponível. Remova-o da lista de itens.';
-        $l_tipo  = 0;
-      }
-    }
   } 
 
   // Configura a variável de retorno com o tipo de erro e a mensagem

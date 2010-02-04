@@ -45,6 +45,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_setorial'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO SETORIAL' : 'ARQUIVADO SETORIAL').'</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AT') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_central'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO CENTRAL' : 'ARQUIVADO CENTRAL').'</b></font></td>';
+  } elseif (f($RS,'sg_tramite')=='CA') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>CANCELADO</b></font></td>';
   } 
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
@@ -354,8 +356,37 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
+    // Versões
+    $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,2,'LISTA');
+    $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
+    if (count($RS_Log)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Versão</b></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Responsável</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$conTrBgColor;
+      $i = 0;
+      foreach($RS_Log as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td width="1%" nowrap>'.FormataDataEdicao(f($row,'phpdt_data'),3).'</td>';
+        if (Nvl(f($row,'caminho'),'')>'' && $l_formato=='HTML') {
+          $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'sq_siw_arquivo'),'_blank','Clique para exibir o anexo em outra janela.',f($row,'origem'),null).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.f($row,'origem').'</td>';
+        } 
+        if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa_resp'),$TP,f($row,'nm_pessoa_resp')).'</td>';
+        else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'nm_pessoa_resp').'</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;
@@ -381,14 +412,14 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
           $i=1;
         }
         $l_html.=chr(13).'    <tr valign="top">';
-        $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(nvl(f($row,'phpdt_envio'),f($row,'phpdt_data')),3).'</td>';
+        $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(nvl(f($row,'phpdt_envio'),f($row,'phpdt_data')),6).'</td>';
 
         $l_html.=chr(13).'        <td>'.f($row,'origem').'</td>';
         if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_resp'),$TP,f($row,'nm_pessoa_resp')).'</td>';
         else                    $l_html.=chr(13).'        <td>'.f($row,'nm_pessoa_resp').'</td>';
 
         if (nvl(f($row,'recebedor'),'')!='') {
-          $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_receb'),3).'</td>';
+          $l_html.=chr(13).'      <td nowrap>'.FormataDataEdicao(f($row,'phpdt_receb'),6).'</td>';
           if ($l_formato!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa('../',$w_cliente,f($row,'recebedor'),$TP,f($row,'nm_recebedor'));
           else                    $l_html.=chr(13).'        <td>'.f($row,'nm_recebedor');
         } elseif (f($row,'origem')=='TRÂMITE ORIGINAL' || f($row,'origem')=='TRAMITAÇÃO') {
@@ -430,7 +461,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'   <tr><td><b>Consulta realizada por:</b></td>';
     $l_html.=chr(13).'       <td>'.$_SESSION['NOME_RESUMIDO'].'</td></tr>';
     $l_html.=chr(13).'   <tr><td><b>Data da consulta:</b></td>';
-    $l_html.=chr(13).'       <td>'.FormataDataEdicao(time(),3).'</td></tr>';
+    $l_html.=chr(13).'       <td>'.FormataDataEdicao(time(),6).'</td></tr>';
   } 
   $l_html.=chr(13).'    </table>';
   return $l_html;

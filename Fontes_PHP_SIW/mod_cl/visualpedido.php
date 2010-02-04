@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
@@ -50,7 +50,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if (f($RS,'decisao_judicial')=='S') $l_html.=chr(13).'      <tr><td><b>Decisão judicial: </b></td><td>'.RetornaSimNao(f($RS,'decisao_judicial')).' </td></tr>';
     //$l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
-    //$l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+    if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
     $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
@@ -71,7 +71,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
 
     }
     $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     $l_html.=chr(13).'          </table></td></tr>';    
     
     if (nvl(f($RS,'sq_financeiro'),'')!='') {
@@ -120,6 +120,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Tipo</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
     if ($w_pede_valor_pedido=='N') $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
     $l_html.=chr(13).'        </tr>';
@@ -146,6 +147,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         } else {
           $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
         }
+        $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
         if($w_sg_tramite=='AT') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>';
@@ -170,7 +172,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     } 
     if ($w_pede_valor_pedido=='N') {
       $l_html.=chr(13).'      <tr align="center">';
-      $l_html.=chr(13).'        <td align="right" colspan="6"><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
       $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
       $l_html.=chr(13).'      </tr>';
     }

@@ -942,7 +942,7 @@ function Telefones() {
     ShowHTML('          <td><b>DDD</td>');
     ShowHTML('          <td><b>Número</td>');
     ShowHTML('          <td><b>Padrão</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    ShowHTML('          <td width="10%"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
@@ -954,7 +954,7 @@ function Telefones() {
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td>'.f($row,'tipo_telefone').'</td>');
         ShowHTML('        <td align="center">'.f($row,'ddd').'</td>');
-        ShowHTML('        <td>'.f($row,'numero').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'numero').'</td>');
         ShowHTML('        <td align="center">'.f($row,'padrao').'</td>');
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_handle='.f($row,'sq_pessoa_telefone').'&w_sq_pessoa_telefone='.f($row,'sq_pessoa_telefone').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');

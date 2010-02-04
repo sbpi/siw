@@ -19,6 +19,7 @@ include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
+include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
 include_once($w_dir_volta.'visualalerta.php');
 // =========================================================================
 //  trabalho.php
@@ -141,21 +142,26 @@ function Mesa() {
   ShowHTML('    <td align="right">');
   // Se o módulo de pessoal estiver habilitado para o cliente, exibe link para acesso à folha de ponto
   if (nvl($w_pessoal,'')!='') {
-    //Verifica se o usuário tem contrato de trabalho  
+    // Verifica se o usuário tem contrato de trabalho  
     $RS1 = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
-
-    if (count($RS1)>0) {
-      //Verifica se os horários da jornada diária foram preenchidos
-      foreach($RS1 as $row) { $RS1 = $row; break; }
-      if (nvl(f($row,'entrada_manha'),'')=='' && nvl(f($row,'entrada_tarde'),'')=='' && nvl(f($row,'entrada_noite'),'')=='') {
-        $w_erro = true;
-      } else {
-        $w_erro = false;
+    
+    // Verifica se é chefe de unidade
+    $RS2 = db_getUserResp::getInstanceOf($dbms,$w_usuario,null);
+    
+    if (count($RS1) || count($RS2)) {
+      $w_erro = false;
+      if (count($RS1)) {
+        //Verifica se os horários da jornada diária foram preenchidos
+        foreach($RS1 as $row) { $RS1 = $row; break; }
+        if (nvl(f($row,'entrada_manha'),'')=='' && nvl(f($row,'entrada_tarde'),'')=='' && nvl(f($row,'entrada_noite'),'')=='') {
+          $w_erro = true;
+        }
       }
+      
       if ($w_erro) {
         ShowHTML('      <a HREF="javascript:this.status.value;" onClick="alert(\'Jornada diária não informada no contrato. Entre em contato com os gestores de pessoal!\');" title="Pendente gestores de pessoal informarem jornada diária de trabalho no contrato."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
       } else {
-        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_rh/folha.php?par=inicial&O=L&TP='.$TP.' - Folha de ponto').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a folha de ponto."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_rh/folha.php?par=inicial&O=L&SG=COINICIAL&TP='.$TP.' - Folha de ponto').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a folha de ponto."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
       }
     }
   }

@@ -384,7 +384,7 @@ table ul li{
 }
 
 #folhadeponto tr:FIRST-CHILD td{
-  background-color:#DFDFDF;
+  background-color:#EFEFEF;
   border-right: solid 0.01em #CFCFCF;
 }
 
@@ -392,6 +392,8 @@ table ul li{
   border: none;
   border-top: solid 0.01em #DFDFDF;
   border-right: solid 0.01em #DFDFDF;
+  line-height: 100%;
+  line-height: 70%;
 }
 
 #folhadeponto input{

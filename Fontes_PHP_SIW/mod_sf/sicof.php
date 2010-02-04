@@ -253,7 +253,7 @@ function ConsultaDoc() {
           ShowHTML('        <td align="center">'.f($row,'projeto').'</td>');
           ShowHTML('        <td align="right">'.FormatNumber(f($row,'totcontratacao'),2).'</td>');
           ShowHTML('        <td>'.f($row,'modalidade').'</td>');
-          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td>'.str_replace('&quot;','"',str_replace('www1.unesco.org.br','200.130.8.24',f($row,'fase_atual'))).'</td>');
           ShowHTML('      </tr>');
           $w_total += f($row,'totcontratacao');
         } 
@@ -314,7 +314,7 @@ function ConsultaDoc() {
           ShowHTML('        <td nowrap>'.f($row,'projeto').'</td>');
           ShowHTML('        <td align="right" nowrap>'.FormatNumber(f($row,'valor'),2).'</td>');
           if ($_POST['p_documento']=='') ShowHTML('        <td>'.substr(f($row,'historico'),0,69).'</td>');
-          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td>'.str_replace('&quot;','"',str_replace('www1.unesco.org.br','200.130.8.24',f($row,'fase_atual'))).'</td>');
           ShowHTML('      </tr>');
           $w_total += f($row,'valor');
         } 
@@ -364,7 +364,7 @@ function ConsultaDoc() {
           ShowHTML('        <td align="center" nowrap>'.f($row,'fim').'</td>');
           ShowHTML('        <td>'.f($row,'projeto').'</td>');
           if ($_POST['p_documento']=="") ShowHTML('        <td>'.f($row,'historico').'</td>');
-          ShowHTML('        <td>'.f($row,'fase_atual').'</td>');
+          ShowHTML('        <td>'.str_replace('&quot;','"',str_replace('www1.unesco.org.br','200.130.8.24',f($row,'fase_atual'))).'</td>');
           ShowHTML('      </tr>');
         } 
         ShowHTML('         </table></td></tr>');

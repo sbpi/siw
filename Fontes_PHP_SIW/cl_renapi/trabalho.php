@@ -445,7 +445,7 @@ function Mesa() {
     ShowHTML('<area shape="rect" coords="310,259,329,272" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=DF&SG='.f($RS,'sigla').'" alt="Distrito Federal" />');
     ShowHTML('<area shape="poly" coords="129,38,121,41,118,47,104,55,99,53,95,57,81,36,73,42,70,41,68,43,50,43,48,52,56,53,58,57,47,59,47,68,54,80,48,120,41,119,32,122,25,122,13,129,8,143,10,147,2,152,2,156,4,158,8,159,13,163,17,163,24,165,30,167,45,171,61,178,88,190,96,184,101,186,105,183,109,185,112,180,120,180,125,166,136,166,151,177,190,176,192,159,191,151,198,134,216,95,186,75,184,62,170,64,168,68,166,75,160,76,154,74,151,80,151,85,145,79,144,70,140,56,137,45,138,42" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AM&SG='.f($RS,'sigla').'" alt="Amazonas" />');
     ShowHTML('<area shape="poly" coords="89,192,76,200,67,206,43,205,42,184,33,190,25,192,20,187,9,186,12,180,1,162,1,156,47,171,86,189" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AC&SG='.f($RS,'sigla').'" alt="Acre" />');
-    ShowHTML('<area shape="poly" coords="112,14,137,18,140,14,162,6,169,1,175,17,175,43,183,51,183,63,172,63,165,75,157,73,152,75,150,84,144,77,138,42,129,38,121,35,120,28,119,21,116,19,114,18,113,16,113,15" href="rr.html" alt="Roraima" />');
+    ShowHTML('<area shape="poly" coords="112,14,137,18,140,14,162,6,169,1,175,17,175,43,183,51,183,63,172,63,165,75,157,73,152,75,150,84,144,77,138,42,129,38,121,35,120,28,119,21,116,19,114,18,113,16,113,15" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RR&SG='.f($RS,'sigla').'" alt="Roraima" />');
     ShowHTML('<area shape="poly" coords="90,190,105,189,105,207,112,220,120,224,134,227,144,233,149,237,162,238,167,233,173,222,170,214,172,209,171,206,153,204,152,178,146,177,136,167,125,167,121,180,112,181,109,185,100,186,88,188,89,189" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=RO&SG='.f($RS,'sigla').'" alt="Rondônia" />');
     ShowHTML('<area shape="poly" coords="153,177,153,204,172,206,170,215,173,221,164,238,170,272,191,273,190,279,194,286,200,290,211,286,218,284,231,289,241,288,248,285,247,291,255,293,257,279,260,271,270,267,276,255,280,252,284,238,287,226,284,209,291,190,209,184,200,176,198,168,192,159,191,176,168,177,158,177" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=MT&SG='.f($RS,'sigla').'" alt="Mato Grosso" />');
     ShowHTML('<area shape="poly" coords="235,35,248,37,259,38,269,21,275,10,280,17,286,38,295,44,293,56,287,60,286,64,271,81,265,79,252,55,237,42" href="cl_renapi/projeto.php?par=inicial&R='.$w_pagina.$par.'&P1=5&P2='.f($RS,'sq_menu').'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&p_pais='.$w_pais.'&p_uf=AP&SG='.f($RS,'sigla').'" alt="Amapá" />');
@@ -800,7 +800,7 @@ function Calendario() {
     include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
     $RS_Unidade = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
     if (nvl($_REQUEST['p_pesquisa'],'')!='') {
-      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+      $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
       if ($p_ordena>'') { 
         $lista = explode(',',str_replace(' ',',',$p_ordena));
         $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -918,7 +918,7 @@ function Calendario() {
       ShowHTML($w_legenda);
     }
     
-    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+    $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,null,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');

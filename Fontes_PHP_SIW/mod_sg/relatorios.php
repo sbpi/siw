@@ -507,7 +507,7 @@ function TelaUsuarioRel() {
   ShowHTML('         </table></td></tr>');  
   
   //Unidades
-  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>UNIDADES QUE GERÊNCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
+  ShowHTML('      <tr><td colspan="2"><br><font size="2"><b>UNIDADES QUE GERENCIA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');    
   $RS1 = db_getUserResp::getInstanceOf($dbms,$w_sq_pessoa,null);
   $RS1 = SortArray($RS1,'nome','asc');
   ShowHTML('      <tr><td colspan="2">');

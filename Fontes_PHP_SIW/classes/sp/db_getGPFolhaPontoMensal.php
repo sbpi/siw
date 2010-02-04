@@ -1,5 +1,5 @@
 <?php
-extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.php");
+extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class sp_getGPFolhaPontoMensal
 *
@@ -9,13 +9,12 @@ extract($GLOBALS); include_once($w_dir_volta."classes/db/DatabaseQueriesFactory.
 */
 
 class db_getGPFolhaPontoMensal {
-   function getInstanceOf($dbms, $p_contrato, $p_mes) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
-     $sql=$strschema.'sp_getGPFolhaPontoMensal';
-     $params=array("p_contrato"   =>array($p_contrato,      B_INTEGER,    32),
-                   "p_mes"        =>array($p_mes,           B_VARCHAR,     6),
-                   "p_restricao"  =>array(null,             B_VARCHAR,    32),
-                   "p_result"     =>array(null,             B_CURSOR,      -1)
+   function getInstanceOf($dbms, $p_contrato, $p_mes, $p_restricao) {
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getGPFolhaPontoMensal';
+     $params=array('p_contrato'   =>array($p_contrato,      B_INTEGER,     32),
+                   'p_mes'        =>array($p_mes,           B_VARCHAR,      6),
+                   'p_restricao'  =>array($p_restricao,     B_VARCHAR,     32),
+                   'p_result'     =>array(null,             B_CURSOR,      -1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(0); if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }

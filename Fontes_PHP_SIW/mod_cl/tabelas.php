@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -900,8 +900,8 @@ function Unidade() {
         } else {
           ShowHTML('        <td width="1%">&rarr;<td>'.f($row,'nome').' ('.f($row,'sigla').')</td>');
         }
-        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'realiza_compra'),'IMAGEM').'</td>');
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'solicita_compra'),'IMAGEM').'</td>');
+        ShowHTML('        <td align="center">'.retornaSimNao(f($row,'realiza_compra'),'IMAGEM').'</td>');
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'registra_pesquisa'),'IMAGEM').'</td>');
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'registra_contrato'),'IMAGEM').'</td>');
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'registra_judicial'),'IMAGEM').'</td>');

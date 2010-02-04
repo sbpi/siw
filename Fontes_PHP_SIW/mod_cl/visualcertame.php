@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
@@ -52,14 +52,30 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
      
     // Identificação do certame
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    if(nvl(f($RS,'processo'),'')!='') {
+      $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
+      if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
+        $l_html.=chr(13).'        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+      } else {
+        $l_html.=chr(13).'        <td>'.f($RS,'processo');
+      }
+    }
+    $l_html.=chr(13).'      <tr><td width="30%"><b>Modalidade: </b></td><td>'.f($RS,'nm_lcmodalidade').' </td></tr>';
+    
     // Exibe a vinculação
-    $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
-    if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
-    else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
-    if (nvl(f($RS,'nm_prioridade'),'')!='') $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
+    if (f($RS,'dados_pai')!='???') {
+      $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
+      if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
+      else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S','S').'</td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
-    if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Previsão de conclusão:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),2).'</td></tr>';
+    if(f($RS,'or_tramite')>2) {
+      if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Previsão de conclusão:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+      if (nvl(f($RS,'nm_prioridade'),'')!='') $l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
+    }
+    if(f($RS,'or_tramite')>1) {
+      $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),2).'</td></tr>';
+    }
     if ($w_cliente_arp=='S' && nvl(f($RS,'arp'),'')!='') $l_html.=chr(13).'      <tr><td><b>Gera ARP?</b></td><td>'.RetornaSimNao(f($RS,'arp')).' </td></tr>';
     $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
@@ -78,23 +94,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.CRLF2BR(f($RS,'justificativa')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
-    $l_html.=chr(13).'          </table></td></tr>';    
     
     //Dados da análise
-    if(nvl(f($RS,'sq_lcmodalidade'),'')!='') {
+    if(f($RS,'or_tramite')>2) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA ANÁLISE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Modalidade: </b></td><td>'.f($RS,'nm_lcmodalidade').' </td></tr>';
-      if(nvl(f($RS,'processo'),'')!='') {
-        $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
-        if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
-          $l_html.=chr(13).'        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
-        } else {
-          $l_html.=chr(13).'        <td>'.f($RS,'processo');
-        }
-      }
+      if (nvl(f($RS,'certame'),'')!='')  $l_html.=chr(13).'      <tr><td><b>Abertura das propostas:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'data_abertura')),'---').' </td></tr>';
       if (f($RS,'certame')=='S') {
-        $l_html.=chr(13).'      <tr><td><b>Abertura das propostas:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'data_abertura')),'---').' </td></tr>';
         $l_html.=chr(13).'      <tr><td><b>Julgamento: </b></td><td>'.nvl(f($RS,'nm_lcjulgamento'),'---').' </td></tr>';
         $l_html.=chr(13).'      <tr><td><b>Mínimo de dias de validade das propostas: </b></td><td>'.f($RS,'dias_validade_proposta').' </td></tr>';
       }
@@ -223,6 +228,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Item</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Código</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pedido</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
     if (f($RS,'ativo')=='S') $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
@@ -237,7 +243,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'        </tr>';
     if (count($RS1)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      $l_html.=chr(13).'      <tr><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>';
     } else {
       $w_total_preco  = 0;
       $w_atual        = 0;
@@ -249,7 +255,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       foreach($RS1 as $row) { 
         if ($w_atual!=f($row,'sq_material')) {
           if ($w_exibe) {
-            $l_html.=chr(13).'      <tr><td colspan=3><td align="right" nowrap><b>Totais do item</td>';
+            $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,2).'</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,2).'</td>';
             if(f($RS,'ativo')=='S') {
@@ -262,6 +268,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'        <td>'.f($row,'codigo_interno').'</td>';
           if($l_tipo=='WORD') $l_html.=chr(13).'        <td align="left">'.f($row,'nome').'</td>';
           else                $l_html.=chr(13).'        <td align="left">'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
+          $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
           $w_item_lic   = 0;
@@ -269,7 +276,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $w_item_unit  = 0;
         } else {
           $l_html.=chr(13).'      <tr align="center">';
-          $l_html.=chr(13).'        <td colspan=3></td>';
+          $l_html.=chr(13).'        <td colspan=4></td>';
           $w_exibe = true;
         }
         if($l_tipo!='WORD') $l_html.=chr(13).'        <td align="left" nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N').'</td>';
@@ -295,7 +302,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         $w_item_unit  = f($row,'pesquisa_preco_medio');
       }
       if ($w_exibe && f($RS,'ativo')=='S') {
-        $l_html.=chr(13).'      <tr><td colspan=3><td align="right" nowrap><b>Totais do item</td>';
+        $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,2).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,2).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_unit,4).'</td>';
@@ -307,7 +314,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     } 
     if (f($RS,'ativo')=='S') {
       $l_html.=chr(13).'      <tr align="center">';
-      $l_html.=chr(13).'        <td align="right" colspan="7"><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="8"><b>Total</b></td>';
       $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_preco,4).'</b></td>';
       $l_html.=chr(13).'      </tr>';
       $l_html.=chr(13).'         </table></td></tr>';
@@ -484,10 +491,12 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } 
       $l_html.=chr(13).'  <ul>'.substr($w_erro,1,1000).'</ul>';
       $l_html.=chr(13).'  </font></td></tr>';
-    }     
-    // Encaminhamentos
-    include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    }
+    if ($O!='V') {
+      // Encaminhamentos
+      include_once($w_dir_volta.'funcoes/exibeLog.php');
+      $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    }
   }
   $l_html .= chr(13).'</table>';
   $l_html .= chr(13).'</table>';

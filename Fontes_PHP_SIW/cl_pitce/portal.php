@@ -20,6 +20,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicResultado.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicEV.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
@@ -98,6 +99,7 @@ $p_agenda      = $_REQUEST['p_agenda'];
 $p_programa    = $_REQUEST['p_programa'];
 $p_projeto     = $_REQUEST['p_projeto'];
 $p_unidade     = $_REQUEST['p_unidade'];
+$p_chave       = $_REQUEST['p_chave'];
 $p_projeto     = $_REQUEST['p_projeto'];
 $p_texto       = $_REQUEST['p_texto'];
 $p_tipo_evento = explodeArray($_REQUEST['p_tipo_evento']);
@@ -187,7 +189,11 @@ function Calendario() {
   foreach($l_rs as $row)  $p_tipo_evento.=','.f($row,'chave');
   $p_tipo_evento = substr($p_tipo_evento,1);
   
-  $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+  $RS_Resultado = db_getSolicResultado :: getInstanceOf($dbms,$w_cliente,$p_programa,$p_projeto,$p_unidade,$p_chave,$p_solicitante,$p_texto,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,$p_agenda,$p_tipo_evento,'CALEND');
+  /*$RS_Resultado = db_getSolicEV::getInstanceOf($dbms, $w_cliente,f($RS_Projeto,'sq_menu'),$w_usuario,
+    null,null,null,null,null,null,null,null,null,null,null,null,$l_chave, null, 
+    null, null, null, null, null,null, null, null, null, null, null, null, null, null);*/
+    //print_r($RS_Resultado);
   if ($p_ordena>'') { 
     $lista = explode(',',str_replace(' ',',',$p_ordena));
     $RS_Resultado = SortArray($RS_Resultado,$lista[0],$lista[1],'mes_ano','desc','cd_programa','asc', 'cd_projeto','asc','titulo','asc');
@@ -197,51 +203,85 @@ function Calendario() {
   if ($O=='L') {
     ShowHTML('<table width="100%">');
     ShowHTML('<tr>');
-    ShowHTML('  <td>Período de busca: <b>'.formataDataEdicao($w_inicio).'</b> e <b>'.formataDataEdicao($w_fim).'</b></td>');
+    ShowHTML('  <td>Per&iacute;odo de busca: <b>'.formataDataEdicao($w_inicio).'</b> e <b>'.formataDataEdicao($w_fim).'</b></td>');
     ShowHTML('  <td align="right">Resultados: '.count($RS_Resultado).'</td></tr>');
     ShowHTML('<tr><td align="center" colspan=2>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
     ShowHTML('        <tr bgcolor="' . $conTrBgColor . '" align="center">');
     ShowHTML('          <td nowrap><b>&nbsp;Tipo&nbsp;</td>');
-    ShowHTML('          <td nowrap><b>&nbsp;Início&nbsp;</td>');
+    ShowHTML('          <td nowrap><b>&nbsp;In&iacute;cio&nbsp;</td>');
     ShowHTML('          <td nowrap><b>&nbsp;Fim&nbsp;</td>');
     ShowHTML('          <td nowrap><b>&nbsp;Programa&nbsp;</td>');
     ShowHTML('          <td nowrap><b>&nbsp;Evento&nbsp;</td>');
-    ShowHTML('          <td nowrap><b>&nbsp;Descrição&nbsp;</td>');
+    ShowHTML('          <td nowrap><b>&nbsp;Descri&ccedil;&atilde;o&nbsp;</td>');
     ShowHTML('          <td nowrap><b>&nbsp;Local&nbsp;</td>');
     ShowHTML('        </tr>');
-    $w_cor = $conTrBgColor;
+    //$w_cor = $conTrBgColor;
     if (count($RS_Resultado) == 0) {
       ShowHTML('    <tr align="center"><td colspan="8">Nenhum resultado encontrado para os critérios informados.</td>');
     } else {
       foreach ($RS_Resultado as $row) {
-        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
+        //$w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('    <tr valign="top" bgColor="' . $w_cor . '">');
         ShowHTML('      <td>'.f($row, 'nm_tipo_evento').'</td>');
         ShowHTML('      <td align="center">' . Date('d/m/Y', Nvl(f($row, 'inicio_real'), f($row, 'inicio_previsto'))) . '</td>');
         ShowHTML('      <td align="center">' . Date('d/m/Y', Nvl(f($row, 'fim_real'), f($row, 'fim_previsto'))) . '</td>');
         ShowHTML('      <td>' . Nvl(f($row, 'nm_projeto'), '---') . '</td>');
-        ShowHTML('      <td>'.f($row, 'titulo'));
-        ShowHTML('      <td>'.f($row, 'descricao'));
-        ShowHTML('      <td>'.nvl(f($row, 'motivo_insatisfacao'),'---').' </td>');
+        ShowHTML('      <td>'.htmlentities(f($row, 'titulo')));
+        ShowHTML('      <td>'.htmlentities(f($row, 'descricao')));
+        ShowHTML('      <td>'.htmlentities(nvl(f($row, 'motivo_insatisfacao'),'---')).' </td>');
         ShowHTML('    </tr>');
       }
       ShowHTML('  </table>');
       ShowHTML('<tr><td>&nbsp;</td></tr>');
     }
     ShowHTML('</table>');
-  } else {
+  } elseif($O=='R') {
+    $i=0;
     if (count($RS_Resultado) == 0) {
       ShowHTML('    Nenhum evento cadastrado para o mês indicado!');
     } else {
       ShowHTML('<dl>');
       foreach ($RS_Resultado as $row) {
+        $i++;      
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         ShowHTML('      <dt>>&nbsp;' . Date('d/m/Y', Nvl(f($row, 'inicio_real'), f($row, 'inicio_previsto'))) . '</td>');
-        ShowHTML('      <dd>'.f($row, 'titulo'));
+        ShowHTML('      <dd style="cursor:pointer" onclick="location.href=\'/siw/cl_pitce/portal.php?par=CALENDARIO&p_chave='.f($row, 'sq_siw_solicitacao').'&p_cliente=14014&w_usuario=14015&w_mesano=11/2009&O=E\'">'.htmlentities(f($row, 'titulo')));
+        if($i == 3){
+          break;
+        }
       }
       ShowHTML('</dl>');
     }
+  }else{
+    ShowHTML('<table width="100%">');
+    ShowHTML('<tr>');
+    ShowHTML('<tr><td align="center" colspan=2>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
+    if (count($RS_Resultado) == 0) {
+      ShowHTML('    <tr align="center"><td colspan="8">Nenhum resultado encontrado para os critérios informados.</td>');
+    } else {
+      foreach ($RS_Resultado as $row) {
+        ShowHTML('        <tr bgcolor="' . $conTrBgColor . '">');
+        ShowHTML('              <td colspan="2"><h3>'.htmlentities(f($row, 'titulo'))).'</h3></td>';      
+        ShowHTML('          <tr><td nowrap><b>&nbsp;Tipo:&nbsp;</td>');
+        ShowHTML('              <td>'.f($row, 'nm_tipo_evento').'</td>');
+        ShowHTML('          <tr><td nowrap><b>&nbsp;In&iacute;cio:&nbsp;</td>');
+        ShowHTML('              <td>' . Date('d/m/Y', Nvl(f($row, 'inicio_real'), f($row, 'inicio_previsto'))) . '</td>');
+        ShowHTML('          <tr><td nowrap><b>&nbsp;Fim:&nbsp;</td>');
+        ShowHTML('              <td>' . Date('d/m/Y', Nvl(f($row, 'fim_real'), f($row, 'fim_previsto'))) . '</td>');
+        ShowHTML('          <tr><td nowrap><b>&nbsp;Programa:&nbsp;</td>');
+        ShowHTML('              <td>' . Nvl(f($row, 'nm_projeto'), '---') . '</td>');
+        ShowHTML('          <tr><td nowrap><b>&nbsp;Descri&ccedil;&atilde;o:&nbsp;</td>');
+        ShowHTML('              <td>'.htmlentities(f($row, 'descricao')));
+        ShowHTML('          <tr><td nowrap><b>&nbsp;Local:&nbsp;</td>');
+        ShowHTML('              <td>'.htmlentities(nvl(f($row, 'motivo_insatisfacao'),'---')).' </td>');
+        ShowHTML('        </tr>');        
+      }
+      ShowHTML('  </table>');
+      ShowHTML('<tr><td>&nbsp;</td></tr>');
+    }
+    ShowHTML('</table>');  
   }
 }
 

@@ -31,7 +31,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
    
     //Recupera os dados dos contratos do colaborador
     $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$l_usuario,null,null,null,null,null,null,null,null,null,null);
-    $RSContrato = SortArray($RSContrato,'fim','asc');
+    $RSContrato = SortArray($RSContrato,'inicio','desc');
     if (Nvl(f($RS,'inclusao'),'')=='') {
       $html.= '<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Curriculum não informado.</b><br><br><br><br><br><br><br><br><br><br></center></div>';
     } else {
@@ -39,11 +39,11 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.='<div align=center><center>';
       $html.=chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="100%">';
       $html.=chr(13).'<tr><td align="center">';
-      $html.=chr(13).'    <table width="99%" border="0">';
-      $html.=chr(13).'      <tr><td align="center" colspan="3"><font size=4><b>'.f($RS,'nome').'</b></font></td></tr>';
-      $html.=chr(13).'      <table width="99%" border="0">';
+      $html.=chr(13).'    <table id="pai" width="100%" border="0">';
+      $html.=chr(13).'      <tr><td align="center" colspan="3"><font size=3><b>'.f($RS,'nome').'</b></font></td></tr>';
+      $html.=chr(13).'      <tr><td><table width="99%" border="0">';
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS PESSOAIS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';      
-      $html.=chr(13).'      <tr valign="top"><td><b>Nome:</b></td>';
+      $html.=chr(13).'      <tr valign="top"><td width="30%"><b>Nome:</b></td>';
       $html.=chr(13).'        <td>'.f($RS,'nome').' </td>';
       if (nvl(f($RS,'sq_siw_arquivo'),'nulo')!='nulo') {
         if ($p_formato=='HTML') {
@@ -66,31 +66,29 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13).'        <td>'.f($RS,'nm_etnia').' </td></tr>';
       $html.=chr(13).'      <tr><td><b>Deficiência:</b></td>';
       $html.=chr(13).'        <td>'.Nvl(f($RS,'nm_deficiencia'),'---').' </td></tr>';    
-            $html.=chr(13).'<tr><td align="center" colspan="4">&nbsp;';
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>LOCAL DE NASCIMENTO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'      <tr valign="top">';
       $html.=chr(13).'          <td><b>País:</b></td>';
-      $html.=chr(13).'        <td>'.f($RS,'nm_pais_nascimento').' </td></tr>';
-      $html.=chr(13).'          <td><b>Estado:</b></td>';
-      $html.=chr(13).'        <td>'.f($RS,'nm_uf_nascimento').' </td></tr>';
-      $html.=chr(13).'          <td><b>Cidade:</b></td>';
-      $html.=chr(13).'        <td>'.f($RS,'nm_cidade_nascimento').' </td></tr>';
-            $html.=chr(13).'<tr><td align="center" colspan="4">&nbsp;';
+      $html.=chr(13).'          <td>'.f($RS,'nm_pais_nascimento').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Estado:</b></td>';
+      $html.=chr(13).'      <td>'.f($RS,'nm_uf_nascimento').' </td></tr>';
+      $html.=chr(13).'      <tr><td><b>Cidade:</b></td>';
+      $html.=chr(13).'          <td>'.f($RS,'nm_cidade_nascimento').' </td></tr>';
       $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DOCUMENTAÇÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'      <tr valign="top">';
       $html.=chr(13).'          <td><b>Identidade:</b></td>';
-          $html.=chr(13).'      <td>'.f($RS,'rg_numero').' </td></tr>';
+      $html.=chr(13).'      <td>'.f($RS,'rg_numero').' </td></tr>';
       $html.=chr(13).'          <td><b>Emissor:</b></td>';
-          $html.=chr(13).'      <td>'.f($RS,'rg_emissor').' </td></tr>';
+      $html.=chr(13).'      <td>'.f($RS,'rg_emissor').' </td></tr>';
       $html.=chr(13).'          <td><b>Data de emissão:</b></td>';
-          $html.=chr(13).'      <td>'.FormataDataEdicao(f($RS,'rg_emissao')).' </td></tr>';
+      $html.=chr(13).'      <td>'.FormataDataEdicao(f($RS,'rg_emissao')).' </td></tr>';
       $html.=chr(13).'      <tr valign="top">';
       $html.=chr(13).'          <td><b>CPF:</b></td>';
-          $html.=chr(13).'      <td>'.f($RS,'cpf').'</td></tr>';
+      $html.=chr(13).'      <td>'.f($RS,'cpf').'</td></tr>';
       $html.=chr(13).'          <td><b>Passaporte:</b></td>';
-          $html.=chr(13).'      <td>'.Nvl(f($RS,'passaporte_numero'),'---').' </td></tr>';
+      $html.=chr(13).'      <td>'.Nvl(f($RS,'passaporte_numero'),'---').' </td></tr>';
       $html.=chr(13).'          <td valign="top"><b>País emissor:</b></td>';
-          $html.=chr(13).'      <td>'.Nvl(f($RS,'nm_pais_passaporte'),'---').' </td></tr>';
+      $html.=chr(13).'      <td>'.Nvl(f($RS,'nm_pais_passaporte'),'---').' </td></tr>';
       $html.=chr(13).'          <td valign="top"><b>Número CTPS:</b></td>';
       $html.=chr(13).'      <td>'.Nvl(f($RSDocumentacao,'ctps_numero'),'---').' </td></tr>';          
       $html.=chr(13).'          <td valign="top"><b>Série:</b></td>';
@@ -135,13 +133,71 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       }
       $html.=chr(13).'          <td valign="top"><b>Observações</b></td>';
       $html.=chr(13).'      <td>'.Nvl(f($RSDocumentacao,'observacoes'),'---').' </td></tr>';
-      $html.=chr(13).'      <tr><td valign="top" colspan="3">&nbsp;</td>';
-      $html.=chr(13).'<tr><td align="center" colspan="4">&nbsp;';
+      
+      $RSPensao = db_getGpPensionista::getInstanceOf($dbms,null,$w_cliente,$w_usuario);
+      $RSPensao = SortArray($RSPensao,'nome','asc');
+      if (count($RSPensao)) {
+        $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PENSIONISTAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+        foreach($RSPensao as $row) {
+          $html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
+          $html.=chr(13).'          '.f($row,'nome').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
+          $html.=chr(13).'          <tr><td><b>Tipo de pensão:</b></td>'; 
+          $html.=chr(13).'              <td>'.f($row,'tipo_pensao').': '.formatNumber(f($row,'valor')).'</td></tr>';
+          $html.=chr(13).'          <tr><td><b>Período de pagamento:</b></td>'; 
+          $html.=chr(13).'              <td>'.formataDataEdicao(f($row,'inicio')).((nvl(f($row,'fim'),'')=='') ? ' em diante' : ' a '.formataDataEdicao(f($row,'fim'))).'</td></tr>';
+          $RSQuery1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($row,'chave'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+          foreach($RSQuery1 as $row1){$RSQuery1=$row1; break;}
+          $html.=chr(13).'      <tr><td colspan="2">';
+          $html.=chr(13).'          <tr><td><b>Sexo:</b></td>'; 
+          $html.=chr(13).'              <td>'.f($RSQuery1,'nm_sexo').'</td></tr>';
+          $w_rg = '---';
+          if (nvl(f($RSQuery1,'rg_numero'),'')!='') {
+            $w_rg = f($RSQuery1,'rg_numero').'&nbsp;'.f($RSQuery1,'rg_emissor');
+            if (nvl(f($RSQuery1,'rg_emissor'),'')!='') {
+              $w_rg .= '&nbsp;de '.FormataDataEdicao(f($RSQuery1,'rg_emissao'));
+            }
+          } 
+          $html.=chr(13).'          <tr><td><b>Identidade:</b></td>'; 
+          $html.=chr(13).'              <td>'.$w_rg.'</td></tr>';
+          $html.=chr(13).'      <tr><td colspan="2">';
+          $w_telefone = '---';
+          if (nvl(f($RSQuery1,'ddd'),'')!='') {
+            $w_telefone = '('.f($RSQuery1,'ddd').') ';
+          }
+          if (nvl(f($RSQuery1,'nr_telefone'),'')!='') {
+            $w_telefone .= '&nbsp;&nbsp;Fone: '.f($RSQuery1,'nr_telefone');
+          }
+          if (nvl(f($RSQuery1,'nr_fax'),'')!='') {
+            $w_telefone .= '&nbsp;&nbsp;Fax: '.f($RSQuery1,'nr_fax');
+          }
+          if (nvl(f($RSQuery1,'nr_celular'),'')!='') {
+            $w_telefone .= '&nbsp;&nbsp;Cel: '.f($RSQuery1,'nr_celular');
+          }
+          $html.=chr(13).'          <tr valign="top">';
+          $html.=chr(13).'            <td><b>Telefones:</b></td><td>'.$w_telefone.'</td></tr>';
+          // Recupera os dados bancários do pensionista
+          $RSConta = db_getContaBancoList::getInstanceOf($dbms,f($row,'chave'),null,null);
+          if (count($RSConta)>0) {
+            foreach($RSConta as $row2) { 
+              if (f($row2,'padrao')=='S') {
+                $html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=1></td></tr>';
+                $html.=chr(13).'          <tr><td><b>Banco:</b></td>';
+                $html.=chr(13).'                <td>'.f($row2,'banco').'</td></tr>';
+                $html.=chr(13).'          <tr><td><b>Agência:</b></td>';
+                $html.=chr(13).'              <td>'.f($row2,'agencia').'</td></tr>';
+                if (f($row2,'operacao')!='') $html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($row2,'operacao'),'---').'</td>';
+                $html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
+                $html.=chr(13).'              <td>'.Nvl(f($row2,'numero'),'---').'</td></tr>';
+              }
+            }
+          }
+          $html.=chr(13).'          <tr><td><font size="1">&nbsp;</font></td>'; 
+        }
+      }
+      
       $html.=chr(13).'      <tr><td  colspan="2"><br><font size="2"><b>CONTRATOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
 
-      
       //Contratos
-      
       $html.=chr(13). "<script type='text/javascript'>";
       $html.=chr(13). "$(function(){";
       $html.=chr(13). "    $('#contratos_antigos').css('display','none');";
@@ -149,45 +205,36 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13). "$('#contratos').click(function(event) {";
       $html.=chr(13). "    event.preventDefault();";
       $html.=chr(13). "    $('#contratos_antigos').slideToggle('slow');";
-      $html.=chr(13). "    if($('#colxpand').html() == '[-]'){";
-      $html.=chr(13). '      $(\'#colxpand\').html(\'<img src="images/expandir.gif">\');';
-      $html.=chr(13). "    }else{";
+      $html.=chr(13). '    if($(\'#colxpand\').html() == \'<img src="images/expandir.gif">\'){';
       $html.=chr(13). '      $(\'#colxpand\').html(\'<img src="images/colapsar.gif">\');';
-      $html.=chr(13). "    }";
-      $html.=chr(13). "  });";
-      $html.=chr(13). "});";
-      $html.=chr(13). "</script>";
+      $html.=chr(13). '    }else{';
+      $html.=chr(13). '      $(\'#colxpand\').html(\'<img src="images/expandir.gif">\');';
+      $html.=chr(13). '    }';
+      $html.=chr(13). '  });';
+      $html.=chr(13). '});';
+      $html.=chr(13). '</script>';
       $i = 0;
-      foreach($RSContrato as $row){
-        if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
-          $html.=chr(13).'      </table><table width="99%" border="0">';        
-          $html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</h3></td></tr>';
-        } elseif ($i==0) {
-          $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</h3></td></tr>';
-          $html.=chr(13).'      </table><table id="contratos_antigos" width="99%" border="0">';        
-          
-          $i++;
-        }                
-
-        //Recupera os dados do vínculo do colaborador
-        $RSVinculo = db_getVincKindData::getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
-
-        //Recupera os dados da modalidade do contrato
-        $RSModalidade = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
-        foreach($RSModalidade as $row1){$RSModalidade = $row1; break;}
-        
-        $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,f($row,'chave'),$l_usuario,null,null,null,null,null,null,null,null,null,null);
-        $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
-        $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
-            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
-            null, null, null, null, null, null, null,null, null, null, null, null, null, null, $l_usuario);
-        $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
-        
-        $RS_Afast = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
-        $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc');
-      
-        foreach($RS as $row){
-          $html.=chr(13).'        <tr><td><br><b>Matrícula:</b></td>';
+      $j = 0;
+      if (count($RSContrato)) {
+	      foreach($RSContrato as $row){
+	        if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
+	          $html.=chr(13).'      </table><tr><td colspan="2"><table width="99%" border="0">';
+	          $html.=chr(13).'      <tr><td colspan="2" bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>CONTRATO VIGENTE</b></td></tr>';
+	          $j++;
+	        } elseif ($i==0) {
+	          $html.=chr(13).'      <tr><br><td id="contratos" colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b><span id="colxpand"></span> CONTRATOS ANTIGOS</b></td></tr>';
+	          $html.=chr(13).'      </table><tr><td colspan="2"><table id="contratos_antigos" width="99%" border="0">';        
+	          $i++;
+	        }                
+	
+	        //Recupera os dados do vínculo do colaborador
+	        $RSVinculo = db_getVincKindData::getInstanceOf($dbms, f($row,'sq_tipo_vinculo'));
+	
+	        //Recupera os dados da modalidade do contrato
+	        $RSModalidade = db_getGPModalidade::getInstanceOf($dbms,$w_cliente,f($row,'sq_modalidade_contrato'),null,null,'S',null,null);
+	        foreach($RSModalidade as $row1){$RSModalidade = $row1; break;}
+	        
+          $html.=chr(13).'        <tr><td width="30%"><br><b>Matrícula:</b></td>';
           $html.=chr(13).'          <td>'.f($row,'matricula').' </td>';    
           $html.=chr(13).'        </tr>';         
           $html.=chr(13).'        <tr><td><b>Cargo:</b></td>';
@@ -262,12 +309,11 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
               $html.=chr(13).'      </tr>';          
             }
           }else{
-            $html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+            $html.=chr(13).'      <tr><td colspan="3" align="center"><b>Não foram encontrados registros.</b></td></tr>';
           }
           $html.=chr(13).'    </table>';
 
           //Percentual de desempenho
-          
           $html.=chr(13).'<tr valign="top"><td><b>Percentuais de desempenho</b>';
           $html.=chr(13).'    <td><table width=100%  border="1" bordercolor="#00000">';
           $html.=chr(13).'        <tr align="center">';
@@ -284,45 +330,57 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
               $html.=chr(13).'      </tr>';
             }            
           }else{
-            $html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+            $html.=chr(13).'      <tr><td colspan="2" align="center"><b>Não foram encontrados registros.</b></td></tr>';
           } 
           $html.=chr(13).'    </table><br>';
           
           //Resumo da folha de ponto mensal
-          $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms,f($row,'chave'),null);
-          $html.=chr(13).'      </tr>';
-          $html.=chr(13).'  <tr><td colspan="2"><table width="100%" border="1">';
-          $html.=chr(13).'      <tr valign="top"><td colspan="5"><b>RESUMO DA FOLHA DE PONTO';
-          $html.=chr(13).'      <td colspan="6"><b>BANCO DE HORAS';
-          $html.=chr(13).'      <tr valign="top"><td bgcolor="#f0f0f0"><b>Período';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas trabalhadas';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas Extras';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Atrasos';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Banco de horas do mês';            
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Saldo inicial';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Movimentações mensais';
-          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Total';          
-          foreach($RSMensal as $row3) { 
-            $html.=chr(13).'      <tr>';
-            $html.=chr(13).'      <td nowrap>'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4);
-            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_trabalhadas'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_extras'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_atrasos'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_saldo'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_mensal'),'00:00');
-            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
-          }          
-          $html.=chr(13).'        </table><br><br><br>';
+          $RSMensal = db_getGPFolhaPontoMensal::getInstanceOf($dbms,f($row,'chave'),null,null);
+          $RSMensal = SortArray($RSMensal,'mes','desc');
+          if (count($RSMensal)) {
+	          $html.=chr(13).'      </tr>';
+	          $html.=chr(13).'  <tr><td colspan="2"><table width="100%" border="1">';
+	          $html.=chr(13).'      <tr align="center" valign="top"><td colspan="5"><b>RESUMO DA FOLHA DE PONTO';
+	          $html.=chr(13).'      <td colspan="6"><b>BANCO DE HORAS';
+	          $html.=chr(13).'      <tr align="center" valign="top"><td bgcolor="#f0f0f0"><b>Período';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas trabalhadas';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas Extras';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Atrasos';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Banco de horas do mês';            
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Saldo inicial';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Movimentações mensais';
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Total';          
+	          $html.=chr(13).'      <td bgcolor="#f0f0f0"><b>Horas autorizadas';
+	          foreach($RSMensal as $row3) { 
+	            $html.=chr(13).'      <tr align="center" valign="top">';
+	            if ($p_formato=='HTML') {
+                $html.=chr(13).'      <td nowrap><A class="HL" HREF="'.$w_dir.'folha.php?par=Visual&O=V&w_usuario='.f($row3,'sq_pessoa').'&w_chave='.f($row3,'sq_contrato_colaborador').'&w_mes='.substr(f($row3,'mes'),4,2).'/'.substr(f($row3,'mes'),0,4).'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.MontaFiltro('GET').'" target="visualFolha" title="Exibe detalhamento da folha de ponto">'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4).'</a>&nbsp;';	              
+	            }else{
+	              $html.=chr(13).'      <td nowrap>'.nomeMes(substr(f($row3,'mes'),4,2)).'/'.substr(f($row3,'mes'),0,4);
+	            }	            //
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_trabalhadas'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_extras'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_atrasos'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_saldo'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row,'banco_horas_mensal'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_banco'),'00:00');
+	            $html.=chr(13).'      <td>'.Nvl(f($row3,'horas_autorizadas'),'00:00');
+	          }          
+	          $html.=chr(13).'        </table><br><br><br>';
+          }
+	      }
 
-        }
-      }
-      $html.=chr(13).'      </table><table width="99%" border="0">';
-      //Viagens e afastamentos
-      if (count($RS_Viagem)>0){
-        $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VIAGENS A SERVIÇO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';        
-        // Exibe as viagens a serviço do usuário logado
-        if (count($RS_Viagem)>0) {
+        // Exibe as viagens do colaborador
+	      $RSMenu_Viagem = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+        $RS_Viagem = db_getSolicList::getInstanceOf($dbms,f($RSMenu_Viagem,'sq_menu'),$l_usuario,'PD',4,
+            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null,
+            null, null, null, null, null, null, null,null, null, null, null, null, null, null, $l_usuario);
+        $RS_Viagem = SortArray($RS_Viagem,'inicio', 'desc', 'fim', 'desc');
+        if (count($RS_Viagem)>0){
+	        $html.=chr(13).'      </table><table width="99%"><tr><td colspan="2"><table width="100%" border="0">';
+	        $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VIAGENS A SERVIÇO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';        
+	        // Exibe as viagens a serviço do usuário logado
           $html.=chr(13).'                <table width="100%" bordercolor="#000000" border="1">';
           $html.=chr(13).'                  <tr align="center" valign="middle">';
           $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Início</td>';
@@ -331,54 +389,55 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
           $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Destinos</td>';
           reset($RS_Viagem);
           $w_cor = $w_cor=$conTrBgColor;
-          if (count($RS_Viagem)==0) {
-            $html.=chr(13).'                  <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=4 align="center"><b>Não foram encontrados registros.';
-          } else {
-            foreach($RS_Viagem as $row) {
-              $html.=chr(13).'                  <tr valign="top">';
-              $html.=chr(13).'                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_saida')),'-').'</td>';
-              $html.=chr(13).'                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_chegada')),'-').'</td>';
-              $html.=chr(13).'                    <td nowrap>';
-              $html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+          foreach($RS_Viagem as $row) {
+            $html.=chr(13).'                  <tr valign="top">';
+            $html.=chr(13).'                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_saida')),'-').'</td>';
+            $html.=chr(13).'                    <td align="center">'.Nvl(date(d.'/'.m.', '.H.':'.i,f($row,'phpdt_chegada')),'-').'</td>';
+            $html.=chr(13).'                    <td nowrap>';
+            $html.=chr(13).ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null);
+            if ($p_formato=='HTML') {
               $html.=chr(13).'                      <A class="HL" HREF="'.substr(f($RSMenu_Viagem,'link'),0,strpos(f($RSMenu_Viagem,'link'),'=')).'=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.f($RSMenu_Viagem,'p1').'&P2='.f($RSMenu_Viagem,'p2').'&P3='.f($RSMenu_Viagem,'p3').'&P4='.f($RSMenu_Viagem,'p4').'&TP='.$TP.'&SG='.f($RSMenu_Viagem,'sigla').MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'codigo_interno').'&nbsp;</a>';
-              $html.=chr(13).'                    <td nowrap>'.f($row,'trechos').'&nbsp;</td>';
-              $html.=chr(13).'                  </tr>';
+            }else{
+              $html.=chr(13).'                      '.f($row,'codigo_interno');
             }
-            $html.=chr(13).'    </table>';
+            $html.=chr(13).'                    <td nowrap>'.f($row,'trechos').'&nbsp;</td>';
+            $html.=chr(13).'                  </tr>';
           }
+          $html.=chr(13).'    </table>';
         }
-
+	
         // Exibe afastamentos do usuário logado
+	      $RS_Afast = db_getAfastamento::getInstanceOf($dbms,$w_cliente,$l_usuario,null,null,null,formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null);
+        $RS_Afast = SortArray($RS_Afast,'inicio_data','desc','inicio_periodo','asc','fim_data','desc','inicio_periodo','asc');
         if (count($RS_Afast)>0) {
           // Mostra os períodos de indisponibilidade
+          $html.=chr(13).'      </table><table width="99%"><tr><td colspan="2"><table width="99%" border="0">';
           $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>AFASTAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
           $html.=chr(13).'                <table width="100%" bordercolor="#000000" border="1">';
           $html.=chr(13).'                  <tr align="center" valign="top">';
-          $html.=chr(13).'                  <td bgColor="#f0f0f0"><b>Início';
-          $html.=chr(13).'                  <td bgColor="#f0f0f0"><b>Término';
-          $html.=chr(13).'                    <td><b>Dias';
-          $html.=chr(13).'                    <td><b>Tipo';
+          $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Início';
+          $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Término';
+          $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Dias';
+          $html.=chr(13).'                    <td bgColor="#f0f0f0"><b>Tipo';
+          $html.=chr(13).'                  </tr>';
           reset($RS_Afast);
           $w_cor = $w_cor=$conTrBgColor;
-          if (count($RS_Afast)==0) {
-            $html.=chr(13).'                  <tr bgcolor="'.$w_cor.'" valign="top"><td colspan=6 align="center"><b>Não foram encontrados registros.';
-          } else {
-            foreach($RS_Afast as $row) {
-              $html.=chr(13).'                <tr bgcolor="#FFFFFF" valign="top">';
-              $html.=chr(13).'                    <td align="center">'.date(d.'/'.m,f($row,'inicio_data')).' ('.f($row,'nm_inicio_periodo').')';
-              $html.=chr(13).'                    <td align="center">'.date(d.'/'.m,f($row,'fim_data')).' ('.f($row,'nm_fim_periodo').')';
-              $html.=chr(13).'                    <td align="center">'.crlf2br(f($row,'dias'));
-              $html.=chr(13).'                    <td>'.f($row,'nm_tipo_afastamento');
-            }
+          foreach($RS_Afast as $row) {
+            $html.=chr(13).'                <tr bgcolor="#FFFFFF" valign="top">';
+            $html.=chr(13).'                    <td align="center">'.date(d.'/'.m,f($row,'inicio_data')).' ('.f($row,'nm_inicio_periodo').')';
+            $html.=chr(13).'                    <td align="center">'.date(d.'/'.m,f($row,'fim_data')).' ('.f($row,'nm_fim_periodo').')';
+            $html.=chr(13).'                    <td align="center">'.crlf2br(f($row,'dias'));
+            $html.=chr(13).'                    <td>'.f($row,'nm_tipo_afastamento');
           }
           $html.=chr(13).'                </table></tr>';
-        }
+	      }
+        $html.=chr(13).'        </table>';
       }
-     
+      
       // Contas bancárias do usuário
       $RS = db_getContaBancoList::getInstanceOf($dbms,$l_usuario,null,null);
       $RS = SortArray($RS,'tipo_conta','asc','banco','asc','numero','asc');
-      $html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $html.=chr(13).'      <table width="99%"><tr><td colspan="2"><br><font size="2"><b>CONTAS BANCÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $html.=chr(13).'<tr><td align="center" colspan=3>';
       $html.=chr(13).'    <table width=100%  border="1" bordercolor="#00000">';
       $html.=chr(13).'        <tr align="center">';
@@ -387,6 +446,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
       $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Agência</b></div></td>';
       $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Operação</b></div></td>';
       $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Conta</b></div></td>';
+      $html.=chr(13).'          <td bgColor="#f0f0f0"><div><b>Padrão</b></div></td>';
       $html.=chr(13).'        </tr>';
       if (count($RS)<=0) {
         // Se não foram selecionados registros, exibe mensagem
@@ -402,6 +462,7 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
             $html.=chr(13).'        <td>'.f($row,'agencia').'</td>';
             $html.=chr(13).'        <td align="center">'.Nvl(f($row,'operacao'),'---').'</td>';
             $html.=chr(13).'        <td>'.f($row,'numero').'</td>';
+            $html.=chr(13).'        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>';
             $html.=chr(13).'      </tr>';        
           }else{
             $html.=chr(13).'      <tr><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>';
@@ -457,7 +518,11 @@ function visualFicha($l_cliente,$l_usuario,$O,$p_formato=0) {
         foreach ($RS as $row) {
           $html.=chr(13).'      <tr valign="top">';
             if (f($row,'email')=='S') {
-              $html.=chr(13).'        <td><a href="mailto:'.f($row,'logradouro').'">'.f($row,'logradouro').'</a></td>';
+              if ($p_formato=='HTML') {
+                $html.=chr(13).'        <td><a href="mailto:'.f($row,'logradouro').'">'.f($row,'logradouro').'</a></td>';  
+              }else{
+                $html.=chr(13).'        <td>'.f($row,'logradouro').'</td>';
+              }              
             } else {
               $html.=chr(13).'        <td><a href="://'.str_replace('://','',f($row,'logradouro')).'" target="_blank">'.f($row,'logradouro').'</a></td>';
             } 

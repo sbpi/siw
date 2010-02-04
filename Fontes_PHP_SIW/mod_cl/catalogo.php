@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -914,6 +914,7 @@ function PesquisaPreco() {
     ShowHTML('          <tr bgcolor="'.$w_cor.'" align="center">');
     ShowHTML('            <td><b>Código</td>');
     ShowHTML('            <td><b>Nome</td>');
+    ShowHTML('            <td><b>U.M.</td>');
     ShowHTML('            <td><b>Fonte da Pesquisa</td>');
     ShowHTML('            <td><b>Dt.Pesq.</td>');
     ShowHTML('            <td><b>Dias Valid.</td>');
@@ -922,6 +923,7 @@ function PesquisaPreco() {
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
     ShowHTML('        <td>'.$w_codigo_item.'</td>');
     ShowHTML('        <td>'.ExibeMaterial($w_dir_volta,$w_cliente,$w_nome_item,$w_chave_item,$TP,null).'</td>');
+    ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
     SelecaoFontePesquisa(null,null,null,$w_origem,null,'w_origem',null,null);
     ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_inicio" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_inicio.'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('        <td align="center" nowrap><input '.$w_Disabled.' type="text" name="w_dias" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias,f($RS_Parametro,'dias_validade_pesquisa')).'" title=Dias de validade da pesquisa de preço."></td>');
@@ -932,7 +934,7 @@ function PesquisaPreco() {
     }
     ShowHTML('        </tr>');
     if (f($RS_Item,'classe')!=5) {
-      ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
+      ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="8">');
       ShowHTML('          <TABLE WIDTH="100%" border=0>');
       ShowHTML('            <tr valign="top">');
       ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$w_fabricante.'"></td>');

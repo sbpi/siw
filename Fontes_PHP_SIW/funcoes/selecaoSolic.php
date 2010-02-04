@@ -7,7 +7,7 @@ include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 // =========================================================================
 // Montagem da seleção das solicitaçãoes, de acordo com o serviço selecionado
 // -------------------------------------------------------------------------
-function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$chaveAux3=null,$separador='<BR />') {
+function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAux2,$campo,$restricao,$atributo,$chaveAux3=null,$separador='<BR />',$colspan=1) {
   extract($GLOBALS);
   if ($chaveAux=='CLASSIF') {
     include_once($w_dir_volta.'funcoes/selecaoCC.php');
