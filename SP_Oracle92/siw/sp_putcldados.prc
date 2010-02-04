@@ -28,6 +28,8 @@ create or replace procedure SP_PutCLDados
    w_numero_certame cl_solicitacao.numero_certame%type;
    w_sq_modalidade  number(18);
    w_certame        varchar2(1);
+   w_prefixo        siw_menu.prefixo%type;
+   w_codigo         siw_solicitacao.codigo_interno%type;
 begin
    If p_restricao = 'PROT' Then
       -- Recupera a modalidade atual
@@ -54,9 +56,14 @@ begin
          where sq_siw_solicitacao = p_chave;
       End If;
    ElsIf p_restricao = 'DADOS' Then
-      -- Recupera a modalidade atual
-      select a.sq_lcmodalidade into w_sq_modalidade from cl_solicitacao a where sq_siw_solicitacao = p_chave;
-      
+      -- Recupera o prefixo do serviço, o código da solicitação e a modalidade
+      select b.prefixo, a.codigo_interno, c.sq_lcmodalidade, c.numero_certame 
+        into w_prefixo, w_codigo,         w_sq_modalidade,   w_numero_certame
+        from siw_solicitacao           a
+             inner join siw_menu       b on (a.sq_menu            = b.sq_menu)
+             inner join cl_solicitacao c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
+       where a.sq_siw_solicitacao = p_chave;
+
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
          sq_lcmodalidade          = p_sq_lcmodalidade,
@@ -81,7 +88,10 @@ begin
         set a.fim = p_fim
       where sq_siw_solicitacao = p_chave;
 
-      If w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade) Then
+      If w_sq_modalidade is null or 
+         w_numero_certame is null or 
+         (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade)
+      Then
          -- Recupera o número do certame
          CL_CriaParametro(p_chave, w_numero_certame);
 

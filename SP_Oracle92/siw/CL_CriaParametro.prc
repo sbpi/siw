@@ -13,7 +13,7 @@ create or replace procedure CL_CriaParametro
              coalesce(f.sigla, i.sufixo) as sufixo
         from siw_menu                            a
              inner     join siw_solicitacao      c on (a.sq_menu            = c.sq_menu)
-               inner   join siw_tramite          d on (c.sq_siw_tramite     = d.sq_siw_tramite)
+               inner   join siw_tramite          d on (c.sq_siw_tramite     = d.sq_siw_tramite and d.sigla <> 'CI')
                inner   join cl_unidade           e on (c.sq_unidade         = e.sq_unidade)
                  inner join eo_unidade           f on (f.sq_unidade         = coalesce(e.sq_unidade_pai,e.sq_unidade))
                inner   join cl_solicitacao       g on (c.sq_siw_solicitacao = g.sq_siw_solicitacao)
