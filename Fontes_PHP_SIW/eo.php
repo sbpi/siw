@@ -150,7 +150,7 @@ function Unidade() {
 
 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<style> ');
   ShowHTML(' .lh {text-decoration:none;font:Arial;color="#FF0000"}');
   ShowHTML(' .lh:HOVER {text-decoration: underline;} ');
@@ -504,7 +504,7 @@ function Localizacao() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -664,7 +664,7 @@ function Documentos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -833,7 +833,7 @@ function Responsavel() {
     $w_inicio_titular = date('d/m/Y',time());
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -998,7 +998,7 @@ function BuscaUnidade() {
   $RS = SortArray($RS,'nome','asc', 'co_uf', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de unidade</TITLE>');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_nome, l_sigla, l_chave) {');

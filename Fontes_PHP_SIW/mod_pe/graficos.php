@@ -109,7 +109,7 @@ function Hierarquico() {
   $data = $diagram->getNodePositions();
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Diagrama Hierárquico</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -269,7 +269,7 @@ function Gantt() {
   foreach ($RS as $row) { $RS = $row; break; }
   $w_cabecalho   = f($RS,'nome_completo');  
 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Gantt</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');

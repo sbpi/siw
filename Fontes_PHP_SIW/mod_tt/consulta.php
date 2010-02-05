@@ -157,7 +157,7 @@ function LigacaoParticular(){
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if (!(strpos('R',$O)===false)){
     ScriptOpen('JavaScript');
@@ -329,7 +329,7 @@ function listaTelefonica(){
   } else {
     cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   ShowHTML('<TITLE>Lista Telefônica</TITLE>');
   ShowHTML('</HEAD>');
@@ -372,7 +372,7 @@ function ResumoLigacaoParticular(){
   } else {
     cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Lista Telefônica</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');

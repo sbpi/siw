@@ -272,7 +272,7 @@ function Vinculacao() {
   } else {
     $w_embed = 'HTML';
     cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de projetos</TITLE>');
     ScriptOpen('Javascript');
@@ -603,7 +603,7 @@ function ConfiguraViagem() {
   }
   
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Configuração de viagens</TITLE>');
   If ($O!='L') {
     ScriptOpen('Javascript');
@@ -707,8 +707,9 @@ function ConfiguraViagem() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
-    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,2);
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,5);
+    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,7);
+    ShowHTML('      <tr valign="top">');
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,7);
     ShowHTML('      <tr valign="top">');
     MontaRadioSN("<b>Diária?</b>",$w_diaria,'w_diaria');
     MontaRadioSN("<b>Hospedagem?</b>",$w_hospedagem,'w_hospedagem');
@@ -778,7 +779,7 @@ function ConfiguraCompra() {
   }
   
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Configuração de compras e licitações</TITLE>');
   If ($O!='L') {
     ScriptOpen('Javascript');
@@ -876,8 +877,9 @@ function ConfiguraCompra() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr><td><table border="0" width="100%">');
     ShowHTML('      <tr valign="top">');
-    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,2);
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,3);
+    SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_chave,null,'w_rubrica',null,null,5);
+    ShowHTML('      <tr valign="top">');
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento',null,null,5);
     ShowHTML('      <tr valign="top">');
     MontaRadioSN("<b>Material de consumo?</b>",$w_consumo,'w_consumo');
     MontaRadioSN("<b>Material permanente?</b>",$w_permanente,'w_permanente');
@@ -948,7 +950,7 @@ function TipoEvento() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de evento</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {
@@ -1116,7 +1118,7 @@ function TipoRestricao() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1260,7 +1262,7 @@ function CronPrestacao() {
     $w_tipo             = f($RS,'tipo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();

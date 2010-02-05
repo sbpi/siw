@@ -336,7 +336,7 @@ function Inicial() {
   } else {
     $w_embed = 'HTML';
     cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');    
     if ($P1==2 || $P1==3) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de Viagens</TITLE>');
@@ -795,7 +795,7 @@ function Geral() {
   $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,'S',null,null,null);
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1273,7 +1273,7 @@ function OutraParte() {
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1626,7 +1626,7 @@ function Trechos() {
     }
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1878,7 +1878,7 @@ function Bilhetes() {
     $w_observacao   = f($RS,'observacao');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Bilhetes</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -2392,7 +2392,7 @@ function RegistroAlteracao() {
     $w_total = formatNumber(nvl($w_valor_dia,0)+nvl($w_valor_hsp,0)+nvl($w_valor_tar,0)+nvl($w_valor_tax,0));
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Alterações de viagem</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -2699,7 +2699,7 @@ function Vinculacao() {
     $RS = SortArray($RS,'inicio','asc');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -3002,7 +3002,7 @@ function DadosFinanceiros() {
   $w_desc_alimentacao   = Nvl(formatNumber(f($RS,'desconto_alimentacao')),0);
   $w_desc_transporte    = Nvl(formatNumber(f($RS,'desconto_transporte')),0);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   FormataValor();
   ValidateOpen('Validacao');
@@ -3265,7 +3265,7 @@ function PagamentoDiaria() {
   $w_desc_alimentacao   = Nvl(formatNumber(f($RS,'desconto_alimentacao')),0);
   $w_desc_transporte    = Nvl(formatNumber(f($RS,'desconto_transporte')),0);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Pagamento de diárias</TITLE>');
   ScriptOpen('JavaScript');
   FormataValor();
@@ -3684,7 +3684,7 @@ function Diarias() {
   $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null,null);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Diárias</TITLE>');
   if ($O=='L') {
     ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
@@ -4418,7 +4418,7 @@ function Diarias_Solic() {
   $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null,null);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Diárias</TITLE>');
   if ($O=='L') {
     ShowHTML('<SCRIPT LANGUAGE="JAVASCRIPT">');
@@ -4959,7 +4959,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de viagem</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -5003,7 +5003,7 @@ function Excluir() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='E') {
     ScriptOpen('JavaScript');
@@ -5102,7 +5102,7 @@ function Encaminhamento() {
   if ($O=='V') $w_erro = ValidaViagem($w_cliente,$w_chave,$SG,'PDGERAL',null,null,$w_tramite);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (substr(Nvl($w_erro,'nulo'),0,1)!='0' && (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S'))) {
     ScriptOpen('JavaScript');
@@ -5252,7 +5252,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -5355,7 +5355,7 @@ function Concluir() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,substr($SG,0,3).'GERAL');
   $w_tramite = f($RS,'sq_siw_tramite');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -5420,7 +5420,7 @@ function InformarPassagens() {
   $w_pta                = f($RS,'pta');
   $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   CheckBranco();
   FormataData();
@@ -5566,7 +5566,7 @@ function InformarCotacao() {
   $w_pta                = f($RS,'pta');
   $w_emissao_bilhete    = FormataDataEdicao(f($RS,'emissao_bilhete'));
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Informar cotação</TITLE>');
   ScriptOpen('JavaScript');
   CheckBranco();
@@ -6012,7 +6012,7 @@ function Anexo() {
     }
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -6203,7 +6203,7 @@ function PrestarContas() {
     $w_deposito                 = f($RS,'deposito_identificado');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Prestação de contas</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -6736,7 +6736,7 @@ function Reembolso() {
     $w_ressarcimento_data       = FormataDataEdicao(f($RS,'ressarcimento_data'));
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Dados do reembolso</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -6981,7 +6981,7 @@ function ReembolsoValor() {
     $w_observacao       = f($RS,'observacao');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Cadastro de valor de reembolso</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,

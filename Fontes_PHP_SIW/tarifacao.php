@@ -179,7 +179,7 @@ function Informar(){
     } 
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
   if (!(strpos('IAEPR',$O)===false)){
     ScriptOpen('JavaScript');

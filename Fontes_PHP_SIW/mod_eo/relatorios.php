@@ -128,7 +128,7 @@ function Rel_Unidades() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatorio de unidades</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -283,7 +283,7 @@ function Rel_Unidades() {
     if ($p_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de unidade</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');

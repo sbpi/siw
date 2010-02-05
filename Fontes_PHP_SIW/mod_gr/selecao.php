@@ -172,7 +172,7 @@ function indica(){
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML($api->getHeadCode());
   ShowHTML('<TITLE>'.$conSgSistema.' - Objetivos</TITLE>');
   Estrutura_CSS($w_cliente);

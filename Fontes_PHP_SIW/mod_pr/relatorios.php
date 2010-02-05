@@ -169,7 +169,7 @@ function Rel_Progresso() {
       $w_embed = 'WORD';
     } else {
       Cabecalho();
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -522,7 +522,7 @@ function Rel_Progresso() {
     }
     if ($w_cont==1) $p_plano = $w_registro;
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -676,7 +676,7 @@ function Rel_Executivo() {
       $w_embed = 'WORD';
     } else {
       Cabecalho();
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório executivo do projeto</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -982,7 +982,7 @@ function Rel_Executivo() {
     }
     if ($w_cont==1) $p_plano = $w_registro;
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de progresso do projeto</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -1120,7 +1120,7 @@ function Rel_Projeto() {
       $w_embed = 'WORD';
     } else {
       Cabecalho();
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório detalhado do projeto</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
@@ -1184,7 +1184,7 @@ function Rel_Projeto() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -1426,7 +1426,7 @@ function Rel_Atualizacao() {
       $w_embed = 'WORD';
     } else {
       Cabecalho();
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório de atualização dos dados dos projetos</TITLE>');
       ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
       ShowHTML('</HEAD>');
@@ -1527,7 +1527,7 @@ function Rel_Atualizacao() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de detalhamento de projetos</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');

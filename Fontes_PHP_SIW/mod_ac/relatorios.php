@@ -114,7 +114,7 @@ function Demonstrativo() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Demonstrativo jurídico/financeiro</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -378,7 +378,7 @@ function Demonstrativo() {
     }
   } elseif ($O=='P') {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Demostrativo jurídico/financeiro</TITLE>');
     ScriptOpen('JavaScript');
     CheckBranco();

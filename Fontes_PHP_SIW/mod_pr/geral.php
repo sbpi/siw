@@ -261,7 +261,7 @@ function Inicial() {
     HeaderWord(); 
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.MontaURL('MESA').'">');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de solicitações</TITLE>");
@@ -684,7 +684,7 @@ function Visual() {
   if ($w_tipo=='PDF') {
     ob_start();  
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
     ShowHTML('</HEAD>');
@@ -697,7 +697,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -729,7 +729,7 @@ function EmiteOS() {
     $w_logo='img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Ordem de Serviço</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -771,7 +771,7 @@ function Excluir() {
     $w_solic_recurso   = f($RS,'chave_aux');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (strpos('E',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -866,7 +866,7 @@ function Encaminhamento() {
   if ($O=='V') $w_erro = ValidaGeral($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -1011,7 +1011,7 @@ function Opiniao() {
   $w_tipo       = Nvl($_REQUEST['w_tipo'],'');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
@@ -1091,7 +1091,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');

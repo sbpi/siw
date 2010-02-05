@@ -287,7 +287,7 @@ function Gerencial() {
   } else {
     $w_embed = 'HTML';
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if ($O=='P') {
       ScriptOpen('Javascript');
       CheckBranco();

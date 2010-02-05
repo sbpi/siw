@@ -129,7 +129,7 @@ function Afastamento() {
       
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de afastamentos</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
@@ -454,7 +454,7 @@ function BuscaColaborador() {
   //foreach ($RS as $row) {$RS = $row; break;}
   Cabecalho();
   ShowHTML('<TITLE>Seleção de colaborador</TITLE>');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_chave) {');

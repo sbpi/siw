@@ -134,7 +134,7 @@ function Rel_Permissao() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatorio de permissões</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -299,7 +299,7 @@ function TelaUsuarioRel() {
   } else {
     Cabecalho();
     $w_embed = 'EMBED';
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

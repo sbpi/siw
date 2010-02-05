@@ -256,8 +256,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         if ($w_atual!=f($row,'sq_material')) {
           if ($w_exibe) {
             $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
-            $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,2).'</td>';
-            $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,2).'</td>';
+            $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,0).'</td>';
+            $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,0).'</td>';
             if(f($RS,'ativo')=='S') {
               $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_unit,4).'</td>';
               $l_html.=chr(13).'        <td align="right">'.formatNumber(($w_item_lic*$w_item_unit),4).'</td>';
@@ -303,8 +303,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       if ($w_exibe && f($RS,'ativo')=='S') {
         $l_html.=chr(13).'      <tr><td colspan=4><td align="right" nowrap><b>Totais do item</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,2).'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,2).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_lic,0).'</td>';
+        $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_comp,0).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber($w_item_unit,4).'</td>';
         if(f($RS,'ativo')=='S') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(($w_item_lic*$w_item_unit),4).'</td>';
@@ -377,6 +377,66 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'    </table>';
   }
   
+  //Listagem dos itens da licitação
+  $RSOrc = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVORC');
+  $RSFin = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'LICPREVFIN'); 
+  if ($RSOrc || $RSFin) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PREVISÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan=2><table width="100%" border=0 cellpadding=0 cellspacing=5><tr valign="top">';
+    
+    // Exibe previsão orçamentária
+    $l_html.=chr(13).'        <td align="center" width="50%"><table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'          <td colspan="3" bgColor="#f0f0f0"><b>ORÇAMENTÁRIO</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Projeto</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$w_TrBgColor;
+    $w_tot = 0;
+    foreach($RSOrc as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      if($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.f($row,'cd_projeto').'</td>';
+      else                $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_projeto'),f($row,'cd_projeto'),'S','S').'</td>';
+      $l_html .= chr(13).'          <td>'.f($row,'nm_rubrica').'&nbsp';
+      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'vl_pesquisa')).'</td>';
+      $w_tot += f($row,'vl_pesquisa');
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+    $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAIS</b></td>';
+    $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_tot).'</b></td>';
+    $l_html.=chr(13).'      </tr>';
+    $l_html.=chr(13).'         </table></td>';
+
+    // Exibe previsão financeira
+    $l_html.=chr(13).'        <td align="center" width="50%"><table width=100%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'          <td colspan="2" bgColor="#f0f0f0"><b>FINANCEIRO</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo de Lançamento</b></td>';
+    $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$w_TrBgColor;
+    $w_tot = 0;
+    foreach($RSFin as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html .= chr(13).'          <td>'.f($row,'nm_lancamento').'&nbsp';
+      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'vl_pesquisa')).'</td>';
+      $w_tot += f($row,'vl_pesquisa');
+      $l_html.=chr(13).'      </tr>';
+    } 
+    $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+    $l_html.=chr(13).'        <td align="right"><b>TOTAIS</b></td>';
+    $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_tot).'</b></td>';
+    $l_html.=chr(13).'      </tr>';
+    $l_html.=chr(13).'         </table></td></tr>';
+    $l_html.=chr(13).'       </table></td></tr>';
+  }
+  
   //Listagem das propostas da licitação
   $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
   $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
@@ -391,10 +451,11 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>PROPOSTAS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-    $l_html.=chr(13).'        <tr valign="top">';
+    $l_html.=chr(13).'        <tr>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>Item</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>Material</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>Qtd.</td>';
+    $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>$ médio</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>Fornecedor</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0" rowspan=2><b>Dt.Prop.</b></td>';
@@ -416,6 +477,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
          if($l_tipo=='WORD') $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.f($row,'nome').'</td>';
          else                $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>';
+         $l_html.=chr(13).'        <td align="center" rowspan='.f($row,'qtd_proposta').' title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
          $l_html.=chr(13).'        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),2),'---').'</td>';
          $w_atual      = f($row,'sq_material');
       } else {

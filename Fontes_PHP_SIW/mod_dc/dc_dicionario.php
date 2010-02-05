@@ -175,7 +175,7 @@ function Arquivos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -390,7 +390,7 @@ function Colunas() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -613,7 +613,7 @@ function Procedure() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -812,7 +812,7 @@ function Relacionamento() {
     }
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1006,7 +1006,7 @@ function Sistema() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1150,7 +1150,7 @@ function StoredProcedure() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1344,7 +1344,7 @@ function Tabela() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1537,7 +1537,7 @@ function Trigger() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1725,7 +1725,7 @@ function Usuario() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1874,7 +1874,7 @@ function Indice() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2050,7 +2050,7 @@ function Evento() {
   $RS = db_getTrigEvento::getInstanceOf($dbms,$w_chave,null);
   $RS = SortArray($RS,'nm_evento','asc');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   ShowHTML('  var i; ');
@@ -2144,7 +2144,7 @@ function SPTabs() {
   $RS = db_getSPTabs::getInstanceOf($dbms,$w_chave,null);
   $RS = SortArray($RS,'nm_usuario_tabela','asc','nm_tabela','asc');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Associação entre SP e Tabelas</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -2302,7 +2302,7 @@ function SPSP() {
   }
   reset($RS);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Associação entre SP e SP</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -2483,7 +2483,7 @@ function SPParam() {
   } 
   $RS = SortArray ($RS,'ord_sp_param','asc');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Associação entre SP e Parâmetros</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');

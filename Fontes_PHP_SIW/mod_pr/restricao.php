@@ -187,7 +187,7 @@ function Restricao() {
     $w_ultima_atualizacao    = formataDataEdicao(f($RS,'ultima_atualizacao'));
   }  
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -436,7 +436,7 @@ function Pacote() {
   $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,$w_chave_aux,'QUESTAO',null);
   $RS = SortArray($RS,'sq_etapa_pai','asc'); 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.'</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O=='M') {
@@ -583,7 +583,7 @@ function ComentarioEtapa() {
     $w_caminho               = f($row,'caminho');
   }  
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Comentários</TITLE>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (strpos('IAEP',$O)!==false) {
@@ -847,7 +847,7 @@ function TelaRestricao() {
   $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Restrição</TITLE>');
   ShowHTML('</HEAD>');
@@ -890,7 +890,7 @@ function VisualRestricao() {
   $w_ultima_atualizacao    = f($RS,'phpdt_ultima_atualizacao');
 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   ShowHTML('<TITLE>'.$conSgSistema.' - Restrições</TITLE>');
   ShowHTML('</HEAD>');
@@ -1238,7 +1238,8 @@ function Main() {
     case 'GRAVA':              Grava();            break;
     default:
     Cabecalho();
-    ShowHTML('<HEAD><BASE HREF="'.$conRootSIW.'"></HEAD>');
+    head();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'"></HEAD>');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Texto_Abre();
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

@@ -139,7 +139,7 @@ function Rel_ItensAta() {
     CabecalhoWord($w_cliente,'ITENS DE ARP',$w_pag);
   } else {
     if($O=='P') Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     ShowHTML('<TITLE>Itens de ARP</TITLE>');
     Estrutura_CSS($w_cliente);

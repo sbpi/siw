@@ -172,7 +172,7 @@ function Inicial() {
     $w_ativo             = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -391,7 +391,7 @@ function VisualAfericao() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
@@ -514,7 +514,7 @@ function VisualDados() {
   $p_cidade         = $_REQUEST['p_cidade'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
   BodyOpen(null);
@@ -776,7 +776,7 @@ function Aferidor() {
   } 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('CIAE',$O)!==false) {
@@ -957,7 +957,7 @@ function AferidorPerm() {
   //} 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Aferidores</TITLE>');
   Estrutura_CSS($w_cliente);
   ShowHTML('</HEAD>');
@@ -1098,7 +1098,7 @@ function Afericao() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1322,7 +1322,7 @@ function Solic() {
     $RS = SortArray($RS,'nm_tipo_indicador','asc','nome','asc');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1626,7 +1626,7 @@ function Meta() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Monitoramento de metas</TITLE>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if (strpos('IAEP',$O)!==false) {
@@ -1983,7 +1983,7 @@ function CronMeta() {
     }
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Cronograma da meta</TITLE>');
   if (strpos('IAEP',$O)!==false && $w_edita=='S') {
     ScriptOpen('JavaScript');
@@ -2163,7 +2163,7 @@ function TelaIndicador() {
   global $p_Disabled;
   $p_sigla          = $_REQUEST['w_sigla'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</HEAD>');
   BodyOpen(null);
@@ -2199,7 +2199,7 @@ function TelaMeta() {
   $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Meta</TITLE>');
   ShowHTML('</HEAD>');
@@ -2247,7 +2247,7 @@ function VisualMeta() {
   }
 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   ShowHTML('<TITLE>'.$conSgSistema.' - Meta</TITLE>');
   ShowHTML('</HEAD>');
@@ -2455,7 +2455,7 @@ function Documentos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2927,7 +2927,8 @@ function Main() {
     case 'GRAVA':              Grava();             break;
     default:
     Cabecalho();
-    ShowHTML('<HEAD><BASE HREF="'.$conRootSIW.'"></HEAD>');
+    head();
+    ShowHTML('<BASE HREF="'.$conRootSIW.'"></HEAD>');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Texto_Abre();
     ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/icone/underc.gif" align="center"> <b>Esta opção está sendo desenvolvida.</b><br><br><br><br><br><br><br><br><br><br></center></div>');

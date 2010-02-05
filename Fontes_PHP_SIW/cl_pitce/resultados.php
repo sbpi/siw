@@ -147,7 +147,7 @@ function Inicial() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
     ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
     ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');

@@ -378,7 +378,7 @@ function Inicial() {
   } else {
     $w_embed = 'HTML';
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     if ($P1==2 || $P1==3) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
@@ -858,7 +858,7 @@ function BuscaCompra() {
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('<TITLE>Seleção de compra/licitação</TITLE>');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
@@ -1099,7 +1099,7 @@ function Geral() {
   }
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1552,7 +1552,7 @@ function Termo() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1729,7 +1729,7 @@ function DadosAdicionais() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -2021,7 +2021,7 @@ function OutraParte() {
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -2511,7 +2511,7 @@ function Representante() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   if ($O!='L') {
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.(($w_tipo=='PREPOSTO') ? 'Prepostos': 'Representantes').'</TITLE>');
     ScriptOpen('JavaScript');
     Modulo();
@@ -2823,7 +2823,7 @@ function Parcelas() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (strpos('IAEGCPV',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -3357,7 +3357,7 @@ function Anexo() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3499,7 +3499,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3535,7 +3535,7 @@ function Excluir() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O='E') {
@@ -3635,7 +3635,7 @@ function Encaminhamento() {
   // Se for envio, executa verificações nos dados da solicitação
   if ($O=='V') $w_erro = ValidaAcordo($w_cliente,$w_chave,substr($SG,0,3).'GERAL',null,null,null,$w_tramite);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
@@ -3772,7 +3772,7 @@ function Encaminhamento1() {
   // Se for envio, executa verificações nos dados da solicitação
   if ($O=='V') $w_erro = ValidaAcordo($w_cliente,$w_chave,substr($SG,0,3).'GERAL',null,null,null,$w_tramite);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -3894,7 +3894,7 @@ function Anotar() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
@@ -4013,7 +4013,7 @@ function Concluir() {
   if ($O=='V') $w_erro = ValidaAcordo($w_cliente,$w_chave,substr($SG,0,3).'GERAL',null,null,null,$w_tramite);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
@@ -4211,7 +4211,7 @@ function Aditivos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Aditivos de contrato</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -4574,7 +4574,7 @@ function Notas() {
     }
   } 
    Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Notas de empenho</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -4864,7 +4864,7 @@ function NotaCancel() {
     }
   } 
    Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Cancelamento de notas de empenho</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');

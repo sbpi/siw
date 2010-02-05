@@ -147,7 +147,7 @@ function Inicial() {
     $w_diretorio            = $_REQUEST['w_diretorio'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
   ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');
   ShowHTML('  <!-- JS FILE for my tree-view menu -->');

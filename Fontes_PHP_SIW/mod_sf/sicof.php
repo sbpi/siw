@@ -94,7 +94,7 @@ function ConsultaDoc() {
     foreach ($RS as $row) { $RS = $row; break; }
   } 
 
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     Modulo();

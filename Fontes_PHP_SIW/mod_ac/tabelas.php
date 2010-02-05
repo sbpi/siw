@@ -132,7 +132,7 @@ function TipoAcordo() {
   $w_heranca        = $_REQUEST['w_heranca'];
   $w_sq_tipo_acordo = $_REQUEST['w_sq_tipo_acordo'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de Acordo</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($w_troca>'' && strpos('EDT',$O)===false) {
@@ -517,7 +517,7 @@ function FormaPagamento(){
   global $w_Disabled;
   $w_chave   = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das formas de pagamentos</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O=='') $O='L';
@@ -745,7 +745,7 @@ function Parametros() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1231,7 +1231,7 @@ function EspecDespesa() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Especificação de despesa</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O!='L') {
@@ -1548,7 +1548,7 @@ function PrestacaoContas() {
   }  
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {

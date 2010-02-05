@@ -314,7 +314,7 @@ function LogOn() {
 
     $w_username = $_REQUEST['Login'];
     ShowHTML('<HTML>');
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<link rel="shortcut icon" href="'.$conRootSIW.'favicon.ico" type="image/ico" />');
     ShowHTML('<script type="text/javascript" src="js/modal/js/ajax.js"></script>');
     ShowHTML('<script type="text/javascript" src="js/modal/js/ajax-dynamic-content.js"></script> ');

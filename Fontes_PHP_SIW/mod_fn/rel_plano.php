@@ -111,7 +111,7 @@ function Inicial() {
     } 
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de contas</TITLE>');
     if ($O == 'P') {
       ScriptOpen('JavaScript');

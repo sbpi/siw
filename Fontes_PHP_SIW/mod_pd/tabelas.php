@@ -159,7 +159,7 @@ function CiaTrans() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -323,7 +323,7 @@ function Desconto() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataValor();
@@ -489,7 +489,7 @@ function MeioTrans() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -668,7 +668,7 @@ function ValorDiaria() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataValor();
@@ -859,7 +859,7 @@ function Parametros() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -982,7 +982,7 @@ function Unidade() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1155,7 +1155,7 @@ function LimiteUnidade() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Limites de passagens e diárias por unidade</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1306,7 +1306,7 @@ function Usuario() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='I') {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1420,7 +1420,7 @@ function CategoriaDiaria() {
     $w_tramite      = f($RS,'tramite_especial');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

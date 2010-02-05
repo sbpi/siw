@@ -158,7 +158,7 @@ function Plano() {
   }  
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {
@@ -580,7 +580,7 @@ function Natureza() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -710,7 +710,7 @@ function Horizonte() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -859,7 +859,7 @@ function Objetivo(){
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Objetivos</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAET',$O)===false)) {
@@ -1045,7 +1045,7 @@ function Telaplano(){
   $RS = db_getPlanoEstrategico::getInstanceOf($dbms,$w_cliente,$w_sq_plano,null,null,null,null,null,'REGISTROS');
   foreach ($RS as $row) { $RS = $row; break; }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Plano Estratégico</TITLE>');
   ScriptOpen('JavaScript');
@@ -1479,7 +1479,7 @@ function Arquivo() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1645,7 +1645,7 @@ function TipoInter() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de interessado</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {
@@ -1820,7 +1820,7 @@ function TipoRecurso() {
   }  
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {
@@ -2086,7 +2086,7 @@ function TipoIndicador() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2222,7 +2222,7 @@ function UnidadeMedida() {
   } 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Unidades de medida</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {
@@ -2378,7 +2378,7 @@ function Unidade() {
     $w_ativo        = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataCNPJ();

@@ -100,7 +100,7 @@ function Help() {
   $w_objetivo_espec = f($RS,'objetivo_especif');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=this.focus();');
@@ -331,7 +331,7 @@ function Pagina() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Ajuda - '.f($RS_Menu,'nome').'</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpenClean('onLoad=this.focus();');
@@ -416,7 +416,7 @@ function Menu() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$w_TP.'</TITLE>');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
@@ -477,7 +477,8 @@ function Main() {
   case 'MENU':      Menu();     break;
   default:
     Cabecalho();
-    ShowHTML('<HEAD><TITLE>'.$conSgSistema.' - Ajuda</TITLE></HEAD>');
+    head();
+    ShowHTML('<BASE HREF="'.$conRootSIW.' - Ajuda</TITLE></HEAD>');
     BodyOpen('onLoad=this.focus();');
     Estrutura_Topo_Limpo();
     Estrutura_Menu();

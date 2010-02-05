@@ -106,7 +106,7 @@ function Benef() {
     }    
   }   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>SIW - Cadastramento provisório de usuários</TITLE>');
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,

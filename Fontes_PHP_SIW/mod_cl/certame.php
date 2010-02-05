@@ -352,12 +352,12 @@ function Inicial() {
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Menu,'nome').'</TITLE>');
     ScriptOpen('Javascript');
@@ -762,7 +762,7 @@ function Geral() {
     $w_solicitante = $_SESSION['SQ_PESSOA'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1047,7 +1047,7 @@ function Itens() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Itens da solicitação</TITLE>');
   Estrutura_CSS($w_cliente);
@@ -1344,7 +1344,7 @@ function ItensContrato() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Itens de acordo</TITLE>');
   Estrutura_CSS($w_cliente);
@@ -1692,7 +1692,7 @@ function Anexos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1964,7 +1964,7 @@ function PesquisaPreco() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - '.(($w_pesquisa=='S') ? 'Pesquisas de preço' : 'Propostas').'</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('IAP',$O)!==false) {
@@ -2237,6 +2237,7 @@ function PesquisaPreco() {
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Nome','nome').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Pedido','dados_pai').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Qtd','quantidade').'</td>');
+      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('U.M.','sg_unidade_medida').'</td>');
       ShowHTML('          <td colspan=3><b>Última pesquisa</b></td>');
       ShowHTML('          <td rowspan=2 nowrap><b>'.LinkOrdena('Pesq. preços','qtd_cotacao').'</td>');
       ShowHTML('        </tr>');
@@ -2247,6 +2248,7 @@ function PesquisaPreco() {
       ShowHTML('          <td><b>Ordem</td>');
       ShowHTML('          <td><b>Material</td>');
       ShowHTML('          <td><b>Qtd.</td>');
+      ShowHTML('          <td><b>U.M.</td>');
       ShowHTML('          <td><b>Fornecedor</td>');
       ShowHTML('          <td><b>Dt.Prop.</b></td>');
       ShowHTML('          <td><b>Dias Valid.</b></td>');
@@ -2269,8 +2271,8 @@ function PesquisaPreco() {
           if ($w_atual!=f($row,'sq_material')) {
             if ($w_exibe) {
               ShowHTML('      <tr bgcolor="'.$w_cor.'"><td colspan=3><td align="right" nowrap><b>Total do item</td>');
-              ShowHTML('        <td align="right">'.formatNumber($w_item_lic,2).'</td>');
-              ShowHTML('        <td colspan=4>&nbsp;</td>');
+              ShowHTML('        <td align="right">'.formatNumber($w_item_lic,0).'</td>');
+              ShowHTML('        <td colspan=5>&nbsp;</td>');
             }
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -2286,15 +2288,19 @@ function PesquisaPreco() {
             $w_exibe = true;
           }
           ShowHTML('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai')).'</td>');
-          ShowHTML('        <td align="right">'.formatNumber(f($row,'qtd_pedido'),2).'</td>');
+          ShowHTML('        <td align="right">'.formatNumber(f($row,'qtd_pedido'),0).'</td>');
           if (nvl(f($row,'pesquisa_data'),'')=='') {
-            ShowHTML('            <td colspan=4 align="center">Não há nenhuma pesquisa de preço</td>');
+            ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+            ShowHTML('        <td colspan=4 align="center">Não há nenhuma pesquisa de preço</td>');
+          } elseif (!$w_exibe) {
+            ShowHTML('        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
+            ShowHTML('        <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
+            ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
+            ShowHTML('        <td align="center">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
+            ShowHTML('        <td align="center">'.f($row,'qtd_cotacao').'</td>');
           } else {
-            ShowHTML('            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'pesquisa_data'),f($row,'pesquisa_validade'),f($row,'pesquisa_aviso')).'</td>');
-            ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'pesquisa_validade'),5),'---').'</td>');
-            ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'pesquisa_preco_medio'),4),'---').'</td>');
-            ShowHTML('            <td align="center">'.f($row,'qtd_cotacao').'</td>');
-          }        
+            ShowHTML('        <td colspan=5>&nbsp;</td>');
+          }
           ShowHTML('        </tr>');
           $w_item_lic   += f($row,'qtd_pedido');
         } else {
@@ -2304,6 +2310,7 @@ function PesquisaPreco() {
             ShowHTML('        <td align="center" rowspan='.f($row,'qtd_proposta').'>'.f($row,'ordem').'</td>');
             ShowHTML('        <td rowspan='.f($row,'qtd_proposta').'>'.ExibeMaterial($w_dir_volta,$w_cliente,f($row,'nome'),f($row,'sq_material'),$TP,null).'</td>');
             ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="right">'.nvl(formatNumber(f($row,'quantidade'),0),'---').'</td>');
+            ShowHTML('        <td rowspan='.f($row,'qtd_proposta').' align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>');
             $w_atual      = f($row,'sq_material');
           } else {
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
@@ -2323,7 +2330,7 @@ function PesquisaPreco() {
     if ($w_exibe && $w_pesquisa=='S') {
       ShowHTML('      <tr bgcolor="'.$w_cor.'"><td colspan=3><td align="right" nowrap><b>Total do item</td>');
       ShowHTML('        <td align="right">'.formatNumber($w_item_lic,2).'</td>');
-      ShowHTML('        <td colspan=4>&nbsp;</td>');
+      ShowHTML('        <td colspan=5>&nbsp;</td>');
     }
     ShowHTML('      </center>');
     ShowHTML('    </table>');
@@ -2464,10 +2471,10 @@ function PesquisaPreco() {
           $w_cont+= 1;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
           if(nvl(f($row,'fornecedor_data'),'')!='' || nvl($w_chave_aux[$i],'')!='') {
-            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');" checked>');
+            ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');" checked>');
             $w_Disabled = 'ENABLED';
           } else {
-            ShowHTML('        <td align="center" valign="middle" rowspan="2"><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
+            ShowHTML('        <td align="center" valign="middle" '.((f($row,'classe')==3) ? 'rowspan="2"' : '').'><input type="checkbox" name="w_chave_aux[]" value="'.nvl($w_chave_aux[$i],f($row,'chave')).'" onClick="valor('.$w_cont.');">');
             $w_Disabled = 'DISABLED';
           }
           ShowHTML('        <INPUT type="hidden" name="w_classe[]" value="'.f($row,'classe').'">');
@@ -2676,7 +2683,7 @@ function DadosPrevios() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -2836,7 +2843,7 @@ function DadosAnalise() {
     $w_contrato = f($RS_Modal,'gera_contrato');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -3062,7 +3069,7 @@ function Informar() {
     $w_fim              = FormataDataEdicao(f($RS,'fim'));
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -3135,7 +3142,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização do certame</TITLE>');
     ShowHTML('</HEAD>');  
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3167,7 +3174,7 @@ function Excluir() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='E') {
     ScriptOpen('JavaScript');
@@ -3268,7 +3275,7 @@ function Encaminhamento() {
   if ($O=='V') $w_erro = ValidaCertame($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -3394,7 +3401,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -3502,9 +3509,9 @@ function Concluir() {
   
   $w_erro = ValidaCertame($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço

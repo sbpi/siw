@@ -149,7 +149,7 @@ if ($O=='L') {
   $w_erro = ValidaColaborador($w_cliente,$w_sq_pessoa,f($RS1,'chave'),null);
 }
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 Estrutura_CSS($w_cliente);
 ScriptOpen('Javascript');
 modulo();
@@ -514,7 +514,7 @@ $w_Disabled = '';
 }
 
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos percentuais de desempenho do colaborador</TITLE>');
 if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
 Estrutura_CSS($w_cliente);
@@ -728,7 +728,7 @@ $w_percentual = f($row,'percentual');
 }
 
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos percentuais de desempenho do colaborador</TITLE>');
 if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
 Estrutura_CSS($w_cliente);
@@ -965,7 +965,7 @@ $w_observacoes       = f($RS,'observacoes');
 }
 }
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara.
 ScriptOpen('JavaScript');
 CheckBranco();
@@ -1220,7 +1220,7 @@ function Pensao(){
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -1578,7 +1578,7 @@ $w_banco_horas_saldo   = $_REQUEST['w_banco_horas_saldo'];
 $w_remuneracao_inicial = $_REQUEST['w_remuneracao_inicial'];
 
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos contratos do colaborador</TITLE>');
 if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
 Estrutura_CSS($w_cliente);
@@ -2019,7 +2019,7 @@ CabecalhoWord($w_cliente,'Ficha funcional',0);
 $w_embed = 'WORD';
 } else {
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 ShowHTML('<TITLE>'.$conSgSistema.' - Ficha funcional'.'</TITLE>');
 ShowHTML('</HEAD>');
 ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2045,7 +2045,7 @@ $w_sq_pessoa  =  $_REQUEST['w_sq_pessoa'];
 $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 foreach ($RS as $row) {$RS = $row; break;}
 Cabecalho();
-ShowHTML('<HEAD>');
+head();
 Estrutura_CSS($w_cliente);
 ShowHTML('<TITLE>Colaborador</TITLE>');
 ShowHTML('</HEAD>');

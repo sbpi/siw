@@ -226,7 +226,7 @@ function Benef() {
         }
     }
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
     // tratando as particularidades de cada serviço
@@ -637,7 +637,7 @@ function CadastraPessoa() {
         }
     }
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
     // tratando as particularidades de cada serviço
@@ -849,7 +849,7 @@ function BuscaUsuario() {
     $RS = db_getPersonList::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$ChaveAux,$restricao,$w_nome,$w_sg_unidade,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     ScriptOpen('JavaScript');
     ShowHTML('  function volta(l_nome, l_chave) {');
@@ -951,7 +951,7 @@ function BuscaPessoa() {
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     ScriptOpen('JavaScript');
     ShowHTML('  function volta(l_nome, l_chave) {');

@@ -164,7 +164,7 @@ function Rel_Limite() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de Limites - Exercício '.$w_ano.'</TITLE>');
     if ($O=='P') {
       ScriptOpen('JavaScript');

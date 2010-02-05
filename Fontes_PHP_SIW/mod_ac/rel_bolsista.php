@@ -147,7 +147,7 @@ function Rel_Bolsista() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if($p_tipo=='F') {
       ShowHTML('<TITLE>Relatório financeiro geral de bolsistas</TITLE>');
     } elseif($p_tipo=='T') {

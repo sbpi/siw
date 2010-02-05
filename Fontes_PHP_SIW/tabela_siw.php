@@ -132,7 +132,7 @@ function SegmentoVinc() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -315,7 +315,7 @@ function SegmentoMenu() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -502,7 +502,7 @@ function SegmentoModulo() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -682,7 +682,7 @@ function Modulos() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -836,7 +836,7 @@ function Segmento() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();

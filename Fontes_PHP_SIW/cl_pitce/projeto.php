@@ -328,12 +328,12 @@ function Inicial() {
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de programas</TITLE>');
     ShowHTML('</HEAD>');
   } else {
     cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de programas</TITLE>');
     ScriptOpen('Javascript');
@@ -887,7 +887,7 @@ function Geral() {
   }
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1197,7 +1197,7 @@ function Descritivo() {
   }
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1352,7 +1352,7 @@ function Informar() {
   }
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1468,7 +1468,7 @@ function Anexos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1618,7 +1618,7 @@ function AnexosEtapas() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1886,7 +1886,7 @@ function Etapas() {
   }
 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
@@ -2273,7 +2273,7 @@ function AtualizaEtapa() {
     $w_sq_unidade   = f($RS,'sq_unidade_resp');
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Itens de agenda de ação</TITLE>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -2727,7 +2727,7 @@ function InteressadoPacote() {
   $RS = db_getUorgData::getInstanceOf($dbms, $w_sq_unidade);
   
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Partes Interessadas</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2871,7 +2871,7 @@ function Recursos() {
     }
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2980,7 +2980,7 @@ function EtapaRecursos() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_chave_pai  = $_REQUEST['w_chave_pai'];
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -3080,7 +3080,7 @@ function Interessados() {
     }
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
@@ -3214,7 +3214,7 @@ function Areas() {
     }
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
@@ -3342,7 +3342,7 @@ function Pacote() {
   $RS = SortArray($RS,'cd_ordem','asc'); 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.'</TITLE>');
   Estrutura_CSS($w_cliente);
   if ($O=='M') {
@@ -3452,7 +3452,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de '.f($RS_Menu,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -3479,7 +3479,7 @@ function Excluir() {
   // Se for recarga da página  
   if ($w_troca > '' && $O!='E') $w_observacao = $_REQUEST['w_observacao'];
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='E') {
     ScriptOpen('JavaScript');
@@ -3587,7 +3587,7 @@ function Encaminhamento() {
     }
   }
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -3670,7 +3670,7 @@ function Anotar() {
   // Se for recarga da página
   if ($w_troca > '' && $O!='E') $w_observacao = $_REQUEST['w_observacao'];
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -3755,7 +3755,7 @@ function Concluir() {
     $w_custo_real       = $_REQUEST['w_custo_real'];
   } 
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');

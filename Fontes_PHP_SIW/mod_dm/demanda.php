@@ -276,12 +276,12 @@ function Inicial() {
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Consulta de '.f($RS_Menu,'nome'),0);
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
     ShowHTML('</HEAD>');    
   }else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     if ($P1==2) ShowHTML ('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML("<TITLE>".$conSgSistema." - Listagem de demandas</TITLE>");
@@ -845,7 +845,7 @@ function Geral() {
     } 
   }  
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1112,7 +1112,7 @@ function Anexos() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1261,7 +1261,7 @@ function Interessados() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1400,7 +1400,7 @@ function Areas() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1519,7 +1519,7 @@ function Visual() {
   if ($w_tipo=='WORD') {
     HeaderWord($_REQUEST['orientacao']);
     CabecalhoWord($w_cliente,'Visualização de '.f($RS_Menu,'nome'),0);
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1530,7 +1530,7 @@ function Visual() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de demanda</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1574,7 +1574,7 @@ function Excluir() {
     $w_observacao=$_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if (!(strpos('E',$O)===false)) {
@@ -1665,7 +1665,7 @@ function Encaminhamento() {
     }   
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -1753,7 +1753,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');
@@ -1841,7 +1841,7 @@ function Concluir() {
     $w_custo_real       = $_REQUEST['w_custo_real'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   if ($O=='V') {
     ScriptOpen('JavaScript');

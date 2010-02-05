@@ -113,7 +113,7 @@ function CentroCusto() {
   $w_sq_cc        = $_REQUEST['w_sq_cc'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if ($w_troca>'' && strpos('EDT',$O)===false) {
     // Se for recarga da página
@@ -458,7 +458,7 @@ function Agencia() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -686,7 +686,7 @@ function Banco() {
     $w_exige        = f($RS,'exige_operacao');    
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -872,7 +872,7 @@ function Moeda() {
   Global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');

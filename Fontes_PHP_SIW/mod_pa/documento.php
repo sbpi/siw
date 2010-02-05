@@ -276,7 +276,7 @@ function Inicial() {
   } else {
     $w_embed = 'HTML';
     cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de processos e documentos</TITLE>');
@@ -685,7 +685,7 @@ function Geral() {
     if (count($RS_Assunto)>0) $w_assunto = f($RS_Assunto,'sq_assunto');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -888,7 +888,7 @@ function Interessados() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1008,7 +1008,7 @@ function Assuntos() {
     $w_principal            = f($RS,'principal');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1162,7 +1162,7 @@ function Anexos() {
     $w_caminho   = f($RS,'chave_aux');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1331,7 +1331,7 @@ function Visual($w_chave=null,$w_o=null,$w_usuario=null,$w_p1=null,$w_tipo=null,
   } else {
     $RS_Cab = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PADCAD');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - '.f($RS_Cab,'nome').'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1361,7 +1361,7 @@ function Excluir() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('E',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1462,7 +1462,7 @@ function Encaminhamento() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (strpos('V',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1592,7 +1592,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1669,7 +1669,7 @@ function Concluir() {
     $w_custo_real       = $_REQUEST['w_custo_real'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1892,7 +1892,7 @@ function BuscaAssunto() {
   $RS = SortArray($RS,'provisorio','desc', 'codigo','asc', 'descricao', 'asc');
   Cabecalho();
   ShowHTML('<TITLE>Seleção de assunto</TITLE>');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_codigo, l_nome, l_chave) {');
@@ -2157,7 +2157,7 @@ function Tramitacao() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -2536,7 +2536,7 @@ function TramitCentral() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -2782,7 +2782,7 @@ function Classificacao() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -2971,7 +2971,7 @@ function Recebimento() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='R' || $O=='T' || $O=='P') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3221,7 +3221,7 @@ function BuscaProtocolo() {
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('<TITLE>Seleção de protocolo</TITLE>');
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ShowHTML('  function volta(l_protocolo, l_chave) {');

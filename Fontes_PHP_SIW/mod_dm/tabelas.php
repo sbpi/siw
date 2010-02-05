@@ -119,7 +119,7 @@ function TipoDemanda() {
     $w_ativo      = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

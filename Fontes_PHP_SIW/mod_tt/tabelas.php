@@ -166,7 +166,7 @@ function centralTel() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -345,7 +345,7 @@ function Troncos() {
   $RS = db_getCentralTel::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null);
   $RS = SortArray($RS,lower($_REQUEST['p_ordena']),'asc');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>SIW - Troncos da Central</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -519,7 +519,7 @@ function Ramais() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -647,7 +647,7 @@ function UsuarioCentral() {
   $w_codigo          = $_REQUEST['w_codigo'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>SIW - Associação entre Central telefônica e Usuários</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -807,7 +807,7 @@ function RamalUsr() {
 
   // Recupera sempre todos os registros
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>SIW - Associação entre Central telefônica e Usuários</TITLE>');
   if (!(strpos('IAEF',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1040,7 +1040,7 @@ function prefixo() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1237,7 +1237,7 @@ function Classificacao() {
   $w_sq_central_fone = $_REQUEST['w_sq_central_fone'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ScriptOpen('JavaScript');

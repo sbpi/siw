@@ -272,7 +272,7 @@ function headerPdf($titulo,$pag=null) {
   ob_end_clean();
   ob_start();
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$titulo.'</TITLE>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="' . $conRootSIW . '/classes/menu/xPandMenu.css">');
   ShowHTML('</HEAD>');
@@ -2830,9 +2830,17 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
 // Rotina de cabeçalho
 // -------------------------------------------------------------------------
 function Cabecalho() {
-  extract($GLOBALS);
   ShowHTML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">');
   ShowHTML('<HTML xmlns="http://www.w3.org/1999/xhtml">');
+}
+
+// =========================================================================
+// Rotina de abertura da tag HEAD
+// -------------------------------------------------------------------------
+function head() {
+  ShowHTML('<HEAD>');
+  ShowHTML('<META NAME="author" CONTENT="SBPI Consultoria Ltda">');
+  ShowHTML('<META NAME="robots" CONTENT="noindex,nofollow">');
 }
 
 // =========================================================================

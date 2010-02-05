@@ -163,7 +163,7 @@ function Usuarios() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('Javascript');
   ValidateOpen('Validacao');
@@ -436,7 +436,7 @@ function Menu() {
   $w_sq_menu             = $_REQUEST['w_sq_menu'];
 
   $Cabecalho;
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {
@@ -1356,7 +1356,7 @@ function Acessos() {
   $w_nome     = f($RS,'nome');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
@@ -1524,7 +1524,7 @@ function Visao() {
   $w_username   = f($RS,'username');
   $w_nome       = f($RS,'nome');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
@@ -1758,7 +1758,7 @@ function Email() {
   $w_username = f($RS,'username');
   $w_nome     = f($RS,'nome');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Usuários</TITLE>');
   ScriptOpen('JavaScript');
@@ -2109,7 +2109,7 @@ function TelaUsuario() {
   $l_sq_pessoa = $_REQUEST['w_sq_pessoa'];
   $RS = db_getPersonData::getInstanceOf($dbms, $w_cliente, $l_sq_pessoa, null, null);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (f($RS,'interno')=='S') {
     ShowHTML('<TITLE>Usuário</TITLE>');
@@ -2315,7 +2315,7 @@ function TelaAcessoUsuarios() {
   $RS = SortArray($RS,'nome_resumido_ind','asc');
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização usuários de acesso</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2396,7 +2396,7 @@ function TelaUnidade() {
 
   $RS = db_getUorgData::getInstanceOf($dbms, $w_sq_unidade);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Unidade</TITLE>');
   ScriptOpen('JavaScript');

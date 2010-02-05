@@ -142,7 +142,7 @@ function Inicial() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();

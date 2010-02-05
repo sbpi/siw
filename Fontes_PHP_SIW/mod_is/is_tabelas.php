@@ -123,7 +123,7 @@ function Natureza() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -253,7 +253,7 @@ function Horizonte() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -396,7 +396,7 @@ function Projetos() {
     $w_padrao       = f($RS,'padrao');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -561,7 +561,7 @@ function Unidade() {
     $w_planejamento     = f($RS,'planejamento');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataCNPJ();
@@ -716,7 +716,7 @@ function Limites() {
     $w_limite   = number_format(f($RS,'limite_orcamento'),2,',','.');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>'); 
+  head(); 
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataValor();
@@ -835,7 +835,7 @@ function SelecionarAno() {
   extract($GLOBALS);
   global $w_Disabled;
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_ano_escolhido','Ano','SELECT','1','4','4','','1');
@@ -891,7 +891,7 @@ function OpcaoEstrategica() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1029,7 +1029,7 @@ function MacroObjetivo() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

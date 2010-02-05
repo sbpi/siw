@@ -112,7 +112,7 @@ function Inicial(){
     } 
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório do Fluxo de Caixa</TITLE>');
     if ($O=='P') {
       ScriptOpen('JavaScript');

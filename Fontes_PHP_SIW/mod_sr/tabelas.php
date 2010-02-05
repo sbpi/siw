@@ -90,7 +90,7 @@ function Abastecimento() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
@@ -274,7 +274,7 @@ function Grupo() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
@@ -437,7 +437,7 @@ function Opiniao() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
@@ -608,7 +608,7 @@ function TipoVeiculo() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
@@ -777,7 +777,7 @@ function Veiculo() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de opinião</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');

@@ -162,7 +162,7 @@ function TipoArquivo() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Tipos de arquivo</TITLE>');
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAE',$O)===false)) {

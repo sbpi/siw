@@ -208,7 +208,7 @@ function Inicial() {
     $w_no_raiz      = f($RS,'no_raiz');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -387,7 +387,7 @@ function Tabela() {
     $w_elemento = f($RS,'elemento');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAPM',$O)===false)) {
     ScriptOpen('JavaScript');
     if (!(strpos('I',$O)===false)) {
@@ -692,7 +692,7 @@ function Mapeamento() {
     $RS = SortArray($RS,'ordem','asc','nm_coluna','asc');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('I',$O)===false)) {
     ScriptOpen('JavaScript');
     ShowHTML('  function valor(p_indice) {');
@@ -881,7 +881,7 @@ function Importacao() {
   } elseif (!(strpos('AE',$O)===false)) {
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();

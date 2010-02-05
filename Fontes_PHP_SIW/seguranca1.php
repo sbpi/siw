@@ -133,7 +133,7 @@ function AcessoTramite() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
   if (strpos('IAE',$O)!==false) {
@@ -381,7 +381,7 @@ function Tramite() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Configuração dos trâmites</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('IAEP',$O)!==false) {
@@ -607,7 +607,7 @@ function AcessoMenu() {
     $RS1 = db_getMenuUser::getInstanceOf($dbms,$w_cliente,$w_sq_menu,null,'VINCULO',null,null,null);
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
   if (strpos('IAE',$O)!==false) {
@@ -847,7 +847,7 @@ function AcessoMenuPerfil() {
 
   Cabecalho();
   Estrutura_CSS($w_cliente);
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Acessos</TITLE>');
   if (strpos('IAE',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -956,7 +956,7 @@ function Endereco() {
 
   $RS = db_getAddressList::getInstanceOf($dbms,$w_cliente,null,'FISICO', null);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Endereços</TITLE>');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');

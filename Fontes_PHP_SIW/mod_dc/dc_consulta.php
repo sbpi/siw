@@ -302,7 +302,7 @@ function Tabela() {
     $RS = db_getTabela::getInstanceOf($dbms,$w_cliente,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -550,7 +550,7 @@ function StoredProcedure() {
   } elseif ($O=='NIVEL2') {
     $RS = db_getStoredProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_sp,null,null,$w_sq_usuario,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -842,7 +842,7 @@ function Coluna() {
     $RS = db_getColuna::getInstanceOf($dbms,$w_cliente,$w_sq_coluna,$w_sq_tabela,null,$w_chave,$w_sq_usuario,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -961,7 +961,7 @@ function Arquivo() {
     $RS = db_getArquivo::getInstanceOf($dbms,$w_cliente,null,$w_sq_arquivo,$w_chave,null,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1079,7 +1079,7 @@ function Procedure() {
     $RS = db_getProcedure::getInstanceOf($dbms,$w_cliente,$w_sq_procedure,$w_sq_arquivo,$w_chave,null,null);
     $RS = SortArray($RS,'chave','asc');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1212,7 +1212,7 @@ function Relacionamento() {
     $RS = db_getRelacionamento::getInstanceOf($dbms,$w_cliente,$w_sq_relacionamento,null,$w_sq_tabela,$w_chave,null);
     $RS = SortArray($RS,'nm_relacionamento','asc');
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Dicionário</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

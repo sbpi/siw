@@ -128,7 +128,7 @@ function Inicial() {
     $RS = SortArray($RS,'phpdt_data_arquivo','desc');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();

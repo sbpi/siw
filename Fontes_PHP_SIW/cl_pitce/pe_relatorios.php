@@ -142,7 +142,7 @@ function Rel_Executivo() {
     } else {
       Cabecalho();
       $w_embed = 'HTML';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório executivo de macroprogramas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -356,7 +356,7 @@ function Rel_Executivo() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório executivo de macroprogramas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -452,7 +452,7 @@ function Rel_Programas() {
     }else{
       Cabecalho();
       $w_embed = 'HTML';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório de detalhamento de macroprogramas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -535,7 +535,7 @@ function Rel_Programas() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');

@@ -159,7 +159,7 @@ function Mesa() {
   $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('  <link rel="stylesheet" type="text/css" href="cl_renapi/nucleos.css">');
@@ -490,7 +490,7 @@ function Alerta() {
   extract($GLOBALS);
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -561,7 +561,7 @@ function Arquivos() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
   ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');
@@ -713,7 +713,7 @@ function Calendario() {
     $w_embed = 'WORD';
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
     ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
     ShowHTML('  <link rel="stylesheet" type="text/css" href="'.$w_dir_volta.'classes/menu/xPandMenu.css">');

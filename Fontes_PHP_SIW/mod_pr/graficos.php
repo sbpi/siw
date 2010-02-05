@@ -111,7 +111,7 @@ function Hierarquico() {
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>EAP Hierárquica</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -211,7 +211,7 @@ function Gantt() {
   if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
   if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
   else                 Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Gantt</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');

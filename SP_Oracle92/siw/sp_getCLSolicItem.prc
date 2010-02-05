@@ -82,6 +82,52 @@ begin
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_codigo        is null or (p_codigo        is not null and b.codigo_interno      = p_codigo))
             and (p_cancelado     is null or (p_cancelado     is not null and a.cancelado           = p_cancelado));
+   ElsIf p_restricao = 'LICPREVORC' Then
+      -- Recupera previsão orçamentária de uma licitação
+      open p_result for 
+         select g.sq_siw_solicitacao as sq_projeto, g.codigo_interno as cd_projeto, g.titulo as nm_projeto,
+                h.sq_projeto_rubrica as sq_rubrica, h.codigo||' - '||h.nome as nm_rubrica,
+                sum(d.quantidade_autorizada*coalesce(coalesce(j.vl_proposta,i.pesquisa_preco_medio),0)) as vl_pesquisa
+           from cl_solicitacao                                a
+                inner           join cl_solicitacao_item      b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner         join cl_solicitacao_item_vinc c on (b.sq_solicitacao_item = c.item_licitacao)
+                    inner       join cl_solicitacao_item      d on (c.item_pedido         = d.sq_solicitacao_item)
+                      inner     join cl_solicitacao           e on (d.sq_siw_solicitacao  = e.sq_siw_solicitacao)
+                        inner   join cl_vinculo_financeiro    f on (e.sq_financeiro       = f.sq_clvinculo_financeiro)
+                          inner join siw_solicitacao          g on (f.sq_siw_solicitacao  = g.sq_siw_solicitacao)
+                          inner join pj_rubrica               h on (f.sq_projeto_rubrica  = h.sq_projeto_rubrica)
+                      inner     join cl_material              i on (d.sq_material         = i.sq_material)
+                  left          join (select w.sq_solicitacao_item, min(w.valor_unidade) as vl_proposta
+                                        from cl_item_fornecedor w
+                                       where vencedor = 'S'
+                                          or (vencedor = 'N' and pesquisa = 'N')
+                                      group by w.sq_solicitacao_item
+                                     )                        j on (b.sq_solicitacao_item = j.sq_solicitacao_item)
+          where a.sq_siw_solicitacao = p_solicitacao
+         group by g.sq_siw_solicitacao, g.codigo_interno, g.titulo, h.sq_projeto_rubrica, h.codigo, h.nome
+         order by g.titulo, h.codigo, h.nome;
+   ElsIf p_restricao = 'LICPREVFIN' Then
+      -- Recupera previsão financeira de uma licitação
+      open p_result for 
+         select h.sq_tipo_lancamento as sq_lancamento, h.nome as nm_lancamento,
+                sum(d.quantidade_autorizada*coalesce(coalesce(j.vl_proposta,i.pesquisa_preco_medio),0)) as vl_pesquisa
+           from cl_solicitacao                                a
+                inner           join cl_solicitacao_item      b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+                  inner         join cl_solicitacao_item_vinc c on (b.sq_solicitacao_item = c.item_licitacao)
+                    inner       join cl_solicitacao_item      d on (c.item_pedido         = d.sq_solicitacao_item)
+                      inner     join cl_solicitacao           e on (d.sq_siw_solicitacao  = e.sq_siw_solicitacao)
+                        inner   join cl_vinculo_financeiro    f on (e.sq_financeiro       = f.sq_clvinculo_financeiro)
+                          inner join fn_tipo_lancamento       h on (f.sq_tipo_lancamento  = h.sq_tipo_lancamento)
+                      inner     join cl_material              i on (d.sq_material         = i.sq_material)
+                  left          join (select w.sq_solicitacao_item, min(w.valor_unidade) as vl_proposta
+                                        from cl_item_fornecedor w
+                                       where vencedor = 'S'
+                                          or (vencedor = 'N' and pesquisa = 'N')
+                                      group by w.sq_solicitacao_item
+                                     )                        j on (b.sq_solicitacao_item = j.sq_solicitacao_item)
+          where a.sq_siw_solicitacao = p_solicitacao
+         group by h.sq_tipo_lancamento, h.nome
+         order by h.nome;
    ElsIf p_restricao = 'LICITACAO' Then
       -- Recupera materiais e serviços
       open p_result for 

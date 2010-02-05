@@ -230,7 +230,7 @@ function Inicial	() {
     HeaderWord($_REQUEST['orientacao']); 
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
     ShowHTML('<TITLE>'.$conSgSistema.' - Recursos</TITLE>');
@@ -621,7 +621,7 @@ function Disponivel() {
   } 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Disponibilidade</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('CIAE',$O)!==false) {
@@ -870,7 +870,7 @@ function Indisponivel() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Indisponibilidade</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('CIAE',$O)!==false) {
@@ -1038,7 +1038,7 @@ function TelaRecurso() {
   $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Recurso</TITLE>');
   ShowHTML('</HEAD>');
@@ -1309,7 +1309,7 @@ function Solic() {
   } 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Recursos</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('MCIAE',$O)!==false) {
@@ -1521,7 +1521,7 @@ function SolicPeriodo() {
   } 
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Disponibilidade</TITLE>');
   Estrutura_CSS($w_cliente);
   if (strpos('CIAE',$O)!==false) {

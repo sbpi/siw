@@ -137,7 +137,7 @@ function Gerencial() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Planejamento Estratégico - Exercício '.$w_ano.'</TITLE>');
   if ($O=='L') {
     ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
@@ -620,7 +620,7 @@ function Rel_PPA() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Analítico - Ações PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1119,7 +1119,7 @@ function Rel_Projeto(){
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Analítico Planos internos '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1523,7 +1523,7 @@ function Rel_Programa() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Analítico - Programas PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1829,7 +1829,7 @@ function Rel_Sintetico_PR() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Sintético - Planos '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -2147,7 +2147,7 @@ function Rel_Sintetico_PPA() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Sintético - Ações PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -2506,7 +2506,7 @@ function Rel_Sintetico_Prog() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Sintético - Programas PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -2751,7 +2751,7 @@ function Rel_Gerencial_Acao() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Plano Gerencial - Ações PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2783,7 +2783,7 @@ function Rel_Gerencial_Acao() {
     if ($w_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Ações - Relatório Gerencial '.$w_ano.'</TITLE>');
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2835,7 +2835,7 @@ function Rel_Gerencial_Prog() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Plano Gerencial - Programas PPA 2004 - 2007 Exercício '.$w_ano.'</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2867,7 +2867,7 @@ function Rel_Gerencial_Prog() {
     if ($w_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Programas - Relatório Gerencial '.$w_ano.'</TITLE>');
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2920,7 +2920,7 @@ function Rel_Gerencial_Tarefa() {
     if (f($RS,'logo')>'') $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     if ($w_tipo=='WORD') HeaderWord($_REQUEST['orientacao']);
     else                 Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Tarefa</TITLE>');
     ShowHTML('</HEAD>');
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2940,7 +2940,7 @@ function Rel_Gerencial_Tarefa() {
     //if ($w_tipo!='WORD') Rodape();
   } elseif ($O=='P') {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Tarefas - Relatório Gerencial '.$w_ano.'</TITLE>');
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -3031,7 +3031,7 @@ function Rel_Metas() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Metas - Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -3539,7 +3539,7 @@ function Rel_Det_Tarefa() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de Tarefas - Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -3761,7 +3761,7 @@ function Rel_Det_Acao() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de Ações - Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -4000,7 +4000,7 @@ function Rel_Det_Prog() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de Programas - Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -4238,7 +4238,7 @@ function Rel_Limite() {
     ShowHTML('</FONT></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de Limites - Exercício '.$w_ano.'</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');

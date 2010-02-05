@@ -193,7 +193,7 @@ function Inicial() {
 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -476,7 +476,7 @@ function Tabela() {
     $w_remove_registro  = f($RS,'remove_registro');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAPM',$O)===false)) {
     ScriptOpen('JavaScript');
     if (!(strpos('I',$O)===false)) {
@@ -800,7 +800,7 @@ function Mapeamento() {
   foreach($RS1 as $row){$RS1=$row; break;}
   $w_formato = f($RS1,'formato');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('I',$O)===false)) {
     ScriptOpen('JavaScript');
     ShowHTML('  function valor(p_indice) {');
@@ -1038,7 +1038,7 @@ function Importacao() {
     foreach($RS as $row){$RS=$row; break;}
   } elseif (!(strpos('AE',$O)===false)) { } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     if (f($RS,'formato')!='T') {
@@ -1187,7 +1187,7 @@ function Registro() {
     //$RS = SortArray($RS,'ordem','asc','nm_coluna','asc');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IA',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1365,7 +1365,7 @@ function Script() {
     $w_ordem        = f($RS,'ordem');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

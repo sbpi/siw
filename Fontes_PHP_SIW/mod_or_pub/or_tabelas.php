@@ -147,7 +147,7 @@ function Iniciativa() {
     $w_padrao      = f($RS,'padrao');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -315,7 +315,7 @@ function PPA() {
     $w_selecionada_relevante = f($RS,'selecionada_relevante');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)){
     ScriptOpen('JavaScript');
     FormataValor();
@@ -503,7 +503,7 @@ function Rel_PPA() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Tabela PPA</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1023,7 +1023,7 @@ function Rel_Iniciativa() {
     CabecalhoWordOR('Iniciativa Prioritária',$w_pag,LinkArquivo(null,$w_cliente,$w_logo,null,null,null,'EMBED'));
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Iniciativas Prioritárias</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1517,7 +1517,7 @@ function Rel_Sintetico_IP() {
     ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Sintético das Iniciativas Prioritárias</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');
@@ -1910,7 +1910,7 @@ function Rel_Sintetico_PPA() {
       ShowHTML('</FONT></B></TD></TR></TABLE>');
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório Sintético das Ações do PPA</TITLE>');
     if (!(strpos('P',$O)===false)) {
       ScriptOpen('JavaScript');

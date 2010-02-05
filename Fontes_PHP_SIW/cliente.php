@@ -151,7 +151,7 @@ function Inicial() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('Javascript');
   ValidateOpen('Validacao');
@@ -393,7 +393,7 @@ function Geral() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -667,7 +667,7 @@ function Enderecos() {
   }
     
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -887,7 +887,7 @@ function Telefones() {
   $RS_Benef = db_getPersonData::getInstanceOf($dbms,$w_cliente,$w_sq_pessoa,null,null);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1099,7 +1099,7 @@ function ContasBancarias() {
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1322,7 +1322,7 @@ function Modulos() {
 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1542,7 +1542,7 @@ function Configuracao() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -1791,7 +1791,7 @@ function Visual() {
   }  
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Cliente</TITLE>');
   ShowHTML('</HEAD>');

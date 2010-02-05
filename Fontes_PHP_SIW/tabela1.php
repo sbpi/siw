@@ -123,7 +123,7 @@ function TipoVinculo() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -345,7 +345,7 @@ function ParSeguranca() {
     $w_dias_aviso_expiracao   = f($RS,'dias_aviso_expir');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_tamanho_minimo_senha','Tamanho mínimo','1','1','1','2','','1');
@@ -421,7 +421,7 @@ function Integracao() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_tabela','Tabela','SELECT','1','1','20','1','1');

@@ -168,7 +168,7 @@ function Rel_Progresso() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatorio de progresso</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -512,7 +512,7 @@ function Rel_Progresso() {
     
   
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de progresso</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -651,7 +651,7 @@ function Rel_Projeto() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatório detalhado de programa</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -712,7 +712,7 @@ function Rel_Projeto() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');
@@ -957,7 +957,7 @@ function Rel_Atualizacao() {
     } else {
       Cabecalho();
       $w_embed = 'EMBED';
-      ShowHTML('<HEAD>');
+      head();
       ShowHTML('<TITLE>Relatorio de atualização dos dados dos programas</TITLE>');
       ShowHTML('</HEAD>');
       ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1057,7 +1057,7 @@ function Rel_Atualizacao() {
     if ($w_cont==1) $p_plano = $w_registro;
 
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     ShowHTML('<TITLE>Relatório de detalhamento de programas</TITLE>');
     ScriptOpen('JavaScript');
     ShowHTML('  function MarcaTodosBloco() {');

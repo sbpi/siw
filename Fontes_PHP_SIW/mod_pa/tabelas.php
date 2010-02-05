@@ -146,7 +146,7 @@ function TipoDespacho() {
     $w_ativo     = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -401,7 +401,7 @@ function Caixa() {
     $w_numero           = f($RS,'numero').'/'.f($RS,'sg_unidade');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -579,7 +579,7 @@ function EspecieDocumento() {
     $w_assunto  = f($RS,'sq_assunto');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -742,7 +742,7 @@ function Unidade() {
     $w_ativo              = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataCNPJ();
@@ -967,7 +967,7 @@ function NaturezaDoc() {
     $w_ativo     = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1122,7 +1122,7 @@ function TipoGuarda() {
     $w_ativo            = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1271,7 +1271,7 @@ function Parametro() {
   $w_limite_interessados   = f($RS,'limite_interessados');  
   $w_ano_corrente          = f($RS,'ano_corrente');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_despacho_arqsetorial','Despacho para arquivo setorial','SELECT','1','1','18','','1');
@@ -1351,7 +1351,7 @@ function Renumera() {
   $w_ano           = nvl($_REQUEST['w_ano'],substr($w_protocolo,13,4));
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   FormataProtocolo();
   ShowHTML('function carregaDados(p_campo) { ');
@@ -1462,7 +1462,7 @@ function Assunto() {
     $w_ativo                = f($RS,'ativo');
   }
   cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1646,7 +1646,7 @@ function TelaAssunto() {
   $w_chave = $_REQUEST['w_chave'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>SIW - Protocolo - Assunto</TITLE>');
   ShowHTML('</HEAD>');
@@ -2166,7 +2166,7 @@ function Arquivo() {
     $w_ativo        = f($RS,'ativo');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2317,7 +2317,7 @@ function Locais() {
   }  
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Locais de Arquivos</TITLE>');
   Estrutura_CSS($w_cliente);
 

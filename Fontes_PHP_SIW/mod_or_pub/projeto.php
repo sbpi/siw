@@ -280,7 +280,7 @@ function Inicial() {
     }
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de ações</TITLE>');
   ScriptOpen('Javascript');
@@ -775,7 +775,7 @@ function Geral() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1021,7 +1021,7 @@ function InfoAdic(){
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1154,7 +1154,7 @@ function Iniciativas() {
     ScriptClose();
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1240,7 +1240,7 @@ function Financiamento() {
     $w_obs_financ  = f($RS,'observacao');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1394,7 +1394,7 @@ function Responsaveis() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('A',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1597,7 +1597,7 @@ function Etapas() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1874,7 +1874,7 @@ function AtualizaEtapa() {
   } else {
     Cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Meta da ação</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -2198,7 +2198,7 @@ function Recursos() {
      $w_finalidade = f($RS,'finalidade');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2319,7 +2319,7 @@ function EtapaRecursos() {
   $RS = db_getSolicEtpRec::getInstanceOf($dbms,$w_chave_aux,null,null);
   $RS = SortArray($RS,'tipo','asc','nome','asc');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   //ShowHTML '  for (i = 0; i < theForm.w_recurso.length; i++) {'
@@ -2424,7 +2424,7 @@ function Interessados() {
     $w_envia_email  = f($RS,'envia_email');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     modulo();
@@ -2583,7 +2583,7 @@ function Areas() {
     $w_papel = f($RS,'papel');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     $modulo;
@@ -2706,7 +2706,7 @@ function Visual() {
   } else {
     Cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de Ação</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -2754,7 +2754,7 @@ function Excluir() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('E',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -2833,7 +2833,7 @@ function Anexos() {
     $w_caminho   = f($RS,'chave_aux');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -2976,7 +2976,7 @@ function Encaminhamento() {
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_novo_tramite);
   $w_sg_tramite = f($RS,'sigla');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -3062,7 +3062,7 @@ function Anotar() {
     $w_observacao = $_REQUEST['w_observacao'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -3137,7 +3137,7 @@ function Concluir() {
     $w_custo_real     = $_REQUEST['w_custo_real'];
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   if (!(strpos('V',$O)===false)) {
     ScriptOpen('JavaScript');

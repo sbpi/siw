@@ -279,7 +279,7 @@ function inicial(){
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML($api->getHeadCode());
   ShowHTML('<TITLE>'.$conSgSistema.' - Geo-referenciamento</TITLE>');
   Estrutura_CSS($w_cliente);

@@ -112,7 +112,7 @@ function AreaAtuacao(){
     $w_ativo = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
@@ -306,7 +306,7 @@ function TipoUnidade() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -496,7 +496,7 @@ function TipoPosto() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');

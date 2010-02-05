@@ -143,7 +143,7 @@ function Tramitacao() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -303,7 +303,7 @@ function Transferencia() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -477,7 +477,7 @@ function Etiqueta() {
     $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();

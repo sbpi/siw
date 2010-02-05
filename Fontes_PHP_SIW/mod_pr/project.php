@@ -136,7 +136,7 @@ function Etapa() {
     $w_ativo    = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Importação MS-Project</TITLE>');
   if (!(strpos('LIAEP',$O)===false)) {
     ScriptOpen('JavaScript');

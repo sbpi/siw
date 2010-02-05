@@ -270,7 +270,7 @@ function ExibeDocs() {
   // - Referencie o arquivo CSS
   // - Exiba o código HTML gerado anteriormente
   ShowHTML('<html>');
-  ShowHTML('<head>');
+  head();
   ShowHTML('  <!-- CSS FILE for my tree-view menu -->');
   ShowHTML('  <link rel="stylesheet" type="text/css" href="classes/menu/xPandMenu.css">');
   ShowHTML('  <!-- JS FILE for my tree-view menu -->');
@@ -362,7 +362,7 @@ function TrocaSenha() {
     $w_dt_troca = f($RS,'dt_ultima_troca_assin');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($P1!=1 || ($P1==1 && $w_tipo_autenticacao=='B')) {
@@ -474,7 +474,7 @@ function Vinculacao() {
   // Monta uma string para indicar a opção selecionada
   $w_texto = opcaoMenu($w_sq_menu);
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>'.$conSgSistema.' - Configuração de vinculações</TITLE>');
   ScriptOpen('JavaScript');

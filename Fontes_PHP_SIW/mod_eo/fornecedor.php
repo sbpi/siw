@@ -132,7 +132,7 @@ function Inicial() {
     }
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ScriptOpen('Javascript');
   ValidateOpen('Validacao');
@@ -353,7 +353,7 @@ function Geral() {
     $RS = SortArray($RS,'nome_indice','asc');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -578,7 +578,7 @@ function Visual() {
   } else {
     Cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Visualização de fornecedor</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');

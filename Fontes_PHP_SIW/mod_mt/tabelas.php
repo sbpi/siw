@@ -161,7 +161,7 @@ function TipoMovimentacao() {
     $w_ativo        = f($RS,'ativo');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -342,7 +342,7 @@ function Situacao() {
 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -507,7 +507,7 @@ function Locais() {
   }  
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Locais de Almoxarifado</TITLE>');
   Estrutura_CSS($w_cliente);
 
@@ -766,7 +766,7 @@ function Almoxarifado() {
     $w_ativo        = f($RS,'ativo');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Almoxarifado</TITLE>');
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');

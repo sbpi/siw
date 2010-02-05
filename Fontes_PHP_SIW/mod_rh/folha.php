@@ -485,7 +485,7 @@ function Inicial() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Folha de Ponto</TITLE>');
   Estrutura_CSS($w_cliente);
   
@@ -1111,7 +1111,7 @@ function Lista() {
     reset($RSMensal);
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Aprovação de Folha de Ponto</TITLE>');
   Estrutura_CSS($w_cliente);
   
@@ -1623,7 +1623,7 @@ function Visual() {
   } else {
     $w_embed = 'HTML';
     cabecalho();
-	  ShowHTML('<HEAD>');
+	  head();
 	  ShowHTML('<TITLE>'.$conSgSistema.' - Folha de Ponto</TITLE>');
 	  Estrutura_CSS($w_cliente);
 	  ShowHTML('</HEAD>');

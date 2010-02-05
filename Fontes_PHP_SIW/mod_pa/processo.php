@@ -176,7 +176,7 @@ function Inicial() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -410,7 +410,7 @@ function Alterar() {
     if (count($RS_Assunto)>0) $w_assunto = f($RS_Assunto,'sq_assunto');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -640,7 +640,7 @@ function Central() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='L') {
     if ($w_existe) {
       ScriptOpen('JavaScript');
@@ -858,7 +858,7 @@ function Autuar() {
   }
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
@@ -951,7 +951,7 @@ function Anexar() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   FormataProtocolo();
@@ -1044,7 +1044,7 @@ function Apensar() {
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   FormataProtocolo();
@@ -1137,7 +1137,7 @@ function Desmembrar() {
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   FormataProtocolo();
@@ -1351,7 +1351,7 @@ function ArqSetorial() {
     }
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='P') {
     ScriptOpen('JavaScript');
     FormataProtocolo();
@@ -1557,7 +1557,7 @@ function Arquivar() {
   if (count($RS)>0) $w_processo = f($RS,'processo');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
@@ -1643,7 +1643,7 @@ function Eliminar() {
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
@@ -1735,7 +1735,7 @@ function Emprestar() {
   if (count($RS)>0) $w_processo           = f($RS,'processo');
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   FormataProtocolo();

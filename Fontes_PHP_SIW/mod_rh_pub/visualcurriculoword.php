@@ -31,7 +31,7 @@ ConectaBD();
 $w_data_banco = f($RS,'DATA');
 $w_cpf        = $_REQUEST['w_cpf'];
 header('Content-type: '.'application/msword');
-ShowHTML('<HEAD>');
+head();
 ShowHTML('<TITLE>Curriculum Vitae</TITLE>');
 ShowHTML('</HEAD>');
 ShowHTML('<TABLE WIDTH=\'100%\' BORDER=0><TD ALIGN=\'RIGHT\'><B><FONT SIZE=5 COLOR=\'#000000\'>');

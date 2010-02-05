@@ -221,10 +221,11 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'  </font></td></tr>';
     }
 
-
-    // Encaminhamentos
-    include_once($w_dir_volta.'funcoes/exibeLog.php');
-    $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    if ($O!='V') {
+      // Encaminhamntos
+      include_once($w_dir_volta.'funcoes/exibeLog.php');
+      $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
+    }
   }
   $l_html .= chr(13).'</table>';
   return $l_html;

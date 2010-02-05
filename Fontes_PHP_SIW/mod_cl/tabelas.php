@@ -160,7 +160,7 @@ function TipoMatServ() {
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {
@@ -716,7 +716,7 @@ function Parametro() {
   $w_sequencial              = f($RS,'sequencial');
   $w_sufixo                  = f($RS,'sufixo');
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('w_dias_validade_pesquisa','Dias de validade da pesquisa','1','1','1','4','','0123456789');
@@ -818,7 +818,7 @@ function Unidade() {
     $w_ativo                = f($RS,'ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataCNPJ();
@@ -1045,7 +1045,7 @@ function Usuario() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='I') {
     ScriptOpen('JavaScript');
     CheckBranco();

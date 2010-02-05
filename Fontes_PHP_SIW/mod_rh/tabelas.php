@@ -99,7 +99,7 @@ function ModalidadeCont() {
   Global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de modalidades de contratação</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');   
@@ -341,7 +341,7 @@ function Tipoafast() {
   Global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
@@ -586,7 +586,7 @@ function DataEspecial() {
   global $w_Disabled;
   $w_chave = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem das datas especiais</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
@@ -883,7 +883,7 @@ function Parametros() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
@@ -1014,7 +1014,7 @@ function Cargo() {
   Global $w_Disabled;
   $w_chave          = $_REQUEST['w_chave'];
 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');

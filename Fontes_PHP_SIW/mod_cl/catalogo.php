@@ -229,7 +229,7 @@ function Inicial() {
     HeaderWord($_REQUEST['orientacao']); 
   } else {
     Cabecalho();
-    ShowHTML('<HEAD>');
+    head();
     Estrutura_CSS($w_cliente);
     ShowHTML('<TITLE>'.$conSgSistema.' - Materiais e Serviços</TITLE>');
     Estrutura_CSS($w_cliente);
@@ -630,7 +630,7 @@ function PesquisaPreco() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1087,7 +1087,7 @@ function TelaMaterial() {
   $w_solic = $_REQUEST['w_solic'];
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   ShowHTML('<TITLE>Materiais e serviços</TITLE>');
   ShowHTML('</HEAD>');

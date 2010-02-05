@@ -152,7 +152,7 @@ function InputSql() {
     }
   }
   ShowHTML('<html>');
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('serverName','Servidor','','',1,100,'1','1');
@@ -377,7 +377,7 @@ function InputCom() {
   extract($GLOBALS);
 
   ShowHTML('<html>');
-  ShowHTML('<HEAD>');
+  head();
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
   Validate('sqlStr','Comando','',1,1,64536,'1','1');

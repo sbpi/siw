@@ -160,7 +160,7 @@ exit;
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -325,7 +325,7 @@ exit;
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -504,7 +504,7 @@ exit;
   }
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     FormataValor();
@@ -695,7 +695,7 @@ exit;
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
@@ -818,7 +818,7 @@ exit;
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -991,7 +991,7 @@ exit;
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Limites de passagens e diárias por unidade</TITLE>');
   if (!(strpos('IAEP',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -1151,7 +1151,7 @@ function Locais() {
   }  
   
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
 
   if ($O!='L') {
@@ -1413,7 +1413,7 @@ function Usuario() {
   } 
 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($O=='I') {
     ScriptOpen('JavaScript');
     CheckBranco();
@@ -1532,7 +1532,7 @@ function Almoxarifado() {
     $w_ativo        = f($RS,'ativo');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');

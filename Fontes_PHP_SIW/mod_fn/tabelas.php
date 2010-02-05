@@ -112,7 +112,7 @@ function Imposto() {
     $w_ativo        = f($RS,'nm_ativo');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de impostos</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
@@ -259,7 +259,7 @@ function Documento(){
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de documentos</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
@@ -419,7 +419,7 @@ function Lancamento() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Listagem de tipos de lançamento</TITLE>');
   if ($P1==2) ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">');
   Estrutura_CSS($w_cliente);
@@ -619,7 +619,7 @@ function Parametros() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   Estrutura_CSS($w_cliente);
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço

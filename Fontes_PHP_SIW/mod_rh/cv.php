@@ -158,7 +158,7 @@ function Inicial() {
     $RS = SortArray($RS,'nome_resumido', 'asc');
   }
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if ($P1==2) {
     ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.$w_dir_volta.MontaURL('MESA').'">');
   } 
@@ -383,7 +383,7 @@ function Identificacao() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara.
   ScriptOpen('JavaScript');
   CheckBranco();
@@ -685,7 +685,7 @@ function Historico() {
     } 
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara.
   ScriptOpen('JavaScript');
   CheckBranco();
@@ -823,7 +823,7 @@ function Idiomas() {
     $w_conversacao  = f($RS,'conversacao');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
@@ -1010,7 +1010,7 @@ function Experiencia() {
     $w_ultimo_salario     = number_format(Nvl(f($RS,'ultimo_salario'),0),2,',','.');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     modulo();
@@ -1225,7 +1225,7 @@ function Cargos() {
     $w_fim                  = FormataDataEdicao(f($RS,'fim'));
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<title>Cargos de uma experiência profissional</title>');
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
@@ -1405,7 +1405,7 @@ function Escolaridade() {
     $w_fim         = f($RS,'fim');
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
@@ -1595,7 +1595,7 @@ function Extensao() {
     $w_conclusao            = FormataDataEdicao(f($RS,'conclusao'));
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
@@ -1768,7 +1768,7 @@ function Producao() {
     $w_data                 = FormataDataEdicao(f($RS,'data'));
   } 
   Cabecalho();
-  ShowHTML('<HEAD>');
+  head();
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     checkbranco();
@@ -2002,7 +2002,7 @@ function Visualizar() {
   } else {
     cabecalho();
   } 
-  ShowHTML('<HEAD>');
+  head();
   ShowHTML('<TITLE>Curriculum Vitae</TITLE>');
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
