@@ -2757,8 +2757,7 @@ function TrataErro($sp, $Err, $params, $file, $line, $object) {
     ShowHTML(' alert("Banco de dados fora do ar. Aguarde alguns instantes e tente novamente!");');
     ShowHTML(' history.back(1);');
     ScriptClose();
-  }
-  else {
+  } else {
     $w_html='<html>';
     $w_html .= chr(10).'<head>';
     $w_html .= chr(10).'  <BASEFONT FACE="Arial" SIZE="2">';

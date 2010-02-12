@@ -9,10 +9,11 @@ create or replace procedure SP_PutViagemOutra
      p_nome_resumido       in varchar2  default null,
      p_sexo                in varchar2  default null,
      p_vinculo             in number    default null,
-     p_matricula           in varchar2  default null,
      p_rg_numero           in varchar2  default null,
      p_rg_emissao          in date      default null,
      p_rg_emissor          in varchar2  default null,
+     p_passaporte          in varchar2  default null,
+     p_sq_pais_passaporte  in number    default null,
      p_ddd                 in varchar2  default null,
      p_nr_telefone         in varchar2  default null,
      p_nr_fax              in varchar2  default null,
@@ -76,15 +77,17 @@ begin
    select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave_pessoa;
     If w_existe = 0 Then -- Se não existir insere
       insert into co_pessoa_fisica
-        (sq_pessoa,      rg_numero,   rg_emissor,   rg_emissao,   cpf,   sexo,   cliente)
+        (sq_pessoa,      rg_numero,   rg_emissor,   rg_emissao,   passaporte_numero, sq_pais_passaporte,   cpf,   sexo,   cliente)
       values
-        (w_chave_pessoa, p_rg_numero, p_rg_emissor, p_rg_emissao, p_cpf, p_sexo, p_chave_aux
+        (w_chave_pessoa, p_rg_numero, p_rg_emissor, p_rg_emissao, p_passaporte,      p_sq_pais_passaporte, p_cpf, p_sexo, p_chave_aux
         );
    Else -- Caso contrário, altera
       update co_pessoa_fisica
          set rg_numero          = Nvl(p_rg_numero, rg_numero),
              rg_emissor         = Nvl(p_rg_emissor, rg_emissor),
              rg_emissao         = Nvl(p_rg_emissao, rg_emissao),
+             passaporte_numero  = p_passaporte,
+             sq_pais_passaporte = p_sq_pais_passaporte,
              cpf                = Nvl(p_cpf, cpf),
              sexo               = Nvl(p_sexo, sexo)
        where sq_pessoa = w_chave_pessoa;

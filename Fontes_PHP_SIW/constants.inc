@@ -78,7 +78,7 @@ $conImgSheet     = 'images/Folder/SheetImg.gif';
 
 //---------------------------Definições de banco
 
-$strschema	= 'siw.';
+$strschema	= '';
 $strschema_is	= 'siw_is.';
 $conPageSize	= 30;
 $conRefreshSec  = 1000;

@@ -18,11 +18,6 @@ create or replace procedure SP_PutViagemGeral
     p_dias                in number    default null,
     p_projeto             in number    default null,
     p_tarefa              in number    default null,
-    p_cpf                 in varchar2  default null,
-    p_nome                in varchar2  default null,
-    p_nome_res            in varchar2  default null,
-    p_sexo                in varchar2  default null,
-    p_vinculo             in number    default null,
     p_inicio_atual        in date      default null,
     p_passagem            in varchar2  default null,
     p_diaria              in number     default null,
@@ -44,7 +39,6 @@ create or replace procedure SP_PutViagemGeral
    w_log_esp    number(18);
    w_reg        PD_parametro%rowtype;
    w_financeiro number(18) := p_financeiro;
-   w_pessoa     number(18) := null;
    
 begin
    -- Verifica se precisa gravar o tipo de vínculo financeiro
@@ -106,45 +100,13 @@ begin
         from dual
       );
       
-      -- Se for pessoa que ainda não consta da base de dados, inclui
-      If p_solicitante is null Then
-         -- recupera a próxima chave da pessoa
-         select sq_pessoa.nextval into w_pessoa from dual;
-   
-         -- insere os dados da pessoa
-         insert into co_pessoa (sq_pessoa, sq_pessoa_pai, sq_tipo_vinculo, sq_tipo_pessoa,   nome,   nome_resumido)
-         (select                w_pessoa,  p_cliente,     p_vinculo,       sq_tipo_pessoa,   p_nome, p_nome_res
-            from co_tipo_pessoa a
-           where a.nome  = 'Física'
-             and a.ativo = 'S'
-         );
-         
-         insert into co_pessoa_fisica 
-                (sq_pessoa, cpf,   sexo,   cliente)
-         values (w_pessoa,  p_cpf, coalesce(p_sexo,'M'), p_cliente);
-      Else
-         -- Verifica se a pessoa tem registro em CO_PESSOA_FISICA. Se não tiver, grava
-         select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = p_solicitante;
-         If w_existe = 0 Then
-            insert into co_pessoa_fisica 
-                   (sq_pessoa,     cpf,   sexo,   cliente)
-            values (p_solicitante, p_cpf, coalesce(p_sexo,'M'), p_cliente);
-         End If;
-        
-         -- Verifica se a pessoa tem indicação do tipo de vínculo. Se não tiver, grava
-         select count(*) into w_existe from co_pessoa where sq_pessoa = p_solicitante and sq_tipo_vinculo is not null;
-         If w_existe = 0 Then
-            update co_pessoa set sq_tipo_vinculo = p_vinculo where sq_pessoa = p_solicitante;
-         End If;
-      End If;
-      
       -- Insere registro em PD_MISSAO
       insert into pd_missao
         (sq_siw_solicitacao, cliente,   sq_pessoa,                     tipo,      justificativa_dia_util,
          passagem,           diaria,    hospedagem,                    veiculo,   sq_pdvinculo_bilhete
         )
       values
-        (w_chave,            p_cliente, Nvl(w_pessoa, p_solicitante),  p_tipo,    p_justif_dia_util,
+        (w_chave,            p_cliente, p_solicitante,                 p_tipo,    p_justif_dia_util,
          p_passagem,         p_diaria,  p_hospedagem,                  p_veiculo, w_financeiro
         );
 

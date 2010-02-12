@@ -827,7 +827,7 @@ function Idiomas() {
   if (strpos('IAEP',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if (strpos('I',$O)!==false) {
+    if (strpos('IA',$O)!==false) {
       Validate('w_chave','Idioma','SELECT','1','1','10','','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E' && $_SESSION['PORTAL']=='') {

@@ -86,6 +86,7 @@ include_once($w_dir_volta.'funcoes/selecaoBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAgencia.php');
 include_once($w_dir_volta.'funcoes/selecaoMeioTransporte.php');
 include_once($w_dir_volta.'funcoes/selecaoCategoriaDiaria.php');
+include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoCumprimento.php');
@@ -217,6 +218,10 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
 }
 
 $w_cadgeral = RetornaCadastrador_PD(f($RS_Menu,'sq_menu'), $w_usuario);
+
+// Verifica se o cliente tem o módulo de protocolo e arquivo
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 
 Main();
 
@@ -654,26 +659,8 @@ function Geral() {
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
   if ($w_troca>'') {
     // Se for recarga da página
-    if (Nvl($_REQUEST['w_cpf'],'')>'') {
-      // Recupera os dados do proponente
-      $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,$_REQUEST['w_cpf'],null,null,1,null,null,null,null,null,null,null);
-      if (count($RS)>0) {
-        foreach($RS as $row) { $RS = $row; break; }
-        $w_cpf          = f($RS,'cpf');
-        $w_sq_prop      = f($RS,'sq_pessoa');
-        $w_nm_prop      = f($RS,'nm_pessoa');
-        $w_nm_prop_res  = f($RS,'nome_resumido');
-        $w_sexo         = f($RS,'sexo');
-        $w_vinculo      = f($RS,'sq_tipo_vinculo');
-      } else {
-        $w_cpf          = $_REQUEST['w_cpf'];
-        $w_sq_prop      = '';
-        $w_nm_prop      = '';
-        $w_nm_prop_res  = '';
-        $w_sexo         = '';
-        $w_vinculo      = '';
-      }
-    }
+    $w_sq_prop          = $_REQUEST['w_sq_prop'];
+    $w_sq_prop_nm       = $_REQUEST['w_sq_prop_nm'];
     $w_sq_menu_relac    = $_REQUEST['w_sq_menu_relac'];
     $w_sq_unidade_resp  = $_REQUEST['w_sq_unidade_resp'];
     $w_assunto          = $_REQUEST['w_assunto'];
@@ -836,28 +823,7 @@ function Geral() {
     ShowHTML('     theForm.w_diaria.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    if ($O=='I') {
-      if ($w_cadgeral=='S') {
-        Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
-        if ($w_sq_prop>'') {
-          if (Nvl($w_sexo,'')=='') {
-            Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
-          }
-          if (Nvl($w_vinculo,'')=='') {
-            Validate('w_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
-          }
-        } else {
-          Validate('w_nm_prop','Nome do beneficiário','1',1,5,60,'1','1');
-          Validate('w_nm_prop_res','Nome resumido do beneficiário','1',1,2,21,'1','1');
-          Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
-          Validate('w_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
-        }
-      } else {
-        if ($w_sexo=='') {
-          Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
-        }
-      }
-    }
+    if ($O=='I' && $w_cadgeral=='S') Validate('w_sq_prop_nm','Beneficiário','HIDDEN',1,5,100,'1','1');
     if ($w_chave_pai>'' && $w_passagem=='S') {
       if (count($RS_Financ)>1) {
         Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','1');
@@ -894,7 +860,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_inicio_atual" value="'.$w_inicio_atual.'">');
     ShowHTML('<INPUT type="hidden" name="w_atividade_ant" value="'.$w_atividade_ant.'">');
     ShowHTML('<INPUT type="hidden" name="w_aviso" value="N">');
-    ShowHTML('<INPUT type="hidden" name="w_sq_prop" value="'.$w_sq_prop.'">');
+    //ShowHTML('<INPUT type="hidden" name="w_sq_prop" value="'.$w_sq_prop.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -986,6 +952,10 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_tipo_missao" value="I">');
     ShowHTML('<INPUT type="hidden" name="w_inicio" value="'.nvl($w_inicio,formataDataEdicao(time())).'">');
     ShowHTML('<INPUT type="hidden" name="w_fim" value="'.nvl($w_fim,formataDataEdicao(time())).'">');
+    if ($O=='I' && $w_cadgeral=='S') {
+      ShowHTML('      <tr>');
+      SelecaoPessoaOrigem('<u>B</u>eneficiário:','P','Clique na lupa para selecionar o beneficiário.',nvl($w_sq_prop,$_SESSION['SQ_PESSOA']),null,'w_sq_prop','NF,EF',null,null);
+    }
     ShowHTML('      <tr><td><b>Contato na au<u>s</u>ência:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="'.$w_proponente.'" title="Indique pessoa para contato durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea '.$w_Disabled.' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">'.$w_assunto.'</TEXTAREA></td>');
 
@@ -1017,7 +987,7 @@ function Geral() {
     }
     ShowHTML('      </tr></table>');
 
-    if ($O=='I') {
+    if ($O=='W') {
       if ($w_cadgeral=='S') {
         ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1138,8 +1108,8 @@ function OutraParte() {
     $w_cidade_estrang   = f($RS,'cidade_estrang');
     $w_informacoes      = f($RS,'informacoes');
     $w_codigo_deposito  = f($RS,'codigo_deposito');
+    $w_sq_tipo_pessoa   = f($RS,'sq_tipo_pessoa');
   }
-  $w_sq_tipo_pessoa     = 1;
   if (Nvl($w_sq_pessoa,0)==0) $O='I'; else $O='A';
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -1191,7 +1161,7 @@ function OutraParte() {
     $w_rg_numero            = $_REQUEST['w_rg_numero'];
     $w_rg_emissor           = $_REQUEST['w_rg_emissor'];
     $w_rg_emissao           = $_REQUEST['w_rg_emissao'];
-    $w_matricula            = $_REQUEST['w_matricula'];
+    $w_passaporte           = $_REQUEST['w_passaporte'];
     $w_sq_pais_passaporte   = $_REQUEST['w_sq_pais_passaporte'];
     $w_sexo                 = $_REQUEST['w_sexo'];
     $w_cnpj                 = $_REQUEST['w_cnpj'];
@@ -1203,6 +1173,7 @@ function OutraParte() {
       if (count($RS)>0) {
         foreach($RS as $row) { $RS = $row; break; }
         $w_sq_pessoa            = f($RS,'sq_pessoa');
+        $w_tipo_pessoa          = f($row,'sq_tipo_pessoa');
         $w_nome                 = f($RS,'nm_pessoa');
         $w_nome_resumido        = f($RS,'nome_resumido');
         $w_sq_pessoa_pai        = f($RS,'sq_pessoa_pai');
@@ -1233,7 +1204,7 @@ function OutraParte() {
         $w_rg_numero            = f($RS,'rg_numero');
         $w_rg_emissor           = f($RS,'rg_emissor');
         $w_rg_emissao           = FormataDataEdicao(f($RS,'rg_emissao'));
-        $w_matricula            = f($RS,'passaporte_numero');
+        $w_passaporte           = f($RS,'passaporte_numero');
         $w_sq_pais_passaporte   = f($RS,'sq_pais_passaporte');
         $w_sexo                 = f($RS,'sexo');
         $w_cnpj                 = f($RS,'cnpj');
@@ -1286,7 +1257,7 @@ function OutraParte() {
   FormataData();
   SaltaCampo();
   ValidateOpen('Validacao');
-  if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Procurar')!==false || strpos($_REQUEST['Botao'],'Alterar')!==false) {
+  if (($w_cpf=='' && $w_cnpj=='' && $w_passaporte=='') || strpos($_REQUEST['Botao'],'Procurar')!==false || strpos($_REQUEST['Botao'],'Alterar')!==false) {
     // Se o beneficiário ainda não foi selecionado
     ShowHTML('  if (theForm.Botao.value == "Procurar") {');
     Validate('w_nome','Nome','','1','4','20','1','');
@@ -1304,14 +1275,53 @@ function OutraParte() {
     if ($w_sq_tipo_vinculo=='') {
       Validate('w_sq_tipo_vinculo','Tipo de vínculo','SELECT',1,1,1,'','1');
     }
-    Validate('w_matricula','Matrícula','1','',1,20,'1','1');
-    Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
-    Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
-    Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');
-    Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
-    Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
-    Validate('w_nr_fax','Fax','1','',7,25,'1','1');
-    Validate('w_nr_celular','Celular','1','',7,25,'1','1');
+    if ($w_tipo_pessoa==1) {
+      Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
+      Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
+      Validate('w_rg_emissor','Órgão expedidor','1',1,2,30,'1','1');
+    } else {
+      Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
+      Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
+      Validate('w_rg_emissor','Órgão expedidor','1','',2,30,'1','1');
+      ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
+      ShowHTML('     alert(\'Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.\');');
+      ShowHTML('     theForm.w_rg_numero.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+    }
+    if ($w_tipo_pessoa==1) {
+      Validate('w_passaporte','Passaporte','1','',1,20,'1','1');
+      Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+      ShowHTML('  if ((theForm.w_passaporte.value+theForm.w_sq_pais_passaporte[theForm.w_sq_pais_passaporte.selectedIndex].value)!="" && (theForm.w_passaporte.value=="" || theForm.w_sq_pais_passaporte.selectedIndex==0)) {');
+      ShowHTML('     alert(\'Os campos passaporte e país emissor devem ser informados em conjunto!\');');
+      ShowHTML('     theForm.w_passaporte.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+    } else {
+      Validate('w_passaporte','Passaporte','1','1',1,20,'1','1');
+      Validate('w_sq_pais_passaporte','País emissor','SELECT','1',1,10,'1','1');
+    }
+    if ($w_tipo_pessoa==1) {
+      Validate('w_ddd','DDD','1','1',2,4,'','0123456789');
+      Validate('w_nr_telefone','Telefone','1',1,7,25,'1','1');
+      Validate('w_nr_fax','Fax','1','',7,25,'1','1');
+      Validate('w_nr_celular','Celular','1','',7,25,'1','1');
+    } else {
+      Validate('w_ddd','DDD','1','',2,4,'','0123456789');
+      Validate('w_nr_telefone','Telefone','1','',7,25,'1','1');
+      Validate('w_nr_fax','Fax','1','',7,25,'1','1');
+      Validate('w_nr_celular','Celular','1','',7,25,'1','1');
+      ShowHTML('  if ((theForm.w_nr_telefone.value+theForm.w_nr_fax.value+theForm.w_nr_celular.value)!="" && theForm.w_ddd.value=="") {');
+      ShowHTML('     alert(\'O campo DDD é obrigatório quando informar telefone, fax ou celular!\');');
+      ShowHTML('     theForm.w_ddd.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_ddd.value!="" && theForm.w_nr_telefone.value=="") {');
+      ShowHTML('     alert(\'Se informar o DDD, então informe obrigatoriamente o telefone!\\nFax e celular são opcionais.\');');
+      ShowHTML('     theForm.w_nr_telefone.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+    }
     if ($w_dados_pagamento) {
       Validate('w_sq_forma_pag','Forma de recebimento','SELECT',1,1,18,'','0123456789');
       if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
@@ -1350,7 +1360,7 @@ function OutraParte() {
   ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
+  if (($w_cpf=='' && $w_cnpj=='' && $w_passaporte=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
     // Se o beneficiário ainda não foi selecionado
     if (strpos($_REQUEST['Botao'],'Procurar')!==false) {
       // Se está sendo feita busca por nome
@@ -1369,7 +1379,7 @@ function OutraParte() {
   Estrutura_Texto_Abre();
   ShowHTML('<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">');
   if (strpos('IA',$O)!==false) {
-    if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
+    if (($w_cpf=='' && $w_cnpj=='' && $w_passaporte=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       // Se o beneficiário ainda não foi selecionado
       ShowHTML('<FORM action="'.$w_dir.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     } else {
@@ -1388,7 +1398,7 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
-    if (($w_cpf=='' && $w_cnpj=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
+    if (($w_cpf=='' && $w_cnpj=='' && $w_passaporte=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       $w_nome=$_REQUEST['w_nome'];
       if (strpos($_REQUEST['Botao'],'Alterar')!==false) {
         $w_cpf  = '';
@@ -1444,7 +1454,8 @@ function OutraParte() {
       ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="2"><table border="0" width="100%">');
       ShowHTML('          <tr valign="top">');
-      ShowHTML('          <td>CPF:<br><b><font size=2>'.$w_cpf);
+      if ($w_tipo_pessoa==1) ShowHTML('          <td>CPF:<br><b><font size=2>'.$w_cpf);
+      
       ShowHTML('              <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
       ShowHTML('          <tr valign="top">');
       ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
@@ -1456,10 +1467,12 @@ function OutraParte() {
         ShowHTML('<INPUT type="hidden" name="w_sq_tipo_vinculo" value="'.$w_sq_tipo_vinculo.'">');
       }
       ShowHTML('          <tr valign="top">');
-      ShowHTML('          <td title="Informe este campo apenas se o beneficiário tiver matrícula. Caso contrário, deixe-o em branco."><b><u>M</u>atrícula:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_matricula" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_matricula.'"></td>');
-      ShowHTML('          <td><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg_numero" class="sti" SIZE="14" MAXLENGTH="80" VALUE="'.$w_rg_numero.'"></td>');
-      ShowHTML('          <td><b>Data de <u>e</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_rg_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_rg_emissao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
-      ShowHTML('          <td><b>Ór<u>g</u>ão emissor:</b><br><input '.$w_Disabled.' accesskey="G" type="text" name="w_rg_emissor" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_rg_emissor.'"></td>');
+      ShowHTML('            <td><b><u>I</u>dentidade:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_rg_numero" class="sti" SIZE="14" MAXLENGTH="80" VALUE="'.$w_rg_numero.'"></td>');
+      ShowHTML('            <td><b>Data de <u>e</u>missão:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_rg_emissao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_rg_emissao.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
+      ShowHTML('            <td><b>Ór<u>g</u>ão emissor:</b><br><input '.$w_Disabled.' accesskey="G" type="text" name="w_rg_emissor" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_rg_emissor.'"></td>');
+      ShowHTML('          <tr valign="top">');
+      ShowHTML('            <td><b>Passapo<u>r</u>te:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_passaporte" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_passaporte.'"></td>');
+      SelecaoPais('<u>P</u>aís emissor do passaporte:','P',null,$w_sq_pais_passaporte,null,'w_sq_pais_passaporte',null,null);
       ShowHTML('          </table>');
       ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1899,10 +1912,10 @@ function Bilhetes() {
     Validate('w_classe','Classe','','1',1,1,'1','1');
     Validate('w_trecho','Trecho','',1,1,60,'1','1');
     Validate('w_rloc','Número vôo','','',1,6,'1','1');
-    Validate('w_valor_cheio','Valor do bilhete cheio','VALOR','1',4,18,'','0123456789,.');
+    Validate('w_valor_cheio','Valor do bilhete com desconto','VALOR','1',4,18,'','0123456789,.');
     Validate('w_valor_bil','Valor do bilhete','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_bil','Valor do bilhete','>=','0,00','zero');
-    CompValor('w_valor_cheio','Valor do bilhete cheio','>=','w_valor_bil','valor do bilhete');
+    CompValor('w_valor_cheio','Valor do bilhete com desconto','>=','w_valor_bil','valor do bilhete');
     Validate('w_valor_tax','Valor da taxa de embarque','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_tax','Valor da taxa de embarque','>=','0,00','zero');
     Validate('w_valor_pta','Valor da transmissão do pta','VALOR','1',4,18,'','0123456789,.');
@@ -2040,7 +2053,7 @@ function Bilhetes() {
     ShowHTML('        <td colspan=3><b><u>T</u>rechos:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_trecho" class="sti" SIZE="60" MAXLENGTH="60" style="text-transform:uppercase;" VALUE="'.$w_trecho.'"></td>');
     ShowHTML('        <td><b><u>R</u>LOC:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_rloc" class="sti" SIZE="6" MAXLENGTH="6" VALUE="'.$w_rloc.'"></td>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b>$ Bilhete <u>c</u>heio:</b><br><input type="text" accesskey="C" name="w_valor_cheio" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_cheio.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete cheio."></td>');
+    ShowHTML('        <td><b>$ Bilhete <u>c</u>om desconto:</b><br><input type="text" accesskey="C" name="w_valor_cheio" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_cheio.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete com desconto."></td>');
     ShowHTML('        <td><b>$ <u>B</u>ilhete:</b><br><input type="text" accesskey="V" name="w_valor_bil" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_bil.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ <u>T</u>axa de embarque:</b><br><input type="text" accesskey="T" name="w_valor_tax" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_tax.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
     ShowHTML('        <td><b>$ Ta<u>x</u>as:</b><br><input type="text" accesskey="X" name="w_valor_pta" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($w_valor_pta,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do bilhete."></td>');
@@ -4514,10 +4527,17 @@ function Diarias_Solic() {
       }
     }
     if ($w_hospedagem=='S') {
+      Validate('w_vl_diaria_hospedagem','Valor da hospedagem','VALOR','',4,10,'','0123456789,');
       Validate('w_hospedagem_qtd','Quantidade de hospedagens','VALOR','',3,5,'','0123456789,');
-      ShowHTML('    if(theForm.w_hospedagem_qtd.value=="") {');
-      ShowHTML('      alert("Favor informar a quantidade de hospedagens!");');
-      ShowHTML('      theForm.w_hospedagem_qtd.focus();');
+      ShowHTML('    if(theForm.w_vl_diaria_hospedagem.value=="") {');
+      ShowHTML('      alert("Favor informar o valor da hospedagem!");');
+      ShowHTML('      theForm.w_vl_diaria_hospedagem.focus();');
+      ShowHTML('      return (false);');
+      ShowHTML('    }');
+      CompValor('w_vl_diaria_hospedagem','Valor da hospedagem','>','0,0','zero');
+      ShowHTML('    if(theForm.w_vl_diaria_hospedagem.value=="") {');
+      ShowHTML('      alert("Favor informar o valor da hospedagem!");');
+      ShowHTML('      theForm.w_vl_diaria_hospedagem.focus();');
       ShowHTML('      return (false);');
       ShowHTML('    }');
       //CompValor('w_hospedagem_qtd','Quantidade de hospedagens','>','0,0','zero');
@@ -4637,7 +4657,7 @@ function Diarias_Solic() {
         $w_trechos[$i][16] = Nvl(f($row,'hospedagem_qtd'),0);
         $w_trechos[$i][17] = Nvl(f($row,'hospedagem_valor'),0);
         $w_trechos[$i][18] = f($row,'sg_moeda_hospedagem');
-        $w_trechos[$i][19] = f($row,'vl_diaria_hospedagem');
+        $w_trechos[$i][19] = Nvl(f($row,'hospedagem_valor'),f($row,'vl_diaria_hospedagem'));
         $w_trechos[$i][20] = f($row,'veiculo');
         $w_trechos[$i][21] = Nvl(f($row,'veiculo_qtd'),0);
         $w_trechos[$i][22] = Nvl(f($row,'veiculo_valor'),0);
@@ -4837,7 +4857,7 @@ function Diarias_Solic() {
         ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
         ShowHTML('          <tr valign="top"><td>');
       }
-      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_diaria.'):</b><br><input type="text" READONLY name="w_vl_diaria" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria.'" style="text-align:right;" title="Valor cheio da diária."></td>');
+      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_diaria.'):</b><br><input type="text" '.(($w_diaria=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_vl_diaria" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria.'" style="text-align:right;" title="Valor cheio da diária."></td>');
       ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_diaria=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_quantidade" SIZE="5" MAXLENGTH="5" VALUE="'.(($w_diaria=='N') ? '0,0' : $w_quantidade).'" onBlur="calculaDiaria(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este local."></td>');
       ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_diaria.'):</b><br><input type="text" READONLY name="w_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.(($w_diaria=='N') ? '0,00' : $w_valor).'" style="text-align:right;" title="Valor cheio da diária."></td>');
       ShowHTML('<INPUT type="hidden" name="w_justificativa_diaria" value="'.$w_justificativa_diaria.'">');
@@ -4868,7 +4888,7 @@ function Diarias_Solic() {
         If (nvl($w_hos_observ,'')!='') ShowHTML('          <tr><td><td colspan="3">Observações:<br><b>'.$w_hos_observ.'</td>');
         ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
         ShowHTML('          <tr valign="top"><td>');
-        ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" READONLY name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria_hospedagem.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
+        ShowHTML('            <td><b>Valor ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_vl_diaria_hospedagem" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria_hospedagem.'" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Valor da hospedagem."></td>');
         ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_hospedagem_qtd" SIZE="5" MAXLENGTH="5" VALUE="'.$w_hospedagem_qtd.'" onblur="calculaHospedagem(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de hospedagens para este local."></td>');
         ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_hospedagem.'):</b><br><input type="text" READONLY name="w_hospedagem_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_hospedagem_valor.'" style="text-align:right;" title="Valor cheio da hospedagem."></td>');
         ShowHTML('<INPUT type="hidden" name="w_hos_in" value="'.formataDataEdicao($w_hos_in).'">');
@@ -5326,7 +5346,6 @@ function Anotar() {
 function Concluir() {
   extract($GLOBALS);
   global $w_Disabled;
-
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
@@ -5573,6 +5592,17 @@ function InformarCotacao() {
   FormataData();
   SaltaCampo();
   FormataValor();
+  ShowHTML('function calculaTotal() { ');
+  ShowHTML('  var obj   = document.Form;');
+  ShowHTML('  var w_res = 0;');
+  ShowHTML('  var w_valor;');
+  ShowHTML('  for (ind=1; ind < obj["w_valor_trecho[]"].length; ind++) {');
+  ShowHTML('    w_valor = replaceAll(replaceAll(obj["w_valor_trecho[]"][ind].value,".",""),",",".");');
+  ShowHTML('    w_res   = w_res + parseFloat(w_valor);');
+  ShowHTML('  }');
+  ShowHTML('  if (w_res==0)     obj.w_total.value="0,00";');
+  ShowHTML('  else              obj.w_total.value = mascaraGlobal("[###.]###,##",w_res);');
+  ShowHTML('}');
   ValidateOpen('Validacao');
   ShowHTML('  var i,k;');
   ShowHTML('  for (ind=1; ind < theForm["w_sq_cia_transporte[]"].length; ind++) {');
@@ -5634,6 +5664,7 @@ function InformarCotacao() {
       $w_trechos[$i][11] = f($row,'nm_meio_transporte');
       $w_trechos[$i][12] = formatNumber(f($row,'valor_trecho'));
       $w_trechos[$i][13] = f($row,'sq_meio_transporte');
+      $w_total += f($row,'valor_trecho');
       $i += 1;
     }
     ShowHTML('     <tr><td align="center" colspan="2">');
@@ -5669,11 +5700,13 @@ function InformarCotacao() {
 
       SelecaoCiaTrans('','','Selecione a companhia de transporte para este destino.',$w_cliente,$w_trechos[$i][6],null,'w_sq_cia_transporte[]',$w_trechos[$i][13],null);
       ShowHTML('       <td align="left"><input type="text" name="w_codigo_voo[]" class="sti" SIZE="10" MAXLENGTH="30" VALUE="'.$w_trechos[$i][7].'"  title="Informe o código do vôo para este destino."></td>');
-      ShowHTML('       <td><input type="text" accesskey="V" name="w_valor_trecho[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_trechos[$i][12].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado do bilhete deste trecho."></td>');
+      ShowHTML('       <td><input type="text" accesskey="V" name="w_valor_trecho[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_trechos[$i][12].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" onBlur="calculaTotal();" title="Informe o valor estimado do bilhete deste trecho."></td>');
       ShowHTML('     </tr>');
       $i += 1;
     }
-    ShowHTML('        </tr>');
+    $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+    ShowHTML('     <tr><td align="center" colspan="8" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr valign="top" bgcolor="'.$w_cor.'"><td colspan="7" align="right"><b>Total</b><td><input readonly type="text" name="w_total" class="stih" style="background-color:'.$w_cor.'; border: 0; text-align:right; font-weight: bold;" SIZE="9" MAXLENGTH="18" VALUE="'.formatNumber($w_total).'">');
     ShowHTML('        </table></td></tr>');
   }
   ShowHTML('        <tr><td align="center" colspan="2">');
@@ -7129,8 +7162,7 @@ function Grava() {
             $_REQUEST['w_sq_prop'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_tipo_missao'],$_REQUEST['w_descricao'],
             $_REQUEST['w_assunto'],$_REQUEST['w_justif_dia_util'],$_REQUEST['w_inicio'],$_REQUEST['w_fim'],
             $_REQUEST['w_data_hora'],$_REQUEST['w_aviso'], $_REQUEST['w_dias'], $_REQUEST['w_chave_pai'],
-            $_REQUEST['w_demanda'],$_REQUEST['w_cpf'], $_REQUEST['w_nm_prop'], $_REQUEST['w_nm_prop_res'],
-            $_REQUEST['w_sexo'], $_REQUEST['w_vinculo'], $_REQUEST['w_inicio_atual'], $_REQUEST['w_passagem'],
+            $_REQUEST['w_demanda'],$_REQUEST['w_inicio_atual'], $_REQUEST['w_passagem'],
             $_REQUEST['w_diaria'], $_REQUEST['w_hospedagem'], $_REQUEST['w_veiculo'], $_REQUEST['w_proponente'],
             $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
             &$w_chave_nova, $w_copia, &$w_codigo);
@@ -7163,16 +7195,17 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putViagemOutra::getInstanceOf($dbms,$O,$SG,
-        $_REQUEST['w_chave'],              $_REQUEST['w_chave_aux'],          $_REQUEST['w_sq_pessoa'],
-        $_REQUEST['w_cpf'],                $_REQUEST['w_nome'],               $_REQUEST['w_nome_resumido'],
-        $_REQUEST['w_sexo'],               $_REQUEST['w_sq_tipo_vinculo'],    $_REQUEST['w_matricula'],
-        $_REQUEST['w_rg_numero'],          $_REQUEST['w_rg_emissao'],         $_REQUEST['w_rg_emissor'],
-        $_REQUEST['w_ddd'],                $_REQUEST['w_nr_telefone'],        $_REQUEST['w_nr_fax'],
-        $_REQUEST['w_nr_celular'],         $_REQUEST['w_sq_agencia'],         $_REQUEST['w_operacao'],
-        $_REQUEST['w_nr_conta'],           $_REQUEST['w_sq_pais_estrang'],    $_REQUEST['w_aba_code'],
-        $_REQUEST['w_swift_code'],         $_REQUEST['w_endereco_estrang'],   $_REQUEST['w_banco_estrang'],
-        $_REQUEST['w_agencia_estrang'],    $_REQUEST['w_cidade_estrang'],     $_REQUEST['w_informacoes'],
-        $_REQUEST['w_codigo_deposito'],    $_REQUEST['w_sq_forma_pag']);
+            $_REQUEST['w_chave'],              $_REQUEST['w_chave_aux'],          $_REQUEST['w_sq_pessoa'],
+            $_REQUEST['w_cpf'],                $_REQUEST['w_nome'],               $_REQUEST['w_nome_resumido'],
+            $_REQUEST['w_sexo'],               $_REQUEST['w_sq_tipo_vinculo'],
+            $_REQUEST['w_rg_numero'],          $_REQUEST['w_rg_emissao'],         $_REQUEST['w_rg_emissor'],
+            $_REQUEST['w_passaporte'],         $_REQUEST['w_sq_pais_passaporte'],
+            $_REQUEST['w_ddd'],                $_REQUEST['w_nr_telefone'],        $_REQUEST['w_nr_fax'],
+            $_REQUEST['w_nr_celular'],         $_REQUEST['w_sq_agencia'],         $_REQUEST['w_operacao'],
+            $_REQUEST['w_nr_conta'],           $_REQUEST['w_sq_pais_estrang'],    $_REQUEST['w_aba_code'],
+            $_REQUEST['w_swift_code'],         $_REQUEST['w_endereco_estrang'],   $_REQUEST['w_banco_estrang'],
+            $_REQUEST['w_agencia_estrang'],    $_REQUEST['w_cidade_estrang'],     $_REQUEST['w_informacoes'],
+            $_REQUEST['w_codigo_deposito'],    $_REQUEST['w_sq_forma_pag']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

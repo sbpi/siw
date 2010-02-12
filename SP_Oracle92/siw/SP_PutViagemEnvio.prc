@@ -21,10 +21,11 @@ create or replace procedure SP_PutViagemEnvio
    i               number(18);
    w_ci            number(18);
    w_ee            number(18);
-   w_salto         number(4);
+   w_salto         number(4)    := 0;
    w_reembolso     pd_missao.reembolso%type;
    w_ressarcimento pd_missao.ressarcimento%type;
    w_conta         co_pessoa_conta%rowtype;
+   w_beneficiario  number(18);
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
@@ -216,6 +217,25 @@ begin
          from siw_tramite a
         where sq_siw_tramite = p_tramite;
   
+      -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo
+      select count(*) into w_existe
+        from pd_missao                    a
+             inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
+               inner join eo_unidade_resp c on (b.sq_unidade         = c.sq_unidade and
+                                                a.sq_pessoa          = c.sq_pessoa and
+                                                c.sq_pessoa          = p_pessoa and
+                                                c.tipo_respons       = 'T' and
+                                                c.fim                is null
+                                               )
+       where a.sq_siw_solicitacao = p_chave
+         and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH');
+      -- Se sim, pula autorização pelo chefe imediato.
+      If w_existe > 0 
+         Then w_salto := 1;
+         Else w_salto := 0;
+      End If;
+
       If w_sg_tramite in ('CI','PC') Then
          -- Calcula as quantidades de diárias
          SP_CalculaDiarias(p_chave,null);
@@ -232,7 +252,7 @@ begin
             -- Se viagem para exterior, vai para a cotação de preços; senão vai para aprovação
             If w_existe > 0 
                Then w_salto := 1;
-               Else w_salto := 2;
+               Else w_salto := w_salto + 2;
             End If;
          Else
             w_salto := 1;
@@ -250,17 +270,17 @@ begin
             and e.sq_pessoa          = w_cliente;
         
          If w_existe > 0 
-            Then w_salto := 1;
-            Else w_salto := 2;
+            Then w_salto := w_salto + 1;
+            Else w_salto := w_salto + 2;
          End If;
       Elsif w_sg_tramite = 'VP' Then
          -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.
          If w_reembolso = 'S' or w_ressarcimento = 'S'
-            Then w_salto := 1;
-            Else w_salto := 3;
+            Then w_salto := w_salto + 1;
+            Else w_salto := w_salto + 3;
          End If;
       Else
-         w_salto := 1;
+         w_salto := w_salto + 1;
       End If;
       
       select sq_siw_tramite, sigla into w_tramite, w_sg_tramite

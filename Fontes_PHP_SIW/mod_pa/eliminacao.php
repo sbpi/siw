@@ -1219,7 +1219,7 @@ function Excluir() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML(VisualEliminacao($w_chave,'V',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PAELICAD',$w_pagina.$par,$O);
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');

@@ -1885,6 +1885,8 @@ ShowHTML('          <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I
 if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
 ShowHTML('              <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
 }
+//Informações da folha de ponto diária  
+//$RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms,$w_contrato,null,null);
 ShowHTML('<tr><td colspan="3"><table width="100%">');
 ShowHTML('  <tr><td colspan="4"><br><h3>Jornada de trabalho</td></tr>');
 ShowHTML('  <tr valign="middle" align="center">');
@@ -2227,7 +2229,7 @@ function Grava() {
     $RS = db_getGPDesempenho::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_ano']);
     if(count($RS)>0 && $O=='I') {
     ScriptOpen('JavaScript');
-    ShowHTML('alert(\'?O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
+    ShowHTML('alert(\'O percentual de desempenho para o ano de '.$_REQUEST['w_ano'].' já foi informado.\');');
     ScriptClose();
     retornaFormulario('w_ano');
     exit;

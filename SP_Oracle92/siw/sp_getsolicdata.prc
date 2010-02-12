@@ -706,7 +706,7 @@ begin
                 case d1.veiculo     when 'S' then 'Sim' else 'Não' end as nm_veiculo,
                 case d1.reembolso   when 'S' then 'Sim' else 'Não' end as nm_reembolso,
                 case d1.cumprimento when 'I' then 'Integral' when 'P' then 'Parcial' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
-                d2.nome nm_prop,      d2.nome_resumido nm_prop_res,
+                d2.nome nm_prop,      d2.nome_resumido nm_prop_res, d2.sq_tipo_pessoa,
                 coalesce(d21.ativo,'N') st_prop,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,

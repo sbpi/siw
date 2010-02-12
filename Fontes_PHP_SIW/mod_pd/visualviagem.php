@@ -137,13 +137,19 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } else {
         foreach($RSQuery as $row) { 
           $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
-          $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
+          if (f($row,'tipo_pessoa')==1) {
+            $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
+          } else {
+            $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - Passaporte: '.f($row,'passaporte_numero').' '.f($row,'nm_pais_passaporte').'</b>';
+          }
           $l_html.=chr(13).'      <tr><td colspan="2">';
           $l_html.=chr(13).'      <tr><td><b>Sexo:</b></td><td>'.f($row,'nm_sexo').'</td></tr>';
-          $l_html.=chr(13).'      <tr><td><b>Matrícula:</b></td><td>'.Nvl(f($row,'matricula'),'---').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($row,'rg_numero').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
           $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($row,'rg_emissor').'</td></tr>';
+          if (Nvl(f($row,'passaporte_numero'),'')!='' && f($row,'tipo_pessoa')==1) {
+            $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.f($row,'passaporte_numero').' - '.f($row,'nm_pais_passaporte').'</td></tr>';
+          }
           $l_html.=chr(13).'      <tr valign="top"><td><b>Telefone:</b></td>'; 
           if (nvl(f($row,'ddd'),'nulo')!='nulo') {
             $l_html.=chr(13).'            <td>('.f($row,'ddd').') '.f($row,'nr_telefone').'</td></tr>';
@@ -1195,7 +1201,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'          <td colspan=3><b>Faturamento</td>';
         $l_html.=chr(13).'        </tr>';
         $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $l_html.=chr(13).'          <td><b>Valor Cheio</td>';
+        $l_html.=chr(13).'          <td><b>Valor com desconto</td>';
         $l_html.=chr(13).'          <td><b>Valor Bilhete</td>';
         $l_html.=chr(13).'          <td><b>Embarque</td>';
         $l_html.=chr(13).'          <td><b>Taxas</td>';

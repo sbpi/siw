@@ -70,7 +70,7 @@ begin
        where sq_pessoa = p_sq_pessoa;
    End If;
    
-   If p_tipo_pessoa = 1 Then -- Se for pessoa física
+   If p_tipo_pessoa in (1,3) Then -- Se for pessoa física
       -- Verifica se os dados de pessoa física já existem
       select count(*) into w_existe from co_pessoa_fisica where sq_pessoa = w_chave_pessoa;
       
@@ -95,7 +95,7 @@ begin
                 sexo               = Nvl(p_sexo, sexo)
           where sq_pessoa = w_chave_pessoa;
       End If;
-   Else
+   Elsif p_tipo_pessoa = 2 Then
       -- Verifica se os dados de pessoa jurídica já existem
       select count(*) into w_existe from co_pessoa_juridica where sq_pessoa = w_chave_pessoa;
       

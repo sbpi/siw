@@ -28,7 +28,7 @@ include_once('funcoes/selecaoTipoAutenticacao.php');
 //  /pessoa.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
-// Descricao: Gerencia o módulo de formulários do sistema
+// Descricao: Gerencia o cadastro de pessoas do sistema
 // Mail     : alex@sbpi.com.br
 // Criacao  : 25/11/2002 16:17
 // Versao   : 1.0.0.0
@@ -548,6 +548,7 @@ function CadastraPessoa() {
     $p_cpf            = $_REQUEST['p_cpf'];
     $p_cnpj           = $_REQUEST['p_cnpj'];
     $p_nome           = $_REQUEST['p_nome'];
+    $p_tipo_pessoa    = $_REQUEST['p_tipo_pessoa'];
 
     // Verifica se há necessidade de recarregar os dados da tela a partir
     // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -653,18 +654,23 @@ function CadastraPessoa() {
     Validate('w_nome','Nome','1',1,5,60,'1','1');
     if ($w_tipo_pessoa==1) {
         Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
-    } else {
+    } elseif ($w_tipo_pessoa==2) {
         Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
     }
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
-    if ($w_tipo_pessoa==1) {
+    if ($w_tipo_pessoa==1 or $w_tipo_pessoa==3) {
         Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
         Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
         Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
         Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
         Validate('w_rg_emissor','Órgão expedidor','1','',2,30,'1','1');
-        Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
-        Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+        if ($w_tipo_pessoa==1) {
+          Validate('w_passaporte_numero','Passaporte','1','',1,20,'1','1');
+          Validate('w_sq_pais_passaporte','País emissor','SELECT','',1,10,'1','1');
+        } else {
+          Validate('w_passaporte_numero','Passaporte','1','1',1,20,'1','1');
+          Validate('w_sq_pais_passaporte','País emissor','SELECT','1',1,10,'1','1');
+        }
         ShowHTML('  if ((theForm.w_rg_numero.value+theForm.w_rg_emissao.value+theForm.w_rg_emissor.value)!="" && (theForm.w_rg_numero.value=="" || theForm.w_rg_emissor.value=="")) {');
         ShowHTML('     alert(\'Os campos identidade, data de emissão e órgão emissor devem ser informados em conjunto!\\nDos três, apenas a data de emissão é opcional.\');');
         ShowHTML('     theForm.w_rg_numero.focus();');
@@ -759,12 +765,12 @@ function CadastraPessoa() {
         ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
         if ($w_tipo_pessoa==1) {
             ShowHTML('             <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cpf" VALUE="'.$w_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
-        } else {
+        } elseif ($w_tipo_pessoa==2) {
             ShowHTML('             <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="w_cnpj" VALUE="'.$w_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
         }
         ShowHTML('          <tr valign="top">');
         ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
-        if ($w_tipo_pessoa==1) {
+        if ($w_tipo_pessoa==1 or $w_tipo_pessoa==3) {
             SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
             ShowHTML('          <td><b>Da<u>t</u>a de nascimento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nascimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_nascimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
             ShowHTML('        <tr valign="top">');
@@ -780,7 +786,7 @@ function CadastraPessoa() {
         ShowHTML('          </table>');
         ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
         ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
-        if ($w_tipo_pessoa==1) {
+        if ($w_tipo_pessoa==1 or $w_tipo_pessoa==3) {
             ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td></td></tr>');
         } else {
             ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td></td></tr>');
@@ -942,12 +948,13 @@ function BuscaUsuario() {
 function BuscaPessoa() {
     extract($GLOBALS);
     global $w_Disabled;
-    $p_nome       = upper($_REQUEST['p_nome']);
-    $p_cpf        = $_REQUEST['p_cpf'];
-    $p_cnpj       = $_REQUEST['p_cnpj'];
-    $w_pessoa     = $_REQUEST['w_pessoa'];
-    $p_restricao  = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
-    $p_campo      = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
+    $p_nome        = upper($_REQUEST['p_nome']);
+    $p_cpf         = $_REQUEST['p_cpf'];
+    $p_cnpj        = $_REQUEST['p_cnpj'];
+    $p_tipo_pessoa = nvl($_REQUEST['p_tipo_pessoa'],'NF,NJ,EF,EJ');
+    $w_pessoa      = $_REQUEST['w_pessoa'];
+    $p_restricao   = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
+    $p_campo       = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
@@ -971,8 +978,8 @@ function BuscaPessoa() {
     CheckBranco();
     ValidateOpen('Validacao');
     Validate('p_nome','Nome','1','','3','100','1','1');
-    Validate('p_cpf','CPF','CPF','','14','14','','0123456789.-');
-    Validate('p_cnpj','CNPJ','CNPJ','','18','18','','0123456789.-/');
+    if (strpos($p_tipo_pessoa,'NF')!==false) Validate('p_cpf','CPF','CPF','','14','14','','0123456789.-');
+    if (strpos($p_tipo_pessoa,'NJ')!==false) Validate('p_cnpj','CNPJ','CNPJ','','18','18','','0123456789.-/');
     ShowHTML('  if (theForm.p_nome.value=="" && theForm.p_cpf.value=="" && theForm.p_cnpj.value=="") {');
     ShowHTML('     alert (\'Informe um critério para busca!\');');
     ShowHTML('     theForm.p_nome.focus();');
@@ -991,8 +998,9 @@ function BuscaPessoa() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="p_restricao" value="'.$p_restricao.'">');
     ShowHTML('<INPUT type="hidden" name="p_campo" value="'.$p_campo.'">');
+    ShowHTML('<INPUT type="hidden" name="p_tipo_pessoa" value="'.$p_tipo_pessoa.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="justify"><b><ul>Instruções</b>:');
-    ShowHTML('  <li>Informe parte do nome da pessoa, o CPF ou o CNPJ.');
+    ShowHTML('  <li>Informe pelos menos um critério de busca.');
     ShowHTML('  <li>Quando a relação for exibida, selecione a ação desejada clicando sobre o link <i>Selecionar</i>.');
     ShowHTML('  <li>Após informar os critérios de busca, clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Cancelar</i>, a procura é cancelada.');
     ShowHTML('  <li>Se a pessoa desejada não for encontrada, clique no botão <i>Cadastrar nova pessoa</i>, exibido abaixo da listagem.');
@@ -1003,8 +1011,8 @@ function BuscaPessoa() {
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td colspan=2><b>Parte do <U>n</U>ome da pessoa:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="p_nome" size="50" maxlength="100" value="'.$p_nome.'">');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_cpf" VALUE="'.$p_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
-    ShowHTML('        <td><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_cnpj" VALUE="'.$p_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
+    ShowHTML('        <td '.((strpos($p_tipo_pessoa,'NF')!==false) ? '' : 'style="display:none;"').'><b><u>C</u>PF:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_cpf" VALUE="'.$p_cpf.'" SIZE="14" MaxLength="14" onKeyDown="FormataCPF(this, event);">');
+    ShowHTML('        <td '.((strpos($p_tipo_pessoa,'NJ')!==false) ? '' : 'style="display:none;"').'><b><u>C</u>NPJ:<br><INPUT ACCESSKEY="C" TYPE="text" class="sti" NAME="p_cnpj" VALUE="'.$p_cnpj.'" SIZE="18" MaxLength="18" onKeyDown="FormataCNPJ(this, event);">');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -1042,9 +1050,16 @@ function BuscaPessoa() {
             ShowHTML('  </td>');
             ShowHTML('</tr>');
         }
-        ShowHTML('      <tr><td align="center" colspan="3">');
-        ShowHTML('            <input class="stb" type="Button" name="BotaoCad" value="Cadastrar pessoa física" onClick="javascript:cadastra(1);">');
-        ShowHTML('            <input class="stb" type="Button" name="BotaoCad" value="Cadastrar pessoa jurídica" onClick="javascript:cadastra(2);">');
+        if (strpos($p_tipo_pessoa,'NF')!==false || strpos($p_tipo_pessoa,'NJ')!==false) {
+          ShowHTML('      <tr><td align="center" colspan="3">');
+          if (strpos($p_tipo_pessoa,'NF')!==false) ShowHTML('            <input lenght="150" class="stb" type="Button" name="BotaoNF" value="Cadastrar pessoa física BRASILEIRA" onClick="javascript:cadastra(1);">');
+          if (strpos($p_tipo_pessoa,'NJ')!==false) ShowHTML('            <input class="stb" type="Button" name="BotaoNJ" value="Cadastrar pessoa jurídica BRASILEIRA" onClick="javascript:cadastra(2);">');
+        }
+        if (strpos($p_tipo_pessoa,'NF')!==false || strpos($p_tipo_pessoa,'NJ')!==false) {
+          ShowHTML('      <tr><td align="center" colspan="3">');
+          if (strpos($p_tipo_pessoa,'EF')!==false) ShowHTML('            <input class="stb" type="Button" name="BotaoEF" value="Cadastrar pessoa física ESTRANGEIRA" onClick="javascript:cadastra(3);">');
+          if (strpos($p_tipo_pessoa,'EJ')!==false) ShowHTML('            <input class="stb" type="Button" name="BotaoEJ" value="Cadastrar pessoa jurídica ESTRANGEIRA" onClick="javascript:cadastra(4);">');
+        }
     }
     ShowHTML('    </table>');
     ShowHTML('    </TD>');
@@ -1276,7 +1291,7 @@ function Grava() {
         // Verifica se a Assinatura Eletrônica é válida
         if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
             if ($O=='I' || $O=='A') {
-                if ($_REQUEST['w_tipo_pessoa']==1) {
+                if ($_REQUEST['w_tipo_pessoa']==1 || $_REQUEST['w_tipo_pessoa']==3) {
                     // Verifica se já existe pessoa física com o CPF informado
                     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,nvl($_REQUEST['w_cpf'],'0'),null,null,$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null);
                     if (count($RS)>0) {
@@ -1286,7 +1301,7 @@ function Grava() {
                         retornaFormulario('w_cpf');
                         exit;
                     }
-                    // Verifica se já existe pessoa física com o mesmo nome. Se existir, é obrigatório informar o CPF.
+                    // Verifica se já existe pessoa física com o mesmo nome.
                     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,null,null,nvl($_REQUEST['w_nome'],'0'),$_REQUEST['w_tipo_pessoa'],null,null,null,null,null,null,null,'EXISTE');
                     if (count($RS)>0) {
                         foreach ($RS as $row) {
@@ -1335,14 +1350,14 @@ function Grava() {
             }
 
             dml_putPessoa::getInstanceOf($dbms,$_REQUEST['O'],$w_cliente,Nvl($_REQUEST['p_restricao'],$SG),
-            $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
-            $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
-            $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
-            $_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],$_REQUEST['w_passaporte_numero'],
-            $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
-            $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
-            $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
-            $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
+                $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_cpf'],
+                $_REQUEST['w_cnpj'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],
+                $_REQUEST['w_sexo'],$_REQUEST['w_nascimento'],$_REQUEST['w_rg_numero'],
+                $_REQUEST['w_rg_emissao'],$_REQUEST['w_rg_emissor'],$_REQUEST['w_passaporte_numero'],
+                $_REQUEST['w_sq_pais_passaporte'],$_REQUEST['w_inscricao_estadual'],$_REQUEST['w_logradouro'],
+                $_REQUEST['w_complemento'],$_REQUEST['w_bairro'],$_REQUEST['w_sq_cidade'],
+                $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
+                $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
 
             ScriptOpen('JavaScript');
             ShowHTML('  location.href=\''.$_REQUEST['p_volta'].'&p_tp='.$_REQUEST['p_tp'].'&p_campo='.$_REQUEST['p_campo'].'&p_nome='.$_REQUEST['w_nome'].'&p_cpf='.$_REQUEST['w_cpf'].'&p_cnpj='.$_REQUEST['w_cnpj'].'\';');

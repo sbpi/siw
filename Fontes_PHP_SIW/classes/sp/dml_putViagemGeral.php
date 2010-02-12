@@ -12,9 +12,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putViagemGeral {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_menu, $p_unidade, $p_unid_resp, $p_solicitante, 
         $p_cadastrador, $p_tipo, $p_descricao, $p_agenda, $p_justificativa, $p_inicio, $p_fim, $p_data_hora, $p_aviso, 
-        $p_dias, $p_projeto, $p_atividade, $p_cpf, $p_nome, $p_nome_resumido, $p_sexo, $p_vinculo, $p_inicio_atual, 
-        $p_passagem, $p_diaria, $p_hospedagem, $p_veiculo, $p_proponente, $p_financeiro, $p_rubrica, $p_lancamento,
-        $p_chave_nova, $p_copia, $p_codigo_interno) {
+        $p_dias, $p_projeto, $p_atividade, $p_inicio_atual, $p_passagem, $p_diaria, $p_hospedagem, $p_veiculo, 
+        $p_proponente, $p_financeiro, $p_rubrica, $p_lancamento, $p_chave_nova, $p_copia, $p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putViagemGeral';
      $params=array('p_operacao'              =>array($operacao,                          B_VARCHAR,         1),
                    'p_cliente'               =>array($p_cliente,                         B_INTEGER,        32),
@@ -35,11 +34,6 @@ class dml_putViagemGeral {
                    'p_dias'                  =>array(nvl($p_dias,0),                     B_INTEGER,        32),
                    'p_projeto'               =>array(tvl($p_projeto),                    B_INTEGER,        32),
                    'p_atividade'             =>array(tvl($p_atividade),                  B_INTEGER,        32),
-                   'p_cpf'                   =>array(tvl($p_cpf),                        B_VARCHAR,        14),
-                   'p_nome'                  =>array(tvl($p_nome),                       B_VARCHAR,        60),
-                   'p_nome_resumido'         =>array(tvl($p_nome_resumido),              B_VARCHAR,        21),
-                   'p_sexo'                  =>array(tvl($p_sexo),                       B_VARCHAR,         1),
-                   'p_vinculo'               =>array(tvl($p_vinculo),                    B_INTEGER,        32),
                    'p_inicio_atual'          =>array(tvl($p_inicio_atual),               B_DATE,           32),
                    'p_passagem'              =>array(tvl($p_passagem),                   B_VARCHAR,         1),
                    'p_diaria'                =>array(tvl($p_diaria),                     B_INTEGER,        32),

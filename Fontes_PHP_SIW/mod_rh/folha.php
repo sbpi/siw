@@ -718,7 +718,7 @@ function Inicial() {
     CompHora('["w_entrada2[]"][ind]','Entrada Turno 2','<','["w_saida2[]"][ind]','Saída Turno 2');
     CompHora('["w_entrada1[]"][ind]','Entrada Turno 1','<','["w_saida1[]"][ind]','Saída Turno 1');
   }
-  //CompHora('["w_trabalhadas[]"][ind]','Hora extra diária','<=','["w_limite"]',$w_limite_diario_extras);
+  CompHora('["w_trabalhadas[]"][ind]','Hora extra diária','<=','["w_limite"]',$w_limite_diario_extras);
   //CompHora('w_entrada_manha','Entrada manhã','<','w_saida_manha','Saída manhã');
   ShowHTML('  }');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
