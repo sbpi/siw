@@ -55,9 +55,17 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       if ($l_formato=='WORD') {
         $l_html.=chr(13).'   <tr><td width="30%"><b>Procedência:</b></td>';
         $l_html.=chr(13).'       <td>'.f($RS,'nm_unid_origem').'</td></tr>';
+        if (nvl(f($RS,'nm_pessoa_interes'),'')!='') {
+          $l_html.=chr(13).'   <tr><td><b>Interessado principal:</b></td>';
+          $l_html.=chr(13).'       <td>'.f($RS,'nm_pessoa_interes').'</td></tr>';        
+        }
       } else {
         $l_html.=chr(13).'   <tr><td width="30%"><b>Procedência:</b></td>';
         $l_html.=chr(13).'       <td>'.ExibeUnidade('../',$w_cliente,f($RS,'nm_unid_origem'),f($RS,'sq_unidade'),$TP).'</td></tr>';
+        if (nvl(f($RS,'nm_pessoa_interes'),'')!='') {
+          $l_html.=chr(13).'   <tr><td><b>Interessado principal:</b></td>';
+          $l_html.=chr(13).'       <td>'.ExibePessoa('../',$w_cliente,f($RS,'pessoa_interes'),$TP,f($RS,'nm_pessoa_interes')).'</tr>';        
+        }
       } 
     } else {
       $l_html.=chr(13).'   <tr><td><b>Procedência:</b></td>';
@@ -387,7 +395,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
-    $RS = SortArray($RS,'phpdt_data','desc');
+    $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;
       foreach($RS as $row) {

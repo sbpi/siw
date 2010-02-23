@@ -50,7 +50,15 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
+    if ($w_mod_pa=='S') {
+      if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="protocolo">'.f($RS,'protocolo').'&nbsp;</a></tr>';
+      } else {
+        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: '.nvl(f($RS,'protocolo'),'---').'</tr>';
+      }
+    } else {
+      $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0" align=justify><font size="2"><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td></tr>';
+    }
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
     
     // Identificação da viagem

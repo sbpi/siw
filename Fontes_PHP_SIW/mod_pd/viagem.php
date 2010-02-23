@@ -5379,6 +5379,7 @@ function Concluir() {
   if ($O=='V') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
+    if ($w_cliente==10135 && $w_mod_pa=='S') Validate('w_nota_conclusao','Observações sobre o acondicionamento','1','1',1,2000,'1','1');
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -5394,7 +5395,6 @@ function Concluir() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualViagem($w_chave,'L',$w_usuario,$P1,$P4));
-  ShowHTML('<HR>');
   ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=PDCONC&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
   ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
   ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
@@ -5409,6 +5409,16 @@ function Concluir() {
   ShowHTML('<INPUT type="hidden" name="w_concluida" value="S">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="100%" border="0">');
+  if ($w_cliente==10135 && $w_mod_pa=='S') {
+    //Se ABDI, vincula a viagem com o módulo de protocolo
+    ShowHTML('    <tr><td colspan=3><font size=2><b>DADOS DO ARQUIVAMENTO SETORIAL</b></font></td></tr>');
+    ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('    <tr><td width="30%">Data do arquivamento:<td colspan=2><b>'.formataDataEdicao(time()).'</b></td></tr>');
+    ShowHTML('    <tr><td width="30%">Unidade arquivadora:<td colspan=2><b>'.f($RS_Menu,'nm_unidade').'</b></td></tr>');
+    ShowHTML('    <tr><td width="30%">Usuário arquivador:<td colspan=2><b>'.$_SESSION['NOME'].'</b></td></tr>');
+    ShowHTML('    <tr valign="top"><td width="30%">Acondicionamento:<td title="Descreva de forma objetiva onde o documento encontra-se no arquivo setorial."><textarea '.$w_Disabled.' accesskey="O" name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');    
+    ShowHTML('    <tr><td colspan=3>&nbsp;</td></tr>');
+  }
   ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
@@ -5592,17 +5602,6 @@ function InformarCotacao() {
   FormataData();
   SaltaCampo();
   FormataValor();
-  ShowHTML('function calculaTotal() { ');
-  ShowHTML('  var obj   = document.Form;');
-  ShowHTML('  var w_res = 0;');
-  ShowHTML('  var w_valor;');
-  ShowHTML('  for (ind=1; ind < obj["w_valor_trecho[]"].length; ind++) {');
-  ShowHTML('    w_valor = replaceAll(replaceAll(obj["w_valor_trecho[]"][ind].value,".",""),",",".");');
-  ShowHTML('    w_res   = w_res + parseFloat(w_valor);');
-  ShowHTML('  }');
-  ShowHTML('  if (w_res==0)     obj.w_total.value="0,00";');
-  ShowHTML('  else              obj.w_total.value = mascaraGlobal("[###.]###,##",w_res);');
-  ShowHTML('}');
   ValidateOpen('Validacao');
   ShowHTML('  var i,k;');
   ShowHTML('  for (ind=1; ind < theForm["w_sq_cia_transporte[]"].length; ind++) {');
@@ -5613,8 +5612,8 @@ function InformarCotacao() {
   ShowHTML('  }');
   ShowHTML('  for (ind=1; ind < theForm["w_valor_trecho[]"].length; ind++) {');
   Validate('["w_valor_trecho[]"][ind]','Valor estimado','VALOR','1',4,18,'','0123456789,.');
-  CompValor('["w_valor_trecho[]"][ind]','Valor estimado','>','0,00','zero');
   ShowHTML('  }');
+  CompValor('w_total','Valor estimado','>','0,00','zero');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -5700,7 +5699,7 @@ function InformarCotacao() {
 
       SelecaoCiaTrans('','','Selecione a companhia de transporte para este destino.',$w_cliente,$w_trechos[$i][6],null,'w_sq_cia_transporte[]',$w_trechos[$i][13],null);
       ShowHTML('       <td align="left"><input type="text" name="w_codigo_voo[]" class="sti" SIZE="10" MAXLENGTH="30" VALUE="'.$w_trechos[$i][7].'"  title="Informe o código do vôo para este destino."></td>');
-      ShowHTML('       <td><input type="text" accesskey="V" name="w_valor_trecho[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_trechos[$i][12].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" onBlur="calculaTotal();" title="Informe o valor estimado do bilhete deste trecho."></td>');
+      ShowHTML('       <td><input type="text" accesskey="V" name="w_valor_trecho[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_trechos[$i][12].'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado do bilhete deste trecho."></td>');
       ShowHTML('     </tr>');
       $i += 1;
     }

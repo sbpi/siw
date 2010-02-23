@@ -288,7 +288,7 @@ begin
          and (p_unid_autua is null or (p_unid_autua  is not null and c.unidade_autuacao   = p_unid_autua))
          and (p_ini        is null or (p_ini         is not null and d.envio              between p_ini and p_fim))
          and (p_despacho   is null or (p_despacho    is not null and 
-                                       (b4.sigla     = 'AS' or b4.ativo = 'S') and
+                                       (b4.ativo = 'S' or (b4.ativo = 'N' and b4.sigla = 'AS' and p_numero is not null)) and
                                        ((p_despacho not in (a1.despacho_autuar,
                                                             a1.despacho_anexar,
                                                             a1.despacho_apensar,

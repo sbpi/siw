@@ -660,7 +660,7 @@ begin
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
+                b.palavra_chave,      b.protocolo_siw,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
                 to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
                 to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
@@ -674,6 +674,7 @@ begin
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b4.prefixo||'.'||substr(1000000+b4.numero_documento,2,6)||'/'||b4.ano||'-'||substr(100+b4.digito,2,2) as protocolo,
                 c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
@@ -751,6 +752,7 @@ begin
                   inner                join siw_solicitacao            b  on (a.sq_menu                     = b.sq_menu)
                     inner              join siw_tramite                b1 on (b.sq_siw_tramite              = b1.sq_siw_tramite)
                     left               join pe_plano                   b3 on (b.sq_plano                    = b3.sq_plano)
+                    left               join pa_documento               b4 on (b.protocolo_siw               = b4.sq_siw_solicitacao)
                     inner              join gd_demanda                 d  on (b.sq_siw_solicitacao          = d.sq_siw_solicitacao)
                       inner            join pd_missao                  d1 on (d.sq_siw_solicitacao          = d1.sq_siw_solicitacao)
                         inner          join siw_solicitacao           d11 on (d1.sq_siw_solicitacao         = d11.sq_siw_solicitacao)

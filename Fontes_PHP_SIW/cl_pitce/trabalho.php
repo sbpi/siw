@@ -281,11 +281,36 @@ function Mesa() {
     foreach($RS as $row) { 
       $w_plano = f($row,'sq_plano');
       switch (f($row,'codigo_interno')) {
+        case 'RE01':  $c_re01  = f($row,'sq_siw_solicitacao'); $w_re01 = f($row,'qtd'); break;
+        case 'RE02':  $c_re02  = f($row,'sq_siw_solicitacao'); $w_re02 = f($row,'qtd'); break;
+        case 'RE03':  $c_re03  = f($row,'sq_siw_solicitacao'); $w_re03 = f($row,'qtd'); break;
+        
+        case 'PI01':  $c_pi01  = f($row,'sq_siw_solicitacao'); $w_pi01 = f($row,'qtd'); break;
+        case 'PI02':  $c_pi02  = f($row,'sq_siw_solicitacao'); $w_pi02 = f($row,'qtd'); break;
+        case 'PI03':  $c_pi03  = f($row,'sq_siw_solicitacao'); $w_pi03 = f($row,'qtd'); break;
+        case 'PI04':  $c_pi04  = f($row,'sq_siw_solicitacao'); $w_pi04 = f($row,'qtd'); break;
+        case 'PI05':  $c_pi05  = f($row,'sq_siw_solicitacao'); $w_pi05 = f($row,'qtd'); break;
+        case 'PI06':  $c_pi06  = f($row,'sq_siw_solicitacao'); $w_pi06 = f($row,'qtd'); break;
+        case 'PI07':  $c_pi07  = f($row,'sq_siw_solicitacao'); $w_pi07 = f($row,'qtd'); break;
+        case 'PI08':  $c_pi08  = f($row,'sq_siw_solicitacao'); $w_pi08 = f($row,'qtd'); break;
+        case 'PI09':  $c_pi09  = f($row,'sq_siw_solicitacao'); $w_pi09 = f($row,'qtd'); break;
+        case 'PI10':  $c_pi10  = f($row,'sq_siw_solicitacao'); $w_pi10 = f($row,'qtd'); break;
+        case 'PI11':  $c_pi11  = f($row,'sq_siw_solicitacao'); $w_pi11 = f($row,'qtd'); break;
+        
+        case 'AC01':  $c_ac01  = f($row,'sq_siw_solicitacao'); $w_ac01 = f($row,'qtd'); break;
+        case 'AC02':  $c_ac02  = f($row,'sq_siw_solicitacao'); $w_ac02 = f($row,'qtd'); break;
+        case 'AC03':  $c_ac03  = f($row,'sq_siw_solicitacao'); $w_ac03 = f($row,'qtd'); break;
+        case 'AC04':  $c_ac04  = f($row,'sq_siw_solicitacao'); $w_ac04 = f($row,'qtd'); break;
+        case 'AC05':  $c_ac05  = f($row,'sq_siw_solicitacao'); $w_ac05 = f($row,'qtd'); break;
+        case 'AC06':  $c_ac06  = f($row,'sq_siw_solicitacao'); $w_ac06 = f($row,'qtd'); break;
+
+        /*
         case 'PDE':  $c_pde  = f($row,'sq_siw_solicitacao'); $w_pde = f($row,'qtd'); break;
         case 'PAS':  $c_pns  = f($row,'sq_siw_solicitacao'); $w_pns = f($row,'qtd'); break;
         case 'PMAE': $c_pne = f($row,'sq_solic_pai'); $c_pne1 = f($row,'sq_siw_solicitacao'); $w_pne1 = f($row,'qtd'); break;
         case 'PCE': $c_pne = f($row,'sq_solic_pai'); $c_pne2 = f($row,'sq_siw_solicitacao'); $w_pne2 = f($row,'qtd'); break;
         case 'PFC': $c_pne = f($row,'sq_solic_pai'); $c_pne3 = f($row,'sq_siw_solicitacao'); $w_pne3 = f($row,'qtd'); break;
+        */
       }
     }
     $w_pne   = $w_pne1 + $w_pne2 + $w_pne3;
@@ -295,6 +320,7 @@ function Mesa() {
     ShowHTML('<a href="'.$w_dir.$w_pagina.'calendario&TP='.$TP.' - Calendário&p_plano='.$w_plano.'&SG='.$SG.'" title="Consulta de Programas, eventos e reuniões da PDP."><div id="calendario"></div></a>');
     ShowHTML('<a title="Consulta a documentos da PDP" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=TODOS&TP='.$TP.' - Documentos"><div id="download"></div></a>');
     ShowHTML('</div>');
+    /*
     ShowHTML('<img name="pdp" src="'.$w_dir.'pdp.gif" width="611" height="402" border="0" id="pdp" usemap="#m_pdp" alt="" /><map name="m_pdp" id="m_pdp">');
     ShowHTML('<area shape="poly" coords="376,374,608,374,608,402,376,402,376,374" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&O=L&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" target="PRG"" title="Programas: '.$w_todos.'" />');
     //ShowHTML('<area shape="poly" coords="258,248,261,240,269,237,593,237,600,240,603,248,603,253,600,260,593,263,269,263,261,260,258,253,258,248,258,248" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_programa='.$c_pne.'&O=L&p_sinal=S&p_plano='.$w_plano.'&p_legenda=S&p_projeto=S" title="Programas: '.$w_pne.'" />');
@@ -308,6 +334,33 @@ function Mesa() {
     ShowHTML('<area shape="poly" coords="233,154,234,149,237,145,242,142,247,141,369,141,374,142,379,145,382,149,383,154,383,175,382,180,379,184,374,187,369,188,247,188,242,187,237,184,234,180,233,175,233,154,233,154" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=PDPSE&TP='.$TP.' - Documentos da Secretaria Executiva" title="Documentos da Secretaria Executiva da PDP" />');
     ShowHTML('<area shape="poly" coords="233,14,234,9,237,5,242,2,247,1,369,1,374,2,379,5,382,9,383,14,383,35,382,40,379,44,374,47,369,48,247,48,242,47,237,44,234,40,233,35,233,14,233,14" href="'.$w_dir.$w_pagina.'arquivos&p_codigo=CNDI&TP='.$TP.' - Documentos do CNDI" title="Documentos do CNDI" />');
     ShowHTML('</map>');
+    */
+    ShowHTML('<img name="n00000001" src="'.$w_dir.'mpas.png" width="612" height="377" border="0" id="n00000001" usemap="#m_00000001" alt="" />');
+    ShowHTML('<map name="m_00000001" id="m_00000001">');
+    ShowHTML('<area shape="rect" coords="501,329,606,355" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac06.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac06.'" alt="AC06" />');
+    ShowHTML('<area shape="rect" coords="362,326,464,359" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac05.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac05.'" alt="AC05" />');
+    ShowHTML('<area shape="rect" coords="255,326,358,359" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac04.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac04.'" alt="AC04" />');
+    ShowHTML('<area shape="rect" coords="35,344,128,373" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac02.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac02.'" alt="AC02" />');
+    ShowHTML('<area shape="rect" coords="128,344,221,373" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac03.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac03.'" alt="AC03" />');
+    ShowHTML('<area shape="rect" coords="35,312,128,340" target="programa" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_ac01.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_ac01.'" alt="AC01" />');
+
+    ShowHTML('<area shape="rect" coords="403,233,512,264" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi11.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi11.'" alt="PI11" />');
+    ShowHTML('<area shape="rect" coords="289,233,398,264" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi10.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi10.'" alt="PI10" />');
+    ShowHTML('<area shape="rect" coords="177,233,285,264" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi09.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi09.'" alt="PI09" />');
+    ShowHTML('<area shape="rect" coords="61,233,173,264" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi08.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi08.'" alt="PI08" />');
+    ShowHTML('<area shape="rect" coords="429,164,539,194" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi07.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi07.'" alt="PI07" />');
+    ShowHTML('<area shape="rect" coords="300,168,408,199" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi06.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi06.'" alt="PI06" />');
+    ShowHTML('<area shape="rect" coords="183,168,296,199" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi04.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi04.'" alt="PI04 " />');
+    ShowHTML('<area shape="rect" coords="52,168,163,199" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi02.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi02.'" alt="PI02" />');
+    ShowHTML('<area shape="rect" coords="300,136,408,164" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi05.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi05.'" alt="PI05" />');
+    ShowHTML('<area shape="rect" coords="183,136,296,164" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi03.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi03.'" alt="PI03" />');
+    ShowHTML('<area shape="rect" coords="52,136,163,164" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_pi01.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_pi01.'" alt="PI01" />');
+    ShowHTML('<area shape="rect" coords="398,47,530,83" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_re03.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_re03.'" alt="RE03" />');
+    ShowHTML('<area shape="rect" coords="230,47,362,83" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_re02.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_re02.'" alt="RE02" />');
+    ShowHTML('<area shape="poly" coords="61,47,194,47,194,83,61,83,61,47" href="'.$w_dir.'pe_relatorios.php?par=rel_executivo&p_plano='.$w_plano.'&p_programa='.$c_re01.'&O=L&p_sinal=S&p_legenda=S&p_projeto=S" title="Programas: '.$w_re01.'" alt="RE01 " />');
+    ShowHTML('</map>');
+    
+    
     ShowHTML('<table border="0" width="100%">');
     ShowHTML('      <tr><td colspan=3><p>&nbsp;</p>');
   } else {
