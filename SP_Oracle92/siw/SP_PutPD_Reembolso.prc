@@ -14,14 +14,23 @@ create or replace procedure SP_PutPD_Reembolso
     p_ressarcimento_observacao in varchar2  default null,
     p_fin_dev                  in number    default null,
     p_rub_dev                  in number    default null,
-    p_lan_dev                  in number    default null
+    p_lan_dev                  in number    default null,
+    p_exclui_arquivo           in varchar2  default null,
+    p_caminho                  in varchar2  default null,
+    p_tamanho                  in number    default null,
+    p_tipo                     in varchar2  default null,
+    p_nome_original            in varchar   default null
    ) is
 
    w_financeiro number(18) := p_financeiro;
    w_fin_dev    number(18) := p_fin_dev;
    w_existe     number(18);
+   w_arquivo    number(18) := null;
    
 begin
+   -- Recupera o arquivo ligado ao registro
+   select sq_arquivo_comprovante into w_arquivo from pd_missao where sq_siw_solicitacao = coalesce(p_chave,0);
+    
    -- Verifica se precisa gravar o tipo de vínculo financeiro para reembolso
    If p_financeiro is null and p_lancamento is not null Then
       -- Verifica se há um vínculo único para as opções enviadas
@@ -73,5 +82,35 @@ begin
           sq_pdvinculo_ressarcimento = coalesce(w_fin_dev,sq_pdvinculo_ressarcimento),
           deposito_identificado      = p_deposito
     where sq_siw_solicitacao = p_chave;
+
+   If p_exclui_arquivo is not null Then -- Remove arquivo
+      -- Atualiza os dados da viagem
+      update pd_missao set sq_arquivo_comprovante = null where sq_siw_solicitacao = p_chave;
+
+      -- Remove da tabela de arquivos
+      delete siw_arquivo where sq_siw_arquivo = coalesce(w_arquivo,0);
+   Elsif p_caminho is not null Then
+      If w_arquivo is null Then -- Inclusão
+         -- Recupera a próxima chave
+         select sq_siw_arquivo.nextval into w_arquivo from dual;
+         
+         -- Insere registro em SIW_ARQUIVO
+         insert into siw_arquivo
+          (sq_siw_arquivo, cliente,   nome,            inclusao, tamanho,   tipo,   caminho,   nome_original,   descricao)
+         values
+          (w_arquivo,      p_cliente, 'Comprovantes',  sysdate,  p_tamanho, p_tipo, p_caminho, p_nome_original, 'Arquivo contendo comprovantes de viagem');
+          
+         -- Atualiza os dados da viagem
+         update pd_missao set sq_arquivo_comprovante = w_arquivo where sq_siw_solicitacao = p_chave;
+      Else -- Alteração
+         update siw_arquivo
+            set inclusao      = sysdate,
+                tamanho       = p_tamanho,
+                tipo          = p_tipo,
+                caminho       = p_caminho,
+                nome_original = p_nome_original
+         where sq_siw_arquivo = w_arquivo;
+      End If;
+   End If;
 end SP_PutPD_Reembolso;
 /

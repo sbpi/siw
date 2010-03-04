@@ -38,7 +38,8 @@ create or replace procedure SP_PutViagemEnvio
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro,
-             x2.sq_lancamento_doc  as sq_documento
+             x2.sq_lancamento_doc  as sq_documento,
+             x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
                inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
@@ -49,9 +50,10 @@ create or replace procedure SP_PutViagemEnvio
                                                       x5.sigla             <> 'EE'
                                                      )
                                                     )
+               inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
                                from siw_solicitacao                a
-                                    inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite)
+                                    inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
                                     inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                                       inner join fn_lancamento_doc d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
                             )                 x2 on (x.sq_siw_solicitacao  = x2.sq_solic_pai and 
@@ -377,7 +379,7 @@ begin
                                   p_observacao         => crec.observacao,
                                   p_sq_tipo_lancamento => crec.sq_lancamento,
                                   p_sq_forma_pagamento => crec.sq_forma_pagamento,
-                                  p_sq_tipo_pessoa     => 1, -- pessoa física
+                                  p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
                                   p_tipo_rubrica       => 5, -- despesas
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,

@@ -2379,7 +2379,7 @@ function Grava() {
 
           // Conclui a solicitação
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null);
+              $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,null);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');

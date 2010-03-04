@@ -2015,7 +2015,7 @@ function Grava() {
 
           // Se todos os itens foram devolvidos, encerra a solicitação
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
-              $_SESSION['SQ_PESSOA'],null,null,null,null,null,null,null,null,null);
+              $_SESSION['SQ_PESSOA'],null,null,null,null,null,null,null,null,null,null,null,null);
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);
           ScriptOpen('JavaScript');

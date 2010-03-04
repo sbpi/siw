@@ -4,13 +4,14 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 * class dml_putSolicConc
 *
 * { Description :- 
-*    Conclui a solicitação
+*    Encerra a solicitação
 * }
 */
 
 class dml_putSolicConc {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_fim, $p_executor, $p_observacao, 
-        $p_valor, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original, $p_fin_menu, $p_fin_tram, $p_fin_resp) {
+        $p_valor, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original, $p_fin_menu, $p_fin_tram, $p_fin_resp,
+        $p_situacao, $p_enquadramento, $p_fundo_fixo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSolicConc';
      $params=array('p_menu'                      =>array($p_menu,                                  B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                 B_INTEGER,        32),
@@ -26,7 +27,10 @@ class dml_putSolicConc {
                    'p_nome_original'             =>array(tvl($p_nome_original),                    B_VARCHAR,       255),
                    'p_fin_menu'                  =>array($p_fin_menu,                              B_INTEGER,        32),
                    'p_fin_tram'                  =>array($p_fin_tram,                              B_INTEGER,        32),
-                   'p_fin_resp'                  =>array($p_fin_resp,                              B_INTEGER,        32)
+                   'p_fin_resp'                  =>array($p_fin_resp,                              B_INTEGER,        32),
+                   'p_situacao'                  =>array(tvl($p_situacao),                         B_INTEGER,        32),
+                   'p_enquadramento'             =>array(tvl($p_enquadramento),                    B_INTEGER,        32),
+                   'p_fundo_fixo'                =>array(tvl($p_fundo_fixo),                       B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

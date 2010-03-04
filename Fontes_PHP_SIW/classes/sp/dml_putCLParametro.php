@@ -1,5 +1,4 @@
-<?
-
+<?php
 extract($GLOBALS); 
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
@@ -7,7 +6,7 @@ class dml_putCLParametro {
    function getInstanceOf($dbms, $p_cliente, $p_ano_corrente, $p_dias_validade_pesquisa, $p_dias_aviso_pesquisa, 
             $p_percentual_acrescimo, $p_compra_central, $p_pesquisa_central, $p_contrato_central, 
             $p_banco_ata_central, $p_banco_preco_central, $p_codificacao_central, $p_pede_valor_pedido,
-            $p_automatico, $p_prefixo, $p_sequencial, $p_sufixo) {
+            $p_automatico, $p_prefixo, $p_sequencial, $p_sufixo, $p_cadastrador_geral) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCLParametro';
      $params=array('p_cliente'                  =>array(tvl($p_cliente),                        B_INTEGER,        32),
                    'p_ano_corrente'             =>array(tvl($p_ano_corrente),                   B_INTEGER,        32),
@@ -24,7 +23,8 @@ class dml_putCLParametro {
                    'p_automatico'               =>array(tvl($p_automatico),                     B_VARCHAR,         1),
                    'p_prefixo'                  =>array(tvl($p_prefixo),                        B_INTEGER,        32),
                    'p_sequencial'               =>array(tvl($p_sequencial),                     B_INTEGER,        32),
-                   'p_sufixo'                   =>array(tvl($p_sufixo),                         B_INTEGER,        32)
+                   'p_sufixo'                   =>array(tvl($p_sufixo),                         B_INTEGER,        32),
+                   'p_cadastrador_geral'        =>array(tvl($p_cadastrador_geral),              B_VARCHAR,         1)
                   );
           
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getCadastrador_PD {
    function getInstanceOf($dbms, $p_menu, $p_usuario) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql='FUNCTION'.$strschema.'PD_CADASTRADOR_GERAL';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql='FUNCTION'.$strschema.'pd_cadastrador_geral';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_usuario'                   =>array($p_usuario,                                       B_INTEGER,        32)
                   );

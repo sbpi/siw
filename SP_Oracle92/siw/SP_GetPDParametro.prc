@@ -8,7 +8,7 @@ begin
       -- Recupera os parametros do modulo de recursos humanos de um cliente
       open p_result for 
          select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo, a.dias_antecedencia,
-                a.dias_antecedencia_int, a.dias_prestacao_contas, a.limite_unidade
+                a.dias_antecedencia_int, a.dias_prestacao_contas, a.limite_unidade, a.cadastrador_geral
            from pd_parametro  a
           where a.cliente = p_cliente;
    End If;

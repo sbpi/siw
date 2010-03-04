@@ -13,7 +13,10 @@ create or replace procedure SP_PutSolicConc
     p_nome_original       in varchar2  default null,
     p_financeiro_menu     in number    default null,
     p_financeiro_tramite  in number    default null,
-    p_financeiro_resp     in number    default null
+    p_financeiro_resp     in number    default null,
+    p_situacao            in number    default null,
+    p_enquadramento       in number    default null,
+    p_fundo_fixo          in varchar2  default null
    ) is
    i               number(18);
    w_chave_dem     number(18) := null;
@@ -172,6 +175,7 @@ begin
    Update siw_solicitacao set
       conclusao      = coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate),
       executor       = p_executor,
+      recebedor      = p_financeiro_resp,
       valor          = coalesce(p_valor,valor),
       sq_siw_tramite = (select sq_siw_tramite 
                           from siw_tramite 
@@ -180,10 +184,16 @@ begin
                        )
    Where sq_siw_solicitacao = p_chave;
 
-   if w_sg_modulo = 'SL' then 
-      update cl_solicitacao  set nota_conclusao = p_nota_conclusao where sq_siw_solicitacao = p_chave;
-   elsif w_sg_modulo <> 'PA' then 
+   if w_sg_modulo <> 'PA' then 
       update siw_solicitacao set observacao     = p_nota_conclusao where sq_siw_solicitacao = p_chave;
+      
+      if w_sg_modulo = 'CO' then 
+         update cl_solicitacao a
+            set a.sq_lcsituacao        = p_situacao,
+                a.sq_modalidade_artigo = p_enquadramento,
+                a.fundo_fixo           = coalesce(p_fundo_fixo,'N')
+         where sq_siw_solicitacao = p_chave;
+      end if;
    end if;
    
    for crec in c_vencedor loop

@@ -64,6 +64,7 @@ include_once($w_dir_volta.'funcoes/selecaoCidade.php');
 include_once($w_dir_volta.'funcoes/selecaoLCModalidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoReajuste.php');
 include_once($w_dir_volta.'funcoes/selecaoIndicador.php');
+include_once($w_dir_volta.'funcoes/selecaoLCModEnq.php');
 include_once($w_dir_volta.'funcoes/selecaoLCFonteRecurso.php');
 include_once($w_dir_volta.'funcoes/selecaoCTEspecificacao.php');
 include_once($w_dir_volta.'funcoes/selecaoLCJulgamento.php');
@@ -172,6 +173,7 @@ if (strlen($p_fim_i)==7) {
 
 $p_atraso       = upper($_REQUEST['p_atraso']);
 $p_codigo       = upper($_REQUEST['p_codigo']);
+$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
 $p_empenho      = upper($_REQUEST['p_empenho']);
 $p_chave        = upper($_REQUEST['p_chave']);
 $p_assunto      = upper($_REQUEST['p_assunto']);
@@ -259,7 +261,7 @@ function Inicial() {
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-            null, null, $p_empenho, $p_servico);
+            $p_acao_ppa, null, $p_empenho, $p_servico);
           if($w_tipo=='WORD') $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S','S').'</b>]';
           else                $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif ($p_projeto>'') {
@@ -288,7 +290,7 @@ function Inicial() {
                   $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
                   $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
                   $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-                  null, null, $p_empenho, $p_servico);
+                  $p_acao_ppa, null, $p_empenho, $p_servico);
         $w_filtro.='<tr valign="top"><td align="right">Pedido <td>[<b>'.f($RS,'codigo_interno').'</b>]';
       } 
       if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
@@ -333,14 +335,14 @@ function Inicial() {
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-            null, null, $p_empenho, $p_servico);
+          $p_acao_ppa, null, $p_empenho, $p_servico);
     } else {
       $RS = db_getSolicCL::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
           $p_chave, $p_assunto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
           $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-            null, null, $p_empenho, $p_servico);
+          $p_acao_ppa, null, $p_empenho, $p_servico);
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -3490,6 +3492,11 @@ function Concluir() {
   foreach($RS as $row){$RS=$row; break;}
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_gera_contrato = f($RS,'gera_contrato');
+  $w_situacao      = f($RS,'sq_lcsituacao');
+  $w_modalidade    = f($RS,'sq_lcmodalidade');
+  $w_responsavel   = f($RS,'recebedor');
+  $w_artigo        = f($RS,'sq_modalidade_artigo');
+  $w_fundo_fixo    = f($RS,'fundo_fixo');
 
   // Recupera os itens da solicitação
   $RS_Itens = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'LICITACAO');
@@ -3531,6 +3538,8 @@ function Concluir() {
     }
     Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
     if ($w_indica_usuario=='S') Validate('w_responsavel','Responsável pelo recebimento','HIDDEN',1,1,18,'','0123456789');
+    Validate('w_situacao','Situação','SELECT',1,1,18,'','1');
+    Validate('w_artigo','Artigo','SELECT',1,1,18,'','1');
     ShowHTML('  var i; ');
     ShowHTML('  var j; ');
     ShowHTML('  var w_erro=true; ');
@@ -3605,6 +3614,13 @@ function Concluir() {
       ShowHTML('    <tr>');
       SelecaoPessoa('<u>R</u>esponsável pelo recebimento:','R','Selecione o responsável pelo recebimento do material/serviço na relação.',$w_responsavel,null,'w_responsavel','USUARIOS',null,3);
     }
+    ShowHTML('    <tr valign="top">');
+    SelecaoLCSituacao('<u>S</u>ituação:','S','Selecione a situação do certame.',$w_situacao,null,'w_situacao',null,null);
+    SelecaoLcModEnq('<u>A</u>rtigo:','A',null,$w_artigo,$w_modalidade,'w_artigo',null,null);
+    if ($w_gera_contrato=='N') {
+      MontaRadioNS('<b>Pagamento por fundo fixo?</b>',$w_fundo_fixo,'w_fundo_fixo');
+    }
+    
     ShowHTML('<tr><td colspan=3><b>Vencedores:</b><br>');
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,'PROPOSTA');
     $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
@@ -4264,25 +4280,16 @@ function Grava() {
                 $w_tipo    = $Field['type'];
                 $w_nome    = $Field['name'];
                 if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-              }else{
+              } elseif(nvl($Field['name'],'')!='') {
                 ScriptOpen('JavaScript');
                 ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
                 ScriptClose();
-                retornaFormulario('w_observacao');
+                retornaFormulario('w_caminho');
                 exit();
               } 
             } 
             dml_putSolicEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
-                $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-            //Rotina para gravação da imagem da versão da solicitacão no log.
-            if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
-              $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
-              $w_sg_tramite = f($RS,'sigla');
-              if($w_sg_tramite=='CI') {
-                $w_html = VisualCertame($_REQUEST['w_chave'],'L',$w_usuario,null,'1');
-                CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
-              }
-            }  
+                $_REQUEST['w_tramite'],'N',$_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
           } else {
             ScriptOpen('JavaScript');
             ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
@@ -4358,7 +4365,8 @@ function Grava() {
           // Registra a conclusão da solicitação
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
               $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,$_REQUEST['w_financeiro_menu'],
-              $_REQUEST['w_financeiro_tramite'],$_REQUEST['w_responsavel']);
+              $_REQUEST['w_financeiro_tramite'],$_REQUEST['w_responsavel'],$_REQUEST['w_situacao'],$_REQUEST['w_artigo'],
+              $_REQUEST['w_fundo_fixo']);
           
           // Envia e-mail comunicando a conclusão
           SolicMail($_REQUEST['w_chave'],3);

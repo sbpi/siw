@@ -170,6 +170,23 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
         $l_html.=chr(13).'   <tr valign="top"><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
   
+        if (nvl(f($RS,'recebedor'),'')!='') {
+          $l_html .= chr(13).'    <tr><td><b>Responsável pelo recebimento:<b></td>';
+          if (!($l_P1==4 || $l_tipo=='WORD')){
+            $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'recebedor'),$TP,f($RS,'nm_recebedor')).'</b></td>';
+          } else {
+            $l_html .= chr(13).'        <td>'.f($RS,'nm_recebedor').'</b></td>';
+          }
+        }
+        if (nvl(f($RS,'sg_modalidade_artigo'),'')!='') {
+          $l_html .= chr(13).'    <tr><td><b>Enquadramento:<b></td>';
+          $l_html .= chr(13).'        <td>'.f($RS,'sg_modalidade_artigo').((nvl(f($RS,'sg_modalidade_artigo'),'')!='') ? ' - '.f($RS,'ds_modalidade_artigo') : '').'</b></td>';
+        }
+        if ($w_gera_contrato=='N') {
+          $l_html .= chr(13).'    <tr><td><b>Pagamento por fundo fixo?<b></td>';
+          $l_html .= chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
+        }
+        
         $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,'VENCEDOR');
         $RS1 = SortArray($RS1,'ordem','asc','nome','asc','valor_unidade','asc');
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VENCEDORES</b></font></td></tr>';  

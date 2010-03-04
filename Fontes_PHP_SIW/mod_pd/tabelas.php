@@ -13,6 +13,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 include_once($w_dir_volta.'classes/sp/db_getMeioTransporte.php');
 include_once($w_dir_volta.'classes/sp/db_getValorDiaria.php');
+include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getPDParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgList.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
@@ -109,6 +110,9 @@ $p_ordena       = lower($_REQUEST['p_ordena']);
 
 // Recupera os dados do cliente
 $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
+$RS_Param = db_getParametro::getInstanceOf($dbms,$w_cliente,'PD',null);
+foreach($RS_Param as $row){ $RS_Param = $row; }
 
 Main();
 
@@ -841,6 +845,8 @@ function Parametros() {
     $w_dias_anteced_int  = $_REQUEST['w_dias_anteced_int'];
     $w_dias_prest_contas = $_REQUEST['w_dias_prest_contas'];
     $w_limite_unidade    = $_REQUEST['w_limite_unidade'];
+    $w_cadastrador_geral = $_REQUEST['w_cadastrador_geral'];
+    
   } else {
     // Recupera os dados do parâmetro
     $RS = db_getPDParametro::getInstanceOf($dbms,$w_cliente,null,null);
@@ -855,6 +861,7 @@ function Parametros() {
       $w_dias_anteced_int   = f($RS,'dias_antecedencia_int');
       $w_dias_prest_contas  = f($RS,'dias_prestacao_contas');
       $w_limite_unidade     = f($RS,'limite_unidade');
+      $w_cadastrador_geral  = f($RS,'cadastrador_geral');
     } 
   } 
 
@@ -918,6 +925,7 @@ function Parametros() {
   ShowHTML('      <tr><td><b><u>D</u>ias de antecedência para viagens nacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_antecedencia" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_antecedencia.'"></td>');
   ShowHTML('          <td><b><u>D</u>ias de antecedência para viagens internacionais:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_anteced_int" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_anteced_int.'"></td>');
   ShowHTML('      <tr><td><b>D<u>i</u>as para prestação de contas:</b><br><input '.$w_Disabled.' accesskey="I" type="text" name="w_dias_prest_contas" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dias_prest_contas.'"></td>');
+  MontaRadioNS('    <b>Usuários são cadastradores gerais?</b>',$w_cadastrador_geral,'w_cadastrador_geral');
   ShowHTML('      </table>');
   ShowHTML('      <tr>');
   MontaRadioNS('<b>Controla limite orçamentário de passagens e diárias por unidade e ano?</b>',$w_limite_unidade,'w_limite_unidade');
@@ -1327,38 +1335,46 @@ function Usuario() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
-    ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
-    ShowHTML('          <td><b>Operações</font></td>');
-    ShowHTML('        </tr>');
-    if (count($RS)<=0) {
-      // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    if (f($RS_Param,'cadastrador_geral')=='S') {
+      ShowHTML('  <tr><td colspan="3"><br><br><br></td></tr>');
+      ShowHTML('  <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('  <tr><td colspan="3" valign="top" align="center" bgcolor="#D0D0D0"><b>Na tela de parâmetros foi indicado que todos os usuários são cadastradores gerais.</td></tr>');
+      ShowHTML('  <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('  <tr><td colspan="3"><br><br><br></td></tr>');
     } else {
-      // Lista os registros selecionados para listagem
-      foreach($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
-        ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
-        ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
-        ShowHTML('        <td align="top" nowrap>');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
-        ShowHTML('        </td>');
-        ShowHTML('      </tr>');
+      // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+      ShowHTML('<tr><td><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+      ShowHTML('<tr><td align="center" colspan=3>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
+      ShowHTML('          <td><b>Operações</font></td>');
+      ShowHTML('        </tr>');
+      if (count($RS)<=0) {
+        // Se não foram selecionados registros, exibe mensagem
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      } else {
+        // Lista os registros selecionados para listagem
+        foreach($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
+          ShowHTML('        <td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
+          ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
+          ShowHTML('        <td align="top" nowrap>');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('        </td>');
+          ShowHTML('      </tr>');
+        } 
       } 
-    } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
-    ShowHTML('  </td>');
-    ShowHTML('</tr>');
+      ShowHTML('      </center>');
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+    }
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -1754,7 +1770,7 @@ function Grava() {
       dml_putPDParametro::getInstanceOf($dbms,$w_cliente,
           $_REQUEST['w_sequencial'],$_REQUEST['w_ano_corrente'],$_REQUEST['w_prefixo'],
           $_REQUEST['w_sufixo'],$_REQUEST['w_dias_antecedencia'],$_REQUEST['w_dias_anteced_int'],
-          $_REQUEST['w_dias_prest_contas'],$_REQUEST['w_limite_unidade']);
+          $_REQUEST['w_dias_prest_contas'],$_REQUEST['w_limite_unidade'],$_REQUEST['w_cadastrador_geral']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

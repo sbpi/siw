@@ -46,11 +46,20 @@ begin
    End If;
 
    -- Verifica se é a pessoa já existe
-   select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-   If w_existe > 0 Then
-      select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
-   Else
-      w_chave_pessoa := 0;
+   If p_cpf is not null Then
+      select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+      If w_existe > 0 Then
+         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and cpf = p_cpf;
+      Else
+         w_chave_pessoa := 0;
+      End If;
+   Elsif p_passaporte is not null and p_sq_pais_passaporte is not null Then
+      select count(*) into w_existe from co_pessoa_fisica where cliente = p_chave_aux and passaporte_numero = p_passaporte and sq_pais_passaporte = p_sq_pais_passaporte;
+      If w_existe > 0 Then
+         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_chave_aux and passaporte_numero = p_passaporte and sq_pais_passaporte = p_sq_pais_passaporte;
+      Else
+         w_chave_pessoa := 0;
+      End If;
    End If;
 
    If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere

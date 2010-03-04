@@ -1606,7 +1606,7 @@ function Grava() {
       include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
       dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_fim'],$w_usuario,$_REQUEST['w_observacao'],nvl($_REQUEST['w_valor'],'0,00'),
-          $w_file,$w_tamanho,$w_tipo,$w_nome,null,null,null);
+          $w_file,$w_tamanho,$w_tipo,$w_nome,null,null,null,null,null,null);
 
       // Envia mail avisando sobre a tramitação da solicitação
       SolicMail($_REQUEST['w_chave'],3);

@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getCadastrador_CL.php');
 // =========================================================================
 // Função que retorna S/N indicando se o usuário informado pode cadastrar

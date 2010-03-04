@@ -9,7 +9,7 @@ begin
          -- Recupera os parametros do modulo de passagens e diárias
          open p_result for
             select a.sequencial, a.ano_corrente, a.prefixo, a.sufixo, a.dias_antecedencia,
-                   a.dias_prestacao_contas, a.limite_unidade
+                   a.dias_prestacao_contas, a.limite_unidade, a.cadastrador_geral
               from pd_parametro  a
              where a.cliente = p_cliente;
       Elsif  p_modulo = 'AC' Then
@@ -33,7 +33,8 @@ begin
             select a.cliente, a.ano_corrente,a.dias_validade_pesquisa, a.dias_aviso_pesquisa, 
                    a.percentual_acrescimo, a.compra_central, a.pesquisa_central, a.contrato_central, 
                    a.banco_ata_central, a.banco_preco_central, a.codificacao_central,
-                   a.pede_valor_pedido, a.codificacao_automatica, a.prefixo, a.sequencial, a.sufixo
+                   a.pede_valor_pedido, a.codificacao_automatica, a.prefixo, a.sequencial, a.sufixo, 
+                   a.cadastrador_geral
               from cl_parametro a
              where a.cliente = p_cliente;                         
       End If;

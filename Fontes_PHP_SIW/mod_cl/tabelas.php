@@ -12,13 +12,16 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getLCCriterio.php');
 include_once($w_dir_volta.'classes/sp/db_getLCSituacao.php');
+include_once($w_dir_volta.'classes/sp/db_getLCModEnq.php');
 include_once($w_dir_volta.'classes/sp/db_getParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getUnidade_CL.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putTipoMatServ.php');
 include_once($w_dir_volta.'classes/sp/dml_putLCCriterio.php');
+include_once($w_dir_volta.'classes/sp/db_getLCModalidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putLCSituacao.php');
+include_once($w_dir_volta.'classes/sp/dml_putLCModEnq.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putUnidade_CL.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLUsuario.php');
@@ -27,6 +30,7 @@ include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoMatServSubord.php');
 include_once($w_dir_volta.'funcoes/selecaoClasseMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoLCSituacao.php');
 
 // =========================================================================
 //  /tabelas.php
@@ -111,6 +115,10 @@ else         $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 if ($RS_Menu['ultimo_nivel']=='S') {
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
+
+$RS_Param = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
+foreach($RS_Param as $row){ $RS_Param = $row; }
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -691,6 +699,160 @@ function Situacao() {
   ShowHTML('</center>');
   Rodape();
 }
+
+// =========================================================================
+// Rotina de enquadramentos de modalidade
+// -------------------------------------------------------------------------
+function Enquadramento() {
+  extract($GLOBALS);
+  global $w_Disabled;
+  $w_chave           = $_REQUEST['w_chave'];
+  $w_chave_aux       = $_REQUEST['w_chave_aux'];
+  
+  $RS_Modal = db_getLCModalidade::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null);
+  foreach($RS_Modal as $row) { $RS_Modal = $row; break; }
+  
+  $w_troca           = $_REQUEST['w_troca'];
+  //Se for recarga da página
+  if ($w_troca > '' && $O!='E') {   
+    $w_sigla        = $_REQUEST['w_sigla'];
+    $w_descricao    = $_REQUEST['w_descricao'];
+    $w_ativo        = $_REQUEST['w_ativo'];
+  } elseif ($O=='L') {     
+    // Recupera todos os registros para a listagem
+    $RS = db_getLCModEnq::getInstanceOf($dbms, $w_chave, null, null, null, null);
+    $RS = SortArray($RS,'sigla','asc'); 
+  } elseif (!(strpos('AEV',$O)===false)) {
+    //Recupera os dados do endereço informado
+    $RS = db_getLCModEnq::getInstanceOf($dbms, $w_chave, $w_chave_aux, null, null, null);
+    foreach ($RS as $row) {
+      $w_sigla                = f($row,'sigla');
+      $w_descricao            = f($row,'descricao');
+      $w_ativo                = f($row,'ativo');
+    }
+  }
+  Cabecalho();
+  ShowHTML( '<HEAD>' );
+  If  (!(strpos('IAEP',$O)===false)) {
+    ScriptOpen( 'JavaScript');
+    ValidateOpen( 'Validacao');
+     if (!(strpos('IA',$O)===false)) {    
+       Validate('w_chave','Modalidade','SELECT','1',1,18,'','0123456789');
+       Validate('w_sigla','sigla','1','1','2','60','1','1');
+       Validate('w_descricao','Descrição', '1', '', '5', '255', '1', '1');
+       Validate('w_assinatura','Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+     } elseif ($O=='E') {
+       Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+       ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\')) ');
+       ShowHTML('     { return (true); }; ');
+       ShowHTML('     { return (false); }; ');
+     }
+     ShowHTML('  theForm.Botao[0].disabled=true;');
+     ShowHTML('  theForm.Botao[1].disabled=true;');
+     ValidateClose();
+     ScriptClose();
+  }
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_sigla.focus();"');
+  } elseif ($O=='L') {
+    BodyOpen('onLoad="this.focus();"');
+  } else {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</FONT></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Exibe os dados da modalidade
+  ShowHTML('<tr><td align="center" bgcolor="#FAEBD7" colspan=3><table border=1 width="100%"><tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('      <tr><td><table border=0 width="100%">');
+  ShowHTML('          <tr valign="top"><td align="center"><b>'.upper(f($RS_Modal,'nome')).'</b></td></tr>');
+  ShowHTML('      </table>');
+  ShowHTML('    </TABLE>');
+  ShowHTML('</table>');
+  If ($O=='L') {
+    //Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('        <a accesskey="F" class="ss" HREF="javascript:this.status.value;" onClick="window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
+    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><font size="1"><b>Sigla</font></td>');
+    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
+    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+    // Se não foram selecionados registros, exibe mensagem
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      foreach ($RS as $row) {
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td><font size="1">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td><font size="1">'.nvl(f($row,'descricao'),'---').'</td>');
+        ShowHTML('        <td align="center"><font size="1">'.f($row,'nm_ativo').'</td>');
+        ShowHTML('        <td align="top" nowrap><font size="1">');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
+        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">EX</A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');       
+      }
+    }
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('</tr>');
+  //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
+    AbreForm('Form', $w_dir.$w_pagina.'Grava', 'POST', 'return(Validacao(this));', null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_chave_aux.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+    ShowHTML('    <table width="97%" border="0">');
+    ShowHTML('      <tr><td><table border=0 width="100%" cellspacing=0 cellpadding=0>');
+    ShowHTML('        <tr><td colspan=3><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('        <tr><td colspan=3><font size="1"><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.'accesskey="D" name="w_descricao" class="sti" ROWS="3" COLS="75">'.$w_descricao.'</textarea></td>');
+    ShowHTML('        <tr valign="top">');
+    MontaRadioSN( '<b>Ativo?</b>', $w_ativo, 'w_ativo');
+    ShowHTML('           </table>');
+    ShowHTML('      <tr><td align="LEFT"><font size="1"><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center"><hr>');
+    if ($O=='E') {
+       ShowHTML('   <input class="STB" type="submit" name="Botao" value="Excluir">');
+    } else {
+       if ($O=='I') {
+          ShowHTML('            <input class="STB" type="submit" name="Botao" value="Incluir">');
+       } else {
+          ShowHTML('            <input class="STB" type="submit" name="Botao" value="Atualizar">');
+       }
+    }
+    ShowHTML('            <input class="STB" type="button" onClick="history.back(1);" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen( 'JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  }
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
 // =========================================================================
 // Rotina da tabela de parâmetros do módulo de Compras e Licitação
 // -------------------------------------------------------------------------
@@ -709,7 +871,8 @@ function Parametro() {
   $w_contrato_central        = f($RS,'contrato_central');
   $w_banco_ata_central       = f($RS,'banco_ata_central');
   $w_banco_preco_central     = f($RS,'banco_preco_central');
-  $w_codificacao_central     = f($RS,'codificacao_central');  
+  $w_codificacao_central     = f($RS,'codificacao_central');
+  $w_cadastrador_geral       = f($RS,'cadastrador_geral');
   $w_pede_valor_pedido       = f($RS,'pede_valor_pedido');
   $w_automatico              = f($RS,'codificacao_automatica');
   $w_prefixo                 = f($RS,'prefixo');
@@ -754,6 +917,7 @@ function Parametro() {
   MontaRadioNS('    <b>Pedido de compra solicita valor?</b>',$w_pede_valor_pedido,'w_pede_valor_pedido','Se sim, o usuário deve informar o valor estimado; caso contrário, será calculado a partir dos itens.');
   ShowHTML('      <tr valign="top">');
   MontaRadioSN('    <b>Codificação automática de materiais</b>',$w_automatico,'w_automatico');
+  MontaRadioNS('    <b>Usuários são cadastradores gerais?</b>',$w_cadastrador_geral,'w_cadastrador_geral');
   ShowHTML('      <tr valign="top"><td colspan="2"><table width="97%" border="0">');
   ShowHTML('        <td><b>Ano <U>c</U>orrente:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_ano_corrente" size="4" maxlength="4" value="'.$w_ano_corrente.'"></td>');
   ShowHTML('     </table>');
@@ -1032,7 +1196,7 @@ function Usuario() {
   global $w_Disabled;
 
   $w_chave  = $_REQUEST['w_chave'];
-
+  
   if ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getPersonList::getInstanceOf($dbms,$w_cliente,$w_chave,$SG,null,null,null,null);
@@ -1066,38 +1230,46 @@ function Usuario() {
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
-    ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-    ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
-    ShowHTML('<tr><td align="center" colspan=3>');
-    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
-    ShowHTML('          <td><font size="1"><b>Operações</font></td>');
-    ShowHTML('        </tr>');
-    if (count($RS)<=0) {
-      // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+    if (f($RS_Param,'cadastrador_geral')=='S') {
+      ShowHTML('  <tr><td colspan="3"><br><br><br></td></tr>');
+      ShowHTML('  <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('  <tr><td colspan="3" valign="top" align="center" bgcolor="#D0D0D0"><b>Na tela de parâmetros foi indicado que todos os usuários são cadastradores gerais.</td></tr>');
+      ShowHTML('  <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('  <tr><td colspan="3"><br><br><br></td></tr>');
     } else {
-      // Lista os registros selecionados para listagem
-      foreach($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
-        ShowHTML('        <td><font size="1">'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
-        ShowHTML('        <td align="center"><font size="1">'.Nvl(f($row,'ramal'),'---').'</td>');
-        ShowHTML('        <td align="top" nowrap><font size="1">');
-        ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
-        ShowHTML('        </td>');
-        ShowHTML('      </tr>');
+      // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
+      ShowHTML('<tr><td><font size="1"><a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+      ShowHTML('    <td align="right"><font size="1"><b>Registros existentes: '.count($RS));
+      ShowHTML('<tr><td align="center" colspan=3>');
+      ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome_resumido').'</font></td>');
+      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Lotação','sg_unidade').'</font></td>');
+      ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ramal','ramal').'</font></td>');
+      ShowHTML('          <td><font size="1"><b>Operações</font></td>');
+      ShowHTML('        </tr>');
+      if (count($RS)<=0) {
+        // Se não foram selecionados registros, exibe mensagem
+        ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=4 align="center"><font size="1"><b>Não foram encontrados registros.</b></td></tr>');
+      } else {
+        // Lista os registros selecionados para listagem
+        foreach($RS as $row) {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td><font size="1">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
+          ShowHTML('        <td><font size="1">'.ExibeUnidade($w_dir_volta,$w_cliente,f($row,'nm_local'),f($row,'sq_unidade'),$TP).'</td>');
+          ShowHTML('        <td align="center"><font size="1">'.Nvl(f($row,'ramal'),'---').'</td>');
+          ShowHTML('        <td align="top" nowrap><font size="1">');
+          ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
+          ShowHTML('        </td>');
+          ShowHTML('      </tr>');
+        } 
       } 
-    } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
-    ShowHTML('  </td>');
-    ShowHTML('</tr>');
+      ShowHTML('      </center>');
+      ShowHTML('    </table>');
+      ShowHTML('  </td>');
+      ShowHTML('</tr>');
+    }
   } elseif (!(strpos('IAEV',$O)===false)) {
     if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED ';
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
@@ -1234,14 +1406,40 @@ function Grava() {
         RetornaFormulario('w_assinatura');
       } 
       break;
-    case 'CLPARAM':
+    case 'MODART':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (VerificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+         if ($O=='I' || $O=='A') {
+          // Testa a existência do nome
+          $RS = db_getLCModEnq::getInstanceOf($dbms, $_REQUEST['w_chave'], $_REQUEST['w_chave_aux'], $_REQUEST['w_sigla'], null, 'EXISTE');
+          if (count($RS)>0) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'Já existe um artigo com esta sigla para esta modalidade!\');');
+            ScriptClose(); 
+            retornaFormulario('w_sigla');
+            break;
+          } 
+        }  
+        dml_putLCModEnq::getInstanceOf($dbms,$O,$_REQUEST['w_chave'], $_REQUEST['w_chave_aux'],
+           $_REQUEST['w_sigla'],$_REQUEST['w_descricao'],$_REQUEST['w_ativo']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';');
+        ScriptClose();        
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;
+      case 'CLPARAM':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         dml_putCLParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_ano_corrente'],$_REQUEST['w_dias_validade_pesquisa'],$_REQUEST['w_dias_aviso_pesquisa'],
             $_REQUEST['w_percentual_acrescimo'],$_REQUEST['w_compra_central'],$_REQUEST['w_pesquisa_central'],$_REQUEST['w_contrato_central'],
             $_REQUEST['w_banco_ata_central'],$_REQUEST['w_banco_preco_central'],$_REQUEST['w_codificacao_central'],
             $_REQUEST['w_pede_valor_pedido'],$_REQUEST['w_automatico'],$_REQUEST['w_prefixo'],
-            $_REQUEST['w_sequencial'],$_REQUEST['w_sufixo']);
+            $_REQUEST['w_sequencial'],$_REQUEST['w_sufixo'],$_REQUEST['w_cadastrador_geral']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -1321,6 +1519,7 @@ function Grava() {
 function Main() {
   extract($GLOBALS);
   switch ($par) {
+  case 'ENQUADRAMENTO': Enquadramento();    break;
   case 'TIPOMATSERV':   TipoMatServ();      break;
   case 'CRITERIO':      Criterio();         break;
   case 'PARAMETRO':     Parametro();        break;  

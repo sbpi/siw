@@ -50,8 +50,8 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $l_html.=chr(13).'<tr><td>';
     $l_html.=chr(13).'    <table width="99%" border="0">';
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
-    if ($w_mod_pa=='S') {
-      if ($w_embed!='WORD' && nvl(f($RS,'protocolo_siw'),'')!='') {
+    if ($w_mod_pa=='S' && nvl(f($RS,'protocolo_siw'),'')!='') {
+      if ($w_embed!='WORD') {
         $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: <A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="protocolo">'.f($RS,'protocolo').'&nbsp;</a></tr>';
       } else {
         $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0"><font size=2><b>'.f($RS,'codigo_interno').' ('.$l_chave.')</b></font></td><td bgcolor="#f0f0f0" align="right"><font size="2"><b>PROTOCOLO: '.nvl(f($RS,'protocolo'),'---').'</tr>';
@@ -137,7 +137,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
 
     // Dados do proposto
     if ($l_proposto='S') {
-      $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+      $RSQuery = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,null,null,null,null,null,null,null,null);
       
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>BENEFICIÁRIO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       if (count($RSQuery)==0) {
@@ -1089,7 +1089,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.='</td>';
       }
       $l_html.=chr(13).'      <tr valign="top"><td><b>Reembolso ao beneficiário:</b></td><td>';
-      if (f($RS,'reembolso')=='S') {
+      if (f($RS,'reembolso')=='N') {
+        $l_html.='R$ 0,00</td>';
+      } else {
         // Valores a serem reembolsados
         $RS_Reembolso = db_getPD_Reembolso::getInstanceOf($dbms,$l_chave,null,null,null);
         $RS_Reembolso = SortArray($RS_Reembolso,'sg_moeda','asc');
@@ -1143,6 +1145,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       if (f($RS,'cumprimento')!='C') $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Relatório de viagem:</b></td><td>'.nvl(CRLF2BR(f($RS,'relatorio')),'---').'</td></tr>';
       if (nvl(f($RS,'sq_relatorio_viagem'),'')!='') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Anexo do relatório:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_relatorio_viagem'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo'),null).'</td>';
+      }
+      if (nvl(f($RS,'sq_arquivo_comprovante'),'')!='') {
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Comprovantes de viagem:</b></td><td>'.LinkArquivo('HL',$w_cliente,f($RS,'sq_arquivo_comprovante'),'_blank','Clique para exibir o arquivo em outra janela.',f($RS,'nm_arquivo_comprovante'),null).'</td>';
       }
     }
 

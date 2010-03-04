@@ -7,9 +7,10 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   $l_html.=chr(13). "    $('#enclista').css('display','none');";
   $l_html.=chr(13). '    $(\'#colxenc\').html(\'<img src="images/expandir.gif">\');';      
   $l_html.=chr(13). "    $('#encanot').css('display','none');";
-  $l_html.=chr(13). '    $(\'#colxver\').html(\'<img src="images/expandir.gif">\');';      
+  $l_html.=chr(13). '    $(\'#colxanot\').html(\'<img src="images/expandir.gif">\');';      
   $l_html.=chr(13). "    $('#encver').css('display','none');";
   $l_html.=chr(13). '    $(\'#colxver\').html(\'<img src="images/expandir.gif">\');';      
+
   $l_html.=chr(13). "$('#encaminhamentos').click(function(event) {";
   $l_html.=chr(13). "    event.preventDefault();";
   $l_html.=chr(13). "    $('#enclista').slideToggle('slow');";

@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putPDParametro {
    function getInstanceOf($dbms, $p_cliente, $p_sequencial, $p_ano_corrente, $p_prefixo, $p_sufixo, $p_antecedencia,
-              $p_antecedencia_int, $p_prest_contas, $p_limite_unidade) {
+              $p_antecedencia_int, $p_prest_contas, $p_limite_unidade, $p_cadastrador_geral) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putPDParametro';
      $params=array('p_cliente'                   =>array(tvl($p_cliente),                                  B_INTEGER,        32),
                    'p_sequencial'                =>array(tvl($p_sequencial),                               B_INTEGER,        32),
@@ -21,7 +21,8 @@ class dml_putPDParametro {
                    'p_antecedencia'              =>array(tvl($p_antecedencia),                             B_INTEGER,        32),
                    'p_antecedencia_int'          =>array(tvl($p_antecedencia_int),                         B_INTEGER,        32),
                    'p_prest_contas'              =>array(tvl($p_prest_contas),                             B_INTEGER,        32),
-                   'p_limite_unidade'            =>array(tvl($p_limite_unidade),                           B_VARCHAR,         1)
+                   'p_limite_unidade'            =>array(tvl($p_limite_unidade),                           B_VARCHAR,         1),
+                   'p_cadastrador_geral'         =>array(tvl($p_cadastrador_geral),                        B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

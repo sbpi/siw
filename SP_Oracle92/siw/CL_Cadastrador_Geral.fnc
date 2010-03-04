@@ -16,6 +16,7 @@ create or replace function CL_Cadastrador_Geral
 ***********************************************************************************/
   Result                   varchar2(1) := 'N';
   w_existe                 number(18);
+  w_cliente                number(18);
 begin
 
  -- Verifica se o serviço existe
@@ -24,6 +25,8 @@ begin
 
  select count(*) into w_existe from co_pessoa where sq_pessoa = p_usuario;
  If w_existe = 0 Then Return (Result); End If;
+ 
+ select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
 
  select count(*) into w_existe
    from (select sq_pessoa from sg_autenticacao a where a.sq_pessoa = p_usuario and a.gestor_sistema = 'S' and a.ativo = 'S'
@@ -31,6 +34,8 @@ begin
          select sq_pessoa from sg_pessoa_modulo b where b.sq_pessoa = p_usuario and b.sq_modulo = (select sq_modulo from siw_menu where sq_menu = p_menu)
          UNION
          select sq_pessoa from cl_usuario c where c.sq_pessoa = p_usuario
+         UNION
+         select 1 from cl_parametro where cadastrador_geral = 'S' and cliente = w_cliente
         );
  
  If w_existe > 0 Then Result := 'S'; End If;

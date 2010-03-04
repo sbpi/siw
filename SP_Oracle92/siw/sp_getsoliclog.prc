@@ -412,7 +412,8 @@ begin
                    left outer join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão' and substr(a.observacao,1,9) <> 'Anotação:') or
+                                                               (p_tipo =  1 and substr(a.observacao,1,9) = 'Anotação:') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
                                       )

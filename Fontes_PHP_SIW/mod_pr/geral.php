@@ -1,4 +1,4 @@
-<?
+<?php
 session_start();
 $w_dir_volta    = '../';
 include_once($w_dir_volta.'constants.inc');
@@ -1670,7 +1670,7 @@ function Grava() {
         } else {
           include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_fim'],$_REQUEST['w_executor'],$_REQUEST['w_observacao'],$_REQUEST['w_valor'],
-              $w_file,$w_tamanho,$w_tipo,$w_nome);
+              $w_file,$w_tamanho,$w_tipo,$w_nome,null,null,null,null,null,null);
         }
         // Envia e-mail comunicando a conclusão
         SolicMail($_REQUEST['w_chave'],3);

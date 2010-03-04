@@ -700,7 +700,7 @@ begin
                 d1.cumprimento,       d1.relatorio,                  d1.sq_relatorio_viagem, 
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
                 d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
-                d1.ressarcimento_data,d1.sq_pdvinculo_ressarcimento,
+                d1.ressarcimento_data,d1.sq_pdvinculo_ressarcimento, d1.sq_arquivo_comprovante,
                 d1.nacional,          d1.internacional,              d1.deposito_identificado,
                 case d1.passagem    when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 case d1.hospedagem  when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
@@ -726,6 +726,7 @@ begin
                 d8.matricula,
                 d9.nome as nm_diaria,
                 da.nome_original as nm_arquivo, da.descricao as ds_arquivo,   da.caminho as cm_arquivo,
+                dd.nome_original as nm_arquivo_comprovante, dd.descricao as ds_arquivo_comprovante,   dd.caminho as cm_arquivo_comprovante,
                 b.fim-d.dias_aviso aviso,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
                 e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
@@ -778,6 +779,7 @@ begin
                           left         join co_banco                   d7 on (d6.sq_banco                   = d7.sq_banco)
                         left           join pd_categoria_diaria        d9 on (d1.diaria                     = d9.sq_categoria_diaria)
                         left           join siw_arquivo                da on (d1.sq_relatorio_viagem        = da.sq_siw_arquivo)
+                        left           join siw_arquivo                dd on (d1.sq_arquivo_comprovante     = dd.sq_siw_arquivo)
                       inner            join eo_unidade                 e  on (d.sq_unidade_resp             = e.sq_unidade)
                         left           join eo_unidade_resp            e1 on (e.sq_unidade                  = e1.sq_unidade   and
                                                                               e1.tipo_respons               = 'T'             and

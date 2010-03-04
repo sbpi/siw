@@ -1,13 +1,12 @@
 <?php
-include_once($w_dir_volta.'classes/sp/db_getRegionList.php');
+include_once($w_dir_volta.'classes/sp/db_getLCModEnq.php');
 // =========================================================================
 // Montagem da seleção da região
 // -------------------------------------------------------------------------
-function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
+function selecaoLCModEnq($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
-  if ($restricao=='INDICADOR') $RS = db_getRegionList::getInstanceOf($dbms, nvl($chaveAux,0), $restricao, $w_cliente);
-  else $RS = db_getRegionList::getInstanceOf($dbms, $chaveAux, null, null);
-  $RS = SortArray($RS,'ordem','asc');
+  $l_rs = db_getLCModEnq::getInstanceOf($dbms, $chaveAux, null, null, null, null);
+  $l_rs = SortArray($l_rs,'sigla','asc');
 
   if (!isset($hint)) {
      ShowHTML('          <td colspan="'.$colspan.'"><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
@@ -16,11 +15,11 @@ function selecaoRegiao($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restrica
   }
 
   ShowHTML('          <option value="">---');
-  foreach($RS as $row) {
-    if (nvl(f($row,'sq_regiao'),0)==nvl($chave,0)) {
-       ShowHTML('          <option value="'.f($row,'sq_regiao').'" SELECTED>'.f($row,'nome'));
+  foreach($l_rs as $row) {
+    if (nvl(f($row,'chave'),0)==nvl($chave,0)) {
+       ShowHTML('          <option value="'.f($row,'chave').'" SELECTED>'.f($row,'sigla'));
     } else {
-       ShowHTML('          <option value="'.f($row,'sq_regiao').'">'.f($row,'nome'));
+       ShowHTML('          <option value="'.f($row,'chave').'">'.f($row,'sigla'));
     }
   }
   ShowHTML('          </select>');

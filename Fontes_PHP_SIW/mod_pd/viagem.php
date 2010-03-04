@@ -223,6 +223,9 @@ $w_cadgeral = RetornaCadastrador_PD(f($RS_Menu,'sq_menu'), $w_usuario);
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 
+// Recupera os dados do cliente
+$RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
+
 Main();
 
 FechaSessao($dbms);
@@ -1568,7 +1571,6 @@ function Trechos() {
   
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   $w_cidade_padrao = f($RS_Cliente,'sq_cidade_padrao');
 
   if ($P1==1 || strpos($R,'ALTSOLIC')!==false) $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
@@ -1845,7 +1847,6 @@ function Bilhetes() {
 
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   
   if (f($RS_Solic,'sg_tramite')=='AE') $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
   
@@ -1915,7 +1916,7 @@ function Bilhetes() {
     Validate('w_valor_cheio','Valor do bilhete com desconto','VALOR','1',4,18,'','0123456789,.');
     Validate('w_valor_bil','Valor do bilhete','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_bil','Valor do bilhete','>=','0,00','zero');
-    CompValor('w_valor_cheio','Valor do bilhete com desconto','>=','w_valor_bil','valor do bilhete');
+    CompValor('w_valor_cheio','Valor do bilhete com desconto','<=','w_valor_bil','valor do bilhete');
     Validate('w_valor_tax','Valor da taxa de embarque','VALOR','1',4,18,'','0123456789,.');
     CompValor('w_valor_tax','Valor da taxa de embarque','>=','0,00','zero');
     Validate('w_valor_pta','Valor da transmissão do pta','VALOR','1',4,18,'','0123456789,.');
@@ -2132,7 +2133,6 @@ function AltSolic() {
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
   $w_nm_diaria = f($RS_Solic,'nm_diaria');
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
@@ -2368,7 +2368,6 @@ function RegistroAlteracao() {
 
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
 
   if ($w_troca>'') {
     // Se for recarga da página
@@ -2561,9 +2560,8 @@ function RegistroAlteracao() {
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5"><b><u>J</u>ustificativa:</b><br><textarea class="STI" accesskey="J" '.$w_Disabled.' name="w_justificativa" class="STI" ROWS=5 cols=75 title="Informe a justificativa para a alteração da viagem.">'.$w_justificativa.'</TEXTAREA></td>');
     
-    $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('<tr><td colspan="5"><b>Arquivo contendo a justificativa (o tamanho máximo aceito para o arquivo é de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
-    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    ShowHTML('<tr><td colspan="5"><b>Arquivo contendo a justificativa (o tamanho máximo aceito para o arquivo é de '.formatNumber((f($RS_Cliente,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
+    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
     ShowHTML('<tr><td colspan="5"><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
     if (nvl($w_atual,'')!='') {
       ShowHTML('&nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
@@ -4857,7 +4855,7 @@ function Diarias_Solic() {
         ShowHTML('          <tr><td><td colspan=3><hr height="1"></td></tr>');
         ShowHTML('          <tr valign="top"><td>');
       }
-      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_diaria.'):</b><br><input type="text" '.(($w_diaria=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_vl_diaria" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria.'" style="text-align:right;" title="Valor cheio da diária."></td>');
+      ShowHTML('            <td><b>Valor base ('.$w_sg_moeda_diaria.'):</b><br><input type="text" READONLY name="w_vl_diaria" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.$w_vl_diaria.'" style="text-align:right;" title="Valor cheio da diária."></td>');
       ShowHTML('            <td><b>Quantidade:</b><br><input type="text" '.(($w_diaria=='S') ? 'class="STIO"' : 'READONLY class="STI"').' name="w_quantidade" SIZE="5" MAXLENGTH="5" VALUE="'.(($w_diaria=='N') ? '0,0' : $w_quantidade).'" onBlur="calculaDiaria(this.value);" style="text-align:right;" onKeyDown="FormataValor(this,5,1,event);" title="Informe a quantidade de diárias para este local."></td>');
       ShowHTML('            <td><b>Valor a ser pago ('.$w_sg_moeda_diaria.'):</b><br><input type="text" READONLY name="w_valor" class="STIH" SIZE="10" MAXLENGTH="18" VALUE="'.(($w_diaria=='N') ? '0,00' : $w_valor).'" style="text-align:right;" title="Valor cheio da diária."></td>');
       ShowHTML('<INPUT type="hidden" name="w_justificativa_diaria" value="'.$w_justificativa_diaria.'">');
@@ -5319,9 +5317,8 @@ function Anotar() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
   ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
-  $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
-  ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+  ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS_Cliente,'upload_maximo')/1024).' KBytes</b>.</font></td>');
+  ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
   ShowHTML('      <tr><td valign="top"><b>A<u>n</u>otação:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_observacao" class="STI" ROWS=5 cols=75 title="Redija a anotação desejada.">'.$w_observacao.'</TEXTAREA></td>');
   ShowHTML('      <tr><td><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
   ShowHTML('      </table>');
@@ -5610,10 +5607,15 @@ function InformarCotacao() {
   ShowHTML('  for (ind=1; ind < theForm["w_codigo_voo[]"].length; ind++) {');
   Validate('["w_codigo_voo[]"][ind]','Código do vôo','','1',3,30,'1','1');
   ShowHTML('  }');
+  ShowHTML('  w_tot = 0;');
   ShowHTML('  for (ind=1; ind < theForm["w_valor_trecho[]"].length; ind++) {');
   Validate('["w_valor_trecho[]"][ind]','Valor estimado','VALOR','1',4,18,'','0123456789,.');
+  ShowHTML('  w_tot = w_tot + parseFloat(replaceAll(replaceAll(theForm["w_valor_trecho[]"][ind].value,".",""),",","."));');
   ShowHTML('  }');
-  CompValor('w_total','Valor estimado','>','0,00','zero');
+  ShowHTML('  if (w_tot==0) {');
+  ShowHTML('    alert("Pelo menos um dos trechos deve ter valor maior que zero!");');
+  ShowHTML('    return false;');
+  ShowHTML('  }');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
   ValidateClose();
@@ -6127,9 +6129,8 @@ function Anexo() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('    <table width="97%" border="0">');
     if ($O=='I' || $O=='A') {
-      $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b></font>.</td>');
-      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+      ShowHTML('      <tr><td align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">ATENÇÃO: o tamanho máximo aceito para o arquivo é de '.(f($RS_Cliente,'upload_maximo')/1024).' KBytes</b></font>.</td>');
+      ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
     }
     ShowHTML('      <tr><td><b><u>T</u>ítulo:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_nome" class="STI" SIZE="75" MAXLENGTH="255" VALUE="'.$w_nome.'" title="OBRIGATÓRIO. Informe um título para o arquivo."></td>');
     ShowHTML('      <tr><td><b><u>D</u>escrição:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="STI" ROWS=5 cols=65 title="OBRIGATÓRIO. Descreva a finalidade do arquivo.">'.$w_descricao.'</TEXTAREA></td>');
@@ -6408,8 +6409,8 @@ function PrestarContas() {
     } else {
       ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
     }
-    ShowHTML('<tr><td colspan="2"><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
-    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
+    ShowHTML('<tr><td colspan="2"><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS_Cliente,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
+    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
     ShowHTML('<tr><td colspan="2"><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="'.$w_caminho.'" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
     if (nvl($w_atual,'')!='') {
       ShowHTML('&nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
@@ -6761,6 +6762,7 @@ function Reembolso() {
     $w_rub_dev                  = f($RS,'sq_rubrica_ressarc');
     $w_lan_dev                  = f($RS,'sq_lancamento_ressarc');
     $w_fin_dev                  = f($RS,'sq_pdvinculo_ressarcimento');
+    $w_atual                    = f($RS,'sq_arquivo_comprovante');
     $w_financeiro               = f($RS,'sq_pdvinculo_reembolso');
     $w_rubrica                  = f($RS,'sq_rubrica_reemb');
     $w_lancamento               = f($RS,'sq_lancamento_reemb');
@@ -6832,6 +6834,8 @@ function Reembolso() {
   ShowHTML('<INPUT type="hidden" name="SG" value="'.$SG.'">');
   ShowHTML('<INPUT type="hidden" name="O" value="'.$O.'">');
   ShowHTML('<INPUT type="hidden" name="w_reembolso_bd" value="'.$w_reembolso_bd.'">');
+  ShowHTML('<INPUT type="hidden" name="w_atual" value="'.$w_atual.'">');
+  
   ShowHTML(MontaFiltro('POST'));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
@@ -6898,6 +6902,13 @@ function Reembolso() {
     ShowHTML('    <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td>');
   } else {
     ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
+  }
+  ShowHTML('<tr><td colspan="2"><br><b>Arquivo contendo comprovantes (máximo de '.formatNumber((f($RS_Cliente,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
+  ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
+  ShowHTML('<tr><td colspan="2"><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="'.$w_caminho.'" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+  if (nvl($w_atual,'')!='') {
+    ShowHTML('&nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
+    ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
   }
   ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
   ShowHTML('    <tr><td align="center" colspan="2">');
@@ -6981,7 +6992,6 @@ function ReembolsoValor() {
   
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
-  $RS_Cliente = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
   $w_cidade_padrao = f($RS_Cliente,'sq_cidade_padrao');
   
   // Se viagem nacional, seleciona BRL automaticamente.
@@ -7419,7 +7429,7 @@ function Grava() {
               if ($w_file>'') {
                 move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               }
-            }elseif(nvl($Field['name'],'')!=''){
+            } elseif(nvl($Field['name'],'')!='') {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
               ScriptClose();
@@ -7495,6 +7505,12 @@ function Grava() {
               if ($w_file>'') {
                 move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               }
+            } elseif(nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
             }
           }
           // Se for remoção do arquivo do disco.
@@ -7516,7 +7532,7 @@ function Grava() {
               $_REQUEST['w_valor'],$_REQUEST['w_observacao'],
               $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],$_REQUEST['w_ressarcimento'],
               $_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao'],
-              $_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def']);
+              $_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def'],null,null,null,null,null);
           
           /*
           // Grava dados dos bilhetes
@@ -7588,6 +7604,12 @@ function Grava() {
               if ($w_file>'') {
                 move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
               }
+            } elseif(nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
             }
           }
           // Se for remoção do arquivo do disco.
@@ -7623,13 +7645,74 @@ function Grava() {
     case 'PDREEMB' :
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        // Grava dados do reembolso
-        dml_putPD_Reembolso::getInstanceOf($dbms,
-            $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],
-            $_REQUEST['w_observacao'],$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
-            $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],
-            $_REQUEST['w_ressarcimento_observacao'],$_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def']);
-
+        if (UPLOAD_ERR_OK===0) {
+          $w_maximo = $_REQUEST['w_upload_maximo'];
+          foreach ($_FILES as $Chv => $Field) {
+            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB.
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_observacao');
+              exit();
+            }
+            if ($Field['size'] > 0) {
+              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB.
+              if ($Field['size'] > $w_maximo) {
+                ScriptOpen('JavaScript');
+                ShowHTML('  alert(\'Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!\');');
+                ScriptClose();
+                retornaFormulario('w_observacao');
+                exit();
+              }
+              // Se já há um nome para o arquivo, mantém
+              if ($_REQUEST['w_atual']>'') {
+                $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PDGERAL');
+                if (file_exists($conFilePhysical.$w_cliente.'/'.f($RS,'cm_arquivo_comprovante'))) unlink($conFilePhysical.$w_cliente.'/'.f($RS,'cm_arquivo_comprovante'));
+                if (strpos(f($RS,'cm_arquivo_comprovante'),'.')!==false) {
+                  $w_file = substr(basename(f($RS,'cm_arquivo_comprovante')),0,(strpos(basename(f($RS,'cm_arquivo_comprovante')),'.') ? strpos(basename(f($RS,'cm_arquivo_comprovante')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
+                } else {
+                  $w_file = basename(f($RS,'cm_arquivo_comprovante'));
+                }
+              } else {
+                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+                if (strpos($Field['name'],'.')!==false) {
+                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+                }
+              }
+              $w_tamanho = $Field['size'];
+              $w_tipo    = $Field['type'];
+              $w_nome    = $Field['name'];
+              if ($w_file>'') {
+                move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+              }
+            } elseif(nvl($Field['name'],'')!='') {
+              ScriptOpen('JavaScript');
+              ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+              ScriptClose();
+              retornaFormulario('w_caminho');
+              exit();
+            }
+          }
+          // Se for remoção do arquivo do disco.
+          if ($_REQUEST['w_exclui_arquivo']>'' || $_REQUEST['w_cumprimento']=='C') {
+            $RS = db_getSolicData::getInstanceOf($dbms,$_REQUEST['w_chave'],'PDGERAL');
+            if (file_exists($conFilePhysical.$w_cliente.'/'.nvl(f($RS,'cm_arquivo_comprovante'),'x'))) unlink($conFilePhysical.$w_cliente.'/'.f($RS,'cm_arquivo_comprovante'));
+          }
+          // Grava dados do reembolso
+          dml_putPD_Reembolso::getInstanceOf($dbms,
+              $w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_reembolso'],$_REQUEST['w_deposito'],$_REQUEST['w_valor'],
+              $_REQUEST['w_observacao'],$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
+              $_REQUEST['w_ressarcimento'],$_REQUEST['w_ressarcimento_data'],$_REQUEST['w_ressarcimento_valor'],
+              $_REQUEST['w_ressarcimento_observacao'],$_REQUEST['w_fin_dev'],$_REQUEST['w_rub_dev'],$_REQUEST['w_lan_def'],
+              $_REQUEST['w_exclui_arquivo'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+        } else {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');
+          ScriptClose();
+          exit();
+        }
+        
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
@@ -7721,6 +7804,12 @@ function Grava() {
                   $w_tipo    = $Field['type'];
                   $w_nome    = $Field['name'];
                   if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+                } elseif(nvl($Field['name'],'')!='') {
+                  ScriptOpen('JavaScript');
+                  ShowHTML('  alert(\'Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!\');');
+                  ScriptClose();
+                  retornaFormulario('w_caminho');
+                  exit();
                 }
               }
               dml_putDemandaEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
