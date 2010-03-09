@@ -117,7 +117,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Objetivo/assunto/evento:</b></td><td>'.crLf2Br(f($RS,'descricao')).'</td></tr>';
       if ($l_tipo!='WORD') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade'),$TP).'</b></td>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.ExibeUnidade($w_dir_volta,$w_cliente,f($RS,'nm_unidade_resp'),f($RS,'sq_unidade_resp'),$TP).'</b></td>';
       } else {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
@@ -145,7 +145,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } else {
         foreach($RSQuery as $row) { 
           $l_html.=chr(13).'      <tr><td colspan=2 bgColor="#f0f0f0"style="border: 1px solid rgb(0,0,0);" ><b>';
-          if (f($row,'tipo_pessoa')==1) {
+          if (f($row,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - '.f($row,'cpf').'</b>';
           } else {
             $l_html.=chr(13).'          '.f($row,'nm_pessoa').' ('.f($row,'nome_resumido').') - Passaporte: '.f($row,'passaporte_numero').' '.f($row,'nm_pais_passaporte').'</b>';
@@ -155,7 +155,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           $l_html.=chr(13).'      <tr><td><b>Identidade:</b></td><td>'.f($row,'rg_numero').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Data de emissão:</b></td><td>'.FormataDataEdicao(Nvl(f($row,'rg_emissao'),'---')).'</td>';
           $l_html.=chr(13).'      <tr><td><b>Órgão emissor:</b></td><td>'.f($row,'rg_emissor').'</td></tr>';
-          if (Nvl(f($row,'passaporte_numero'),'')!='' && f($row,'tipo_pessoa')==1) {
+          if (Nvl(f($row,'passaporte_numero'),'')!='' && f($row,'sq_tipo_pessoa')==1) {
             $l_html.=chr(13).'      <tr><td><b>Passaporte:</b></td><td>'.f($row,'passaporte_numero').' - '.f($row,'nm_pais_passaporte').'</td></tr>';
           }
           $l_html.=chr(13).'      <tr valign="top"><td><b>Telefone:</b></td>'; 
@@ -874,7 +874,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>=9) {
+    if($l_diaria=='S' && $w_or_tramite>=10) {
       unset($w_trechos);
       unset($w_tot_diaria_P);
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
@@ -1039,9 +1039,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
     $w_diferenca = false;
     // Dados da prestação de contas
-    if ($w_or_tramite>=9 && f($RS,'cumprimento')!='N') {
+    if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && $w_or_tramite>=9 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
@@ -1117,10 +1117,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'</td>';
             $l_html.=chr(13).'        <td>'.crlf2br(f($row,'justificativa')).'</td>';
-            if ($w_or_tramite<=9) {
+            if ($w_or_tramite<=10) {
               // No trâmite de prestação de contas
               $l_html.=chr(13).'        <td align="center" colspan="2">&nbsp;</td>';
-            } elseif ($w_or_tramite==10 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+            } elseif ($w_or_tramite==11 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
               // No trâmite de verificação da prestação de contas mas sem valor informado.
               $l_html.=chr(13).'        <td align="center" colspan="2">Em análise</td>';
             } else {
@@ -1448,34 +1448,35 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'         </table></td></tr>';
       }
   
-      // Arquivos vinculados
-      $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
-      $RS1 = SortArray($RS1,'nome','asc');
-      if (count($RS1)>0) {
-        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-        $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'          <tr align="center">';
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>KB</b></td>';
-        $l_html.=chr(13).'          </tr>';
-        $w_cor=$w_TrBgColor;
-        foreach($RS1 as $row) {
-          $l_html.=chr(13).'      <tr valign="top">';
-          if ($l_tipo!='WORD') {
-            $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
-          } else {
-            $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
-          } 
-          $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
-          $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
-          $l_html.=chr(13).'        <td align="right">'.(round(f($row,'tamanho')/1024,1)).'&nbsp;</td>';
-          $l_html.=chr(13).'      </tr>';
+    } 
+    
+    // Arquivos vinculados
+    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$l_chave,null,$w_cliente);
+    $RS1 = SortArray($RS1,'nome','asc');
+    if (count($RS1)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ARQUIVOS ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Título</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>KB</b></td>';
+      $l_html.=chr(13).'          </tr>';
+      $w_cor=$w_TrBgColor;
+      foreach($RS1 as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        if ($l_tipo!='WORD') {
+          $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        } else {
+          $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
         } 
-        $l_html.=chr(13).'         </table></td></tr>';
+        $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.(round(f($row,'tamanho')/1024,1)).'&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
       } 
+      $l_html.=chr(13).'         </table></td></tr>';
     } 
     
     // Arquivos gerados para a PCD

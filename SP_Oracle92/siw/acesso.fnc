@@ -127,7 +127,7 @@ begin
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
         b2.nome,
         a.sq_unid_executora, a.consulta_opiniao, a.envia_email, a.exibe_relatorio, a.vinculacao, 
-        d.sq_siw_tramite, d.solicitante, d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
+        d.sq_siw_tramite, coalesce(o.sq_pessoa, d.solicitante), d.cadastrador, d.sq_unidade, d.executor, d.opiniao, d.sq_solic_pai,
         case when d.sq_cc is not null 
              then d.sq_cc
              else case when i.sq_cc is not null
@@ -176,6 +176,7 @@ begin
           left  join eo_unidade             m1 on (m.sq_unidade_resp        = m1.sq_unidade)
         left    join cl_solicitacao         n  on (d.sq_siw_solicitacao     = n.sq_siw_solicitacao)
           left  join eo_unidade             n1 on (n.sq_unidade             = n1.sq_unidade)
+        left    join pd_missao              o  on (d.sq_siw_solicitacao     = o.sq_siw_solicitacao)
   where d.sq_siw_solicitacao     = p_solicitacao
     and b.sq_pessoa              = p_usuario;
   
@@ -229,7 +230,7 @@ begin
  -- Verifica se o usuário é o solicitante
  If w_solicitante = p_usuario Then 
     Result                   := Result + 2; 
-    w_unidade_beneficiario   := w_sq_unidade_lotacao;
+    select sq_unidade into w_unidade_beneficiario from sg_autenticacao where sq_pessoa = p_usuario;
  Else 
     -- Verifica se o usuário participou de alguma forma na solicitação
     select count(*) into w_existe from (
@@ -490,7 +491,11 @@ begin
                  --   a) A solicitação aparece na mesa do titular e do substituto da unidade
                  If crec.sq_pessoa_titular is not null Then
                     If w_vinculacao = 'P' Then
-                       If crec.sq_pessoa_titular    <> w_solicitante and 
+                       If (crec.sq_pessoa_titular    <> w_solicitante or
+                           (crec.sq_pessoa_titular    = w_solicitante and
+                            w_solicitante             <> w_cadastrador
+                           )                             
+                          ) and 
                           crec.sq_pessoa_substituto <> w_solicitante and 
                           (crec.sq_pessoa_titular   = p_usuario or crec.sq_pessoa_substituto = p_usuario) Then
                           Result   := Result + 16;
@@ -578,7 +583,18 @@ begin
  Elsif w_chefia_imediata = 'I' Then
     -- Quando o trâmite for cumprido por todos os usuários internos
     If w_interno = 'S' Then
-       Result := Result + 16;
+       If w_sigla = 'PDINICIAL' Then
+         select count(*) into w_existe
+           from siw_solicitacao      a
+                inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+          where a.sq_siw_solicitacao = p_solicitacao
+            and (a.solicitante       = p_usuario or b.sq_pessoa = p_usuario);
+         If w_existe > 0 Then
+           Result := Result + 16;
+         End If;
+       Else
+         Result := Result + 16;
+       End If;
     End If;
  Elsif w_sigla_situacao = 'AT' and  w_solicitante = p_Usuario and w_consulta_opiniao = 'S' and w_opiniao_solicitante is null Then
     -- Outra possibilidade é a solicitação estar concluída e pendente de opinião pelo

@@ -716,10 +716,10 @@ function Rel_Executivo() {
           ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b><big>Projeto: '.f($row,'codigo_interno').' - '.f($row,'nm_projeto').'</big></b></div></td></tr>');
           if ($w_embed!='WORD') {
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.ExibePessoa(null,$w_cliente,f($row,'resp_projeto'),$TP,f($row,'nm_resp_projeto')).'</b></div></td></tr>');
-            ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade'),f($row,'sq_unidade'),$TP).'</b></div></td></tr>');
+            ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.ExibeUnidade(null,$w_cliente,f($row,'nm_unidade_resp'),f($row,'sq_unidade_resp'),$TP).'</b></div></td></tr>');
           } else {
             ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Responsável: '.f($row,'nm_resp_projeto').'</b></div></td></tr>');
-            ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.f($row,'nm_unidade').'</b></div></td></tr>');
+            ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Diretoria: '.f($row,'nm_unidade_resp').'</b></div></td></tr>');
           } 
           ShowHTML('   <tr><td colspan="3" bgcolor="#f0f0f0"><div align=justify><b>Objetivo do Projeto:</b> '.nvl(f($row,'objetivo_superior'),'---').'</b></div></td></tr>');
           ShowHTML('   <tr><td colspan="3">&nbsp;</td></tr>');

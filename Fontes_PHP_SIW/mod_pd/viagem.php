@@ -1085,7 +1085,8 @@ function OutraParte() {
   $w_cnpj           = $_REQUEST['w_cnpj'];
   $w_sq_pessoa      = $_REQUEST['w_sq_pessoa'];
   $w_pessoa_atual   = $_REQUEST['w_pessoa_atual'];
-
+  $w_tipo_pessoa    = $_REQUEST['w_tipo_pessoa'];
+  
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
 
   // Verifica se há necessidade de informar os dados para pagamento das diárias
@@ -1400,6 +1401,7 @@ function OutraParte() {
     ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
     ShowHTML('<INPUT type="hidden" name="w_chave_aux" value="'.$w_cliente.'">');
     ShowHTML('<INPUT type="hidden" name="w_sq_pessoa" value="'.$w_sq_pessoa.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo_pessoa" value="'.$w_tipo_pessoa.'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_atual" value="'.$w_pessoa_atual.'">');
     if (($w_cpf=='' && $w_cnpj=='' && $w_passaporte=='') || strpos($_REQUEST['Botao'],'Alterar')!==false || strpos($_REQUEST['Botao'],'Procurar')!==false) {
       $w_nome=$_REQUEST['w_nome'];
@@ -6949,10 +6951,10 @@ function Reembolso() {
         ShowHTML('        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'&nbsp;&nbsp;&nbsp;</td>');
         ShowHTML('        <td>'.crlf2br(f($row,'justificativa')).'</td>');
-        if ($w_or_tramite<=9) {
+        if ($w_or_tramite<=10) {
           // No trâmite de prestação de contas
           ShowHTML('        <td align="center" colspan="2">&nbsp;</td>');
-        } elseif ($w_or_tramite==10 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+        } elseif ($w_or_tramite==11 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
           // No trâmite de verificação da prestação de contas mas sem valor informado.
           ShowHTML('        <td align="center" colspan="2">Em análise</td>');
         } else {

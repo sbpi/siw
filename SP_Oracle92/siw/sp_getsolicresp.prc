@@ -212,6 +212,7 @@ begin
                 f.sigla sg_unidade, d.nome_resumido_ind
            from siw_tramite                           c
                 inner       join siw_menu             c1 on (c.sq_menu            = c1.sq_menu)
+                  inner     join siw_modulo           c2 on (c1.sq_modulo         = c2.sq_modulo)
                   inner     join co_pessoa            d  on (c1.sq_pessoa         = d.sq_pessoa_pai)
                     inner   join co_tipo_vinculo      d1 on (d.sq_tipo_vinculo    = d1.sq_tipo_vinculo and
                                                              d1.interno           = 'S'
@@ -222,6 +223,7 @@ begin
                       inner join eo_unidade           f  on (e.sq_unidade         = f.sq_unidade)
           where c.sq_siw_tramite     = p_tramite
             and c.chefia_imediata    = 'I'
+            and c2.sigla             <> 'PD'
          UNION
          -- Usuários com permissão explícita no trâmite
          select distinct d.sq_pessoa, d.nome, d.nome_resumido,

@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class db_getTramiteResp 
@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class db_getTramiteResp  {
    function getInstanceOf($dbms, $p_solic, $p_tramite, $p_restricao) {
-     $sql=$strschema.'SP_GETTRAMITERESP';
+     $sql=$strschema.'sp_getTramiteResp';
      $params=array('p_solic'                     =>array(tvl($p_solic),                                    B_INTEGER,        32),
                    'p_tramite'                   =>array(tvl($p_tramite),                                  B_INTEGER,        32),
                    'p_restricao'                 =>array(tvl($p_restricao),                                B_VARCHAR,        20),

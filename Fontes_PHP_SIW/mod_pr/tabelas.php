@@ -668,7 +668,7 @@ function ConfiguraViagem() {
     if (count($RS_Fin)<=0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      $RS_Fin = array_slice($RS_Fin, (($P3-1)*$P4), $P4);
+      //$RS_Fin = array_slice($RS_Fin, (($P3-1)*$P4), $P4);
       foreach ($RS_Fin as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
