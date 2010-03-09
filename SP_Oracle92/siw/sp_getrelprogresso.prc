@@ -106,6 +106,7 @@ begin
                 c4.sq_plano,
                 case when c4.sq_plano is not null then c4.titulo else c5.titulo end as nm_plano, 
                 m1.sq_unidade, m1.nome as nm_unidade,
+                n.nome as nm_unidade_resp, b.sq_unidade_resp,
                 calculaIGE(c.sq_siw_solicitacao) as ige, calculaIDE(c.sq_siw_solicitacao, w_fim) as ide,
                 calculaIGC(c.sq_siw_solicitacao) as igc, calculaIDC(c.sq_siw_solicitacao, w_fim) as idc
            from pj_projeto_etapa                    a
@@ -129,6 +130,7 @@ begin
                     left      join siw_tramite      l  on (g.sq_siw_tramite      = l.sq_siw_tramite and
                                                            l.ativo               = 'S'
                                                           )
+                  inner       join eo_unidade       n  on (b.sq_unidade_resp     = n.sq_unidade)
           where d.sq_pessoa      = p_cliente
             and (j.ativo         = 'S' or b.exibe_relatorio = 'S')
             and (p_chave         is null or (p_chave       is not null and a.sq_siw_solicitacao = p_chave))
