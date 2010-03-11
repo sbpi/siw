@@ -116,7 +116,8 @@ begin
                                                         )
                                                        )
                                                       )
-          where a.sq_siw_solicitacao   = p_chave;
+          where a.sq_siw_solicitacao   = p_chave
+            and d.sq_menu              = p_chave_aux;
              
    Elsif p_restricao = 'FICHA' Then
      open p_result for    

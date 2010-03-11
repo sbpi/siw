@@ -189,6 +189,15 @@ begin
            where sq_siw_solicitacao = p_copia
          )
          where sq_siw_solicitacao = w_chave;
+         
+         -- Copia os itens da solicitação
+         insert into cl_solicitacao_item
+           (sq_solicitacao_item,              sq_siw_solicitacao, sq_material, quantidade, sq_unidade_medida, prazo_garantia, vistoria_previa, catalogo, prazo_manutencao)
+         (select sq_solicitacao_item.nextval, w_chave,            sq_material, quantidade, sq_unidade_medida, prazo_garantia, vistoria_previa, catalogo, prazo_manutencao
+            from cl_solicitacao_item a
+           where sq_siw_solicitacao = p_copia
+             and cancelado          = 'N'
+         );
       End If;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações

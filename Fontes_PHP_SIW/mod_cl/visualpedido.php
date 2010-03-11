@@ -43,6 +43,14 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
      
     // Identificação do lançamento
     $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    if(nvl(f($RS,'processo'),'')!='') {
+      $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
+      if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
+        $l_html.=chr(13).'        <td><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($RS,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($RS,'processo').'&nbsp;</a>';
+      } else {
+        $l_html.=chr(13).'        <td>'.f($RS,'processo');
+      }
+    }
     // Exibe a vinculação
     $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'S').'</td></tr>';
@@ -149,19 +157,19 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
         $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
-        if($w_sg_tramite=='AT') {
+        if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>';
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
         }
         if ($w_pede_valor_pedido=='N') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'pesquisa_preco_medio'),4).'</td>';
-          if($w_sg_tramite=='AT') {
+          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
             $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada')),4).'</td>';
           } else {
             $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade')),4).'</td>';
           }
-          if($w_sg_tramite=='AT') {
+          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada'));
           } else {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));

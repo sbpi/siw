@@ -89,6 +89,7 @@ create or replace procedure SP_PutSolicConc
    cursor c_financeiro_geral is
       select distinct x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, y.sq_unidade, 
              x.justificativa as descricao, 
+             x1.processo,
              soma_dias(w.sq_pessoa,trunc(sysdate),x1.dias_validade_proposta,'C') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              w3.sq_forma_pagamento,
@@ -193,6 +194,11 @@ begin
                 a.sq_modalidade_artigo = p_enquadramento,
                 a.fundo_fixo           = coalesce(p_fundo_fixo,'N')
          where sq_siw_solicitacao = p_chave;
+
+         -- Atualiza o código da solicitação com o número do certame
+         update siw_solicitacao a
+            set a.codigo_interno = (select numero_certame from cl_solicitacao b where b.sq_siw_solicitacao = a.sq_siw_solicitacao)
+         where a.sq_siw_solicitacao = p_chave;
       end if;
    end if;
    
@@ -272,6 +278,7 @@ begin
                              p_sq_forma_pagamento => crec.sq_forma_pagamento,
                              p_sq_tipo_pessoa     => crec.sq_tipo_pessoa,
                              p_tipo_rubrica       => 5, -- despesas
+                             p_numero_processo    => crec.processo,
                              p_per_ini            => crec.inicio,
                              p_per_fim            => crec.fim,
                              p_chave_nova         => w_sq_financ,
@@ -287,7 +294,7 @@ begin
                              p_chave              => w_sq_financ,
                              p_chave_aux          => null,
                              p_sq_tipo_documento  => crec.sq_tipo_documento,
-                             p_numero             => nvl(crec.cd_interno,w_cd_financ),
+                             p_numero             => 'AJUSTAR',
                              p_data               => trunc(sysdate),
                              p_serie              => null,
                              p_valor              => crec.valor,

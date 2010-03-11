@@ -30,10 +30,17 @@ create or replace procedure SP_PutCLDados
    w_certame        varchar2(1);
    w_prefixo        siw_menu.prefixo%type;
    w_codigo         siw_solicitacao.codigo_interno%type;
+   w_sigla_menu     siw_menu.sigla%type;
 begin
    If p_restricao = 'PROT' Then
       -- Recupera a modalidade atual
       select a.sq_lcmodalidade into w_sq_modalidade from cl_solicitacao a where sq_siw_solicitacao = p_chave;
+      
+      -- Recupera a sigla do serviço da solicitação
+      select a.sigla into w_sigla_menu
+        from siw_menu                   a
+             inner join siw_solicitacao b on (a.sq_menu = b.sq_menu)
+       where b.sq_siw_solicitacao = p_chave;
       
       -- Atualiza a tabela da licitação com os dados da análise
       Update cl_solicitacao set
@@ -41,7 +48,7 @@ begin
          processo        = coalesce(p_numero_processo,p_protocolo)
       Where sq_siw_solicitacao = p_chave;
       
-      If w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade) Then
+      If substr(w_sigla_menu,1,4) = 'CLLC' and (w_sq_modalidade is null or (w_sq_modalidade is not null and w_sq_modalidade <> p_sq_lcmodalidade)) Then
         -- Recupera o número do certame
         CL_CriaParametro(p_chave, w_numero_certame);
 

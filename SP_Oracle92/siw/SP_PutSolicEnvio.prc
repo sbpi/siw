@@ -43,8 +43,8 @@ begin
             -- Regra da ABDI: 
             --   após chefia imediata, pedidos de compra até 5mil vão para GERAF, acima de 15mil vão para DIREX, outros vão para presidente ou diretor
             --   após trâmite intermediario, vai para GERAF concluir.
-            If w_or_tramite = 3 Then
-               If w_solic.valor > 15000 Then
+            If w_or_tramite in (3,4) Then
+               If w_solic.valor > 15000 and w_or_tramite = 4 Then
                   select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                      from siw_tramite a
                     where a.sq_menu = p_menu
@@ -53,13 +53,13 @@ begin
                   select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                      from siw_tramite a
                     where a.sq_menu = p_menu
-                      and a.sigla   = 'EE';
+                      and a.sigla   = 'AF';
                End If;
-            Elsif w_or_tramite in (4,5) Then
+            Elsif w_or_tramite = 5 Then
                select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                   from siw_tramite a
                  where a.sq_menu = p_menu
-                   and a.sigla   = 'EE';
+                   and a.sigla   = 'AF';
             End If;
          Elsif w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLLC' and w_sg_tramite = 'PP' Then
             -- Regra da ABDI: 

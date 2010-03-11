@@ -390,7 +390,7 @@ function Tramite() {
     if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','2','50','1','1');
       Validate('w_ordem','Ordem','1','1','1','2','','0123456789');
-      Validate('w_sigla','Sigla','1','','2','2','1','1');
+      Validate('w_sigla','Sigla','1','1','2','2','1','1');
       Validate('w_descricao','Descrição','1','','5','500','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {

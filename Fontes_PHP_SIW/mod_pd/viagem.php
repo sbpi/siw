@@ -5649,6 +5649,7 @@ function InformarCotacao() {
   ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('      <table width="99%" border="0">');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Trechos</td>');
+  echo $w_chave.'-'.$SG;
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'S',$SG);
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {
@@ -6951,10 +6952,10 @@ function Reembolso() {
         ShowHTML('        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>');
         ShowHTML('        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'&nbsp;&nbsp;&nbsp;</td>');
         ShowHTML('        <td>'.crlf2br(f($row,'justificativa')).'</td>');
-        if ($w_or_tramite<=10) {
+        if ($w_or_tramite<=11) {
           // No trâmite de prestação de contas
           ShowHTML('        <td align="center" colspan="2">&nbsp;</td>');
-        } elseif ($w_or_tramite==11 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+        } elseif ($w_or_tramite==12 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
           // No trâmite de verificação da prestação de contas mas sem valor informado.
           ShowHTML('        <td align="center" colspan="2">Em análise</td>');
         } else {

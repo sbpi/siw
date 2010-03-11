@@ -31,13 +31,15 @@ begin
       
       -- Cria a opção do menu para todos os endereços da organização
       insert into siw_menu_endereco (sq_menu, sq_pessoa_endereco) 
-        (select w_chave, sq_pessoa_endereco 
-           from co_pessoa_endereco a, co_tipo_endereco b 
-          where a.sq_tipo_endereco = b.sq_tipo_endereco 
-            and b.internet         = 'N' 
-            and b.email            = 'N' 
-            and sq_pessoa          = p_chave_aux
-        );
+      (select c.sq_menu, a.sq_pessoa_endereco 
+         from co_pessoa_endereco          a
+              inner join co_tipo_endereco b on (a.sq_tipo_endereco = b.sq_tipo_endereco)
+              inner join siw_menu         c on (a.sq_pessoa        = c.sq_pessoa)
+        where b.internet = 'N' 
+          and b.email    = 'N' 
+          and c.sq_menu  = p_chave_aux
+          and 0          = (select count(*) from siw_menu_endereco where sq_menu = p_chave_aux and sq_pessoa_endereco = a.sq_pessoa_endereco)
+      );
       
    Elsif p_operacao = 'A' Then
       -- Altera registro

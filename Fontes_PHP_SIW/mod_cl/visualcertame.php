@@ -11,10 +11,8 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_cliente_arp = f($RS,'ata_registro_preco');
   
   // Recupera os dados da solicitacao
-  $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,3,
-          null,null,null,null,null,null,null,null,null,null,
-          $v_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
+  $RS = db_getSolicCL::getInstanceOf($dbms,null,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+          $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $l_tramite        = f($RS,'sq_siw_tramite');
   $l_sigla          = f($RS,'sigla');
@@ -95,6 +93,44 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.CRLF2BR(f($RS,'justificativa')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
     
+    if (nvl(f($RS,'sq_financeiro'),'')!='') {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      if (nvl(f($RS,'sq_projeto_rubrica'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Rubrica: </b></td><td>'.f($RS,'cd_rubrica').' - '.f($RS,'nm_rubrica').'</td></tr>';
+      if (nvl(f($RS,'sq_tipo_lancamento'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação financeira: </b></td><td>'.f($RS,'nm_lancamento').'</td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Classe(s) prevista(s): </b></td><td>';
+      $l_texto = '';
+      if (f($RS,'consumo')=='S') $l_texto = 'CONSUMO';
+      if (f($RS,'permanente')=='S') (($l_texto=='') ? $l_texto = 'PERMANENTE' : $l_texto.=', PERMANENTE');
+      if (f($RS,'servico')=='S')    (($l_texto=='') ? $l_texto = 'SERVIÇOS'   : $l_texto.=', SERVIÇOS');
+      if (f($RS,'outros')=='S')     (($l_texto=='') ? $l_texto = 'OUTROS'     : $l_texto.=', OUTROS');
+      $l_html.=$l_texto.'</td></tr>';
+    }
+    
+    // Arquivos vinculados
+    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
+    $RS1 = SortArray($RS1,'nome','asc');
+    if (count($RS1)>0) {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
+      $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+      $l_html.=chr(13).'          <tr align="center">';
+      $l_html.=chr(13).'             <td bgColor="#f0f0f0" width="40%"><div><b>Título</b></div></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Descrição</b></div></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></div></td>';
+      $l_html.=chr(13).'          </tr>';
+      foreach($RS1 as $row) {
+        $l_html.=chr(13).'      <tr valign="top">';
+        if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+        else       $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
+        $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
+        $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
+        $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+      } 
+      $l_html.=chr(13).'         </table></td></tr>';
+    }
+    
     //Dados da análise
     if(f($RS,'or_tramite')>2) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA ANÁLISE<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -119,19 +155,6 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
         $l_html.=chr(13).'      <tr><td><b>Limite de acréscimo/supressão (%): </b></td><td>'.formatNumber(f($RS,'limite_variacao')).' </td></tr>';
       }
-    }
-    
-    if (nvl(f($RS,'sq_financeiro'),'')!='') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VINCULAÇÃO ORÇAMENTÁRIA-FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      if (nvl(f($RS,'sq_projeto_rubrica'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Rubrica: </b></td><td>'.f($RS,'cd_rubrica').' - '.f($RS,'nm_rubrica').'</td></tr>';
-      if (nvl(f($RS,'sq_tipo_lancamento'),'')!='') $l_html.=chr(13).'      <tr><td width="30%"><b>Classificação financeira: </b></td><td>'.f($RS,'nm_lancamento').'</td></tr>';
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Classe(s) prevista(s): </b></td><td>';
-      $l_texto = '';
-      if (f($RS,'consumo')=='S') $l_texto = 'CONSUMO';
-      if (f($RS,'permanente')=='S') (($l_texto=='') ? $l_texto = 'PERMANENTE' : $l_texto.=', PERMANENTE');
-      if (f($RS,'servico')=='S')    (($l_texto=='') ? $l_texto = 'SERVIÇOS'   : $l_texto.=', SERVIÇOS');
-      if (f($RS,'outros')=='S')     (($l_texto=='') ? $l_texto = 'OUTROS'     : $l_texto.=', OUTROS');
-      $l_html.=$l_texto.'</td></tr>';
     }
     
     // Objetivos estratégicos
@@ -532,30 +555,46 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     
   // Se for listagem dos dados
   if ($l_O=='L' || $l_O=='V') {
-    // Arquivos vinculados
-    $RS1 = db_getSolicAnexo::getInstanceOf($dbms,$v_chave,null,$w_cliente);
-    $RS1 = SortArray($RS1,'nome','asc');
+    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
+      null,null,null,null,null,null,null,null,null,null,$v_chave, null, null, null, null, null, null,
+      null, null, null, null, null, null, null, null, null);
+    $RS1 = SortArray($RS1,'inclusao','asc', 'codigo_interno', 'asc');
     if (count($RS1)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ANEXOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
-      $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EXECUÇÃO FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+      $l_html.=chr(13).'      <tr><td colspan="2">';
       $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'             <td bgColor="#f0f0f0" width="40%"><div><b>Título</b></div></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Descrição</b></div></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>Tipo</b></div></td>';
-      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div><b>KB</b></div></td>';
-      $l_html.=chr(13).'          </tr>';
-      foreach($RS1 as $row) {
-        $l_html.=chr(13).'      <tr valign="top">';
-        if($l_tipo=='WORD') $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
-        else       $l_html.=chr(13).'        <td>'.LinkArquivo('HL',$w_cliente,f($row,'chave_aux'),'_blank','Clique para exibir o arquivo em outra janela.',f($row,'nome'),null).'</td>';
-        $l_html.=chr(13).'        <td>'.Nvl(f($row,'descricao'),'---').'</td>';
-        $l_html.=chr(13).'        <td>'.f($row,'tipo').'</td>';
-        $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
-        $l_html.=chr(13).'      </tr>';
+      $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+      $l_html.=chr(13).'          <td><b>Código</td>';
+      $l_html.=chr(13).'          <td><b>Histórico</td>';
+      $l_html.=chr(13).'          <td><b>Valor</td>';
+      $l_html.=chr(13).'          <td><b>Situação atual</td>';
+      $l_html.=chr(13).'          <td><b>Data Pagamento</td>';
+      $l_html.=chr(13).'        </tr>';
+      $w_cor=$conTrBgColor;
+      $i             = 1;
+      $w_total       = 0;
+      foreach ($RS1 as $row) {
+        if (f($row,'sigla')=='FNREVENT') {
+          $w_total       -= f($row,'valor');
+        } else {
+          $w_total       += f($row,'valor');
+        }
+        $l_html.=chr(13).'        <tr valign="middle">';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'descricao').'</td>';
+        $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+        $l_html.=chr(13).'           <td>'.f($row,'nm_tramite').'</td>';
+        $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'conclusao')),'&nbsp;').'</td>';
+        $l_html.=chr(13).'        </tr>';
       } 
+      $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+      $l_html.=chr(13).'        <td align="right" colspan="2"><b>TOTAL</b></td>';
+      $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
       $l_html.=chr(13).'         </table></td></tr>';
     }
+  
     // Se for envio, executa verificações nos dados da solicitação
     $w_erro = ValidaCertame($w_cliente,$v_chave,substr($l_sigla,0,4).'GERAL',null,null,null,Nvl($l_tramite,0));
     if ($w_erro>'') {

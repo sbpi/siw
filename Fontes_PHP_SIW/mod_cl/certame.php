@@ -26,6 +26,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+include_once($w_dir_volta.'classes/sp/db_getCLFinanceiro.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicObjetivo.php');
 include_once($w_dir_volta.'classes/sp/db_getMatServ.php');
 include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
@@ -49,6 +50,8 @@ include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
 include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
 include_once($w_dir_volta.'funcoes/selecaoObjetivoEstrategico.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
+include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
+include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoPrioridade.php');
@@ -705,6 +708,9 @@ function Geral() {
     $w_numero_processo    = $_REQUEST['w_numero_processo'];
     $w_protocolo          = $_REQUEST['w_protocolo'];
     $w_protocolo_nm       = $_REQUEST['w_protocolo_nm'];
+    $w_financeiro         = $_REQUEST['w_financeiro'];
+    $w_rubrica            = $_REQUEST['w_rubrica'];
+    $w_lancamento         = $_REQUEST['w_lancamento'];
   } else {
     if (strpos('AEV',$O)!==false || $w_copia>'') {
       // Recupera os dados do pedido
@@ -755,6 +761,9 @@ function Geral() {
         $w_numero_processo  = f($RS,'processo');
         $w_protocolo        = f($RS,'processo');
         $w_protocolo_nm     = f($RS,'processo');
+        $w_financeiro       = f($RS,'sq_financeiro');
+        $w_rubrica          = f($RS,'sq_projeto_rubrica');
+        $w_lancamento       = f($RS,'sq_tipo_lancamento');
       } 
     } 
   } 
@@ -763,6 +772,12 @@ function Geral() {
     $w_sq_unidade  = $_SESSION['LOTACAO'];
     $w_solicitante = $_SESSION['SQ_PESSOA'];
   } 
+
+  if ($w_solic_pai>'') {
+    // Recupera as possibilidades de vinculação financeira
+    $RS_Financ = db_getCLFinanceiro::getInstanceOf($dbms,$w_cliente,$w_menu,$w_solic_pai,null,null,null,null,null,null,null,null);
+  }
+  
   Cabecalho();
   head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -849,6 +864,10 @@ function Geral() {
     }
     Validate('w_justificativa','Justificativa','','1',3,2000,'1','1');
     Validate('w_observacao','Observação','','',3,2000,'1','1');
+    if (count($RS_Financ)>1) {
+      Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','0123456789');
+      Validate('w_lancamento','Tipo de lançamento','SELECT',1,1,18,'','0123456789');
+    }
     if($w_decisao_judicial=='N') {
       Validate('w_dias','Dias de alerta do pedido','1','',1,3,'','0123456789');
       ShowHTML('  if (theForm.w_aviso[0].checked) {');
@@ -973,6 +992,20 @@ function Geral() {
     }
     ShowHTML('      <tr><td colspan=2><b><u>J</u>ustificativa:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="É obrigatório justificar.">'.$w_justificativa.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan=2><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
+    if ($w_solic_pai>'') {
+      if (count($RS_Financ)>1) {
+        ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Dados para Pagamento</td></td></tr>');
+        ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+        ShowHTML('      <tr valign="top">');
+        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_solic_pai,'T','w_rubrica','CLFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
+        SelecaoTipoLancamento('<u>T</u>ipo de lançamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','CLLC'.str_pad($w_solic_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'T',null);
+      } elseif (count($RS_Financ)==1) {
+        foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
+        ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
+      }
+    }
     /*
     ShowHTML('      <tr><td colspan=2 align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan=2 align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -3922,7 +3955,8 @@ function Grava() {
           $_REQUEST['w_justificativa'],$_REQUEST['w_observacao'],
           nvl($_REQUEST['w_inicio'],$_REQUEST['w_data_recebimento']),$_REQUEST['w_fim'],null,$_REQUEST['w_codigo'],
           $_REQUEST['w_prioridade'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],'N',null,null,
-          $_REQUEST['w_arp'],'N',null,null,null,null,null,&$w_chave_nova,$_REQUEST['w_copia']);        
+          $_REQUEST['w_arp'],'N',null,$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
+          null,&$w_chave_nova,$_REQUEST['w_copia']);        
 
         dml_putCLDados::getInstanceOf($dbms,'PROT',$w_chave_nova,$_REQUEST['w_sq_lcmodalidade'],
           $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_numero_certame'],

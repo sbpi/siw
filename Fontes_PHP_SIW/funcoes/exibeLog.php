@@ -2,16 +2,16 @@
 function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'local');
 
-  $l_html.=chr(13). "<script type='text/javascript'>";
+  $l_html.=chr(13). "<script language='JavaScript'>";
   $l_html.=chr(13). "$(function(){";
-  $l_html.=chr(13). "    $('#enclista').css('display','none');";
-  $l_html.=chr(13). '    $(\'#colxenc\').html(\'<img src="images/expandir.gif">\');';      
-  $l_html.=chr(13). "    $('#encanot').css('display','none');";
-  $l_html.=chr(13). '    $(\'#colxanot\').html(\'<img src="images/expandir.gif">\');';      
-  $l_html.=chr(13). "    $('#encver').css('display','none');";
-  $l_html.=chr(13). '    $(\'#colxver\').html(\'<img src="images/expandir.gif">\');';      
+  $l_html.=chr(13). "  $('#enclista').css('display','none');";
+  $l_html.=chr(13). '  $(\'#colxenc\').html(\'<img src="images/expandir.gif">\');';      
+  $l_html.=chr(13). "  $('#encanot').css('display','none');";
+  $l_html.=chr(13). '  $(\'#colxanot\').html(\'<img src="images/expandir.gif">\');';      
+  $l_html.=chr(13). "  $('#encver').css('display','none');";
+  $l_html.=chr(13). '  $(\'#colxver\').html(\'<img src="images/expandir.gif">\');';      
 
-  $l_html.=chr(13). "$('#encaminhamentos').click(function(event) {";
+  $l_html.=chr(13). "  $('#encaminhamentos').click(function(event) {";
   $l_html.=chr(13). "    event.preventDefault();";
   $l_html.=chr(13). "    $('#enclista').slideToggle('slow');";
   $l_html.=chr(13). '    if($("#colxenc").html().indexOf("expandir")>-1) {';
@@ -21,7 +21,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   $l_html.=chr(13). '    }';
   $l_html.=chr(13). '  });';
 
-  $l_html.=chr(13). "$('#anotacoes').click(function(event) {";
+  $l_html.=chr(13). "  $('#anotacoes').click(function(event) {";
   $l_html.=chr(13). "    event.preventDefault();";
   $l_html.=chr(13). "    $('#encanot').slideToggle('slow');";
   $l_html.=chr(13). '    if($("#colxanot").html().indexOf("expandir")>-1) {';
@@ -31,7 +31,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   $l_html.=chr(13). '    }';
   $l_html.=chr(13). '  });';
 
-  $l_html.=chr(13). "$('#versoes').click(function(event) {";
+  $l_html.=chr(13). "  $('#versoes').click(function(event) {";
   $l_html.=chr(13). "    event.preventDefault();";
   $l_html.=chr(13). "    $('#encver').slideToggle('slow');";
   $l_html.=chr(13). '    if($("#colxver").html().indexOf("expandir")>-1) {';
@@ -94,8 +94,8 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
 	  if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="anotacoes"><td colspan="2"><br><span id="colxanot"></span><font size="2"><b>ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-	    $l_html.=chr(13).'      <tr id="encanot"><td colspan="2" align="center">';
-	    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+	    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+	    $l_html.=chr(13).'        <table id="encanot" width=100%  border="1" bordercolor="#00000">';    
 	    $l_html.=chr(13).'          <tr align="center">';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Anotação</b></td>';
@@ -125,8 +125,8 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
 	  if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="versoes"><td colspan="2"><br><span id="colxver"></span><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-	    $l_html.=chr(13).'      <tr id="encver"><td colspan="2" align="center">';
-	    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+	    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+	    $l_html.=chr(13).'        <table id="encver" width=100%  border="1" bordercolor="#00000">';    
 	    $l_html.=chr(13).'          <tr align="center">';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Versão</b></td>';
@@ -153,8 +153,8 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
 	  $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
 	  $l_html.=chr(13).'      <tr id="encaminhamentos"><td colspan="2"><br><span id="colxenc"></span><font size="2"><b>ENCAMINHAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-	  $l_html.=chr(13).'      <tr id="enclista"><td colspan="2" align="center">';
-	  $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+	  $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
+	  $l_html.=chr(13).'        <table id="enclista" width=100%  border="1" bordercolor="#00000">';    
 	  $l_html.=chr(13).'          <tr align="center">';
 	  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Despacho/Observação</b></td>';

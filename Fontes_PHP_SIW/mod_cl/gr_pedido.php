@@ -311,15 +311,15 @@ function Gerencial() {
         Validate('p_palavra','Certame','','','2','14','1','1');
         Validate('p_regiao','Sequencial do protocolo','','','1','10','','0123456789');
         Validate('p_cidade','Ano do protocolo','','','4','4','','0123456789');
+        Validate('p_ini_i','Início do período','DATA','','10','10','','0123456789/');
+        Validate('p_ini_f','Término do período','DATA','','10','10','','0123456789/');
+        ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
+        ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+        ShowHTML('     theForm.p_ini_i.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        CompData('p_ini_i','Início do período','<=','p_ini_f','Término do período');
       }
-      Validate('p_ini_i','Início do período','DATA','','10','10','','0123456789/');
-      Validate('p_ini_f','Término do período','DATA','','10','10','','0123456789/');
-      ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
-      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
-      ShowHTML('     theForm.p_ini_i.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      CompData('p_ini_i','Início do período','<=','p_ini_f','Término do período');
       ValidateClose();
       ScriptClose();
     } else {
@@ -865,11 +865,11 @@ function ImprimeCabecalho() {
   ShowHTML('          <td><b>Cad.</td>');
   ShowHTML('          <td><b>Tram.</td>');
   ShowHTML('          <td><b>Enc.</td>');
-  ShowHTML('          <td><b>Atraso</td>');
-  ShowHTML('          <td><b>Aviso</td>');
-  ShowHTML('          <td><b>$ Prev.</td>');
-  ShowHTML('          <td><b>$ Real</td>');
-  ShowHTML('          <td><b>Real > Previsto</td>');
+  //ShowHTML('          <td><b>Atraso</td>');
+  //ShowHTML('          <td><b>Aviso</td>');
+  ShowHTML('          <td><b>Valor</td>');
+  //ShowHTML('          <td><b>$ Real</td>');
+  //ShowHTML('          <td><b>Real > Previsto</td>');
   ShowHTML('        </tr>');
 } 
 
@@ -886,7 +886,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
   if ($l_cad>0 && $w_embed != 'WORD')      ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_cad,0,',','.').'</a>&nbsp;</td>');                   else ShowHTML('          <td align="right">'.number_format($l_cad,0,',','.').'&nbsp;</td>');
   if ($l_tram>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_tram,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_tram,0,',','.').'&nbsp;</td>');
   if ($l_conc>0 && $w_embed != 'WORD')     ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true">'.number_format($l_conc,0,',','.').'</a>&nbsp;</td>');                  else ShowHTML('          <td align="right">'.number_format($l_conc,0,',','.').'&nbsp;</td>');
-  if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
+  //if ($l_atraso>0 && $w_embed != 'WORD')   ShowHTML('          <td align="right"><a class="hl" href="javascript:lista(\''.$l_chave.'\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe os registros.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>'.number_format($l_atraso,0,',','.').'</a>&nbsp;</td>'); else ShowHTML('          <td align="right"><b>'.$l_atraso.'&nbsp;</td>');
   if ($l_agrega=='GRCLCIAVIAGEM' || $l_agrega=='GRCLCIDADE' || $l_agrega=='GRCLAUTORIZ') {
     ShowHTML('          <td align="right">---&nbsp;</td>');
     ShowHTML('          <td align="right">---&nbsp;</td>');
@@ -894,7 +894,8 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
     ShowHTML('          <td align="right">---&nbsp;</td>');
   } else {
     ShowHTML('          <td align="right">'.number_format($l_valor,2,',','.').'&nbsp;</td>');
-    ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</td>');
+    //ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</td>');
+    /*
     if ($l_aviso>0 && $O=='L') {
       ShowHTML('          <td align="right"><font color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</td>');
     } else {
@@ -905,6 +906,7 @@ function ImprimeLinha($l_solic,$l_cad,$l_tram,$l_conc,$l_atraso,$l_aviso,$l_valo
     } else {
       ShowHTML('          <td align="right"><b>'.$l_acima.'&nbsp;</td>');
     } 
+    */
   } 
   ShowHTML('        </tr>');
 } 

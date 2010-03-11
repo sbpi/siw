@@ -709,7 +709,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     } 
   
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>4) {
+    if($l_diaria=='S' && $w_or_tramite>5) {
       unset($w_trechos);
       unset($w_tot_diaria_S);
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'S','PDDIARIA');
@@ -874,7 +874,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>=10) {
+    if($l_diaria=='S' && $w_or_tramite>=11) {
       unset($w_trechos);
       unset($w_tot_diaria_P);
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
@@ -1039,9 +1039,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
     $w_diferenca = false;
     // Dados da prestação de contas
-    if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
+    if ($w_or_tramite>=11 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && $w_or_tramite>=11 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
@@ -1077,9 +1077,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'      <tr><td valign="top" colspan="2">';
       $l_html.=chr(13).'      <tr><td><b>Tipo de cumprimento:</b></td><td>'.f($RS,'nm_cumprimento').'</td></tr>';
       if (f($RS,'cumprimento')=='P') {
-        $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Motivo do cumprimento parcial:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo do cumprimento parcial:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } elseif (f($RS,'cumprimento')=='C') {
-        $l_html.=chr(13).'      <tr valign="top"><td valign="top"><b>Motivo do cancelamento:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo do cancelamento:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } 
       if ($w_diferenca) {
         $l_html.=chr(13).'      <tr><td><b>Diferença de diárias:</b></td><td>';
@@ -1117,10 +1117,10 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             $l_html.=chr(13).'        <td>'.f($row,'sg_moeda').' ('.f($row,'nm_moeda').')</td>';
             $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_solicitado')).'</td>';
             $l_html.=chr(13).'        <td>'.crlf2br(f($row,'justificativa')).'</td>';
-            if ($w_or_tramite<=10) {
+            if ($w_or_tramite<=11) {
               // No trâmite de prestação de contas
               $l_html.=chr(13).'        <td align="center" colspan="2">&nbsp;</td>';
-            } elseif ($w_or_tramite==11 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
+            } elseif ($w_or_tramite==12 && f($row,'valor_autorizado')==0 && f($row,'observacao')=='') {
               // No trâmite de verificação da prestação de contas mas sem valor informado.
               $l_html.=chr(13).'        <td align="center" colspan="2">Em análise</td>';
             } else {
@@ -1195,7 +1195,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'</tr>';
     }
 
-    if ($w_or_tramite>4) {
+    if ($w_or_tramite>5) {
       // Bilhete de passagem
       $RS1 = db_getPD_Bilhete::getInstanceOf($dbms,$l_chave,null,null,null,null,null,null,null);
       $RS1 = SortArray($RS1,'data','asc', 'nm_cia_transporte', 'asc', 'numero', 'asc');

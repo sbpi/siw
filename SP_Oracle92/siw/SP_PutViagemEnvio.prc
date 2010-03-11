@@ -26,6 +26,7 @@ create or replace procedure SP_PutViagemEnvio
    w_ressarcimento pd_missao.ressarcimento%type;
    w_conta         co_pessoa_conta%rowtype;
    w_beneficiario  number(18);
+   w_especial      number(18);
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
@@ -238,6 +239,22 @@ begin
          Else w_salto := 0;
       End If;
 
+      -- Se o trâmite for de chefia imediata e a categoria de diárias tiver tramitação especial, pula para o próximo
+      select count(*) into w_existe
+        from pd_missao                        a
+             inner   join pd_categoria_diaria b on (a.diaria             = b.sq_categoria_diaria and
+                                                    b.tramite_especial   = 'S'
+                                                   )
+             inner   join siw_solicitacao     d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+               inner join siw_tramite         e on (d.sq_siw_tramite     = e.sq_siw_tramite)
+       where a.sq_siw_solicitacao = p_chave
+         and e.ordem              < (select ordem from siw_tramite where sq_menu = d.sq_menu and sigla = 'CH');
+      -- Se sim, pula autorização pelo chefe imediato.
+      If w_existe > 0 
+         Then w_salto := 1;
+         Else w_salto := 0;
+      End If;
+
       If w_sg_tramite in ('CI','PC') Then
          -- Calcula as quantidades de diárias
          SP_CalculaDiarias(p_chave,null);
@@ -259,21 +276,37 @@ begin
          Else
             w_salto := 1;
          End If;
-      Elsif w_sg_tramite = 'EA' Then
-         -- ABDI: Se análise pela DIREX, decide o salto dependendo da categoria de diária
-         select count(*) into w_existe
-           from pd_missao                        a
-                inner   join pd_categoria_diaria b on (a.diaria             = b.sq_categoria_diaria and
-                                                       b.tramite_especial   = 'S'
-                                                      )
-                inner   join siw_solicitacao     d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                  inner join siw_menu            e on (d.sq_menu            = e.sq_menu)
-          where a.sq_siw_solicitacao = p_chave
-            and e.sq_pessoa          = w_cliente;
-        
-         If w_existe > 0 
-            Then w_salto := w_salto + 1;
-            Else w_salto := w_salto + 2;
+      Elsif w_sg_tramite = 'EA' or w_sg_tramite = 'DA' Then
+         w_especial := 0;
+         If w_sg_tramite = 'EA' Then
+            -- ABDI: Se viagem internacional, exige trâmite de autorização complementar pela DIREX; caso contrário, salta esse trâmite
+            select count(*) into w_existe
+              from pd_missao                        a
+             where a.sq_siw_solicitacao = p_chave
+               and a.internacional      = 'S';
+           
+            w_salto := w_salto + 1; 
+            If w_existe > 0 Then 
+               w_especial := 1;
+            End If;
+         End If;
+
+         If w_especial = 0 Then
+            -- ABDI: Se análise pela DIREX, decide o salto dependendo da categoria de diária
+            select count(*) into w_existe
+              from pd_missao                        a
+                   inner   join pd_categoria_diaria b on (a.diaria             = b.sq_categoria_diaria and
+                                                          b.tramite_especial   = 'S'
+                                                         )
+                   inner   join siw_solicitacao     d on (a.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                     inner join siw_menu            e on (d.sq_menu            = e.sq_menu)
+             where a.sq_siw_solicitacao = p_chave
+               and e.sq_pessoa          = w_cliente;
+           
+            If w_existe > 0 
+               Then w_salto := w_salto + 1;
+               Else w_salto := w_salto + 2;
+            End If;
          End If;
       Elsif w_sg_tramite = 'VP' Then
          -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.

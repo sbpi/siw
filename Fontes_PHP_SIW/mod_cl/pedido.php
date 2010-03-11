@@ -33,11 +33,13 @@ include_once($w_dir_volta.'classes/sp/db_getCLFinanceiro.php');
 include_once($w_dir_volta.'classes/sp/db_getCcData.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLGeral.php');
+include_once($w_dir_volta.'classes/sp/dml_putCLDados.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicArquivo.php');
 include_once($w_dir_volta.'classes/sp/dml_putCLSolicItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicEnvio.php');
 include_once($w_dir_volta.'funcoes/retornaCadastrador_CL.php');
+include_once($w_dir_volta.'funcoes/selecaoProtocolo.php');
 include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -180,6 +182,10 @@ if (f($RS_Menu,'ultimo_nivel')=='S') {
   $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
 } 
 
+// Verifica se o cliente tem o módulo de protocolo e arquivo
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
+if (count($RS)>0) $w_pa='S'; else $w_pa='N'; 
+
 // Recupera os parâmetros de funcionamento do módulo de compras
 $RS_Parametro = db_getParametro::getInstanceOf($dbms,$w_cliente,'CL',null);
 foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
@@ -275,9 +281,9 @@ function Inicial() {
     } 
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     } else {
-      $RS = SortArray($RS,'ordem','asc', 'fim', 'desc', 'prioridade', 'asc');
+      $RS = SortArray($RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
     }
   }
   if ($w_tipo=='WORD') {
@@ -370,7 +376,7 @@ function Inicial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     if ($w_tipo!='WORD') {
-      ShowHTML('          <td><b>'.LinkOrdena('Código','codigo_interno').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Código','phpdt_inclusao').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Justificativa','justificativa').'</td>');
       if ($_SESSION['INTERNO']=='S') ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Solicitante','sg_unidade_resp').'</td>');
@@ -417,7 +423,7 @@ function Inicial() {
             // Se for listagem para cópia
             $RS = db_getLinkSubMenu::getInstanceOf($dbms,$w_cliente,$_REQUEST['SG']);
             foreach($RS as $row1) { $RS = $row1; break; }
-            ShowHTML('          <a accesskey="I" class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row1,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
+            ShowHTML('          <a accesskey="I" class="HL" href="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=I&SG='.f($row,'sigla').'&w_menu='.$w_menu.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_copia='.f($row,'sq_siw_solicitacao').MontaFiltro('GET').'">Copiar</a>&nbsp;');
           } elseif ($P1==1) {
             // Se for cadastramento
             if ($w_submenu>'') {
@@ -431,9 +437,12 @@ function Inicial() {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Encaminhamento do pedido">EN</A>&nbsp');
           } elseif ($P1==2) {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Registra anotações para a solicitação, sem enviá-la.">AN</A>&nbsp');
+            if (f($row,'sg_tramite')=='AF') {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Atender&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Autorizar compra.">AT</A>&nbsp');
+            } 
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Envia a solicitação para outro responsável.">EN</A>&nbsp');
             if (f($row,'sg_tramite')=='EE') {
-              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Autorizar compra.">AT</A>&nbsp');
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Concluir a solicitação.">CO</A>&nbsp');
             } 
           } 
         } else {
@@ -619,7 +628,7 @@ function Geral() {
       if ($w_copia>'') {
         $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
           null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
+          $w_copia,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
       } else {
         $RS = db_getSolicCL::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
@@ -863,7 +872,7 @@ function Geral() {
     } else {
       // Recupera todos os registros para a listagem
       ShowHTML('          <tr valign="top">');
-      SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$w_sq_unidade,null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
+      SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',nvl($w_sq_unidade,$_SESSION['LOTACAO']),null,'w_sq_unidade','CLCP','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_unidade\'; document.Form.submit();"');
     }
     if (f($RS_Unid_CL,'registra_judicial')=='S') {
       MontaRadioNS('<b>Decisão judicial?</b>',$w_decisao_judicial,'w_decisao_judicial',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_alerta\'; document.Form.submit();"');
@@ -881,7 +890,7 @@ function Geral() {
     } else {
       ShowHTML('          <tr valign="top">');
       if(nvl($w_decisao_judicial,'N')=='N') {
-        SelecaoPessoa('<u>S</u>olicitante:','S','Selecione o solicitante do pedido na relação.',$w_solicitante,null,'w_solicitante','USUARIOS');
+        SelecaoPessoa('<u>S</u>olicitante:','S','Selecione o solicitante do pedido na relação.',nvl($w_solicitante,$_SESSION['SQ_PESSOA']),null,'w_solicitante','USUARIOS');
       } else {
         SelecaoPessoaOrigem('<u>S</u>olicitante:','s','Clique na lupa para selecionar o solicitante do pedido.',$w_solicitante,null,'w_solicitante',null,null,null);
       }
@@ -1814,7 +1823,7 @@ function Anotar() {
 // =========================================================================
 // Rotina de conclusão
 // -------------------------------------------------------------------------
-function Concluir() {
+function Atender() {
   extract($GLOBALS);
   global $w_Disabled;
 
@@ -1822,10 +1831,8 @@ function Concluir() {
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
 
   //Recupera os dados da solicitacao de passagens e diárias
-  $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,5,
-          null,null,null,null,null,null,null,null,null,null,
-          $w_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null);
+  $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}  
   $w_nota_conclusão = f($RS,'nota_conclusao');
   Cabecalho();
@@ -1840,7 +1847,6 @@ function Concluir() {
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
   ShowHTML('  }');
-  Validate('w_nota_conclusao','Nota de conclusão','1','','','500','1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
   ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -1856,7 +1862,7 @@ function Concluir() {
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=CLPCCONC&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
+  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=CLPCATEND&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
   ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
   ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
   ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
@@ -1905,10 +1911,83 @@ function Concluir() {
     ShowHTML('        </tr>');
   }
   ShowHTML('    </table>');
-  ShowHTML('    <tr><td colspan=4><b>Nota d<u>e</u> conclusão:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Descreva o quanto o projeto atendeu aos resultados esperados.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
-  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Concluir">');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
+  ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  ShowHTML('      </td>');
+  ShowHTML('    </tr>');
+  ShowHTML('  </table>');
+  ShowHTML('  </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+} 
+
+// =========================================================================
+// Rotina de conclusão
+// -------------------------------------------------------------------------
+function Concluir() {
+  extract($GLOBALS);
+  global $w_Disabled;
+
+  $w_chave      = $_REQUEST['w_chave'];
+  $w_chave_aux  = $_REQUEST['w_chave_aux'];
+
+  //Recupera os dados da solicitacao de passagens e diárias
+  $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
+          $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+  foreach($RS as $row){$RS=$row; break;}  
+  $w_nota_conclusão = f($RS,'nota_conclusao');
+  Cabecalho();
+  head();
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
+  ScriptOpen('JavaScript');
+  modulo();
+  formatavalor();
+  ValidateOpen('Validacao');
+
+  if ($w_pa=='S') {
+    Validate('w_protocolo_nm','Número do protocolo','hidden','1','20','20','','0123456789./-');
+  }
+  Validate('w_nota_conclusao','Nota de conclusão','1','','','500','1','1');
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
+  ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$P4));
+  ShowHTML('<HR>');
+  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=CLPCCONC&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
+  ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
+  ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
+  ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
+  ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
+  ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
+  ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('  <table width="100%" border="0">');
+  if ($w_pa=='S') {
+    SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo da compra.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+  }
+  ShowHTML('    <tr><td colspan=4><b><u>N</u>ota de conclusão:</b><br><textarea '.$w_Disabled.' accesskey="N" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se desejar, registre observações a respeito desta solicitação.">'.$w_nota_conclusao.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+  ShowHTML('    <tr><td align="center" colspan=4><hr>');
+  ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
   ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   ShowHTML('      </td>');
   ShowHTML('    </tr>');
@@ -2355,13 +2434,11 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } 
       break;
-    case 'CLPCCONC':
+    case 'CLPCATEND':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,
-                null,null,null,null,null,null,null,null,null,null,
-                $_REQUEST['w_chave'],null,null,null,null,null,null,
-                null,null,null,null,null,null,null,null,null,null,null);
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+                $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
         foreach($RS as $row){$RS=$row; break;}
         if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
           ScriptOpen('JavaScript');
@@ -2376,6 +2453,32 @@ function Grava() {
                   Nvl($_REQUEST['w_quantidade'][$i],0),Nvl($_REQUEST['w_qtd_ant'][$i],0),null,null,null);
             }
           }
+
+          ScriptOpen('JavaScript');
+          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+          ScriptClose();
+        } 
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      } 
+      break;
+    case 'CLPCCONC':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+                $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        foreach($RS as $row){$RS=$row; break;}
+        if (f($RS,'sq_siw_tramite')!=$_REQUEST['w_tramite']) {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert(\'ATENÇÃO: Outro usuário já encaminhou o pedido para fase de execução!\');');
+          ScriptClose();
+          exit();
+        } else {
+          dml_putCLDados::getInstanceOf($dbms,'PROT',$_REQUEST['w_chave'],null,$_REQUEST['w_numero_processo'],null,null,null,null,null,
+            null,null,null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_protocolo'],null,null);
 
           // Conclui a solicitação
           dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
@@ -2417,6 +2520,7 @@ function Main() {
   case 'EXCLUIR':           Excluir(); break;
   case 'ENVIO':             Encaminhamento(); break;
   case 'ANOTACAO':          Anotar(); break;
+  case 'ATENDER':           Atender(); break;
   case 'CONCLUIR':          Concluir(); break;
   case 'GRAVA':             Grava(); break; 
   default:
