@@ -27,6 +27,7 @@ create or replace procedure SP_PutFinanceiroGeral
     p_per_ini             in date     default null,
     p_per_fim             in date     default null,
     p_condicao            in varchar2  default null,  
+    p_vinculo             in number   default null,
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -79,13 +80,15 @@ begin
          ( sq_siw_solicitacao,   cliente,           sq_acordo_parcela,   sq_forma_pagamento,
            sq_tipo_lancamento,   sq_tipo_pessoa,    emissao,             vencimento,
            observacao,           aviso_prox_conc,   dias_aviso,          tipo,
-           processo,             referencia_inicio, referencia_fim,      condicoes_pagamento
+           processo,             referencia_inicio, referencia_fim,      condicoes_pagamento,
+           sq_solic_vinculo
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
-           p_numero_processo,    w_inicio,          w_fim,               p_condicao
+           p_numero_processo,    w_inicio,          w_fim,               p_condicao,
+           p_vinculo
       );
 
       -- Insere log da solicitação
@@ -136,7 +139,8 @@ begin
           processo             = p_numero_processo,
           referencia_inicio    = p_per_ini,
           referencia_fim       = p_per_fim,
-          condicoes_pagamento  = p_condicao
+          condicoes_pagamento  = p_condicao,
+          sq_solic_vinculo     = p_vinculo
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then

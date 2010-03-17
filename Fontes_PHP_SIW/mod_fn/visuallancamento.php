@@ -63,6 +63,27 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'      <tr><td><b>Contrato: </b></td><td>'.f($RS,'cd_acordo').' ('.f($RS,'sq_solic_pai').') </td></tr>';
       }
+    } elseif (f($RS_Menu,'sigla')=='FNDFUNDO') {
+      // Recupera dados do fundo fixo
+      $RS_Solic = db_getSolicData::getInstanceOf($dbms,f($RS,'sq_solic_pai'),'FNDFIXO');
+
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Fundo fixo: </b></td>';
+      if (Nvl(f($RS,'dados_pai'),'')!='') {
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS,'sq_solic_pai'),f($RS,'dados_pai'),'N',$l_tipo);
+        if ($w_mod_pa=='S') $l_html.=' (Processo: '.f($RS_Solic,'processo').')</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---</td>';
+      }
+      if (nvl(f($RS,'sq_solic_vinculo'),'')!='') {
+        // Recupera dados da solicitação de compra
+        $RS_Vinculo = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+        $RS_Vinculo = db_getSolicCL::getInstanceOf($dbms,f($RS_Vinculo,'sq_menu'),$w_usuario,f($RS_Vinculo,'sigla'),3,
+            null,null,null,null,null,null,null,null,null,null,f($RS,'sq_solic_vinculo'), null, null, null, null, null, null,
+            null, null, null, null, null, null, null,null, null, null, null);
+        foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
+        $l_html.=chr(13).'      <tr><td width="30%"><b>'.f($RS_Vinculo,'nome').': </b></td>';
+        $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Vinculo,'sq_siw_solicitacao'),f($RS_Vinculo,'codigo_interno'),'N',$l_tipo).'</td>';
+      }
     } else {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Vinculação: </b></td>';
       if (Nvl(f($RS,'dados_pai'),'')!='') {
@@ -70,7 +91,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } else {
         $l_html.=chr(13).'        <td>---</td>';
       }
-    } 
+    }
     if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
       $l_html.=chr(13).'      <tr><td width="30%"><b>Projeto: </b></td>';
       if (Nvl(f($RS,'dados_avo'),'')!='') {

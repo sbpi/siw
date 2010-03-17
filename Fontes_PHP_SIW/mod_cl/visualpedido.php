@@ -15,6 +15,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_tramite        = f($RS,'sq_siw_tramite');
   $w_sigla          = f($RS,'sigla');
   $w_sg_tramite     = f($RS,'sg_tramite');
+  $w_fundo_fixo     = f($RS,'fundo_fixo');
   $w_tramite_ativo  = f($RS,'ativo');
 
   // Recupera o tipo de visão do usuário
@@ -42,7 +43,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
      
     // Identificação do lançamento
-    $l_html .= chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+    $l_html.=chr(13).'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
     if(nvl(f($RS,'processo'),'')!='') {
       $l_html.=chr(13).'      <tr><td><b>Número do protocolo: </b></td>';
       if ($w_embed!='WORD' && f($RS,'protocolo_siw')>'') {
@@ -60,11 +61,11 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
     if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
-    $l_html .= chr(13).'    <tr><td><b>Solicitante:<b></td>';
+    $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
-      $l_html .= chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
+      $l_html.=chr(13).'        <td>'.ExibePessoa(null,$w_cliente,f($RS,'solicitante'),$TP,f($RS,'nm_solic')).'</b></td>';
     } else {
-      $l_html .= chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
+      $l_html.=chr(13).'        <td>'.f($RS,'nm_solic').'</b></td>';
     }
       $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){
@@ -100,27 +101,35 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $RS1 = SortArray($RS1,'nome','asc');
     if (count($RS1)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OBJETIVOS ESTRATÉGICOS ('.count($RS1).' )<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html .= chr(13).'      <tr><td align="center" colspan="2">';
+      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
       $l_html.=chr(13).'          <table width=100%  border="1" bordercolor="#00000">';
-      $l_html .= chr(13).'          <tr valign="top">';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sigla</b></div></td>';
-      $l_html .= chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
-      $l_html .= chr(13).'          </tr>';
+      $l_html.=chr(13).'          <tr valign="top">';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Nome</b></div></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Sigla</b></div></td>';
+      $l_html.=chr(13).'            <td bgColor="#f0f0f0"><div align="center"><b>Descrição</b></div></td>';
+      $l_html.=chr(13).'          </tr>';
       $w_cor=$conTrBgColor;
       foreach ($RS1 as $row) {
-        $l_html .= chr(13).'          <tr valign="top">';
-        $l_html .= chr(13).'            <td>'.f($row,'nome').'</td>';
-        $l_html .= chr(13).'            <td>'.f($row,'sigla').'</td>';
-        $l_html .= chr(13).'            <td>'.crlf2br(f($row,'descricao')).'</td>';
-        $l_html .= chr(13).'          </tr>';
+        $l_html.=chr(13).'          <tr valign="top">';
+        $l_html.=chr(13).'            <td>'.f($row,'nome').'</td>';
+        $l_html.=chr(13).'            <td>'.f($row,'sigla').'</td>';
+        $l_html.=chr(13).'            <td>'.crlf2br(f($row,'descricao')).'</td>';
+        $l_html.=chr(13).'          </tr>';
       } 
-      $l_html .= chr(13).'         </table></td></tr>';
+      $l_html.=chr(13).'         </table></td></tr>';
     }
     
+    // Dados da conclusão da solicitação, se ela estiver nessa situação
+    if (nvl(f($RS,'sg_tramite'),'')=='AT') {
+      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'    <tr><td width="30%"><b>Pagamento por fundo fixo?<b></td>';
+      $l_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
+      $l_html.=chr(13).'   <tr valign="top"><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
+    } 
+
     //Listagem dos itens do pedido de compra
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null);
-    $RS1 = SortArray($RS1,'nm_tipo_material','asc','nm_tipo_material','asc','nome','asc'); 
+    $RS1 = SortArray($RS1,'nm_tipo_material','asc','nm_tipo_material','asc','nome','asc');
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS ('.count($RS1).')<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
     $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';
     $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -130,6 +139,13 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
+    if ($w_sg_tramite=='AT') {
+      if ($w_fundo_fixo=='N') {
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Compra/Certame</td>';
+      } else {
+        $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pagamento</td>';
+      }
+    }
     if ($w_pede_valor_pedido=='N') $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
     $l_html.=chr(13).'        </tr>';
     $l_html.=chr(13).'        <tr align="center">';
@@ -175,6 +191,10 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));
           }
         }
+          if ($w_sg_tramite=='AT') {
+            if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N'),'---').'</td></tr>';
+            else                         $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N','S'),'---').'</td></tr>';
+          }
         $l_html.=chr(13).'        </tr>';
       }
     } 
@@ -213,6 +233,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       } 
       $l_html.=chr(13).'         </table></td></tr>';
     }
+    
     // Se for envio, executa verificações nos dados da solicitação
     $w_erro = ValidaPedido($w_cliente,$v_chave,substr($w_sigla,0,4).'GERAL',null,null,null,Nvl($w_tramite,0));
     if ($w_erro>'') {
@@ -235,7 +256,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html .= exibeLog($v_chave,$l_O,$l_usuario,$w_tramite_ativo,(($l_tipo=='WORD') ? 'WORD' : 'HTML'));
     }
   }
-  $l_html .= chr(13).'</table>';
+  $l_html.=chr(13).'</table>';
   return $l_html;
 }
 ?>

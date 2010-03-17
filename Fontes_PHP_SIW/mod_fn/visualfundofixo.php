@@ -7,7 +7,7 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
   if ($l_tipo=='WORD') $w_TrBgColor=''; else $w_TrBgColor=$conTrBgColor;
   $l_html='';
   // Recupera os dados do lançamento
-  $RS = db_getSolicData::getInstanceOf($dbms,$v_chave,substr($SG,0,3).'GERAL');
+  $RS = db_getSolicData::getInstanceOf($dbms,$v_chave,$SG);
   $w_tramite       = f($RS,'sq_siw_tramite');
   $w_tramite_ativo = f($RS,'ativo');
   $w_SG            = f($RS,'sigla');
@@ -281,8 +281,8 @@ function VisualFundoFixo($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'        <td align="center">'.ExibeImagemSolic(f($RS,'sigla'),f($RS,'inicio'),f($RS,'vencimento'),f($RS,'inicio'),f($RS,'quitacao'),f($RS,'aviso_prox_conc'),f($RS,'aviso'),f($RS,'sg_tramite'), null).' '.f($RS,'codigo_interno').'</td>';
         $l_html.=chr(13).'        <td align="center">&nbsp;'.Nvl(FormataDataEdicao(f($RS,'inicio'),5),'-').'</td>';
         $l_html.=chr(13).'        <td>'.f($RS,'nm_forma_pagamento').'</td>';
-        $l_html.=chr(13).'        <td>'.f($RS,'numero_conta').'</td>';
-        $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'</td>';
+        $l_html.=chr(13).'        <td>'.nvl(f($RS,'numero_conta'),'&nbsp;').'</td>';
+        $l_html.=chr(13).'        <td colspan="2">'.f($RS,'nm_banco').'&nbsp;</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($RS,'valor')).'</td>';
         $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($RS,'valor')).'</td>';

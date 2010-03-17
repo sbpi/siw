@@ -3805,7 +3805,7 @@ function Grava() {
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
-          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
 
       if (strpos($SG,'REEMB')!==false && $O!='E') {
         //Reembolso sempre é para o usuário logado
@@ -4141,7 +4141,7 @@ function Grava() {
                 $_REQUEST['w_chave_pai'][$i],$_REQUEST['w_sq_acordo_parcela'][$i],$_REQUEST['w_observacao'],$_REQUEST['w_sq_tipo_lancamento'][$i],
                 $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],$_REQUEST['w_vencimento_atual'][$i],
                 $w_tipo,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
-                $_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+                $_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento
             $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_outra_parte'][$i],null,null,null,null,null,null,null,null,null,null,null,null);
             foreach ($RS as $row) {$RS=$row; break;}
@@ -4163,7 +4163,7 @@ function Grava() {
             $_REQUEST['w_sqcc'],$_REQUEST['w_descricao'],$_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],
             $_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),Nvl($_REQUEST['w_sq_forma_pagamento'],''),
             $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
-            $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+            $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
       } 
       ScriptOpen('JavaScript');
       ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');

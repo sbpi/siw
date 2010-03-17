@@ -143,6 +143,9 @@ $w_menu     = RetornaMenu($w_cliente,$SG);
 $RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'PA');
 if (count($RS)>0) $w_mod_pa='S'; else $w_mod_pa='N';
 
+// Verifica se o cliente tem o módulo de compras contratado
+$RS = db_getSiwCliModLis::getInstanceOf($dbms,$w_cliente,null,'CO');
+if (count($RS)>0) $w_mod_co='S'; else $w_mod_co='N';
 
 $w_copia        = $_REQUEST['w_copia'];
 $p_projeto      = upper($_REQUEST['p_projeto']);
@@ -688,6 +691,7 @@ function Geral() {
     $w_nome_resumido = $_REQUEST['w_nome_resumido'];
     $w_sexo          = $_REQUEST['w_sexo'];
     $w_vinculo       = $_REQUEST['w_vinculo'];
+    $w_solic_vinculo = $_REQUEST['w_solic_vinculo'];
 
     // Se for recarga da página
     $w_sq_menu_relac        = $_REQUEST['w_sq_menu_relac'];    
@@ -804,6 +808,7 @@ function Geral() {
       $w_nome_resumido        = f($RS,'nm_pessoa_resumido');
       $w_sexo                 = f($RS,'sexo');
       $w_vinculo              = f($RS,'sq_tipo_vinculo');
+      $w_solic_vinculo        = f($RS,'sq_solic_vinculo');
       $w_uf                   = f($RS,'co_uf');
       $w_sq_prop              = f($RS,'sq_prop');
       $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
@@ -861,6 +866,17 @@ function Geral() {
   
   // Recupera dados do fundo fixo
   $RS_Solic = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,'FNDFIXO');
+  
+  if (nvl($w_solic_vinculo,'')!='') {
+    // Recupera dados da solicitação de compra
+    $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+    $RS_Vinculo = db_getSolicCL::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,f($RS,'sigla'),3,
+        null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo, null, null, null, null, null, null,
+        null, null, null, null, null, null, null,null, null, null, null);
+    foreach($RS_Vinculo as $row) { $RS_Vinculo = $row; break; }
+    $w_descricao = nvl($_REQUEST['w_descricao'],f($RS_Vinculo,'justificativa'));
+    $w_descricao = f($RS_Vinculo,'justificativa');
+  }
   
   if(nvl($w_sq_menu_relac,0)>0) $RS_Relac = db_getMenuData::getInstanceOf($dbms,$w_sq_menu_relac);
 
@@ -983,6 +999,11 @@ function Geral() {
       
     if ($w_mod_pa=='S' && nvl($w_chave_pai,'')!='') ShowHTML('         <td><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" READONLY class="STI" type="text" name="w_protocolo_nm" size="20" maxlength="30" value="'.f($RS_Pai,'processo').'"></td>');
     
+    if ($w_mod_co=='S') { 
+      $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+      ShowHTML('      <tr>');
+      SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
+    }
     ShowHTML('      <tr>');
     SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
     ShowHTML('      </tr>');
@@ -3769,7 +3790,8 @@ function Grava() {
           $_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
           Nvl($_REQUEST['w_sq_forma_pagamento'],''),$_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
-          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],&$w_chave_nova,&$w_codigo);
+          $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
+          &$w_chave_nova,&$w_codigo);
 
       
       if ($O!='E') {

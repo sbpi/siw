@@ -498,7 +498,7 @@ function Tramite() {
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U"> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="I"> Todos os usuários internos');
-      } elseif ($w_chefia_imediata=='S') {
+      } elseif ($w_chefia_imediata=='I') {
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="S"> Titular/substituto da unidade solicitante e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="U"> Titular/substituto da unidade executora e usuários que tenham permissão<br>');
         ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_chefia_imediata" value="N"> Apenas os usuários que tenham permissão<br>');

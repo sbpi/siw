@@ -166,12 +166,12 @@ function Help() {
               $RS_Tramite = db_getTramiteList::getInstanceOf($dbms, f($row1,'sq_menu'),null, null, null);
               if (count($RS_Tramite) > 0) {
                 ShowHTML('    <DD><BR>Fases:');
-                ShowHTML('    <DD><TABLE bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+                ShowHTML('    <DD><TABLE width="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
                 ShowHTML('        <tr align="center" valign="top">');
-                ShowHTML('          <td><b>Ordem</td>');
-                ShowHTML('          <td><b>Nome</td>');
-                ShowHTML('          <td><b>Descricao</td>');
-                ShowHTML('          <td><b>Quem cumpre</td>');
+                ShowHTML('          <td width="5%"><b>Ordem</td>');
+                ShowHTML('          <td width="20%"><b>Nome</td>');
+                ShowHTML('          <td width="40%"><b>Descricao</td>');
+                ShowHTML('          <td width="35%"><b>Quem cumpre</td>');
                 ShowHTML('        </tr>');
                 foreach ($RS_Tramite as $row_tramite) {
                   ShowHTML('      <tr valign="top">');

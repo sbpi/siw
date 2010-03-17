@@ -3958,14 +3958,15 @@ function Grava() {
           $_REQUEST['w_arp'],'N',null,$_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],
           null,&$w_chave_nova,$_REQUEST['w_copia']);        
 
-        dml_putCLDados::getInstanceOf($dbms,'PROT',$w_chave_nova,$_REQUEST['w_sq_lcmodalidade'],
-          $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_numero_certame'],
-          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-          $_REQUEST['w_protocolo'],null,null);
-          
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
-          ScriptClose();
+        if ($O!='E') {
+          dml_putCLDados::getInstanceOf($dbms,'PROT',$w_chave_nova,$_REQUEST['w_sq_lcmodalidade'],
+            $_REQUEST['w_numero_processo'],$_REQUEST['w_abertura'],$_REQUEST['w_numero_certame'],
+            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+            $_REQUEST['w_protocolo'],null,null);
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+        ScriptClose();
       } else {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');

@@ -1408,7 +1408,6 @@ function Pensao(){
         $w_cnpj = '';
         $w_nome = '';
       }
-      echo $w_usuario;
       ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
       ShowHTML('    <table border="0">');
       ShowHTML('        <tr><td colspan=4>Informe os dados abaixo e clique no botão "Selecionar" para continuar.</TD>');

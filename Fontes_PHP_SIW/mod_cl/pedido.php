@@ -1833,8 +1833,14 @@ function Atender() {
   //Recupera os dados da solicitacao de passagens e diárias
   $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-  foreach($RS as $row){$RS=$row; break;}  
+  foreach($RS as $row){$RS=$row; break;}
+  $w_fundo_fixo     = f($RS,'fundo_fixo');
   $w_nota_conclusão = f($RS,'nota_conclusao');
+  
+  if (nvl($w_troca,'')!='') {
+    $w_fundo_fixo     = $_REQUEST['w_fundo_fixo'];
+    $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
+  }
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -1846,6 +1852,12 @@ function Atender() {
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
+  ShowHTML('  }');
+  Validate('w_nota_conclusao','Nota de conclusão','','','1','2000','1','1');
+  ShowHTML('  if (theForm.w_fundo_fixo[1].checked && theForm.w_nota_conclusao.value.length>0) {');
+  ShowHTML('    alert("Nota de conclusão pode ser preenchida somente se o pagamento for por fundo fixo!");');
+  ShowHTML('    theForm.w_nota_conclusao.focus();');
+  ShowHTML('    return false;');
   ShowHTML('  }');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1896,7 +1908,8 @@ function Atender() {
   ShowHTML('          <td><b>Autorizada</td>');
   ShowHTML('        </tr>');
   // Lista os registros selecionados para listagem
-  foreach($RS1 as $row){ 
+  $i=1;
+  foreach($RS1 as $row){
     $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
     ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
@@ -1907,10 +1920,14 @@ function Atender() {
     ShowHTML('<INPUT type="hidden" name="w_sq_solicitacao_item[]" value="'.f($row,'chave').'">');
     ShowHTML('<INPUT type="hidden" name="w_qtd_ant[]" value="'.formatNumber(f($row,'quantidade'),0).'">');
     ShowHTML('<INPUT type="hidden" name="w_material[]" value="'.f($row,'sq_material').'">');
-    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.Nvl(formatNumber(f($row,'quantidade'),0),0).'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para compra."></td>');
+    ShowHTML('        <td align="center"><input type="text" name="w_quantidade[]" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.nvl($_REQUEST['w_quantidade'][$i],Nvl(formatNumber(f($row,'quantidade'),0),0)).'" style="text-align:right;" onKeyDown="FormataValor(this,18,0,event);" title="Informe a  quantidade autorizada para compra."></td>');
     ShowHTML('        </tr>');
+    $i++;
   }
   ShowHTML('    </table>');
+  ShowHTML('      <tr>');
+  MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131">(A solicitação será concluída em caso positivo)</font></b>',$w_fundo_fixo,'w_fundo_fixo');
+  ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
   ShowHTML('      <input class="STB" type="submit" name="Botao" value="Atender">');
@@ -2454,6 +2471,11 @@ function Grava() {
             }
           }
 
+          if ($_REQUEST['w_fundo_fixo']=='S') {
+            // Conclui a solicitação
+            dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
+                $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_fundo_fixo']);
+          }
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

@@ -2,6 +2,7 @@
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuRelac.php');
 include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 // =========================================================================
@@ -15,6 +16,18 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
   } elseif ($chaveAux=='PLANOEST') {
     include_once($w_dir_volta.'funcoes/selecaoPlanoEstrategico.php');
     selecaoPlanoEstrategico($label,$accesskey,$hint, $chave, null, $campo, 'CONSULTA', $atributo);
+  } elseif ($chaveAux=='COMPRA_FUNDO') {
+    $l_RS = db_getSolicCL::getInstanceOf($dbms,$chaveAux2,$w_usuario,'FUNDO_FIXO',3,
+        null,null,null,null,null,null,null,null,null,null,$chave, null, null, null, null, null, null,
+        null, null, null, null, null, null, null,null, null, null, null);
+    $l_RS = SortArray($l_RS,'phpdt_inclusao','desc', 'fim', 'desc', 'prioridade', 'asc');
+    
+    ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
+    ShowHTML('          <option value="">---');
+    foreach($l_RS as $l_row) {
+      ShowHTML('          <option value="'.f($l_row,'sq_siw_solicitacao').'"'.((nvl(f($l_row,'sq_siw_solicitacao'),0)==nvl($chave,0)) ? ' SELECTED': '').'>'.f($l_row,'codigo_interno'));
+    } 
+    ShowHTML('          </select>');  
   } elseif(substr($restricao,0,2)=='IS') {
     $l_RS = db_getAcao_IS::getInstanceOf($dbms,null,null,null,$_SESSION['ANO'],$w_cliente,'ACAO',null);
     $l_RS = SortArray($l_RS,'titulo','asc');
