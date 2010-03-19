@@ -79,6 +79,7 @@ create or replace function Acesso
   w_solicitante            number(18);                             -- Solicitante
   w_unidade_beneficiario   number(18);
   w_existe                 number(18);
+  w_sair                   number(18);
   w_unidade_atual          number(18);
   w_chefe_beneficiario     number(18);
   w_executor               number(18);
@@ -480,6 +481,7 @@ begin
      
           loop
              w_existe := 1;
+             w_sair   := 1; -- Variável que controla a saída do laço quando o primeiro chefe é identificado
              for crec in c_Unidade (w_unidade_atual) loop
                  -- Se o serviço for vinculado à pessoa:
                  --   a) se o solicitante não for o titular nem o substituto, aparece apenas na mesa do titular e do substituto;
@@ -489,7 +491,7 @@ begin
                  --      b.2) se não há uma unidade superior ela deve ser assinada pelo substituto.
                  -- Se o serviço for vinculado à unidade:
                  --   a) A solicitação aparece na mesa do titular e do substituto da unidade
-                 If crec.sq_pessoa_titular is not null Then
+                 If crec.sq_pessoa_titular > 0 Then
                     If w_vinculacao = 'P' Then
                        If (crec.sq_pessoa_titular    <> w_solicitante or
                            (crec.sq_pessoa_titular    = w_solicitante and
@@ -499,17 +501,21 @@ begin
                           crec.sq_pessoa_substituto <> w_solicitante and 
                           (crec.sq_pessoa_titular   = p_usuario or crec.sq_pessoa_substituto = p_usuario) Then
                           Result   := Result + 16;
+                          w_sair   := 1;
                        Elsif crec.sq_pessoa_substituto = w_solicitante and
                              crec.sq_pessoa_titular    = p_usuario Then
                              Result   := Result + 16;
+                             w_sair   := 1;
                        Elsif crec.sq_pessoa_titular = w_solicitante and
                              crec.sq_pessoa_titular = p_usuario Then
                           If crec.sq_unidade_pai is not null Then
                              w_unidade_atual := crec.sq_unidade_pai;
                              w_existe        := 0;
+                             w_sair          := 0; -- O chefe da unidade superior assina somente quando o solicitante for titular da unidade
                           Else
                              If crec.sq_pessoa_substituto = p_usuario Then
                                 Result   := Result + 16;
+                                w_sair   := 1;
                              End If;
                           End If;
                        Else
@@ -517,6 +523,7 @@ begin
                              crec.sq_pessoa_substituto = p_usuario and
                              crec.sq_unidade_pai       is null Then
                                 Result   := Result + 16;
+                                w_sair   := 1;
                           Else
                              w_unidade_atual := crec.sq_unidade_pai;
                              w_existe        := 0;
@@ -525,16 +532,19 @@ begin
                     Elsif w_vinculacao = 'U' Then
                        If crec.sq_pessoa_titular = p_usuario or crec.sq_pessoa_substituto = p_usuario Then
                           Result    := Result + 16;
+                          w_sair    := 1;
                        End If;
                     End If;
                  Else
                     If crec.sq_unidade_pai is not null Then
                        w_unidade_atual := crec.sq_unidade_pai;
                        w_existe        := 0;
+                       w_sair          := 0;
                     Else
                        If crec.sq_pessoa_titular    = w_solicitante and
                           crec.sq_pessoa_substituto = p_usuario Then
                              Result   := Result + 16;
+                             w_sair   := 1;
                        Else
                           -- Entrar aqui significa que não foi encontrado nenhum responsável cadastrado no sistema,
                           -- o que é um erro. No módulo de estrutura organizacional, informar os responsáveis.
@@ -544,7 +554,7 @@ begin
                  End If;
              end loop;
             
-             If w_existe = 1 Then
+             If w_existe = 1 or w_sair = 1 Then
                 exit;
              End If;
           end loop;

@@ -159,7 +159,6 @@ function Rel_Unidades() {
     $w_restricao = 'RELATORIO';
     if (nvl($p_exibe_filho,'N')=='S') $w_restricao = 'RELATSUB';
     $RS = db_getUorgList::getInstanceOf($dbms,$w_cliente,$p_unidade,$w_restricao,null,null,$p_endereco);
-    $RS = SortArray($RS,'sq_unidade_pai','asc','ordem','asc','nome','asc');
     if (count($RS)==0) {
       ShowHTML('   <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=4></td></tr>');
       ShowHTML('   <tr><td colspan="2" align="center" bgcolor="#f0f0f0"><font size="2"><b>Nenhum registro encontrado para os parâmetros informados</b></td></tr>');

@@ -3433,6 +3433,7 @@ SP_Oracle92/siw/MontaNomeTipoLancamento.fnc -text
 SP_Oracle92/siw/MontaNomeTipoMaterial.fnc -text
 SP_Oracle92/siw/MontaNomeTipoRecurso.fnc -text
 SP_Oracle92/siw/MontaOrdemMenu.fnc -text
+SP_Oracle92/siw/MontaOrdemUnidade.fnc -text
 SP_Oracle92/siw/PA_CriaParametro.prc -text
 SP_Oracle92/siw/PD_Cadastrador_Geral.fnc -text
 SP_Oracle92/siw/PD_CriaParametro.prc -text

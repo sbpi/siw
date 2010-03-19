@@ -859,6 +859,7 @@ function Parametros() {
     $w_minutos_tolerancia   = $_REQUEST['w_minutos_tolerancia'];
     $w_vinculacao_contrato  = $_REQUEST['w_vinculacao_contrato'];
     $w_limite_diario_extras = $_REQUEST['w_limite_diario_extras'];
+    $w_dias_perda_ferias    = $_REQUEST['w_dias_perda_ferias'];
   } else {
     $RS = db_getGPParametro::getInstanceOf($dbms,$w_cliente,null,null);
     foreach ($RS as $row) {$RS = $row; break;}
@@ -880,6 +881,7 @@ function Parametros() {
       $w_minutos_tolerancia   = f($RS,'minutos_tolerancia');
       $w_vinculacao_contrato  = f($RS,'vinculacao_contrato');
       $w_limite_diario_extras = f($RS,'limite_diario_extras');
+      $w_dias_perda_ferias    = f($RS,'dias_perda_ferias');
     } 
   } 
   Cabecalho();
@@ -901,7 +903,8 @@ function Parametros() {
   Validate('w_aviso_atualizacao_cv','Dias de aviso','1','1','1','30','0123456789','1');
   Validate('w_tipo_tolerancia','Tipo de tolerância','SELECT',1,1,18,'','0123456789');
   Validate('w_minutos_tolerancia','Minutos de tolerância','1','1','1','30','0123456789','1');
-  Validate('w_limite_diario_extras','Limite de horas extras','HORA','1','5','5','','0123456789:');  
+  Validate('w_limite_diario_extras','Limite de horas extras','HORA','1','5','5','','0123456789:');
+  Validate('w_dias_perda_ferias','Limite de afastamento para direito a férias','1','1','1','30','0123456789','1');  
   Validate('w_ferias_legenda','Legenda do ferias','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
   Validate('w_ferias_nome','Nome do ferias','1','1','3','30','1','1');
   Validate('w_viagem_legenda','Legenda do viagem','1','1','1','2','ABCDEFGHIJKLMNOPQRSTUVXYWZabcdefghijklmnopqrstuvxywz','0123456789');
@@ -968,7 +971,10 @@ function Parametros() {
   ShowHTML('      </tr>');  
   ShowHTML('      <tr><td valign="top"><b>Limite diário de horas extras:<br>');
   ShowHTML('          <INPUT class="STI" type="text" name="w_limite_diario_extras" size="5" maxlength="5" value="'.$w_limite_diario_extras.'" onKeyDown="FormataHora(this,event);"></td>');
-  ShowHTML('      </tr>');    
+  ShowHTML('      </tr>');
+  ShowHTML('      <tr><td valign="top"><b>Limite máximo de afastamento para o direito a férias<br>');
+  ShowHTML('          <INPUT class="STI" type="text" name="w_dias_perda_ferias" title="Dias de afastamento dentro do período aquisitivo que causam a perda do direito a férias." size="3" maxlength="3" value="'.$w_dias_perda_ferias.'" onKeyDown="FormataHora(this,event);"></td>');
+  ShowHTML('      </tr>');
   ShowHTML('      </table>');
   ShowHTML('      <tr><td align="center" height="1" bgcolor="#000000"></td></tr>');
   ShowHTML('    </table>');
@@ -1433,7 +1439,7 @@ function Grava() {
         dml_putGPParametro::getInstanceOf($dbms,$w_cliente,$_REQUEST['w_sq_unidade_gestao'],$_REQUEST['w_admissao_texto'],$_REQUEST['w_admissao_destino'],$_REQUEST['w_rescisao_texto'],
         $_REQUEST['w_rescisao_destino'],$_REQUEST['w_feriado_legenda'],$_REQUEST['w_feriado_nome'],$_REQUEST['w_ferias_legenda'],$_REQUEST['w_ferias_nome'],
         $_REQUEST['w_viagem_legenda'],$_REQUEST['w_viagem_nome'],$_REQUEST['w_dias_atualizacao_cv'],$_REQUEST['w_aviso_atualizacao_cv'],$_REQUEST['w_tipo_tolerancia'],
-        $_REQUEST['w_minutos_tolerancia'],$_REQUEST['w_vinculacao_contrato'],$_REQUEST['w_limite_diario_extras']);
+        $_REQUEST['w_minutos_tolerancia'],$_REQUEST['w_vinculacao_contrato'],$_REQUEST['w_limite_diario_extras'],$_REQUEST['w_dias_perda_ferias']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

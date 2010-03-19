@@ -5080,7 +5080,7 @@ function Excluir() {
 function Encaminhamento() {
   extract($GLOBALS);
   global $w_Disabled;
-
+  
   $w_chave      = $_REQUEST['w_chave'];
   $w_chave_aux  = $_REQUEST['w_chave_aux'];
   $w_tipo       = Nvl($_REQUEST['w_tipo'],'');
@@ -5095,6 +5095,9 @@ function Encaminhamento() {
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_justificativa    = $_REQUEST['w_justificativa'];
     $w_justif_dia_util  = $_REQUEST['w_justif_dia_util'];
+    $w_prazo            = $_REQUEST['w_prazo'];
+    $w_antecedencia     = $_REQUEST['w_antecedencia'];
+    $w_fim_semana       = $_REQUEST['w_fim_semana'];
   } else {
     $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
     $w_inicio           = f($RS,'inicio');
@@ -5193,6 +5196,9 @@ function Encaminhamento() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
+    ShowHTML('<INPUT type="hidden" name="w_prazo" value="'.$w_prazo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_antecedencia" value="'.$w_antecedencia.'">');
+    ShowHTML('<INPUT type="hidden" name="w_fim_semana" value="'.$w_fim_semana.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
@@ -5649,7 +5655,6 @@ function InformarCotacao() {
   ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('      <table width="99%" border="0">');
   ShowHTML('        <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Trechos</td>');
-  echo $w_chave.'-'.$SG;
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'S',$SG);
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   if (count($RS)>0) {

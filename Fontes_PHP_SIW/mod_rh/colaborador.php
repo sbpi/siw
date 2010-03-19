@@ -1551,30 +1551,39 @@ function Pensao(){
 // -------------------------------------------------------------------------
 function Contrato() {
 extract($GLOBALS);
-$w_chave               = $_REQUEST['w_chave'];
-$w_cc                  = $_REQUEST['w_cc'];
-$w_posto_trabalho      = $_REQUEST['w_posto_trabalho'];
-$w_modalidade_contrato = $_REQUEST['w_modalidade_contrato'];
-$w_unidade_lotacao     = $_REQUEST['w_unidade_lotacao'];
-$w_unidade_exercicio   = $_REQUEST['w_unidade_exercicio'];
-$w_localizacao         = $_REQUEST['w_localizacao'];
-$w_matricula           = $_REQUEST['w_matricula'];
-$w_dt_ini              = $_REQUEST['w_dt_ini'];
-$w_dt_fim              = $_REQUEST['w_dt_fim'];
-$w_ativo               = $_REQUEST['w_ativo'];
-$w_sq_tipo_vinculo     = $_REQUEST['w_sq_tipo_vinculo'];
-$w_username_pessoa     = $_REQUEST['w_username_pessoa'];
-$w_entrada_manha       = $_REQUEST['w_entrada_manha'];
-$w_saida_manha         = $_REQUEST['w_saida_manha'];
-$w_entrada_tarde       = $_REQUEST['w_entrada_tarde'];
-$w_saida_tarde         = $_REQUEST['w_saida_tarde'];
-$w_entrada_noite       = $_REQUEST['w_entrada_noite'];
-$w_saida_noite         = $_REQUEST['w_saida_noite'];
-$w_sabado              = $_REQUEST['w_sabado'];
-$w_domingo             = $_REQUEST['w_domingo'];
-$w_banco_horas_data    = $_REQUEST['w_banco_horas_data'];
-$w_banco_horas_saldo   = $_REQUEST['w_banco_horas_saldo'];
-$w_remuneracao_inicial = $_REQUEST['w_remuneracao_inicial'];
+$w_chave                 = $_REQUEST['w_chave'];
+$w_cc                    = $_REQUEST['w_cc'];
+$w_posto_trabalho        = $_REQUEST['w_posto_trabalho'];
+$w_modalidade_contrato   = $_REQUEST['w_modalidade_contrato'];
+$w_unidade_lotacao       = $_REQUEST['w_unidade_lotacao'];
+$w_unidade_exercicio     = $_REQUEST['w_unidade_exercicio'];
+$w_localizacao           = $_REQUEST['w_localizacao'];
+$w_matricula             = $_REQUEST['w_matricula'];
+$w_dt_ini                = $_REQUEST['w_dt_ini'];
+$w_dt_fim                = $_REQUEST['w_dt_fim'];
+$w_ativo                 = $_REQUEST['w_ativo'];
+$w_sq_tipo_vinculo       = $_REQUEST['w_sq_tipo_vinculo'];
+$w_username_pessoa       = $_REQUEST['w_username_pessoa'];
+$w_entrada_manha         = $_REQUEST['w_entrada_manha'];
+$w_saida_manha           = $_REQUEST['w_saida_manha'];
+$w_entrada_tarde         = $_REQUEST['w_entrada_tarde'];
+$w_saida_tarde           = $_REQUEST['w_saida_tarde'];
+$w_entrada_noite         = $_REQUEST['w_entrada_noite'];
+$w_saida_noite           = $_REQUEST['w_saida_noite'];
+$w_sabado                = $_REQUEST['w_sabado'];
+$w_domingo               = $_REQUEST['w_domingo'];
+$w_banco_horas_data      = $_REQUEST['w_banco_horas_data'];
+$w_banco_horas_saldo     = $_REQUEST['w_banco_horas_saldo'];
+$w_remuneracao_inicial   = $_REQUEST['w_remuneracao_inicial'];
+$w_seguro_saude          = $_REQUEST['w_seguro_saude'];
+$w_seguro_odonto         = $_REQUEST['w_seguro_odonto'];
+$w_seguro_vida           = $_REQUEST['w_seguro_vida'];
+$w_plano_saude           = $_REQUEST['w_plano_saude'];
+$w_plano_odonto          = $_REQUEST['w_plano_odonto'];
+$w_plano_vida            = $_REQUEST['w_plano_vida'];
+$w_vale_transporte       = $_REQUEST['w_vale_transporte'];
+$w_data_atestado         = $_REQUEST['w_data_atestado'];
+$w_observacao_beneficios = $_REQUEST['w_observacao_beneficios'];
 
 Cabecalho();
 head();
@@ -1588,33 +1597,42 @@ $RS = SortArray($RS,'inicio','desc');
 $RS = db_getGPContrato::getInstanceOf($dbms,$w_cliente,$w_chave,$w_usuario,null,null,null,null,null,null,null,null,null,null);
 foreach ($RS as $row) {$RS = $row; break;}
 if (count($RS)>0) {
-$w_chave               = f($RS,'chave');
-$w_cc                  = f($RS,'centro_custo');
-$w_posto_trabalho      = f($RS,'sq_posto_trabalho');
-$w_modalidade_contrato = f($RS,'sq_modalidade_contrato');
-$w_unidade_lotacao     = f($RS,'sq_unidade_lotacao');
-$w_unidade_exercicio   = f($RS,'sq_unidade_exercicio');
-$w_localizacao         = f($RS,'sq_localizacao');
-$w_matricula           = f($RS,'matricula');
-$w_dt_ini              = FormataDataEdicao(f($RS,'inicio'));
-$w_dt_fim              = FormataDataEdicao(f($RS,'fim'));
-$w_username            = f($RS,'trata_username');
-$w_ferias              = f($RS,'trata_ferias');
-$w_horas_extras        = f($RS,'trata_extras');
-$w_sq_tipo_vinculo     = f($RS,'sq_tipo_vinculo');
-$w_entrada_manha       = f($RS,'entrada_manha');
-$w_saida_manha         = f($RS,'saida_manha');
-$w_entrada_tarde       = f($RS,'entrada_tarde');
-$w_saida_tarde         = f($RS,'saida_tarde');
-$w_entrada_noite       = f($RS,'entrada_noite');
-$w_saida_noite         = f($RS,'saida_noite');
-$w_sabado              = f($RS,'sabado');
-$w_domingo             = f($RS,'domingo');
-$w_minutos_diarios     = f($RS,'minutos_diarios');
-$w_carga_diaria        = f($RS,'carga_diaria');
-$w_banco_horas_data    = FormataDataEdicao(f($RS,'banco_horas_data'));
-$w_banco_horas_saldo   = f($RS,'banco_horas_saldo');
-$w_remuneracao_inicial = formatNumber(f($RS,'remuneracao_inicial'));
+  $w_chave               = f($RS,'chave');
+  $w_cc                  = f($RS,'centro_custo');
+  $w_posto_trabalho      = f($RS,'sq_posto_trabalho');
+  $w_modalidade_contrato = f($RS,'sq_modalidade_contrato');
+  $w_unidade_lotacao     = f($RS,'sq_unidade_lotacao');
+  $w_unidade_exercicio   = f($RS,'sq_unidade_exercicio');
+  $w_localizacao         = f($RS,'sq_localizacao');
+  $w_matricula           = f($RS,'matricula');
+  $w_dt_ini              = FormataDataEdicao(f($RS,'inicio'));
+  $w_dt_fim              = FormataDataEdicao(f($RS,'fim'));
+  $w_username            = f($RS,'trata_username');
+  $w_ferias              = f($RS,'trata_ferias');
+  $w_horas_extras        = f($RS,'trata_extras');
+  $w_sq_tipo_vinculo     = f($RS,'sq_tipo_vinculo');
+  $w_entrada_manha       = f($RS,'entrada_manha');
+  $w_saida_manha         = f($RS,'saida_manha');
+  $w_entrada_tarde       = f($RS,'entrada_tarde');
+  $w_saida_tarde         = f($RS,'saida_tarde');
+  $w_entrada_noite       = f($RS,'entrada_noite');
+  $w_saida_noite         = f($RS,'saida_noite');
+  $w_sabado              = f($RS,'sabado');
+  $w_domingo             = f($RS,'domingo');
+  $w_minutos_diarios     = f($RS,'minutos_diarios');
+  $w_carga_diaria        = f($RS,'carga_diaria');
+  $w_banco_horas_data    = FormataDataEdicao(f($RS,'banco_horas_data'));
+  $w_banco_horas_saldo   = f($RS,'banco_horas_saldo');
+  $w_remuneracao_inicial = formatNumber(f($RS,'remuneracao_inicial'));
+  $w_seguro_saude        = f($RS,'seguro_saude');
+  $w_seguro_odonto       = f($RS,'seguro_odonto');
+  $w_seguro_vida         = f($RS,'seguro_vida');
+  $w_plano_saude         = f($RS,'plano_saude');
+  $w_plano_odonto        = f($RS,'plano_odonto');
+  $w_plano_vida          = f($RS,'plano_vida');
+  $vale_transporte       = f($RS,'vale_transporte');
+  $data_atestado         = f($RS,'data_atestado');
+  $observacao_beneficios = f($RS,'observacao_beneficios');
 }
 $w_erro=ValidaColaborador($w_cliente,$w_usuario,$w_chave,null);
 }
@@ -1703,6 +1721,17 @@ ShowHTML('    } else if (theForm.w_entrada_manha.value!="") {');
 CompHora('w_saida_manha','Saída manhã','<','w_entrada_noite','Entrada noite');
 ShowHTML('    }');
 ShowHTML('  }');
+if($w_seguro_saude=='S'){
+  Validate('w_plano_saude','Tipo de plano de saude','','1','2','30','1','');
+}
+if($w_seguro_odonto=='S'){
+  Validate('w_plano_odonto','Tipo de plano odontológico','','1','2','30','1','');
+}
+if($w_seguro_vida=='S'){
+  Validate('w_plano_vida','Tipo de plano do seguro de vida','','1','2','30','1','');
+}
+
+
 if ($O=='A' && Nvl($w_dt_fim,'')>'') {
 Validate('w_dt_fim','Fim da vigência','DATA','1','10','10','','0123456789/');
 } elseif ($O=='I') {
@@ -1884,10 +1913,42 @@ ShowHTML('          <td><b><u>I</u>nício da vigência:</b><br><input accesskey="I
 if (!($O=='A' && Nvl($w_dt_fim,'')=='')) {
 ShowHTML('              <td><b><u>F</u>im da vigência:</b><br><input accesskey="F" type="text" name="w_dt_fim" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_dt_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">');
 }
+
+//Benefícios do colaborador
+ShowHTML('<tr><td colspan="3"><br><br><fieldset class="rh_fieldset"><legend><big>Benefícios</big></legend>');
+ShowHTML('  <table>');
+ShowHTML('    <tr>');
+ShowHTML(MontaRadioNS('<br><b>O colaborador é optante pelo vale transporte?</b>',$w_vale_transporte,'w_vale_transporte','O colaborador é optante pelo vale transporte?',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_vale_transporte\'; document.Form.submit();"'));
+ShowHTML('    <tr>');
+ShowHTML(MontaRadioNS('<br><b>O colaborador é optante pelo plano de saúde?</b>',$w_seguro_saude,'w_seguro_saude','O colaborador é optante pelo plano de saúde?',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_seguro_saude\'; document.Form.submit();"'));
+ShowHTML('    <tr><td><b>Tipo do plano:</b><br>');
+ShowHTML('       <input size="30" maxlength="30" class="STI" name="w_plano_saude" type="text"/></td>');
+ShowHTML('    </tr>');
+ShowHTML('    <tr>');
+ShowHTML(MontaRadioNS('<br><b>O colaborador é optante pelo plano odontológico?</b>',$w_seguro_odonto,'w_seguro_odonto','O colaborador é optante pelo plano odontológico?',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_seguro_odonto\'; document.Form.submit();"'));
+ShowHTML('    <tr><td><b>Tipo do plano:</b><br>');
+ShowHTML('       <input size="30" maxlength="30" class="STI" name="w_plano_odonto" type="text"/></td>');
+ShowHTML('    </tr>');
+ShowHTML('    <tr>');
+ShowHTML(MontaRadioNS('<br><b>O colaborador é optante pelo seguro de vida?</b>',$w_seguro_vida,'w_seguro_vida','O colaborador é optante pelo seguro de vida?',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_seguro_vida\'; document.Form.submit();"'));
+ShowHTML('    <tr><td><b>Tipo do plano:</b><br>');
+ShowHTML('       <input size="30" maxlength="30" class="STI" name="w_plano_vida" type="text"/></td>');
+ShowHTML('    </tr>');
+ShowHTML('    <tr>');
+ShowHTML('<td><b>Auxílio Alimentação/Refeição:</td>');
+ShowHTML('    <tr><td>');
+ShowHTML('      <input type="radio" '.($w_auxilio=='A'?'checked':'').'checked name="w_auxilio" value="A">Alimentação');
+ShowHTML('      <input type="radio" '.($w_auxilio=='R'?'checked':'').'name="w_auxilio" value="R">Refeição');
+ShowHTML('</td>');
+ShowHTML('    </tr>');
+ShowHTML('  </table>');
+ShowHTML('  </fieldset><br><br></td></tr>');
+
+
 //Informações da folha de ponto diária  
 //$RSFolha = db_getGPFolhaPontoDiario::getInstanceOf($dbms,$w_contrato,null,null);
-ShowHTML('<tr><td colspan="3"><table width="100%">');
-ShowHTML('  <tr><td colspan="4"><br><h3>Jornada de trabalho</td></tr>');
+ShowHTML('<tr><td colspan="3"><fieldset class="rh_fieldset"><legend><big>Jornada de trabalho</big></legend><table width="100%">');
+ShowHTML('  <tr><td colspan="4"><br></td></tr>');
 ShowHTML('  <tr valign="middle" align="center">');
 ShowHTML('    <td width="24%"><fieldset class="rh_fieldset"><legend>Manhã</legend>');
 ShowHTML('      <table><tr>');
@@ -1925,31 +1986,32 @@ ShowHTML('  <tr><td valign="middle" colspan="4"><fieldset class="rh_fieldset"><l
 ShowHTML('  <table width="100%"><tr valign="top">');
 ShowHTML('      <td width="50%"><b>Saldo inicial do banco de horas:</b><br><input id="w_banco_horas_saldo" name="w_banco_horas_saldo" class="sti" type="text" size="8" maxlength="8" value="'.Nvl($w_banco_horas_saldo,'').'" onKeyDown="FormataHora(this,event);" />');
 ShowHTML('      <td width="50%"><b>Data do saldo inicial:</b><br><input id="w_banco_horas_data" name="w_banco_horas_data" class="sti" type="text" size="10" maxlength="10" value="'.Nvl($w_banco_horas_data,'').'" onKeyDown="FormataData(this,event);" />');
-ShowHTML('  </table></fieldset>');
+ShowHTML('  </table>');
 ShowHTML('  </td></tr>');
-ShowHTML('</table></td></tr>');
+//ShowHTML('</table></td></tr>');
 ShowHTML('  <tr valign="top">');
 if(Nvl($username,'')!='S' && Nvl($username,'')!='N'){
-ShowHTML('          '.MontaRadioSN('<b>Cria e bloqueia username na entrada e saida do colaborador?</b>',$w_username,'w_username'));
+  ShowHTML('          '.MontaRadioSN('<b>Cria e bloqueia username na entrada e saida do colaborador?</b>',$w_username,'w_username'));
 }else{
-ShowHTML('<input type="hidden" name="w_username" value="'.$username.'"/>');
+  ShowHTML('<input type="hidden" name="w_username" value="'.$username.'"/>');
 }
 if(Nvl($ferias,'')!='S' && Nvl($ferias,'')!='N'){
-ShowHTML('          '.MontaRadioSN('<b>Esta modalidade permite gozo de férias?</b>',$w_ferias,'w_ferias'));
+  ShowHTML('          '.MontaRadioSN('<b>Esta modalidade permite gozo de férias?</b>',$w_ferias,'w_ferias'));
 }else{
-ShowHTML('<input type="hidden" name="w_ferias" value="'.$ferias.'"/>');
+  ShowHTML('<input type="hidden" name="w_ferias" value="'.$ferias.'"/>');
 }
 if(Nvl($extras,'')!='S' && Nvl($extras,'')!='N'){
-ShowHTML('      <tr valign="top">');
-ShowHTML('          <td>'.MontaRadioSN('<b>Esta modalidade permite o cumprimento de horas extras?</b>',$w_horas_extras,'w_horas_extras'));
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('          <td>'.MontaRadioSN('<b>Esta modalidade permite o cumprimento de horas extras?</b>',$w_horas_extras,'w_horas_extras'));
 }else{
-ShowHTML('<input type="hidden" name="w_horas_extras" value="'.$extras.'"/>');
+  ShowHTML('<input type="hidden" name="w_horas_extras" value="'.$extras.'"/>');
 }
 if ($w_username_pessoa=='S') {
 ShowHTML('        <tr valign="top">');
 ShowHTML('        <td colspan="3" valign="top"><input type="checkbox" name="w_username_pessoa" value="S"><b>Criar username para este colaborador?</b>');
 }
-ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+ShowHTML('</table><br></td></tr>');
+ShowHTML('      <tr><td colspan=5><br><br><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
 ShowHTML('      <tr><td align="center" colspan=5><hr>');
 if ($O=='I') {
 ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');

@@ -419,9 +419,8 @@ begin
                    inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                    left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                      left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) qtd_rubrica
-                                          from pj_rubrica x
+                                          from pj_rubrica                 x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
                                         group by x.sq_siw_solicitacao
                                        )                    m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                      left         join siw_solicitacao      m2 on (m.sq_siw_solicitacao       = m2.sq_siw_solicitacao)
@@ -498,7 +497,7 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
-                d.tipo tipo_rubrica,  d.processo,                    d.referencia_inicio,
+                d.tipo as tipo_rubrica,  d.processo,                    d.referencia_inicio,
                 d.referencia_fim,     d.sq_pessoa_conta,             d.sq_solic_vinculo,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
@@ -581,7 +580,6 @@ begin
                                           from ac_parcela_nota              x
                                                inner join ac_acordo_parcela z on (x.sq_acordo_parcela  = z.sq_acordo_parcela)
                                                inner join siw_solicitacao   y on (z.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
                                         group by x.sq_acordo_parcela
                                        )                    db on (d.sq_acordo_parcela        = db.sq_acordo_parcela)
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
@@ -601,16 +599,14 @@ begin
                      left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
                        left       join pj_projeto           m2 on (m1.sq_solic_pai            = m2.sq_siw_solicitacao)
                          left     join siw_solicitacao      m5 on (m2.sq_siw_solicitacao      = m5.sq_siw_solicitacao)
-                         left     join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) qtd_rubrica
+                         left     join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) as qtd_rubrica
                                           from pj_rubrica                 x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
                                         group by x.sq_siw_solicitacao
                                        )                    m3 on (m2.sq_siw_solicitacao      = m3.sq_siw_solicitacao)
                      left outer   join (select x.sq_siw_solicitacao, count(*) as existe
                                           from ac_acordo_nota x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
                                         group by x.sq_siw_solicitacao
                                        )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
@@ -618,7 +614,6 @@ begin
                      left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) qtd_rubrica
                                           from pj_rubrica                 x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                         where y.sq_menu = w_menu
                                         group by x.sq_siw_solicitacao
                                        )                    q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
                    left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)

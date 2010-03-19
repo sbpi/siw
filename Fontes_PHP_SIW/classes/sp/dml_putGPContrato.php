@@ -44,8 +44,21 @@ class dml_putGPContrato {
                    'p_domingo'                   =>array($p_domingo,                                       B_VARCHAR,         1),
                    'p_banco_horas_saldo'         =>array(tvl($p_banco_horas_saldo),                        B_VARCHAR,         8),     
                    'p_banco_horas_data'          =>array(tvl($p_banco_horas_data),                         B_DATE,           32),
-                   'p_remuneracao_inicial'       =>array(toNumber(tvl($p_remuneracao_inicial)),            B_NUMERIC,      18,2)     
+                   'p_remuneracao_inicial'       =>array(toNumber(tvl($p_remuneracao_inicial)),            B_NUMERIC,      18,2),
+                   'p_seguro_saude'              =>array($p_seguro_saude,                                  B_VARCHAR,         1),
+                   'p_seguro_odonto'             =>array($p_seguro_odonto,                                 B_VARCHAR,         1),
+                   'p_seguro_vida'               =>array($p_seguro_vida,                                   B_VARCHAR,         1),
+                   'p_seguro_saude'              =>array(tvl($p_plano_saude),                              B_VARCHAR,        30),
+                   'p_seguro_odonto'             =>array(tvl($p_plano_odonto),                             B_VARCHAR,        30),
+                   'p_seguro_vida'               =>array(tvl($p_plano_vida),                               B_VARCHAR,        30),
+                   'p_vale_refeicao'             =>array($p_vale_refeicao,                                 B_VARCHAR,         1),
+                   'p_vale_transporte'           =>array($p_vale_transporte,                               B_VARCHAR,         1),
+                   'p_observacao_beneficios'     =>array(tvl($p_observacao_beneficios),                    B_VARCHAR,      2000),
+                   'p_data_atestado'             =>array($p_data_atestado,                                 B_DATE,           32),
+                   'p_dias_experiencia'          =>array(tvl($p_dias_experiencia),                         B_INTEGER,        32)
                   );
+                       exibeArray($params);
+                       exit();
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

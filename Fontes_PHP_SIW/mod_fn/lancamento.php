@@ -693,7 +693,6 @@ function Geral() {
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
     $w_forma_atual          = $_REQUEST['w_forma_atual'];
     $w_vencimento_atual     = $_REQUEST['w_vencimento_atual'];
-    $w_sq_tipo_lancamento   = $_REQUEST['w_sq_tipo_lancamento'];
     $w_observacao           = $_REQUEST['w_observacao'];
     $w_aviso                = $_REQUEST['w_aviso'];
     $w_dias                 = $_REQUEST['w_dias'];
@@ -836,7 +835,7 @@ function Geral() {
       */
     }
     if (strpos('REEMB',substr($SG,3))===false) {
-      Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
+      Validate('w_sq_tipo_lancamento','Tipo do lançamento','HIDDEN',1,1,18,'','0123456789');
       Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
       if ($w_mod_pa=='S') {
         Validate('w_protocolo_nm','Número do processo','hidden','1','20','20','','0123456789./-');
@@ -866,8 +865,7 @@ function Geral() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'')                               BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   elseif (!(strpos('EV',$O)===false))            BodyOpen('onLoad=\'this.focus()\';');
-  elseif (strpos('REEMB',substr($SG,3))!==false) BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
-  else                                           BodyOpen('onLoad=\'document.Form.w_sq_tipo_lancamento.focus()\';');
+  else                                           BodyOpen('onLoad=\'document.Form.w_descricao.focus()\';');
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
@@ -940,23 +938,17 @@ function Geral() {
         if ($w_sq_menu_relac=='CLASSIF') {
           SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null);
         } else {
-          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_sq_tipo_lancamento\'; document.Form.submit();"',$w_chave_pai);
+          SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_chave_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"',$w_chave_pai);
         }
       }
       if (nvl(f($RS_Relac,'sigla'),'')!='') $RS_Pai = db_getSolicData::getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla'));
     }
       
-    if (strpos('REEMB',substr($SG,3))===false) {
-      ShowHTML('      <tr>');
-      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null);
-      ShowHTML('      </tr>');
-    } else {
-      $l_RS = db_getTipoLancamento::getInstanceOf($dbms,null,$chaveAux,$w_cliente,'REEMBOLSO');
-      $l_RS = SortArray($l_RS,'nm_tipo','asc');
-      foreach($l_RS as $row) {
-        ShowHTML('<INPUT type="hidden" name="w_sq_tipo_lancamento" value="'.f($row,'chave').'">');
-        break;
-      }
+    $l_RS = db_getTipoLancamento::getInstanceOf($dbms,null,$chaveAux,$w_cliente,'REEMBOLSO');
+    $l_RS = SortArray($l_RS,'nm_tipo','asc');
+    foreach($l_RS as $row) {
+      ShowHTML('<INPUT type="hidden" name="w_sq_tipo_lancamento" value="'.nvl($w_sq_tipo_lancamento,f($row,'chave')).'">');
+      break;
     }
     if (strpos('CONT',substr($SG,3))!==false)      ShowHTML('      <tr><td colspan=2>Finalidade:<br><b>'.$w_descricao.'</b></td>');
     elseif (strpos('REEMB',substr($SG,3))!==false) ShowHTML('      <tr><td colspan=2><b>Justi<u>f</u>icativa:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
@@ -2309,7 +2301,7 @@ function Itens() {
     if ($w_total>0) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')===false) ? 4 : 6).'"><b>Total</b></td>');
+      ShowHTML('        <td align="right" colspan="'.((strpos(f($RS_Menu,'sigla'),'VIA')===false) ? ((nvl(f($RS1,'qtd_rubrica'),0)>0) ? 5 : 4) : 6).'"><b>Total</b></td>');
       ShowHTML('        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>');
       ShowHTML('        <td colspan="1">&nbsp;</td>');
       ShowHTML('      </tr>');
@@ -3344,7 +3336,7 @@ function Concluir() {
   $w_conta              = f($RS_Solic,'sq_pessoa_conta');
   $w_valor_real         = number_format(f($RS_Solic,'valor'),2,',','.');
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
-  $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
+  $w_sq_tipo_lancamento = nvl($w_sq_tipo_lancamento,f($RS_Solic,'sq_tipo_lancamento'));
   $w_inicio             = FormataDataEdicao(time());
 
   $RS_Conta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
@@ -3358,11 +3350,13 @@ function Concluir() {
     }
   }
   
-  // Se ligado a projeto, recupera rubricas
-  $RS_Rub = db_getSolicRubrica::getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
-
+  $RS_Rub = array();
+  
   // Se reembolso, recupera a rubrica apenas do primeiro item do primeiro documento pois são todos iguais
   if (strpos('REEMB',substr($SG,3))!==false) {
+    // Se ligado a projeto, recupera rubricas
+    $RS_Rub = db_getSolicRubrica::getInstanceOf($dbms,f($RS_Solic,'sq_solic_pai'),null,'S',null,null,null,null,null,null);
+
     // Recupera os documentos do lançamento
     $RS_Doc = db_getLancamentoDoc::getInstanceOf($dbms,$w_chave,null,'DOCS');
     
@@ -3398,7 +3392,7 @@ function Concluir() {
     FormataDataHora();
     FormataValor();
     ValidateOpen('Validacao');
-    if (strpos('REEMB',substr($SG,3))!==false) Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
+    Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
     CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
@@ -3454,19 +3448,15 @@ function Concluir() {
      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
   } else {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
-    ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.f($RS,'upload_maximo').'/1024. KBytes</b>.</font></td>');
+    ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
-    if (strpos('REEMB',substr($SG,3))!==false) {
+    ShowHTML('      <tr>');
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+    ShowHTML('      </tr>');
+    if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
-      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,null,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
       ShowHTML('      </tr>');
-      if(count($RS_Rub)>0) {
-        ShowHTML('      <tr>');
-        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_sq_projeto_rubrica,f($RS_Solic,'sq_solic_pai'),null,'w_sq_projeto_rubrica','RUBRICAS',null);
-        ShowHTML('      </tr>');
-      }
-    } else {
-      ShowHTML('<INPUT type="hidden" name="w_sq_tipo_lancamento" value="'.$w_sq_tipo_lancamento.'">');
     }
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>D</u>ata do '.((substr($SG,2,1)=='R') ? 'recebimento' : 'pagamento').':</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');

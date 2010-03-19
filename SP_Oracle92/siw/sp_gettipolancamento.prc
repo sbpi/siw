@@ -78,14 +78,16 @@ begin
    Elsif upper(p_restricao) = 'REEMBOLSO' Then
      -- Se reembolso, recupera classificação inicial
       open p_result for
-         select a.sq_tipo_lancamento as chave, a.sq_tipo_lancamento_pai,
-                montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo
-           from fn_tipo_lancamento   a
-          where a.cliente                = p_cliente
-            and a.sq_tipo_lancamento_pai is null
-            and a.despesa                = 'S'
-            and a.receita                = 'N'
-         order by a.nome;
+         select chave, sq_tipo_lancamento_pai, nm_tipo
+           from (select a.sq_tipo_lancamento as chave, a.sq_tipo_lancamento_pai,
+                        montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo
+                   from fn_tipo_lancamento   a
+                  where a.cliente                = p_cliente
+                    and a.sq_tipo_lancamento_pai is null
+                    and a.despesa                = 'S'
+                    and a.receita                = 'N'
+                )
+         where rownum = 1;
    Else
       If length(p_restricao) = 25 Then
          w_menu    := substr(p_restricao,1,4);

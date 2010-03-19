@@ -376,12 +376,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     foreach ($RS as $row) {
       $RS2 = db_getImpostoDoc::getInstanceOf($dbms,$w_cliente,$v_chave,f($row,'sq_lancamento_doc'),$w_SG);
       $RS2 = SortArray($RS2,'calculo','asc','esfera','asc','nm_imposto','asc');
-      if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
+      if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
         $RS3 = db_getLancamentoRubrica::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null);
         $RS3 = SortArray($RS3,'cd_rubrica_origem','asc');
       } else {
         $RS3 = db_getLancamentoItem::getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
-        $RS3 = SortArray($RS3,'codigo_rubrica','asc','ordem','asc');
+        $RS3 = SortArray($RS3,'ordem','asc','codigo_rubrica','asc');
       }
       if (count($RS2)<=0) {
         $l_html.=chr(13).'          <tr align="center" valign="top">';
@@ -396,7 +396,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         //}
         $l_html.=chr(13).'          </tr>';
         if (count($RS3)>0)   {
-          if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
+          if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
             $l_html.=chr(13).'              <tr align="center"><td colspan=4 align="center">';
             $l_html.=chr(13).documentorubrica($RS3,$w_tipo_rubrica);
           } else {
@@ -504,12 +504,12 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       foreach($RS as $row) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="left"><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha1\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'rubrica').'</A>&nbsp</td>';
-        if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
+        if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
           $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_rubrica'),0)).'&nbsp;&nbsp;</td>';
         else
           $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_total'),0)).'&nbsp;&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
-        if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
+        if(Nvl($w_tipo_rubrica,0)!=0 && Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5)
           $w_total += nvl(f($row,'valor_rubrica'),0);
         else
           $w_total += nvl(f($row,'valor_total'),0);
@@ -577,21 +577,21 @@ function rubricalinha($v_RS3){
   $v_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
   $v_html.=chr(13).'          <tr align="center">';
   $v_html.=chr(13).'          <td width="6%" bgColor="#f0f0f0"><b>Ordem</b></td>';
-  $v_html.=chr(13).'          <td width="12%" bgColor="#f0f0f0"><b>Rubrica</b></td>';
-  $v_html.=chr(13).'          <td width="45%" bgColor="#f0f0f0"><b>Descrição</b></td>';
+  $v_html.=chr(13).'          <td width="20%" bgColor="#f0f0f0"><b>Rubrica</b></td>';
+  $v_html.=chr(13).'          <td width="42%" bgColor="#f0f0f0"><b>Descrição</b></td>';
   $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Qtd</b></td>';
   if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
     $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Data cotação</b></td>';
     $v_html.=chr(13).'          <td width="7%"  bgColor="#f0f0f0"><b>Valor cotação</b></td>';
   }
-  $v_html.=chr(13).'          <td width="15%" bgColor="#f0f0f0"><b>$ Unit</b></td>';
-  $v_html.=chr(13).'          <td width="15%" bgColor="#f0f0f0"><b>$ Total</b></td>';
+  $v_html.=chr(13).'          <td width="13%" bgColor="#f0f0f0"><b>$ Unit</b></td>';
+  $v_html.=chr(13).'          <td width="13%" bgColor="#f0f0f0"><b>$ Total</b></td>';
   $v_html.=chr(13).'        </tr>';
   foreach($v_RS3 as $row) {
     $v_html.=chr(13).'      <tr valign="top">';
     $v_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
     if(nvl(f($row,'codigo_rubrica'),'')>'')
-      $v_html.=chr(13).'        <td align="center"><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha2\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo_rubrica').' - '.f($row,'nm_rubrica').'</A>&nbsp</td>';
+      $v_html.=chr(13).'        <td><A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.'mod_fn/lancamento.php?par=Ficharubrica&O=L&w_sq_projeto_rubrica='.f($row,'sq_projeto_rubrica').'&w_tipo=&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Extrato Rubrica'.'&SG='.$SG.MontaFiltro('GET')).'\',\'Ficha2\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes\');" title="Exibe as informações deste registro.">'.f($row,'codigo_rubrica').' - '.f($row,'nm_rubrica').'</A>&nbsp</td>';
     else
       $v_html.=chr(13).'        <td align="center">???</td>';
     $v_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';

@@ -276,7 +276,8 @@ begin
             order by a.nome;      
       Elsif substr(p_restricao,1,5) = 'RELAT'Then
         open p_result for 
-            select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
+            select montaordemunidade(a.sq_unidade) as ordena, a.sq_unidade,a.sq_unidade_pai, 
+                   a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
                    a.codigo, a.sq_unidade_pai, a.ordem, a.ativo, a.externo,
                    case a.ativo when 'S' then 'Sim' else 'Não' end as nm_ativo,
                    case a.externo when 'S' then 'Sim' else 'Não' end as nm_externo,
@@ -316,7 +317,8 @@ begin
                                                   )
                                                  )
                         )
-                       );
+                       )
+            order by 1;
       Else
          open p_result for
             select a.sq_unidade,a.sq_unidade_pai, a.nome, a.sigla, a.informal, a.adm_central, a.vinculada, 
