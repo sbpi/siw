@@ -48,7 +48,7 @@ begin
    
    If InStr('IA',p_operacao) > 0 Then
       -- Verifica se a pessoa já existe e decide se é inclusão ou alteração
-      select count(*) into w_existe from co_pessoa where sq_pessoa = nvl(w_chave,0);
+      select count(*) into w_existe from co_pessoa where sq_pessoa = coalesce(w_chave,0);
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Recupera a próxima chave
@@ -96,7 +96,7 @@ begin
        End If;
 
       -- Verifica se o usuário já existe e decide se é inclusão ou alteração
-      select count(*) into w_existe from sg_autenticacao where sq_pessoa = nvl(w_chave,0);
+      select count(*) into w_existe from sg_autenticacao where sq_pessoa = coalesce(w_chave,0);
       -- Se não existir, executa a inclusão
       If w_existe = 0 Then
          -- Insere registro em SG_AUTENTICACAO

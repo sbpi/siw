@@ -3627,6 +3627,8 @@ SP_Oracle92/siw/sp_getDesktop_Recurso.prc -text
 SP_Oracle92/siw/sp_getDocumentoAssunto.prc -text
 SP_Oracle92/siw/sp_getDocumentoInter.prc -text
 SP_Oracle92/siw/sp_getEtapaComentario.prc -text
+SP_Oracle92/siw/sp_getGPFamiliares.prc -text
+SP_Oracle92/siw/sp_getGPFeriasDias.prc -text
 SP_Oracle92/siw/sp_getGPFolhaPontoDiario.prc -text
 SP_Oracle92/siw/sp_getGPFolhaPontoMensal.prc -text
 SP_Oracle92/siw/sp_getGrupoVeiculo.prc -text
@@ -3919,6 +3921,8 @@ SP_Oracle92/siw/sp_putDocumentoReceb.prc -text
 SP_Oracle92/siw/sp_putEtapaProject.prc -text
 SP_Oracle92/siw/sp_putFormaPagamento.prc -text
 SP_Oracle92/siw/sp_putFormaPagamentoVinc.prc -text
+SP_Oracle92/siw/sp_putGPFamiliares.prc -text
+SP_Oracle92/siw/sp_putGPFeriasDias.prc -text
 SP_Oracle92/siw/sp_putGpAlteracaoSalario.prc -text
 SP_Oracle92/siw/sp_putGpDesempenho.prc -text
 SP_Oracle92/siw/sp_putGpPontoDiario.prc -text

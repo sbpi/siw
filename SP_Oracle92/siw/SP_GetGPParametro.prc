@@ -16,6 +16,7 @@ begin
                                        when 2 then 'por período'
                                        when 4 then 'por horário'
                 end as nm_tipo_tolerancia,
+                a.dias_perda_ferias,
                 b.sigla as sg_vinculacao_contrato
            from gp_parametro       a
                 left join siw_menu b on (a.vinculacao_contrato = b.sq_menu)

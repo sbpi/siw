@@ -65,8 +65,8 @@ begin
         (w_chave_pessoa, p_cliente,     w_sq_tipo_vinculo, p_tipo_pessoa,    p_nome, p_nome_resumido, w_fornecedor, w_cliente);
    Else -- Caso contrário, altera
       update co_pessoa
-         set nome          = Nvl(p_nome, nome),
-             nome_resumido = Nvl(p_nome_resumido, nome_resumido)
+         set nome          = coalesce(p_nome, nome),
+             nome_resumido = coalesce(p_nome_resumido, nome_resumido)
        where sq_pessoa = p_sq_pessoa;
    End If;
    
@@ -85,14 +85,14 @@ begin
            );
       Else -- Caso contrário, altera
          update co_pessoa_fisica
-            set nascimento         = Nvl(p_nascimento, nascimento),
-                rg_numero          = Nvl(p_rg_numero, rg_numero),
-                rg_emissor         = Nvl(p_rg_emissor, rg_emissor),
-                rg_emissao         = Nvl(p_rg_emissao, rg_emissao),
-                cpf                = Nvl(p_cpf, cpf),
-                passaporte_numero  = Nvl(p_passaporte, passaporte_numero),
-                sq_pais_passaporte = Nvl(p_sq_pais_passaporte, sq_pais_passaporte),
-                sexo               = Nvl(p_sexo, sexo)
+            set nascimento         = coalesce(p_nascimento, nascimento),
+                rg_numero          = coalesce(p_rg_numero, rg_numero),
+                rg_emissor         = coalesce(p_rg_emissor, rg_emissor),
+                rg_emissao         = coalesce(p_rg_emissao, rg_emissao),
+                cpf                = coalesce(p_cpf, cpf),
+                passaporte_numero  = coalesce(p_passaporte, passaporte_numero),
+                sq_pais_passaporte = coalesce(p_sq_pais_passaporte, sq_pais_passaporte),
+                sexo               = coalesce(p_sexo, sexo)
           where sq_pessoa = w_chave_pessoa;
       End If;
    Elsif p_tipo_pessoa = 2 Then
@@ -107,7 +107,7 @@ begin
       Else -- Caso contrário, altera
          update co_pessoa_juridica
             set cnpj               = p_cnpj,
-                inscricao_estadual = Nvl(p_inscricao_estadual, inscricao_estadual)
+                inscricao_estadual = coalesce(p_inscricao_estadual, inscricao_estadual)
           where sq_pessoa = w_chave_pessoa;
       End If;
    End If;
