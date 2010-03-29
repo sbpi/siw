@@ -250,7 +250,7 @@ begin
        where a.sq_siw_solicitacao = p_chave
          and e.ordem              < (select ordem from siw_tramite where sq_menu = d.sq_menu and sigla = 'CH');
       -- Se sim, pula autorização pelo chefe imediato.
-      If w_existe > 0 
+      If w_existe > 0 or w_salto = 1
          Then w_salto := 1;
          Else w_salto := 0;
       End If;

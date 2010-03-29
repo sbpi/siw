@@ -605,9 +605,8 @@ function csv($arq) {
     while (isset ($var[$i +1]) && substr(trim($var[$i +1]), 0, 1) != '"' && substr(trim($var[$i +1]), 0, 1) != '[' && substr(trim($var[$i]), -1, 1) != ']') {
       $linha .= $var[++ $i];
     }
-
     $linha = corrigeCar($linha);
-    $linha = explode('","', $linha);
+    $linha = explode('";"', $linha);
     $linha[0] = substr($linha[0], 1);
     $linha[count($linha) - 1] = substr($linha[count($linha) - 1], 0, -1);
     array_push($table, $linha);
@@ -2029,8 +2028,8 @@ function MontaRadioNS($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
   extract($GLOBALS);
   print('          <td colspan="'.$colspan.'"'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
-  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave=='S') ? 'checked' : '').' '.$atributo.'> Sim');
-  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave!='S') ? 'checked' : '').' '.$atributo.'> Não');
+  ShowHTML('              <label><input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave=='S') ? 'checked' : '').' '.$atributo.'> Sim</label>');
+  ShowHTML('              <label><input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave!='S') ? 'checked' : '').' '.$atributo.'> Não</label>');
 }
 
 // =========================================================================
@@ -2040,8 +2039,8 @@ function MontaRadioSN($label,$chave,$campo,$hint=null,$restricao=null,$atributo=
   extract($GLOBALS);
   print('          <td colspan="'.$colspan.'"'.((nvl($hint,'')!='') ? ' TITLE="'.$hint.'"': '').'>');
   if (Nvl($label,'')>'') { ShowHTML($label.'</b>'.$separador); }
-  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave!='N') ? 'checked' : '').' '.$atributo.'> Sim');
-  ShowHTML('              <input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave=='N') ? 'checked' : '').' '.$atributo.'> Não');
+  ShowHTML('              <label><input '.$w_Disabled.' type="radio" name="'.$campo.'" value="S" '.(($chave!='N') ? 'checked' : '').' '.$atributo.'> Sim</label>');
+  ShowHTML('              <label><input '.$w_Disabled.' type="radio" name="'.$campo.'" value="N" '.(($chave=='N') ? 'checked' : '').' '.$atributo.'> Não</label>');
 }
 
 // =========================================================================
@@ -2280,6 +2279,14 @@ function toSQLDate($date) {
 // -------------------------------------------------------------------------
 function toNumber($valor) {
   if ($_SESSION['DBMS']==2) return str_replace(',','.',str_replace('.','',$valor)); else return str_replace('.','',$valor);
+}
+
+// =========================================================================
+// Função que retorna um valor da string informada no formato PHP
+// valor: string contendo o valor
+// -------------------------------------------------------------------------
+function toNumberPHP($valor) {
+  return str_replace(',','.',str_replace('.','',$valor));
 }
 
 // =========================================================================

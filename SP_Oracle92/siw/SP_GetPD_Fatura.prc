@@ -23,16 +23,18 @@ begin
    If p_restricao is null Then
       -- Recupera faturas de bilhetes aéreos
       open p_result for
-         select a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, a.emissao as emissao_fat, a.vencimento, a.valor, 
-                a.registros as reg_fatura, a.importados as imp_fatura, a.rejeitados as rej_fatura, 
-                b.data_importacao, b.data_arquivo, b.registros as reg_arquivo, b.importados as imp_arquivo, b.rejeitados as rej_arquivo, 
-                b.sq_pessoa as sq_resp_imp, b.arquivo_recebido, b.arquivo_registro,
+         select a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, 
+                a.emissao as emissao_fat, a.vencimento, a.valor, a.registros as reg_fatura, a.importados as imp_fatura, 
+                a.rejeitados as rej_fatura, 
+                case a.tipo when 0 then 'Bilhetes aéreos' when 1 then 'Hospedagem/Locação/Seguro' else null end as tp_fatura,
+                b.data_importacao, b.data_arquivo, b.registros as reg_arquivo, b.importados as imp_arquivo, 
+                b.rejeitados as rej_arquivo, b.sq_pessoa as sq_resp_imp, b.arquivo_recebido, b.arquivo_registro,
                 to_char(b.data_importacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_importacao,
                 to_char(b.data_arquivo, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_arquivo,
-                case b.rejeitados when 0 then 'Completa' else 'Parcial' end nm_situacao_imp,
-                b1.nome nm_recebido, b1.tamanho tm_recebido, b1.tipo tp_recebido, b1.caminho cm_recebido, b1.sq_siw_arquivo chave_recebido,
-                b2.nome nm_result,   b2.tamanho tm_result,   b2.tipo tp_result,   b2.caminho cm_result,   b2.sq_siw_arquivo chave_result,
-                b3.nome nm_resp_imp, b3.nome_resumido nm_resumido_resp_imp,
+                case b.rejeitados when 0 then 'Completa' else 'Parcial' end as nm_situacao_imp,
+                b1.nome as nm_recebido, b1.tamanho as tm_recebido, b1.tipo as tp_recebido, b1.caminho as cm_recebido, b1.sq_siw_arquivo as chave_recebido,
+                b2.nome as nm_result,   b2.tamanho as tm_result,   b2.tipo as tp_result,   b2.caminho as cm_result,   b2.sq_siw_arquivo as chave_result,
+                b3.nome as nm_resp_imp, b3.nome_resumido as nm_resumido_resp_imp,
                 c.sq_solic_pai, c.cd_solic_pai,
                 d.nome as nm_agencia, d.nome_resumido as nm_agencia_res
            from pd_fatura_agencia                         a
@@ -67,6 +69,7 @@ begin
       open p_result for
          select a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, a.emissao as emissao_fat, a.vencimento, a.valor, 
                 a.registros as reg_fatura, a.importados as imp_fatura, a.rejeitados as rej_fatura, 
+                case a.tipo when 0 then 'Bilhetes aéreos' when 1 then 'Hospedagem/Locação/Seguro' else null end as tp_fatura,
                 b.data_importacao, b.data_arquivo, b.registros as reg_arquivo, b.importados as imp_arquivo, b.rejeitados as rej_arquivo, 
                 b.sq_pessoa as sq_resp_imp, b.arquivo_recebido, b.arquivo_registro,
                 to_char(b.data_importacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_importacao,
@@ -118,6 +121,55 @@ begin
             and (p_numero_bil        is null or (p_numero_bil   is not null and c.numero              = p_numero_bil))
             and (p_cia_trans         is null or (p_cia_trans    is not null and c.sq_cia_transporte   = p_cia_trans))
             and (p_ini_emibil        is null or (p_ini_emibil   is not null and c.data                between p_ini_emibil      and p_fim_emibil));
+   Elsif p_restricao = 'OUTROS' Then
+      -- Recupera locações, hospedagens e seguros ligados a faturas
+      open p_result for
+         select a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, a.emissao as emissao_fat, a.vencimento, a.valor, 
+                a.registros as reg_fatura, a.importados as imp_fatura, a.rejeitados as rej_fatura, 
+                case a.tipo when 0 then 'Bilhetes aéreos' when 1 then 'Hospedagem/Locação/Seguro' else null end as tp_fatura,
+                b.data_importacao, b.data_arquivo, b.registros as reg_arquivo, b.importados as imp_arquivo, b.rejeitados as rej_arquivo, 
+                b.sq_pessoa as sq_resp_imp, b.arquivo_recebido, b.arquivo_registro,
+                to_char(b.data_importacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_importacao,
+                to_char(b.data_arquivo, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_arquivo,
+                case b.rejeitados when 0 then 'Completa' else 'Parcial' end nm_situacao_imp,
+                b1.nome nm_recebido, b1.tamanho tm_recebido, b1.tipo tp_recebido, b1.caminho cm_recebido, b1.sq_siw_arquivo chave_recebido,
+                b2.nome nm_result,   b2.tamanho tm_result,   b2.tipo tp_result,   b2.caminho cm_result,   b2.sq_siw_arquivo chave_result,
+                b3.nome nm_resp_imp, b3.nome_resumido nm_resumido_resp_imp,
+                c.sq_fatura_outros, c.tipo as tipo_reg, c.inicio as inicio_reg, c.fim as fim_reg, c.valor as valor_reg, c.sq_pessoa as sq_pessoa_hotel,
+                case c.tipo when 1 then 'Hospedagem' when 2 then 'Locação de veículo' when 3 then 'Seguro de viagem' end as nm_tipo_reg,
+                c2.sq_siw_solicitacao as sq_solic_viagem, c2.codigo_interno as cd_solic_viagem,
+                c3.sq_siw_solicitacao as sq_solic_pai,    c3.codigo_interno as cd_solic_pai,
+                c5.nome as nm_beneficiario,
+                c6.nome as nm_hotel,
+                d.nome as nm_agencia, d.nome_resumido as nm_agencia_res
+           from pd_fatura_agencia                         a
+                inner         join pd_arquivo_eletronico  b  on (a.sq_arquivo_eletronico = b.sq_arquivo_eletronico)
+                  inner       join siw_arquivo            b1 on (b.arquivo_recebido      = b1.sq_siw_arquivo)
+                  inner       join siw_arquivo            b2 on (b.arquivo_registro      = b2.sq_siw_arquivo)
+                  inner       join co_pessoa              b3 on (b.sq_pessoa             = b3.sq_pessoa)
+                inner         join pd_fatura_outros       c  on (a.sq_fatura_agencia     = c.sq_fatura_agencia)
+                  inner       join siw_solicitacao        c2 on (c.sq_siw_solicitacao    = c2.sq_siw_solicitacao)
+                    left      join siw_solicitacao        c3 on (c2.sq_solic_pai         = c3.sq_siw_solicitacao)
+                  inner       join pd_missao              c4 on (c.sq_siw_solicitacao    = c4.sq_siw_solicitacao)
+                    left      join co_pessoa              c5 on (c4.sq_pessoa            = c5.sq_pessoa)
+                  inner       join co_pessoa              c6 on (c.sq_pessoa             = c6.sq_pessoa)
+                inner         join co_pessoa              d  on (a.agencia_viagem        = d.sq_pessoa)
+          where b.cliente            = p_cliente
+            and (p_arquivo           is null or (p_arquivo      is not null and p_arquivo            = b.sq_arquivo_eletronico))
+            and (p_solic_viagem      is null or (p_solic_viagem is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
+            and (p_solic_pai         is null or (p_solic_pai    is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
+            and (p_fatura            is null or (p_fatura       is not null and a.sq_fatura_agencia   = p_fatura))
+            and (p_agencia           is null or (p_agencia      is not null and a.agencia_viagem      = p_agencia))
+            and (p_numero_fat        is null or (p_numero_fat   is not null and a.numero              = p_numero_fat))
+            and (p_ini_dec           is null or (p_ini_dec      is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
+                                                                                 a.fim_decendio       between p_ini_dec         and p_fim_dec or
+                                                                                 p_ini_dec            between a.inicio_decendio and a.fim_decendio or
+                                                                                 p_fim_dec            between a.inicio_decendio and a.fim_decendio
+                                                                                )
+                                                )
+                )
+            and (p_ini_emifat        is null or (p_ini_emifat   is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
+            and (p_ini_ven           is null or (p_ini_ven      is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)));
    End If;
 End SP_GetPD_Fatura;
 /

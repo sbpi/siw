@@ -14,7 +14,11 @@ class dml_putGPContrato {
         $p_sq_modalidade_contrato, $p_sq_unidade_lotacao, $p_sq_unidade_exercicio, $p_sq_localizacao, 
         $p_matricula, $p_inicio, $p_fim, $p_trata_username, $p_trata_ferias, $p_trata_extras, 
         $p_tipo_vinculo,$p_entrada_manha,$p_saida_manha,$p_entrada_tarde,$p_saida_tarde,$p_entrada_noite,
-        $p_saida_noite,$p_sabado, $p_domingo, $p_banco_horas_saldo,$p_banco_horas_data,$p_remuneracao_inicial){
+        $p_saida_noite,$p_sabado, $p_domingo, $p_banco_horas_saldo,$p_banco_horas_data,$p_remuneracao_inicial,
+        $p_data_atestado,$p_dias_experiencia,$p_vale_refeicao,$p_vale_transporte,
+        $p_seguro_saude,$p_seguro_odonto,$p_seguro_vida,$p_plano_saude,$p_plano_odonto,$p_plano_vida,
+        $p_observacao_beneficios
+        ){
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql=$strschema.'sp_putGPContrato';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -48,17 +52,15 @@ class dml_putGPContrato {
                    'p_seguro_saude'              =>array($p_seguro_saude,                                  B_VARCHAR,         1),
                    'p_seguro_odonto'             =>array($p_seguro_odonto,                                 B_VARCHAR,         1),
                    'p_seguro_vida'               =>array($p_seguro_vida,                                   B_VARCHAR,         1),
-                   'p_seguro_saude'              =>array(tvl($p_plano_saude),                              B_VARCHAR,        30),
-                   'p_seguro_odonto'             =>array(tvl($p_plano_odonto),                             B_VARCHAR,        30),
-                   'p_seguro_vida'               =>array(tvl($p_plano_vida),                               B_VARCHAR,        30),
+                   'p_plano_saude'               =>array(tvl($p_plano_saude),                              B_VARCHAR,        30),
+                   'p_plano_odonto'              =>array(tvl($p_plano_odonto),                             B_VARCHAR,        30),
+                   'p_plano_vida'                =>array(tvl($p_plano_vida),                               B_VARCHAR,        30),
                    'p_vale_refeicao'             =>array($p_vale_refeicao,                                 B_VARCHAR,         1),
                    'p_vale_transporte'           =>array($p_vale_transporte,                               B_VARCHAR,         1),
                    'p_observacao_beneficios'     =>array(tvl($p_observacao_beneficios),                    B_VARCHAR,      2000),
                    'p_data_atestado'             =>array($p_data_atestado,                                 B_DATE,           32),
-                   'p_dias_experiencia'          =>array(tvl($p_dias_experiencia),                         B_INTEGER,        32)
+                   'p_dias_experiencia'          =>array($p_dias_experiencia,                              B_INTEGER,        32)
                   );
-                       exibeArray($params);
-                       exit();
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

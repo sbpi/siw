@@ -549,6 +549,12 @@ function CadastraPessoa() {
     $p_cnpj           = $_REQUEST['p_cnpj'];
     $p_nome           = $_REQUEST['p_nome'];
     $p_tipo_pessoa    = $_REQUEST['p_tipo_pessoa'];
+    $p_mandatory      = $_REQUEST['p_mandatory'];
+    if(strpos($p_mandatory,'w_nascimento')!==false){
+      $w_exige_nascimento = true;
+    }else{
+      $w_exige_nascimento = false;
+    }
 
     // Verifica se há necessidade de recarregar os dados da tela a partir
     // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
@@ -659,7 +665,7 @@ function CadastraPessoa() {
     }
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     if ($w_tipo_pessoa==1 or $w_tipo_pessoa==3) {
-        Validate('w_nascimento','Data de Nascimento','DATA','',10,10,'',1);
+        Validate('w_nascimento','Data de Nascimento','DATA',(($w_exige_nascimento)?'1':''),10,10,'',1);
         Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
         Validate('w_rg_numero','Identidade','1','',2,30,'1','1');
         Validate('w_rg_emissao','Data de emissão','DATA','',10,10,'','0123456789/');
@@ -948,6 +954,7 @@ function BuscaUsuario() {
 function BuscaPessoa() {
     extract($GLOBALS);
     global $w_Disabled;
+    $p_mandatory   = nvl($_REQUEST['mandatory'],$_REQUEST['p_mandatory']);
     $p_nome        = upper($_REQUEST['p_nome']);
     $p_cpf         = $_REQUEST['p_cpf'];
     $p_cnpj        = $_REQUEST['p_cnpj'];
@@ -998,6 +1005,7 @@ function BuscaPessoa() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="p_restricao" value="'.$p_restricao.'">');
     ShowHTML('<INPUT type="hidden" name="p_campo" value="'.$p_campo.'">');
+    ShowHTML('<INPUT type="hidden" name="p_mandatory" value="'.$p_mandatory.'">');
     ShowHTML('<INPUT type="hidden" name="p_tipo_pessoa" value="'.$p_tipo_pessoa.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="justify"><b><ul>Instruções</b>:');
     ShowHTML('  <li>Informe pelos menos um critério de busca.');

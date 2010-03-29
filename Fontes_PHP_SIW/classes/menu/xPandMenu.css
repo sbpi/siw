@@ -371,6 +371,10 @@ table ul li{
 }
 
 .rh_fieldset{
+  background-color: #ECECEC;
+}
+
+.rh_fieldset fieldset{
   background-color: #EFEFEF;
   border: solid thin #FFFFFF; 
 }

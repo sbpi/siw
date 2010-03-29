@@ -3,6 +3,7 @@ create or replace procedure SP_PutPDImportacao
     p_chave                    in  number    default null,
     p_cliente                  in  number    default null,
     p_sq_pessoa                in  number    default null,
+    p_tipo                     in  number    default null,
     p_data_arquivo             in  varchar2  default null,
     p_arquivo_recebido         in  varchar2  default null,
     p_caminho_recebido         in  varchar2  default null,
@@ -65,13 +66,13 @@ begin
       insert into pd_arquivo_eletronico
         (sq_arquivo_eletronico, cliente,             data_importacao,    sq_pessoa, 
          data_arquivo,          arquivo_recebido,    arquivo_registro,   registros, 
-         importados,            rejeitados
+         importados,            rejeitados,          tipo
         )
       values
         (w_chave,               p_cliente,           w_data,             p_sq_pessoa, 
          to_date(p_data_arquivo,'dd/mm/yyyy, hh24:mi'),  
          w_chave1,              w_chave2,            p_registros,        p_importados,
-         p_rejeitados
+         p_rejeitados,                               p_tipo
         );
    End If;
 

@@ -1447,7 +1447,47 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      </tr>';
         $l_html.=chr(13).'         </table></td></tr>';
       }
-  
+
+      // Exibe outros valores associados à viagem
+      $RS1 = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null,
+        null, null, null, null, null, null, null, null, null, 'OUTROS');
+      $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
+      if (count($RS1)>0) {
+        $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DESPESAS COM HOSPEDAGENS, LOCAÇÃO DE VEÍCULOS E SEGUROS DE VIAGEM<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
+        $l_html.=chr(13).'      <tr><td colspan="2">';
+        $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
+        $l_html.=chr(13).'        <tr bgcolor="'.$conTrBgColor.'" align="center">';
+        $l_html.=chr(13).'          <td><b>Fatura</td>';
+        $l_html.=chr(13).'          <td><b>Agência de Viagens</td>';
+        $l_html.=chr(13).'          <td><b>Tipo</td>';
+        $l_html.=chr(13).'          <td><b>Início</td>';
+        $l_html.=chr(13).'          <td><b>Fim</td>';
+        $l_html.=chr(13).'          <td><b>Valor</td>';
+        $l_html.=chr(13).'          <td><b>Hotel/Locadora/Seguradora</td>';
+        $l_html.=chr(13).'        </tr>';
+        $w_cor=$conTrBgColor;
+        $i             = 1;
+        $w_total       = 0;
+        foreach ($RS1 as $row) {
+          $w_total       += f($row,'valor');
+          $l_html.=chr(13).'        <tr valign="middle">';
+          $l_html.=chr(13).'           <td>'.f($row,'nr_fatura').'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'nm_agencia_res').'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'nm_tipo_reg').'</td>';
+          $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_reg')),'&nbsp;').'</td>';
+          $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'fim_reg')),'&nbsp;').'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          $l_html.=chr(13).'           <td>'.f($row,'nm_hotel').'</td>';
+          $l_html.=chr(13).'        </tr>';
+        } 
+        $l_html.=chr(13).'      <tr bgcolor="'.$conTrBgColor.'" valign="top">';
+        $l_html.=chr(13).'        <td align="right" colspan="5"><b>TOTAL</b></td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
+        $l_html.=chr(13).'        <td align="right" colspan="2">&nbsp;</td>';
+        $l_html.=chr(13).'      </tr>';
+        $l_html.=chr(13).'         </table></td></tr>';
+      }
+      
     } 
     
     // Arquivos vinculados
@@ -1496,9 +1536,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     $l_html.=chr(13).'<tr><td colspan=2><HR>';
     $l_html.=chr(13).'<tr bgcolor="'.$w_TrBgColor.'"><td colspan=2>';
     if (substr($w_erro,0,1)=='0') {
-      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo, não sendo possível seu encaminhamento para fases posteriores à atual.</font>';
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> As pendências abaixo devem ser resolvidas antes do encaminhamento para as fases posteriores à atual.</font>';
     } elseif (substr($w_erro,0,1)=='1') {
-      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os erros listados abaixo. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de projetos.</font>';
+      $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> As pendências abaixo devem ser resolvidas antes do encaminhamento para as fases posteriores à atual. Seu encaminhamento para fases posteriores à atual só pode ser feito por um gestor do sistema ou do módulo de viagens.</font>';
     } else {
       $l_html.=chr(13).'  <font color="#BC3131"><b>ATENÇÃO:</b> Foram identificados os alertas listados abaixo. Eles não impedem o encaminhamento para fases posteriores à atual, mas convém sua verificação.</font>';
     } 

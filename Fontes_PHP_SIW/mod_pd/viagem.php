@@ -34,6 +34,7 @@ include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
 include_once($w_dir_volta.'classes/sp/db_getCiaTrans.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicViagem.php');
+include_once($w_dir_volta.'classes/sp/db_getPD_Fatura.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Alteracao.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Deslocamento.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Vinculacao.php');
@@ -627,7 +628,7 @@ function Inicial() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1060,7 +1061,7 @@ function Geral() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1547,7 +1548,7 @@ function OutraParte() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -1823,7 +1824,7 @@ function Trechos() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -2108,7 +2109,7 @@ function Bilhetes() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -2587,7 +2588,7 @@ function RegistroAlteracao() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -2988,7 +2989,7 @@ function Vinculacao() {
     }
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }
@@ -3935,7 +3936,6 @@ function Diarias() {
       ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli))+1;');
       ShowHTML('  var Qtd  = parseFloat(theForm.w_quantidade.value.replace(",","."));');
       ShowHTML('  theForm.w_veiculo_qtd.value=Days+",0";');
-      ShowHTML('  alert(Days);');
       
       if (count($RS_Fin_Vei)>1) {
         ShowHTML('    if(theForm.w_rub_vei.selectedIndex==0) {');
@@ -6165,7 +6165,7 @@ function Anexo() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     //ShowHTML ' history.go(-1);'
     ScriptClose();
   }
@@ -7142,7 +7142,7 @@ function ReembolsoValor() {
     ShowHTML('</FORM>');
   } else {
     ScriptOpen('JavaScript');
-    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' alert("Opção não disponível");');
     ShowHTML(' history.back(1);');
     ScriptClose();
   }

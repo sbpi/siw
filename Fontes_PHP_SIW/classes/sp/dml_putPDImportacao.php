@@ -10,7 +10,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 */
 
 class dml_putPDImportacao {
-   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_pessoa, $p_data_arquivo, 
+   function getInstanceOf($dbms, $operacao, $p_chave, $p_cliente, $p_sq_pessoa, $p_tipo, $p_data_arquivo, 
           $p_arquivo_recebido, $p_caminho_recebido, $p_tamanho_recebido, $p_tipo_recebido, 
           $p_arquivo_registro, $p_caminho_registro, $p_tamanho_registro, $p_tipo_registro, 
           $p_registros, $p_importados, $p_rejeitados, $p_nome_recebido, $p_nome_registro, 
@@ -21,6 +21,7 @@ class dml_putPDImportacao {
                    'p_chave'             => array(tvl($p_chave),                  B_INTEGER,        32),
                    'p_cliente'           => array(tvl($p_cliente),                B_INTEGER,        32),
                    'p_sq_pessoa'         => array(tvl($p_sq_pessoa),              B_INTEGER,        32),
+                   'p_tipo'              => array(tvl($p_tipo),                   B_INTEGER,         1),
                    'p_data_arquivo'      => array(tvl($p_data_arquivo),           B_VARCHAR,        17),
                    'p_arquivo_recebido'  => array(tvl($p_arquivo_recebido),       B_VARCHAR,       255),
                    'p_caminho_recebido'  => array(tvl($p_caminho_recebido),       B_VARCHAR,       255),

@@ -14,6 +14,7 @@ include_once($w_dir_volta.'classes/sp/db_getCVAcadForm.php');
 include_once($w_dir_volta.'classes/sp/db_getDataEspecial.php');
 include_once($w_dir_volta.'classes/sp/db_getGPParametro.php');
 include_once($w_dir_volta.'classes/sp/db_getGPTipoAfast.php');
+include_once($w_dir_volta.'classes/sp/db_getGpFeriasDias.php');
 include_once($w_dir_volta.'classes/sp/db_getGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
 include_once($w_dir_volta.'classes/sp/db_getStateData.php');
@@ -24,6 +25,7 @@ include_once($w_dir_volta.'classes/sp/dml_putGPParametro.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPModalidade.php');
 include_once($w_dir_volta.'classes/sp/dml_putGPTipoAfast.php');
 include_once($w_dir_volta.'classes/sp/dml_putDataEspecial.php');
+include_once($w_dir_volta.'classes/sp/dml_putGPFeriasDias.php');
 include_once($w_dir_volta.'funcoes/selecaoServico.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPosto2.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoData.php');
@@ -331,6 +333,171 @@ Estrutura_Fecha();
 Estrutura_Fecha();
 Estrutura_Fecha();
 Rodape();
+} 
+
+// =========================================================================
+// Rotina de cadastro de dias de direito a férias baseado nas faltas do colaborador
+// -------------------------------------------------------------------------
+function DireitoFerias() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave           = $_REQUEST['w_chave'];
+  Cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem dos tipos de afastamento</TITLE>');
+  if ($P1==2) {
+    ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL='.str_replace($w_dir,'',MontaURL('MESA')).'">'); 
+  }  
+  Estrutura_CSS($w_cliente);
+  if ($O=='') $O='L';
+  if ($w_troca>'' && $O!='E') { 
+    $w_faixa_inicio      = $_REQUEST['w_faixa_inicio'];
+    $w_faixa_fim         = $_REQUEST['w_faixa_fim'];    
+    $w_chave             = $_REQUEST['w_chave'];
+    $w_dias_ferias       = $_REQUEST['w_dias_ferias'];
+    $w_ativo             = $_REQUEST['w_ativo']; 
+  } elseif ($O=='L') {
+    $RS = db_getGpFeriasDias::getInstanceOf($dbms,null,$w_cliente,null);
+    if (Nvl($p_ordena,'') > '') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    } else {
+      $RS = SortArray($RS,'faixa_inicio','asc'); 
+    }
+  } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
+    $RS = db_getGPFeriasDias::getInstanceOf($dbms,$w_chave, $w_cliente, null);
+    
+    foreach ($RS as $row) {$RS = $row; break;}
+    $w_chave             = f($RS,'chave');
+    $w_faixa_inicio      = f($RS,'faixa_inicio');
+    $w_faixa_fim         = f($RS,'faixa_fim');
+    $w_dias_ferias       = f($RS,'dias_ferias');
+    $w_ativo             = f($RS,'ativo');
+  } if (!(strpos('IAE',$O)===false)) {
+    ScriptOpen('JavaScript');
+    modulo();
+    FormataValor();
+    ValidateOpen('Validacao');
+    if (!(strpos('IA',$O)===false)) {
+      Validate('w_faixa_inicio','Dia de início do intervalo','VALOR','1',1,6,'','0123456789');
+      Validate('w_faixa_fim','Dia de término do intervalo','VALOR','1',1,6,'','0123456789');
+      Validate('w_faixa_fim','Dia de término do intervalo','VALOR','1',1,6,'','0123456789');
+      CompValor('w_faixa_inicio','Faixa inicial','<','w_faixa_fim','faixa final');
+      Validate('w_dias_ferias','Dia de férias','VALOR','1',1,6,'','0123456789');
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+    } elseif ($O=='E') {
+      Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+      ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
+      ShowHTML('     { return (true); }; ');
+      ShowHTML('     { return (false); }; ');
+    } 
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+    ValidateClose();
+    ScriptClose();
+  } 
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  if ($w_troca>'') {
+    BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
+  } elseif ($O=='I' || $O=='A') {
+    BodyOpen('onLoad="document.Form.w_faixa_inicio.focus();"');
+  } elseif ($O=='L'){
+    BodyOpen('onLoad="this.focus();"');
+  } else {
+    BodyOpen('onLoad="document.Form.w_assinatura.focus();"');
+  } 
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  if ($O=='L') {
+    ShowHTML('<tr><td><font size="2"><a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
+    ShowHTML('    <td align="right"><b>Registros existentes: '.count($RS));
+    ShowHTML('<tr><td align="center" colspan=3>');
+    ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
+    ShowHTML('          <td><b>'.LinkOrdena('Número de faltas(dias)','faixa_inicio').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Dias de direito a férias','dias_ferias').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
+    ShowHTML('          <td><b> Operações </td>');
+    ShowHTML('        </tr>');
+    if (count($RS)<=0) {
+      // Se não foram selecionados registros, exibe mensagem
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=7 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+    } else {
+      // Lista os registros selecionados para listagem
+      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
+      foreach($RS1 as $row){ 
+        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        ShowHTML('        <td align="center">'.f($row,'faixa_inicio').' a '.f($row,'faixa_fim').'</td>');
+        ShowHTML('        <td align="center">'.f($row,'dias_ferias').'</td>');
+        if (f($row,'ativo')=='N') {
+          ShowHTML('        <td align="center"><font color="red">'.RetornaSimNao(f($row,'ativo')).'</td>');
+        } else{
+          ShowHTML('        <td align="center">'.RetornaSimNao(f($row,'ativo')).'</td>');
+        } 
+        ShowHTML('        <td align="top" nowrap>');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Nome">AL </A>&nbsp');
+        ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'chave').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.'">EX </A>&nbsp');
+        ShowHTML('        </td>');
+        ShowHTML('      </tr>');
+      } 
+    } 
+    ShowHTML('      </center>');
+    ShowHTML('    </table>');
+    ShowHTML('  </td>');
+    ShowHTML('<tr><td align="center" colspan=3>');
+    if ($R>'') {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } else {
+      MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,$RS->PageCount,$P3,$P4,count($RS));
+    } 
+    ShowHTML('</tr>');
+    //Aqui começa a manipulação de registros
+  } elseif (!(strpos('IAEV',$O)===false)) {
+    if (!(strpos('EV',$O)===false)) $w_Disabled=' DISABLED '; 
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
+    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+    ShowHTML('<INPUT type="hidden" name="w_cliente" value="'.$w_cliente.'">');
+    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
+    ShowHTML('    <table width="97%" border="0"><tr>');
+    ShowHTML('      <tr><td><b>Número de falta<u>s</u> sem justificativa:</b>&nbsp;Invervalo: de <input '.$w_Disabled.' accesskey="S" type="text" name="w_faixa_inicio" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_faixa_inicio.'">&nbsp;a&nbsp;<input '.$w_Disabled.' accesskey="S" type="text" name="w_faixa_fim" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_faixa_fim.'">&nbsp;dias</td>');
+    ShowHTML('      <tr><td><b><u>D</u>ias de direito de férias:</b>&nbsp;<input '.$w_Disabled.' accesskey="D" type="text" name="w_dias_ferias" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_dias_ferias.'"></td>');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
+    ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan=5><hr>');
+    if ($O=='E') {
+      ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');
+    } else {
+      if ($O=='I') {
+      ShowHTML('            <input class="stb" type="submit" name="Botao" value="Incluir">');
+      } else {
+        ShowHTML('            <input class="stb" type="submit" name="Botao" value="Atualizar">');
+      } 
+    } 
+    ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.montaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+    ShowHTML('          </td>');
+    ShowHTML('      </tr>');
+    ShowHTML('    </table>');
+    ShowHTML('    </TD>');
+    ShowHTML('</tr>');
+    ShowHTML('</FORM>');
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML(' alert(\'Opção não disponível\');');
+    ShowHTML(' history.back(1);');
+    ScriptClose();
+  } 
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
 } 
 
 // =========================================================================
@@ -1254,6 +1421,47 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');  
   BodyOpen('onLoad="this.focus();"');
   switch ($SG) {
+    case'GPDIRFER':
+// Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='I' || $O=='A') {
+          $RS = db_getGPFeriasDias::getInstanceOf($dbms,null,$w_cliente,null);
+          $erro = false;
+          foreach($RS as $row) {
+            $inicio = f($row,'faixa_inicio');  
+            $fim    = f($row,'faixa_fim');
+            $chave  = f($row,'chave');
+            if($_REQUEST['w_faixa_inicio'] >= $inicio &&  $_REQUEST['w_faixa_inicio'] <= $fim && $_REQUEST['w_chave'] != $chave){
+              $erro = true;
+              break;
+            }elseif($_REQUEST['w_faixa_fim'] >= $inicio &&  $_REQUEST['w_faixa_fim'] <= $fim && $_REQUEST['w_chave'] != $chave){
+              $erro = true;
+              break;
+            }else{
+              $erro = false;
+            }
+          }
+          if($erro===false){
+            dml_putGPFeriasDias::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']);
+          }else{
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert(\'O intervalo informado coincide com outro intervalo cadastrado!\');');
+            ScriptClose();
+            RetornaFormulario('w_faixa_inicio');
+          }
+        } elseif ($O=='E') {
+          dml_putGPFeriasDias::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_faixa_inicio'],$_REQUEST['w_faixa_fim'],$_REQUEST['w_dias_ferias'],$_REQUEST['w_ativo']); 
+        }
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();  
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        RetornaFormulario('w_assinatura');
+      } 
+      break;      
     case 'GPMODALCON':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -1499,6 +1707,7 @@ function Main() {
   switch ($par) {
     case 'MODALIDADECONT':    ModalidadeCont();   break;
     case 'TIPOAFAST':         TipoAfast();        break;
+    case 'DIREITOFERIAS':     DireitoFerias();    break;
     case 'DATAESPECIAL':      DataEspecial();     break;
     case 'PARAMETROS':        Parametros();       break;
     case 'CARGOS':            Cargo();            break;

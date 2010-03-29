@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 include_once('constants.inc');
@@ -147,12 +147,12 @@ function Cidade() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
-      Validate('w_sq_pais','País','SELECT','','1','10','','1');
-      Validate('w_co_uf','Estado','SELECT','','1','3','1','1');
+      Validate('w_sq_pais','País','SELECT','1','1','10','','1');
+      Validate('w_co_uf','UF','SELECT','1','1','3','1','1');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_ddd','DDD','1','','2','4','','1');
       Validate('w_codigo_ibge','IBGE','1','','1','20','1','1');
-	  Validate('w_aeroportos','Aeroporto(s)','1','1','1','1','','0123456789');
+	    Validate('w_aeroportos','Aeroporto(s)','1','1','1','1','','0123456789');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');

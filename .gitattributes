@@ -874,6 +874,8 @@ Fontes_PHP_SIW/classes/sp/db_getGPTipoAfast.php -text
 Fontes_PHP_SIW/classes/sp/db_getGestor.php -text
 Fontes_PHP_SIW/classes/sp/db_getGpAlteracaoSalario.php -text
 Fontes_PHP_SIW/classes/sp/db_getGpDesempenho.php -text
+Fontes_PHP_SIW/classes/sp/db_getGpFamiliares.php -text
+Fontes_PHP_SIW/classes/sp/db_getGpFeriasDias.php -text
 Fontes_PHP_SIW/classes/sp/db_getGpPensionista.php -text
 Fontes_PHP_SIW/classes/sp/db_getGrupoVeiculo.php -text
 Fontes_PHP_SIW/classes/sp/db_getHorizonte_IS.php -text
@@ -1256,11 +1258,13 @@ Fontes_PHP_SIW/classes/sp/dml_putFormaPagamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFormaPagamentoVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPColaborador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPContrato.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGPFeriasDias.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPParametro.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPTipoAfast.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGpAlteracaoSalario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGpDesempenho.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGpFamiliares.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGpPontoDiario.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGpPontoMensal.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGrupoVeiculo.php -text
@@ -1322,6 +1326,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura_Outros.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_ReembValor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
@@ -1638,6 +1643,7 @@ Fontes_PHP_SIW/funcoes/selecaoOrdenaRel.php -text
 Fontes_PHP_SIW/funcoes/selecaoOrigem.php -text
 Fontes_PHP_SIW/funcoes/selecaoOutraParte.php -text
 Fontes_PHP_SIW/funcoes/selecaoPais.php -text
+Fontes_PHP_SIW/funcoes/selecaoParentesco.php -text
 Fontes_PHP_SIW/funcoes/selecaoPeriodicidade_IS.php -text
 Fontes_PHP_SIW/funcoes/selecaoPessoa.php -text
 Fontes_PHP_SIW/funcoes/selecaoPessoaOrigem.php -text
@@ -1691,6 +1697,7 @@ Fontes_PHP_SIW/funcoes/selecaoTipoDocumento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoEndereco.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoEvento.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoEventoCheck.php -text
+Fontes_PHP_SIW/funcoes/selecaoTipoFatura.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoFone.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoGuarda.php -text
 Fontes_PHP_SIW/funcoes/selecaoTipoIndicador.php -text
@@ -3525,6 +3532,7 @@ SP_Oracle92/siw/SP_PutPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_PutPD_Contas.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_PutPD_Fatura.prc -text
+SP_Oracle92/siw/SP_PutPD_Fatura_Outros.prc -text
 SP_Oracle92/siw/SP_PutPD_ReembValor.prc -text
 SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text

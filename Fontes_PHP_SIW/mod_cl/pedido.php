@@ -145,7 +145,13 @@ $p_ordena       = lower($_REQUEST['p_ordena']);
 $p_ini_i        = upper($_REQUEST['p_ini_i']);
 $p_ini_f        = upper($_REQUEST['p_ini_f']);
 $p_fim_i        = upper($_REQUEST['p_fim_i']);
-$p_fim_f        = upper($_REQUEST['p_fim_f']);
+if (nvl($p_fim_i,'')!='') {
+  if ($_REQUEST['p_agrega']=='GRCLAUTORIZ') {
+    $p_fim_f = formataDataEdicao(last_day(toDate($p_fim_i)));
+  } else {
+    $p_fim_f = nvl($_REQUEST['p_fim_f'],formataDataEdicao(last_day(toDate($p_fim_i))));
+  }
+}
 $p_atraso       = upper($_REQUEST['p_atraso']);
 $p_codigo       = upper($_REQUEST['p_codigo']);
 $p_empenho      = upper($_REQUEST['p_empenho']);
@@ -257,8 +263,8 @@ function Inicial() {
         $RS = db_getUorgData::getInstanceOf($dbms,$p_unidade);
         $w_filtro .= '<tr valign="top"><td align="right">Unidade solicitante <td>[<b>'.f($RS,'nome').'</b>]';
       }
-      if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Recebimento <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
-      if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Conclusão <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
+      if ($p_ini_i>'')      $w_filtro.='<tr valign="top"><td align="right">Homologação <td>[<b>'.$p_ini_i.'-'.$p_ini_f.'</b>]';
+      if ($p_fim_i>'')      $w_filtro.='<tr valign="top"><td align="right">Autorização <td>[<b>'.$p_fim_i.'-'.$p_fim_f.'</b>]';
       if ($w_filtro>'')     $w_filtro  ='<table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table>';
     } 
  

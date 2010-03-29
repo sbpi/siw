@@ -3,6 +3,7 @@ create or replace procedure SP_PutPD_Fatura
     p_chave               in  number    default null,
     p_arquivo             in  number    default null,
     p_agencia             in  number    default null,
+    p_tipo                in  number    default null,
     p_numero              in  varchar2  default null,
     p_inicio              in  date      default null,
     p_fim                 in  date      default null,
@@ -23,10 +24,10 @@ begin
       -- Insere registro na tabela de bilhetes
       insert into pd_fatura_agencia
         (sq_fatura_agencia, sq_arquivo_eletronico, agencia_viagem, numero,   inicio_decendio, fim_decendio, emissao,   vencimento,   valor,
-         registros,         importados,            rejeitados)
+         registros,         importados,            rejeitados,     tipo)
       values
         (w_chave,           p_arquivo,             p_agencia,      p_numero, p_inicio,        p_fim,        p_emissao, p_vencimento, p_valor, 
-         p_registros,       p_importados,          p_rejeitados);
+         p_registros,       p_importados,          p_rejeitados,   p_tipo);
    End If;
 
    -- Devolve a chave
@@ -36,3 +37,4 @@ begin
    End If;
 
 end SP_PutPD_Fatura;
+/

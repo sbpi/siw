@@ -95,6 +95,7 @@ begin
                 b.sq_plano,           b.sq_cc,                       b.observacao,
                 b.protocolo_siw,      b.recebedor,
                 to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_inclusao,
+                to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then case when n.sq_cc is null
@@ -121,7 +122,7 @@ begin
                 d.prioridade,         d.aviso_prox_conc,             d.dias_aviso,
                 d.sq_especificacao_despesa, d.interno,               d.dias_validade_proposta,
                 d.sq_financeiro,      d.nota_conclusao,              d.data_abertura,
-                d.fundo_fixo,         d.sq_modalidade_artigo,
+                d.fundo_fixo,         d.sq_modalidade_artigo,        coalesce(d.data_homologacao, b.conclusao) as data_autorizacao,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 case d.tipo_reajuste when 0 then 'Não permite' when 1 then 'Com índice' else 'Sem índice' end as nm_tipo_reajuste,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
@@ -225,7 +226,7 @@ begin
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and coalesce(b1.sigla,'-') <> 'AT' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_ini_i          is null or (p_ini_i       is not null and d.data_abertura between p_ini_i and p_ini_f))
-            and (p_fim_i          is null or (p_fim_i       is not null and d.data_homologacao between p_fim_i and p_fim_f))
+            and (p_fim_i          is null or (p_fim_i       is not null and coalesce(d.data_homologacao, b.conclusao) between p_fim_i and p_fim_f))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso = 'S' and coalesce(b1.sigla,'-') <> 'AT' and b.fim+1-sysdate<0))
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade           = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante          = p_solicitante))
@@ -241,7 +242,7 @@ begin
                   (instr(p_restricao,'MODAL')    > 0 and d4.sq_lcmodalidade    is not null) or
                   (instr(p_restricao,'ENQ')      > 0 and b1.sigla              = 'AT' and d41.sq_modalidade_artigo is not null) or
                   (instr(p_restricao,'ABERTURA') > 0 and d.data_abertura       is not null) or
-                  (instr(p_restricao,'AUTORIZ')  > 0 and d.data_homologacao    is not null)
+                  (instr(p_restricao,'AUTORIZ')  > 0 and (d.data_homologacao   is not null or b.conclusao is not null))
                  )
                 )
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or

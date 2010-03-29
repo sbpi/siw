@@ -114,22 +114,24 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
     $allValid=true;
     $D1=0;
     $D2=0;
-    $checkStr=str_replace('-','',str_replace('/','',str_replace('.','',$Value))) ;
+    $checkStr='0'.str_replace('-','',str_replace('/','',str_replace('.','',$Value))) ;
     $soma=0;
-    for ($i=2; $i<=13; $i=$i+1) {
-      if ($i<=5) $soma = $soma+(substr($checkStr,$i-1-1,1)*(7-$i));
-      else       $soma = $soma+(substr($checkStr,$i-1-1,1)*(15-$i));
-    } 
-    $D1 = fmodulo($soma,11);
+    for ($i=1; $i<=12; $i++) {
+      if ($i<5) $mult = 6;
+      else      $mult = 14;
+      $soma+=(substr($checkStr,$i,1)*($mult-$i));
+    }
+    $D1 = 11 - ($soma % 11);
     if (($D1>9)) $D1=0;
     $soma=0;
-    for ($i=2; $i<=14; $i=$i+1) {
-      if ($i<=6)  $soma = $soma+(substr($checkStr,$i-1-1,1)*(8-$i));
-      else        $soma = $soma+(substr($checkStr,$i-1-1,1)*(16-$i));
+    for ($i=1; $i<=13; $i++) {
+      if ($i<6)  $mult = 7;
+      else       $mult = 15;
+      $soma+=(substr($checkStr,$i,1)*($mult-$i));
     } 
-    $D2 = fmodulo($soma,11);
+    $D2 = 11 - ($soma % 11);
     if (($D2>9)) $D2=0;
-    if ($D1!=substr($checkStr,12,1)||$D2!=substr($checkStr,13,1))   $w_erro=$w_erro.'; dígito verificador inválido';
+    if ($D1!=substr($checkStr,13,1)||$D2!=substr($checkStr,14,1))   $w_erro=$w_erro.'; dígito verificador inválido';
     if ($w_erro>'' && $Tipo==0)   return str_replace('; ','',$w_erro);
   } elseif (upper($DataType)=='CPF') {
     $checkOK    = '';
@@ -143,7 +145,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
       $soma=$soma+(substr($checkStr,$i-1-1,1)*(12-$i));
       if (substr($checkStr,$i-1,1)!=substr($checkStr,$i-1-1,1)) $igual=1;
     } 
-    $D1 = fModulo($soma,11);
+    $D1 = ($soma % 11);
     if (($D1>9))    $D1=0;
     if ($igual==0)  $w_erro=$w_erro.'; CPF inválido';
     if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);
@@ -152,7 +154,7 @@ function fValidate($Tipo,$Value,$DisplayName,$DataType,$ValueRequired,$MinimumLe
       $soma = $soma+(substr($checkStr,$i-1-1,1)*(13-$i));
       if (substr($checkStr,$i-1,1)!=substr($checkStr,$i-1-1,1)) $igual=1;
     } 
-    $D2=fModulo($soma,11);
+    $D2=($soma % 11);
     if (($D2>9)) $D1=0;
     if ($D1!=substr($checkStr,9,1) || $D2!=substr($checkStr,10,1))  $w_erro=$w_erro.'; dígito verificador inválido';
     if ($w_erro>'' && $Tipo==0) return str_replace('; ','',$w_erro);

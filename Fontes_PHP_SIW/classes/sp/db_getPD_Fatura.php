@@ -13,7 +13,7 @@ class db_getPD_Fatura {
    function getInstanceOf($dbms, $p_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
         $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
         $p_ini_emibil, $p_fim_emibil, $p_restricao) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); if ($p_restricao>'') $sql=$strschema.'sp_getPD_Fatura'; else $sql=$strschema.'sp_getPD_Fatura';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getPD_Fatura';
      $params=array('p_cliente'            =>array(tvl($p_cliente),                  B_INTEGER,        32),
                    'p_agencia'            =>array(tvl($p_agencia),                  B_INTEGER,        32),
                    'p_fatura'             =>array(tvl($p_fatura),                   B_INTEGER,        32),
