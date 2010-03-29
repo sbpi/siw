@@ -337,7 +337,7 @@ begin
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5     and coalesce(b1.sigla,'-') <> 'CA') or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
              and ((p_restricao <> 'GRDMETAPA'    and p_restricao <> 'GRDMPROP' and
                    p_restricao <> 'GRDMRESPATU'  and p_restricao <> 'GDPCADET'
@@ -578,7 +578,7 @@ begin
                  (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo          = 5     and coalesce(b1.sigla,'-') <> 'CA') or
-                 (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
             and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU' and p_restricao <> 'GRPRCC' and p_restricao <> 'GRPRVINC') or 
                  ((p_restricao = 'GRPRCC'      and b.sq_cc        is not null)   or 
@@ -825,7 +825,7 @@ begin
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b.conclusao is null and b1.ativo = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b.conclusao is null and b1.ativo = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
                   instr(p_restricao,'ETAPA')   = 0 and
@@ -1033,7 +1033,7 @@ begin
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
                   instr(p_restricao,'ETAPA')   = 0 and
@@ -1133,7 +1133,7 @@ begin
                       inner   join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                       inner   join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                         inner join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
-                        inner join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
+                        left  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
                         inner join (select x.sq_unidade, 
                                            coalesce(y.limite_passagem,0) as limite_passagem, 
                                            coalesce(y.limite_diaria,0)   as limite_diaria
@@ -1216,7 +1216,7 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    Elsif substr(p_restricao,1,4) = 'PEPR' Then
       -- Recupera os programas que o usuário pode ver
@@ -1372,15 +1372,13 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_palavra        is null or (p_palavra     is not null and b.codigo_interno     like '%'||p_palavra||'%'))
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b4.acesso > 15) or
                  (p_tipo         = 3     and b4.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or --  and b4.acesso > 0) or
-                 --(p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA' and b4.acesso > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S') -- and b4.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b4.acesso > 0 and b1.sigla <> 'CI')
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
                   instr(p_restricao,'ETAPA')   = 0 and
@@ -1590,7 +1588,7 @@ begin
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0) or
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
                  (p_tipo         = 7     and b1.sigla          = 'AT' and b.sq_solic_pai is null and d.data_central is not null and b7.protocolo is null and b8.protocolo is null) or -- Empréstimo
                  (p_tipo         = 8     and b.sq_solic_pai is null and b1.sigla = 'AT' and d.data_central is not null 
                                          and b7.protocolo is null and b8.protocolo is null and d51.Sigla='ELIM'

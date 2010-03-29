@@ -191,7 +191,7 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    Elsif p_restricao = 'GRPDATIV' Then
       -- Recupera as viagens que o usuário pode ver
@@ -338,7 +338,7 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    Elsif p_restricao = 'GRPDCIAVIAGEM' Then
       -- Recupera as viagens que o usuário pode ver
@@ -481,7 +481,7 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    Elsif p_restricao = 'GRPDCIDADE' Then
       -- Recupera as viagens que o usuário pode ver
@@ -626,7 +626,7 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
             and m.destino  not in (select origem
                                      from pd_deslocamento x
@@ -780,7 +780,7 @@ begin
                  (p_tipo         = 4     and Nvl(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    End If;
 end SP_GetSolicViagem;

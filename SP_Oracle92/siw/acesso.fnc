@@ -47,6 +47,7 @@ create or replace function Acesso
   w_interno                co_tipo_vinculo.interno%type;
   w_sq_servico             siw_menu.sq_menu%type;
   w_acesso_geral           siw_menu.acesso_geral%type;
+  w_consulta_geral         siw_menu.consulta_geral%type;
   w_modulo                 siw_menu.sq_modulo%type;
   w_sg_modulo              siw_modulo.sigla%type;
   w_sigla                  siw_menu.sigla%type;
@@ -123,7 +124,7 @@ begin
  End If;
  
  -- Recupera as informações da opção à qual a solicitação pertence
- select a.sq_pessoa, a.acesso_geral, a.sq_menu, a.sq_modulo, a.sigla, e.destinatario,
+ select a.sq_pessoa, a.acesso_geral, a.consulta_geral, a.sq_menu, a.sq_modulo, a.sigla, e.destinatario,
         a1.sigla,
         b.sq_pessoa, b.sq_unidade, b.gestor_seguranca, b.gestor_sistema, b.ativo as usuario_ativo,
         b2.nome,
@@ -140,7 +141,7 @@ begin
         coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
         coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
-   into w_cliente, w_acesso_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
+   into w_cliente, w_acesso_geral, w_consulta_geral, w_sq_servico, w_modulo, w_sigla, w_destinatario,
         w_sg_modulo,
         w_username, w_sq_unidade_lotacao, w_gestor_seguranca, w_gestor_sistema, w_usuario_ativo,
         w_nm_vinculo,
@@ -201,8 +202,8 @@ begin
  -- Verifica se o usuário é o executor
  If p_usuario = w_executor Then Result := 1; End If;
 
- -- Verifica se a solicitação é do módulo de planejamento estratégico
- If w_sg_modulo = 'PE' and w_interno = 'S' Then Result := 1; End If;
+ -- Verifica se a solicitação é de consulta geral
+ If w_consulta_geral = 'S' and w_interno = 'S' Then Result := 1; End If;
  
  -- Verifica se o usuário é representante de projeto
  select count(*) into w_existe from pj_projeto_representante a where a.sq_pessoa = p_usuario and a.sq_siw_solicitacao = p_solicitacao;
@@ -592,7 +593,7 @@ begin
     End If;
  Elsif w_chefia_imediata = 'I' Then
     -- Quando o trâmite for cumprido por todos os usuários internos
-    If w_interno = 'S' Then
+    If w_interno = 'S' and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then
        If w_sigla = 'PDINICIAL' Then
          select count(*) into w_existe
            from siw_solicitacao      a

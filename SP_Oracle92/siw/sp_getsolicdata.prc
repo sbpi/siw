@@ -755,7 +755,7 @@ begin
                         inner          join co_pessoa                  d2 on (d1.sq_pessoa                  = d2.sq_pessoa)
                           left         join sg_autenticacao           d21 on (d2.sq_pessoa                  = d21.sq_pessoa)
                           inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo            = d3.sq_tipo_vinculo)
-                          inner        join co_pessoa_fisica           d4 on (d2.sq_pessoa                  = d4.sq_pessoa)
+                          left         join co_pessoa_fisica           d4 on (d2.sq_pessoa                  = d4.sq_pessoa)
                             left       join gp_contrato_colaborador    d8 on (d4.cliente                    = d8.cliente      and
                                                                               d4.sq_pessoa                  = d8.sq_pessoa    and
                                                                               d8.fim                        is null)

@@ -204,7 +204,7 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
  elsif p_restricao = 'PAELIM' or substr(p_restricao,1,4) = 'GREL' Then
       -- Recupera as demandas que o usuário pode ver
@@ -350,7 +350,7 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    Elsif p_restricao = 'EMPREST' Then
       -- Recupera as solicitações que o usuário pode ver
@@ -432,7 +432,7 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0)
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
    End If;
 end SP_GetSolicPA;

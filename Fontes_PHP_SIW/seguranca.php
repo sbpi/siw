@@ -464,6 +464,7 @@ function Menu() {
         $w_ativo                = f($RS,'ativo');
         $w_envio                = f($RS,'destinatario');
         $w_acesso_geral         = f($RS,'acesso_geral');
+        $w_consulta_geral       = f($RS,'consulta_geral');
         $w_modulo               = f($RS,'sq_modulo');
         $w_descentralizado      = f($RS,'descentralizado');
         $w_externo              = f($RS,'externo');
@@ -511,6 +512,7 @@ function Menu() {
         $w_ativo                = $_REQUEST['w_ativo'];
         $w_envio                = $_REQUEST['w_envio'];
         $w_acesso_geral         = $_REQUEST['w_acesso_geral'];
+        $w_consulta_geral       = $_REQUEST['w_consulta_geral'];
         $w_modulo               = $_REQUEST['w_modulo'];
         $w_descentralizado      = $_REQUEST['w_descentralizado'];
         $w_externo              = $_REQUEST['w_externo'];
@@ -1177,13 +1179,20 @@ function Menu() {
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_controla_ano" value="N" > Não');
     } 
-    ShowHTML('              <td title="Informe \'Sim\' se desejar que o usuário tenha a alternativa de enviar a solicitação durante a inclusão." colspan="2"><b>Permite envio da solicitação durante a inclusão?</b><br>');
+    ShowHTML('              <td title="Informe \'Sim\' se desejar que o usuário tenha a alternativa de enviar a solicitação durante a inclusão."><b>Permite envio da solicitação durante a inclusão?</b><br>');
     if ($w_envio_inclusao=='S') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N"> Não');
     } elseif ($w_envio_inclusao=='N') {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N" checked> Não');
     } else {
       ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_envio_inclusao" value="N" > Não');
+    } 
+    
+    ShowHTML('              <td title="Solicitações de consulta geral aparecem para qualquer usuário, sem nenhuma restrição."><b>Consulta geral?</b><br>');
+    if ($w_consulta_geral=='S') {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="S" checked> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="N"> Não');
+    } else {
+      ShowHTML('                 <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="S"> Sim <input '.$w_Disabled.' class="str" type="radio" name="w_consulta_geral" value="N" checked> Não');
     } 
     
     ShowHTML('          <tr align="left">');
@@ -2531,7 +2540,7 @@ function Grava() {
             $_REQUEST['w_exibe_relatorio'], $_REQUEST['w_como_funciona'], $_REQUEST['w_vinculacao'], 
             $_REQUEST['w_data_hora'], $_REQUEST['w_envia_dia_util'], $_REQUEST['w_pede_descricao'], 
             $_REQUEST['w_pede_justificativa'], $_REQUEST['w_finalidade'], $w_cliente, 
-            $_REQUEST['w_descricao'], $_REQUEST['w_acesso_geral'], $_REQUEST['w_modulo'], 
+            $_REQUEST['w_descricao'], $_REQUEST['w_acesso_geral'], $_REQUEST['w_consulta_geral'], $_REQUEST['w_modulo'], 
             $_REQUEST['w_sq_unidade_executora'], $_REQUEST['w_tramite'], $_REQUEST['w_ultimo_nivel'], 
             $_REQUEST['w_descentralizado'], $_REQUEST['w_externo'], $_REQUEST['w_ativo'], $_REQUEST['w_ordem'], 
             $_REQUEST['w_envio'], $_REQUEST['w_controla_ano'], $_REQUEST['w_libera_edicao'], $_REQUEST['w_numeracao'],

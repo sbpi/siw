@@ -4,6 +4,7 @@ create or replace procedure SP_PutSIWMenu
     p_cliente             in  number,
     p_nome                in  varchar2,
     p_acesso_geral        in  varchar2,
+    p_consulta_geral      in  varchar2,
     p_modulo              in  number,
     p_tramite             in  varchar2,
     p_ultimo_nivel        in  varchar2,
@@ -54,7 +55,7 @@ begin
       insert into siw_menu (sq_menu, sq_menu_pai, link, p1, p2, p3, p4, sigla, imagem, target, 
          emite_os, consulta_opiniao, envia_email, exibe_relatorio, como_funciona, vinculacao,  
          data_hora, envia_dia_util, descricao, justificativa, finalidade,  
-         sq_pessoa, nome, acesso_geral, sq_modulo, sq_unid_executora,
+         sq_pessoa, nome, acesso_geral, consulta_geral, sq_modulo, sq_unid_executora,
          tramite, ultimo_nivel, descentralizado, externo, ativo, ordem, destinatario,
          controla_ano, libera_edicao, numeracao_automatica, servico_numerador, sequencial, ano_corrente,
          prefixo, sufixo, envio_inclusao)
@@ -62,10 +63,10 @@ begin
          p_p1, p_p2, p_p3, p_p4, upper(trim(p_sigla)), trim(p_imagem), trim(p_target),
          p_emite_os, p_consulta_opiniao, p_envia_email, p_exibe_relatorio, trim(p_como_funciona), p_vinculacao,
          p_data_hora, p_envia_dia_util, p_pede_descricao, p_pede_justificativa, p_finalidade,
-         p_cliente, p_nome, p_acesso_geral, p_modulo, p_sq_unidade_exec,
-         p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, Nvl(p_envio,'S'),
-         Nvl(p_controla_ano,'N'), p_libera_edicao, p_numeracao, p_numerador, p_sequencial, p_ano_corrente,
-         p_prefixo, p_sufixo, Nvl(p_envio_inclusao,'N'));
+         p_cliente, p_nome, p_acesso_geral, p_consulta_geral, p_modulo, p_sq_unidade_exec,
+         p_tramite, p_ultimo_nivel, p_descentralizado, p_externo, p_ativo, p_ordem, coalesce(p_envio,'S'),
+         coalesce(p_controla_ano,'N'), p_libera_edicao, p_numeracao, p_numerador, p_sequencial, p_ano_corrente,
+         p_prefixo, p_sufixo, coalesce(p_envio_inclusao,'N'));
       
       -- Cria a opção do menu para todos os endereços da organização
       insert into siw_menu_endereco (sq_menu, sq_pessoa_endereco) 
@@ -123,15 +124,16 @@ begin
           envia_dia_util       = p_envia_dia_util,     descricao            = p_pede_descricao, 
           justificativa        = p_pede_justificativa, finalidade           = p_finalidade,
           nome                 = p_nome,               acesso_geral         = p_acesso_geral, 
+          consulta_geral       = p_consulta_geral,
           sq_modulo            = p_modulo,             tramite              = p_tramite, 
           ultimo_nivel         = p_ultimo_nivel,       descentralizado      = p_descentralizado, 
           externo              = p_externo,            ordem                = p_ordem,
-          sq_unid_executora    = p_sq_unidade_exec,    destinatario         = Nvl(p_envio,'S'),
-          controla_ano         = Nvl(p_controla_ano,'N'),
+          sq_unid_executora    = p_sq_unidade_exec,    destinatario         = coalesce(p_envio,'S'),
+          controla_ano         = coalesce(p_controla_ano,'N'),
           libera_edicao        = p_libera_edicao,      numeracao_automatica = p_numeracao,
           servico_numerador    = p_numerador,          sequencial           = w_sequencial,
           ano_corrente         = p_ano_corrente,       prefixo              = p_prefixo,
-          sufixo               = p_sufixo,             envio_inclusao       = Nvl(p_envio_inclusao,'N')
+          sufixo               = p_sufixo,             envio_inclusao       = coalesce(p_envio_inclusao,'N')
       where sq_menu = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove as configurações de e-mail do serviço

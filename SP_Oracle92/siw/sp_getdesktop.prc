@@ -34,7 +34,8 @@ begin
                                                               inner join siw_menu y on (x.sq_menu = y.sq_menu and y.sq_pessoa = p_cliente)
                                                       )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
                                    where c.sq_pessoa = p_cliente
-                                     and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
+                                     and c.sigla  <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
+                                     and 'CI'     <> coalesce(e.sigla,'nulo')
                                      and (e.ativo = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                                      and (('N'    = c.consulta_opiniao and d.conclusao is null) or
                                           ('S'    = c.consulta_opiniao and d.opiniao is null)

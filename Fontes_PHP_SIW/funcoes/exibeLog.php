@@ -180,16 +180,18 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	          if (count($RS2)>0) {
 	            $j = 0;
 	            foreach($RS2 as $row2) {
-	              if ($j==0) {
-	                $w_tramite_resp = f($row2,'nome_resumido');
-	                if ($l_formato=='HTML') $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-	                else                    $l_html.=chr(13).f($row2,'nome_resumido').'</td>';
-	                $j = 1;
-	              } else {
-	                if (strpos($w_tramite_resp,f($row_log,'nome_resumido'))===false) {
-	                  if ($l_formato=='HTML') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-	                  else                    $l_html.=chr(13).', '.f($row2,'nome_resumido').'</td>';
-	                }
+	              if (f($row2,'gestor_modulo')=='N') {
+  	              if ($j==0) {
+  	                $w_tramite_resp = f($row2,'nome_resumido');
+  	                if ($l_formato=='HTML') $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+  	                else                    $l_html.=chr(13).f($row2,'nome_resumido').'</td>';
+  	                $j = 1;
+  	              } else {
+  	                if (strpos($w_tramite_resp,f($row_log,'nome_resumido'))===false) {
+  	                  if ($l_formato=='HTML') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+  	                  else                    $l_html.=chr(13).', '.f($row2,'nome_resumido').'</td>';
+  	                }
+  	              }
 	              }
 	            } 
 	          } 

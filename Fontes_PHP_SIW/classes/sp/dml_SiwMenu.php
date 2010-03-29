@@ -12,15 +12,16 @@ class dml_SiwMenu {
    function getInstanceOf($dbms, $operacao, $chave, $sq_menu_pai, $link, $p1, $p2, $p3, $p4, $sigla, 
          $imagem, $target, $emite_os, $consulta_opiniao, $envia_email, $exibe_relatorio, $como_funciona, 
          $vinculacao, $data_hora, $envia_dia_util, $descricao, $justificativa, $finalidade, $cliente, 
-         $nome, $acesso_geral, $sq_modulo, $sq_unidade_exec, $tramite, $ultimo_nivel, $descentralizado, 
-         $externo, $ativo, $ordem, $envio, $controla_ano, $libera_edicao, $numeracao, $numerador, 
-         $sequencial, $ano_corrente, $prefixo, $sufixo, $envio_inclusao) {
+         $nome, $acesso_geral, $consulta_geral, $sq_modulo, $sq_unidade_exec, $tramite, $ultimo_nivel, 
+         $descentralizado, $externo, $ativo, $ordem, $envio, $controla_ano, $libera_edicao, $numeracao, 
+         $numerador, $sequencial, $ano_corrente, $prefixo, $sufixo, $envio_inclusao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putSiwMenu';
      $params=array('operacao'           =>array($operacao,              B_VARCHAR,      1),
                    'chave'              =>array($chave,                 B_NUMERIC,     32),
                    'cliente'            =>array($cliente,               B_NUMERIC,     32),
                    'nome'               =>array($nome,                  B_VARCHAR,     40),
                    'acesso_geral'       =>array($acesso_geral,          B_VARCHAR,      1),
+                   'consulta_geral'     =>array($consulta_geral,          B_VARCHAR,      1),
                    'sq_modulo'          =>array($sq_modulo,             B_NUMERIC,     32),
                    'tramite'            =>array($tramite,               B_VARCHAR,      1),
                    'ultimo_nivel'       =>array($ultimo_nivel,          B_VARCHAR,      1),
