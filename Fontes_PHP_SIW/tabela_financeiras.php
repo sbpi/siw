@@ -465,7 +465,7 @@ function Agencia() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_banco','Banco','SELECT','1','1','18','1','1');
-      Validate('w_codigo','Código','1','1','4','4','','0123456789');
+      Validate('w_codigo','Código','1','1','4','6','','0123456789-');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {
@@ -572,7 +572,7 @@ function Agencia() {
     selecaoBanco('<u>B</u>anco:','B',null,$w_sq_banco,null,'w_sq_banco',null,null);
     ShowHTML('      </tr>');
     ShowHTML('      <tr align="left"><td valign="top"><table width="100%" cellpadding=0 cellspacing=0><tr><td>');
-    ShowHTML('          <td valign="top"><b><U>C</U>ódigo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo" size="4" maxlength="4" value="'.$w_codigo.'"></td>');
+    ShowHTML('          <td valign="top"><b><U>C</U>ódigo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="sti" type="text" name="w_codigo" size="6" maxlength="6" value="'.$w_codigo.'"></td>');
     ShowHTML('          <td valign="top"><b><U>N</U>ome:<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="sti" type="text" name="w_nome" size="40" maxlength="40" value="'.$w_nome.'"></td>');
     ShowHTML('      </tr></table></td></tr>');
     ShowHTML('      <tr>');

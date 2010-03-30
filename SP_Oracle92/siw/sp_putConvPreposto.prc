@@ -1,5 +1,5 @@
 create or replace procedure SP_PutConvPreposto
-   ( l_operacao               in varchar2,
+   ( p_operacao               in varchar2,
      p_restricao              in varchar2,
      p_chave                  in number    default null,
      p_sq_acordo_outra_parte  in number    default null,
@@ -43,10 +43,10 @@ begin
       select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_cliente and cpf = p_cpf;
    End If;
 
-   If l_operacao = 'I' Then
+   If p_operacao = 'I' Then
       If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
          -- Verifica se o tipo do acordo e carrega a chave da tabela CO_TIPO_VINCULO
-         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Cliente' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_cliente;
+         select sq_tipo_vinculo into w_sq_tipo_vinculo from co_tipo_vinculo where nome = 'Fornecedor' and sq_tipo_pessoa = w_sq_tipo_pessoa and cliente = p_cliente;
 
          -- recupera a próxima chave da pessoa
          select sq_pessoa.nextval into w_chave_pessoa from dual;
@@ -87,7 +87,7 @@ begin
            update ac_acordo set preposto = w_chave_pessoa where sq_siw_solicitacao = p_chave;
          End If;
       End If;      
-   Elsif  l_operacao = 'A' Then 
+   Elsif  p_operacao = 'A' Then 
    -- Caso contrário, altera
          update co_pessoa
             set nome          = p_nome,
@@ -107,7 +107,7 @@ begin
            and sq_acordo_outra_parte = p_sq_acordo_outra_parte
            and sq_siw_solicitacao    = p_chave;
       
-   Elsif l_operacao = 'E' Then
+   Elsif p_operacao = 'E' Then
       -- Exclui registro
       select sq_siw_solicitacao into w_chave 
         from ac_acordo_outra_parte 
@@ -134,7 +134,7 @@ begin
            and preposto           = w_chave_pessoa;
       End If;      
    End If;
-   If l_operacao = 'I' or l_operacao = 'A' Then
+   If p_operacao = 'I' or p_operacao = 'A' Then
       -- Recupera a cidade padrão do cliente para definir a cidade
       select sq_cidade_padrao into w_cidade from siw_cliente where sq_pessoa = p_cliente;
    

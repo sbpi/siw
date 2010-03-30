@@ -3395,7 +3395,6 @@ function Concluir() {
     Validate('w_sq_tipo_lancamento','Tipo de lançamento', 'SELECT', 1, 1, 18, '', '0123456789');
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do pagamento', 'DATA', 1, 10, 10, '', '0123456789/');
-    CompData('w_quitacao','Data do pagamento','<=',FormataDataEdicao(time()),'data atual');
     Validate('w_valor_real','Valor real','VALOR','1', 4, 18, '', '0123456789.,');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
@@ -4129,7 +4128,7 @@ function Grava() {
                 $_REQUEST['w_solicitante'][$i],$w_usuario,$_REQUEST['w_sqcc'][$i],$_REQUEST['w_descricao'][$i],$_REQUEST['w_vencimento'][$i],
                 Nvl($_REQUEST['w_valor'][$i],0),$_REQUEST['w_data_hora'],$_REQUEST['w_aviso'],$_REQUEST['w_dias'],$_REQUEST['w_cidade'],
                 $_REQUEST['w_chave_pai'][$i],$_REQUEST['w_sq_acordo_parcela'][$i],$_REQUEST['w_observacao'],$_REQUEST['w_sq_tipo_lancamento'][$i],
-                $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],$_REQUEST['w_vencimento_atual'][$i],
+                $_REQUEST['w_sq_forma_pagamento'][$i],$_REQUEST['w_tipo_pessoa'][$i],$_REQUEST['w_forma_atual'][$i],null,
                 $w_tipo,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],null,&$w_chave_nova,&$w_codigo);
             //Recupera os dados da pessoa associada ao lançamento

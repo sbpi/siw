@@ -892,10 +892,12 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           $l_html.=chr(13).'      <tr><td><td colspan="4"><hr NOSHADE color=#000000 SIZE=1></td></tr>'; 
           $w_total_preco += f($row,'valor_item');
         }
-        $l_html.=chr(13).'      <tr>';
-        $l_html.=chr(13).'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
-        $l_html.=chr(13).'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
-        $l_html.=chr(13).'      </tr>';
+        if ($w_cliente==9634) { // SMSSP trabalha com quantidades mensais
+          $l_html.=chr(13).'      <tr>';
+          $l_html.=chr(13).'        <td align="right" colspan="3"><b>Total mensal:&nbsp;&nbsp;</b></td>';
+          $l_html.=chr(13).'        <td><b>'.formatNumber($w_total_preco,4).'</b></td>';
+          $l_html.=chr(13).'      </tr>';
+        }
         $l_html.=chr(13).'    </table></td></tr>';
       } 
     }

@@ -2845,8 +2845,12 @@ function Cabecalho() {
 // -------------------------------------------------------------------------
 function head() {
   ShowHTML('<HEAD>');
+  ShowHTML('<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">');
+  ShowHTML('<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">');
   ShowHTML('<META NAME="author" CONTENT="SBPI Consultoria Ltda">');
   ShowHTML('<META NAME="robots" CONTENT="noindex,nofollow">');
+  ShowHTML('<META HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR">');
+  ShowHTML('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1">');
 }
 
 // =========================================================================

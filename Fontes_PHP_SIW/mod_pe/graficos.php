@@ -501,7 +501,7 @@ function Gera_Gantt1() {
   $i = 0;
   foreach ($RS as $row) {
     // Nível 1
-    $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+    $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
     $RS1 = SortArray($RS1,'ac_titulo','asc');
     if (count($RS1)>0) {
       $w_cor = $conTrBgColor;

@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -12,7 +12,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putConvPreposto {
    function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_sq_acordo_outra_parte, $p_sq_pessoa, $p_chave_aux,  $p_cpf, 
                           $p_nome, $p_nome_resumido, $p_sexo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_email, $p_cargo) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'SP_PUTCONVPREPOSTO';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putConvPreposto';
      $params=array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
                    'p_restricao'                 =>array($p_restricao,                                     B_VARCHAR,        10),
                    'p_chave'                     =>array(tvl($p_chave),                                    B_INTEGER,        32),

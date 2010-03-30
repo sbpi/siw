@@ -3,7 +3,7 @@ create or replace procedure SP_PutCOAgencia
     p_chave     in  number default null,
     p_sq_banco  in  number,
     p_nome      in  varchar2,
-    p_codigo    in  number,
+    p_codigo    in  varchar2,
     p_padrao    in  varchar2,
     p_ativo     in  varchar2
    ) is
@@ -34,4 +34,3 @@ begin
    End If;
 end SP_PutCOAgencia;
 /
-

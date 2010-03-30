@@ -852,7 +852,7 @@ function ExibePrograma($l_chave,$operacao,$l_usuario,$l_tipo) {
   if(nvl($_REQUEST['p_projetos'],'')!='') {
     // Estruturação do programa
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PEPROCAD');
-    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ESTRUTURA',6,
+    $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'ESTRUTURA',7,
            null,null,null,null,null,null,null,null,null,null,$l_chave,
            null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
 

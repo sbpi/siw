@@ -228,8 +228,8 @@ begin
 
    -- O tratamento a seguir é relativo ao código interno do lançamento.
    If p_operacao               in ('I','A')  and 
-      (to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') and
-       to_char(p_vencimento,'yyyy') <> w_reg.ano_corrente
+      (p_vencimento_atual is null or
+       to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy')
       )
       Then
       

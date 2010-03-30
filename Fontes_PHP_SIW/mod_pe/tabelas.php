@@ -1333,7 +1333,7 @@ function Telaplano(){
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     foreach ($RS as $row) {
-      $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
+      $RS1 = db_getSolicList::getInstanceOf($dbms, f($row,'sq_menu'), $w_usuario, f($row,'sigla'), 7, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, f($row,'sq_plano'));
       $RS1 = SortArray($RS1,'codigo_interno','asc');
       if (count($RS1)>0) {
         $w_cor = $conTrBgColor;
