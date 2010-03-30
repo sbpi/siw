@@ -578,7 +578,8 @@ begin
                  (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
                  (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo          = 5     and coalesce(b1.sigla,'-') <> 'CA') or
-                 (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
+                 (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')or
+                 (p_tipo          = 7     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
             and ((p_restricao <> 'GRPRPROP'    and p_restricao <> 'GRPRRESPATU' and p_restricao <> 'GRPRCC' and p_restricao <> 'GRPRVINC') or 
                  ((p_restricao = 'GRPRCC'      and b.sq_cc        is not null)   or 
@@ -1378,7 +1379,8 @@ begin
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and b1.sigla <> 'CA' and b4.acesso > 0) or
                  (p_tipo         = 5) or
-                 (p_tipo         = 6     and b1.ativo          = 'S' and b4.acesso > 0 and b1.sigla <> 'CI')
+                 (p_tipo         = 6     and b1.ativo          = 'S' and b4.acesso > 0 and b1.sigla <> 'CI') or
+                 (p_tipo         = 7     and b1.ativo          = 'S' and b4.acesso > 0)
                 )
             and ((instr(p_restricao,'PROJ')    = 0 and
                   instr(p_restricao,'ETAPA')   = 0 and
