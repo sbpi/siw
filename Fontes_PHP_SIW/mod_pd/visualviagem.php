@@ -491,19 +491,21 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             $l_html.=chr(13).'      <tr valign="top"><td><b>Diárias:</b><td>';
             if ($w_trechos[$i][12]=='S') {
-              $l_html.=chr(13).'Sim.</td>';
+              $l_html.=chr(13).'Sim. '.((nvl($w_trechos[$i][28],'')!='') ? 'Observações: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
             } else {
               $l_html.=chr(13).'Não. Justificativa: '.crlf2br($w_trechos[$i][28]).'</td>';
             }
-            if (f($RS,'hospedagem')=='S' && $w_trechos[$i][39]=='S') {
-            if ($w_trechos[$i][15]=='S') {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
-              } else {
-                $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. Justificativa: '.crlf2br($w_trechos[$i][36]).'</td>';
-              }
+            if ($w_trechos[$i][39]=='S') {
+              if ($w_trechos[$i][15]=='S') {
+                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
+                } else {
+                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. Justificativa: '.crlf2br($w_trechos[$i][36]).'</td>';
+                }
             }
             if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
               $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
+            } else {
+              $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>Não.</td>';
             }
           }
           $i += 1;

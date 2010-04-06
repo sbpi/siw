@@ -59,7 +59,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     if (f($RS,'decisao_judicial')=='S') $l_html.=chr(13).'      <tr><td><b>Decisão judicial: </b></td><td>'.RetornaSimNao(f($RS,'decisao_judicial')).' </td></tr>';
     //$l_html.=chr(13).'      <tr><td><b>Prioridade: </b></td><td>'.f($RS,'nm_prioridade').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Data do pedido:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' </td></tr>';
-    if (nvl(f($RS,'fim'),'')!='') $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
+    if (nvl(f($RS,'fim'),'')!='' && $w_cliente!=10135) $l_html.=chr(13).'      <tr><td><b>Limite para atendimento:</b></td><td>'.FormataDataEdicao(f($RS,'fim')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor estimado: </b></td><td>'.formatNumber(f($RS,'valor'),4).'</td></tr>';
     $l_html.=chr(13).'    <tr><td><b>Solicitante:<b></td>';
     if (!($l_P1==4 || $l_tipo=='WORD')){

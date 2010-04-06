@@ -1671,10 +1671,10 @@ begin
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
            from siw_solicitacao               b
-                   inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
-                   inner   join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
+                inner   join siw_tramite      b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
+                inner   join pj_projeto       d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where b.sq_menu         = p_menu
-            and coalesce(b1.sigla,'-') not in ('CA','AT')
+            and b1.sigla          not in ('CA','AT')
             and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
                  InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
                 );

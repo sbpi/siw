@@ -2072,10 +2072,9 @@ function Tramitacao() {
   $p_ini            = $_REQUEST['p_ini'];
   $p_fim            = $_REQUEST['p_fim'];
   $p_tipo_despacho  = nvl($_REQUEST['w_tipo_despacho'],$_REQUEST['p_tipo_despacho']);
-  
+
   if ($w_troca>'') {
     // Se for recarga da página
-    $w_chave            = $_REQUEST['w_chave'];
     $w_retorno_limite   = $_REQUEST['w_retorno_limite'];
     $w_interno          = $_REQUEST['w_interno'];
     $w_sq_unidade       = $_REQUEST['w_sq_unidade'];
@@ -2117,7 +2116,12 @@ function Tramitacao() {
     if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) {
       // Recupera caixas para transferência
       $RS = db_getCaixa::getInstanceOf($dbms, $p_chave, $w_cliente, nvl($w_sq_unidade,$_SESSION['LOTACAO']), null, null, null, null,null, null, null, 'TRAMITE');
-      $RS = SortArray($RS,'numero','asc');
+      if (Nvl($p_ordena,'')>'') {
+        $lista = explode(',',str_replace(' ',',',$p_ordena));
+        $RS = SortArray($RS,$lista[0],$lista[1],'numero','asc');
+       } else {
+        $RS = SortArray($RS,'numero','asc');
+      }
       $w_existe = count($RS);
       
       if (count($w_chave) > 0) {
@@ -2138,7 +2142,12 @@ function Tramitacao() {
       $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
           $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $p_unid_posse, $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, 
           $p_tipo_despacho);
-      $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+      if (Nvl($p_ordena,'')>'') {
+        $lista = explode(',',str_replace(' ',',',$p_ordena));
+        $RS = SortArray($RS,$lista[0],$lista[1],'prefixo','asc', 'ano','desc','numero_documento','asc');
+       } else {
+        $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+      }
       $w_existe = count($RS);
       
       if (count($w_chave) > 0) {
@@ -2290,15 +2299,15 @@ function Tramitacao() {
     } else {
       ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
+      ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Tipo','nm_tipo').'</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
-      ShowHTML('          <td rowspan=2><b>Resumo</td>');
+      ShowHTML('          <td rowspan=2><b>'.linkOrdena('Resumo','descricao').'</td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>Espécie</td>');
-      ShowHTML('          <td><b>Nº</td>');
-      ShowHTML('          <td><b>Data</td>');
-      ShowHTML('          <td><b>Procedência</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Espécie','nm_especie').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Nº','numero_original').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Data','inicio').'</td>');
+      ShowHTML('          <td><b>'.linkOrdena('Procedência','nm_origem_doc').'</td>');
       ShowHTML('        </tr>');
     }
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);

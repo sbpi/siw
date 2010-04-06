@@ -178,6 +178,12 @@ begin
    If p_origem = 'SOLIC' Then
       -- Se tela preenchida pelo solicitante, atualiza o valor calculado das hospedagens e das diárias de veículo
       update pd_diaria set calculo_hospedagem_qtd = hospedagem_qtd, calculo_veiculo_qtd = veiculo_qtd where sq_diaria =  w_sq_diaria;
+      
+      update pd_missao
+         set diaria     = case p_diaria when 'S' then diaria else null end,
+             hospedagem = p_hospedagem,
+             veiculo    = p_veiculo
+      where sq_siw_solicitacao = p_chave;
    End If;
    
    -- Ajusta as diárias se o usuário não as definiu manualmente

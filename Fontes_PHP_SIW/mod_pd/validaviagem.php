@@ -161,6 +161,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             if (f($l_rs_solic,'diaria')!='')      $w_erro_diaria      = true;
             if (f($l_rs_solic,'hospedagem')=='S') $w_erro_hospedagem  = true;
             if (f($l_rs_solic,'veiculo')=='S')    $w_erro_veiculo     = true;
+            $w_destino_nacional = false;
             
             $w_cont = 0;
             $l_i    = 1;
@@ -170,9 +171,10 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
                 if (nvl(f($row,'diaria'),'')=='' && f($row,'saida_internacional')==0 && f($row,'chegada_internacional')==0 && (f($row,'origem_nacional')=='S' || toDate(FormataDataEdicao(f($row,'phpdt_chegada')))!=$w_fim_s)) {
                   $w_cont++;
                 }
-                if (f($row,'diaria')=='S')     $w_erro_diaria = false;
-                if (f($row,'hospedagem')=='S') $w_erro_hospedagem = false;
-                if (f($row,'veiculo')=='S')    $w_erro_veiculo = false;
+                if (f($row,'diaria')=='S')           $w_erro_diaria = false;
+                if (f($row,'hospedagem')=='S')       $w_erro_hospedagem = false;
+                if (f($row,'veiculo')=='S')          $w_erro_veiculo = false;
+                if (f($row,'destino_nacional')=='S') $w_destino_nacional = true;
               }
               $l_i++;
             }
@@ -184,7 +186,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_erro .= '<li>Informe as localidades em que deseja recebimento de diárias ou altere essa necessidade na tela de dados gerais.';
               $l_tipo = 0;
             }
-            if ($w_erro_hospedagem) {
+            if ($w_erro_hospedagem && $w_destino_nacional) {
               $l_erro .= '<li>Informe as localidades em que deseja hospedagens ou altere essa necessidade na tela de dados gerais.';
               $l_tipo = 0;
             }

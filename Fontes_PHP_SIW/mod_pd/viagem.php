@@ -2277,6 +2277,7 @@ function AltSolic() {
       $w_trechos[$i][48] = f($row,'saida_internacional');
       $w_trechos[$i][49] = f($row,'chegada_internacional');
       $w_trechos[$i][50] = f($row,'origem_nacional');
+      $w_trechos[$i][51] = f($row,'destino_nacional');
       // Cria array para guardar o valor total por moeda
       if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
       if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -3612,6 +3613,7 @@ function Diarias() {
     $w_hos_observ           = $_REQUEST['w_hos_observ'];
     $w_vei_ret              = $_REQUEST['w_vei_ret'];
     $w_vei_dev              = $_REQUEST['w_vei_dev'];
+    $w_destino_nacional     = $_REQUEST['w_destino_nacional'];
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
@@ -3674,6 +3676,7 @@ function Diarias() {
     $w_max_diaria           = (toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400;
     $w_max_hosp             = ($w_hos_out-$w_hos_in)/86400;
     $w_max_veiculo          = ($w_vei_dev-$w_vei_ret)/86400;
+    $w_destino_nacional     = $w_trechos[51];
     
     // Reconfigura o máximo de diárias para o primeiro trecho
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
@@ -3696,7 +3699,7 @@ function Diarias() {
   $RS_Fin_Dia = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,'S',null,null,null,null,null,null,null);
   $RS_Fin_Hsp = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,'S',null,null,null,null,null,null);
   $RS_Fin_Vei = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,f($RS_Solic,'sq_solic_pai'),null,null,null,null,'S',null,null,null,null,null);
-
+  
   Cabecalho();
   head();
   ShowHTML('<TITLE>'.$conSgSistema.' - Diárias</TITLE>');
@@ -3873,7 +3876,7 @@ function Diarias() {
       Validate('w_justificativa_diaria','Observações / Justificativa para não pagamento de diárias','','1',3,500,'1','1');
       ShowHTML('  }');     
     }
-    if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
+    if (nvl($w_destino_nacional,'')=='S') {
       ShowHTML('  if (theForm.w_hospedagem[0].checked) {');
       Validate('w_hos_in','Data de check in','DATA','1',10,10,'','0123456789/');
       CompData('w_hos_in','Data de check in','>=','w_dt_chegada','Chegada à localidade');
@@ -3911,48 +3914,49 @@ function Diarias() {
       Validate('w_hos_observ','Observações / Justificativa para não pagamento de hospedagem','1','1',3,500,'1','1');
       ShowHTML('  }');
     }
-    if (nvl($w_sq_diaria_veiculo,'')!='' && f($RS_Solic,'veiculo')=='S') {
-      ShowHTML('  if (theForm.w_veiculo[0].checked) {');
-      Validate('w_vei_ret','Data de retirada','DATA','1',10,10,'','0123456789/');
-      CompData('w_vei_ret','Data de retirada','>=','w_dt_chegada','Chegada à localidade');
-      Validate('w_vei_dev','Data de devolução','DATA','1',10,10,'','0123456789/');
-      CompData('w_vei_dev','Data de devolução','>=','w_vei_ret','Data de retirada');
-      CompData('w_vei_dev','Data de retirada','<=','w_dt_saida','Saída da localidade');
-      Validate('w_justificativa_veiculo','Justificativa para locação de veículo','','',3,500,'1','1');
-      ShowHTML('    if(theForm.w_justificativa_veiculo.value=="") {');
-      ShowHTML('      alert("Favor informar a justificativa para locação de veículo!");');
-      ShowHTML('      theForm.w_justificativa_veiculo.focus();');
+
+    // Validação para locação de veículo
+    ShowHTML('  if (theForm.w_veiculo[0].checked) {');
+    Validate('w_vei_ret','Data de retirada','DATA','1',10,10,'','0123456789/');
+    CompData('w_vei_ret','Data de retirada','>=','w_dt_chegada','Chegada à localidade');
+    Validate('w_vei_dev','Data de devolução','DATA','1',10,10,'','0123456789/');
+    CompData('w_vei_dev','Data de devolução','>=','w_vei_ret','Data de retirada');
+    CompData('w_vei_dev','Data de retirada','<=','w_dt_saida','Saída da localidade');
+    Validate('w_justificativa_veiculo','Justificativa para locação de veículo','','',3,500,'1','1');
+    ShowHTML('    if(theForm.w_justificativa_veiculo.value=="") {');
+    ShowHTML('      alert("Favor informar a justificativa para locação de veículo!");');
+    ShowHTML('      theForm.w_justificativa_veiculo.focus();');
+    ShowHTML('      return (false);');
+    ShowHTML('    }');
+    ShowHTML('  w_data = theForm.w_vei_ret.value;');
+    ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');
+    ShowHTML('  w_data1  = new Date(Date.parse(w_data));');
+    ShowHTML('  w_data = theForm.w_vei_dev.value;');
+    ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');
+    ShowHTML('  w_data2= new Date(Date.parse(w_data));');
+    ShowHTML('  var MinMilli = 1000 * 60;');
+    ShowHTML('  var HrMilli = MinMilli * 60;');
+    ShowHTML('  var DyMilli = HrMilli * 24;');
+    ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli))+1;');
+    ShowHTML('  var Qtd  = parseFloat(theForm.w_quantidade.value.replace(",","."));');
+    ShowHTML('  theForm.w_veiculo_qtd.value=Days+",0";');
+    
+    if (count($RS_Fin_Vei)>1) {
+      ShowHTML('    if(theForm.w_rub_vei.selectedIndex==0) {');
+      ShowHTML('      alert("Favor informar a rubrica para pagamento de locações de veículo!");');
+      ShowHTML('      theForm.w_rub_vei.focus();');
       ShowHTML('      return (false);');
       ShowHTML('    }');
-      ShowHTML('  w_data = theForm.w_vei_ret.value;');
-      ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');
-      ShowHTML('  w_data1  = new Date(Date.parse(w_data));');
-      ShowHTML('  w_data = theForm.w_vei_dev.value;');
-      ShowHTML('  w_data = w_data.substr(3,2) + "/" + w_data.substr(0,2) + "/" + w_data.substr(6,4);');
-      ShowHTML('  w_data2= new Date(Date.parse(w_data));');
-      ShowHTML('  var MinMilli = 1000 * 60;');
-      ShowHTML('  var HrMilli = MinMilli * 60;');
-      ShowHTML('  var DyMilli = HrMilli * 24;');
-      ShowHTML('  var Days = Math.round(Math.abs((w_data2 - w_data1) / DyMilli))+1;');
-      ShowHTML('  var Qtd  = parseFloat(theForm.w_quantidade.value.replace(",","."));');
-      ShowHTML('  theForm.w_veiculo_qtd.value=Days+",0";');
-      
-      if (count($RS_Fin_Vei)>1) {
-        ShowHTML('    if(theForm.w_rub_vei.selectedIndex==0) {');
-        ShowHTML('      alert("Favor informar a rubrica para pagamento de locações de veículo!");');
-        ShowHTML('      theForm.w_rub_vei.focus();');
-        ShowHTML('      return (false);');
-        ShowHTML('    }');
-        Validate('w_rub_vei','Rubrica para pagamento de diárias','SELECT','',1,18,'','1');
-        ShowHTML('    if(theForm.w_lan_vei.selectedIndex==0) {');
-        ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de locações de veículo!");');
-        ShowHTML('      theForm.w_lan_vei.focus();');
-        ShowHTML('      return (false);');
-        ShowHTML('    }');
-        Validate('w_lan_vei','Tipo de lançamento para pagamento de locações de veículo','SELECT','',1,18,'','1');
-      }
-      ShowHTML('  }');
+      Validate('w_rub_vei','Rubrica para pagamento de diárias','SELECT','',1,18,'','1');
+      ShowHTML('    if(theForm.w_lan_vei.selectedIndex==0) {');
+      ShowHTML('      alert("Favor informar o tipo de lançamento para pagamento de locações de veículo!");');
+      ShowHTML('      theForm.w_lan_vei.focus();');
+      ShowHTML('      return (false);');
+      ShowHTML('    }');
+      Validate('w_lan_vei','Tipo de lançamento para pagamento de locações de veículo','SELECT','',1,18,'','1');
     }
+    ShowHTML('  }');
+
     ValidateClose();
     ScriptClose();
   }
@@ -4045,6 +4049,7 @@ function Diarias() {
         $w_trechos[$i][48] = f($row,'saida_internacional');
         $w_trechos[$i][49] = f($row,'chegada_internacional');
         $w_trechos[$i][50] = f($row,'origem_nacional');
+        $w_trechos[$i][51] = f($row,'destino_nacional');
         // Cria array para guardar o valor total por moeda
         if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
         if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -4148,6 +4153,7 @@ function Diarias() {
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_diaria" value="'.$w_sg_moeda_diaria.'">');
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_hospedagem" value="'.$w_sg_moeda_hospedagem.'">');
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_veiculo" value="'.$w_sg_moeda_veiculo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_destino_nacional" value="'.$w_destino_nacional.'">');
     ShowHTML('<INPUT type="hidden" name="w_origem" value="SOLIC">');
 
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'"><td><table border=0 width="100%">');
@@ -4187,7 +4193,7 @@ function Diarias() {
       }
     }
     $w_Disabled = '';
-    if (nvl($w_sq_diaria_hospedagem,'')!='' && f($RS_Solic,'hospedagem')=='S') {
+    if (nvl($w_destino_nacional,'')=='S') {
       ShowHTML('          <tr valign="top">');
       MontaRadioNS('<b>Hospedagem?</b>',$w_hospedagem,'w_hospedagem','Informe Sim se desejar pagamento das hospedagens.',null,'onClick="marcaHospedagem()"');
       ShowHTML('          <td><b><u>C</u>heck in:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_hos_in" '.(($w_hospedagem=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_hos_in).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
@@ -4208,28 +4214,28 @@ function Diarias() {
         ShowHTML('<INPUT type="hidden" name="w_fin_hsp" value="'.f($RS_Fin_Hsp,'chave').'">');
       }
     }
+    // Tratamento para locação de veículos
     $w_Disabled = '';
-    if (nvl($w_sq_diaria_veiculo,'')!='' && f($RS_Solic,'veiculo')=='S') {
-      ShowHTML('          <tr valign="top">');
-      MontaRadioNS('<b>Veículo?</b>',$w_veiculo,'w_veiculo','Informe Sim se desejar locação de veículo.',null,'onClick="marcaLocacao()"');
-      ShowHTML('          <td><b><u>R</u>etirada:</b><br><input accesskey="C" type="text" name="w_vei_ret" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_vei_ret).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
-      ShowHTML('          <td><b><u>D</u>evolução:</b><br><input accesskey="C" type="text" name="w_vei_dev" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_vei_dev).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
-      ShowHTML('          <tr><td><td colspan="3" valign="top"><b><u>J</u>ustificativa para locação de veículo:</b><br><textarea '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' accesskey="J" name="w_justificativa_veiculo" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, a necessidade de locação de veículo. Caso contrário, deixe este campo em branco.">'.$w_justificativa_veiculo.'</TEXTAREA></td>');
-      ShowHTML('<INPUT type="hidden" name="w_vl_diaria_veiculo" value="'.$w_vl_diaria_veiculo.'">');
-      ShowHTML('<INPUT type="hidden" name="w_veiculo_qtd" value="'.$w_veiculo_qtd.'">');
-      ShowHTML('<INPUT type="hidden" name="w_veiculo_valor" value="'.$w_veiculo_valor.'">');
-      if (count($RS_Fin_Vei)>1) {
-        ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
-        ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
-        ShowHTML('          <tr><td>');
-        SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_vei,f($RS_Solic,'sq_solic_pai'),'D','w_rub_vei','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_vei\'; document.Form.submit();"');
-        SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,null,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
-        ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
-      } elseif (count($RS_Fin_Vei)==1) {
-        foreach($RS_Fin_Vei as $row) { $RS_Fin_Vei = $row; break; }
-        ShowHTML('<INPUT type="hidden" name="w_fin_vei" value="'.f($RS_Fin_Vei,'chave').'">');
-      }
+    ShowHTML('          <tr valign="top">');
+    MontaRadioNS('<b>Veículo?</b>',$w_veiculo,'w_veiculo','Informe Sim se desejar locação de veículo.',null,'onClick="marcaLocacao()"');
+    ShowHTML('          <td><b><u>R</u>etirada:</b><br><input accesskey="C" type="text" name="w_vei_ret" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_vei_ret).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+    ShowHTML('          <td><b><u>D</u>evolução:</b><br><input accesskey="C" type="text" name="w_vei_dev" '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' SIZE="10" MAXLENGTH="10" VALUE="'.formataDataEdicao($w_vei_dev).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"> '.ExibeCalendario('Form','w_data_saida').'</td>');
+    ShowHTML('          <tr><td><td colspan="3" valign="top"><b><u>J</u>ustificativa para locação de veículo:</b><br><textarea '.(($w_veiculo=='S') ? 'class="STIO"' : 'READONLY class="STI"').' accesskey="J" name="w_justificativa_veiculo" class="STI" ROWS=5 cols=75 title="É obrigatório justificar, neste campo, a necessidade de locação de veículo. Caso contrário, deixe este campo em branco.">'.$w_justificativa_veiculo.'</TEXTAREA></td>');
+    ShowHTML('<INPUT type="hidden" name="w_vl_diaria_veiculo" value="'.$w_vl_diaria_veiculo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_veiculo_qtd" value="'.$w_veiculo_qtd.'">');
+    ShowHTML('<INPUT type="hidden" name="w_veiculo_valor" value="'.$w_veiculo_valor.'">');
+    if (count($RS_Fin_Vei)>1) {
+      ShowHTML('          <tr><td><td colspan="3"><b>Dados para Pagamento</td></td></tr>');
+      ShowHTML('          <tr><td><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('          <tr><td>');
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rub_vei,f($RS_Solic,'sq_solic_pai'),'D','w_rub_vei','PDFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rub_vei\'; document.Form.submit();"');
+      SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lan_vei,null,$w_cliente,'w_lan_vei','PDSV'.str_pad(f($RS_Solic,'sq_solic_pai'),10,'0',STR_PAD_LEFT).str_pad($w_rub_vei,10,'0',STR_PAD_LEFT).'D',null);
+      ShowHTML('<INPUT type="hidden" name="w_tipo_despesa" value="D">');
+    } elseif (count($RS_Fin_Vei)==1) {
+      foreach($RS_Fin_Vei as $row) { $RS_Fin_Vei = $row; break; }
+      ShowHTML('<INPUT type="hidden" name="w_fin_vei" value="'.f($RS_Fin_Vei,'chave').'">');
     }
+
     ShowHTML('          <tr><td colspan=4><hr height="1"></td></tr>');
     ShowHTML('          <tr><td align="center" colspan=4>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
