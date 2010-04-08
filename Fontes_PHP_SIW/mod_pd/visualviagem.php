@@ -122,7 +122,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      <tr valign="top"><td><b>Unidade proponente:</b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
       } 
       $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.f($RS,'nm_diaria').' </b></td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.Nvl(f($RS,'nm_diaria'),'---').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Contato na ausência:</b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {
@@ -458,7 +458,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           
           $w_tot_local = $w_diarias + $w_locacoes;
           
-          if (($i>1 && $i<count($w_trechos)) || 
+          if (($i>1 && $i<count($w_trechos) && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || 
               ($w_trechos[$i][40]==0 && 
                $w_trechos[$i][41]==0 && 
                ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && 
@@ -493,13 +493,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             if ($w_trechos[$i][12]=='S') {
               $l_html.=chr(13).'Sim. '.((nvl($w_trechos[$i][28],'')!='') ? 'Observações: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
             } else {
-              $l_html.=chr(13).'Não. Justificativa: '.crlf2br($w_trechos[$i][28]).'</td>';
+              $l_html.=chr(13).'Não.'.((nvl($w_trechos[$i][28],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
             }
             if ($w_trechos[$i][39]=='S') {
               if ($w_trechos[$i][15]=='S') {
                   $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
                 } else {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. Justificativa: '.crlf2br($w_trechos[$i][36]).'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. '.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
                 }
             }
             if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
@@ -607,11 +607,17 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             
             if ($w_diarias>0)     $w_tot_diaria_P[$w_trechos[$i][13]] += $w_diarias;
             if ($w_locacoes<>0)   $w_tot_diaria_P[$w_trechos[$i][23]] += $w_locacoes;
-            //if ($w_hospedagens>0) $w_tot_diaria_P[$w_trechos[$i][18]] += $w_hospedagens;
             
             $w_tot_local = $w_diarias + $w_locacoes;
             
-            if (($i>1 && $i<count($w_trechos)) || ($w_trechos[$i][40]==0 && $w_trechos[$i][41]==0 && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && ($w_tot_local!=0 || $i!=count($w_trechos)))) {
+            if (($i>1 && $i<count($w_trechos && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) || 
+                ($w_trechos[$i][40]==0 && 
+                 $w_trechos[$i][41]==0 && 
+                 ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && 
+                 ($w_tot_local!=0 || $i!=count($w_trechos))
+                )
+               ) 
+              {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               
               // Configura a quantidade de linhas do trecho
@@ -640,17 +646,19 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
               if ($w_trechos[$i][12]=='S') {
                 $l_html.=chr(13).'Sim.</td>';
               } else {
-                $l_html.=chr(13).'Não. Justificativa: '.crlf2br($w_trechos[$i][28]).'</td>';
+                $l_html.=chr(13).'Não.'.((nvl($w_trechos[$i][28],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][28]) : '').'</td>';
               }
               if (f($RS,'hospedagem')=='S'&&$w_trechos[$i][39]=='S') {
                 if ($w_trechos[$i][15]=='S') {
                   $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>'.$w_trechos[$i][34].' a '.$w_trechos[$i][35].'. Observação: '.crlf2br($w_trechos[$i][36]).'</td>';
                 } else {
-                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não. Justificativa: '.crlf2br($w_trechos[$i][36]).'</td>';
+                  $l_html.=chr(13).'      <tr valign="top"><td><b>Hospedagem:</b><td>Não.'.((nvl($w_trechos[$i][36],'')!='') ? 'Justificativa: '.crlf2br($w_trechos[$i][36]) : '').'</td>';
                 }
               }
               if ($w_trechos[$i][20]=='S' && $w_trechos[$i][27]>'' && f($RS,'veiculo')=='S') {
                 $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>'.$w_trechos[$i][37].' a '.$w_trechos[$i][38].'. Justificativa: '.crlf2br($w_trechos[$i][29]).'</td>';
+              } else {
+                $l_html.=chr(13).'      <tr valign="top"><td><b>Veículo:</b><td>Não.</td>';
               }
             }
             $i += 1;
@@ -866,7 +874,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
           $i += 1;
         }
-        $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL:';
+        $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_S as $k => $v) {
           $l_html.=chr(13).'       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v);
         }
@@ -1031,7 +1039,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
           $i += 1;
         }
-        $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL:';
+        $l_html.=chr(13).'     <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>TOTAL DIÁRIAS:';
         foreach($w_tot_diaria_P as $k => $v) {
           $l_html.=chr(13).'       &nbsp;&nbsp;&nbsp;&nbsp;'.$k.' '.formatNumber($v);
         }

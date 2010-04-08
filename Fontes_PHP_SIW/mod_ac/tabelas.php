@@ -826,6 +826,7 @@ function Modalidades() {
   global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
+  $p_ordena          = $_REQUEST['p_ordena'];
   //Se for recarga da página
   if ($w_troca > '' && $O!='E') {   
     $w_nome                   = $_REQUEST['w_nome'];
@@ -920,14 +921,14 @@ function Modalidades() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan="2"><b>Sigla</td>');
-    ShowHTML('          <td rowspan="2"><b>Nome</td>');
-    ShowHTML('          <td rowspan="2"><b>Mínimo pesquisas</td>');
-    ShowHTML('          <td colspan="3"><b>Certame</td>');
-    ShowHTML('          <td rowspan="2"><b>Gera contrato</td>');
-    ShowHTML('          <td colspan="2"><b>Enquadramento</td>');
-    ShowHTML('          <td rowspan="2"><b>Ativo</td>');
-    ShowHTML('          <td rowspan="2"><b>Padrão</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Mínimo pesquisas','minimo_pesquisas').'</td>');
+    ShowHTML('          <td colspan="3"><b>'.LinkOrdena('Certame','nm_certame').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Gera contrato','nm_gera_contrato').'</td>');
+    ShowHTML('          <td colspan="2"><b>'.LinkOrdena('Enquadramento','enquadramento_inicial').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
+    ShowHTML('          <td rowspan="2"><b>'.LinkOrdena('Padrão','nm_padrao').'</td>');
     ShowHTML('          <td rowspan="2"><b>Operações</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');

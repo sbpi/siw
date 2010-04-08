@@ -11,6 +11,7 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
   w_tot_dia   number(5,2);
   w_compromisso_saida   varchar2(1);
   w_compromisso_retorno varchar2(1);
+  w_internacional       varchar2(1);
 
   type diaria is table of number(10,1) index by binary_integer;
   
@@ -70,7 +71,9 @@ begin
         sp_calculaDiarias(crec.sq_siw_solicitacao);
      end loop;
   End If;
-  
+  -- Recupera informação sobre viagem internacional
+  select internacional into w_internacional from pd_missao where sq_siw_solicitacao = p_chave;
+   
   -- Recupera o início e o fim da viagem
   select min(trunc(a.saida)), max(trunc(a.chegada)) into w_inicio, w_fim 
     from pd_deslocamento        a
@@ -102,84 +105,87 @@ begin
      i := 0;
      -- Calcula as diárias
      for crec in c_deslocamentos (p_chave, w_atual) loop
-       If w_tot_dia < 1 Then
-         If w_cont = 1 Then
-            -- No primeiro dia:
-            --    NACIONAL
-            --    Toda e qualquer saída após as 18h será computada com o 1/2 diária nacional, tendo compromisso ou não
-            --    A saída antes das 18h com compromisso implica em uma diária nacional
-            --                          sem compromisso implica em 1/2 diária nacional
-            --    INTERNACIONAL
-            --    Toda e qualquer saída será computada com o 1 diária internacional
-            If crec.diaria_inicio = 'S' Then
-               If crec.destino_nacional = 'N' Then 
-                  diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
-               Elsif crec.compromisso = 'N' or to_char(crec.saida,'hh24mi') > 1800
-                  Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
-                  Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
-               End If;
-            End If;
-         Elsif w_cont = (w_fim-w_inicio+1) Then
-            -- No último dia:
-            --    NACIONAL
-            --    Chegada até  as 12h será computada com o 1/2 diária nacional, tendo compromisso ou não
-            --    Chegada após as 12h   com compromisso implica em uma diária nacional
-            --                          sem compromisso implica em 1/2 diária nacional
-            --    INTERNACIONAL
-            --    Toda e qualquer chegada será computada com o 1/2 diária internacional
-            If crec.origem_nacional = 'N' Then
-               If crec.diaria_fim = 'S' Then diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
-               If w_compromisso_retorno = 'S' and crec.sq_diaria_inicio is not null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  End If;
-               i := i + 1;
-               exit;
-            Elsif crec.diaria_fim = 'S' Then
-               If (w_compromisso_retorno = 'S' and w_tot_dia < 1) or
-                  (w_compromisso_retorno = 'N' and w_tot_dia = 0)
-               Then
-                  If  crec.compromisso = 'N' or to_char(crec.chegada,'hh24mi') <= 1200 or crec.origem_nacional = 'N' or w_tot_dia = 0.5
-                     Then diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 0.5;  w_tot_dia := w_tot_dia + 0.5;
-                     Else diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 1;    w_tot_dia := w_tot_dia + 1;
+       If w_tot_dia < 1  Then
+         -- Não concede diária em fim de semana para viagem nacional
+         If (w_internacional = 'S' or (w_internacional = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
+            If w_cont = 1 Then
+               -- No primeiro dia:
+               --    NACIONAL
+               --    Toda e qualquer saída após as 18h será computada com o 1/2 diária nacional, tendo compromisso ou não
+               --    A saída antes das 18h com compromisso implica em uma diária nacional
+               --                          sem compromisso implica em 1/2 diária nacional
+               --    INTERNACIONAL
+               --    Toda e qualquer saída será computada com o 1 diária internacional
+               If crec.diaria_inicio = 'S' Then
+                  If crec.destino_nacional = 'N' Then 
+                     diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
+                  Elsif crec.compromisso = 'N' or to_char(crec.saida,'hh24mi') > 1800
+                     Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
+                     Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
                   End If;
                End If;
-            End If;
-         Else
-            If (trunc(crec.saida) = trunc(crec.chegada) or 
-                (trunc(crec.saida) <> trunc(crec.chegada) and ((crec.origem_nacional = crec.destino_nacional or (crec.destino_nacional = 'N' and w_atual = trunc(crec.saida))) or
-                                                               (crec.origem_nacional  = 'N' and w_atual = trunc(crec.chegada))
-                                                              )
-                )
-               ) 
-            Then
-              -- Nos demais dias:
-              --    Cada dia de viagem corresponde a uma diária.
-              --    Se não há alteração de cidade na data, soma uma diária na cidade em que se encontra
-              --    Se há alteração de cidade na data:
-              --       Para destino internacional, conta 1 diária na cidade de destino, não importando horários;
-              --       Para destino nacional, conta 1/2 diária na cidade de origem e 1/2 diária na cidade de destino, não importando horários
-              If crec.origem_nacional = 'N' and crec.destino_nacional = 'S' Then
-                 -- vindo do exterior e não sendo o último dia de viagem, 0,5 diária para a origem e para o destino
-                 If crec.sq_diaria_inicio is not null and crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
-                 If crec.sq_diaria_fim    is not null and crec.diaria_fim    = 'S' Then diarias(crec.sq_diaria_fim)    := diarias(crec.sq_diaria_fim) + 0.5;     w_tot_dia := w_tot_dia + 0.5; End If;
-                 w_diaria    := crec.diaria_inicio;
-                 w_sq_diaria := crec.sq_diaria_inicio;
-                 i := i + 1;
-                 exit;
-              Else
-                 select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_atual = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
-                 If w_existe <= 1 or w_existe = (i+1) Then
-                    If crec.destino_nacional = 'N' Then
-                       If crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;  w_tot_dia := w_tot_dia + 1; End If;
-                    Else
-                       If crec.diaria_inicio = 'S' Then 
-                          diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; 
-                          If crec.diaria_fim is null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;    w_tot_dia := w_tot_dia + 0.5; End If;
+            Elsif w_cont = (w_fim-w_inicio+1) Then
+               -- No último dia:
+               --    NACIONAL
+               --    Chegada até  as 12h será computada com o 1/2 diária nacional, tendo compromisso ou não
+               --    Chegada após as 12h   com compromisso implica em uma diária nacional
+               --                          sem compromisso implica em 1/2 diária nacional
+               --    INTERNACIONAL
+               --    Toda e qualquer chegada será computada com o 1/2 diária internacional
+               If crec.origem_nacional = 'N' Then
+                  If crec.diaria_fim = 'S' Then diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
+                  If w_compromisso_retorno = 'S' and crec.sq_diaria_inicio is not null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  End If;
+                  i := i + 1;
+                  exit;
+               Elsif crec.diaria_fim = 'S' Then
+                  If (w_compromisso_retorno = 'S' and w_tot_dia < 1) or
+                     (w_compromisso_retorno = 'N' and w_tot_dia = 0)
+                  Then
+                     If  crec.compromisso = 'N' or to_char(crec.chegada,'hh24mi') <= 1200 or crec.origem_nacional = 'N' or w_tot_dia = 0.5
+                        Then diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 0.5;  w_tot_dia := w_tot_dia + 0.5;
+                        Else diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 1;    w_tot_dia := w_tot_dia + 1;
+                     End If;
+                  End If;
+               End If;
+            Else
+               If (trunc(crec.saida) = trunc(crec.chegada) or 
+                   (trunc(crec.saida) <> trunc(crec.chegada) and ((crec.origem_nacional = crec.destino_nacional or (crec.destino_nacional = 'N' and w_atual = trunc(crec.saida))) or
+                                                                  (crec.origem_nacional  = 'N' and w_atual = trunc(crec.chegada))
+                                                                 )
+                   )
+                  ) 
+               Then
+                 -- Nos demais dias:
+                 --    Cada dia de viagem corresponde a uma diária.
+                 --    Se não há alteração de cidade na data, soma uma diária na cidade em que se encontra
+                 --    Se há alteração de cidade na data:
+                 --       Para destino internacional, conta 1 diária na cidade de destino, não importando horários;
+                 --       Para destino nacional, conta 1/2 diária na cidade de origem e 1/2 diária na cidade de destino, não importando horários
+                 If crec.origem_nacional = 'N' and crec.destino_nacional = 'S' Then
+                    -- vindo do exterior e não sendo o último dia de viagem, 0,5 diária para a origem e para o destino
+                    If crec.sq_diaria_inicio is not null and crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
+                    If crec.sq_diaria_fim    is not null and crec.diaria_fim    = 'S' Then diarias(crec.sq_diaria_fim)    := diarias(crec.sq_diaria_fim) + 0.5;     w_tot_dia := w_tot_dia + 0.5; End If;
+                    w_diaria    := crec.diaria_inicio;
+                    w_sq_diaria := crec.sq_diaria_inicio;
+                    i := i + 1;
+                    exit;
+                Else
+                    select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_atual = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
+                    If w_existe <= 1 or w_existe = (i+1) Then
+                       If crec.destino_nacional = 'N' Then
+                          If crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;  w_tot_dia := w_tot_dia + 1; End If;
+                       Else
+                          If crec.diaria_inicio = 'S' Then 
+                             diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; 
+                             If crec.diaria_fim is null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;    w_tot_dia := w_tot_dia + 0.5; End If;
+                          End If;
+                          If crec.diaria_fim = 'S' and w_sq_diaria is not null Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; w_tot_dia := w_tot_dia + 0.5; End If;
                        End If;
-                       If crec.diaria_fim = 'S' and w_sq_diaria is not null Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 0.5; w_tot_dia := w_tot_dia + 0.5; End If;
                     End If;
                  End If;
-              End If;
-            Else
-              If w_diaria = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; End If;
+               Elsif w_tot_dia = 0 Then
+                 If w_diaria = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; w_tot_dia := w_tot_dia + 1; End If;
+               End If;
             End If;
          End If;
          w_diaria    := crec.diaria_inicio;
@@ -188,7 +194,9 @@ begin
        End If;
      end loop;
      If i = 0 Then
-        If w_diaria = 'S' Then diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; End If;
+        If w_diaria = 'S' and (w_internacional = 'S' or (w_internacional = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
+           diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; 
+        End If;
      End If;
      w_atual := w_atual + 1;
      w_tot_dia := 0;

@@ -411,8 +411,9 @@ function Criterio() {
   $w_sq_lcjulgamento = $_REQUEST['w_sq_lcjulgamento'];
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
+  $p_ordena          = $_REQUEST['p_ordena'];
   //Se for recarga da página
-  if ($w_troca > '' && $O!='E') {   
+  if($w_troca > '' && $O!='E') {   
     $w_nome         = $_REQUEST['w_nome'];
     $w_descricao    = $_REQUEST['w_descricao'];
     $w_ativo        = $_REQUEST['w_ativo'];
@@ -421,7 +422,12 @@ function Criterio() {
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $RS = db_getLCCriterio::getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
-    $RS = SortArray($RS,'nome','asc'); 
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome_resumido','asc');
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    } 
   } elseif (strpos('AEV',$O)!==false) {
     //Recupera os dados do endereço informado
     $RS = db_getLCCriterio::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
@@ -475,11 +481,11 @@ function Criterio() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
-    ShowHTML('          <td><font size="1"><b>Vencedor por item</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Vencedor por item','nm_item').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><font size="1"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -559,8 +565,9 @@ function Situacao() {
   global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
   $w_troca           = $_REQUEST['w_troca'];
+  $p_ordena          = $_REQUEST['p_ordena'];
   //Se for recarga da página
-  if ($w_troca > '' && $O!='E') {   
+  if($w_troca > '' && $O!='E') {   
     $w_nome         = $_REQUEST['w_nome'];
     $w_descricao    = $_REQUEST['w_descricao'];
     $w_ativo        = $_REQUEST['w_ativo'];
@@ -569,7 +576,12 @@ function Situacao() {
   } elseif ($O=='L') {     
     // Recupera todos os registros para a listagem
     $RS = db_getLCSituacao::getInstanceOf($dbms, null, $w_cliente, null, null, null, null, null, null);
-    $RS = SortArray($RS,'nome','asc'); 
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    } 
   } elseif (!(strpos('AEV',$O)===false)) {
     //Recupera os dados do endereço informado
     $RS = db_getLCSituacao::getInstanceOf($dbms, $w_chave, $w_cliente, null, null, null, null, null, null);
@@ -624,11 +636,11 @@ function Situacao() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Descrição</font></td>');
-    ShowHTML('          <td><font size="1"><b>Publicar no portal</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrão</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Descrição','descricao').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Publicar no portal','nm_publicar').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrão','nm_padrao').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','nm_ativo').'</font></td>');
     ShowHTML('          <td><font size="1"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {

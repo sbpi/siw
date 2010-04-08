@@ -100,8 +100,9 @@ function AreaAtuacao(){
     $w_ativo  = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $RS = db_getEOAAtuac::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc');
+    if ($p_ordena>'') {      
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
       $RS = SortArray($RS,'nome','asc');
     }
@@ -166,9 +167,9 @@ function AreaAtuacao(){
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Chave</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Chave','sq_area_atuacao').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><font size="1"><b>Operações</font></td>');
     }  
@@ -294,7 +295,8 @@ function TipoUnidade() {
   } elseif ($O=='L') {
     $RS = db_getUnitTypeList::getInstanceOf($dbms,$w_cliente,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc');
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
       $RS = SortArray($RS,'nome','asc');
     }
@@ -360,9 +362,9 @@ function TipoUnidade() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Chave</font></td>');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Chave','sq_tipo_unidade').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><font size="1"><b>Operações</font></td>');
     } 
@@ -475,7 +477,8 @@ function TipoUnidade() {
 function TipoPosto() {
   extract($GLOBALS);
   global $w_Disabled;
-  $w_chave=$_REQUEST['w_chave'];
+  $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
   if ($w_troca>'' && $O!='E') {
     $w_nome      = $_REQUEST['w_nome'];
     $w_sigla     = $_REQUEST['w_sigla'];
@@ -484,6 +487,12 @@ function TipoPosto() {
     $w_ativo     = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,null,null);
+    if ($p_ordena>'') { 
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    } else {
+      $RS = SortArray($RS,'nome','asc');
+    }
   } elseif ($O=='A' || $O=='E') {
     $RS = db_getTipoPostoList::getInstanceOf($dbms,$w_cliente,$w_chave,null);
     foreach ($RS as $row) {
@@ -540,10 +549,10 @@ function TipoPosto() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td><font size="1"><b>Sigla</font></td>');
-    ShowHTML('          <td><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td><font size="1"><b>Padrao</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Sigla','sigla').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
+    ShowHTML('          <td><font size="1"><b>'.LinkOrdena('Padrao','padrao').'</font></td>');
     ShowHTML('          <td><font size="1"><b>Operações</font></td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {

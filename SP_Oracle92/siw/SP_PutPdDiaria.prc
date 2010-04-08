@@ -39,11 +39,15 @@ create or replace procedure SP_PutPdDiaria
     p_texto_hospedagem      in varchar2  default null,
     p_texto_veiculo         in varchar2  default null
    ) is
-   w_reg       number(18);
-   w_sq_diaria number(18) := p_sq_diaria;
-   w_fin_dia   number(18) := p_fin_dia;
-   w_fin_hsp   number(18) := p_fin_hsp;
-   w_fin_vei   number(18) := p_fin_vei;
+   w_reg        number(18);
+   w_sq_diaria  number(18) := p_sq_diaria;
+   w_fin_dia    number(18) := p_fin_dia;
+   w_fin_hsp    number(18) := p_fin_hsp;
+   w_fin_vei    number(18) := p_fin_vei;
+   w_diaria     number(4);
+   w_hospedagem number(4);
+   w_veiculo    number(4);
+   w_sg_tramite varchar2(10);
 begin
    -- Verifica se precisa gravar o tipo de vínculo financeiro
    If instr('IA','I')>0 Then
@@ -179,11 +183,27 @@ begin
       -- Se tela preenchida pelo solicitante, atualiza o valor calculado das hospedagens e das diárias de veículo
       update pd_diaria set calculo_hospedagem_qtd = hospedagem_qtd, calculo_veiculo_qtd = veiculo_qtd where sq_diaria =  w_sq_diaria;
       
-      update pd_missao
-         set diaria     = case p_diaria when 'S' then diaria else null end,
-             hospedagem = p_hospedagem,
-             veiculo    = p_veiculo
-      where sq_siw_solicitacao = p_chave;
+      -- Verifica o trâmite da solicitação
+      select b.sigla into w_sg_tramite
+        from siw_solicitacao        a
+             inner join siw_tramite b on (a.sq_siw_tramite = b.sq_siw_tramite)
+       where a.sq_siw_solicitacao = p_chave;
+       
+      -- Verifica se alguma diária foi cadastrada para a solicitação
+      select count(*) into w_reg from pd_diaria where sq_siw_solicitacao = p_chave;
+       
+      If w_sg_tramite <> 'CI' and w_reg > 0 Then
+         -- Verifica se alguma das localidades necessita de diárias, hospedagens ou veículos
+         select count(*) into w_diaria     from pd_diaria where sq_siw_solicitacao = p_chave and diaria     = 'S';
+         select count(*) into w_hospedagem from pd_diaria where sq_siw_solicitacao = p_chave and hospedagem = 'S';
+         select count(*) into w_veiculo    from pd_diaria where sq_siw_solicitacao = p_chave and veiculo    = 'S';
+         
+         update pd_missao
+            set diaria     = case w_diaria     when 0 then null else diaria end,
+                hospedagem = case w_hospedagem when 0 then 'N'  else 'S'    end,
+                veiculo    = case w_veiculo    when 0 then 'N'  else 'S'    end
+         where sq_siw_solicitacao = p_chave;
+      End If;
    End If;
    
    -- Ajusta as diárias se o usuário não as definiu manualmente

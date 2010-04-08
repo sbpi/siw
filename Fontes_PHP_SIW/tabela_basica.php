@@ -113,6 +113,7 @@ function TipoEndereco() {
   $p_nome               = trim(upper($_REQUEST['p_nome']));
   $p_ativo              = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_endereco   = $_REQUEST['w_sq_tipo_endereco'];
+  $p_ordena             = $_REQUEST['p_ordena'];
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -126,10 +127,13 @@ function TipoEndereco() {
     $w_internet             = $_REQUEST['w_internet'];
     $w_ativo                = $_REQUEST['w_ativo'];
     $w_padrao               = $_REQUEST['w_padrao'];
+    $p_ordena               = $_REQUEST['p_ordena'];
+    
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getAdressTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');    
     } else {
       $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     }
@@ -199,13 +203,13 @@ function TipoEndereco() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Aplicação</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>e-Mail</td>');
-    ShowHTML('          <td><b>Internet</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_tipo_endereco').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aplicação','sq_tipo_pessoa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('e-Mail','email').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Internet','internet').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 
@@ -319,9 +323,10 @@ function TipoTelefone() {
   extract($GLOBALS);
   global $w_Disabled;
 
-  $p_nome=trim(upper($_REQUEST['p_nome']));
-  $p_ativo=trim($_REQUEST['p_ativo']);
-  $w_sq_tipo_telefone=$_REQUEST['w_sq_tipo_telefone'];
+  $p_nome             = trim(upper($_REQUEST['p_nome']));
+  $p_ativo            = trim($_REQUEST['p_ativo']);
+  $w_sq_tipo_telefone = $_REQUEST['w_sq_tipo_telefone'];
+  $p_ordena           = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -330,10 +335,12 @@ function TipoTelefone() {
     $w_sq_tipo_pessoa       = $_REQUEST['w_sq_tipo_pessoa'];
     $w_ativo                = $_REQUEST['w_ativo'];
     $w_padrao               = $_REQUEST['w_padrao'];
+    
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getFoneTypeList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     } else {
       $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
     }
@@ -398,11 +405,11 @@ function TipoTelefone() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Aplicação</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_tipo_telefone').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Aplicação','sq_tipo_pessoa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -509,6 +516,7 @@ function TipoPessoa() {
   $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_pessoa = $_REQUEST['w_sq_tipo_pessoa'];
+  $p_ordena         = $_REQUEST['p_ordena'];
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao=f($RS,'libera_edicao');
@@ -522,7 +530,8 @@ function TipoPessoa() {
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getUserTypeList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
     } else {
       $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
@@ -590,10 +599,10 @@ function TipoPessoa() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_tipo_pessoa').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     }  
@@ -701,6 +710,7 @@ function Deficiencia() {
   $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_deficiencia = $_REQUEST['w_sq_deficiencia'];
+  $p_ordena         = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -713,7 +723,8 @@ function Deficiencia() {
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficiencyList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sq_grupo_defic','asc','codigo','asc');
     } else {
       $RS = SortArray($RS,'sq_grupo_defic','asc','codigo','asc');
     }
@@ -781,12 +792,12 @@ function Deficiencia() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Grupo</td>');
-    ShowHTML('          <td><b>Código</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_deficiencia').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Grupo','sq_grupo_defic').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','codigo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -896,6 +907,7 @@ function GrupoDeficiencia() {
   $p_codigo_externo         = trim(upper($_REQUEST['p_codigo_externo']));
   $p_ativo                  = trim($_REQUEST['p_ativo']);
   $w_sq_grupo_deficiencia   = $_REQUEST['w_sq_grupo_deficiencia'];
+  $p_ordena                 = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -906,7 +918,8 @@ function GrupoDeficiencia() {
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getDeficGroupList::getInstanceOf($dbms,$p_nome,$p_codigo_externo,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
       $RS = SortArray($RS,'nome','asc');
     }
@@ -970,10 +983,10 @@ function GrupoDeficiencia() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Código externo</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_grupo_defic').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1076,6 +1089,7 @@ function Idioma() {
   $p_nome       = trim(upper($_REQUEST['p_nome']));
   $p_ativo      = trim($_REQUEST['p_ativo']);
   $w_sq_idioma  = $_REQUEST['w_sq_idioma'];
+  $p_ordena     = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -1086,7 +1100,8 @@ function Idioma() {
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getIdiomList::getInstanceOf($dbms,$p_nome,$p_ativo);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc','nome','asc');
     } else {
       $RS = SortArray($RS,'padrao','desc','nome','asc');
     }
@@ -1147,10 +1162,10 @@ function Idioma() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_idioma').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1251,6 +1266,7 @@ function Etnia() {
   global $w_Disabled;
 
   $w_sq_etnia   = $_REQUEST['w_sq_etnia'];
+  $p_ordena     = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -1260,8 +1276,9 @@ function Etnia() {
     $w_codigo_siape   = $_REQUEST['w_codigo_siape'];
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getEtniaList::getInstanceOf($dbms,$p_nome,$p_ativo);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+    if ($p_ordena>'') {
+    $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'codigo_siape','asc','nome','asc');
     } else {
       $RS = SortArray($RS,'codigo_siape','asc','nome','asc');
     }
@@ -1325,10 +1342,10 @@ function Etnia() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Código externo</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_etnia').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_siape').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','descativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1433,6 +1450,7 @@ function Formacao() {
   $p_nome           = trim(upper($_REQUEST['p_nome']));
   $p_ativo          = trim($_REQUEST['p_ativo']);
   $w_sq_formacao    = $_REQUEST['w_sq_formacao'];
+  $p_ordena         = $_REQUEST['p_ordena'];
 
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E')  {
@@ -1443,8 +1461,9 @@ function Formacao() {
     $w_ordem     = $_REQUEST['w_ordem'];
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getFormationList::getInstanceOf($dbms,null,$p_nome,$p_ativo);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,substr($p_ordena,0,strpos($p_ordena,' ')),substr($p_ordena,strpos($p_ordena,' ')+1));
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'tipo','asc','ordem','asc','nome','asc');
     } else {
       $RS = SortArray($RS,'tipo','asc','ordem','asc','nome','asc');
     }
@@ -1505,11 +1524,11 @@ function Formacao() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Tipo</td>');
-    ShowHTML('          <td><b>Ordem</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_formacao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','tipo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ordem','ordem').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {

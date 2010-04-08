@@ -562,6 +562,8 @@ function Natureza() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
+  
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_chave    = $_REQUEST['w_chave'];
@@ -570,7 +572,12 @@ function Natureza() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getNatureza_pe::getInstanceOf($dbms,null,$w_cliente,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    }    
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados chave informada
     $RS = db_getNatureza_pe::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
@@ -620,8 +627,8 @@ function Natureza() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
@@ -691,6 +698,8 @@ function Horizonte() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
+  
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_chave    = $_REQUEST['w_chave'];
@@ -699,7 +708,12 @@ function Horizonte() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getHorizonte_pe::getInstanceOf($dbms,null,$w_cliente,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    }    
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getHorizonte_pe::getInstanceOf($dbms,$w_chave,$w_cliente,null,null);
@@ -750,8 +764,8 @@ function Horizonte() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1616,7 +1630,8 @@ function TipoInter() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave           = $_REQUEST['w_chave'];
-
+  $p_ordena          = $_REQUEST['p_ordena'];
+  
   if ($w_troca>'' && $O!='E') {
     $w_servico         = $_REQUEST['w_servico'];
     $w_nome            = $_REQUEST['w_nome'];
@@ -1693,12 +1708,12 @@ function TipoInter() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Serviço</td>');
-    ShowHTML('          <td><b>Ordem</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Serviço','nm_servico').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ordem','ordem').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b> Operações </td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -2067,6 +2082,8 @@ function TipoIndicador() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
+  
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_chave    = $_REQUEST['w_chave'];
@@ -2075,7 +2092,12 @@ function TipoIndicador() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,null,null,null,'REGISTROS');
-    $RS = SortArray($RS,'nome','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getTipoIndicador::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,'REGISTROS');
@@ -2126,8 +2148,8 @@ function TipoIndicador() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -2351,6 +2373,7 @@ function Unidade() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -2364,7 +2387,12 @@ function Unidade() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1]);
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getUnidade_PE::getInstanceOf($dbms,$w_cliente,$w_chave,null,null);
@@ -2424,12 +2452,12 @@ function Unidade() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Unidade</td>');
-    ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td><b>Planejamento</td>');
-    ShowHTML('          <td><b>Execução</td>');
-    ShowHTML('          <td><b>Recursos</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Unidade','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Planejamento','nm_planejamento').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Execução','nm_execucao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Recursos','nm_recursos').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {

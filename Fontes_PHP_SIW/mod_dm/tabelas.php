@@ -92,6 +92,7 @@ function TipoDemanda() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave  = $_REQUEST['w_chave'];
+  $p_ordena = $_REQUEST['p_ordena'];
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_chave      = $_REQUEST['w_chave'];
@@ -104,7 +105,13 @@ function TipoDemanda() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getTipoDemanda::getInstanceOf($dbms,null,$w_cliente,null,null,null,null,null);
-    $RS = SortArray($RS,'nome','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
+    }else{
+      $RS = SortArray($RS,'nome','asc');
+    }
+    
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados do endereço informado
     $RS = db_getTipoDemanda::getInstanceOf($dbms,$w_chave,$w_cliente,null,null,null,null,null);
@@ -162,11 +169,11 @@ function TipoDemanda() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Setor</td>');
-    ShowHTML('          <td><b>Reunião</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Setor','nm_unidade').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Reunião','nm_reuniao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {

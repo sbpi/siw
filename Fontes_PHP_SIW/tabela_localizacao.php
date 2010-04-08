@@ -363,8 +363,9 @@ function Estado() {
     $w_ordem        = $_REQUEST['w_ordem'];
   } elseif ($O=='L') {
     $RS = db_getStateList::getInstanceOf($dbms,nvl($p_sq_pais,0),$p_sq_regiao,$p_ativo,null);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc'); 
     } else {
       $RS = SortArray($RS,'padrao','desc','co_uf','asc');
     }
@@ -443,13 +444,13 @@ function Estado() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>País</td>');
-    ShowHTML('          <td><b>Região</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>IBGE</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('País','nome_pais').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Região','nome_regiao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','co_uf').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('IBGE','codigo_ibge').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 
@@ -603,7 +604,8 @@ function Regiao() {
   } elseif ($O=='L') {
     $RS = db_getRegionList::getInstanceOf($dbms,$p_sq_pais,'N',$p_nome);
     if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc');
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],$p_ordena,'asc');
     } else {
       $RS = SortArray($RS,'padrao','desc','sq_pais','asc','sq_regiao','asc');
     }
@@ -673,11 +675,11 @@ function Regiao() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>País</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>Ordem</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_regiao').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('País','nome_pais').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ordem','ordem').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     }  
@@ -804,8 +806,9 @@ function Pais() {
     $w_sq_moeda     = $_REQUEST['w_sq_moeda'];
   } elseif ($O=='L') {
     $RS = db_getCountryList::getInstanceOf($dbms,null,$p_nome,$p_ativo,$p_sigla);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc','sq_pais','asc','nome','asc');
+    if (nvl($p_ordena,'')!='') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sq_pais','asc','nome','asc');
     } else {
       $RS = SortArray($RS,'sq_pais','asc','padrao','desc','nome','asc');
     }
@@ -878,14 +881,14 @@ function Pais() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Sigla</td>');
-    ShowHTML('          <td><b>DDI</td>');
-    ShowHTML('          <td><b>Moeda</td>');
-    ShowHTML('          <td><b>Continente</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrao</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_pais').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('DDI','ddi').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Moeda','nm_moeda').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Continente','nm_continente').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativodesc').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrao','padraodesc').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 

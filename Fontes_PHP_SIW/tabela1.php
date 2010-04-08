@@ -94,6 +94,7 @@ function TipoVinculo() {
   $p_nome               = trim(upper($_REQUEST['p_nome']));
   $p_ativo              = trim($_REQUEST['p_ativo']);
   $w_sq_tipo_vinculo    = $_REQUEST['w_sq_tipo_vinculo'];
+  $p_ordena             = $_REQUEST['p_ordena'];
 
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
@@ -109,7 +110,12 @@ function TipoVinculo() {
     $w_mail_alerta      = $_REQUEST['w_mail_alerta'];
   } elseif (!(strpos('LP',$O)===false)) {
     $RS = db_getVincKindList::getInstanceOf($dbms,$w_cliente,$p_ativo,null,$p_nome,null);
-    $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
+    if ($p_ordena>'') { 
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
+    } else {
+     $RS = SortArray($RS,'sq_tipo_pessoa','asc','padrao','desc','nome','asc');
+    }
   } elseif (($O=='A' || $O=='E')) {
     $RS = db_getVincKindData::getInstanceOf($dbms,$w_sq_tipo_vinculo);
     $w_nome             = f($RS,'nome');
@@ -183,13 +189,13 @@ function TipoVinculo() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Chave</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Aplicação</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Nome</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Interno</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Contratado</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Ativo</font></td>');
-    ShowHTML('          <td rowspan="2"><font size="1"><b>Padrão</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Chave','sq_tipo_vinculo').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Aplicação','sq_tipo_pessoa').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Nome','nome').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Interno','interno').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Contratado','contratado').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Ativo','ativo').'</font></td>');
+    ShowHTML('          <td rowspan="2"><font size="1"><b>'.LinkOrdena('Padrão','padrao').'</font></td>');
     ShowHTML('          <td colspan="2"><font size="1"><b>E-mail</font></td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td rowspan=2><font size="1"><b>Operações</font></td>');

@@ -659,6 +659,7 @@ function Banco() {
   $RS = db_getMenuData::getInstanceOf($dbms,$w_menu);
   $w_libera_edicao = f($RS,'libera_edicao');
   $w_sq_banco      = $_REQUEST['w_sq_banco'];
+  $p_ordena        = $_REQUEST['p_ordena'];
 
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
@@ -670,8 +671,9 @@ function Banco() {
     $w_exige         = $_REQUEST['w_exige'];    
   } elseif ($O=='L') {
     $RS = db_getBankList::getInstanceOf($dbms,$p_codigo,$p_nome,$p_ativo);
-    if ($p_ordena>'') { 
-      $RS = SortArray($RS,$p_ordena,'asc','nome','asc');
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'nome','asc');
     } else {
       $RS = SortArray($RS,'codigo','asc');
     }
@@ -741,11 +743,11 @@ function Banco() {
     ShowHTML('<tr><td colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Chave</td>');
-    ShowHTML('          <td><b>Código</td>');
-    ShowHTML('          <td><b>Nome</td>');
-    ShowHTML('          <td><b>Ativo</td>');
-    ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Chave','sq_banco').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','codigo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','ativo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Padrão','padrao').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td><b>Operações</td>');
     } 

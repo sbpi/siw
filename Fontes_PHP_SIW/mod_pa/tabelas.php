@@ -1422,6 +1422,7 @@ function Assunto() {
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
   $w_copia      = $_REQUEST['w_copia'];
+  $p_ordena     = $_REQUEST['p_ordena'];
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
     $w_chave_pai            = $_REQUEST['w_chave_pai'];
@@ -1441,7 +1442,13 @@ function Assunto() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,null,null,null,'ISNULL');
-    $RS = SortArray($RS,'provisorio','desc','codigo','asc','descricao','asc');
+    if(nvl($p_ordena,'')!=''){
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'provisorio','desc','codigo','asc','descricao','asc');
+    }else{
+      $RS = SortArray($RS,'provisorio','desc','codigo','asc','descricao','asc');
+    }
+    
   } elseif (!(strpos('AEV',$O)===false) && $w_troca=='') {
     // Recupera os dados de um assunto
     $RS = db_getAssunto_PA::getInstanceOf($dbms,$w_cliente,$w_chave,null,null,null,null,null,null,null,null,'REGISTROS');
@@ -1514,14 +1521,14 @@ function Assunto() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Código</td>');
-    ShowHTML('          <td><b>Descrição</td>');
-    ShowHTML('          <td><b>Corrente</td>');
-    ShowHTML('          <td><b>Intermediária</td>');
-    ShowHTML('          <td><b>Final</td>');
-    ShowHTML('          <td><b>Destinação final</td>');
-    ShowHTML('          <td><b>Provisório</td>');
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código','codigo').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao','').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Corrente','ds_corrente_guarda').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Intermediária','ds_intermed_guarda').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Final','ds_final_guarda').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Destinação final','ds_destinacao_final').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Provisório','nm_provisorio').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {

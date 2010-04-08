@@ -2321,14 +2321,13 @@ function AltSolic() {
       $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
       $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
       $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-      if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+      if (($i>1 && $i < ($j-1) && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
         $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
         $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
         $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
     
         if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
         if ($w_locacoes<>0)   $w_total[$w_trechos[$i][23]] += $w_locacoes;
-        //if ($w_hospedagens>0) $w_total[$w_trechos[$i][18]] += $w_hospedagens;
     
         $w_tot_local = $w_diarias + $w_locacoes;
                
@@ -3614,6 +3613,9 @@ function Diarias() {
     $w_vei_ret              = $_REQUEST['w_vei_ret'];
     $w_vei_dev              = $_REQUEST['w_vei_dev'];
     $w_destino_nacional     = $_REQUEST['w_destino_nacional'];
+    $w_saida_internacional  = $_REQUEST['w_saida_internacional'];
+    $w_chegada_internacional = $_REQUEST['w_chegada_internacional'];
+    $w_origem_nacional      = $_REQUEST['w_origem_nacional'];
   } elseif ($O=='L') {
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
     $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
@@ -3673,10 +3675,15 @@ function Diarias() {
     $w_hos_observ           = $w_trechos[45];
     $w_vei_ret              = $w_trechos[46];
     $w_vei_dev              = $w_trechos[47];
+    $w_saida_internacional  = $w_trechos[48];
+    $w_chegada_internacional = $w_trechos[49];
+    $w_origem_nacional      = $w_trechos[50];
+    $w_destino_nacional     = $w_trechos[51];
     $w_max_diaria           = (toDate(formataDataEdicao($w_phpdt_saida))-toDate(formataDataEdicao($w_phpdt_chegada)))/86400;
     $w_max_hosp             = ($w_hos_out-$w_hos_in)/86400;
     $w_max_veiculo          = ($w_vei_dev-$w_vei_ret)/86400;
-    $w_destino_nacional     = $w_trechos[51];
+    
+    
     
     // Reconfigura o máximo de diárias para o primeiro trecho
     $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
@@ -4093,15 +4100,15 @@ function Diarias() {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        
+        if (($i>1 && $i < ($j-1) && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
 
           if ($w_diarias>0)     $w_total[$w_trechos[$i][13]] += $w_diarias;
           if ($w_locacoes<>0)   $w_total[$w_trechos[$i][23]] += $w_locacoes;
-          //if ($w_hospedagens>0) $w_total[$w_trechos[$i][18]] += $w_hospedagens;
-
+          
           $w_tot_local = $w_diarias + $w_locacoes;
            
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
@@ -4154,6 +4161,7 @@ function Diarias() {
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_hospedagem" value="'.$w_sg_moeda_hospedagem.'">');
     ShowHTML('<INPUT type="hidden" name="w_sg_moeda_veiculo" value="'.$w_sg_moeda_veiculo.'">');
     ShowHTML('<INPUT type="hidden" name="w_destino_nacional" value="'.$w_destino_nacional.'">');
+    ShowHTML('<INPUT type="hidden" name="w_chegada_internacional" value="'.$w_chegada_internacional.'">');
     ShowHTML('<INPUT type="hidden" name="w_origem" value="SOLIC">');
 
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'"><td><table border=0 width="100%">');
@@ -4744,7 +4752,7 @@ function Diarias_Solic() {
       ShowHTML('       <input type="hidden" name="w_trechos" value="">');
       while($i<count($w_trechos)) {
         $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
-        if (($i>1 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        if (($i>1 && $i < ($j-1) && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
