@@ -41,6 +41,8 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>EM PROCESSO DE ELIMINAÇÃO</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='EL') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ELIMINADO</b></font></td>';
+  } elseif (f($RS,'sg_tramite')=='DE') {
+    $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>ENVIADO PARA DESTINO EXTERNO</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AS') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>'.((nvl(f($RS,'data_setorial'),'')=='') ? 'EM TRÂNSITO PARA ARQUIVO SETORIAL' : 'ARQUIVADO SETORIAL').'</b></font></td>';
   } elseif (f($RS,'sg_tramite')=='AT') {

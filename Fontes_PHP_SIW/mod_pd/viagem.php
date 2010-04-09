@@ -5141,54 +5141,52 @@ function Encaminhamento() {
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
-  if (substr(Nvl($w_erro,'nulo'),0,1)!='0' && (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S'))) {
-    ScriptOpen('JavaScript');
-    ValidateOpen('Validacao');
-    if ($w_sg_tramite=='CI') {
-      if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-        Validate('w_justificativa','Justificativa','','1','1','2000','1','1');
-      }
-      if ($w_fim_semana=='S') {
-        Validate('w_justif_dia_util','Justificativa','1','1',5,2000,'1','1');
-      }
+  ScriptOpen('JavaScript');
+  ValidateOpen('Validacao');
+  if ($w_sg_tramite=='CI') {
+    if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+      Validate('w_justificativa','Justificativa','','1','1','2000','1','1');
+    }
+    if ($w_fim_semana=='S') {
+      Validate('w_justif_dia_util','Justificativa','1','1',5,2000,'1','1');
+    }
+  } else {
+    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+      Validate('w_despacho','Despacho','1','1','1','2000','1','1');
     } else {
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
-        Validate('w_despacho','Despacho','1','1','1','2000','1','1');
-      } else {
-        Validate('w_despacho','Despacho','','','1','2000','1','1');
-        ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-        ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
-        ShowHTML('     theForm.w_despacho.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-        ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-        ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
-        ShowHTML('     theForm.w_despacho.focus();');
-        ShowHTML('     return false;');
-        ShowHTML('  }');
-        if (Nvl(substr($w_erro,0,1),'')=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-          if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-            Validate('w_justificativa','Justificativa','','','1','2000','1','1');
-            ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-            ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
-            ShowHTML('     theForm.w_justificativa.focus();');
-            ShowHTML('     return false;');
-            ShowHTML('}');
-          }
+      Validate('w_despacho','Despacho','','','1','2000','1','1');
+      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+      ShowHTML('     theForm.w_despacho.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+      ShowHTML('     theForm.w_despacho.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      if (Nvl(substr($w_erro,0,1),'')=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
+        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+          Validate('w_justificativa','Justificativa','','','1','2000','1','1');
+          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
+          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+          ShowHTML('     theForm.w_justificativa.focus();');
+          ShowHTML('     return false;');
+          ShowHTML('}');
         }
       }
     }
-    Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
-      // Se não for encaminhamento e nem o sub-menu do cadastramento
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
-    } else {
-      ShowHTML('  theForm.Botao.disabled=true;');
-    }
-    ValidateClose();
-    ScriptClose();
   }
+  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+  if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
+    // Se não for encaminhamento e nem o sub-menu do cadastramento
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } else {
+    ShowHTML('  theForm.Botao.disabled=true;');
+  }
+  ValidateClose();
+  ScriptClose();
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
@@ -5203,75 +5201,73 @@ function Encaminhamento() {
   // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
   ShowHTML(VisualViagem($w_chave,'V',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  if (Nvl($w_erro,'')=='' || $w_sg_tramite=='EE' || (substr(Nvl($w_erro,'nulo'),0,1)=='2' && $w_sg_tramite=='CI') || (Nvl($w_erro,'')>'' && RetornaGestor($w_chave,$w_usuario)=='S')) {
-    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PDENVIO',$w_pagina.$par,$O);
-    ShowHTML(MontaFiltro('POST'));
-    ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-    ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
-    ShowHTML('<INPUT type="hidden" name="w_prazo" value="'.$w_prazo.'">');
-    ShowHTML('<INPUT type="hidden" name="w_antecedencia" value="'.$w_antecedencia.'">');
-    ShowHTML('<INPUT type="hidden" name="w_fim_semana" value="'.$w_fim_semana.'">');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
-    ShowHTML('  <table width="97%" border="0">');
-    ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
-    if ($w_sg_tramite=='CI') {
-      if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-        // Se cadastramento inicial
-        ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
-        // Se a data de início da viagem não respeitar os dias de antecedência, exige justificativa.
-        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-          ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_antecedencia)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
-        }
-        if ($w_fim_semana=='S') {
-          ShowHTML('      <tr><td colspan="4" valign="top"><b><u>J</u>ustificativa para viagem contendo fim de semana/feriado:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justif_dia_util" class="STI" ROWS=5 cols=75 title="Justifique a necessidade da viagem abranger fim de semana/feriado.">'.$w_justif_dia_util.'</TEXTAREA></td>');
-        }
-        ShowHTML('      </table>');
-        ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-        ShowHTML('    <tr><td align="center" colspan=4><hr>');
-        ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'PDENVIO',$w_pagina.$par,$O);
+  ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
+  ShowHTML('<INPUT type="hidden" name="w_prazo" value="'.$w_prazo.'">');
+  ShowHTML('<INPUT type="hidden" name="w_antecedencia" value="'.$w_antecedencia.'">');
+  ShowHTML('<INPUT type="hidden" name="w_fim_semana" value="'.$w_fim_semana.'">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
+  ShowHTML('  <table width="97%" border="0">');
+  ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
+  if ($w_sg_tramite=='CI') {
+    if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+      // Se cadastramento inicial
+      ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
+      // Se a data de início da viagem não respeitar os dias de antecedência, exige justificativa.
+      if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+        ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_antecedencia)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
       }
-    } else {
-      ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
-      if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
-        ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-        ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
-      } else {
-        if (Nvl($w_envio,'N')=='N') {
-          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');
-        } else {
-          ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
-        }
-      }
-      ShowHTML('    <tr>');
-      SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,$w_chave,'w_novo_tramite','DEVFLUXO',null);
-      ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
-      if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
-        if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-          if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-            ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_prazo)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
-          }
-        }
+      if ($w_fim_semana=='S') {
+        ShowHTML('      <tr><td colspan="4" valign="top"><b><u>J</u>ustificativa para viagem contendo fim de semana/feriado:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justif_dia_util" class="STI" ROWS=5 cols=75 title="Justifique a necessidade da viagem abranger fim de semana/feriado.">'.$w_justif_dia_util.'</TEXTAREA></td>');
       }
       ShowHTML('      </table>');
       ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
       ShowHTML('    <tr><td align="center" colspan=4><hr>');
       ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
     }
-    if ($P1!=1) {
-      // Se não for cadastramento, volta para a listagem
-      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
-    } elseif ($P1==1 && $w_tipo=='Volta') {
-      ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  } else {
+    ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
+    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+      ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
+      ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
+    } else {
+      if (Nvl($w_envio,'N')=='N') {
+        ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N" checked> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S"> Devolver para a fase anterior');
+      } else {
+        ShowHTML('              <input '.$w_Disabled.' class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input '.$w_Disabled.' class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
+      }
     }
-    ShowHTML('      </td>');
-    ShowHTML('    </tr>');
-    ShowHTML('  </table>');
-    ShowHTML('  </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>');
+    ShowHTML('    <tr>');
+    SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,$w_chave,'w_novo_tramite','DEVFLUXO',null);
+    ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
+    if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
+      if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
+        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+          ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_prazo)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
+        }
+      }
+    }
+    ShowHTML('      </table>');
+    ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('    <tr><td align="center" colspan=4><hr>');
+    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Enviar">');
   }
+  if ($P1!=1) {
+    // Se não for cadastramento, volta para a listagem
+    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  } elseif ($P1==1 && $w_tipo=='Volta') {
+    ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
+  }
+  ShowHTML('      </td>');
+  ShowHTML('    </tr>');
+  ShowHTML('  </table>');
+  ShowHTML('  </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
   ShowHTML('</table>');
   ShowHTML('</center>');
   Rodape();

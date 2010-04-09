@@ -55,12 +55,13 @@ class dml_putGPContrato {
                    'p_plano_saude'               =>array(tvl($p_plano_saude),                              B_VARCHAR,        30),
                    'p_plano_odonto'              =>array(tvl($p_plano_odonto),                             B_VARCHAR,        30),
                    'p_plano_vida'                =>array(tvl($p_plano_vida),                               B_VARCHAR,        30),
-                   'p_vale_refeicao'             =>array($p_vale_refeicao,                                 B_VARCHAR,         1),
-                   'p_vale_transporte'           =>array($p_vale_transporte,                               B_VARCHAR,         1),
+                   'p_vale_refeicao'             =>array(tvl($p_vale_refeicao),                            B_VARCHAR,         1),
+                   'p_vale_transporte'           =>array(tvl($p_vale_transporte),                          B_VARCHAR,         1),
                    'p_observacao_beneficios'     =>array(tvl($p_observacao_beneficios),                    B_VARCHAR,      2000),
                    'p_data_atestado'             =>array($p_data_atestado,                                 B_DATE,           32),
                    'p_dias_experiencia'          =>array($p_dias_experiencia,                              B_INTEGER,        32)
                   );
+                  //print_r($params);exit();
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 
      error_reporting(0); 

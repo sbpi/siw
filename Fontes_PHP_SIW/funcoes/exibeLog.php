@@ -49,36 +49,38 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
     $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
     $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
     $l_html.=chr(13).'      <tr id="encaminhamentos"><td colspan="2"><br><span id="colxenc"></span><font size="2"><b>ENCAMINHAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $l_html.=chr(13).'      <tr id="enclista"><td colspan="2" align="center">';
-    $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';    
+    $l_html.=chr(13).'      <tr><td colspan="2" width="100%">';
+    $l_html.=chr(13).'        <table id="enclista" border="1" bordercolor="#00000" width="100%">';    
     if (count($RS_Log)<=0) {
-      $l_html.=chr(13).'      <tr><td colspan=4 align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center"><b>Não foram encontrados encaminhamentos.</b></td></tr>';
     } else {
       $l_html.=chr(13).'      <tr valign="top">';
       $w_cor=$conTrBgColor;
       $i = 0;
       foreach($RS_Log as $row) {
         if ($i==0) {
-          $l_html .= chr(13).'        <td colspan=4>Fase atual: <b>'.f($row,'fase').'</b></td>';
+          $l_html .= chr(13).'        <td width="100%">Fase atual: <b>'.f($row,'fase').'</b></td>';
           $i = 1;
           if ($l_tramite_ativo=='S') {
             // Recupera os responsáveis pelo tramite
             include_once($w_dir_volta.'classes/sp/db_getTramiteResp.php');
             $RS2 = db_getTramiteResp::getInstanceOf($dbms,$l_chave,null,null);
             $l_html .= chr(13).'      <tr bgcolor="'.$w_TrBgColor.'" valign="top">';
-            $l_html .= chr(13).'        <td colspan=4>Responsável(is) pelo trâmite: <b>';
+            $l_html .= chr(13).'        <td>Responsável(is) pelo trâmite: <b>';
             if (count($RS2)>0) {
               $j = 0;
               foreach($RS2 as $row2) {
-                if ($j==0) {
-                  $w_tramite_resp = f($row2,'nome_resumido');
-                  if ($l_formato=='HTML') $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                  else                    $l_html.=chr(13).f($row2,'nome_resumido').'</td>';
-                  $j = 1;
-                } else {
-                  if (strpos($w_tramite_resp,f($row,'nome_resumido'))===false) {
-                    if ($l_formato=='HTML') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
-                    else                    $l_html.=chr(13).', '.f($row2,'nome_resumido').'</td>';
+                if (f($row2,'gestor_modulo')=='N') {
+                  if ($j==0) {
+                    $w_tramite_resp = f($row2,'nome_resumido');
+                    if ($l_formato=='HTML') $l_html .= chr(13).ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+                    else                    $l_html.=chr(13).f($row2,'nome_resumido').'</td>';
+                    $j = 1;
+                  } else {
+                    if (strpos($w_tramite_resp,f($row_log,'nome_resumido'))===false) {
+                      if ($l_formato=='HTML') $l_html .= chr(13).', '.ExibePessoa($w_dir_volta,$w_cliente,f($row2,'sq_pessoa'),$TP,f($row2,'nome_resumido'));
+                      else                    $l_html.=chr(13).', '.f($row2,'nome_resumido').'</td>';
+                    }
                   }
                 }
               } 
@@ -95,7 +97,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="anotacoes"><td colspan="2"><br><span id="colxanot"></span><font size="2"><b>ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
 	    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-	    $l_html.=chr(13).'        <table id="encanot" width=100%  border="1" bordercolor="#00000">';    
+	    $l_html.=chr(13).'        <table id="encanot" width="100%"  border="1" bordercolor="#00000">';    
 	    $l_html.=chr(13).'          <tr align="center">';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Anotação</b></td>';
@@ -126,7 +128,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="versoes"><td colspan="2"><br><span id="colxver"></span><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
 	    $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-	    $l_html.=chr(13).'        <table id="encver" width=100%  border="1" bordercolor="#00000">';    
+	    $l_html.=chr(13).'        <table id="encver" width="100%"  border="1" bordercolor="#00000">';    
 	    $l_html.=chr(13).'          <tr align="center">';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Versão</b></td>';
@@ -154,7 +156,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
 	  $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
 	  $l_html.=chr(13).'      <tr id="encaminhamentos"><td colspan="2"><br><span id="colxenc"></span><font size="2"><b>ENCAMINHAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
 	  $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
-	  $l_html.=chr(13).'        <table id="enclista" width=100%  border="1" bordercolor="#00000">';    
+	  $l_html.=chr(13).'        <table id="enclista" width="100%"  border="1" bordercolor="#00000">';    
 	  $l_html.=chr(13).'          <tr align="center">';
 	  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
 	  $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Despacho/Observação</b></td>';

@@ -434,6 +434,8 @@ function Inicial() {
           } else {
             ShowHTML('           <img src="'.$conImgOkAcima.'" title="Arquivado Setorial" border=0 width=10 height=10 align="center">');
           }
+        } elseif (f($row,'sg_tramite')=='DE') {
+          ShowHTML('           <img src="'.$conImgOkNormal.'" title="Enviado para destino externo" border=0 width=10 height=10 align="center">');
         } elseif (f($row,'sg_tramite')=='AT') {
           ShowHTML('           <img src="'.$conImgOkNormal.'" title="Arquivado Central" border=0 width=10 height=10 align="center">');
         } else {
@@ -2977,6 +2979,9 @@ function Recebimento() {
     // Recupera os protocolos da guia
     $RS_Dados = db_getProtocolo::getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
         null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, 2, null);
+    
+    foreach($RS_Dados as $row) { $RS_Dados = $row; break; }
+    $w_interno = f($RS_Dados,'interno');
   }
 
   Cabecalho();
@@ -2985,6 +2990,7 @@ function Recebimento() {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if ($O=='R' || $O=='T') {
+      if ($w_interno=='N') Validate('w_observacao','Observações sobre o envio externo','1','1','5','2000','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -3006,7 +3012,8 @@ function Recebimento() {
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
   } elseif ($O=='R' || $O=='T') {
-    BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
+    if ($w_interno=='N') BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
+    else BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } elseif ($O=='P') {
     BodyOpen('onLoad=\'document.Form.w_nu_guia.focus()\';');
   } else {
@@ -3101,6 +3108,7 @@ function Recebimento() {
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
+    if ($w_interno=='N') ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
@@ -3851,7 +3859,7 @@ function Grava() {
         retornaFormulario('w_assinatura');
       } else {
         dml_putDocumentoReceb::getInstanceOf($dbms,$w_usuario,
-            $_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia']);
+            $_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia'],$_REQUEST['w_observacao']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'Protocolos da guia recebidos com sucesso!\');');

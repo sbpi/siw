@@ -2129,7 +2129,8 @@ function Grava() {
                 $w_cliente,$_REQUEST['w_sq_contrato_colaborador'],null,$w_chave_nova,$_REQUEST['w_posto_trabalho'],$_REQUEST['w_modalidade_contrato'],
                 $_REQUEST['w_unidade_lotacao'],$_REQUEST['w_unidade_exercicio'],$_REQUEST['w_localizacao'],$_REQUEST['w_matricula'],
                 $_REQUEST['w_dt_ini'],null,$w_username,$ferias,$extras,
-                $_REQUEST['w_sq_tipo_vinculo'],null,null,null,null,null,null,'N','N','00:00',formataDataEdicao(time()),'0,00'
+                $_REQUEST['w_sq_tipo_vinculo'],null,null,null,null,null,null,'N','N','00:00',formataDataEdicao(time()),'0,00',
+                null,null,'N','N','N','N','N',null,null,null,null
             );
             //Cria a conta para o usuário
             if ($w_username == 'S') {

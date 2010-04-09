@@ -2132,18 +2132,19 @@ function TelaUsuario() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td>Nome:<br><font size=2><b>'.f($RS,'nome').' </b></td>');
     ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($RS,'nome_resumido').'</b></td>');
+    ShowHTML('          <td>Sexo:<b><br>'.nvl(f($row1,'nm_sexo'),'*** Atualizar').'</td>');
     if (nvl(f($RS,'email'),'')>'') {
-      ShowHTML('      <tr><td colspan=2>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
+      ShowHTML('      <tr><td colspan=3>e-Mail:<br><b><A class="hl" HREF="mailto:'.f($RS,'email').'">'.f($RS,'email').'</a></b></td>');
     } else {
-      ShowHTML('      <tr><td colspan=2>e-Mail:<br><b>---</b></td>');
+      ShowHTML('      <tr><td colspan=3>e-Mail:<br><b>---</b></td>');
     } 
 
-    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
-    ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-    ShowHTML('      <tr><td>Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>Lotação</td>');
+    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+    ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+    ShowHTML('      <tr><td colspan="2">Unidade:<br><b>'.f($RS,'unidade').' ('.f($RS,'sigla').')</b></td>');
     if (nvl(f($RS,'email_unidade'),'')>'') {
       ShowHTML('          <td>e-Mail da unidade:<br><b><A class="hl" HREF="mailto:'.f($RS,'email_unidade').'">'.f($RS,'email_unidade').'</a></b></td>');
     } else {
@@ -2154,7 +2155,7 @@ function TelaUsuario() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td>Endereço:<br><b>'.f($RS,'endereco').'</b></td>');
     ShowHTML('          <td>Cidade:<br><b>'.f($RS,'cidade').'</b></td>');
-    ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0><tr valign="top">');
+    ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0><tr valign="top">');
     ShowHTML('          <td>Telefone:<br><b>'.nvl(f($RS,'telefone'), '---').' </b></td>');
     ShowHTML('          <td>Ramal:<br><b>'.nvl(f($RS,'ramal'), '---').'</b></td>');
     ShowHTML('          <td>Telefone 2:<br><b>'.nvl(f($RS,'telefone2'), '---').'</b></td>');
@@ -2178,34 +2179,34 @@ function TelaUsuario() {
       ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
     } else {
       foreach ($RS1 as $row1) {
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td colspan="2" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td colspan="3" bgcolor="#D0D0D0"><font size=2><b>'.f($RS,'nome_vinculo').'</td>');
+        ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
         ShowHTML('      <tr valign="top">');
-        ShowHTML('          <td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
+        ShowHTML('          <td colspan="2">Nome:<br><font size=2><b>'.f($row1,'nm_pessoa'));
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
         ShowHTML('      <tr valign="top">');
-        ShowHTML('          <td>'.((f($row1,'tipo_pessoa')==1) ? 'CPF' : 'CNPJ').':<br><b>'.nvl(f($row1,'identificador_primario'),'---'));
+        ShowHTML('          <td>'.((f($row1,'sq_tipo_pessoa')==1) ? 'CPF' : 'CNPJ').':<br><b>'.nvl(f($row1,'identificador_primario'),'---'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {
           ShowHTML('          <td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
         } else {
           ShowHTML('          <td>e-Mail:<b><br>---</td>');
         } 
         if (f($row1,'sq_tipo_pessoa')==1) {
-          ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('          <td>Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
         } else {
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
         } 
-        ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+        ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
         ShowHTML('          <tr valign="top">');
         if (nvl(f($row1,'ddd'),'')>'') {
           ShowHTML('          <td>Telefone:<b><br>('.f($row1,'ddd').') '.f($row1,'nr_telefone').'</td>');
@@ -2248,13 +2249,13 @@ function TelaUsuario() {
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="99%" border="0">');
     if (count($RS1)<=0) {
-      ShowHTML('      <tr><td colspan=2><font size=2><b>Outra parte não informada');
+      ShowHTML('      <tr><td colspan=3><font size=2><b>Outra parte não informada');
     } else {
       foreach ($RS1 as $row1) {
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
-        ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></td>');
-        ShowHTML('      <tr><td>Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
+        ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>ATENÇÃO: Vínculo não informado</td>');
+        ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></td>');
+        ShowHTML('      <tr><td colspan="2">Nome:<br><font size=2><b>'.f($row1,'nm_pessoa').' ('.$l_sq_pessoa.')');
         ShowHTML('          <td>Nome resumido:<br><font size=2><b>'.f($row1,'nome_resumido'));
         if (nvl(f($row1,'email'),'nulo')!='nulo') {
           ShowHTML('      <tr><td>e-Mail:<b><br><a class="hl" href="mailto:'.f($row1,'email').'">'.f($row1,'email').'</a></td>');
@@ -2262,20 +2263,20 @@ function TelaUsuario() {
           ShowHTML('      <tr><td>e-Mail:<b><br>---</td>');
         } 
         if (f($row1,'sq_tipo_pessoa')==1) {
-          ShowHTML('          <td colspan="2">Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('          <td>Sexo:<b><br>'.f($row1,'nm_sexo').'</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>Endereço comercial, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
         } else {
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
-          ShowHTML('      <tr><td align="center" colspan="2" height="1" bgcolor="#000000">');
-          ShowHTML('      <tr><td align="center" colspan="2" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td colspan="3" align="center" bgcolor="#D0D0D0"><b>Endereço principal, Telefones e e-Mail</td>');
+          ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+          ShowHTML('      <tr><td align="center" colspan="3" height="2" bgcolor="#000000">');
         } 
-        ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
+        ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
         ShowHTML('          <tr valign="top">');
         if (nvl(f($row1,'ddd'),'')>'') {
           ShowHTML('          <td>Telefone:<b><br>('.f($row1,'ddd').') '.f($row1,'nr_telefone').'</td>');
