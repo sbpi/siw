@@ -33,8 +33,8 @@ create or replace procedure SP_PutGPContrato
     p_plano_saude              in  varchar2  default null,
     p_plano_odonto             in  varchar2  default null,
     p_plano_vida               in  varchar2  default null,
-    p_vale_refeicao            in  varchar2  default null,
-    p_vale_transporte          in  varchar2  default null,
+    p_vale_refeicao            in  varchar2,
+    p_vale_transporte          in  varchar2,
     p_observacao_beneficios    in  varchar2  default null,
     p_data_atestado            in  date,
     p_dias_experiencia         in  number
