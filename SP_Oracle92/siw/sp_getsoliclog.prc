@@ -486,6 +486,7 @@ begin
                                   when instr(upper(a.observacao),'DESM')>0              then 'DESMEMBRAMENTO'
                                   when instr(upper(a.observacao),'INDICAÇÃO')>0         then 'CLASSIFICAÇÃO'
                                   when instr(upper(a.observacao),'ARQ')>0               then 'ARQUIVAMENTO'
+                                  when instr(upper(a.observacao),'ENVIO EXTERNO')>0     then 'ENVIO EXTERNO'
                                   else 'REGISTRO' 
                              end
                         else case f.sigla

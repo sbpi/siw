@@ -2,8 +2,12 @@ create or replace procedure sp_putDocumentoReceb
    (p_pessoa       in number,
     p_unid_autua   in number   default null,
     p_nu_guia      in number   default null,
-    p_ano_guia     in number   default null
+    p_ano_guia     in number   default null,
+    p_observacao   in varchar2 default null
    ) is
+
+   w_tramite siw_tramite%rowtype;
+
    cursor c_protocolo is
      select a.sq_documento_log, a.sq_siw_solicitacao, a.unidade_destino, a.unidade_origem, a.interno,
             d.sq_caixa
@@ -30,6 +34,34 @@ begin
      update pa_caixa c
         set c.arquivo_data = sysdate
      where c.sq_caixa = coalesce(crec.sq_caixa,0);
+     
+     -- Se guia relativa a envio externo, coloca documentos na situação adequada
+     If crec.interno = 'N' Then
+        -- Recupera os dados do trâmite de envio para destino externo
+        select b.* into w_tramite 
+          from siw_solicitacao        a
+               inner join siw_tramite b on (b.sq_menu = b.sq_menu)
+          where b.sigla              = 'DE'
+            and a.sq_siw_solicitacao = crec.sq_siw_solicitacao;
+          
+        -- Atualiza a tabela de solicitações
+        Update siw_solicitacao set sq_siw_tramite = w_tramite.sq_siw_tramite Where sq_siw_solicitacao = crec.sq_siw_solicitacao or sq_solic_pai = crec.sq_siw_solicitacao;
+
+        -- Registra os dados do envio
+        Insert Into siw_solic_log 
+            (sq_siw_solic_log,          sq_siw_solicitacao,       sq_pessoa, 
+             sq_siw_tramite,            data,                     devolucao, 
+             observacao
+            )
+        (Select 
+             sq_siw_solic_log.nextval,  crec.sq_siw_solicitacao,  p_pessoa,
+             a.sq_siw_tramite,          sysdate,                  'N',
+             'Envio externo: '||p_observacao
+            from siw_solicitacao a
+           where a.sq_siw_solicitacao = crec.sq_siw_solicitacao
+              or a.sq_solic_pai       = crec.sq_siw_solicitacao
+        );
+     End If;
   end loop;
 end sp_putDocumentoReceb;
 /
