@@ -227,7 +227,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   if (nvl(f($RS,'sq_solic_pai'),'')!='') {
     $l_html.=chr(13).'   <tr><td colspan="2"><br><font size="2"><b>DADOS DA '.((f($RS,'tipo_juntada')=='A') ? 'ANEXAÇÃO' : 'APENSAÇÃO').'<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'   <tr><td valign="top"><b>Data:</b></td>';
-    $l_html.=chr(13).'       <td align="justify">'.f($RS,'phpdt_juntada').'</td></tr>';
+    $l_html.=chr(13).'       <td align="justify">'.formataDataEdicao(f($RS,'phpdt_juntada')).'</td></tr>';
   }
   
   $RS_Juntado = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'PAD',5,

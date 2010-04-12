@@ -429,11 +429,7 @@ function Inicial() {
         } elseif (f($row,'sg_tramite')=='EL') {
           ShowHTML('           <img src="'.$conImgCancel.'" title="Eliminado" border=0 width=10 height=10 align="center">');
         } elseif (f($row,'sg_tramite')=='AS') {
-          if (Nvl(f($row,'fim'),time()) < addDays(time(),-1)) {
-            ShowHTML('           <img src="'.$conImgOkAtraso.'" title="Arquivado Setorial" border=0 width=10 height=10 align="center">');
-          } else {
-            ShowHTML('           <img src="'.$conImgOkAcima.'" title="Arquivado Setorial" border=0 width=10 height=10 align="center">');
-          }
+          ShowHTML('           <img src="'.$conImgOkAcima.'" title="Arquivado Setorial" border=0 width=10 height=10 align="center">');
         } elseif (f($row,'sg_tramite')=='DE') {
           ShowHTML('           <img src="'.$conImgOkNormal.'" title="Enviado para destino externo" border=0 width=10 height=10 align="center">');
         } elseif (f($row,'sg_tramite')=='AT') {
@@ -2300,6 +2296,7 @@ function Tramitacao() {
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
+      ShowHTML('          <td rowspan=2><b>'.linkOrdena('Posse','sg_unidade_posse').'</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
       ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Tipo','nm_tipo').'</td>');
       ShowHTML('          <td colspan=4><b>Documento original</td>');
@@ -2327,7 +2324,7 @@ function Tramitacao() {
     }
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="9" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $w_atual = '';
@@ -2368,6 +2365,7 @@ function Tramitacao() {
             }
           }
           ShowHTML('        </td>');
+          ShowHTML('        <td width="1%" nowrap>&nbsp;'.ExibeUnidade('../',$w_cliente,f($row,'sg_unidade_posse'),f($row,'unidade_int_posse'),$TP).'</td>');
           ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
           ShowHTML('        <td width="1%" nowrap>&nbsp;'.f($row,'nm_especie').'</td>');

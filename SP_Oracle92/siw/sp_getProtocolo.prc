@@ -222,7 +222,7 @@ begin
       -- Recupera guias de tramitação
       open p_result for
       select b.sq_siw_solicitacao, b.inicio, b.fim, b.sq_siw_tramite, b.sq_solic_pai, b.descricao,
-             c.numero_original, c.numero_documento, c.unidade_int_posse,
+             c.numero_original, c.numero_documento, c.unidade_int_posse, c.pessoa_ext_posse,
              c.prefixo||'.'||substr(1000000+c.numero_documento,2,6)||'/'||c.ano||'-'||substr(100+c.digito,2,2) as protocolo,
              c1.sigla sg_unidade,
              c2.nome as nm_especie,
@@ -233,6 +233,7 @@ begin
                   then b3.prefixo||'.'||substr(1000000+b3.numero_documento,2,6)||'/'||b3.ano||'-'||substr(100+b3.digito,2,2) 
                   else null
              end as protocolo_pai,
+             c6.sigla as sg_unidade_posse, c6.nome as nm_unidade_posse,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              d.nu_guia||'/'||d.ano_guia||'-'||d6.sigla as guia_tramite,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
@@ -268,6 +269,7 @@ begin
                                       and y.sq_menu          = p_menu
                                     group by x.sq_documento_pai
                                   )                    c5 on (c.sq_siw_solicitacao   = c5.sq_documento_pai)
+                 left        join eo_unidade           c6 on (c.unidade_int_posse    = c6.sq_unidade)
                    left      join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
                      left    join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                      left    join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
