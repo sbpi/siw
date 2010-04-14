@@ -960,7 +960,7 @@ function Geral() {
         ShowHTML('        <tr valign="top">');
       } elseif ($w_mod_pa=='S') {
         ShowHTML('       <tr>');
-        SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
+        SelecaoProtocolo('N<u>ú</u>mero do protocolo:','U','Selecione o protocolo de pagamento.',$w_protocolo,null,'w_protocolo',$SG,null);
       } elseif($w_segmento=='Público') {
         ShowHTML('       <tr><td colspan="2"><b>N<U>ú</U>mero do processo:<br><INPUT ACCESSKEY="U" '.$w_Disabled.' class="STI" type="text" name="w_numero_processo" size="20" maxlength="30" value="'.$w_numero_processo.'" title="OPCIONAL. Informe o número do processo ao qual este lançamento está ligado."></td>');
       }

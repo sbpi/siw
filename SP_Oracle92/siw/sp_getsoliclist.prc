@@ -180,7 +180,7 @@ begin
            from siw_menu                                      a
                 inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
-                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite)
+                  inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite and b1.sigla <> 'CA')
                     left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
                       inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
                         inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
@@ -941,7 +941,9 @@ begin
                    inner             join siw_solicitacao      b  on (a.sq_menu                  = b.sq_menu)
                       inner          join siw_tramite          b1 on (b.sq_siw_tramite           = b1.sq_siw_tramite)
                       inner          join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
-                                             from siw_solicitacao
+                                             from siw_solicitacao     a
+                                                  inner join siw_menu b on (a.sq_menu = b.sq_menu)
+                                            where b.sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
@@ -953,7 +955,10 @@ begin
                         left         join co_pessoa            d2 on (d.pessoa                   = d2.sq_pessoa)
                         left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                              from fn_lancamento_doc x
+                                                  inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
+                                                  inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
                                             where x.sq_acordo_nota is null
+                                              and z.sq_menu        = p_menu
                                            group by x.sq_siw_solicitacao
                                           )                    d3 on (d.sq_siw_solicitacao       = d3.sq_siw_solicitacao)
                         left         join co_pessoa_conta      d4 on (d.pessoa                   = d4.sq_pessoa and
@@ -966,10 +971,13 @@ begin
                           left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco and
                                                                       d6.ativo                   = 'S'
                                                                      )
-                          left         join (select sq_siw_solicitacao, sum(valor) as valor
-                                               from fn_lancamento_doc x
+                          left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
+                                               from fn_lancamento_doc          x
+                                                    inner join siw_solicitacao y on (x.sq_lancamento_doc = y.sq_siw_solicitacao)
+                                                    inner join siw_menu        z on (y.sq_menu           = z.sq_menu)
                                               where x.sq_acordo_nota is not null
-                                             group by sq_siw_solicitacao
+                                                and z.sq_menu        = p_menu
+                                             group by x.sq_siw_solicitacao
                                             )                  d9 on (d.sq_siw_solicitacao       = d9.sq_siw_solicitacao)
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and

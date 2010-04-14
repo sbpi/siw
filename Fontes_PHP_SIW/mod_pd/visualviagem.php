@@ -867,9 +867,18 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             if ($w_trechos[$i][35]>''||$w_trechos[$i][37]>''||$w_trechos[$i][39]>'') {
               $l_html.=chr(13).'     <tr><td colspan="6">';
-              if ($w_trechos[$i][35]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],1).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
-              if ($w_trechos[$i][37]>'') $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
-              if ($w_trechos[$i][39]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias de veículo alterada de <b>'.formatNumber($w_trechos[$i][38],1).'</b> para <b>'.formatNumber($w_trechos[$i][21],1).'</b>. Motivo: <b>'.$w_trechos[$i][39].'</b></li>';
+              if ($w_trechos[$i][35]>'') {
+                if ($w_trechos[$i][8]!=$w_trechos[$i][34]) $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],1).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
+                else $l_html.=chr(13).'         <li>Observação sobre as hospedagens: <b>'.$w_trechos[$i][35].'</b></li>';
+              }
+              if ($w_trechos[$i][37]>'') {
+                if ($w_trechos[$i][16]!=$w_trechos[$i][36]) $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
+                else  $l_html.=chr(13).'         <li>Observação sobre a hospedagem: <b>'.$w_trechos[$i][37].'</b></li>';
+              }
+              if ($w_trechos[$i][39]>'') {
+                if ($w_trechos[$i][21]!=$w_trechos[$i][38]) $l_html.=chr(13).'         <li>Quantidade calculada de diárias de veículo alterada de <b>'.formatNumber($w_trechos[$i][38],1).'</b> para <b>'.formatNumber($w_trechos[$i][21],1).'</b>. Motivo: <b>'.$w_trechos[$i][39].'</b></li>';
+                else $l_html.=chr(13).'         <li>Observação sobre a locação: <b>'.$w_trechos[$i][39].'</b></li>';
+              }
             }
           }
           $i += 1;
@@ -1032,9 +1041,18 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             }
             if ($w_trechos[$i][35]>''||$w_trechos[$i][37]>''||$w_trechos[$i][39]>'') {
               $l_html.=chr(13).'     <tr><td colspan="6">';
-              if ($w_trechos[$i][35]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],1).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
-              if ($w_trechos[$i][37]>'') $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
-              if ($w_trechos[$i][39]>'') $l_html.=chr(13).'         <li>Quantidade calculada de diárias de veículo alterada de <b>'.formatNumber($w_trechos[$i][38],1).'</b> para <b>'.formatNumber($w_trechos[$i][21],1).'</b>. Motivo: <b>'.$w_trechos[$i][39].'</b></li>';
+              if ($w_trechos[$i][35]>'') {
+                if ($w_trechos[$i][8]!=$w_trechos[$i][34]) $l_html.=chr(13).'         <li>Quantidade calculada de diárias alterada de <b>'.formatNumber($w_trechos[$i][34],1).'</b> para <b>'.formatNumber($w_trechos[$i][8],1).'</b>. Motivo: <b>'.$w_trechos[$i][35].'</b></li>';
+                else $l_html.=chr(13).'         <li>Observação sobre as hospedagens: <b>'.$w_trechos[$i][35].'</b></li>';
+              }
+              if ($w_trechos[$i][37]>'') {
+                if ($w_trechos[$i][16]!=$w_trechos[$i][36]) $l_html.=chr(13).'         <li>Quantidade calculada de hospedagens alterada de <b>'.formatNumber($w_trechos[$i][36],1).'</b> para <b>'.formatNumber($w_trechos[$i][16],1).'</b>. Motivo: <b>'.$w_trechos[$i][37].'</b></li>';
+                else  $l_html.=chr(13).'         <li>Observação sobre a hospedagem: <b>'.$w_trechos[$i][37].'</b></li>';
+              }
+              if ($w_trechos[$i][39]>'') {
+                if ($w_trechos[$i][21]!=$w_trechos[$i][38]) $l_html.=chr(13).'         <li>Quantidade calculada de diárias de veículo alterada de <b>'.formatNumber($w_trechos[$i][38],1).'</b> para <b>'.formatNumber($w_trechos[$i][21],1).'</b>. Motivo: <b>'.$w_trechos[$i][39].'</b></li>';
+                else $l_html.=chr(13).'         <li>Observação sobre a locação: <b>'.$w_trechos[$i][39].'</b></li>';
+              }
             }
           }
           $i += 1;
@@ -1049,7 +1067,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
     $w_diferenca = false;
     // Dados da prestação de contas
-    if ($w_or_tramite>=11 && f($RS,'cumprimento')!='N') {
+    if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
       if($l_diaria=='S' && $w_or_tramite>=11 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   

@@ -5763,6 +5763,7 @@ function SolicMail($p_solic,$p_tipo) {
     // Recupera os dados da solicitação
     $w_sg_tramite = f($RSM,'sg_tramite');
     $w_nome       = f($RSM,'codigo_interno');
+    $w_cumprimento= f($RSM,'cumprimento');
 
     $w_html='<HTML>'.$crlf;
     $w_html .= BodyOpenMail(null).$crlf;
@@ -5771,15 +5772,19 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= '    <table width="97%" border="0">'.$crlf;
     if ($p_tipo==1) {
       $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO</b><br><br><td></tr>'.$crlf;
-    } elseif ($w_sg_tramite=='EE') {
+    } elseif ($w_sg_tramite=='EE' && $w_cumprimento!='C') {
       $w_html .= '      <tr valign="top"><td align="center"><b>PRESTAÇÃO DE CONTAS</b><br><br><td></tr>'.$crlf;
     } elseif ($p_tipo==2) {
       $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO</b><br><br><td></tr>'.$crlf;
     } elseif ($p_tipo==3) {
       $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO</b><br><br><td></tr>'.$crlf;
     }
-    if ($w_sg_tramite=='EE') {
-      $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>Conforme Portaria Nº 47/MPO 29/04/2003 – DOU 30/04/2003, é necessário elaborar o relatório de viagem e entregar os bilhetes de embarque.<br><br>Use o arquivo anexo para elaborar seu relatório de viagem e entregue-o assinado ao setor competente, juntamente com os bilhetes.</font></b><br><br><td></tr>'.$crlf;
+    if ($w_sg_tramite=='EE' && $w_cumprimento!='C') {
+      if ($w_cliente==10135) { //ABDI
+        $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>É necessário elaborar o relatório de viagem e entregar os bilhetes de embarque, conforme PO 059.</font></b><br><br><td></tr>'.$crlf;
+      } else {
+        $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>Conforme Portaria Nº 47/MPO 29/04/2003 – DOU 30/04/2003, é necessário elaborar o relatório de viagem e entregar os bilhetes de embarque.<br><br>Use o arquivo anexo para elaborar seu relatório de viagem e entregue-o assinado ao setor competente, juntamente com os bilhetes.</font></b><br><br><td></tr>'.$crlf;
+      }
     } else {
       $w_html .= '      <tr valign="top"><td><font size=2><b><font color="#BC3131">ATENÇÃO: Esta é uma mensagem de envio automático. Não responda esta mensagem.</font></b><br><br><td></tr>'.$crlf;
     }
@@ -5796,9 +5801,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'            <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RSm,'phpdt_fim')).' </b></td>';
     $w_html .= $crlf.'          </table>';
     // Informações adicionais
-    if (Nvl(f($RSM,'descricao'),'')>'') {
-      if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= $crlf.'      <tr><td valign="top">Objetivo/assunto a ser tratado/evento:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
-    }
+    if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= $crlf.'      <tr><td valign="top">Objetivo/assunto a ser tratado/evento:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
     $w_html .= $crlf.'    </table>';
     $w_html .= $crlf.'</tr>';
 
@@ -5808,165 +5811,13 @@ function SolicMail($p_solic,$p_tipo) {
     foreach ($RS as $row) { $RS = $row; if(strpos(f($row,'despacho'),'*** Nova versão')===false) break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');
     if ($p_tipo==2) {
-      if ($w_sg_tramite=='EE') {
-        // Recupera o número máximo de dias para entrega da prestação de contas
-        $RS1 = db_getPDParametro::getInstanceOf($dbms,$w_cliente,null,null);
-        foreach($RS1 as $row) { $RS1 = $row; break; }
-        $w_dias_prest_contas = f($RS1,'dias_prestacao_contas');
-
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ORIENTAÇÕES PARA PRESTAÇÃO DE CONTAS</td>';
-        $w_html .= $crlf.'        <tr><td valign="top" colspan="2" bgcolor="'.$w_TrBgColor.'">';
-        $w_html .= $crlf.'          <p>Esta solicitação foi autorizada. Você deve entregar os documentos abaixo na unidade proponente (<b>'.f($RSM,'nm_unidade_resp').')</b>';
-        $w_html .= $crlf.'          <ul>';
-        $w_html .= $crlf.'          <li>Relatório de viagem (anexo) preenchido;';
-        $w_html .= $crlf.'          <li>Bilhetes de embarque;';
-        $w_html .= $crlf.'          <li>Notas fiscais de taxi, restaurante e hotel.';
-        $w_html .= $crlf.'          </ul>';
-        $w_html .= $crlf.'          <p>A data limite para entrega é até o último dia útil antes de: <b>'.substr(FormataDataEdicao(addDays(f($RSM,'fim'),$w_dias_prest_contas),4),0,-10).' </b>; caso contrário, suas viagens serão automaticamente bloqueadas pelo sistema.';
-
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>DADOS DA CONCESSÃO</td>';
-        // Benefícios servidor
-        $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
-        if (count($RS1)>0) {
-          $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Benefícios recebidos pelo beneficiário</td>';
-          $w_html .= $crlf.'        <tr><td align="center" colspan="2">';
-          $w_html .= $crlf.'          <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-          $w_html .= $crlf.'            <tr>';
-          if (Nvl(f($RS1,'valor_alimentacao'),0)>0) $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-alimentação: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_alimentacao'),0)).'</b></td>';
-          $w_html .= $crlf.'            <tr>';
-          if (Nvl(f($RS1,'valor_transporte'),0)>0) $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Sim</b></td>'; else $w_html .= $crlf.'           <td>Auxílio-transporte: <b>Não</b></td>';
-          $w_html .= $crlf.'              <td>Valor R$: <b>'.formatNumber(Nvl(f($RS1,'valor_transporte'),0)).'</b></td>';
-          $w_html .= $crlf.'          </table></td></tr>';
-        }
-
-        //Dados da viagem
-        $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Dados da viagem/cálculo das diárias</td>';
-
-        $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$p_solic,null,'S','DADFIN');
-        $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-        if (count($RS1)>0) {
-          $i = 1;
-          foreach($RS1 as $row) {
-            $w_trechos[$i][1] = f($row,'sq_diaria');
-            $w_trechos[$i][2] = f($row,'cidade_dest');
-            $w_trechos[$i][3] = f($row,'nm_destino');
-            $w_trechos[$i][4] = FormataDataEdicao(f($row,'phpdt_chegada'));
-            $w_trechos[$i][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-            $w_trechos[$i][6] = formatNumber(Nvl(f($row,'quantidade'),0),1,',','.');
-            $w_trechos[$i][7] = formatNumber(Nvl(f($row,'valor'),0));
-            $w_trechos[$i][8] = Nvl(f($row,'quantidade'),0);
-            $w_trechos[$i][9] = Nvl(f($row,'valor'),0);
-            if ($i>1) {
-              $w_trechos[$i-1][5] = FormataDataEdicao(f($row,'phpdt_saida'));
-            }
-            $i += 1;
-          }
-          $j       = $i;
-          $i       = 1;
-          $w_total = 0;
-          $w_html .= $crlf.'     <tr><td align="center" colspan="2">';
-          $w_html .= $crlf.'       <TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-          $w_html .= $crlf.'         <tr align="center">';
-          $w_html .= $crlf.'         <td><b>Destino</td>';
-          $w_html .= $crlf.'         <td><b>Saida</td>';
-          $w_html .= $crlf.'         <td><b>Chegada</td>';
-          $w_html .= $crlf.'         <td><b>Quantidade de diárias</td>';
-          $w_html .= $crlf.'         <td><b>Valor unitário R$</td>';
-          $w_html .= $crlf.'         <td><b>Total por localidade - R$</td>';
-          $w_html .= $crlf.'         </tr>';
-          $w_cor=$conTrBgColor;
-          while($i!=($j-1)) {
-            $w_html .= $crlf.'     <tr valign="top">';
-            $w_html .= $crlf.'       <td>'.$w_trechos[$i][3].'</td>';
-            $w_html .= $crlf.'       <td align="center">'.$w_trechos[$i][4].'</td>';
-            $w_html .= $crlf.'       <td align="center">'.$w_trechos[$i][5].'</td>';
-            $w_html .= $crlf.'       <td align="right">'.$w_trechos[$i][6].'</td>';
-            $w_html .= $crlf.'       <td align="right">'.$w_trechos[$i][7].'</td>';
-            $w_html .= $crlf.'       <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(($w_trechos[$i][8]*$w_trechos[$i][9])).'</td>';
-            $w_html .= $crlf.'     </tr>';
-            $w_total += ($w_trechos[$i][8]*$w_trechos[$i][9]);
-            $i += 1;
-          }
-
-          $w_html .= $crlf.'        <tr>';
-          $w_html .= $crlf.'          <td rowspan="5" align="right" colspan="3">&nbsp;</td>';
-          $w_html .= $crlf.'          <td colspan="2"><b>(a) subtotal:</b></td>';
-          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)).'</td>';
-          $w_html .= $crlf.'        </tr>';
-          $w_html .= $crlf.'        <tr>';
-          $w_html .= $crlf.'          <td colspan="2"><b>(b) adicional:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'valor_adicional'),0)).'</td>';
-          $w_html .= $crlf.'        </tr>';
-          $w_html .= $crlf.'        <tr>';
-          $w_html .= $crlf.'          <td colspan="2"><b>(c) desconto auxílio-alimentação:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'desconto_alimentacao'),0)).'</td>';
-          $w_html .= $crlf.'        </tr>';
-          $w_html .= $crlf.'        <tr>';
-          $w_html .= $crlf.'          <td colspan="2"><b>(d) desconto auxílio-transporte:</b></td>';
-          $w_html .= $crlf.'          <td align="right">'.formatNumber(Nvl(f($RS,'desconto_transporte'),0)).'</td>';
-          $w_html .= $crlf.'        </tr>';
-          $w_html .= $crlf.'        <tr>';
-          $w_html .= $crlf.'          <td colspan="2"><b>Total(a + b - c - d):</b></td>';
-          $w_html .= $crlf.'          <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.formatNumber(Nvl($w_total,0)+Nvl(f($RS,'valor_adicional'),0)-Nvl(f($RS,'desconto_alimentacao'),0)-Nvl(f($RS,'desconto_transporte'),0)).'</td>';
-          $w_html .= $crlf.'        </tr>';
-          $w_html .= $crlf.'        </table></td></tr>';
-        }
-
-        // Bilhete de passagem
-        $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$p_solic,null,'S',$SG);
-        $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
-        if (count($RS1)>0) {
-          $i=0;
-          $j=0;
-          foreach($RS1 as $row) {
-            if (nvl(f($row,'sq_cia_transporte'),'')>'') {
-              if ($i==0) {
-                $w_html .= $crlf.'        <tr><td valign="top" colspan="2" align="center" bgcolor="'.$w_TrBgColor.'"><b>Bilhete de passagem</td>';
-                $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-                $w_html .= $crlf.'         <tr bgcolor="'.$conTrBgColor.'" align="center">';
-                $w_html .= $crlf.'         <td><b>Origem</td>';
-                $w_html .= $crlf.'         <td><b>Destino</td>';
-                $w_html .= $crlf.'         <td><b>Saida</td>';
-                $w_html .= $crlf.'         <td><b>Chegada</td>';
-                $w_html .= $crlf.'         <td><b>Cia. transporte</td>';
-                $w_html .= $crlf.'         <td><b>Código vôo</td>';
-                $w_html .= $crlf.'         </tr>';
-                $w_cor=$conTrBgColor;
-                $i=1;
-              }
-              $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-              $w_html .= $crlf.'     <tr valign="middle" bgcolor="'.$w_cor.'">';
-              $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_origem'),'---').'</td>';
-              $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_destino'),'---').'</td>';
-              $w_html .= $crlf.'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_saida'),3),0,-3).'</td>';
-              $w_html .= $crlf.'       <td align="center">'.substr(FormataDataEdicao(f($row,'phpdt_chegada'),3),0,-3).'</td>';
-              $w_html .= $crlf.'       <td>'.Nvl(f($row,'nm_cia_transporte'),'---').'</td>';
-              $w_html .= $crlf.'       <td>'.Nvl(f($row,'codigo_voo'),'---').'</td>';
-              $w_html .= $crlf.'     </tr>';
-              $j=1;
-            }
-          }
-          if ($j==1) {
-            $w_html .= $crlf.'        </tr>';
-            $w_html .= $crlf.'        </table></td></tr>';
-            $RS1 = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
-            $w_html .= $crlf.'        <tr><td align="center" colspan="2"><TABLE WIDTH="100%" bgcolor="'.$w_TrBgColor.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">';
-            $w_html .= $crlf.'        <tr><td><b>Nº do PTA/Ticket: </b>'.f($RS1,'PTA').'</td>';
-            $w_html .= $crlf.'            <td><b>Data da emissão: </b>'.FormataDataEdicao(f($RS1,'emissao_bilhete')).'</td>';
-            $w_html .= $crlf.'      </table>';
-            $w_html .= $crlf.'    </td>';
-          }
-        }
-      } else {
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
-        $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
-        $w_html .= $crlf.'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
-        if (Nvl(f($RS,'despacho'),'')!='') {
-          $w_html.=$crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(f($RS,'despacho')).' </b></td>';
-        }
-        $w_html .= $crlf.'          </table>';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>ÚLTIMO ENCAMINHAMENTO</td>';
+      $w_html .= $crlf.'      <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>';
+      $w_html .= $crlf.'          <tr><td>De:<br><b>'.f($RS,'responsavel').'</b></td>';
+      if (Nvl(f($RS,'despacho'),'')!='') {
+        $w_html.=$crlf.'          <tr><td>Despacho:<br><b>'.CRLF2BR(f($RS,'despacho')).' </b></td>';
       }
+      $w_html .= $crlf.'          </table>';
     }
     $w_html .= $crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>OUTRAS INFORMAÇÕES</td>';
     $RS = db_getCustomerSite::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);

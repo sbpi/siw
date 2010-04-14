@@ -86,6 +86,10 @@ create or replace function Acesso
   w_executor               number(18);
   Result                   number := 0;
   w_unidade_resp           number(18);
+  w_anterior               number(18);
+  w_beneficiario           number(18);
+  w_anterior_assina        varchar2(1);
+  w_beneficiario_assina    varchar2(1);
 
   cursor c_unidade (p_unidade in number) is
      select pt.sq_unidade, a.sq_unidade_pai, coalesce(pt.sq_pessoa, -1) as sq_pessoa_titular,
@@ -137,7 +141,7 @@ begin
                        else j.sq_cc
                   end
         end as sq_cc,
-        e.ordem, e.sigla, e.ativo, e.chefia_imediata,
+        e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre,
         coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
         coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
@@ -148,7 +152,7 @@ begin
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
         w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, 
         w_opiniao_solicitante, w_solic_pai, w_sq_cc,
-        w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata,
+        w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,
         w_sq_endereco_unidade, w_executor,
         w_unidade_resp
@@ -402,6 +406,30 @@ begin
     End If;
  End If;
  
+ -- Se o trâmite atual não puder ser cumprido pela mesma pessoa que cumpriu o trâmite anterior, identifica quem cumpriu o trâmite anterior
+ If w_anterior_assina = 'N' Then
+   select c.sq_pessoa into w_anterior
+     from siw_solicitacao                   a
+          inner   join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
+                          from siw_solic_log              x
+                               inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
+                         where y.sq_menu   = w_sq_servico
+                           and x.devolucao = 'N'
+                        group by x.sq_siw_solicitacao
+                       )                    b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+            inner join siw_solic_log        c on (b.chave              = c.sq_siw_solic_log)
+    where a.sq_siw_solicitacao = p_solicitacao;
+ Else
+   w_anterior := 0;
+ End If;
+ 
+ -- Se o trâmite atual não puder ser cumprido pelo beneficiário da solicitação, identifica o beneficiário
+ If w_beneficiario_assina = 'N' Then
+   w_beneficiario := w_solicitante;
+ Else
+   w_beneficiario := 0;
+ End If;
+ 
  -- Verifica se o usuário é gestor do módulo à qual a solicitação pertence
  select count(*)
    into w_existe
@@ -448,233 +476,237 @@ begin
  End If;
 
 
- -- Verifica se o usuário tem permissão para cumprir o trâmite atual da solicitação
- -- Uma das possibilidades é o trâmite ser cumprido pelo titular/substituto
- -- da unidade do cadastrador ou da solicitação ou usuários que tenham permissão
- If w_chefia_imediata = 'S' Then
- 
-    If w_executor = p_usuario Then
-       -- Se a solicitação tem indicação do executor, verifica se ele é o usuário.
-       Result := Result + 16;
-    Else
-       -- Se o trâmite NÃO tem indicação de destinatário, 
-       -- verifica se o usuário está entre as pessoas que podem cumprí-lo
-       select count(*) into w_existe 
-         from sg_tramite_pessoa a 
-        where a.sq_pessoa          = p_usuario
-          and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-          and a.sq_siw_tramite     = w_sq_siw_tramite
-          and (w_sigla <> 'PADCAD' or
-               (w_sigla = 'PADCAD' and
-                0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
-               )
-              );
-       If w_existe > 0 Then 
-          Result := Result + 16; 
-       Else
-          -- Se o serviço for vinculado à unidade, testa a unidade que cadastrou a solicitação.
-          -- Caso contrário, testa a unidade de lotação do solicitante.
-          If w_vinculacao = 'U' Then
-             w_unidade_atual := w_unidade_solicitante;
-          Elsif w_vinculacao = 'P' Then
-             w_unidade_atual := w_unidade_beneficiario;
-          End If;
-     
-          loop
-             w_existe := 1;
-             w_sair   := 1; -- Variável que controla a saída do laço quando o primeiro chefe é identificado
-             for crec in c_Unidade (w_unidade_atual) loop
-                 -- Se o serviço for vinculado à pessoa:
-                 --   a) se o solicitante não for o titular nem o substituto, aparece apenas na mesa do titular e do substituto;
-                 --   a) se o solicitante for o substituto, aparece na mesa do titular;
-                 --   b) se o solicitante for o titular:
-                 --      b.1) se há uma unidade superior ela deve ser assinada por chefes superiores;
-                 --      b.2) se não há uma unidade superior ela deve ser assinada pelo substituto.
-                 -- Se o serviço for vinculado à unidade:
-                 --   a) A solicitação aparece na mesa do titular e do substituto da unidade
-                 If crec.sq_pessoa_titular > 0 Then
-                    If w_vinculacao = 'P' Then
-                       If (crec.sq_pessoa_titular    <> w_solicitante or
-                           (crec.sq_pessoa_titular    = w_solicitante and
-                            w_solicitante             <> w_cadastrador
-                           )                             
-                          ) and 
-                          crec.sq_pessoa_substituto <> w_solicitante and 
-                          (crec.sq_pessoa_titular   = p_usuario or crec.sq_pessoa_substituto = p_usuario) Then
-                          Result   := Result + 16;
-                          w_sair   := 1;
-                       Elsif crec.sq_pessoa_substituto = w_solicitante and
-                             crec.sq_pessoa_titular    = p_usuario Then
-                             Result   := Result + 16;
-                             w_sair   := 1;
-                       Elsif crec.sq_pessoa_titular = w_solicitante and
-                             crec.sq_pessoa_titular = p_usuario Then
-                          If crec.sq_unidade_pai is not null Then
-                             w_unidade_atual := crec.sq_unidade_pai;
-                             w_existe        := 0;
-                             w_sair          := 0; -- O chefe da unidade superior assina somente quando o solicitante for titular da unidade
-                          Else
-                             If crec.sq_pessoa_substituto = p_usuario Then
-                                Result   := Result + 16;
-                                w_sair   := 1;
-                             End If;
-                          End If;
-                       Else
-                          If crec.sq_pessoa_titular    = w_solicitante and
-                             crec.sq_pessoa_substituto = p_usuario and
-                             crec.sq_unidade_pai       is null Then
-                                Result   := Result + 16;
-                                w_sair   := 1;
-                          Else
-                             w_unidade_atual := crec.sq_unidade_pai;
-                             w_existe        := 0;
-                          End If;
-                       End If;
-                    Elsif w_vinculacao = 'U' Then
-                       If crec.sq_pessoa_titular = p_usuario or crec.sq_pessoa_substituto = p_usuario Then
-                          Result    := Result + 16;
-                          w_sair    := 1;
-                       End If;
-                    End If;
-                 Else
-                    If crec.sq_unidade_pai is not null Then
-                       w_unidade_atual := crec.sq_unidade_pai;
-                       w_existe        := 0;
-                       w_sair          := 0;
-                    Else
-                       If crec.sq_pessoa_titular    = w_solicitante and
-                          crec.sq_pessoa_substituto = p_usuario Then
-                             Result   := Result + 16;
-                             w_sair   := 1;
-                       Else
-                          -- Entrar aqui significa que não foi encontrado nenhum responsável cadastrado no sistema,
-                          -- o que é um erro. No módulo de estrutura organizacional, informar os responsáveis.
-                          w_existe           := 1;
-                       End If;
-                    End If;
-                 End If;
-             end loop;
-            
-             If w_existe = 1 or w_sair = 1 Then
-                exit;
-             End If;
-          end loop;
-       End If;
-    End If;
+ -- A condição abaixo verifica se:
+ -- 1) o trâmite atual pode ser cumprido pelo cumpridor do trâmite anterior
+ -- 2) o trâmite atual pode ser cumprido pelo beneficiário da solicitação
+ If w_anterior <> p_usuario and w_beneficiario <> p_usuario Then 
+   -- Verifica se o usuário tem permissão para cumprir o trâmite atual da solicitação
+   -- Uma das possibilidades é o trâmite ser cumprido pelo titular/substituto
+   -- da unidade do cadastrador ou da solicitação ou usuários que tenham permissão
+   If w_chefia_imediata = 'S' Then
+   
+      If w_executor = p_usuario Then
+         -- Se a solicitação tem indicação do executor, verifica se ele é o usuário.
+         Result := Result + 16;
+      Else
+         -- Se o trâmite NÃO tem indicação de destinatário, 
+         -- verifica se o usuário está entre as pessoas que podem cumprí-lo
+         select count(*) into w_existe 
+           from sg_tramite_pessoa a 
+          where a.sq_pessoa          = p_usuario
+            and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+            and a.sq_siw_tramite     = w_sq_siw_tramite
+            and (w_sigla <> 'PADCAD' or
+                 (w_sigla = 'PADCAD' and
+                  0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+                 )
+                );
+         If w_existe > 0 Then 
+            Result := Result + 16; 
+         Else
+            -- Se o serviço for vinculado à unidade, testa a unidade que cadastrou a solicitação.
+            -- Caso contrário, testa a unidade de lotação do solicitante.
+            If w_vinculacao = 'U' Then
+               w_unidade_atual := w_unidade_solicitante;
+            Elsif w_vinculacao = 'P' Then
+               w_unidade_atual := w_unidade_beneficiario;
+            End If;
+       
+            loop
+               w_existe := 1;
+               w_sair   := 1; -- Variável que controla a saída do laço quando o primeiro chefe é identificado
+               for crec in c_Unidade (w_unidade_atual) loop
+                   -- Se o serviço for vinculado à pessoa:
+                   --   a) se o solicitante não for o titular nem o substituto, aparece apenas na mesa do titular e do substituto;
+                   --   a) se o solicitante for o substituto, aparece na mesa do titular;
+                   --   b) se o solicitante for o titular:
+                   --      b.1) se há uma unidade superior ela deve ser assinada por chefes superiores;
+                   --      b.2) se não há uma unidade superior ela deve ser assinada pelo substituto.
+                   -- Se o serviço for vinculado à unidade:
+                   --   a) A solicitação aparece na mesa do titular e do substituto da unidade
+                   If crec.sq_pessoa_titular > 0 Then
+                      If w_vinculacao = 'P' Then
+                         If (crec.sq_pessoa_titular    <> w_solicitante or
+                             (crec.sq_pessoa_titular    = w_solicitante and
+                              w_solicitante             <> w_cadastrador
+                             )                             
+                            ) and 
+                            crec.sq_pessoa_substituto <> w_solicitante and 
+                            (crec.sq_pessoa_titular   = p_usuario or crec.sq_pessoa_substituto = p_usuario) Then
+                            Result   := Result + 16;
+                            w_sair   := 1;
+                         Elsif crec.sq_pessoa_substituto = w_solicitante and
+                               crec.sq_pessoa_titular    = p_usuario Then
+                               Result   := Result + 16;
+                               w_sair   := 1;
+                         Elsif crec.sq_pessoa_titular = w_solicitante and
+                               crec.sq_pessoa_titular = p_usuario Then
+                            If crec.sq_unidade_pai is not null Then
+                               w_unidade_atual := crec.sq_unidade_pai;
+                               w_existe        := 0;
+                               w_sair          := 0; -- O chefe da unidade superior assina somente quando o solicitante for titular da unidade
+                            Else
+                               If crec.sq_pessoa_substituto = p_usuario Then
+                                  Result   := Result + 16;
+                                  w_sair   := 1;
+                               End If;
+                            End If;
+                         Else
+                            If crec.sq_pessoa_titular    = w_solicitante and
+                               crec.sq_pessoa_substituto = p_usuario and
+                               crec.sq_unidade_pai       is null Then
+                                  Result   := Result + 16;
+                                  w_sair   := 1;
+                            Else
+                               w_unidade_atual := crec.sq_unidade_pai;
+                               w_existe        := 0;
+                            End If;
+                         End If;
+                      Elsif w_vinculacao = 'U' Then
+                         If crec.sq_pessoa_titular = p_usuario or crec.sq_pessoa_substituto = p_usuario Then
+                            Result    := Result + 16;
+                            w_sair    := 1;
+                         End If;
+                      End If;
+                   Else
+                      If crec.sq_unidade_pai is not null Then
+                         w_unidade_atual := crec.sq_unidade_pai;
+                         w_existe        := 0;
+                         w_sair          := 0;
+                      Else
+                         If crec.sq_pessoa_titular    = w_solicitante and
+                            crec.sq_pessoa_substituto = p_usuario Then
+                               Result   := Result + 16;
+                               w_sair   := 1;
+                         Else
+                            -- Entrar aqui significa que não foi encontrado nenhum responsável cadastrado no sistema,
+                            -- o que é um erro. No módulo de estrutura organizacional, informar os responsáveis.
+                            w_existe           := 1;
+                         End If;
+                      End If;
+                   End If;
+               end loop;
+              
+               If w_existe = 1 or w_sair = 1 Then
+                  exit;
+               End If;
+            end loop;
+         End If;
+      End If;
 
- -- Outra possibilidade é o trâmite ser cumprido pelo titular/substituto
- -- da unidade de execução
- Elsif w_chefia_imediata = 'U' Then
-    If w_executor = p_usuario Then
-       -- Se a solicitação tem indicação do executor, verifica se ele é o usuário.
-       Result := Result + 16;
-    Else
-       -- Verifica se o usuário é responsável pela unidade executora
-       select count(*) into w_existe
-         from eo_unidade_resp a
-        where a.sq_unidade = w_sq_unidade_executora
-          and a.sq_pessoa  = p_usuario
-          and a.fim        is null;
-       If w_existe > 0 Then 
-          Result := Result + 16;
-       Else
-          select count(*) into w_existe 
-            from sg_tramite_pessoa a 
-           where a.sq_pessoa          = p_usuario
-             and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-             and a.sq_siw_tramite     = w_sq_siw_tramite
-             and (w_sigla <> 'PADCAD' or
-                  (w_sigla = 'PADCAD' and
-                   0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
-                  )
-                 );
-          If w_existe > 0 Then Result := Result + 16; End If;
-       End If;
-    End If;
- Elsif w_chefia_imediata = 'I' Then
-    -- Quando o trâmite for cumprido por todos os usuários internos
-    If w_interno = 'S' and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then
-       If w_sigla = 'PDINICIAL' Then
+   -- Outra possibilidade é o trâmite ser cumprido pelo titular/substituto
+   -- da unidade de execução
+   Elsif w_chefia_imediata = 'U' Then
+      If w_executor = p_usuario Then
+         -- Se a solicitação tem indicação do executor, verifica se ele é o usuário.
+         Result := Result + 16;
+      Else
+         -- Verifica se o usuário é responsável pela unidade executora
          select count(*) into w_existe
-           from siw_solicitacao      a
-                inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-          where a.sq_siw_solicitacao = p_solicitacao
-            and (a.solicitante       = p_usuario or b.sq_pessoa = p_usuario);
-         If w_existe > 0 Then
+           from eo_unidade_resp a
+          where a.sq_unidade = w_sq_unidade_executora
+            and a.sq_pessoa  = p_usuario
+            and a.fim        is null;
+         If w_existe > 0 Then 
+            Result := Result + 16;
+         Else
+            select count(*) into w_existe 
+              from sg_tramite_pessoa a 
+             where a.sq_pessoa          = p_usuario
+               and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+               and a.sq_siw_tramite     = w_sq_siw_tramite
+               and (w_sigla <> 'PADCAD' or
+                    (w_sigla = 'PADCAD' and
+                     0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+                    )
+                   );
+            If w_existe > 0 Then Result := Result + 16; End If;
+         End If;
+      End If;
+   Elsif w_chefia_imediata = 'I' Then
+      -- Quando o trâmite for cumprido por todos os usuários internos
+      If w_interno = 'S' and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then
+         If w_sigla = 'PDINICIAL' Then
+           select count(*) into w_existe
+             from siw_solicitacao      a
+                  inner join pd_missao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+            where a.sq_siw_solicitacao = p_solicitacao
+              and (a.solicitante       = p_usuario or b.sq_pessoa = p_usuario);
+           If w_existe > 0 Then
+             Result := Result + 16;
+           End If;
+         Else
            Result := Result + 16;
          End If;
-       Else
-         Result := Result + 16;
-       End If;
-    End If;
- Elsif w_sigla_situacao = 'AT' and  w_solicitante = p_Usuario and w_consulta_opiniao = 'S' and w_opiniao_solicitante is null Then
-    -- Outra possibilidade é a solicitação estar concluída e pendente de opinião pelo
-    -- solicitante
-    Result := Result + 16;
- Else
-    -- Outra possibilidade é o trâmite ser cumprido por uma pessoa que tenha
-    -- permissão para isso
-    select count(*) into w_existe 
-      from sg_tramite_pessoa a 
-     where a.sq_pessoa          = p_usuario
-       and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-       and a.sq_siw_tramite     = w_sq_siw_tramite
-       and (w_sigla <> 'PADCAD' or
-            (w_sigla = 'PADCAD' and
-             0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
-            )
-           );
-    If w_existe > 0 and w_destinatario = 'N' Then 
-       Result := Result + 16; 
-    Else
-       -- Outra possibilidade é a solicitação estar sendo executada pelo usuário
-       -- Neste caso a solicitação deve estar em tramite ativo e diferente de cadastramento
-       If w_executor = p_usuario and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then 
-          Result := Result + 16;
-       Elsif w_sg_modulo = 'OR' Then
-          -- Se for módulo de orçamento, outra possibilidade é a solicitação ter metas e o usuário ser:
-          -- responsável pelo monitoramento, tit/subst do setor responsável pelo monitoramento ou
-          -- tit/subst da unidade executora do serviço.
-          If p_usuario = w_solicitante Then
-             Result := Result + 16;
-          Else
-             -- Verifica se o usuário é responsável pela unidade executora
-             select count(*) into w_existe
-               from eo_unidade_resp a
-              where a.sq_unidade = w_sq_unidade_executora
-                and a.sq_pessoa  = p_usuario
-                and a.fim        is null;
-             If w_existe > 0 Then 
-                Result := Result + 16;
-             Else
-                -- Verifica, nas demandas, se o usuário é responsável pela unidade responsável pelo monitoramento
-                select count(*) into w_existe
-                  from eo_unidade_resp       a
-                       inner join gd_demanda b on (a.sq_unidade = b.sq_unidade_resp)
-                 where b.sq_siw_solicitacao = p_solicitacao
-                   and a.sq_pessoa          = p_usuario
-                   and a.fim                is null;
-                If w_existe > 0 Then 
-                   Result := Result + 16;
-                Else
-                   -- Verifica, nas demandas, se o usuário é responsável pela unidade responsável pelo monitoramento
-                   select count(*) into w_existe
-                     from eo_unidade_resp       a
-                          inner join pj_projeto b on (a.sq_unidade = b.sq_unidade_resp)
-                    where b.sq_siw_solicitacao = p_solicitacao
-                      and a.sq_pessoa          = p_usuario
-                      and a.fim                is null;
-                   If w_existe > 0 Then 
-                      Result := Result + 16;
-                   End If;
-                End If;
-             End If;
-          End If;
-       End If;
-    End If;
+      End If;
+   Elsif w_sigla_situacao = 'AT' and  w_solicitante = p_Usuario and w_consulta_opiniao = 'S' and w_opiniao_solicitante is null Then
+      -- Outra possibilidade é a solicitação estar concluída e pendente de opinião pelo
+      -- solicitante
+      Result := Result + 16;
+   Else
+      -- Outra possibilidade é o trâmite ser cumprido por uma pessoa que tenha
+      -- permissão para isso
+      select count(*) into w_existe 
+        from sg_tramite_pessoa a 
+       where a.sq_pessoa          = p_usuario
+         and a.sq_pessoa_endereco = w_sq_endereco_unidade 
+         and a.sq_siw_tramite     = w_sq_siw_tramite
+         and (w_sigla <> 'PADCAD' or
+              (w_sigla = 'PADCAD' and
+               0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)
+              )
+             );
+      If w_existe > 0 and w_destinatario = 'N' Then 
+         Result := Result + 16; 
+      Else
+         -- Outra possibilidade é a solicitação estar sendo executada pelo usuário
+         -- Neste caso a solicitação deve estar em tramite ativo e diferente de cadastramento
+         If w_executor = p_usuario and w_ativo = 'S' and w_sigla_situacao <> 'CI' Then 
+            Result := Result + 16;
+         Elsif w_sg_modulo = 'OR' Then
+            -- Se for módulo de orçamento, outra possibilidade é a solicitação ter metas e o usuário ser:
+            -- responsável pelo monitoramento, tit/subst do setor responsável pelo monitoramento ou
+            -- tit/subst da unidade executora do serviço.
+            If p_usuario = w_solicitante Then
+               Result := Result + 16;
+            Else
+               -- Verifica se o usuário é responsável pela unidade executora
+               select count(*) into w_existe
+                 from eo_unidade_resp a
+                where a.sq_unidade = w_sq_unidade_executora
+                  and a.sq_pessoa  = p_usuario
+                  and a.fim        is null;
+               If w_existe > 0 Then 
+                  Result := Result + 16;
+               Else
+                  -- Verifica, nas demandas, se o usuário é responsável pela unidade responsável pelo monitoramento
+                  select count(*) into w_existe
+                    from eo_unidade_resp       a
+                         inner join gd_demanda b on (a.sq_unidade = b.sq_unidade_resp)
+                   where b.sq_siw_solicitacao = p_solicitacao
+                     and a.sq_pessoa          = p_usuario
+                     and a.fim                is null;
+                  If w_existe > 0 Then 
+                     Result := Result + 16;
+                  Else
+                     -- Verifica, nas demandas, se o usuário é responsável pela unidade responsável pelo monitoramento
+                     select count(*) into w_existe
+                       from eo_unidade_resp       a
+                            inner join pj_projeto b on (a.sq_unidade = b.sq_unidade_resp)
+                      where b.sq_siw_solicitacao = p_solicitacao
+                        and a.sq_pessoa          = p_usuario
+                        and a.fim                is null;
+                     If w_existe > 0 Then 
+                        Result := Result + 16;
+                     End If;
+                  End If;
+               End If;
+            End If;
+         End If;
+      End If;
 
+   End If;
  End If;
-
  return(Result);
 end Acesso;
 /

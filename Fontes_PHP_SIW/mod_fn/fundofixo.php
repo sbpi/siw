@@ -52,6 +52,7 @@ include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordoParcela.php');
+include_once($w_dir_volta.'funcoes/selecaoSolic.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoAcordo.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoPessoa.php');
@@ -891,7 +892,7 @@ function Geral() {
     // Recupera dados da opção Projetos
     ShowHTML('      <tr>');
     $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pr<u>o</u>jeto:','P','Selecione o projeto ao qual o lançamento está vinculado.',$w_chave_pai,$w_usuario,f($RS,'sq_menu'),null,null,null,'w_chave_pai','PJLISTCAD','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_chave_pai\'; document.Form.submit();"',1,3);
+    SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto ao qual o lançamento está vinculado.',$w_cliente,$w_chave_pai,f($RS,'sq_menu'),f($RS_Menu,'sq_menu'),'w_chave_pai',f($RS,'sigla'),null,null,'<BR />',2);
     if ($w_chave_pai >'') {
       $RS = db_getSolicRubrica::getInstanceOf($dbms,$w_chave_pai,null,null,null,null,null,null,null,null);
       if (count($RS)>0) {

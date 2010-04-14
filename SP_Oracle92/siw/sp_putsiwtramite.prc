@@ -10,7 +10,9 @@ create or replace procedure SP_PutSIWTramite
     p_ativo               in  varchar2 default null,
     p_solicita_cc         in  varchar2 default null,
     p_envia_mail          in  varchar2 default null,
-    p_destinatario        in  varchar2 default null
+    p_destinatario        in  varchar2 default null,
+    p_anterior            in  varchar2 default null,
+    p_beneficiario        in  varchar2 default null
    ) is
    w_chave  number(18);
 begin
@@ -22,11 +24,11 @@ begin
       insert into siw_tramite 
          (sq_siw_tramite,     sq_menu,           nome,     ordem,         sigla, 
           descricao,          chefia_imediata,   ativo,    solicita_cc,   envia_mail,
-          destinatario)  
+          destinatario,       assina_tramite_anterior,     beneficiario_cumpre)  
       values 
          (w_Chave,            p_chave_aux,       p_nome,   p_ordem,       upper(p_sigla),
           p_descricao,        p_chefia_imediata, p_ativo,  p_solicita_cc, p_envia_mail,
-          p_destinatario
+          p_destinatario,     p_anterior,                  p_beneficiario
          );
       
       -- Cria a opção do menu para todos os endereços da organização
@@ -44,15 +46,17 @@ begin
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update siw_tramite set
-          nome             = trim(p_nome),
-          ordem            = p_ordem,
-          chefia_imediata  = p_chefia_imediata,
-          envia_mail       = p_envia_mail,
-          solicita_cc      = p_solicita_cc,
-          sigla            = upper(p_sigla),
-          descricao        = trim(p_descricao),
-          ativo            = p_ativo,
-          destinatario     = p_destinatario
+          nome                    = trim(p_nome),
+          ordem                   = p_ordem,
+          chefia_imediata         = p_chefia_imediata,
+          envia_mail              = p_envia_mail,
+          solicita_cc             = p_solicita_cc,
+          sigla                   = upper(p_sigla),
+          descricao               = trim(p_descricao),
+          ativo                   = p_ativo,
+          destinatario            = p_destinatario,
+          assina_tramite_anterior = p_anterior,
+          beneficiario_cumpre     = p_beneficiario
       where sq_siw_tramite = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove vínculo com logs

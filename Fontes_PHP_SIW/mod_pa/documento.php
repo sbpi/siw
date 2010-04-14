@@ -2972,7 +2972,7 @@ function Recebimento() {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
         null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, null, null);
-    $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
+    $RS = SortArray($RS,'sg_unid_dest','asc', 'sg_unid_origem','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
   } elseif ($O=='R') {
     // Recupera os protocolos da guia
     $RS_Dados = db_getProtocolo::getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
@@ -3037,8 +3037,9 @@ function Recebimento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Guia</td>');
+    ShowHTML('          <td><b>Destino</td>');
     ShowHTML('          <td><b>Procedência</td>');
+    ShowHTML('          <td><b>Guia</td>');
     ShowHTML('          <td><b>Despacho</td>');
     ShowHTML('          <td><b>Protocolo</td>');
     ShowHTML('          <td><b>Envio</td>');
@@ -3046,7 +3047,7 @@ function Recebimento() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=6 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan="7" align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
@@ -3055,8 +3056,9 @@ function Recebimento() {
         if ($w_atual=='' || $w_atual!=f($row,'guia_tramite')) {
           $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
           ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          ShowHTML('        <td title="'.f($row,'nm_unid_dest').'">'.f($row,'sg_unid_dest').'</td>');
+          ShowHTML('        <td title="'.f($row,'nm_unid_origem').'">'.f($row,'sg_unid_origem').'</td>');
           ShowHTML('        <td>'.f($row,'guia_tramite').'</td>');
-          ShowHTML('        <td>'.f($row,'nm_unid_origem').'</td>');
           ShowHTML('        <td>'.f($row,'nm_despacho').'</td>');
           ShowHTML('        <td align="center"><A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'phpdt_envio'),3).'</td>');

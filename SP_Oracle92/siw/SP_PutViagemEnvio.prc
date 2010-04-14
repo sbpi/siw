@@ -31,16 +31,17 @@ create or replace procedure SP_PutViagemEnvio
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
       
-   cursor c_reembolso_geral is
+   cursor c_reembolso is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
-             case x5.sigla when 'EE' then 'Diferença de diárias da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||'.' as descricao,
+             case x5.sigla when 'EE' then 'Diferença de diárias da ' else 'Adiantamento de diárias da 'end ||x.codigo_interno||' ('||x4.nm_moeda||').' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro,
              x2.sq_lancamento_doc  as sq_documento,
-             x3.sq_tipo_pessoa
+             x3.sq_tipo_pessoa,
+             x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor, x4.nm_despesa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
                inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
@@ -52,12 +53,61 @@ create or replace procedure SP_PutViagemEnvio
                                                      )
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
+               inner   join (select sq_siw_solicitacao, 
+                                    sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
+                                    case tp_despesa 
+                                         when 'RMB' then 'Diferença de diárias'
+                                         when 'DIA' then 'Diárias' 
+                                         when 'HSP' then 'Hospedagem' 
+                                         else 'Locação de veículos' 
+                                    end as nm_despesa
+                               from (select a.sq_siw_solicitacao, 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
+                                            c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                                            b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
+                                       from siw_solicitacao                      a
+                                            inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla = 'EE')
+                                            inner     join pd_reembolso          b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
+                                              inner   join co_moeda              b1 on (b.sq_moeda                   = b1.sq_moeda)
+                                            inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                                              inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
+                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                                      where a.sq_siw_solicitacao = p_chave
+                                     UNION
+                                     select a.sq_siw_solicitacao, 'DIA' as tp_despesa, b.sq_diaria, (b.quantidade*b.valor) as valor,
+                                            c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                       from siw_solicitacao                      a
+                                            inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
+                                            inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                                            inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
+                                              inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_diaria        = c.sq_pdvinculo_financeiro)
+                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                                              inner   join pd_valor_diaria       d  on (b.sq_valor_diaria            = d.sq_valor_diaria)
+                                                inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
+                                      where a.sq_siw_solicitacao = p_chave
+                                     UNION
+                                     select a.sq_siw_solicitacao, 'VEI' as tp_despesa, b.sq_diaria, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
+                                            c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
+                                            d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
+                                       from siw_solicitacao                      a
+                                            inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
+                                            inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
+                                            inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
+                                              inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_veiculo       = c.sq_pdvinculo_financeiro)
+                                                inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
+                                              inner   join pd_valor_diaria       d  on (b.sq_valor_diaria_veiculo    = d.sq_valor_diaria)
+                                                inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
+                                      where a.sq_siw_solicitacao = p_chave
+                                    ) 
+                             group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa
+                            )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
                                     inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
                                       inner join fn_lancamento_doc d on (c.sq_siw_solicitacao = d.sq_siw_solicitacao)
-                            )                 x2 on (x.sq_siw_solicitacao  = x2.sq_solic_pai and 
+                            )                 x2 on (x.sq_siw_solicitacao  = x2.sq_solic_pai and
+                                                     0                     < instr(x2.descricao,'('||x4.nm_moeda||')') and 
                                                      (x5.sigla <> 'EE' or (x5.sigla = 'EE' and instr(lower(x2.descricao),'adiantamento')=0))
                                                     ),
              fn_tipo_documento             y,
@@ -94,55 +144,6 @@ create or replace procedure SP_PutViagemEnvio
          and y.sigla              = 'VG'
          and z.sq_lancamento      = case when x2.sq_financeiro is null then z.sq_lancamento else x2.sq_tipo_lancamento end;
 
-
-   cursor c_reembolso_item is
-      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
-             case tp_despesa 
-                  when 'RMB' then 'Diferença de diárias'
-                  when 'DIA' then 'Diárias' 
-                  when 'HSP' then 'Hospedagem' 
-                  else 'Locação de veículos' 
-             end as nm_despesa
-        from (select 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
-                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
-                from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla = 'EE')
-                     inner     join pd_reembolso          b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join co_moeda              b1 on (b.sq_moeda                   = b1.sq_moeda)
-                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_reembolso    = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
-               where a.sq_siw_solicitacao = p_chave
-              UNION
-              select 'DIA' as tp_despesa, b.sq_diaria, (b.quantidade*b.valor) as valor,
-                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
-                from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
-                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_diaria        = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
-                       inner   join pd_valor_diaria       d  on (b.sq_valor_diaria            = d.sq_valor_diaria)
-                         inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
-               where a.sq_siw_solicitacao = p_chave
-              UNION
-              select 'VEI' as tp_despesa, b.sq_diaria, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
-                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
-                from siw_solicitacao                      a
-                     inner     join siw_tramite           a2 on (a.sq_siw_tramite             = a2.sq_siw_tramite and a2.sigla <> 'EE')
-                     inner     join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
-                     inner     join pd_diaria             b  on (a.sq_siw_solicitacao         = b.sq_siw_solicitacao)
-                       inner   join pd_vinculo_financeiro c  on (b.sq_pdvinculo_veiculo       = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
-                       inner   join pd_valor_diaria       d  on (b.sq_valor_diaria_veiculo    = d.sq_valor_diaria)
-                         inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
-               where a.sq_siw_solicitacao = p_chave
-             )
-      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
-   
    cursor c_ressarcimento_geral is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
              'Devolução de valores da '||x.codigo_interno||'.' as descricao,
@@ -392,7 +393,7 @@ begin
       If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
          If w_reembolso = 'S' or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
-            for crec in c_reembolso_geral loop
+            for crec in c_reembolso loop
                 sp_putfinanceirogeral(
                                   p_operacao           => case when crec.sq_financeiro is null then 'I' else 'A' end,
                                   p_cliente            => crec.cliente,
@@ -457,20 +458,16 @@ begin
                                  );
                 -- Cria itens do lançamento
                 delete fn_documento_item where sq_lancamento_doc = w_sq_doc;
-                i := 0;
-                For drec in c_reembolso_item Loop
-                    i := i + 1;
-                    sp_putlancamentoitem(
-                                  p_operacao           => 'I',
-                                  p_chave              => w_sq_doc,
-                                  p_chave_aux          => null,
-                                  p_sq_projeto_rubrica => drec.sq_rubrica,
-                                  p_descricao          => drec.nm_despesa||': '||drec.sg_moeda||' ('||drec.nm_moeda||') '||fValor(drec.valor,'T'),
-                                  p_quantidade         => 1,
-                                  p_valor_unitario     => drec.valor,
-                                  p_ordem              => i
-                                 );
-                End Loop;
+                sp_putlancamentoitem(
+                              p_operacao           => 'I',
+                              p_chave              => w_sq_doc,
+                              p_chave_aux          => null,
+                              p_sq_projeto_rubrica => crec.sq_rubrica,
+                              p_descricao          => crec.nm_despesa||': '||crec.sg_moeda||' ('||crec.nm_moeda||') '||fValor(crec.valor,'T'),
+                              p_quantidade         => 1,
+                              p_valor_unitario     => crec.valor,
+                              p_ordem              => 1
+                             );
    
                 If crec.sq_financeiro is null Then
                    -- Coloca a solicitação na fase de liquidação
