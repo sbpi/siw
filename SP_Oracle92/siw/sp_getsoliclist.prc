@@ -902,7 +902,7 @@ begin
                 b.codigo_externo,     d.observacao,                  d.valor_imposto,
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
-                d.referencia_inicio,  d.referencia_fim,
+                d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
                 d1.nome as nm_tipo_lancamento,
                 case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa,    d2.nome_resumido as nm_pessoa_resumido,
@@ -926,7 +926,8 @@ begin
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
-                q1.titulo as nm_projeto
+                q1.titulo as nm_projeto,
+                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -998,6 +999,8 @@ begin
                                           )                    m2 on (m1.sq_acordo_parcela       = m2.sq_acordo_parcela)
                       left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                         left         join siw_solicitacao      q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
+                      left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)
+                        left         join siw_solicitacao      r1 on (r.sq_siw_solicitacao       = r1.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                         inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
@@ -1020,7 +1023,11 @@ begin
             and (p_usu_resp       is null or (p_usu_resp    is not null and (b.executor          = p_usu_resp or 0 < (select count(*) from fn_lancamento_log where destinatario = p_usu_resp and sq_siw_solicitacao = b.sq_siw_solicitacao))))
             and (p_uorg_resp      is null or (p_uorg_resp   is not null and b.conclusao          is null and l.sq_unidade = p_uorg_resp))
             and (p_sqcc           is null or (p_sqcc        is not null and b.sq_cc              = p_sqcc))
-            and (p_projeto        is null or (p_projeto     is not null and b.sq_solic_pai       = p_projeto))
+            and (p_projeto        is null or (p_projeto     is not null and ((substr(a.sigla,4)  = 'CONT' and d.sq_solic_vinculo is not null and d.sq_solic_vinculo = p_projeto) or
+                                                                             (substr(a.sigla,4) <> 'CONT' and b.sq_solic_pai     is not null and b.sq_solic_pai     = p_projeto)
+                                                                            )
+                                             )
+                )
             and (p_uf             is null or (p_uf          is not null and f.co_uf              = p_uf))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
@@ -1050,7 +1057,7 @@ begin
                   instr(p_restricao,'RESPATU') = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
-                 ((instr(p_restricao,'PROJ')    > 0    and q.sq_siw_solicitacao is not null) or
+                 ((instr(p_restricao,'PROJ')    > 0    and ((substr(a.sigla,4) = 'CONT' and r.sq_siw_solicitacao is not null) or (substr(a.sigla,4) <> 'CONT' and q.sq_siw_solicitacao is not null))) or
                   --(instr(p_restricao,'ETAPA') > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
                   (instr(p_restricao,'PROP')    > 0    and d.pessoa       is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or

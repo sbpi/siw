@@ -156,7 +156,7 @@ begin
       -- Recupera a previsão orçamentária da viagem
       open p_result for
       select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor,
+        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -168,7 +168,7 @@ begin
                          inner join pj_rubrica            c1 on (c.sq_projeto_rubrica         = c1.sq_projeto_rubrica)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'BIL' as tp_despesa, a1.valor_passagem as valor,
+              select 'BIL' as tp_despesa, a1.valor_passagem as valor, 0 as sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -179,7 +179,7 @@ begin
                where a.sq_siw_solicitacao = p_solic
                  and d1.sigla = 'BRL'
               UNION
-              select 'DIA' as tp_despesa, (b.quantidade*b.valor) as valor,
+              select 'DIA' as tp_despesa, (b.quantidade*b.valor) as valor, b.sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -191,7 +191,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'HSP' as tp_despesa, (b.hospedagem_qtd*b.hospedagem_valor) as valor,
+              select 'HSP' as tp_despesa, (b.hospedagem_qtd*b.hospedagem_valor) as valor, b.sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -203,7 +203,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'VEI' as tp_despesa, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
+              select 'VEI' as tp_despesa, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor, b.sq_diaria,
                      c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -220,7 +220,7 @@ begin
       -- Recupera a previsão financeira da viagem
       open p_result for
       select sq_tipo_lancamento as sq_lancamento, nm_lancamento, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
-        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor,
+        from (select 'RMB' as tp_despesa, b.valor_autorizado as valor, b.sq_pdreembolso as sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -231,7 +231,7 @@ begin
                          inner join fn_tipo_lancamento    c2 on (c.sq_tipo_lancamento         = c2.sq_tipo_lancamento)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'BIL' as tp_despesa, a1.valor_passagem as valor,
+              select 'BIL' as tp_despesa, a1.valor_passagem as valor, 0 as sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -242,7 +242,7 @@ begin
                where a.sq_siw_solicitacao = p_solic
                  and d1.sigla = 'BRL'
               UNION
-              select 'DIA' as tp_despesa, (b.quantidade*b.valor) as valor,
+              select 'DIA' as tp_despesa, (b.quantidade*b.valor) as valor, b.sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -254,7 +254,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'HSP' as tp_despesa, (b.hospedagem_qtd*b.hospedagem_valor) as valor,
+              select 'HSP' as tp_despesa, (b.hospedagem_qtd*b.hospedagem_valor) as valor, b.sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a
@@ -266,7 +266,7 @@ begin
                          inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                where a.sq_siw_solicitacao = p_solic
               UNION
-              select 'VEI' as tp_despesa, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
+              select 'VEI' as tp_despesa, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor, b.sq_diaria,
                      c2.sq_tipo_lancamento, c2.nome as nm_lancamento,
                      d1.sigla as sg_moeda, d1.nome as nm_moeda, d1.simbolo as sb_moeda
                 from siw_solicitacao                      a

@@ -236,7 +236,13 @@ function Gerencial() {
         break;
       case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
         $w_TP=$TP.' - Por projeto';
-        $RS1 = SortArray($RS1,'nm_projeto','asc');
+        if (substr(f($RS_Menu,'sigla'),3)=='CONT') {
+          $RS1 = SortArray($RS1,'nm_solic_vinculo','asc');
+          $agrega_projeto = 'solic_vinculo';
+        } else {
+          $RS1 = SortArray($RS1,'nm_projeto','asc');
+          $agrega_projeto = 'projeto';
+        }
         break;
       case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':
         $w_TP = $TP.' - Por etapa de projeto';
@@ -506,16 +512,16 @@ function Gerencial() {
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROJ':
-            if ($w_nm_quebra!=f($row1,'nm_projeto')) {
+            if ($w_nm_quebra!=f($row1,'nm_'.$agrega_projeto)) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_projeto'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_'.$agrega_projeto));
               } 
-              $w_nm_quebra=f($row1,'nm_projeto');
-              $w_chave=f($row1,'sq_solic_pai');
+              $w_nm_quebra=f($row1,'nm_'.$agrega_projeto);
+              if (substr(f($RS_Menu,'sigla'),3)=='CONT') $w_chave=f($row1,'sq_solic_vinculo'); else $w_chave=f($row1,'sq_solic_pai');
               $w_chave_aux=-1;
               $w_qt_quebra=0.00;
               $t_solic=0.00;
@@ -698,15 +704,15 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_etapa'));                   break;
-            case substr(f($RS_Menu,'sigla'),0,3).'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));             break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_projeto'));                 break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa_resumido'));    break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_solic'));                   break;
-            case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_exec'));                    break;
-            case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'sg_cc'));                      break;
-            case substr(f($RS_Menu,'sigla'),0,3).'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_unidade_resp'));            break;
-            case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'co_uf'));                      break;
+            case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_etapa'));                    break;
+            case substr(f($RS_Menu,'sigla'),0,3).'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo')); break;
+            case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_'.$agrega_projeto));         break;
+            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa_resumido'));          break;
+            case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_solic'));                    break;
+            case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_exec'));                     break;
+            case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'sg_cc'));                       break;
+            case substr(f($RS_Menu,'sigla'),0,3).'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_unidade_resp'));             break;
+            case substr(f($RS_Menu,'sigla'),0,3).'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'co_uf'));                       break;
           } 
           $w_linha += 1;
         }
@@ -787,7 +793,7 @@ function Gerencial() {
       if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')    ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Bolsista');
       else                                                  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROP">Outra parte');
     }
-    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
+    if (substr(f($RS_Menu_Origem,'sigla'),0,3)!='GCA') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'PROJ')  ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ" selected>Projeto');             else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'PROJ">Projeto'); }
     if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB') { if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'ETAPA') ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA" selected>Modalidade de bolsa');else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'ETAPA">Modalidade de bolsa'); }
     if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'RESP')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP" selected>Responsável');         else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'RESP">Responsável');
     if ($p_agrega==substr(f($RS_Menu,'sigla'),0,3).'TIPO')                                                       ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO" selected>Tipo de lançamento');  else ShowHTML('          <option value="'.substr(f($RS_Menu,'sigla'),0,3).'TIPO">Tipo de lançamento');
