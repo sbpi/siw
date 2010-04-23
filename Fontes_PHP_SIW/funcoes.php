@@ -364,7 +364,7 @@ function CabecalhoWord($p_cliente,$p_titulo,$p_pagina) {
 // =========================================================================
 // Montagem de link para ordenação, usada nos títulos de colunas
 // -------------------------------------------------------------------------
-function LinkOrdena($p_label,$p_campo) {
+function LinkOrdena($p_label,$p_campo,$p_form=null) {
   extract($GLOBALS);
   foreach($_POST as $chv => $vlr) {
     if (nvl($vlr,'')>'' && (upper(substr($chv,0,2))=="W_" || upper(substr($chv,0,2))=="P_")) {
@@ -390,18 +390,34 @@ function LinkOrdena($p_label,$p_campo) {
       }
     }
   }
-  if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
-    if (strpos(upper($l_ordena),' DESC') !== false) {
-      $l_string .= '&p_ordena='.$p_campo.' asc&';
-      $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
-    } else {
-      $l_string .= '&p_ordena='.$p_campo.' desc&';
-      $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
-    }
+  if ($p_form>'') {
+	  if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
+	    if (strpos(upper($l_ordena),' DESC') !== false) {
+	      $l_string = $p_campo.' asc';
+	      $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
+	    } else {
+	      $l_string = $p_campo.' desc';
+	      $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
+	    }
+	  } else {
+	    $l_string = $p_campo.' asc';
+	  }
+    return '<a class="ss" href="javascript:this.status.value" onClick="javascript:document.'.$p_form.'.action=\''.$w_dir.$w_pagina.$par.'\'; document.'.$p_form.'.O.value=\''.$O.'\'; document.'.$p_form.'.w_troca.value=\'w_assinatura\'; document.'.$p_form.'.p_ordena.value=\''.$l_string.'\'; document.'.$p_form.'.submit();" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
   } else {
-    $l_string .= '&p_ordena='.$p_campo.' asc&';
+    if (upper($p_campo)==str_replace(' DESC','',str_replace(' ASC','',upper($l_ordena)))) {
+      if (strpos(upper($l_ordena),' DESC') !== false) {
+        $l_string .= '&p_ordena='.$p_campo.' asc&';
+        $l_img='&nbsp;<img src="images/down.gif" width=8 height=8 border=0 align="absmiddle">';
+      } else {
+        $l_string .= '&p_ordena='.$p_campo.' desc&';
+        $l_img='&nbsp;<img src="images/up.gif" width=8 height=8 border=0 align="absmiddle">';
+      }
+    } else {
+      $l_string .= '&p_ordena='.$p_campo.' asc&';
+    }
+    return '<a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3=1'.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$l_string.'" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
   }
-  return '<a class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&P3=1'.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.$l_string.'" title="Ordena a listagem por esta coluna.">'.$p_label.'</a>'.$l_img;
+  
 }
 
 // =========================================================================

@@ -5772,14 +5772,14 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= '    <table width="97%" border="0">'.$crlf;
     if ($p_tipo==1) {
       $w_html .= '      <tr valign="top"><td align="center"><b>INCLUSÃO</b><br><br><td></tr>'.$crlf;
-    } elseif ($w_sg_tramite=='EE' && $w_cumprimento!='C') {
+    } elseif ($w_sg_tramite=='PC' && $w_cumprimento!='C') {
       $w_html .= '      <tr valign="top"><td align="center"><b>PRESTAÇÃO DE CONTAS</b><br><br><td></tr>'.$crlf;
     } elseif ($p_tipo==2) {
       $w_html .= '      <tr valign="top"><td align="center"><b>TRAMITAÇÃO</b><br><br><td></tr>'.$crlf;
     } elseif ($p_tipo==3) {
       $w_html .= '      <tr valign="top"><td align="center"><b>CONCLUSÃO</b><br><br><td></tr>'.$crlf;
     }
-    if ($w_sg_tramite=='EE' && $w_cumprimento!='C') {
+    if ($w_sg_tramite=='PC' && $w_cumprimento!='C') {
       if ($w_cliente==10135) { //ABDI
         $w_html .= '      <tr valign="top"><td><b><font color="#BC3131">ATENÇÃO:<br>É necessário elaborar o relatório de viagem e entregar os bilhetes de embarque, conforme PO 059.</font></b><br><br><td></tr>'.$crlf;
       } else {
@@ -5797,8 +5797,8 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'            <td>Beneficiário:<br><b>'.f($RSM,'nm_prop').'</b></td>';
     $w_html .= $crlf.'            <td>Unidade proponente:<br><b>'.f($RSM,'nm_unidade_resp').'</b></td>';
     $w_html .= $crlf.'          <tr valign="top">';
-    $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RSm,'phpdt_inicio')).' </b></td>';
-    $w_html .= $crlf.'            <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RSm,'phpdt_fim')).' </b></td>';
+    $w_html .= $crlf.'            <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RSM,'phpdt_inicio')).' </b></td>';
+    $w_html .= $crlf.'            <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RSM,'phpdt_fim')).' </b></td>';
     $w_html .= $crlf.'          </table>';
     // Informações adicionais
     if (Nvl(f($RSM,'descricao'),'')>'') $w_html .= $crlf.'      <tr><td valign="top">Objetivo/assunto a ser tratado/evento:<br><b>'.CRLF2BR(f($RSM,'descricao')).' </b></td>';
@@ -5869,7 +5869,7 @@ function SolicMail($p_solic,$p_tipo) {
     // Executa o envio do e-mail
     if ($w_destinatarios>'') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);
 
-    if ($w_sg_tramite=='EE') {
+    if ($w_sg_tramite=='xx') {
       // Remove o arquivo temporário
       if (!unlink($w_file)) {
         ScriptOpen('JavaScript');
@@ -7643,7 +7643,7 @@ function Grava() {
             retornaFormulario('w_observacao');
             exit();
           } else {
-            // Se foi feito o upload de um arquivo
+          // Se foi feito o upload de um arquivo
             if (UPLOAD_ERR_OK==0) {
               $w_maximo = $_REQUEST['w_upload_maximo'];
               foreach ($_FILES as $Chv => $Field) {
@@ -7691,7 +7691,6 @@ function Grava() {
                 if($w_sg_tramite=='CI' || ($w_sg_tramite=='DF' || $w_sg_tramite=='AE' || $w_sg_tramite=='PC' || $w_sg_tramite=='VP')) {
                   $w_html = VisualViagem($w_chave,'L',$w_usuario,$P1,'1');
                   CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
-                  exit();
                 }
               }
             } else {
