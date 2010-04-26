@@ -133,7 +133,7 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, c.cpf
+                i.nome nm_modalidade_contrato, i.ferias 
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)
@@ -167,7 +167,7 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, c.cpf
+                i.nome nm_modalidade_contrato, i.ferias
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)
@@ -203,7 +203,7 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, c.cpf
+                i.nome nm_modalidade_contrato, i.ferias
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)

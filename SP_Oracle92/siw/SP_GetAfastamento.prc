@@ -27,7 +27,7 @@ begin
                 a.inicio_periodo, a.fim_data, a.fim_periodo, a.dias, a.observacao, 
                 case inicio_periodo when 'M' then 'Manhã' else 'Tarde' end as nm_inicio_periodo,
                 case fim_periodo when 'M' then 'Manhã' else 'Tarde' end as nm_fim_periodo,
-                b.nome as nm_tipo_afastamento, b.sigla,
+                b.nome as nm_tipo_afastamento, b.sigla, b.abate_banco_horas, b.abate_ferias, b.falta_nao_justificada,
                 e.sq_unidade, e.sigla||' ('||d.nome||' - R.'||d.ramal||')' as local, 
                 f.nome_resumido, f.sq_pessoa
            from gp_afastamento                     a
