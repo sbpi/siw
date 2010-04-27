@@ -3562,6 +3562,7 @@ SP_Oracle92/siw/TG_FN_LANCAMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_FN_LANCAMENTO_RUBRICA.trg -text
 SP_Oracle92/siw/TG_GP_AFASTAMENTO.trg -text
 SP_Oracle92/siw/TG_GP_CONTRATO_COLAB_IN_UP.trg -text
+SP_Oracle92/siw/TG_GP_FERIAS_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_ASUNTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_IN_UP.trg -text
 SP_Oracle92/siw/TG_PA_DOCUMENTO_LOG_IN_UP.trg -text

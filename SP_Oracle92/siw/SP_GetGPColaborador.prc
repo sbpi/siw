@@ -50,8 +50,8 @@ begin
                 g.nome unidade, g.sigla, g.email email_unidade,
                 h.logradouro endereco, (i.nome||'-'||i.co_uf) Cidade, i.ddd
            from gp_colaborador                                a
-                  inner          join co_pessoa               b on (a.sq_pessoa      = b.sq_pessoa)
-                    left outer   join co_pessoa_fisica        c on (a.sq_pessoa      = c.sq_pessoa)
+                  inner          join co_pessoa               b on (a.sq_pessoa               = b.sq_pessoa)
+                    left outer   join co_pessoa_fisica        c on (a.sq_pessoa               = c.sq_pessoa)
                     left outer   join (select w.sq_pessoa, w.logradouro email
                                          from co_pessoa_endereco            w
                                               inner   join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
@@ -61,7 +61,7 @@ begin
                                           and x.email              = 'S'
                                           and x.ativo              = 'S'
                                           and w.padrao             = 'S'
-                                      )                       d on (b.sq_pessoa      = d.sq_pessoa)
+                                      )                       d on (b.sq_pessoa               = d.sq_pessoa)
                     left outer   join (select w.sq_pessoa, w.sq_pessoa_endereco, w.sq_cidade, w.logradouro
                                          from co_pessoa_endereco          w
                                               inner join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
@@ -71,16 +71,22 @@ begin
                                           and x.nome               = 'Comercial'
                                           and x.ativo              = 'S'
                                           and w.padrao             = 'S'
-                                      )                       h on (b.sq_pessoa_pai = h.sq_pessoa)
-                  left outer     join co_cidade               i on (h.sq_cidade     = i.sq_cidade)
-                  inner          join gp_contrato_colaborador e on (a.sq_pessoa      = e.sq_pessoa and
-                                                                    e.fim            is null)
-                    left outer   join eo_localizacao          f on (e.sq_localizacao = f.sq_localizacao) 
-                      left outer join eo_unidade              g on (f.sq_unidade     = g.sq_unidade)                                             
+                                      )                       h on (b.sq_pessoa_pai           = h.sq_pessoa)
+                  left outer     join co_cidade               i on (h.sq_cidade               = i.sq_cidade)
+                  inner          join (select sq_pessoa, max(inicio) as inicio
+                                         from gp_contrato_colaborador
+                                        where cliente = p_cliente
+                                       group by sq_pessoa
+                                      )                      e1 on (a.sq_pessoa               = e1.sq_pessoa)
+                  inner          join gp_contrato_colaborador e on (e1.sq_pessoa              = e.sq_pessoa and
+                                                                    e1.inicio                 = e.inicio
+                                                                   )
+                    left outer   join eo_localizacao          f on (e.sq_localizacao          = f.sq_localizacao)
+                      left outer join eo_unidade              g on (f.sq_unidade              = g.sq_unidade)
           where a.cliente  = p_cliente
-            and ((p_chave  is null) or (p_chave is not null and a.sq_pessoa    = p_chave))
-            and ((p_nome   is null) or (p_nome  is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
-            and (p_ativo       is null or (p_ativo    = 'S' and e.fim is null));
+            and ((p_chave  is null) or (p_chave  is not null and a.sq_pessoa    = p_chave))
+            and ((p_nome   is null) or (p_nome   is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
+            and (p_ativo   is null  or ((p_ativo = 'S' and e.fim is null)) or (p_ativo = 'N' and e.fim is not null));
    ElsIf p_restricao = 'AFASTAMENTO' Then
       -- Recupera os colaboradores que estão ligados a um afastamento
       open p_result for 
@@ -122,7 +128,7 @@ begin
             and a.sq_tipo_afastamento = p_chave_aux
             and (p_nome               is null or (p_nome     is not null and (d.nome_indice like '%'||acentos(p_nome)||'%' or d.nome_resumido_ind like '%'||acentos(p_nome)||'%')));
    Elsif p_restricao = 'COLABORADOR' Then
-      -- Recupera os colaboradores ativos
+      -- Recupera os colaboradores
       open p_result for 
          select distinct a.sq_pessoa chave, a.ctps_numero, a.ctps_serie, a.ctps_emissor, a.ctps_emissao_data,
                 a.pis_pasep, a.pispasep_numero, a.pispasep_cadastr, a.te_numero, a.te_zona, a.te_secao,
@@ -133,22 +139,38 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, i.ferias 
+                i.nome nm_modalidade_contrato, i.ferias,
+                k.nome as nm_posto, k.descricao as ds_posto, k.atividades as at_posto, k.competencias as cp_posto,
+                k1.nome as nm_tipo_posto, k1.descricao as ds_tipo_posto,
+                k2.nome as nm_formacao,
+                k3.codigo_cnpq as cd_cbo, k3.nome as nm_cbo,
+                k1.nome||' - '||k.nome as nm_posto_completo
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)
                 inner          join co_pessoa_fisica          c on (a.sq_pessoa = c.sq_pessoa)
-                inner          join gp_contrato_colaborador   e on (a.sq_pessoa = e.sq_pessoa and
-                                                                    e.fim is null)
+                inner          join (select sq_pessoa, max(inicio) as inicio
+                                         from gp_contrato_colaborador
+                                        where cliente = p_cliente
+                                       group by sq_pessoa
+                                    )                        e1 on (a.sq_pessoa               = e1.sq_pessoa)
+                inner          join gp_contrato_colaborador   e on (e1.sq_pessoa              = e.sq_pessoa and
+                                                                    e1.inicio                 = e.inicio
+                                                                   )
                   inner        join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
                     inner      join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)
                   inner        join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
+                  inner        join eo_posto_trabalho         k on (e.sq_posto_trabalho       = k.sq_posto_trabalho)
+                    inner      join eo_tipo_posto            k1 on (k.sq_eo_tipo_posto        = k1.sq_eo_tipo_posto)
+                    inner      join co_formacao              k2 on (k.sq_formacao             = k2.sq_formacao)
+                    left       join co_area_conhecimento     k3 on (k.sq_area_conhecimento    = k3.sq_area_conhecimento)
           where a.cliente              = p_cliente 
             and p_afastamento          is null
             and p_viagem               is null
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
             and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_ativo               is null or ((p_ativo = 'S' and e.fim is null)) or (p_ativo = 'N' and e.fim is not null))
             and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
                                                                                                                                                                                                                                   from eo_unidade
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_lotacao
@@ -167,22 +189,38 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, i.ferias
+                i.nome nm_modalidade_contrato, i.ferias,
+                k.nome as nm_posto, k.descricao as ds_posto, k.atividades as at_posto, k.competencias as cp_posto,
+                k1.nome as nm_tipo_posto, k1.descricao as ds_tipo_posto,
+                k2.nome as nm_formacao,
+                k3.codigo_cnpq as cd_cbo, k3.nome as nm_cbo,
+                k1.nome||' - '||k.nome as nm_posto_completo
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)
                 inner          join co_pessoa_fisica          c on (a.sq_pessoa = c.sq_pessoa)
-                inner          join gp_contrato_colaborador   e on (a.sq_pessoa = e.sq_pessoa and
-                                                                    e.fim is null)
+                inner          join (select sq_pessoa, max(inicio) as inicio
+                                         from gp_contrato_colaborador
+                                        where cliente = p_cliente
+                                       group by sq_pessoa
+                                    )                        e1 on (a.sq_pessoa               = e1.sq_pessoa)
+                inner          join gp_contrato_colaborador   e on (e1.sq_pessoa              = e.sq_pessoa and
+                                                                    e1.inicio                 = e.inicio
+                                                                   )
                   inner        join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
                     inner      join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)
                   inner        join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
                   inner        join gp_afastamento            f on (e.sq_contrato_colaborador = f.sq_contrato_colaborador)
+                  inner        join eo_posto_trabalho         k on (e.sq_posto_trabalho       = k.sq_posto_trabalho)
+                    inner      join eo_tipo_posto            k1 on (k.sq_eo_tipo_posto        = k1.sq_eo_tipo_posto)
+                    inner      join co_formacao              k2 on (k.sq_formacao             = k2.sq_formacao)
+                    left       join co_area_conhecimento     k3 on (k.sq_area_conhecimento    = k3.sq_area_conhecimento)
           where a.cliente              = p_cliente
             and p_afastamento          is not null 
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
             and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_ativo               is null or ((p_ativo = 'S' and e.fim is null)) or (p_ativo = 'N' and e.fim is not null))
             and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
                                                                                                                                                                                                                                   from eo_unidade
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_lotacao
@@ -203,23 +241,39 @@ begin
                 e.sq_posto_trabalho, e.sq_unidade_lotacao, e.sq_unidade_exercicio, e.sq_modalidade_contrato,
                 e.matricula, e.sq_localizacao,
                 h.sigla||' ('||g.nome||')' local, g.ramal,
-                i.nome nm_modalidade_contrato, i.ferias
+                i.nome nm_modalidade_contrato, i.ferias,
+                k.nome as nm_posto, k.descricao as ds_posto, k.atividades as at_posto, k.competencias as cp_posto,
+                k1.nome as nm_tipo_posto, k1.descricao as ds_tipo_posto,
+                k2.nome as nm_formacao,
+                k3.codigo_cnpq as cd_cbo, k3.nome as nm_cbo,
+                k1.nome||' - '||k.nome as nm_posto_completo
            from gp_colaborador                                a
                 inner          join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                                     a.cliente   = b.sq_pessoa_pai)
                 inner          join co_pessoa_fisica          c on (a.sq_pessoa = c.sq_pessoa)
-                inner          join gp_contrato_colaborador   e on (a.sq_pessoa = e.sq_pessoa and
-                                                                    e.fim is null)
+                inner          join (select sq_pessoa, max(inicio) as inicio
+                                         from gp_contrato_colaborador
+                                        where cliente = p_cliente
+                                       group by sq_pessoa
+                                    )                        e1 on (a.sq_pessoa               = e1.sq_pessoa)
+                inner          join gp_contrato_colaborador   e on (e1.sq_pessoa              = e.sq_pessoa and
+                                                                    e1.inicio                 = e.inicio
+                                                                   )
                   inner        join eo_localizacao            g on (e.sq_localizacao         = g.sq_localizacao)
                     inner      join eo_unidade                h on (g.sq_unidade             = h.sq_unidade)                                                                    
                   inner        join gp_modalidade_contrato    i on (e.sq_modalidade_contrato  = i.sq_modalidade_contrato)
                   inner        join pd_missao                 j on (a.sq_pessoa               = j.sq_pessoa)
                     inner      join siw_solicitacao           l on (j.sq_siw_solicitacao      = l.sq_siw_solicitacao)
+                  inner        join eo_posto_trabalho         k on (e.sq_posto_trabalho       = k.sq_posto_trabalho)
+                    inner      join eo_tipo_posto            k1 on (k.sq_eo_tipo_posto        = k1.sq_eo_tipo_posto)
+                    inner      join co_formacao              k2 on (k.sq_formacao             = k2.sq_formacao)
+                    left       join co_area_conhecimento     k3 on (k.sq_area_conhecimento    = k3.sq_area_conhecimento)
           where a.cliente              = p_cliente
             and p_viagem               is not null 
             and (p_chave               is null or (p_chave               is not null and e.sq_contrato_colaborador = p_chave))
             and (p_nome                is null or (p_nome                is not null and (b.nome_indice like '%'||acentos(p_nome)||'%' or b.nome_resumido_ind like '%'||acentos(p_nome)||'%')))
             and (p_modalidade_contrato is null or (p_modalidade_contrato is not null and e.sq_modalidade_contrato  = p_modalidade_contrato))
+            and (p_ativo               is null or ((p_ativo = 'S' and e.fim is null)) or (p_ativo = 'N' and e.fim is not null))
             and (p_unidade_lotacao     is null or (p_unidade_lotacao     is not null and ((p_filhos_lotacao   is null and e.sq_unidade_lotacao   = p_unidade_lotacao)   or (p_filhos_lotacao   is not null and e.sq_unidade_lotacao in (select sq_unidade 
                                                                                                                                                                                                                                   from eo_unidade
                                                                                                                                                                                                                                 start with sq_unidade = p_unidade_lotacao
