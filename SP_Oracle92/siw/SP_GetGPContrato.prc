@@ -10,7 +10,7 @@ create or replace procedure SP_GetGPContrato
     p_afastamento             in number    default null,
     p_dt_ini                  in date      default null,
     p_dt_fim                  in date      default null,
-    p_chave_aux               in number    default null,
+    p_data                    in varchar2  default null,
     p_restricao               in varchar2  default null,
     p_result    out sys_refcursor) is
     
@@ -53,11 +53,11 @@ begin
                                   case when to_char(add_months(sysdate,-1),'yyyymm') < to_char(e.inicio,'yyyymm') then to_char(e.inicio,'yyyymm') else to_char(add_months(coalesce(p_dt_fim,sysdate),-1),'yyyymm') end, 
                                   null
                                  ) as banco_horas_mensal,
-                h.sigla||' ('||g.nome||')' local, g.ramal, h.nome nm_unidade_exercicio, h.sigla sg_unidade_exercicio,
-                i.nome nm_modalidade_contrato, j.nome nm_posto_trabalho, 
-                l.nome nm_unidade_lotacao, l.sigla sg_unidade_lotacao,
+                h.sigla||' ('||g.nome||')' local, g.ramal, h.nome as nm_unidade_exercicio, h.sigla as sg_unidade_exercicio,
+                i.nome nm_modalidade_contrato, j.nome as nm_posto_trabalho, 
+                l.nome nm_unidade_lotacao, l.sigla as sg_unidade_lotacao,
                 m.sq_menu as sq_menu_cc, m.titulo as nm_cc, m.codigo_interno as cd_cc,
-                e.remuneracao_inicial
+                e.remuneracao_inicial, dados_ferias(p_chave,p_data) as dados_ferias
            from gp_colaborador                          a
                 inner    join co_pessoa                 b on (a.sq_pessoa = b.sq_pessoa and
                                                               a.cliente   = b.sq_pessoa_pai

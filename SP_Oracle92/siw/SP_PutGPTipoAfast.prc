@@ -11,6 +11,8 @@ create or replace procedure SP_PutGPTipoAfast
     p_periodo                  in  varchar2,
     p_sobrepoe_ferias          in  varchar2,
     p_abate_banco_horas        in  varchar2,
+    p_abate_ferias             in  varchar2,
+    p_falta                    in  varchar2,
     p_ativo                    in  varchar2,
     p_fase                     in varchar2 default null
    ) is
@@ -27,10 +29,10 @@ begin
       -- Insere registro
       insert into gp_tipo_afastamento
         (sq_tipo_afastamento, cliente, nome, sigla, limite_dias, sexo, percentual_pagamento, 
-         contagem_dias, periodo, abate_banco_horas, sobrepoe_ferias, ativo)
+         contagem_dias, periodo, abate_banco_horas, abate_ferias, falta_nao_justificada , sobrepoe_ferias, ativo)
       values
         (w_chave, p_cliente, trim(p_nome), upper(trim(p_sigla)), p_limite_dias, p_sexo, p_percentual_pagamento, 
-         p_contagem_dias, p_periodo, p_abate_banco_horas, p_sobrepoe_ferias, p_ativo);
+         p_contagem_dias, p_periodo, p_abate_banco_horas, p_abate_ferias, p_falta, p_sobrepoe_ferias, p_ativo);
       If p_fase is not null Then
       
       Loop
@@ -48,17 +50,19 @@ begin
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update gp_tipo_afastamento
-         set cliente              = p_cliente,
-             nome                 = trim(p_nome),
-             sigla                = upper(trim(p_sigla)),
-             limite_dias          = p_limite_dias,
-             sexo                 = p_sexo,
-             percentual_pagamento = p_percentual_pagamento,
-             contagem_dias        = p_contagem_dias,
-             periodo              = p_periodo,
-             sobrepoe_ferias      = p_sobrepoe_ferias,
-             abate_banco_horas    = p_abate_banco_horas,
-             ativo                = p_ativo
+         set cliente               = p_cliente,
+             nome                  = trim(p_nome),
+             sigla                 = upper(trim(p_sigla)),
+             limite_dias           = p_limite_dias,
+             sexo                  = p_sexo,
+             percentual_pagamento  = p_percentual_pagamento,
+             contagem_dias         = p_contagem_dias,
+             periodo               = p_periodo,
+             sobrepoe_ferias       = p_sobrepoe_ferias,
+             abate_banco_horas     = p_abate_banco_horas,
+             abate_ferias          = p_abate_ferias,             
+             falta_nao_justificada = p_falta,
+             ativo                 = p_ativo
        where sq_tipo_afastamento = p_chave;
        
       delete gp_afastamento_modalidade where sq_tipo_afastamento = p_chave;

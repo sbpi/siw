@@ -76,10 +76,12 @@ begin
              
              If p_data is null Then
                 -- Se não foi informada uma data, o período aquisitivo em questão é o que abrange a data atual
-                If trunc(sysdate) between w_inicio_gozo and w_fim_gozo Then Exit; End If;
+                If trunc(sysdate) between w_inicio_gozo and w_fim_gozo or trunc(sysdate) < w_inicio_gozo Then 
+                  Exit; 
+                End If;
              Else
                 -- Caso contrário, o período aquisitivo em questão é o que abrange a data informada
-                If p_data between w_inicio_gozo and w_fim_gozo Then Exit; End If;
+                If p_data between w_inicio_gozo and w_fim_gozo or p_data < w_inicio_gozo Then Exit; End If;
              End If;
              -- Reconfigura início de novo período aquisitivo
              w_inicio_pa := w_fim_pa + 1;
