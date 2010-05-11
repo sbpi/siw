@@ -13,11 +13,9 @@ begin
   -- Calcula o gozo previsto
   :new.gozo_previsto := :new.fim_data - :new.inicio_data + 1;
   
-  -- Se a solicitação está concluída, grava o gozo efetivo
-  If w_sg_tramite = 'AT' Then
+  -- Se a solicitação está diferente de concluída, grava o gozo efetivo
+  If w_sg_tramite <> 'AT' Then
      :new.gozo_efetivo := :new.gozo_previsto;
-  Else
-     :new.gozo_efetivo := null;
   End If;
 end TG_GP_FERIAS_IN_UP;
 /

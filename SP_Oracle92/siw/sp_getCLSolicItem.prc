@@ -196,7 +196,7 @@ begin
                     inner join siw_tramite             h4 on (h1.sq_siw_tramite      = h4.sq_siw_tramite and
                                                               h4.sigla              <> 'CA'
                                                              )
-                  left    join (select z.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
+                  left    join (select  z.sq_solicitacao_item, count(z.sq_item_fornecedor) as qtd_cotacao
                                   from cl_item_fornecedor  z
                                  where 'S' = z.pesquisa
                                 group by z.sq_solicitacao_item
@@ -424,7 +424,7 @@ begin
                 dados_solic(h.sq_siw_solicitacao) as dados_pai,
                 i.fim fornecedor_validade, i.inicio fornecedor_data, i.valor_unidade fornecedor_valor,
                 i.fim-f.dias_aviso_pesquisa as fornecedor_aviso, i.fabricante, i.marca_modelo, i.embalagem,
-                i.dias_validade_proposta, i.fator_embalagem,
+                i.dias_validade_proposta, i.fator_embalagem, i.origem,
                 j.dias_validade_proposta as dias_validade_certame
            from cl_solicitacao_item                     a
                 inner     join cl_material              b  on (a.sq_material         = b.sq_material)
@@ -535,7 +535,8 @@ begin
                 g.inicio as proposta_data, g.fim as proposta_validade, g.valor_unidade, g.valor_item,
                 g.sq_item_fornecedor, g.fornecedor, g.dias_validade_proposta, g.fator_embalagem,
                 g.vencedor,
-                h.nome_resumido nm_fornecedor,
+                case g.origem when 'SA' then 'ARP externa' when 'SG' then 'Governo' when 'SF' then 'Site comercial' else 'Proposta fornecedor' end as nm_origem,
+                h.nome_resumido as nm_fornecedor,
                 i.qtd_proposta,
                 nvl(b.pesquisa_preco_medio,0)*nvl(f.percentual_acrescimo,0)/100 as variacao_valor
            from cl_solicitacao_item                     a

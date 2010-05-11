@@ -9,7 +9,8 @@ create or replace function dados_ferias(p_chave in number, p_data in date defaul
 *    p_data  : opcional. 
 *              Se nulo, considera o último P.A. encerrado até a data atual; 
 *              caso contrário, encerrado (ou a encerrar) até a data informada
-* Retorno: se o contrato não existir ou se estiver encerrado, retorna nulo
+* Retorno: se o contrato não existir ou se estiver encerrado, retorna -1
+*          se o contrato não permitir gozo de férias, retorna -2
 *          se o contrato existir, retorna string contendo informações sobre ela.
 *          A string contém vários pedaços separados por |@|
 *          1  - data de admissão
@@ -135,8 +136,12 @@ begin
                      w_faltas||'|@|'||
                      w_dias_direito||'|@|'||
                      w_saldo;
+        Else
+          Result := '-2'; 
         End If; 
-     end if;
+     Else
+       Result := '-1'; 
+     End if;
   end if;
   return(Result);
 
