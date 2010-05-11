@@ -388,6 +388,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Material</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Qtd.</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Fornecedor</td>';
+    $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Fonte</td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dt.Pesq.</b></td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Dias Valid.</b></td>';
     $l_html.=chr(13).'          <td align="center" bgColor="#f0f0f0"><b>Valor</td>';
@@ -407,6 +408,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       }
       if($l_tipo=='WORD') $l_html.=chr(13).'        <td nowrap>'.f($row,'nm_fornecedor').'</td>';
       else                $l_html.=chr(13).'        <td nowrap>'.ExibePessoa('../',$w_cliente,f($row,'fornecedor'),$TP,f($row,'nm_fornecedor')).'</td>';
+      $l_html.=chr(13).'        <td>'.f($row,'nm_origem').'</td>';
       $l_html.=chr(13).'        <td align="center">'.nvl(formataDataEdicao(f($row,'proposta_data'),5),'---').'</td>';
       $l_html.=chr(13).'        <td align="center">'.nvl(f($row,'dias_validade_proposta'),'---').'</td>';
       if(formatNumber(f($row,'valor_unidade'),4)>formatNumber(0,4)) {

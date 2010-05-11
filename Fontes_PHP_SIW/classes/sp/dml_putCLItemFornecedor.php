@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putCLItemFornecedor {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_chave, $p_chave_aux, $p_fornecedor, $p_inicio, $p_dias, 
-               $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_ordem, $p_vencedor, $p_pesquisa) {
+               $p_valor, $p_fabricante, $p_marca_modelo, $p_embalagem, $p_fator, $p_ordem, $p_vencedor, $p_pesquisa, $p_origem) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $sql = $strschema.'sp_putCLItemFornecedor';
      $params = array('p_operacao'                  =>array($operacao,                                        B_VARCHAR,         1),
@@ -28,7 +28,8 @@ class dml_putCLItemFornecedor {
                      'p_fator'                     =>array($p_fator,                                         B_VARCHAR,        32),
                      'p_ordem'                     =>array(tvl($p_ordem),                                    B_VARCHAR,        10),
                      'p_vencedor'                  =>array($p_vencedor,                                      B_VARCHAR,         1),
-                     'p_pesquisa'                  =>array($p_pesquisa,                                      B_VARCHAR,         1)
+                     'p_pesquisa'                  =>array($p_pesquisa,                                      B_VARCHAR,         1),
+                     'p_origem'                    =>array($p_origem,                                        B_VARCHAR,         2)
                     );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

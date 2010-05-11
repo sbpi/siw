@@ -44,6 +44,7 @@ include_once($w_dir_volta.'classes/sp/dml_putCLDados.php');
 include_once($w_dir_volta.'funcoes/retornaCadastrador_CL.php');
 include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
+include_once($w_dir_volta.'funcoes/selecaoFontePesquisa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFase.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
@@ -752,6 +753,7 @@ function Geral() {
         $w_justificativa    = f($RS,'justificativa');
         $w_observacao       = f($RS,'observacao');
         $w_inicio           = FormataDataEdicao(f($RS,'inicio'));
+        $w_origem           = f($RS,'origem');
         $w_fim              = FormataDataEdicao(f($RS,'fim'));
         $w_inclusao         = f($RS,'inclusao');
         $w_arp              = f($RS,'arp');
@@ -1928,6 +1930,7 @@ function PesquisaPreco() {
     $w_inicio               = $_REQUEST['w_inicio'];
     $w_dias                 = $_REQUEST['w_dias'];
     $w_valor                = $_REQUEST['w_valor'];
+    $w_origem               = $_REQUEST['w_origem'];
     $w_fabricante           = $_REQUEST['w_fabricante'];
     $w_marca_modelo         = $_REQUEST['w_marca_modelo'];
     $w_embalagem            = $_REQUEST['w_embalagem'];
@@ -2195,6 +2198,7 @@ function PesquisaPreco() {
       ShowHTML('    if(theForm["w_chave_aux[]"][ind].checked) {');
       if ($w_pesquisa=='S') Validate('["w_inicio[]"][ind]','Pesq. preço','DATA',1,10,10,'','0123456789/');
       else                  Validate('["w_inicio[]"][ind]','Proposta','DATA',1,10,10,'','0123456789/');
+      Validate('w_origem','Fonte da Pesquisa','',1,1,10,'1','1');
       Validate('["w_dias[]"][ind]','Dias de Validade','',1,1,10,'','0123456789');
       Validate('["w_valor[]"][ind]','Valor','VALOR','1',6,18,'','0123456789.,');
       CompValor('["w_valor[]"][ind]','Valor','>','0','zero');
@@ -2460,7 +2464,6 @@ function PesquisaPreco() {
       $RS = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,$w_sq_pessoa,null,null,null,null,null,null,null,null,null,'FORNECEDORP');
       $RS = SortArray($RS,'ordem','asc','nm_tipo_material_pai','asc','nm_tipo_material','asc','nome','asc','dados_pai','asc');    
     }
-    
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td colspan="2">');
     ShowHTML('    <table width="100%" border="0">');
     ShowHTML('      <tr><td colspan="2" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -2477,7 +2480,7 @@ function PesquisaPreco() {
     if (count($RS)==0) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=5 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
-      ShowHTML('<tr><td colspan="7" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
+      ShowHTML('<tr><td colspan="8" bgcolor="'.$conTrBgColorLightBlue2.'"" style="border: 2px solid rgb(0,0,0);">');
       ShowHTML('  Orientação:<ul>');
       ShowHTML('  <li>Selecione os itens propostos pelo fornecedor e, para cada um deles, informe os dados solicitados.');
       ShowHTML('  <li>O campo valor deve ser informado com quatro casas decimais. Ex: se valor for "25", informe "25,0000", digitando apenas os números.');
@@ -2495,6 +2498,7 @@ function PesquisaPreco() {
       ShowHTML('            <td><b>Código</td>');
       ShowHTML('            <td><b>Nome</td>');
       ShowHTML('            <td><b>U.M.</td>');
+      ShowHTML('            <td><b>Fonte da Pesquisa</td>');
       if ($w_pesquisa=='S') ShowHTML('            <td><b>Dt.Pesq.</td>'); else ShowHTML('            <td><b>Dt.Prop.</td>'); 
       ShowHTML('            <td><b>Dias Valid.</td>');
       ShowHTML('            <td><b>Valor</td>');
@@ -2519,6 +2523,7 @@ function PesquisaPreco() {
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
           $w_item_lic   = 0;
+          SelecaoFontePesquisa(null,null,null,nvl($w_origem,f($row,'origem')),null,'w_origem',null,null);
           ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_inicio[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_inicio[$i],Nvl(formataDataEdicao(f($row,'fornecedor_data')),formataDataEdicao(time()))).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
           if ($w_pesquisa=='S') {
             ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias[$i],f($RS_Parametro,'dias_validade_pesquisa')).'" title="Dias de validade da pesquisa de preço."></td>');
@@ -2532,7 +2537,7 @@ function PesquisaPreco() {
           }
           ShowHTML('        </tr>');
           if (f($row,'classe')==3) {
-            ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="7">');
+            ShowHTML('        <tr bgcolor="'.$w_cor.'" valign="top"><td colspan="8">');
             ShowHTML('          <TABLE WIDTH="100%" border=0>');
             ShowHTML('            <tr valign="top">');
             ShowHTML('              <td><b>Fabricante: </b><input '.$w_Disabled.' type="text" name="w_fabricante[]" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.nvl($w_fabricante[$i],f($row,'fabricante')).'"></td>');
@@ -4109,14 +4114,14 @@ function Grava() {
           $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
           $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
       // Apaga todos os itens cotados dessa solicitação
-      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa']);
+      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],$_REQUEST['w_origem']);
       
       // Insere as cotaçoes e atualiza a tabela de materiais
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
           dml_putCLItemFornecedor::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
              $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
-             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa']);
+             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem']);
         } 
       }
       
