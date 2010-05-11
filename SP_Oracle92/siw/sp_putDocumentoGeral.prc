@@ -149,8 +149,8 @@ begin
           pessoa_origem         = p_pessoa_origem,
           copias                = p_copias,
           volumes               = p_volumes,
-          data_autuacao         = p_dt_autuacao,
-          unidade_autuacao      = p_unid_autua
+          data_autuacao         = case p_processo when 'S' then data_autuacao else p_dt_autuacao end,
+          unidade_autuacao      = case p_processo when 'S' then unidade_autuacao else p_unid_autua end
        where sq_siw_solicitacao = p_chave;
 
       If p_pessoa_interes is null Then

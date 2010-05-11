@@ -41,7 +41,7 @@ create or replace procedure SP_PutViagemEnvio
              x2.sq_financeiro,
              x2.sq_lancamento_doc  as sq_documento,
              x3.sq_tipo_pessoa,
-             x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor, x4.nm_despesa
+             x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
                inner   join co_forma_pagamento w2 on (w1.sq_pessoa          = w2.cliente and w2.sigla = 'CREDITO'),
@@ -54,13 +54,7 @@ create or replace procedure SP_PutViagemEnvio
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
                inner   join (select sq_siw_solicitacao, 
-                                    sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
-                                    case tp_despesa 
-                                         when 'RMB' then 'Diferença de diárias'
-                                         when 'DIA' then 'Diárias' 
-                                         when 'HSP' then 'Hospedagem' 
-                                         else 'Locação de veículos' 
-                                    end as nm_despesa
+                                    sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor
                                from (select a.sq_siw_solicitacao, 'RMB' as tp_despesa, null as sq_diaria, b.valor_autorizado as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
                                             b1.sigla as sg_moeda, b1.nome as nm_moeda, b1.simbolo as sb_moeda
@@ -85,6 +79,7 @@ create or replace procedure SP_PutViagemEnvio
                                               inner   join pd_valor_diaria       d  on (b.sq_valor_diaria            = d.sq_valor_diaria)
                                                 inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                                       where a.sq_siw_solicitacao = p_chave
+                                        and b.tipo               = case a2.sigla when 'EE' then 'P' else 'S' end
                                      UNION
                                      select a.sq_siw_solicitacao, 'VEI' as tp_despesa, b.sq_diaria, (-1*b.valor*b.veiculo_qtd*b.veiculo_valor/100) as valor,
                                             c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
@@ -98,8 +93,9 @@ create or replace procedure SP_PutViagemEnvio
                                               inner   join pd_valor_diaria       d  on (b.sq_valor_diaria_veiculo    = d.sq_valor_diaria)
                                                 inner join co_moeda              d1 on (d.sq_moeda                   = d1.sq_moeda)
                                       where a.sq_siw_solicitacao = p_chave
+                                        and b.tipo               = case a2.sigla when 'EE' then 'P' else 'S' end
                                     ) 
-                             group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda, tp_despesa
+                             group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc
                                from siw_solicitacao                a
@@ -311,9 +307,19 @@ begin
          End If;
       Elsif w_sg_tramite = 'VP' Then
          -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.
-         If w_reembolso = 'S' or w_ressarcimento = 'S'
-            Then w_salto := w_salto + 1;
-            Else w_salto := w_salto + 3;
+         If w_reembolso = 'S' Then 
+            w_salto := w_salto + 1;
+         Elsif w_ressarcimento = 'S' Then
+            w_salto := w_salto + 2;
+         Else w_salto := w_salto + 3;
+         End If;
+      Elsif w_sg_tramite = 'VP' Then
+         If w_reembolso = 'S' Then        -- ABDI: Se tiver reembolso, vai para aprovação da GERPE.
+            w_salto := w_salto + 1;
+         Elsif w_ressarcimento = 'S' Then -- ABDI: Se tiver ressarcimento, vai para envio à GERAF.
+            w_salto := w_salto + 2;
+         Else                             -- ABDI: Senão, vai para arquivamento.
+            w_salto := w_salto + 3;
          End If;
       Else
          w_salto := w_salto + 1;
@@ -463,7 +469,7 @@ begin
                               p_chave              => w_sq_doc,
                               p_chave_aux          => null,
                               p_sq_projeto_rubrica => crec.sq_rubrica,
-                              p_descricao          => crec.nm_despesa||': '||crec.sg_moeda||' ('||crec.nm_moeda||') '||fValor(crec.valor,'T'),
+                              p_descricao          => crec.sg_moeda||' ('||crec.nm_moeda||') '||fValor(crec.valor,'T'),
                               p_quantidade         => 1,
                               p_valor_unitario     => crec.valor,
                               p_ordem              => 1

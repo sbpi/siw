@@ -11,20 +11,20 @@ begin
                 a.saida, a.chegada, a.codigo_cia_transporte, a.valor_trecho, a.codigo_voo, a.sq_bilhete,
                 a.aeroporto_origem, a.aeroporto_destino,
                 trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
-                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
-                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
-                b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
-                d.sq_cidade cidade_dest, d.co_uf uf_dest, d.sq_pais pais_dest,
+                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
+                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
+                b.sq_cidade as cidade_orig, b.co_uf as uf_orig, b.sq_pais as pais_orig,
+                d.sq_cidade as cidade_dest, d.co_uf as uf_dest, d.sq_pais as pais_dest,
                 case c.padrao 
                     when 'S' 
                     then b.nome||'-'||b.co_uf
                     else b.nome||' ('||c.nome||')'
-                    end nm_origem,
+                end as nm_origem,
                 case e.padrao 
                     when 'S'
                     then d.nome||'-'||d.co_uf
                     else d.nome||' ('||e.nome||')'
-                    end nm_destino,
+                end as nm_destino,
                 f.sq_diaria, f.quantidade, f.valor, f.hospedagem_checkin, f.hospedagem_checkout, f.hospedagem_observacao,
                 f.veiculo_retirada, f.veiculo_devolucao
            from pd_deslocamento          a
@@ -46,11 +46,11 @@ begin
                 a.compromisso, a.sq_bilhete,
                 a.aeroporto_origem, a.aeroporto_destino,
                 trunc(a.chegada)-trunc(a.saida) as dias_deslocamento,
-                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') phpdt_saida,
-                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') phpdt_chegada,
+                to_char(a.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida,
+                to_char(a.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 case a.compromisso when 'S' then 'Sim' else 'Não' end as nm_compromisso,
-                b.sq_cidade cidade_orig, b.co_uf uf_orig, b.sq_pais pais_orig,
-                d.sq_cidade cidade_dest, d.co_uf uf_dest, d.sq_pais pais_dest,
+                b.sq_cidade as cidade_orig, b.co_uf as uf_orig, b.sq_pais as pais_orig,
+                d.sq_cidade as cidade_dest, d.co_uf as uf_dest, d.sq_pais as pais_dest,
                 case c.padrao 
                     when 'S' 
                     then b.nome||'-'||b.co_uf 
@@ -89,7 +89,7 @@ begin
                     and x.sq_deslocamento    <> a.sq_deslocamento 
                     and trunc(x.saida)       = trunc(a.chegada) 
                     and l.padrao             = 'N'
-                ) saida_internacional,
+                ) as saida_internacional,
                 (select count(*) 
                    from pd_deslocamento            x
                         inner   join co_cidade     k on (x.origem  = k.sq_cidade)
@@ -98,7 +98,7 @@ begin
                     and x.sq_deslocamento    <> a.sq_deslocamento 
                     and trunc(x.chegada)       = trunc(a.saida) 
                     and l.padrao             = 'N'
-                ) chegada_internacional
+                ) as chegada_internacional
            from pd_deslocamento                       a
                 inner      join pd_missao             a1 on (a.sq_siw_solicitacao         = a1.sq_siw_solicitacao)
                 inner      join co_cidade             b  on (a.origem                     = b.sq_cidade)
@@ -129,7 +129,7 @@ begin
             and a.tipo               = p_tipo;
    Elsif p_restricao = 'DF' Then
       open p_result for
-         select count(*) existe
+         select count(*) as existe
            from pd_deslocamento a
           where sq_siw_solicitacao = p_chave
             and a.passagem         = 'S'

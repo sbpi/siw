@@ -701,7 +701,7 @@ begin
                 case d1.hospedagem  when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
                 case d1.veiculo     when 'S' then 'Sim' else 'Não' end as nm_veiculo,
                 case d1.reembolso   when 'S' then 'Sim' else 'Não' end as nm_reembolso,
-                case d1.cumprimento when 'I' then 'Integral' when 'P' then 'Parcial' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
+                case d1.cumprimento when 'I' then 'Não' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 d2.nome nm_prop,      d2.nome_resumido nm_prop_res, d2.sq_tipo_pessoa,
                 coalesce(d21.ativo,'N') st_prop,
                 d3.sq_tipo_vinculo,   d3.nome nm_tipo_vinculo,
@@ -732,6 +732,7 @@ begin
                 coalesce(o1.ativo,'N') st_sol,
                 p.nome_resumido nm_exec,
                 soma_dias(a.sq_pessoa, b.inicio, (-1*case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as limite_envio,
+                soma_dias(a.sq_pessoa, trunc(sysdate), (case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end), 'U') as envio_regular,
                 case d1.internacional when 'S' then a11.dias_antecedencia_int else a11.dias_antecedencia end as dias_antecedencia,
                 case trunc(b.fim) when soma_dias(a.sq_pessoa,b.inicio,trunc(b.fim)-trunc(b.inicio),'U') then 'N' else 'S' end as fim_semana
            from siw_menu                                               a

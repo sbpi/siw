@@ -541,6 +541,10 @@ begin
                                w_sair   := 1;
                          Elsif crec.sq_pessoa_titular = w_solicitante and
                                crec.sq_pessoa_titular = p_usuario Then
+                            -- Alterado para testes
+                            Result   := Result + 16;
+                            w_sair   := 1;
+                            /*
                             If crec.sq_unidade_pai is not null Then
                                w_unidade_atual := crec.sq_unidade_pai;
                                w_existe        := 0;
@@ -551,6 +555,7 @@ begin
                                   w_sair   := 1;
                                End If;
                             End If;
+                            */
                          Else
                             If crec.sq_pessoa_titular    = w_solicitante and
                                crec.sq_pessoa_substituto = p_usuario and

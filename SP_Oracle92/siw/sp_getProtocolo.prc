@@ -370,7 +370,7 @@ begin
        where a.nu_guia          = p_nu_guia
          and a.ano_guia         = p_ano_guia
          and b.unidade_autuacao = p_unid_autua
-         and a.recebimento      is not null;
+         and a.recebimento      is null;
    Elsif p_restricao = 'EXISTE' Then
       -- Verifica a existência de um protocolo
       open p_result for

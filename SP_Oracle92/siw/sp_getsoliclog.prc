@@ -391,7 +391,7 @@ begin
                    )
                and b.sq_siw_solicitacao = p_chave;
       End If;      
-   Elsif w_modulo in ('SR','CO') Then -- Se for o módulo de recursos logísticos ou de compras
+   Elsif w_modulo in ('GP','SR','CO') Then -- Se for o módulo de recursos logísticos ou de compras
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 

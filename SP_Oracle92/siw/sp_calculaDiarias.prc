@@ -93,7 +93,14 @@ begin
   -- Zera as quantidades de diárias da solicitação
   update pd_diaria 
      set quantidade = 0 
-    where sq_diaria in (select sq_diaria from pd_diaria a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end));
+    where sq_diaria in (select sq_diaria 
+                          from pd_diaria a 
+                               join   siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao 
+                                 join siw_tramite     c on b.sq_siw_tramite = c.sq_siw_tramite 
+                         where a.sq_siw_solicitacao = p_chave 
+                           and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end) 
+                           and a.calculo_diaria_texto is null
+                       );
   
   -- Inicializa o array de diárias
   for crec in (select sq_diaria from pd_diaria a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end)) loop diarias(crec.sq_diaria) := 0; end loop;

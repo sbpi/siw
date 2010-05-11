@@ -320,7 +320,7 @@ begin
                              p_chave_aux          => null,
                              p_sq_projeto_rubrica => drec.sq_rubrica,
                              p_solic_item         => drec.sq_solicitacao_item,
-                             p_descricao          => drec.ds_material,
+                             p_descricao          => drec.nm_material,
                              p_quantidade         => drec.quantidade,
                              p_valor_unitario     => drec.valor_unidade,
                              p_ordem              => i
