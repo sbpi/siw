@@ -2196,9 +2196,12 @@ function PesquisaPreco() {
       }
       ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');
       ShowHTML('    if(theForm["w_chave_aux[]"][ind].checked) {');
-      if ($w_pesquisa=='S') Validate('["w_inicio[]"][ind]','Pesq. preço','DATA',1,10,10,'','0123456789/');
-      else                  Validate('["w_inicio[]"][ind]','Proposta','DATA',1,10,10,'','0123456789/');
-      Validate('w_origem','Fonte da Pesquisa','',1,1,10,'1','1');
+      if ($w_pesquisa=='S') {
+        Validate('w_origem','Fonte da Pesquisa','',1,1,10,'1','1');
+        Validate('["w_inicio[]"][ind]','Pesq. preço','DATA',1,10,10,'','0123456789/');
+      }else{
+        Validate('["w_inicio[]"][ind]','Proposta','DATA',1,10,10,'','0123456789/');
+      }
       Validate('["w_dias[]"][ind]','Dias de Validade','',1,1,10,'','0123456789');
       Validate('["w_valor[]"][ind]','Valor','VALOR','1',6,18,'','0123456789.,');
       CompValor('["w_valor[]"][ind]','Valor','>','0','zero');
@@ -2498,8 +2501,13 @@ function PesquisaPreco() {
       ShowHTML('            <td><b>Código</td>');
       ShowHTML('            <td><b>Nome</td>');
       ShowHTML('            <td><b>U.M.</td>');
-      ShowHTML('            <td><b>Fonte da Pesquisa</td>');
-      if ($w_pesquisa=='S') ShowHTML('            <td><b>Dt.Pesq.</td>'); else ShowHTML('            <td><b>Dt.Prop.</td>'); 
+      
+      if ($w_pesquisa=='S'){
+        ShowHTML('            <td><b>Fonte da Pesquisa</td>');
+        ShowHTML('            <td><b>Dt.Pesq.</td>'); 
+      }else{
+        ShowHTML('            <td><b>Dt.Prop.</td>');
+      }
       ShowHTML('            <td><b>Dias Valid.</td>');
       ShowHTML('            <td><b>Valor</td>');
       ShowHTML('          </tr>');
@@ -2523,10 +2531,12 @@ function PesquisaPreco() {
           $w_atual      = f($row,'sq_material');
           $w_exibe      = false;
           $w_item_lic   = 0;
-          SelecaoFontePesquisa(null,null,null,nvl($w_origem,f($row,'origem')),null,'w_origem',null,null);
-          ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_inicio[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_inicio[$i],Nvl(formataDataEdicao(f($row,'fornecedor_data')),formataDataEdicao(time()))).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
+          if ($w_pesquisa=='S'){
+            SelecaoFontePesquisa(null,null,null,nvl($w_origem,f($row,'origem')),null,'w_origem',null,null);
+          }          
+          ShowHTML('        <td nowrap>!<input '.$w_Disabled.' type="text" name="w_inicio[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_inicio[$i],Nvl(formataDataEdicao(f($row,'fornecedor_data')),formataDataEdicao(time()))).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
           if ($w_pesquisa=='S') {
-            ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias[$i],f($RS_Parametro,'dias_validade_pesquisa')).'" title="Dias de validade da pesquisa de preço."></td>');
+            ShowHTML('        <td nowrap>!<input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias[$i],f($RS_Parametro,'dias_validade_pesquisa')).'" title="Dias de validade da pesquisa de preço."></td>');
           } else {
             ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl(nvl($w_dias[$i],f($row,'dias_validade_proposta')),f($row,'dias_validade_certame')).'" title="Dias de validade da proposta."></td>');
           }
