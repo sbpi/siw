@@ -2021,6 +2021,7 @@ function PesquisaPreco() {
       ShowHTML('    if (theForm["w_chave_aux[]"][p_indice].checked) { ');
       ShowHTML('       theForm["w_valor[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_dias[]"][p_indice].disabled=false; ');
       ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=false; ');
@@ -2031,6 +2032,7 @@ function PesquisaPreco() {
       ShowHTML('    } else {');
       ShowHTML('       theForm["w_valor[]"][p_indice].disabled=true; ');
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=true; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_dias[]"][p_indice].disabled=true; ');
       ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=true; ');
@@ -2047,6 +2049,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_chave_aux[]"][i].checked=true;');
       ShowHTML('         theForm["w_valor[]"][i].disabled=false; ');
       ShowHTML('         theForm["w_inicio[]"][i].disabled=false; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=false; ');
       ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=false; ');
@@ -2060,6 +2063,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_chave_aux[]"][i].checked=false;');
       ShowHTML('         theForm["w_valor[]"][i].disabled=true; ');
       ShowHTML('         theForm["w_inicio[]"][i].disabled=true; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=true; ');
       ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=true; ');
@@ -2197,7 +2201,7 @@ function PesquisaPreco() {
       ShowHTML('  for (ind=1; ind < theForm["w_chave_aux[]"].length; ind++) {');
       ShowHTML('    if(theForm["w_chave_aux[]"][ind].checked) {');
       if ($w_pesquisa=='S') {
-        Validate('w_origem','Fonte da Pesquisa','',1,1,10,'1','1');
+        Validate('["w_origem[]"][ind]','Fonte da Pesquisa','',1,1,10,'1','1');
         Validate('["w_inicio[]"][ind]','Pesq. preço','DATA',1,10,10,'','0123456789/');
       }else{
         Validate('["w_inicio[]"][ind]','Proposta','DATA',1,10,10,'','0123456789/');
@@ -2392,6 +2396,7 @@ function PesquisaPreco() {
     ShowHTML('<INPUT type="hidden" name="w_classe[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_valor[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_inicio[]" value="">');
+    ShowHTML('<INPUT type="hidden" name="w_origem[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_dias[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_fabricante[]" value="">');
     ShowHTML('<INPUT type="hidden" name="w_marca_modelo[]" value="">');
@@ -2532,11 +2537,11 @@ function PesquisaPreco() {
           $w_exibe      = false;
           $w_item_lic   = 0;
           if ($w_pesquisa=='S'){
-            SelecaoFontePesquisa(null,null,null,nvl($w_origem,f($row,'origem')),null,'w_origem',null,null);
+            SelecaoFontePesquisa(null,null,null,nvl($w_origem,f($row,'origem')),null,'w_origem[]',null,null);
           }          
-          ShowHTML('        <td nowrap>!<input '.$w_Disabled.' type="text" name="w_inicio[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_inicio[$i],Nvl(formataDataEdicao(f($row,'fornecedor_data')),formataDataEdicao(time()))).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
+          ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_inicio[]" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.nvl($w_inicio[$i],Nvl(formataDataEdicao(f($row,'fornecedor_data')),formataDataEdicao(time()))).'" onKeyDown="FormataData(this,event);" title="Data da pesquisa de preço."></td>');
           if ($w_pesquisa=='S') {
-            ShowHTML('        <td nowrap>!<input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias[$i],f($RS_Parametro,'dias_validade_pesquisa')).'" title="Dias de validade da pesquisa de preço."></td>');
+            ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl($w_dias[$i],f($RS_Parametro,'dias_validade_pesquisa')).'" title="Dias de validade da pesquisa de preço."></td>');
           } else {
             ShowHTML('        <td nowrap><input '.$w_Disabled.' type="text" name="w_dias[]" class="STI" SIZE="4" MAXLENGTH="10" VALUE="'.nvl(nvl($w_dias[$i],f($row,'dias_validade_proposta')),f($row,'dias_validade_certame')).'" title="Dias de validade da proposta."></td>');
           }
@@ -4124,14 +4129,14 @@ function Grava() {
           $_REQUEST['w_cep'],$_REQUEST['w_ddd'],$_REQUEST['w_nr_telefone'],
           $_REQUEST['w_nr_fax'],$_REQUEST['w_nr_celular'],$_REQUEST['w_email'],&$w_chave_nova);
       // Apaga todos os itens cotados dessa solicitação
-      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],$_REQUEST['w_origem']);
+      dml_putCLItemFornecedor::getInstanceOf($dbms,'E',$w_cliente,$_REQUEST['w_chave'],null,$w_chave_nova,null,null,null,null,null,null,null,null,null,$_REQUEST['w_pesquisa'],null);
       
       // Insere as cotaçoes e atualiza a tabela de materiais
       for ($i=0; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
         if (Nvl($_REQUEST['w_chave_aux'][$i],'')>'') {
           dml_putCLItemFornecedor::getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$w_chave_nova,
              $_REQUEST['w_inicio'][$i],$_REQUEST['w_dias'][$i],$_REQUEST['w_valor'][$i],$_REQUEST['w_fabricante'][$i],
-             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem']);
+             $_REQUEST['w_marca_modelo'][$i],$_REQUEST['w_embalagem'][$i],$_REQUEST['w_fator'][$i],0,'N',$_REQUEST['w_pesquisa'],$_REQUEST['w_origem'][$i]);
         } 
       }
       

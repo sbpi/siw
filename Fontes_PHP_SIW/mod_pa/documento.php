@@ -2221,6 +2221,19 @@ function Tramitacao() {
     }
     ShowHTML('    return false;');
     ShowHTML('  }');
+    if ($p_tipo_despacho==f($RS_Parametro,'despacho_apensar') || $p_tipo_despacho==f($RS_Parametro,'despacho_anexar')) {
+      ShowHTML('  var i; ');
+      ShowHTML('  var w_erro=false; ');
+      ShowHTML('  for (i=1; i < theForm["w_chave[]"].length; i++) {');
+      ShowHTML('    if (theForm.w_protocolo_nm.value == theForm["w_lista[]"][i].value && theForm["w_chave[]"][i].checked) {');
+      ShowHTML('       w_erro=true; ');
+      ShowHTML('    }');
+      ShowHTML('  }');
+      ShowHTML('  if (w_erro) {');
+      ShowHTML('    alert(\'Não é possível juntar um protocolo a ele mesmo!\'); ');
+      ShowHTML('    return false;');
+      ShowHTML('  }');    
+    }
     if ($w_envia_protocolo=='N') {
       Validate('w_retorno_limite','Prazo de resposta','DATA','',10,10,'','0123456789/');
       CompData('w_retorno_limite','Prazo de resposta','>=',FormataDataEdicao(time()),'data atual');
@@ -2319,7 +2332,8 @@ function Tramitacao() {
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
-    ShowHTML('<input type="hidden" name="w_chave[]" value=""></td>'); 
+    ShowHTML('<input type="hidden" name="w_chave[]" value=""></td>');
+    ShowHTML('<input type="hidden" name="w_lista[]" value=""></td>'); 
     ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_despacho" value="'.$p_tipo_despacho.'">');
@@ -2365,7 +2379,8 @@ function Tramitacao() {
           if ($w_tipo=='') { 
             ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
             ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
-            ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">'); 
+            ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">');
+            ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="'.f($row,'protocolo').'">'); 
             if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
               ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>'); 
             } else {
@@ -3864,7 +3879,7 @@ function Grava() {
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
       $RS = db_getProtocolo::getInstanceOf($dbms, $w_menu, $w_usuario, 'RECEBIDO', null, null, null, null, null, 
                 $_REQUEST['w_unid_autua'], null, $_REQUEST['w_nu_guia'], $_REQUEST['w_ano_guia'], null, null, 2, null);
-      if (count($RS)>0) {
+      if (count($RS)==0) {
         ScriptOpen('JavaScript');
         ShowHTML('  alert(\'ATENÇÃO: Outro usuário já recebeu esta guia!\');');
         ScriptClose();

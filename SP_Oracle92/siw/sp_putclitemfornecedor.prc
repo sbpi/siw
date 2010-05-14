@@ -33,7 +33,7 @@ begin
       values
         (sq_item_fornecedor.nextval, p_chave_aux,         w_material,  p_fornecedor, p_inicio,     (p_inicio + p_dias - 1), p_valor, 
          (p_valor*w_quantidade),     p_ordem,             p_vencedor,  p_pesquisa,   p_fabricante, p_marca_modelo, p_embalagem,
-         p_dias,                     p_origem,              coalesce(p_fator,1)
+         p_dias,                     case                 p_pesquisa   when 'S' then p_origem else 'PF' end,              coalesce(p_fator,1)
         );
       
       -- Atualiza a tabela CL_MATERIAL

@@ -659,7 +659,11 @@ function CadastraPessoa() {
     ValidateOpen('Validacao');
     Validate('w_nome','Nome','1',1,5,60,'1','1');
     if ($w_tipo_pessoa==1) {
-        Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
+        if(substr($_REQUEST['p_objeto'],0,2)=='PD' ){
+          Validate('w_cpf','CPF','CPF','1','14','14','','0123456789-.');
+        }else{
+          Validate('w_cpf','CPF','CPF','','14','14','','0123456789-.');
+        }
     } elseif ($w_tipo_pessoa==2) {
         Validate('w_cnpj','CNPJ','CNPJ','','18','18','','0123456789/-.');
     }
@@ -962,6 +966,7 @@ function BuscaPessoa() {
     $w_pessoa      = $_REQUEST['w_pessoa'];
     $p_restricao   = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
     $p_campo       = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);
+    $p_objeto      = nvl($SG,$_REQUEST['p_objeto']);
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$w_pessoa,null,$p_cpf,$p_cnpj,$p_nome,null,null,null,null,null,null,null,null);
     Cabecalho();
     ShowHTML('<TITLE>Seleção de pessoa</TITLE>');
@@ -976,7 +981,7 @@ function BuscaPessoa() {
     ShowHTML('     opener.focus();');
     ShowHTML('   }');
     ShowHTML('  function cadastra(l_tipo_pessoa) {');
-    ShowHTML('     location.href="'.$w_pagina.'CadastraPessoa&O=I&p_tp='.$TP.'&TP=Cadastro de pessoas&w_tipo_pessoa="+l_tipo_pessoa+"&p_volta='.$w_pagina.$par.montaFiltro('GET').'";');
+    ShowHTML('     location.href="'.$w_pagina.'CadastraPessoa&O=I&p_tp='.$TP.'&TP=Cadastro de pessoas&w_tipo_pessoa="+l_tipo_pessoa+"&p_volta='.$w_pagina.$par.montaFiltro('GET').'&p_objeto='.$p_objeto.'";');
     ShowHTML('   }');
     Modulo();
     FormataCPF();
@@ -1005,6 +1010,7 @@ function BuscaPessoa() {
     AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this))',null,$P1,$P2,$P3,$P4,$TP,$SG,null,null);
     ShowHTML('<INPUT type="hidden" name="p_restricao" value="'.$p_restricao.'">');
     ShowHTML('<INPUT type="hidden" name="p_campo" value="'.$p_campo.'">');
+    ShowHTML('<INPUT type="hidden" name="p_objeto" value="'.$p_objeto.'">');
     ShowHTML('<INPUT type="hidden" name="p_mandatory" value="'.$p_mandatory.'">');
     ShowHTML('<INPUT type="hidden" name="p_tipo_pessoa" value="'.$p_tipo_pessoa.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="justify"><b><ul>Instruções</b>:');
