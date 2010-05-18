@@ -361,6 +361,7 @@ function Tramite() {
     $w_destinatario     = $_REQUEST['w_destinatario'];
     $w_anterior         = $_REQUEST['w_anterior'];
     $w_beneficiario     = $_REQUEST['w_beneficiario'];
+    $w_gestor           = $_REQUEST['w_gestor'];
   } elseif ($O=='L') {
     $RS = db_getTramiteList::getInstanceOf($dbms,$w_sq_menu,null,null,null);
     $RS = SortArray($RS,'ordem','asc');
@@ -377,6 +378,7 @@ function Tramite() {
     $w_destinatario     = f($RS,'destinatario');
     $w_anterior         = f($RS,'assina_tramite_anterior');
     $w_beneficiario     = f($RS,'beneficiario_cumpre');
+    $w_gestor           = f($RS,'gestor_cumpre');
     if (f($RS,'primeiro')==$w_sq_siw_tramite && f($RS,'acesso_geral')=='S') {
       $w_acesso_geral='S';
     } else {
@@ -550,7 +552,10 @@ function Tramite() {
     MontaRadioSN('<b>Cumpridor do trâmite anterior pode cumprir este trâmite?</b>',$w_anterior,'w_anterior');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Beneficiário/solicitante pode cumprir este trâmite?</b>',$w_beneficiario,'w_beneficiario');
-    ShowHTML('      <tr><td valign="top"><b>Ativo?</b><br>');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioSN('<b>Gestor do módulo pode cumprir este trâmite?</b>',$w_gestor,'w_gestor');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('      <td><br><b>Ativo?</b><br>');
     if ($w_ativo=='S' || $w_ativo=='') {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_ativo" value="S" checked> Sim <input '.$w_Disabled.' type="radio" name="w_ativo" value="N"> Não');
     } else {
@@ -1084,7 +1089,7 @@ function Grava() {
         dml_SiwTramite::getInstanceOf($dbms,$O,$_REQUEST['w_sq_siw_tramite'],$_REQUEST['w_sq_menu'],
             $_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_sigla'],$_REQUEST['w_descricao'],
             $_REQUEST['w_chefia_imediata'],$_REQUEST['w_ativo'],$_REQUEST['w_solicita_cc'],$_REQUEST['w_envia_mail'],
-            $_REQUEST['w_destinatario'],$_REQUEST['w_anterior'],$_REQUEST['w_beneficiario']);
+            $_REQUEST['w_destinatario'],$_REQUEST['w_anterior'],$_REQUEST['w_beneficiario'],$_REQUEST['w_gestor']);
         
         if ($O!='E') {
           // Insere os tramites de fluxo

@@ -12,7 +12,8 @@ create or replace procedure SP_PutSIWTramite
     p_envia_mail          in  varchar2 default null,
     p_destinatario        in  varchar2 default null,
     p_anterior            in  varchar2 default null,
-    p_beneficiario        in  varchar2 default null
+    p_beneficiario        in  varchar2 default null,
+    p_gestor              in  varchar2 default null
    ) is
    w_chave  number(18);
 begin
@@ -24,11 +25,11 @@ begin
       insert into siw_tramite 
          (sq_siw_tramite,     sq_menu,           nome,     ordem,         sigla, 
           descricao,          chefia_imediata,   ativo,    solicita_cc,   envia_mail,
-          destinatario,       assina_tramite_anterior,     beneficiario_cumpre)  
+          destinatario,       assina_tramite_anterior,     beneficiario_cumpre, gestor_cumpre)  
       values 
-         (w_Chave,            p_chave_aux,       p_nome,   p_ordem,       upper(p_sigla),
-          p_descricao,        p_chefia_imediata, p_ativo,  p_solicita_cc, p_envia_mail,
-          p_destinatario,     p_anterior,                  p_beneficiario
+         (w_Chave,            p_chave_aux,       p_nome,   p_ordem,        upper(p_sigla),
+          p_descricao,        p_chefia_imediata, p_ativo,  p_solicita_cc,  p_envia_mail,
+          p_destinatario,     p_anterior,                  p_beneficiario, p_gestor
          );
       
       -- Cria a opção do menu para todos os endereços da organização
@@ -56,7 +57,8 @@ begin
           ativo                   = p_ativo,
           destinatario            = p_destinatario,
           assina_tramite_anterior = p_anterior,
-          beneficiario_cumpre     = p_beneficiario
+          beneficiario_cumpre     = p_beneficiario,
+          gestor_cumpre           = p_gestor
       where sq_siw_tramite = p_chave;
    Elsif p_operacao = 'E' Then
       -- Remove vínculo com logs
