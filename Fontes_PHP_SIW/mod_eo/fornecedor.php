@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -123,7 +123,7 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   if ($O=='L') {
-    $RS_Benef = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,null,null,null,'S',$p_pais,$p_regiao,$p_uf,$p_cidade);
+    $RS_Benef = db_getBenef::getInstanceOf($dbms,$w_cliente,null,null,null,null,$p_nome,null,null,null,null,$p_pais,$p_regiao,$p_uf,$p_cidade,'NUSUARIO');
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS_Benef = SortArray($RS_Benef,$lista[0],$lista[1],'nome_indice','desc');

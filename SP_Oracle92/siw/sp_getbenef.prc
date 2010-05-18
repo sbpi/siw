@@ -155,6 +155,10 @@ begin
         and (p_pais               is null     or (p_pais               is not null and h.sq_pais            = p_pais))
         and (p_regiao             is null     or (p_regiao             is not null and h.sq_regiao          = p_regiao))
         and (p_cidade             is null     or (p_cidade             is not null and h.sq_cidade          = p_cidade))
-        and (p_uf                 is null     or (p_uf                 is not null and h.co_uf              = p_uf));
+        and (p_uf                 is null     or (p_uf                 is not null and h.co_uf              = p_uf))
+        and (p_restricao          is null     or (p_restricao          is not null and 
+                                                  (p_restricao         = 'NUSUARIO' and 0 = (select count(*) from sg_autenticacao where ativo = 'S' and sq_pessoa = a.sq_pessoa))
+                                                 )
+            );
 end SP_GetBenef;
 /
