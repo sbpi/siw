@@ -101,7 +101,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             $l_tipo  = 0;
           } else {
             // Verifica se o beneficiário tem os dados bancários cadastrados
-            if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='') {
+            if (nvl(f($l_rs_solic,'sq_forma_pagamento'),'')=='' && nvl(f($l_rs_solic,'diaria'),'')!='') {
               $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
               $l_tipo  = 0;
             } 
@@ -111,9 +111,8 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
             $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado.';
             if ($l_tipo=='') $l_tipo = 2;
           }
-          
           if ((mktime(0,0,0,date(m),date(d),date(Y))>f($l_rs_solic,'limite_envio')) && nvl(f($l_rs_solic,'justificativa'),'')=='') {
-            $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias de antecedência do pedido, a ser informada no momento do envio da solicitação.';
+            $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos '.f($l_rs_solic,'dias_antecedencia').' dias úteis de antecedência do pedido, a ser informada no momento do envio da solicitação.';
             if ($l_tipo=='') $l_tipo = 2;
           }
       } 
@@ -182,7 +181,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
               $l_erro .= '<li>Você deve indicar as diárias de cada localidade.';
               $l_tipo = 0;
             }
-            if ($w_erro_diaria) {
+            if ($w_erro_diaria && $w_erro_hospedagem && $w_destino_nacional) {
               $l_erro .= '<li>Informe as localidades em que deseja recebimento de diárias ou altere essa necessidade na tela de dados gerais.';
               $l_tipo = 0;
             }

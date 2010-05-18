@@ -3,10 +3,11 @@ include_once($w_dir_volta.'classes/sp/db_getPersonList.php');
 // =========================================================================
 // Montagem da seleção de pessoas
 // -------------------------------------------------------------------------
-function selecaoPessoaOrigem($label,$accesskey,$hint,$chave,$chaveAux,$campo,$tipo_pessoa,$restricao,$atributo,$colspan=1,$mandatory=null) {
+function selecaoPessoaOrigem($label,$accesskey,$hint,$chave,$chaveAux,$campo,$tipo_pessoa,$restricao,$atributo,$colspan=1,$mandatory=null,$obj_solic=null) {
   extract($GLOBALS);
   include_once($w_dir_volta.'classes/sp/db_getBenef.php');
   ShowHTML('<INPUT type="hidden" name="'.$campo.'" value="'.$chave.'">');
+  ShowHTML('<INPUT type="hidden" name="obj_origem" value="'.$chave.'">');
   if ($chave>'') {
     $RS = db_getBenef::getInstanceOf($dbms,$w_cliente,$chave,null,null,null,null,null,null,null,null,null,null,null,null);
     foreach ($RS as $row) { $RS = $row; break; }

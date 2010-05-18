@@ -378,8 +378,8 @@ function Inicial() {
       ShowHTML('          <td colspan=4><b>Documento original</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Assunto','cd_assunto').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Resumo','ds_assunto').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.linkOrdena('Guarda','prazo_guarda').'</b></td>');
-      ShowHTML('          <td rowspan=2><b>'.linkOrdena('Destinação final','nm_final').'</b></td>');
+      //ShowHTML('          <td rowspan=2><b>'.linkOrdena('Guarda','prazo_guarda').'</b></td>');
+      //ShowHTML('          <td rowspan=2><b>'.linkOrdena('Destinação final','nm_final').'</b></td>');
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Recebimento','data_recebimento').'</td>');
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Limite','fim').'</td>');
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Fase atual','nm_tramite').'</td>');
@@ -397,8 +397,8 @@ function Inicial() {
       ShowHTML('          <td colspan=4><b>Documento original</td>');
       ShowHTML('          <td rowspan=2><b>Assunto</td>');
       ShowHTML('          <td rowspan=2><b>Resumo</td>');
-      ShowHTML('          <td rowspan=2><b>Guarda</b></td>');
-      ShowHTML('          <td rowspan=2><b>Destinação final</b></td>');
+      //ShowHTML('          <td rowspan=2><b>Guarda</b></td>');
+      //ShowHTML('          <td rowspan=2><b>Destinação final</b></td>');
       //ShowHTML('          <td rowspan=2><b>Recebimento</td>');
       //ShowHTML('          <td rowspan=2><b>Limite</td>');
       //ShowHTML('          <td rowspan=2><b>Fase atual</td>');
@@ -468,8 +468,8 @@ function Inicial() {
           if (f($row,'sg_tramite')=='CA') ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'"><strike>'.htmlspecialchars($w_titulo).'</strike></td>');
           else                            ShowHTML('        <td title="'.htmlspecialchars(f($row,'descricao')).'">'.htmlspecialchars($w_titulo).'</td>');
         }
-        ShowHTML('        <td align="center">'.f($row,'prazo_guarda').'</font></td>');
-        ShowHTML('        <td align="center" '.((f($row,'provisorio')=='S') ? '' : 'title="'.f($row,'nm_final').'"').'>'.((f($row,'provisorio')=='S') ? '&nbsp;' : f($row,'sg_final')).'</font></td>');
+        //ShowHTML('        <td align="center">'.f($row,'prazo_guarda').'</font></td>');
+        //ShowHTML('        <td align="center" '.((f($row,'provisorio')=='S') ? '' : 'title="'.f($row,'nm_final').'"').'>'.((f($row,'provisorio')=='S') ? '&nbsp;' : f($row,'sg_final')).'</font></td>');
         //ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data_recebimento')).'</td>');
         //ShowHTML('        <td align="center">'.nvl(FormataDataEdicao(f($row,'fim')),'---').'</td>');
         //ShowHTML('        <td nowrap>'.f($row,'nm_tramite').'</td>');
@@ -673,7 +673,7 @@ function Geral() {
       $w_circular = 'N';
     }
     // Carrega assunto padrão do documento
-    $w_assunto = f($RS,'sq_assunto');
+    if (nvl($w_assunto,'')=='') $w_assunto = f($RS,'sq_assunto');
   }
   
   if (nvl($w_assunto,'')=='') {
@@ -2519,6 +2519,12 @@ function Tramitacao() {
 function TramitCentral() {
   extract($GLOBALS);
   global $w_Disabled;
+  if(is_array($_REQUEST['w_chave'])){
+    $itens = $_REQUEST['w_chave'];
+  }else{
+    $itens = explode(',',$_REQUEST['w_chave']);
+  }
+  
   // Recupera as variáveis utilizadas na filtragem
   $p_protocolo      = $_REQUEST['p_protocolo'];
   $p_chave          = explodeArray($_REQUEST['p_chave']);
@@ -2554,7 +2560,12 @@ function TramitCentral() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, nvl($p_unid_posse,$_SESSION['LOTACAO']), $p_nu_guia, $p_ano_guia, $p_ini, $p_fim, 2, 
         $p_tipo_despacho);
-    $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    if (Nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'numero_documento','asc');
+    } else {
+      $RS = SortArray($RS,'numero_documento','asc');
+    }
     $w_existe = count($RS);
     
     if (count($w_chave) > 0) {
@@ -2652,28 +2663,30 @@ function TramitCentral() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Assunto</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Protocolo','protocolo','Form').'</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Tipo','nm_tipo','Form').'</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Assunto','cd_assunto','Form').'</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
     ShowHTML('          <td colspan=2><b>Arq. setorial</td>');
-    ShowHTML('          <td rowspan=2><b>Prazo Guarda</td>');
+    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Prazo Guarda','data_limite_doc','Form').'</td>');
     ShowHTML('          <td colspan=2><b>Acondicionamento</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Espécie</td>');
-    ShowHTML('          <td><b>Nº</td>');
-    ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Procedência</td>');
-    ShowHTML('          <td><b>Observação</td>');
-    ShowHTML('          <td><b>Arquivamento</td>');
-    ShowHTML('          <td><b>Caixa</td>');
-    ShowHTML('          <td><b>Pasta</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Espécie','nm_especie','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nº','numero_original','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Data','inicio','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Procedência','nm_origem_doc','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Observação','observacao_setorial','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Arquivamento','data_setorial','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Caixa','nr_caixa','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Pasta','pasta','Form').'</td>');
     ShowHTML('        </tr>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<input type="hidden" name="w_chave[]" value=""></td>'); 
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+    if (nvl($_REQUEST['p_ordena'],'')=='') ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
+    ShowHTML(MontaFiltro('POST'));
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=13 align="center"><b>Não foram encontrados registros.</b></td></tr>');

@@ -323,6 +323,7 @@ begin
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
+             d.unidade_origem, d.unidade_destino,
              d.nu_guia||'/'||d.ano_guia||'-'||d6.sigla as guia_tramite, d.recebimento, d.sq_tipo_despacho,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
              d1.nome as nm_despacho,

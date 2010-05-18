@@ -50,6 +50,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   } elseif (f($RS,'sg_tramite')=='CA') {
     $l_html.=chr(13).'          <td bgcolor="#f0f0f0" align=right><font size="2"><b>CANCELADO</b></font></td>';
   } 
+  $w_sg_tramite = f($RS,'sg_tramite');
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   // Identificação do documento
   if ($l_identificacao=='S') {
@@ -122,14 +123,16 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
       $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'dst_assunto'),'---')).'</td></tr>';
       $l_html.=chr(13).'   <tr><td valign="top"><b>Observação:</b></td>';
       $l_html.=chr(13).'       <td align="justify">'.crlf2br(Nvl(f($RS,'ob_assunto'),'---')).'</td></tr>';
-      $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
-      $l_html.=chr(13).'       <td align="justify"><table border=1>';
-      $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
-      $l_html.=chr(13).'         <tr valign="top">';
-      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
-      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
-      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
-      $l_html.=chr(13).'         </table>';
+      if ($w_sg_tramite=='AT') {
+	      $l_html.=chr(13).'   <tr><td valign="top"><b>Prazos de guarda:</b></td>';
+	      $l_html.=chr(13).'       <td align="justify"><table border=1>';
+	      $l_html.=chr(13).'         <tr valign="top"><td align="center"><b>Fase corrente<td align="center"><b>Fase intermediária<td align="center"><b>Destinação final';
+	      $l_html.=chr(13).'         <tr valign="top">';
+	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_corrente')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_corrente').'</td>';
+	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_intermed')),'ANOS')===false) ? '<td>' : '<td align="center">').f($RS,'guarda_intermed').'</td>';
+	      $l_html.=chr(13).'           '.((strpos(upper(f($RS,'guarda_final')),'ANOS')===false)    ? '<td>' : '<td align="center">').f($RS,'guarda_final').'</td>';
+	      $l_html.=chr(13).'         </table>';
+      }
     } 
 
     // Assuntos complementares

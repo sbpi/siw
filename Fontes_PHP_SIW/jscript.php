@@ -223,7 +223,7 @@ function CompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
   print "        Data2 = a2 + m2 + d2; "."\r\n";
   print "     } "."\r\n";
   print "     if (!(Data1 ".$Operator." Data2)) { "."\r\n";
-  print "        alert('".$DisplayName1." deve ser ".$w_Operator.$DisplayName2.".'); "."\r\n";
+  print "        alert('".$DisplayName1." deve ser".$w_Operator.$DisplayName2.".'); "."\r\n";
   print "        ".$Form1.$Date1.".focus(); "."\r\n";
   print "        return (false); "."\r\n";
   print "     } "."\r\n";

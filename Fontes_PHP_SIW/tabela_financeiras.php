@@ -465,7 +465,7 @@ function Agencia() {
     ValidateOpen('Validacao');
     if (!(strpos('IA',$O)===false)) {
       Validate('w_sq_banco','Banco','SELECT','1','1','18','1','1');
-      Validate('w_codigo','Código','1','1','4','6','','0123456789-');
+      Validate('w_codigo','Código','1','1','4','6','X','0123456789-');
       Validate('w_nome','Nome','1','1','3','60','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
     } elseif ($O=='E') {

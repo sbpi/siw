@@ -11,6 +11,7 @@ if (array_key_exists('url', $_POST)) {
   $w_orientation = strtoupper($_POST['orientation']);
   $w_width = (($w_orientation=='PORTRAIT') ? 800 : 1128);
   
+  @header('Accept-Ranges: none');
   header('Content-type: application/pdf');
   header('Content-disposition: inline');
   //header('Content-disposition: attachment; filename=arquivo.pdf');

@@ -92,7 +92,7 @@ $w_pagina     = 'processo.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_pa/';
 $w_troca      = $_REQUEST['w_troca'];
-$p_ordena     = $_REQUEST['p_ordena'];
+$p_ordena     = lower($_REQUEST['p_ordena']);
 
 if (strpos('PADTRANSF',$SG)!==false) {
   if ($O!='I' && $O!='E' && nvl($_REQUEST['w_chave_aux'],$_REQUEST['w_sq_pessoa'])=='') $O='L';
@@ -317,6 +317,7 @@ function Alterar() {
   extract($GLOBALS);
   global $w_Disabled;
   $w_chave      = $_REQUEST['w_chave'];
+  $w_tipo       = nvl($_REQUEST['w_tipo'],'N');
   $w_processo   = nvl($_REQUEST['w_processo'],'N');
   $w_circular   = nvl($_REQUEST['w_circular'],'N');
   $w_readonly   = '';
@@ -360,6 +361,7 @@ function Alterar() {
       if (count($RS)>0) {
         $w_protocolo          = f($RS,'protocolo');
         $w_processo           = f($RS,'processo');
+        $w_tipo               = f($RS,'processo');
         $w_doc_original       = f($RS,'numero_original');
         $w_especie_documento  = f($RS,'sq_especie_documento');
         $w_natureza_documento = f($RS,'sq_natureza_documento');
@@ -493,6 +495,7 @@ function Alterar() {
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.f($RS_Menu,'sq_menu').'">');
     ShowHTML('<INPUT type="hidden" name="w_protocolo" value="'.$w_protocolo.'">');
     ShowHTML('<INPUT type="hidden" name="w_processo" value="'.$w_processo.'">');
+    ShowHTML('<INPUT type="hidden" name="w_tipo" value="'.$w_tipo.'">');
     if ($w_interno=='S' and $w_processo=='S') ShowHTML('<INPUT type="hidden" name="w_un_autuacao" value="'.f($RS_Menu,'sq_unid_executora').'">');
     ShowHTML('<INPUT type="hidden" name="w_circular" value="'.$w_circular.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
@@ -1295,6 +1298,12 @@ function Desmembrar() {
 function ArqSetorial() {
   extract($GLOBALS);
   global $w_Disabled;
+  if(is_array($_REQUEST['w_chave'])){
+    $itens = $_REQUEST['w_chave'];
+  }else{
+    $itens = explode(',',$_REQUEST['w_chave']);
+  }
+  
 //exibevariaveis();
   // Recupera as variáveis utilizadas na filtragem
   $p_protocolo      = $_REQUEST['p_protocolo'];
@@ -1333,9 +1342,14 @@ function ArqSetorial() {
     $RS = db_getProtocolo::getInstanceOf($dbms, f($RS_Menu,'sq_menu'), $w_usuario, $SG, $p_chave, $p_chave_aux, 
         $p_prefixo, $p_numero, $p_ano, $p_unid_autua, $_SESSION['LOTACAO'], $p_nu_guia, $p_ano_guia, null, null, 2, 
         null);
-    $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    if (Nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'prefixo','asc', 'ano','desc','numero_documento','asc');
+    } else {
+      $RS = SortArray($RS,'prefixo','asc', 'ano','desc','numero_documento','asc');
+    }
     $w_existe = count($RS);
-    
+        
     if (count($w_chave) > 0) {
       $i = 0;
       foreach($w_chave as $k => $v) {
@@ -1437,23 +1451,27 @@ function ArqSetorial() {
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td rowspan=2><b>&nbsp;</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Protocolo</td>');
-    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>Tipo</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Protocolo','protocolo','Form').'</td>');
+    ShowHTML('          <td rowspan=2 width="1%" nowrap><b>'.linkOrdena('Tipo','nm_tipo','Form').'</td>');
     ShowHTML('          <td colspan=4><b>Documento original</td>');
-    ShowHTML('          <td rowspan=2><b>Resumo</td>');
+    ShowHTML('          <td rowspan=2><b>'.linkOrdena('Resumo','','Form').'</td>');
     ShowHTML('        </tr>');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Espécie</td>');
-    ShowHTML('          <td><b>Nº</td>');
-    ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Procedência</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Espécie','nm_especie','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Nº','numero_original','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Data','inicio','Form').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Procedência','nm_origem_doc','Form').'</td>');
     ShowHTML('        </tr>');
     AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+    ShowHTML('<input type="hidden" name="w_chave[]" value=""></td>');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_unidade_posse" value="'.f($RS_Solic,'unidade_int_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_pessoa_posse" value="'.f($RS_Solic,'pessoa_ext_posse').'">');
     ShowHTML('<INPUT type="hidden" name="w_tipo_despacho" value="'.$p_tipo_despacho.'">');
+    if (nvl($_REQUEST['p_ordena'],'')=='') ShowHTML('<INPUT type="hidden" name="p_ordena" value="">');
+    ShowHTML(MontaFiltro('POST'));
+    
     if (count($RS)<=0) { 
       // Se não foram selecionados registros, exibe mensagem
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -1467,13 +1485,18 @@ function ArqSetorial() {
         if ($SG=='PADTRANSF') {
           ShowHTML('        <td align="center" width="1%" nowrap>'); 
           ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
-          ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
+          ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">');
+          ShowHTML('          <input type="CHECKBOX" '.((nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') ? 'CHECKED' : '').' name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>'); 
           ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">'); 
-          if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
-            ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_solic_pai').'" ></td>'); 
+          /*if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
+            ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_solic_pai').'" ></td>');             
           } else {
-            ShowHTML('          <input type="CHECKBOX" name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'" ></td>'); 
-          }
+            if(in_array(f($row,'sq_siw_solicitacao'),$itens)){
+              ShowHTML('          <input type="CHECKBOX" CHECKED  name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>');
+            }else{
+              ShowHTML('          <input type="CHECKBOX"  name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>');
+            }    
+          }*/
           ShowHTML('        </td>');
           ShowHTML('        <td align="center" width="1%" nowrap><A class="HL" HREF="'.$w_dir.'documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" target="visualdoc" title="Exibe as informações deste registro.">'.f($row,'protocolo').'&nbsp;</a>');
           ShowHTML('        <td width="10">&nbsp;'.f($row,'nm_tipo').'</td>');
@@ -1858,8 +1881,9 @@ function Grava() {
       dml_putDocumentoGeral::getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$w_copia,$_REQUEST['w_menu'],
           nvl($_REQUEST['w_sq_unidade'],$_SESSION['LOTACAO']), nvl($_REQUEST['w_un_autuacao'],$_SESSION['LOTACAO']),
           nvl($_REQUEST['w_pessoa_origem'],$_SESSION['SQ_PESSOA']),$_SESSION['SQ_PESSOA'],$_REQUEST['w_solic_pai'],
-          $_REQUEST['w_codigo_interno'],$_REQUEST['w_processo'],$_REQUEST['w_circular'],$_REQUEST['w_especie_documento'],
-          $_REQUEST['w_doc_original'],$_REQUEST['w_data_documento'],$_REQUEST['w_volumes'],$_REQUEST['w_dt_autuacao'],
+          $_REQUEST['w_codigo_interno'],nvl($_REQUEST['w_tipo'],$_REQUEST['w_processo']),$_REQUEST['w_circular'],
+          $_REQUEST['w_especie_documento'],$_REQUEST['w_doc_original'],$_REQUEST['w_data_documento'],
+          $_REQUEST['w_volumes'],$_REQUEST['w_dt_autuacao'],
           $_REQUEST['w_copias'],$_REQUEST['w_natureza_documento'],$_REQUEST['w_fim'],$_REQUEST['w_data_recebimento'],
           $_REQUEST['w_interno'],$_REQUEST['w_pessoa_origem'],$_REQUEST['w_pessoa_interes'],$_REQUEST['w_cidade'],
           $_REQUEST['w_assunto'],$_REQUEST['w_descricao'],&$w_chave_nova, &$w_codigo);

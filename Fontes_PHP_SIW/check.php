@@ -9,6 +9,8 @@ $arrayFun = array();
 $arrayIni = array();
 $arrayReq = array();
 $arrayMod = get_loaded_extensions();
+
+
 // Módulos PHP
 array_push($arrayReq,array(
            /*'apache2handler',*/    'curl',        'ctype',           'date',             'dom',
@@ -86,6 +88,12 @@ function checkMod($arrayMod,$arrayReq){
 }
 
 function checkFun($arrayFun){
+  if (strpos(strtoupper(PHP_OS),'WIN')===false) {
+    @exec('ls _',$comando,$error);
+  }else{
+    @exec('dir',$comando,$error);
+  }
+
   $saida = '<table border="1"><caption><b>Funções</b></caption>';
   $saida .= '<tr><td><b>Item</b></td><td><b>Check</b></td></tr>';
 
@@ -100,6 +108,15 @@ function checkFun($arrayFun){
     }
     $saida .='</tr>';
   }
+  $saida .= '<tr valign="top">';
+  if($error == 0 || $error == 2){
+    $saida .= '<td>exec</td><td>' . '<font color="green"><b>OK</b></font></td>';
+  }
+  else
+  {
+    $saida .= '<td>exec</td><td>' . '<font color="red"><b>X</b></font></td>';
+  }
+  $saida .='</tr>';  
   $saida .='</table>';
   return $saida;
 }

@@ -45,6 +45,7 @@ include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Bilhete.php');
 include_once($w_dir_volta.'classes/sp/db_getPD_Reembolso.php');
 include_once($w_dir_volta.'classes/sp/db_getFNParametro.php');
+include_once($w_dir_volta.'classes/sp/db_getUserMail.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoList.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'classes/sp/dml_putViagemGeral.php');
@@ -73,7 +74,6 @@ include_once($w_dir_volta.'funcoes/selecaoVinculo.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoCC.php');
-include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoEtapa.php');
 include_once($w_dir_volta.'funcoes/selecaoCiaTrans.php');
 include_once($w_dir_volta.'funcoes/selecaoPais.php');
@@ -572,13 +572,11 @@ function Inicial() {
       // Se for cópia, cria parâmetro para facilitar a recuperação dos registros
       ShowHTML('<INPUT type="hidden" name="w_copia" value="OK">');
     }
-    ShowHTML('     <tr><td valign="top" colspan="2">');
-    ShowHTML('        <table border=0 width="100%" cellspacing=0>');
-    ShowHTML('          <tr>');
-    $RS = db_getMenuCode::getInstanceOf($dbms, $w_cliente, 'PJCAD');
-    foreach($RS as $row) { $RS = $row; break; }
-    SelecaoSolic('Projeto:',null,null,$w_cliente,$p_projeto,$w_sq_menu_relac,f($RS,'sq_menu'),'p_projeto','PJCAD',null);
-    ShowHTML('        </table></td></tr>');
+    ShowHTML('     <tr valign="top">');
+    $RSF = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
+    $RSC = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
+    SelecaoSolic('Pro<u>j</u>eto:','J','Selecione o projeto da atividade na relação.',$w_cliente,$p_projeto,f($RSF,'sq_menu'),f($RSC,'sq_menu'),'p_projeto',f($RSF,'sigla'),null,null,'<BR />',2);
+    ShowHTML('     </tr>');
     ShowHTML('     <tr><td valign="top" colspan="2"><table border=0 width="100%" cellspacing=0>');
     if ($P1!=1 || $O=='C') {
       // Se não for cadastramento ou se for cópia
@@ -823,7 +821,7 @@ function Geral() {
     Validate('w_proponente','Contato na ausência','1',1,2,90,'1','1');
     Validate('w_assunto','Agenda da solicitação','1','1',5,2000,'1','1');
     ShowHTML('  if (theForm.w_diaria.selectedIndex==0 && (theForm.w_hospedagem[0].checked || theForm.w_veiculo[0].checked)) {');
-    ShowHTML('     alert(\'Se houver despesa com hospedagem ou locação de veículo, é necessário informar a categoria das diárias!\');');
+    ShowHTML('     alert("Se houver despesa com locação de veículo, é necessário informar a categoria das diárias!");');
     ShowHTML('     theForm.w_diaria.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
@@ -958,7 +956,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_fim" value="'.nvl($w_fim,formataDataEdicao(time())).'">');
     if ($O=='I' && $w_cadgeral=='S') {
       ShowHTML('      <tr>');
-      SelecaoPessoaOrigem('<u>B</u>eneficiário:','P','Clique na lupa para selecionar o beneficiário.',nvl($w_sq_prop,$_SESSION['SQ_PESSOA']),null,'w_sq_prop','NF,EF',null,null);
+      SelecaoPessoaOrigem('<u>B</u>eneficiário:','P','Clique na lupa para selecionar o beneficiário.',nvl($w_sq_prop,$_SESSION['SQ_PESSOA']),null,'w_sq_prop','NF,EF',null,null,$SG);
     }
     ShowHTML('      <tr><td><b>Contato na au<u>s</u>ência:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="'.$w_proponente.'" title="Indique pessoa para contato durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea '.$w_Disabled.' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">'.$w_assunto.'</TEXTAREA></td>');
@@ -1278,7 +1276,7 @@ function OutraParte() {
     Validate('w_nome_resumido','Nome resumido','1',1,2,21,'1','1');
     Validate('w_sexo','Sexo','SELECT',1,1,1,'MF','');
     if ($w_sq_tipo_vinculo=='') {
-      Validate('w_sq_tipo_vinculo','Tipo de vínculo','SELECT',1,1,1,'','1');
+      Validate('w_sq_tipo_vinculo','Tipo de vínculo','SELECT',1,1,18,'','1');
     }
     if ($w_tipo_pessoa==1) {
       Validate('w_rg_numero','Identidade','1',1,2,30,'1','1');
@@ -1643,6 +1641,21 @@ function Trechos() {
       }
     }
   }
+
+  $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,$SG);
+  $RS1 = SortArray($RS1,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
+  $w_tot_trechos = count($RS1);
+  if (count($RS1)) {
+    foreach($RS1 as $row) {
+      if (count($RS1==1) && f($row,'sq_deslocamento')==$w_chave_aux) {
+        $w_tot_trechos = 0;
+      } else {
+        $w_cidade_padrao =  f($row,'cidade_orig');
+      }
+      break;
+    }
+  } 
+    
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -1783,7 +1796,7 @@ function Trechos() {
       SelecaoMeioTransporte('<u>M</u>eio de transporte:','M',null,$w_cliente,$w_meio_transp,null,'w_meio_transp',null,null);
     }
     // Se for primeira saída ou último retorno, informa se há compromisso no dia da viagem
-    if ($w_cidade_orig==$w_cidade_padrao || $w_cidade_dest==$w_cidade_padrao) {
+    if ($w_cidade_orig==$w_cidade_padrao || $w_cidade_dest==$w_cidade_padrao || $w_tot_trechos==0) {
       ShowHTML('        <td colspan="4"><table width="97%" border="0" cellpadding=0 cellspacing=0>');
       MontaRadioNS('<b>Há compromisso relativo à viagem no dia da viagem?</b>',$w_compromisso,'w_compromisso',null,null,null);
       ShowHTML('      </table>');
@@ -1794,12 +1807,13 @@ function Trechos() {
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td colspan="5"><table width="97%" border="0" cellpadding=0 cellspacing=0>');
       ShowHTML('        <tr valign="top">');
-      MontaRadioSN('<b>Adquire bilhete para o trecho?</b>',$w_passagem,'w_passagem',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor_trecho\'; document.Form.submit();"');
       if ($P1!=1 && $w_passagem=='S' && strpos($R,'PRESTARCONTAS')===false && strpos($R,'ALTSOLIC')===false) {
+        MontaRadioSN('<b>Adquire bilhete para o trecho?</b>',$w_passagem,'w_passagem',null,null,'onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_valor_trecho\'; document.Form.submit();"');
         ShowHTML('            <td><b><u>V</u>alor estimado do trecho (R$):</b><br><input type="text" accesskey="V" name="w_valor_trecho" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_trecho.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado do bilhete deste trecho."></td>');
         SelecaoCiaTrans('<u>C</u>ompanhia cotada','C','Selecione a companhia de transporte onde foi feita a cotação.',$w_cliente,$w_cia_aerea,null,'w_cia_aerea',$w_meio_transp,null);
         ShowHTML('            <td><b>Código do vô<u>o</u>:</b><br><input type="text" accesskey="O" name="w_codigo_voo" class="sti" SIZE="5" MAXLENGTH="30" VALUE="'.$w_codigo_voo.'" title="Informe o código do vôo cotado."></td>');
       } else {
+        MontaRadioSN('<b>Adquire bilhete para o trecho?</b>',$w_passagem,'w_passagem',null,null,null);
         ShowHTML('<INPUT type="hidden" name="w_valor_trecho" value="0,00">');
         ShowHTML('<INPUT type="hidden" name="w_cia_aerea" value="">');
         ShowHTML('<INPUT type="hidden" name="w_codigo_voo" value="">');
@@ -5111,6 +5125,7 @@ function Encaminhamento() {
     $w_justif_dia_util  = $_REQUEST['w_justif_dia_util'];
     $w_prazo            = $_REQUEST['w_prazo'];
     $w_antecedencia     = $_REQUEST['w_antecedencia'];
+    $w_envio_regular    = $_REQUEST['w_envio_regular'];
     $w_fim_semana       = $_REQUEST['w_fim_semana'];
   } else {
     $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
@@ -5119,6 +5134,7 @@ function Encaminhamento() {
     $w_justificativa    = f($RS,'justificativa');
     $w_prazo            = f($RS,'limite_envio');
     $w_antecedencia     = f($RS,'dias_antecedencia');
+    $w_envio_regular    = f($RS,'envio_regular');
     $w_justif_dia_util  = f($RS,'justificativa_dia_util');
     $w_fim_semana       = f($RS,'fim_semana');
   }
@@ -5143,47 +5159,49 @@ function Encaminhamento() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  if ($w_sg_tramite=='CI') {
-    if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-      Validate('w_justificativa','Justificativa','','1','1','2000','1','1');
-    }
-    if ($w_fim_semana=='S') {
-      Validate('w_justif_dia_util','Justificativa','1','1',5,2000,'1','1');
-    }
-  } else {
-    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
-      Validate('w_despacho','Despacho','1','1','1','2000','1','1');
-    } else {
-      Validate('w_despacho','Despacho','','','1','2000','1','1');
-      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
-      ShowHTML('     theForm.w_despacho.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
-      ShowHTML('     theForm.w_despacho.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
-      if (Nvl(substr($w_erro,0,1),'')=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-          Validate('w_justificativa','Justificativa','','','1','2000','1','1');
-          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
-          ShowHTML('     theForm.w_justificativa.focus();');
-          ShowHTML('     return false;');
-          ShowHTML('}');
-        }
+  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
+    if ($w_sg_tramite=='CI') {
+      if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+        Validate('w_justificativa','Justificativa','','1','1','2000','1','1');
       }
-    }
-  }
-  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-  if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
-    // Se não for encaminhamento e nem o sub-menu do cadastramento
-    ShowHTML('  theForm.Botao[0].disabled=true;');
-    ShowHTML('  theForm.Botao[1].disabled=true;');
-  } else {
-    ShowHTML('  theForm.Botao.disabled=true;');
+      if ($w_fim_semana=='S') {
+        Validate('w_justif_dia_util','Justificativa','1','1',5,2000,'1','1');
+      }
+	  } else {
+	    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+	      Validate('w_despacho','Despacho','1','1','1','2000','1','1');
+	    } else {
+	      Validate('w_despacho','Despacho','','','1','2000','1','1');
+	      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+	      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+	      ShowHTML('     theForm.w_despacho.focus();');
+	      ShowHTML('     return false;');
+	      ShowHTML('  }');
+	      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+	      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+	      ShowHTML('     theForm.w_despacho.focus();');
+	      ShowHTML('     return false;');
+	      ShowHTML('  }');
+	      if (Nvl(substr($w_erro,0,1),'')=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
+	        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
+	          Validate('w_justificativa','Justificativa','','','1','2000','1','1');
+	          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
+	          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+	          ShowHTML('     theForm.w_justificativa.focus();');
+	          ShowHTML('     return false;');
+	          ShowHTML('}');
+	        }
+	      }
+	    }
+	  }
+	  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
+	  if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
+	    // Se não for encaminhamento e nem o sub-menu do cadastramento
+	    ShowHTML('  theForm.Botao[0].disabled=true;');
+	    ShowHTML('  theForm.Botao[1].disabled=true;');
+	  } else {
+	    ShowHTML('  theForm.Botao.disabled=true;');
+	  }
   }
   ValidateClose();
   ScriptClose();
@@ -5209,6 +5227,7 @@ function Encaminhamento() {
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
   ShowHTML('<INPUT type="hidden" name="w_prazo" value="'.$w_prazo.'">');
   ShowHTML('<INPUT type="hidden" name="w_antecedencia" value="'.$w_antecedencia.'">');
+  ShowHTML('<INPUT type="hidden" name="w_envio_regular" value="'.$w_envio_regular.'">');
   ShowHTML('<INPUT type="hidden" name="w_fim_semana" value="'.$w_fim_semana.'">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="97%" border="0">');
@@ -5219,7 +5238,7 @@ function Encaminhamento() {
       ShowHTML('<INPUT type="hidden" name="w_envio" value="N">');
       // Se a data de início da viagem não respeitar os dias de antecedência, exige justificativa.
       if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-        ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_antecedencia)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
+        ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao($w_envio_regular).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
       }
       if ($w_fim_semana=='S') {
         ShowHTML('      <tr><td colspan="4" valign="top"><b><u>J</u>ustificativa para viagem contendo fim de semana/feriado:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justif_dia_util" class="STI" ROWS=5 cols=75 title="Justifique a necessidade da viagem abranger fim de semana/feriado.">'.$w_justif_dia_util.'</TEXTAREA></td>');
@@ -5247,7 +5266,7 @@ function Encaminhamento() {
     if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
       if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
         if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-          ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao(addDays(time(),$w_prazo)).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
+          ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao($w_envio_regular).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
         }
       }
     }
@@ -5756,6 +5775,7 @@ function SolicMail($p_solic,$p_tipo) {
   $RSM = db_getSolicData::getInstanceOf($dbms,$p_solic,'PDGERAL');
   if(f($RS,'envia_mail_tramite')=='S' && (f($RS_Menu,'envia_email')=='S') && (f($RSM,'envia_mail')=='S')) {
     $l_solic          = $p_solic;
+    $l_menu           = f($RSM,'sq_menu');    
     $w_destinatarios  = '';
     $w_resultado      = '';
     $w_anexos         = array();
@@ -5853,18 +5873,28 @@ function SolicMail($p_solic,$p_tipo) {
     $RS = db_getTramiteResp::getInstanceOf($dbms,$p_solic,null,null);
     if (!count($RS)<=0) {
       foreach($RS as $row) {
-        $w_destinatarios .= f($row,'email').'|'.f($row,'nome').'; ';
+	      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($row,'sq_pessoa'), $w_cliente, null);
+	      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+	      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+	        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+	      }
       }
     }
     if(f($RSM,'st_sol')=='S') {
       // Recupera o e-mail do responsável
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'solicitante'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM,'solicitante'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     }
     if(f($RSM,'st_prop')=='S') {
       // Recupera o e-mail do beneficiário
-      $RS = db_getPersonData::getInstanceOf($dbms,$w_cliente,f($RSM,'sq_prop'),null,null);
-      $w_destinatarios .= f($RS,'email').'|'.f($RS,'nome').'; ';
+      $RS_Mail = DB_GetUserMail::getInstanceOf($dbms, $l_menu, f($RSM,'sq_prop'), $w_cliente, null);
+      foreach($RS_Mail as $row_mail){$RS_Mail=$row_mail;}
+      if (($p_tipo == 2 && f($RS_Mail,'tramitacao')=='S') || ($p_tipo == 3 && f($RS_Mail,'conclusao')=='S')) {
+        $w_destinatarios .= f($RS_Mail,'email').'|'.f($RS_Mail,'nome').'; ';
+      }
     }
     // Executa o envio do e-mail
     if ($w_destinatarios>'') $w_resultado = EnviaMail($w_assunto,$w_html,$w_destinatarios,$w_anexos);
@@ -6198,11 +6228,11 @@ function PrestarContas() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
   ShowHTML('    <tr valign="top">');
-  SelecaoTipoCumprimento('<u>T</u>ipo de cumprimento:','T','Indique o tipo de cumprimento da viagem.',$w_cumprimento,null,'w_cumprimento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_cumprimento\'; document.Form.submit();"');
+  SelecaoTipoCumprimento('Viagem al<u>t</u>erada:','T','Indique se houve alguma alteração no roteiro ou nos horários da viagem.',$w_cumprimento,null,'w_cumprimento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_cumprimento\'; document.Form.submit();"');
   ShowHTML('    </tr>');
   if ($w_cumprimento=='I' || $w_cumprimento=='P') {
     if ($w_cumprimento=='P') {
-      ShowHTML('    <tr><td colspan="2"><br><b>Motivo do cumprimento parcial:</b></font></td></tr>');   
+      ShowHTML('    <tr><td colspan="2"><br><b>Motivo da alteração:</b></font></td></tr>');   
       ShowHTML('    <tr><td colspan="2"><textarea '.$w_Disabled.' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');
     }
     
@@ -7684,15 +7714,6 @@ function Grava() {
               dml_putDemandaEnvio::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
               $_REQUEST['w_novo_tramite'],'N',$_REQUEST['w_observacao'],$_REQUEST['w_destinatario'],$_REQUEST['w_despacho'],
               $w_file,$w_tamanho,$w_tipo,$w_nome);
-              //Rotina para gravação da imagem da versão da solicitacão no log.
-              if($_REQUEST['w_tramite']!=$_REQUEST['w_novo_tramite']) {
-                $RS = db_getTramiteData::getInstanceOf($dbms,$_REQUEST['w_tramite']);
-                $w_sg_tramite = f($RS,'sigla');
-                if($w_sg_tramite=='CI' || ($w_sg_tramite=='DF' || $w_sg_tramite=='AE' || $w_sg_tramite=='PC' || $w_sg_tramite=='VP')) {
-                  $w_html = VisualViagem($w_chave,'L',$w_usuario,$P1,'1');
-                  CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
-                }
-              }
             } else {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!\');');

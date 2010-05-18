@@ -525,6 +525,8 @@ function Tipoafast() {
     $w_periodo           = $_REQUEST['w_periodo'];
     $w_sobrepoe_ferias   = $_REQUEST['w_sobrepoe_ferias'];
     $w_abate_banco_horas = $_REQUEST['w_abate_banco_horas'];
+    $w_abate_ferias      = $_REQUEST['w_abate_ferias'];
+    $w_falta             = $_REQUEST['w_falta'];
     $w_ativo             = $_REQUEST['w_ativo']; 
   } elseif ($O=='L') {
     $RS = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,$w_sigla,$w_nome,$w_ativo,null,null);
@@ -547,6 +549,9 @@ function Tipoafast() {
     $w_periodo           = f($RS,'periodo');
     $w_sobrepoe_ferias   = f($RS,'sobrepoe_ferias');
     $w_abate_banco_horas = f($RS,'abate_banco_horas');
+    $w_abate_ferias      = f($RS,'abate_ferias');
+    $w_falta             = f($RS,'falta');
+    
     $w_ativo             = f($RS,'ativo');
   } if (!(strpos('IAE',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -680,8 +685,6 @@ function Tipoafast() {
     } else {
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="C" checked> Corridos <br><input '.$w_Disabled.' type="radio" name="w_contagem_dias" value="U"> Úteis');
     }
-    ShowHTML('      <tr valign="top">');
-    MontaRadioNS('<b>Abate horas do banco de horas?</b>',$w_abate_banco_horas,'w_abate_banco_horas');
     ShowHTML('      <tr valign="top"><td><b>Informar afastamento em:</b><br>');
     if ($w_periodo=='D') {  
       ShowHTML('              <input '.$w_Disabled.' type="radio" name="w_periodo" value="A"> Datas <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="D" checked> Dias <br><input '.$w_Disabled.' type="radio" name="w_periodo" value="H"> Horas');
@@ -713,6 +716,11 @@ function Tipoafast() {
     } 
     ShowHTML('      <tr valign="top">');
     MontaRadioNS('<b>Sobrepõe gozo de férias?</b>',$w_sobrepoe_ferias,'w_sobrepoe_ferias');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioNS('<b>É considerado falta sem justificativa?</b>',$w_falta,'w_falta');
+    ShowHTML('      <tr valign="top">');
+    MontaRadioNS('<b>Abate horas do banco de horas?</b>',$w_abate_banco_horas,'w_abate_banco_horas');
+    MontaRadioNS('<b>Abate dias de férias?</b>',$w_abate_ferias,'w_abate_ferias');
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td colspan=5><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1518,8 +1526,9 @@ function Grava() {
         } 
         
         dml_putGPTipoAfast::getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],$_REQUEST['w_sigla'],$_REQUEST['w_limite_dias'],
-          $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'], $_REQUEST['w_abate_banco_horas'],
-          $_REQUEST['w_ativo'],explodearray($_REQUEST['w_sq_modalidade']));
+          $_REQUEST['w_sexo'],$_REQUEST['w_perc_pag'],$_REQUEST['w_contagem_dias'],$_REQUEST['w_periodo'],$_REQUEST['w_sobrepoe_ferias'], $_REQUEST['w_abate_banco_horas'], 
+          $_REQUEST['w_abate_ferias'], $_REQUEST['w_falta'], $_REQUEST['w_ativo'],
+          explodearray($_REQUEST['w_sq_modalidade']));
         
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');

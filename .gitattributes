@@ -1011,6 +1011,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicData_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEV.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtapa.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicEtpRec.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicGP.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGR.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGRA.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicGRI.php -text
@@ -1258,6 +1259,7 @@ Fontes_PHP_SIW/classes/sp/dml_putFormaPagamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putFormaPagamentoVinc.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPColaborador.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPContrato.php -text
+Fontes_PHP_SIW/classes/sp/dml_putGPFerias.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPFeriasDias.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPModalidade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putGPParametro.php -text
@@ -1886,13 +1888,16 @@ Fontes_PHP_SIW/mod_pr/tabelas.php -text
 Fontes_PHP_SIW/mod_rh/afastamento.php -text
 Fontes_PHP_SIW/mod_rh/colaborador.php -text
 Fontes_PHP_SIW/mod_rh/cv.php -text
+Fontes_PHP_SIW/mod_rh/ferias.php -text
 Fontes_PHP_SIW/mod_rh/folha.php -text
 Fontes_PHP_SIW/mod_rh/funcoes.php -text
 Fontes_PHP_SIW/mod_rh/tabelas.php -text
 Fontes_PHP_SIW/mod_rh/validaafastamento.php -text
 Fontes_PHP_SIW/mod_rh/validacolaborador.php -text
+Fontes_PHP_SIW/mod_rh/validaferias.php -text
 Fontes_PHP_SIW/mod_rh/visualCurriculo.php -text
 Fontes_PHP_SIW/mod_rh/visualFicha.php -text
+Fontes_PHP_SIW/mod_rh/visualferias.php -text
 Fontes_PHP_SIW/mod_rh_pub/cv.php -text
 Fontes_PHP_SIW/mod_rh_pub/visualcurriculo.php -text
 Fontes_PHP_SIW/mod_rh_pub/visualcurriculoword.php -text

@@ -624,6 +624,7 @@ function Arquivos() {
   
   if($_REQUEST['p_pesquisa'] == 'S'){
     $RS = db_getUorgAnexo::getInstanceOf($dbms,f($RS_Unidade,'sq_unidade'),null,$p_tipo,$p_titulo,$w_cliente);
+    exibeArray($RS);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nome','asc');

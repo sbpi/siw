@@ -89,7 +89,14 @@ $w_dir          = 'mod_rh/';
 $w_dir_volta    = '../';
 $w_Disabled     = 'ENABLED';
 
-if ($O=='') $O='P';
+if ($O=='') {
+  if ($par=='INICIAL') {
+    $O='L';
+  } else {
+    $O='P';
+  }
+}
+
 switch ($O) {
   case 'I':    $w_TP=$TP.' - Inclusão';     break;
   case 'P':    $w_TP=$TP.' - Filtragem';    break;
@@ -127,6 +134,7 @@ function Inicial() {
   $p_modalidade_contrato    = upper($_REQUEST['p_modalidade_contrato']);
   $p_unidade_lotacao        = upper($_REQUEST['p_unidade_lotacao']);
   $p_filhos_lotacao         = upper($_REQUEST['p_filhos_lotacao']);
+  $p_ativo                  = nvl($_REQUEST['p_ativo'],'S');
   $p_unidade_exercicio      = upper($_REQUEST['p_unidade_exercicio']);
   $p_filhos_exercicio       = upper($_REQUEST['p_filhos_exercicio']);
   $p_afastamento            = explodeArray($_REQUEST['p_afastamento']);
@@ -139,7 +147,7 @@ function Inicial() {
   $w_cpf                    = upper($_REQUEST['w_cpf']);
   $w_botao                  = upper($_REQUEST['w_botao']);
   if ($O=='L') {
-    $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$p_contrato_colaborador,null,null,$p_modalidade_contrato,$p_unidade_lotacao,$p_filhos_lotacao,$p_unidade_exercicio,$p_filhos_exercicio,$p_afastamento,$p_dt_ini,$p_dt_fim,$p_ferias,$p_viagem,null,'COLABORADOR');
+    $RS = db_getGPColaborador::getInstanceOf($dbms,$w_cliente,$p_contrato_colaborador,null,$p_ativo,$p_modalidade_contrato,$p_unidade_lotacao,$p_filhos_lotacao,$p_unidade_exercicio,$p_filhos_exercicio,$p_afastamento,$p_dt_ini,$p_dt_fim,$p_ferias,$p_viagem,null,'COLABORADOR');
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'nome_resumido_ind','asc');
@@ -170,12 +178,6 @@ function Inicial() {
     ShowHTML('      cont = cont+1;');
     ShowHTML('    }');
     ShowHTML('  }');
-    ShowHTML('if (theForm.p_contrato_colaborador.value == \'\' && theForm.p_modalidade_contrato.value == \'\' && theForm.p_unidade_lotacao.value == \'\' && theForm.p_unidade_exercicio.value == \'\' && theForm.p_ferias.checked == false && theForm.p_viagem.checked == false) { ');
-    ShowHTML('  if (cont == 0) { ');
-    ShowHTML('    alert(\'Pelo menos um critério de filtragem deve ser informado!\');');
-    ShowHTML('    return false;');
-    ShowHTML('  }');
-    ShowHTML('}');
     ShowHTML('if (theForm.p_filhos_lotacao.checked && theForm.p_unidade_lotacao.value == \'\') {');
     ShowHTML('  alert(\'Os campos ""Exibir colaboradores das unidades subordinadas"" somente podem ser marcados se os respectivos campos de unidade forem selecionados!\');');
     ShowHTML('  return false;');
@@ -242,6 +244,7 @@ function Inicial() {
     ShowHTML('          <td><b>'.LinkOrdena('Matrícula','matricula').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome_resumido_ind').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Modalidade','nm_modalidade_contrato').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Posto','nm_posto_completo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Exercício','nm_exercicio').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ramal','ramal').'</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -256,6 +259,7 @@ function Inicial() {
         ShowHTML('        <td align="center">'.Nvl(f($row,'matricula'),'---').'</td>');
         ShowHTML('        <td align="left">'.ExibeColaborador($w_dir,$w_cliente,f($row,'chave'),$TP,f($row,'nome_resumido')).'</td>');
         ShowHTML('        <td align="left">'.f($row,'nm_modalidade_contrato').'</td>');
+        ShowHTML('        <td align="left">'.f($row,'nm_posto_completo').'</td>');
         ShowHTML('        <td align="left">'.ExibeUnidade('../',$w_cliente,f($row,'local'),f($row,'sq_unidade_exercicio'),$TP).'</td>');
         ShowHTML('        <td align="center">'.Nvl(f($row,'ramal'),'---').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -302,6 +306,15 @@ function Inicial() {
     if ($p_filhos_exercicio > '') ShowHTML('        <td><input type="checkbox" name="p_filhos_exercicio" value="S" checked>Exibir colaboradores das unidades subordinadas</td>');
     else                          ShowHTML('        <td><input type="checkbox" name="p_filhos_exercicio" value="S">Exibir colaboradores das unidades subordinadas</td>');
     ShowHTML('      </tr>');
+    ShowHTML('      <tr>');
+    ShowHTML('          <td><b>Colaboradores:</b><br>');
+    if (Nvl($p_ativo,'S')=='S') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S" checked> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
+    } elseif ($p_ativo=='N') {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N" checked> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""> Tanto faz');
+    } else {
+      ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"> Apenas ativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"> Apenas inativos<br><input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="" checked> Tanto faz');
+    } 
     ShowHTML('      <tr><td><b>Afastado por:</b><br>');
     $RS1 = db_getGPTipoAfast::getInstanceOf($dbms,$w_cliente,null,null,null,'S',null,null);
     $RS1 = SortArray($RS1,'nome','asc');
@@ -340,7 +353,7 @@ function Inicial() {
     ShowHTML('    </TD>');
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
-  } elseif (!(strpos('I',$O)===false)) {
+  } elseif ($O=='I') {
     ShowHTML('<FORM action="'.$w_dir.$w_pagina.$par.'" method="POST" name="Form" onSubmit="return(Validacao(this));">');
     ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
     ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');

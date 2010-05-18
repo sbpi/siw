@@ -2,22 +2,29 @@
 // =========================================================================
 // Rotina de visualização da solicitação
 // -------------------------------------------------------------------------
-function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
+function VisualFerias($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   extract($GLOBALS);
   $l_html='';
   // Recupera os dados da tarefa
-  $RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  //$RS1 = db_getSolicData::getInstanceof($dbms,$l_chave,$l_sg);
+  $RS1 = db_getSolicGP::getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$SG,3,
+  null,null,null,null,null,null,null,null,null,null,
+  $w_copia,null,null,null,null,null,null,
+  null,null,null,null,null,null,null,null,null,null,null);
+  foreach ($RS1 as $row) {$RS1 = $row; break;}
+  //exibeArray($RS1);
+  
   $w_tramite_ativo      = f($RS1,'ativo');
   $l_html.=chr(13).'    <table border=0 width="100%">';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0"><div align=justify><font size="2"><b>SERVIÇO: '.f($RS1,'nome').' ('.f($RS1,'sq_siw_solicitacao').')</b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
 
-  // Exibe a vinculação
+/*  // Exibe a vinculação
   if (substr(f($RS1,'dados_pai'),0,3)!='---') {
     $l_html.=chr(13).'      <tr><td valign="top" width="20%"><b>Vinculação: </b></td>';
     $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS1,'sq_solic_pai'),f($RS1,'dados_pai'),'S').'</td></tr>';
-  }
+  }*/
 
   // Se a classificação foi informada, exibe.
   if (Nvl(f($RS1,'sq_cc'),'')>'') {
@@ -25,11 +32,19 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
     $l_html .= chr(13).'        <td>'.f($RS1,'cc_nome').' </td></tr>';
   }
 
-  if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Procedimento:</b></td>';
-    $l_html.=chr(13).'       <td><b>'.f($RS1,'nm_procedimento').'</b></font></tr>';
-    $l_html.=chr(13).'   <tr><td width="20%"><b>Data e hora de saída:</b></td>';
-    $l_html.=chr(13).'       <td><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_inicio'),3),0,-3),'-').'</b></font></tr>';
+  if (Nvl(f($RS1,'sigla'),'')=='GPFERIAS') {
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Solicitante:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.ExibePessoa('../',$w_cliente,f($RS1,'solicitante'),$TP,f($RS1,'nm_solic')).'</td>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Período aquisitivo:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.FormataDataEdicao(f($RS1,'inicio_aquisitivo'),5).' a '.FormataDataEdicao(f($RS1,'fim_aquisitivo'),5).'</b></font></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Período de gozo:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.FormataDataEdicao(f($RS1,'inicio_data'),5).' a '.FormataDataEdicao(f($RS1,'fim_data'),5).'</b></font></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Dias de gozo:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.f($RS1,'gozo_efetivo').'</b></font></tr>';
+    $l_html.=chr(13).'   <tr><td width="20%"><b>Abono pecuniário:</b></td>';
+    $l_html.=chr(13).'       <td><b>'.f($RS1,'nm_abono_pecuniario').'</b></font></tr>';         
+    
+    
     if (f($RS1,'procedimento')==2) {
       $l_html.=chr(13).'   <tr><td width="20%"><b>Previsão de retorno:</b></td>';
       $l_html.=chr(13).'       <td><b><b>'.Nvl(substr(FormataDataEdicao(f($RS1,'phpdt_fim'),3),0,-3),'-').'</b></td></tr>';
@@ -152,7 +167,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
         }
       }
     } 
-    if (Nvl(f($RS1,'sigla'),'')=='SRTRANSP') {
+    if (Nvl(f($RS1,'sigla'),'')=='GPFERIAS') {
       $l_html.=chr(13).'       <tr valign="top"><td><b>Data do atendimento:</td>';
       $l_html.=chr(13).'         <td>Saída: '.substr(FormataDataEdicao(f($RS1,'phpdt_horario_saida'),3),0,-3).'<br>Retorno: '.substr(FormataDataEdicao(f($RS1,'phpdt_horario_chegada'),3),0,-3).'<b></font></td></tr>';
       $l_html.=chr(13).'       <tr valign="top"><td><b>Hodômetro:</td>';
