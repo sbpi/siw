@@ -81,6 +81,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
+    $l_html.=chr(13).'      <tr><td width="30%"><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
     $l_html.=chr(13).'          </table></td></tr>';    
     
     if (nvl(f($RS,'sq_financeiro'),'')!='') {
@@ -122,8 +123,6 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     // Dados da conclusão da solicitação, se ela estiver nessa situação
     if (nvl(f($RS,'sg_tramite'),'')=='AT') {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'    <tr><td width="30%"><b>Pagamento por fundo fixo?<b></td>';
-      $l_html.=chr(13).'        <td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
       $l_html.=chr(13).'   <tr valign="top"><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
     } 
 
@@ -139,12 +138,10 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Nome</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>U.M.</td>';
     $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Quantidade</td>';
-    if ($w_sg_tramite=='AT') {
-      if ($w_fundo_fixo=='N') {
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Compra/Certame</td>';
-      } else {
-        $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pagamento</td>';
-      }
+    if ($w_fundo_fixo=='N') {
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Compra/Certame</td>';
+    } else {
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0" rowspan=2><b>Pagamento</td>';
     }
     if ($w_pede_valor_pedido=='N') $l_html.=chr(13).'          <td bgColor="#f0f0f0" colspan=2><b>Preço Estimado (*)</td>';
     $l_html.=chr(13).'        </tr>';
@@ -191,10 +188,8 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));
           }
         }
-          if ($w_sg_tramite=='AT') {
-            if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N'),'---').'</td></tr>';
-            else                         $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N','S'),'---').'</td></tr>';
-          }
+        if (!($l_P1==4 || $l_tipo=='WORD')) $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N'),'---').'</td></tr>';
+        else                         $l_html.=chr(13).'        <td>'.nvl(exibeSolic($w_dir,f($row,'solic_filho'),f($row,'codigo_filho'),'N','S'),'---').'</td></tr>';
         $l_html.=chr(13).'        </tr>';
       }
     } 

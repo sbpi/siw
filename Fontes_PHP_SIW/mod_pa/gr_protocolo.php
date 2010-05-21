@@ -767,7 +767,7 @@ function Gerencial() {
           } 
           $w_linha = $w_linha + 1;
         } 
-        if (nvl(f($row,'data_central'),'')=='') {
+        if (nvl(f($row,'ativo'),'')=='S') {
           if (Nvl(f($row,'fim'),time()) < addDays(time(),-1)) {
             $t_atraso    = $t_atraso + 1;
             $t_totatraso = $t_totatraso + 1;

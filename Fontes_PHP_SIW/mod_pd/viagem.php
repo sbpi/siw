@@ -821,7 +821,7 @@ function Geral() {
     Validate('w_proponente','Contato na ausência','1',1,2,90,'1','1');
     Validate('w_assunto','Agenda da solicitação','1','1',5,2000,'1','1');
     ShowHTML('  if (theForm.w_diaria.selectedIndex==0 && (theForm.w_hospedagem[0].checked || theForm.w_veiculo[0].checked)) {');
-    ShowHTML('     alert("Se houver despesa com locação de veículo, é necessário informar a categoria das diárias!");');
+    ShowHTML('     alert("Se houver despesa com hospedagem, é necessário informar a categoria das diárias!");');
     ShowHTML('     theForm.w_diaria.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');

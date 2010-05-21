@@ -181,6 +181,13 @@ foreach($RS_Parametro as $row){$RS_Parametro=$row; break;}
 $RS_PAUnidade = db_getUnidade_PA::getInstanceOf($dbms,$w_cliente,$_SESSION['LOTACAO'],null,null);
 foreach($RS_PAUnidade as $row) { $RS_PAUnidade = $row; break; }
 
+// Verifica se usuário logado é da unidade central de protocolo ou gestor do módulo
+if (nvl(f($RS_PAUnidade,'sq_unidade_pai'),'')=='' || RetornaModMaster($w_cliente, $w_usuario, $w_menu)=='S') {
+  $w_gestor = true;
+} else { 
+  $w_gestor = false;
+}
+
 Main();
 FechaSessao($dbms);
 exit;
@@ -673,7 +680,7 @@ function Geral() {
       $w_circular = 'N';
     }
     // Carrega assunto padrão do documento
-    if (nvl($w_assunto,'')=='') $w_assunto = f($RS,'sq_assunto');
+    if ($O=='I' ||(nvl($w_assunto,'')=='' && nvl(f($RS,'sq_assunto'),'')!='')) $w_assunto = f($RS,'sq_assunto');
   }
   
   if (nvl($w_assunto,'')=='') {
@@ -682,6 +689,10 @@ function Geral() {
     foreach($RS_Assunto as $row) { $RS_Assunto = $row; break; }
     if (count($RS_Assunto)>0) $w_assunto = f($RS_Assunto,'sq_assunto');
   }
+  
+  // Somente gestores do módulo e lotados na unidade de protocolo podem cadastrar documentos externos.
+  if ($w_gestor==false) $w_interno = 'S';
+  
   Cabecalho();
   head();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -705,7 +716,7 @@ function Geral() {
     Validate('w_doc_original','Nº do documento','1','1',1,30,'1','1');
     Validate('w_data_documento','Data do documento','DATA','1',10,10,'','0123456789/');
     CompData('w_data_documento','Data do documento','<=',FormataDataEdicao(time()),'data atual');
-    Validate('w_interno','Procedência','SELECT',1,1,1,'SN','');
+    if ($w_gestor) Validate('w_interno','Procedência','SELECT',1,1,1,'SN','');
     if ($w_interno=='N') {
       Validate('w_pais','País','SELECT',1,1,18,'','0123456789');
       Validate('w_uf','Estado','SELECT',1,1,3,'1','1');
@@ -772,7 +783,11 @@ function Geral() {
     selecaoEspecieDocumento('<u>E</u>spécie documental:','E','Selecione a espécie do documento.',$w_especie_documento,null,'w_especie_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_doc_original\'; document.Form.submit();"');
     ShowHTML('           <td title="Informe o número do documento de origem."><b>Número:</b><br><INPUT '.$w_Disabled.' class="STI" type="text" name="w_doc_original" size="20" maxlength="30" value="'.$w_doc_original.'" ></td>');
     ShowHTML('           <td title="Informe a data do documento de origem."><b>D<u>a</u>ta:</b><br><input '.$w_Disabled.' accesskey="A" type="text" name="w_data_documento" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_documento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Data original do documento.">'.ExibeCalendario('Form','w_data_documento').'</td>');
-    selecaoOrigem('<u>O</u>rigem:','O','Indique se a origem é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+    if ($w_gestor) {
+      selecaoOrigem('<u>O</u>rigem:','O','Indique se a origem é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+    } else {
+      ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
+    }
     ShowHTML('      <tr><td colspan=5>&nbsp;</td></tr>');
     ShowHTML('      <tr><td colspan=5 align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan=4><b>PROCEDÊNCIA</b></td></tr>');
@@ -1459,6 +1474,9 @@ function Encaminhamento() {
     exit();
   }
   
+  // Somente gestores do módulo e usuários lotados no setor de protocolo podem fazer envios externos.
+  if ($w_gestor==false) $w_interno = 'S';
+  
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -1482,7 +1500,7 @@ function Encaminhamento() {
     ShowHTML('  else {');
     ShowHTML('     theForm.w_dias.value = \'\';');
     ShowHTML('  }');
-    Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
+    if ($w_gestor) Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
     if ($w_interno=='N') {
       Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
       Validate('w_unidade_externa','Unidade externa','','',2,60,'1','1');
@@ -1543,7 +1561,11 @@ function Encaminhamento() {
   ShowHTML('      <tr><td>&nbsp;</td></br>');
   ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
   ShowHTML('      <tr valign="top">');
-  selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+  if ($w_gestor) {
+    selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
+  } else {
+    ShowHTML('<INPUT type="hidden" name="w_interno" value="S">');
+  }
   if ($w_interno=='N') {
     SelecaoPessoaOrigem('<u>P</u>essoa de destino:','P','Clique na lupa para selecionar a pessoa de destino.',$w_pessoa_destino,null,'w_pessoa_destino',null,null,null);
     ShowHTML('        <td><b>U<U>n</U>idade externa: (preencher apenas para pessoas jurídicas)<br><INPUT ACCESSKEY="N" '.$w_Disabled.' class="STI" type="text" name="w_unidade_externa" size="30" maxlength="60" value="'.$w_unidade_externa.'"></td>');
@@ -2112,7 +2134,8 @@ function Tramitacao() {
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) $w_envia_arquivo = 'S'; else $w_envia_arquivo = 'N';  
 
    if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral') ||
-      $p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')
+      $p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial') ||
+      $w_gestor==false
      ) $w_interno = 'S';  
      
   if ($p_tipo_despacho==f($RS_Parametro,'despacho_desmembrar')) $w_desmembrar = 'S'; else $w_desmembrar = 'N';  
@@ -2207,10 +2230,16 @@ function Tramitacao() {
     SaltaCampo();
     ValidateOpen('Validacao');
     ShowHTML('  var i; ');
+    ShowHTML('  var chave; ');
     ShowHTML('  var w_erro=true; ');
+    ShowHTML('  var w_envia_outra=false; ');
     ShowHTML('  for (i=1; i < theForm["w_chave[]"].length; i++) {');
     ShowHTML('    if (theForm["w_chave[]"][i].checked) {');
     ShowHTML('       w_erro=false; ');
+    ShowHTML('       chave=theForm["w_chave[]"][i].value; ');
+    ShowHTML('       if (theForm["w_mesma_lotacao["+chave+"]"].value==\'N\') {');
+    ShowHTML('         w_envia_outra=true; ');
+    ShowHTML('       }');
     ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('  if (w_erro) {');
@@ -2248,7 +2277,7 @@ function Tramitacao() {
       ShowHTML('  else {');
       ShowHTML('     theForm.w_dias.value = \'\';');
       ShowHTML('  }');
-      Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
+      if ($w_envia_arquivo=='N' && $w_envia_protocolo=='N' && $p_tipo_despacho!=f($RS_Parametro,'despacho_arqsetorial') && $w_gestor) Validate('w_interno','Tipo da unidade/pessoa','SELECT',1,1,1,'SN','');
       if ($w_interno=='N') {
         Validate('w_pessoa_destino','Pessoa de destino','HIDDEN',1,1,18,'','0123456789');
         Validate('w_unidade_externa','Unidade externa','','',2,60,'1','1');
@@ -2269,7 +2298,11 @@ function Tramitacao() {
       Validate('w_despacho','Detalhamento do despacho','','1','1','2000','1','1');
     }
     Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-    ShowHTML('  if (!confirm(\'Confirma a geração de guia de tramitação APENAS para '.(($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados').'?\')) return false;');
+    ShowHTML('  if (w_envia_outra) {');
+    ShowHTML('    if (!confirm("Você selecionou protocolos que estão de posse de outras unidades!\nCONFIRMA O ENVIO?")) return false;');
+    ShowHTML('  } else {');
+    ShowHTML('    if (!confirm(\'Confirma a geração de guia de tramitação APENAS para '.(($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) ? 'as caixas selecionadas' : 'os documentos selecionados').'?\')) return false;');
+    ShowHTML('  }');
     ShowHTML('  theForm.Botao.disabled=true;');
     ValidateClose();
     ScriptClose();
@@ -2351,12 +2384,19 @@ function Tramitacao() {
       // Lista os registros selecionados para listagem
       $w_atual = '';
       $i = 0;
+      $w_outra_unidade = false;
       foreach ($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+        if (f($row,'st_mesma_lotacao')=='N') {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColorLightRed1.'">');
+          $w_outra_unidade = true;
+        } else {
+          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+          ShowHTML('      <tr bgcolor="'.$w_cor.'">');
+        }
         if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqcentral')) {
           ShowHTML('        <td align="center" width="1%" nowrap>'); 
           ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_caixa').']" value="'.f($row,'sq_unidade').'">'); 
+          ShowHTML('          <INPUT type="hidden" name="w_mesma_lotacao['.f($row,'sq_caixa').']" value="'.f($row,'st_mesma_lotacao').'">'); 
           ShowHTML('          <input type="CHECKBOX" '.((nvl($w_marcado[f($row,'sq_caixa')],'')!='') ? 'CHECKED' : '').' name="w_chave[]" value="'.f($row,'sq_caixa').'"></td>'); 
           ShowHTML('        </td>');
           ShowHTML('        <td align="center" width="1%" nowrap>&nbsp;<A onclick="window.open (\''.montaURL_JS($w_dir,'relatorio.php?par=ConteudoCaixa'.'&R='.$w_pagina.'IMPRIMIR'.'&O=L&w_chave='.f($row,'sq_caixa').'&w_formato=WORD&orientacao=PORTRAIT&&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\',\'Imprimir\',\'width=700,height=450, status=1,toolbar=yes,scrollbars=yes,resizable=yes\');" class="HL"  HREF="javascript:this.status.value;" title="Imprime a lista de protocolos arquivados na caixa.">'.f($row,'numero').'/'.f($row,'sg_unidade').'</a>&nbsp;');
@@ -2380,6 +2420,7 @@ function Tramitacao() {
             ShowHTML('          <INPUT type="hidden" name="w_tramite['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'sq_siw_tramite').'">'); 
             ShowHTML('          <INPUT type="hidden" name="w_unid_origem['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_int_posse').'">'); 
             ShowHTML('          <INPUT type="hidden" name="w_unid_autua['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'unidade_autuacao').'">');
+            ShowHTML('          <INPUT type="hidden" name="w_mesma_lotacao['.f($row,'sq_siw_solicitacao').']" value="'.f($row,'st_mesma_lotacao').'">');
             ShowHTML('          <INPUT type="hidden" name="w_lista[]" value="'.f($row,'protocolo').'">'); 
             if (nvl($w_marcado[f($row,'sq_siw_solicitacao')],'')!='') {
               ShowHTML('          <input type="CHECKBOX" CHECKED name="w_chave[]" value="'.f($row,'sq_siw_solicitacao').'"></td>'); 
@@ -2411,7 +2452,7 @@ function Tramitacao() {
         $i += 1;
       } 
     } 
-    ShowHTML('      </center>');
+    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="9"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
     ShowHTML('    </table>');
     ShowHTML('      <tr><td colspan="3">&nbsp;</td></tr>');
     if ($w_envia_protocolo=='N') {
@@ -2436,7 +2477,7 @@ function Tramitacao() {
     } else {
       ShowHTML('      <tr><td colspan="3"  bgcolor="#f0f0f0" align=justify><font size="2"><b>DESTINO</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
-      if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial')) {
+      if ($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial') || $w_gestor==false) {
         ShowHTML('<INPUT type="hidden" name="w_interno" value="'.$w_interno.'">');
       } else {
         selecaoOrigem('<u>T</u>ipo da unidade/pessoa:','T','Indique se a unidade ou pessoa é interna ou externa.',$w_interno,null,'w_interno',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_interno\'; document.Form.submit();"');
@@ -2449,7 +2490,7 @@ function Tramitacao() {
           SelecaoUnidade('Ar<U>q</U>uivo setorial:','Q','Selecione o arquivo setorial.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA_SET',null);
         } else {
           SelecaoUnidade('<U>U</U>nidade de destino:','U','Selecione a unidade de destino.',$w_sq_unidade,null,'w_sq_unidade','MOD_PA',null);
-          ShowHTML('      <tr><td><td colspan="2"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
+          ShowHTML('      <tr>'.(($p_tipo_despacho==f($RS_Parametro,'despacho_arqsetorial') || $w_gestor==false) ? '' : '<td>').'<td colspan="3"><font color="#BC3131"><b>Se unidade de destino igual à de origem, não há emissão de guia de remessa e o recebimento é automático.</b></font></td></tr>');
         }
       }
     }
@@ -3012,7 +3053,12 @@ function Recebimento() {
     // Recupera todos os registros para a listagem
     $RS = db_getProtocolo::getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
         null, null, null, $w_unid_autua, null, $w_nu_guia, $w_ano_guia, null, null, null, null);
-    $RS = SortArray($RS,'sg_unid_dest','asc', 'sg_unid_origem','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
+    if (Nvl($p_ordena,'')>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'ano_guia','desc','nu_guia','asc','protocolo','asc');
+     } else {
+      $RS = SortArray($RS,'sg_unid_dest','asc', 'sg_unid_origem','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
+    }
   } elseif ($O=='R') {
     // Recupera os protocolos da guia
     $RS_Dados = db_getProtocolo::getInstanceOf($dbms, $P2, $w_usuario, $SG, null, null, 
@@ -3024,11 +3070,11 @@ function Recebimento() {
 
   Cabecalho();
   head();
-  if ($O=='R' || $O=='T' || $O=='P') {
+  if ($O=='R' || $O=='S' || $O=='T' || $O=='U' || $O=='P') {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
-    if ($O=='R' || $O=='T') {
-      if ($w_interno=='N') Validate('w_observacao','Observações sobre o envio externo','1','1','5','2000','1','1');
+    if ($O=='R' || $O=='S' || $O=='T' || $O=='U') {
+      if ($w_interno=='N' && ($O=='R' || $O=='T')) Validate('w_observacao','Observações sobre o envio externo','1','1','5','2000','1','1');
       Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
       ShowHTML('  theForm.Botao[0].disabled=true;');
       ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -3049,7 +3095,7 @@ function Recebimento() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad=\'document.Form.'.$w_troca.'.focus()\';');
-  } elseif ($O=='R' || $O=='T') {
+  } elseif ($O=='R' || $O=='S' || $O=='T' || $O=='U') {
     if ($w_interno=='N') BodyOpen('onLoad=\'document.Form.w_observacao.focus()\';');
     else BodyOpen('onLoad=\'document.Form.w_assinatura.focus()\';');
   } elseif ($O=='P') {
@@ -3068,7 +3114,7 @@ function Recebimento() {
     ShowHTML('  </ul></b></font></td>');
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     ShowHTML('<tr><td>');
-    if (MontaFiltro('GET')>'') {
+    if ($w_nu_guia||$w_ano_guia||$w_unid_autua) {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
     } else {
       ShowHTML('                         <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
@@ -3077,10 +3123,10 @@ function Recebimento() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Destino</td>');
-    ShowHTML('          <td><b>Última Procedência</td>');
-    ShowHTML('          <td><b>Guia</td>');
-    ShowHTML('          <td><b>Despacho</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Destino','sg_unid_dest').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Última Procedência','sg_unid_origem').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Guia','guia_tramite').'</td>');
+    ShowHTML('          <td><b>'.linkOrdena('Despacho','nm_despacho').'</td>');
     ShowHTML('          <td><b>Protocolo</td>');
     ShowHTML('          <td><b>Envio</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -3094,8 +3140,17 @@ function Recebimento() {
       $w_atual = '';
       foreach ($RS1 as $row) {
         if ($w_atual=='' || $w_atual!=f($row,'guia_tramite')) {
-          $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          if (f($row,'st_mesma_lotacao')=='N') {
+            $w_outra_unidade = true;
+          } else {
+            $w_outra_unidade = false;
+          }
+          if ($w_outra_unidade) {
+            ShowHTML('      <tr bgcolor="'.$conTrBgColorLightRed1.'" valign="top">');
+          } else {
+            $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+            ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          }
           ShowHTML('        <td title="'.f($row,'nm_unid_dest').'">'.f($row,'sg_unid_dest').'</td>');
           ShowHTML('        <td title="'.f($row,'nm_unid_origem').'">'.f($row,'sg_unid_origem').'</td>');
           ShowHTML('        <td>'.f($row,'guia_tramite').'</td>');
@@ -3104,15 +3159,27 @@ function Recebimento() {
           ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'phpdt_envio'),3).'</td>');
           ShowHTML('        <td align="top" nowrap>');
           if (nvl(f($row,'despacho_arqcentral'),'')=='') {
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=R&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"'.(($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '').'>Receber</A>&nbsp');
           } else {
-            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Receber</A>&nbsp');
+            ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=T&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"'.(($w_outra_unidade) ? ' onClick="return(confirm(\'O destino da guia é uma unidade diferente da sua!\nCONFIRMA O RECEBIMENTO?\'));"' : '').'>Receber</A>&nbsp');
+          }
+          if (!$w_outra_unidade) {
+            if (nvl(f($row,'despacho_arqcentral'),'')=='') {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=S&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Recusar</A>&nbsp');
+            } else {
+              ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=U&w_unid_autua='.f($row,'unidade_autuacao').'&w_nu_guia='.f($row,'nu_guia').'&w_ano_guia='.f($row,'ano_guia').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">Recusar</A>&nbsp');
+            }
           }
           ShowHTML('        </td>');
           ShowHTML('      </tr>');
           $w_atual = f($row,'guia_tramite');
         } else {
-          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          if ($w_outra_unidade) {
+            ShowHTML('      <tr bgcolor="'.$conTrBgColorLightRed1.'" valign="top">');
+          } else {
+            ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+          }
+          ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
           ShowHTML('        <td>&nbsp;</td>');
@@ -3123,14 +3190,14 @@ function Recebimento() {
         }
       } 
     } 
-    ShowHTML('      </center>');
+    if ($w_outra_unidade) ShowHTML('      <tr><td colspan="9"><b>ATENÇÃO: Linha na cor vermelha indica que o protocolo está de posse de unidade diferente da sua!');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
     ShowHTML('<tr><td align="center" colspan=3>');
     MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET'),ceil(count($RS)/$P4),$P3,$P4,count($RS));
     ShowHTML('</tr>');
-  } elseif ($O=='R') {
+  } elseif ($O=='R'||$O=='S') {
     ShowHTML('<tr><td align="center" colspan=3>');
     // Chama a rotina de visualização dos protocolos da guia
     ShowHTML(VisualGR($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu,'sq_menu'), 'TELA'));
@@ -3143,22 +3210,31 @@ function Recebimento() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('  ATENÇÃO:<ul>');
-    ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
-    ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+    if ($O=='R') {
+      ShowHTML('  <li>Verifique cada um dos protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
+      ShowHTML('  <li>O recebimento da guia implica no recebimento de todos os seus protocolos, não sendo possível o recebimento parcial.');
+    } else {
+      ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
+      ShowHTML('  <li>Não será possível reverter esta ação.');
+    }
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     if ($w_interno=='N') ShowHTML('      <tr><td colspan="4" title="Informe os dados do envio do protocolo."><b><u>O</u>bservação sobre o envio externo:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75>'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
-    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+    if ($O=='R') {
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+    } else {
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
+    }
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('      </td>');
     ShowHTML('    </tr>');
     ShowHTML('  </table>');
     ShowHTML('  </TD>');
     ShowHTML('</tr>');
-  } elseif ($O=='T') {
+  } elseif ($O=='T'||$O=='U') {
     ShowHTML('<tr><td align="center" colspan=3>');
     // Chama a rotina de visualização dos protocolos da guia
     ShowHTML(VisualGT($w_unid_autua, $w_nu_guia, $w_ano_guia, f($RS_Menu,'sq_menu'), 'TELA'));
@@ -3171,14 +3247,23 @@ function Recebimento() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr><td colspan=3 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131">');
     ShowHTML('  ATENÇÃO:<ul>');
-    ShowHTML('  <li>Verifique cada uma das caixas, pastas e protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
-    ShowHTML('  <li>O recebimento da guia implica no recebimento de todas as suas caixas, pastas e protocolos, não sendo possível o recebimento parcial.');
+    if ($O=='T') {
+      ShowHTML('  <li>Verifique cada uma das caixas, pastas e protocolos antes de assinar o recebimento, pois não será possível reverter esta ação.');
+      ShowHTML('  <li>O recebimento da guia implica no recebimento de todas as suas caixas, pastas e protocolos, não sendo possível o recebimento parcial.');
+    } else {
+      ShowHTML('  <li>Antes de recusar o recebimento, verifique com atenção se essa é realmente sua intenção.');
+      ShowHTML('  <li>Não será possível reverter esta ação.');
+    }
     ShowHTML('  </ul></b></font></td>');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     ShowHTML('      <tr><td align="LEFT" colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
-    ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+    if ($O=='T') {
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Receber">');
+    } else {
+      ShowHTML('      <input class="STB" type="submit" name="Botao" value="Recusar">');
+    }
     ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     ShowHTML('      </td>');
     ShowHTML('    </tr>');
@@ -3528,6 +3613,7 @@ function Grava() {
   ShowHTML('</HEAD>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   BodyOpen(null);
+  
   if ($SG=='PADGERAL') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
@@ -3898,11 +3984,11 @@ function Grava() {
         ScriptClose();
         retornaFormulario('w_assinatura');
       } else {
-        dml_putDocumentoReceb::getInstanceOf($dbms,$w_usuario,
+        dml_putDocumentoReceb::getInstanceOf($dbms,$O,$w_usuario,
             $_REQUEST['w_unid_autua'],$_REQUEST['w_nu_guia'],$_REQUEST['w_ano_guia'],$_REQUEST['w_observacao']);
 
         ScriptOpen('JavaScript');
-        ShowHTML('  alert(\'Protocolos da guia recebidos com sucesso!\');');
+        ShowHTML('  alert("Protocolos da guia '.(($O=='S'||$O=='U') ? 'recusados' : 'recebidos').' com sucesso!");');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } 

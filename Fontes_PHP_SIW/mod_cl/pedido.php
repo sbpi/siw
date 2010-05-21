@@ -1932,7 +1932,7 @@ function Atender() {
   }
   ShowHTML('    </table>');
   ShowHTML('      <tr>');
-  MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131">(A solicitação será concluída em caso positivo)</font></b>',$w_fundo_fixo,'w_fundo_fixo');
+  MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131"></font></b>',$w_fundo_fixo,'w_fundo_fixo');
   ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
   ShowHTML('    <tr><td align="center" colspan=4><hr>');
@@ -2477,11 +2477,13 @@ function Grava() {
             }
           }
 
+          /*
           if ($_REQUEST['w_fundo_fixo']=='S') {
             // Conclui a solicitação
             dml_putSolicConc::getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,
                 $_SESSION['SQ_PESSOA'],$_REQUEST['w_nota_conclusao'],null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_fundo_fixo']);
           }
+          */
           ScriptOpen('JavaScript');
           ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
           ScriptClose();

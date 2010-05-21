@@ -1485,12 +1485,9 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
         if ($l_tramite=='AT') {
           $l_imagem = $conImgOkNormal;
           $l_title  = 'Missão encerrada.';
-        } elseif ($l_tramite!='EE') {
-          $l_imagem = $conImgOkAtraso;
-          $l_title  = 'Missão com tramitação em atraso.';
         } else {
           $l_imagem = $conImgOkAcima;
-          $l_title  = 'Missão pendente de prestação de contas.';
+          $l_title  = 'Missão encerrada com solicitação em trâmite.';
         }
       } elseif ($l_inicio>time()) {
         if ($l_dias_aviso<=time()) {
