@@ -22,22 +22,14 @@ create or replace procedure sp_putGPFamiliares
 
 begin   
   If p_operacao is null or (p_operacao is not null and p_operacao = 'I' or p_operacao = 'A') Then
-      -- Verifica se é pessoa física e carrega a chave da tabela CO_TIPO_PESSOA    
+        -- Verifica se é pessoa física e carrega a chave da tabela CO_TIPO_PESSOA    
+    If p_cpf is not null Then 
       select sq_tipo_pessoa into w_sq_tipo_pessoa from co_tipo_pessoa   where nome = 'Física';
-      select count(*)
-        into w_existe
-        from co_pessoa_fisica
-       where cliente = p_cliente
-         and (p_chave is null or p_chave is not null and sq_pessoa = p_chave)
-         and (p_cpf is null or p_cpf is not null and cpf = p_cpf);
+      select count(*)       into w_existe         from co_pessoa_fisica where cliente = p_cliente and cpf = p_cpf;
       If w_existe > 0 Then
-         select sq_pessoa
-           into w_chave_pessoa
-           from co_pessoa_fisica
-          where cliente = p_cliente
-            and cpf = p_cpf;
-
-      Else
+         select sq_pessoa into w_chave_pessoa from co_pessoa_fisica where cliente = p_cliente and cpf = p_cpf;
+      End If;   
+    Else
         select count(*)
           into w_existe
           from sg_autenticacao a
@@ -57,8 +49,9 @@ begin
            w_chave_pessoa := 0;
         End If;
       End If;
+   --End If;
      
-     If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
+   If w_chave_pessoa = 0 Then -- Se a chave da pessoa não foi informada, insere
 
         -- recupera a próxima chave da pessoa
         select sq_pessoa.nextval into w_chave_pessoa from dual;
