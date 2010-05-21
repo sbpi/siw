@@ -90,6 +90,7 @@ create or replace function Acesso
   w_beneficiario           number(18);
   w_anterior_assina        varchar2(1);
   w_beneficiario_assina    varchar2(1);
+  w_gestor_cumpre          varchar2(1);
 
   cursor c_unidade (p_unidade in number) is
      select pt.sq_unidade, a.sq_unidade_pai, coalesce(pt.sq_pessoa, -1) as sq_pessoa_titular,
@@ -141,7 +142,7 @@ begin
                        else j.sq_cc
                   end
         end as sq_cc,
-        e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre,
+        e.ordem, e.sigla, e.ativo, e.chefia_imediata, e.assina_tramite_anterior, e.beneficiario_cumpre, e.gestor_cumpre,
         coalesce(f.sq_pessoa,-1), coalesce(g.sq_pessoa,-1),
         h.sq_pessoa_endereco, d.executor,
         coalesce(k1.sq_unidade, l1.sq_unidade,m1.sq_unidade,n1.sq_unidade,d.sq_unidade) --d.sq_unidade deve sempre ser a última opção
@@ -152,7 +153,7 @@ begin
         w_sq_unidade_executora, w_consulta_opiniao, w_envia_email, w_exibe_relatorio, w_vinculacao,
         w_sq_siw_tramite, w_solicitante, w_cadastrador, w_unidade_solicitante, w_sq_pessoa_executor, 
         w_opiniao_solicitante, w_solic_pai, w_sq_cc,
-        w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina,
+        w_ordem, w_sigla_situacao, w_ativo, w_chefia_imediata, w_anterior_assina, w_beneficiario_assina, w_gestor_cumpre,
         w_sq_pessoa_titular, w_sq_pessoa_substituto,
         w_sq_endereco_unidade, w_executor,
         w_unidade_resp
@@ -442,7 +443,7 @@ begin
         );
  If w_existe > 0 or w_gestor_sistema = 'S' Then
     Result := Result + 6;
-    If w_existe > 0 and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
+    If w_existe > 0 and w_gestor_cumpre = 'S' and w_destinatario = 'N' and w_sigla_situacao <> 'CI' Then
        -- Se o trâmite da solicitação não for cadastramento inicial e se o trâmite não indicar destinatario
        -- e se não for gestor do sistema, complementa o resultado para somar 16
        Result := Result + 10;
@@ -655,7 +656,7 @@ begin
         from sg_tramite_pessoa a 
        where a.sq_pessoa          = p_usuario
          and a.sq_pessoa_endereco = w_sq_endereco_unidade 
-         and a.sq_siw_tramite     = w_sq_siw_tramite
+         and a.sq_siw_tramite     = coalesce(p_tramite, w_sq_siw_tramite)
          and (w_sigla <> 'PADCAD' or
               (w_sigla = 'PADCAD' and
                0 < (select count(*) from pa_documento where sq_siw_solicitacao = p_solicitacao and unidade_int_posse = w_sq_unidade_lotacao)

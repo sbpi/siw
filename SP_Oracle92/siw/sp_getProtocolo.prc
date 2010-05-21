@@ -234,6 +234,7 @@ begin
                   else null
              end as protocolo_pai,
              c6.sigla as sg_unidade_posse, c6.nome as nm_unidade_posse,
+             case coalesce(c7.existe,0) when 0 then 'N' else 'S' end as st_mesma_lotacao,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              d.nu_guia||'/'||d.ano_guia||'-'||d6.sigla as guia_tramite,
              to_char(d.envio, 'dd/mm/yyyy, hh24:mi:ss') as phpdt_envio, 
@@ -270,6 +271,15 @@ begin
                                     group by x.sq_documento_pai
                                   )                    c5 on (c.sq_siw_solicitacao   = c5.sq_documento_pai)
                  left        join eo_unidade           c6 on (c.unidade_int_posse    = c6.sq_unidade)
+                 left        join (select x.sq_siw_solicitacao, count(*) as existe
+                                     from pa_documento               x
+                                          inner   join siw_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
+                                            inner join siw_menu        x2 on (x2.sq_menu  = p_menu  and x1.sq_menu           = x2.sq_menu)
+                                          left    join sg_autenticacao y  on (y.sq_pessoa = p_pessoa and x.unidade_int_posse = y.sq_unidade)
+                                          left    join eo_unidade_resp z  on (z.sq_pessoa = p_pessoa and x.unidade_int_posse = z.sq_unidade and z.fim is null)
+                                    where y.sq_pessoa is not null or z.sq_pessoa is not null
+                                   group by x.sq_siw_solicitacao
+                                  )                    c7 on (c.sq_siw_solicitacao   = c7.sq_siw_solicitacao)
                    left      join pa_documento_log     d  on (c4.sq_documento_log    = d.sq_documento_log)
                      left    join pa_tipo_despacho     d1 on (d.sq_tipo_despacho     = d1.sq_tipo_despacho)
                      left    join eo_unidade           d2 on (d.unidade_origem       = d2.sq_unidade)
@@ -277,7 +287,7 @@ begin
                        left  join eo_unidade           d6 on (d6.sq_unidade          = coalesce(d5.sq_unidade_pai,d5.sq_unidade))
                      left    join eo_unidade           d3 on (d.unidade_destino      = d3.sq_unidade)
                      left    join co_pessoa            d4 on (d.pessoa_destino       = d4.sq_pessoa),
-               sg_autenticacao                       w
+               sg_autenticacao                         w
        where a.sq_menu      = p_menu
          and w.sq_pessoa    = p_pessoa
          and (d.sq_documento_log is null or (d.sq_documento_log is not null and d.recebimento is not null))
@@ -322,6 +332,7 @@ begin
              end as protocolo_pai,
              case c.interno when 'S' then b2.sigla else c3.nome_resumido end as nm_origem_doc,
              case c.processo when 'S' then 'Proc' else 'Doc' end as nm_tipo,
+             case coalesce(c7.existe,0) when 0 then 'N' else 'S' end as st_mesma_lotacao,
              d.nu_guia, d.ano_guia, c.unidade_autuacao, d.resumo, d.unidade_externa, d.interno,
              d.unidade_origem, d.unidade_destino,
              d.nu_guia||'/'||d.ano_guia||'-'||d6.sigla as guia_tramite, d.recebimento, d.sq_tipo_despacho,
@@ -344,6 +355,15 @@ begin
                  inner     join pa_especie_documento c2 on (c.sq_especie_documento = c2.sq_especie_documento)
                  left      join co_pessoa            c3 on (c.pessoa_origem        = c3.sq_pessoa)
                  left      join pa_documento         c5 on (c.sq_documento_pai     = c5.sq_siw_solicitacao)
+                 left      join (select x.sq_siw_solicitacao, count(*) as existe
+                                   from pa_documento               x
+                                        inner   join siw_solicitacao x1 on (x.sq_siw_solicitacao = x1.sq_siw_solicitacao)
+                                          inner join siw_menu        x2 on (x2.sq_menu  = p_menu  and x1.sq_menu           = x2.sq_menu)
+                                        left    join sg_autenticacao y  on (y.sq_pessoa = p_pessoa and x.unidade_int_posse = y.sq_unidade)
+                                        left    join eo_unidade_resp z  on (z.sq_pessoa = p_pessoa and x.unidade_int_posse = z.sq_unidade and z.fim is null)
+                                  where y.sq_pessoa is not null or z.sq_pessoa is not null
+                                 group by x.sq_siw_solicitacao
+                                )                    c7 on (c.sq_siw_solicitacao   = c7.sq_siw_solicitacao)
                  inner     join pa_documento_log     d  on (c.sq_siw_solicitacao   = d.sq_siw_solicitacao and
                                                             d.recebimento          is null
                                                            )
