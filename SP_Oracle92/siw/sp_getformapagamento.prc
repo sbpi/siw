@@ -11,8 +11,8 @@ begin
       -- Recupera os tipos de contrato do cliente
       open p_result for 
          select a.sq_forma_pagamento, a.cliente, a.nome, a.sigla, a.ativo,
-                case ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
-                c.sq_menu, c.nome nm_menu, c.sigla sg_menu
+                case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                c.sq_menu, c.nome as nm_menu, c.sigla as sg_menu
            from co_forma_pagamento              a
                 inner   join siw_menu_forma_pag b on (a.sq_forma_pagamento = b.sq_forma_pagamento)
                   inner join siw_menu           c on (a.cliente            = c.sq_pessoa and

@@ -43,7 +43,7 @@ begin
    Elsif p_restricao = 'EXISTE' Then
      -- Retorna registros que se sobrepõe ao período informado
       open p_result for
-         select count(sq_recurso) as existe
+         select count(a.sq_recurso) as existe
            from eo_recurso_disponivel a
           where a.sq_recurso              =  p_chave_pai
             and a.sq_recurso_disponivel  <> coalesce(p_chave,0)
@@ -66,18 +66,18 @@ begin
               from (select count(y.sq_recurso_indisponivel) as qtd 
                       from eo_recurso_disponivel              x
                            inner join eo_recurso_indisponivel y on (x.sq_recurso = y.sq_recurso and
-                                                                    (y.inicio      between x.inicio and x.fim or
-                                                                     y.fim         between x.inicio and x.fim
+                                                                    (y.inicio    between x.inicio and x.fim or
+                                                                     y.fim       between x.inicio and x.fim
                                                                     )
                                                                    )
                      where x.sq_recurso = p_chave_pai
                    ) a, 
-                   (select count(sq_solic_recurso) as qtd 
+                   (select count(y.sq_solic_recurso) as qtd 
                       from eo_recurso_disponivel                   x
                            inner   join siw_solic_recurso          y on (x.sq_recurso       = y.sq_recurso)
                              inner join siw_solic_recurso_alocacao z on (y.sq_solic_recurso = z.sq_solic_recurso and
-                                                                         (z.inicio            between x.inicio and x.fim or
-                                                                          z.fim               between x.inicio and x.fim
+                                                                         (z.inicio          between x.inicio and x.fim or
+                                                                          z.fim             between x.inicio and x.fim
                                                                          )
                                                                         )
                      where x.sq_recurso = p_chave

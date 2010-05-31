@@ -17,4 +17,4 @@ select a.sq_material,
   from cl_material                  a
        inner join co_unidade_medida b on (a.sq_unidade_medida = b.sq_unidade_medida)
        inner join cl_tipo_material  c on (a.sq_tipo_material  = c.sq_tipo_material)
- where cliente = 9614;
+ where a.cliente = 9614;

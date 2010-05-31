@@ -23,19 +23,19 @@ begin
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
-                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
-                a2.vinculada vinc_exec,a2.adm_central adm_exec,
-                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                a.envia_dia_util,     a.descricao as ds_menu,        a.justificativa as just_menu,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,
+                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.valor,              b.opiniao,
-                b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
-                b.palavra_chave,
-                b.fim-d.dias_aviso aviso,
+                b.valor,              b.opiniao,                     b.sq_solic_pai,
+                b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
+                b.fim-d.dias_aviso as aviso,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -43,11 +43,9 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
-                b5.nome nm_unidade,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
+                b1.nome as nm_tramite,b1.ordem as or_tramite,
+                b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
+                b5.nome as nm_unidade,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
@@ -55,16 +53,16 @@ begin
                 d.ordem,              d.sq_demanda_pai,              d.sq_demanda_tipo,
                 d.recebimento,        d.limite_conclusao,            d.responsavel,
                 d1.reuniao,           d1.nome as nm_demanda_tipo,
-                d2.nome_resumido nm_resp,
-                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
-                e.vinculada vinc_resp,e.adm_central adm_resp,
-                e1.sq_pessoa titular, e2.sq_pessoa substituto,
-                f.nome_resumido nm_sol,
+                d2.nome_resumido as nm_resp,
+                e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
+                e.vinculada as vinc_resp,                            e.adm_central as adm_resp,
+                e1.sq_pessoa as titular,                             e2.sq_pessoa as substituto,
+                f.nome_resumido as nm_sol,
                 coalesce(f1.ativo,'N') as st_sol,
-                g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
+                g.sq_cc,              g.nome as cc_nome,             g.sigla as cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
-                h.nome nm_cidade,
-                i.sq_projeto_etapa,   j.titulo nm_etapa,             k1.titulo nm_projeto,
+                h.nome as nm_cidade,
+                i.sq_projeto_etapa,   j.titulo as nm_etapa,          k1.titulo as nm_projeto,
                 montaordem(j.sq_projeto_etapa,null) as cd_ordem,
                 l.sq_siw_restricao,   l.descricao as ds_restricao,
                 case l.risco when 'S' then 'Risco' else 'Problema' end as nm_tipo_restricao
@@ -100,12 +98,11 @@ begin
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                     g  on (b.sq_cc               = g.sq_cc)
                   left       join siw_restricao             l  on (d.sq_siw_restricao    = l.sq_siw_restricao)
-                left         join eo_unidade                c  on (a.sq_unid_executora   = c.sq_unidade)
                 left         join pj_etapa_demanda          i  on (b.sq_siw_solicitacao  = i.sq_siw_solicitacao)
                   left       join pj_projeto_etapa          j  on (i.sq_projeto_etapa    = j.sq_projeto_etapa)
                 left         join pj_projeto                k  on (b.sq_solic_pai        = k.sq_siw_solicitacao)
                   left       join siw_solicitacao           k1 on (k.sq_siw_solicitacao  = k1.sq_siw_solicitacao)
-          where b.sq_siw_solicitacao       = p_chave;
+          where b.sq_siw_solicitacao = p_chave;
    Elsif substr(p_restricao,1,2) in ('PJ','OR') Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
@@ -116,12 +113,14 @@ begin
                 a.acesso_geral,       a.como_funciona,               
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
-                a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
-                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
-                a2.vinculada vinc_exec,a2.adm_central adm_exec,
-                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                a.exibe_relatorio as exibe_rel_menu,                 a.vinculacao,
+                a.data_hora,
+                a.envia_dia_util,     a.descricao as ds_menu,        a.justificativa as just_menu,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,
+                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -129,7 +128,7 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade sq_unidade_cad,   b.sq_cidade_origem,
                 b.codigo_interno,     b.codigo_externo,              b.titulo,
-                b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) meses_projeto,
+                b.palavra_chave,      ceil(months_between(b.fim,b.inicio)) as meses_projeto,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -137,64 +136,61 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b1.nome nm_tramite,   b1.ordem as or_tramite,
+                b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
                 b2.sq_plano,          b2.sq_plano_pai,               b2.titulo nm_plano,
                 b2.missao,            b2.valores,                    b2.visao_presente,
-                b2.visao_futuro,      b2.inicio inicio_plano,        b2.fim vim_plano,
-                b2.ativo st_plano,
-                b3.nome nm_unidade,
-                bb.sq_siw_coordenada, bb.nome as nm_coordenada,
-                bb.latitude, bb.longitude, bb.icone, bb.tipo,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
-                d.sq_unidade_resp,    d.prioridade,
+                b2.visao_futuro,      b2.inicio as inicio_plano,     b2.fim as fim_plano,
+                b2.ativo as st_plano,
+                b3.nome as nm_unidade,
+                bb.sq_siw_coordenada, bb.nome as nm_coordenada,      bb.latitude, 
+                bb.longitude,         bb.icone,                      bb.tipo,
+                d.sq_unidade_resp,    d.prioridade,                  
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.aviso_prox_conc_pacote, d.perc_dias_aviso_pacote,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 d.vincula_contrato,   d.vincula_viagem,              d.sq_tipo_pessoa,
                 d.outra_parte,        d.preposto,                    d.limite_passagem,
-                d.sq_cidade cidade_evento, d.vincula_contrato,       d.objetivo_superior,
+                d.sq_cidade as cidade_evento,                        d.objetivo_superior,
                 d.exclusoes,          d.premissas,                   d.restricoes,
                 d.estudos,            d.instancia_articulacao,       d.composicao_instancia,
                 d.analise1,           d.analise2,                    d.analise3,
                 d.analise4,           d.exibe_relatorio,
-                b.fim-d.dias_aviso aviso,
-                d2.sq_pais pais_evento,d2.co_uf uf_evento,
-                d1.nome nm_prop,      d1.nome_resumido nm_prop_res,
-                case upper(d3.nome) when 'BRASIL' then d2.nome||'-'||d2.co_uf||' ('||d3.nome||')' else d2.nome||' ('||d3.nome||')' end nm_cidade_evento,
-                d4.inicio_etapa,      d4.fim_etapa,
+                b.fim-d.dias_aviso as aviso,
+                d2.sq_pais as pais_evento,                           d2.co_uf as uf_evento,
+                d1.nome as nm_prop,   d1.nome_resumido as nm_prop_res,
+                case upper(d3.nome) when 'BRASIL' then d2.nome||'-'||d2.co_uf||' ('||d3.nome||')' else d2.nome||' ('||d3.nome||')' end as nm_cidade_evento,
                 d4.inicio_etapa,      d4.fim_etapa,
                 d5.inicio_etapa_real, d5.fim_etapa_real,
                 e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
-                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sq_unidade,
-                e.sigla as sg_unidade_resp,
-                e1.sq_pessoa titular, e2.sq_pessoa substituto,
-                f.nome_resumido nm_sol,
+                e.vinculada as vinc_resp,                            e.adm_central as adm_resp,
+                e.sq_unidade,         e.sigla as sg_unidade_resp,
+                e1.sq_pessoa as titular,                             e2.sq_pessoa as substituto,
+                f.nome_resumido as nm_sol,
                 coalesce(f1.ativo,'N') as st_sol,
-                g.sq_cc,              g.nome cc_nome,                g.sigla cc_sigla,
+                g.sq_cc,              g.nome as cc_nome,             g.sigla as cc_sigla,
                 h.sq_pais,            h.sq_regiao,                   h.co_uf,
-                h.nome nm_cidade,
-                h1.nome nm_uf,
+                h.nome as nm_cidade,
+                h1.nome as nm_uf,
                 i.sq_acao_ppa,        i.sq_orprioridade,             i.problema,
-                i.descricao ds_acao,  i.publico_alvo,                i.estrategia,
+                i.descricao as ds_acao,  i.publico_alvo,             i.estrategia,
                 i.indicadores,        i.objetivo,
-                j.codigo cd_ppa,      j.nome nm_ppa,                 j.responsavel resp_ppa,
-                j.telefone  fone_ppa, j.email mail_ppa,              j.selecionada_mpog mpog_ppa,
+                j.codigo as cd_ppa,   j.nome as nm_ppa,              j.responsavel as resp_ppa,
+                j.telefone as fone_ppa, j.email as mail_ppa,         j.selecionada_mpog as mpog_ppa,
                 j.sq_acao_ppa_pai,    j.aprovado,                    j.empenhado,
                 j.liquidado,          j.liquidar,                    j.saldo,
-                j.ativo ativo_ppa,    j.padrao padrao_ppa,           j.selecionada_relevante relev_ppa,
-                k.codigo cd_ppa_pai,  k.nome nm_ppa_pai,             k.responsavel resp_ppa_pai,
-                k.telefone  fone_ppa_pai, k.email mail_ppa_pai,      k.selecionada_mpog mpog_ppa_pai,
-                k.ativo ativo_ppa_pai,k.padrao padrao_ppa_pai,       k.selecionada_relevante relev_ppa_pai,
-                l.codigo cd_pri,      l.nome nm_pri,                 l.responsavel resp_pri,
-                l.telefone fone_pri,  l.email mail_pri,              l.ordem ord_pri,
-                l.ativo ativo_pri,    l.padrao padrao_pri,
+                j.ativo as ativo_ppa, j.padrao as padrao_ppa,        j.selecionada_relevante as relev_ppa,
+                k.codigo as cd_ppa_pai, k.nome as nm_ppa_pai,        k.responsavel as resp_ppa_pai,
+                k.telefone as fone_ppa_pai, k.email as mail_ppa_pai, k.selecionada_mpog as mpog_ppa_pai,
+                k.ativo as ativo_ppa_pai, k.padrao as padrao_ppa_pai,k.selecionada_relevante as relev_ppa_pai,
+                l.codigo as cd_pri,   l.nome as nm_pri,              l.responsavel as resp_pri,
+                l.telefone as fone_pri, l.email as mail_pri,         l.ordem as ord_pri,
+                l.ativo as ativo_pri, l.padrao as padrao_pri,
                 m.sq_acordo,          m.cd_acordo,                   m.nm_acordo,
-                m.sigla sg_acordo,
-                n.sq_menu sq_menu_pai,
-                o.sq_siw_solicitacao sq_programa, o1.codigo_interno cd_programa, o1.titulo nm_programa,
+                m.sigla as sg_acordo,
+                n.sq_menu as sq_menu_pai,
+                o.sq_siw_solicitacao as sq_programa, o1.codigo_interno as cd_programa, o1.titulo as nm_programa,
                 acentos(b.titulo,1) as ac_titulo,
                 calculaIGE(d.sq_siw_solicitacao) as ige, calculaIDE(d.sq_siw_solicitacao) as ide,
                 calculaIGC(d.sq_siw_solicitacao) as igc, calculaIDC(d.sq_siw_solicitacao) as idc
@@ -220,13 +216,13 @@ begin
                       left   join co_cidade                  d2 on (d.sq_cidade           = d2.sq_cidade)
                         left join co_pais                    d3 on (d2.sq_pais            = d3.sq_pais)
                         left join (select x.sq_siw_solicitacao, min(x.inicio_previsto) as inicio_etapa, max(x.fim_previsto) as fim_etapa
-                                     from pj_projeto_etapa x
+                                     from pj_projeto_etapa           x
                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                     where y.sq_menu = w_menu
                                    group by x.sq_siw_solicitacao
                                   )                          d4 on (d.sq_siw_solicitacao = d4.sq_siw_solicitacao)
                         left join (select x.sq_siw_solicitacao, min(x.inicio_real) as inicio_etapa_real, max(x.fim_real) as fim_etapa_real
-                                     from pj_projeto_etapa x
+                                     from pj_projeto_etapa           x
                                           inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                     where y.sq_menu = w_menu
                                    group by x.sq_siw_solicitacao
@@ -251,8 +247,7 @@ begin
                                                                     h.sq_pais             = h1.sq_pais
                                                                    )
                   left       join ct_cc                      g  on (b.sq_cc               = g.sq_cc)
-                left         join eo_unidade                 c  on (a.sq_unid_executora   = c.sq_unidade)
-                left         join (select x.sq_siw_solicitacao sq_acordo, y.codigo_interno cd_acordo,
+                left         join (select x.sq_siw_solicitacao as sq_acordo, y.codigo_interno as cd_acordo,
                                                 w.nome_resumido||' - '||z.nome||' ('||to_char(x.inicio,'dd/mm/yyyy')||'-'||to_char(x.fim,'dd/mm/yyyy')||')' as nm_acordo,
                                                 v.sigla
                                            from ac_acordo                      x
@@ -276,7 +271,7 @@ begin
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
+                a.envia_dia_util,     a.descricao,                   a.justificativa as just_menu,
                 a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
                 a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
                 a2.vinculada vinc_exec,a2.adm_central adm_exec,
@@ -452,13 +447,14 @@ begin
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa,
-                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
-                a2.vinculada vinc_exec,a2.adm_central adm_exec,
-                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
-                b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
-                b.cadastrador,        b.executor,                    b.descricao,
+                a.envia_dia_util,     a.descricao,                   a.justificativa as just_menu,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,
+                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
+                b.sq_siw_solicitacao, b.solicitante,                 b.cadastrador,
+                b.executor,           b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
                 b.opiniao,            b.sq_solic_pai,
@@ -482,10 +478,8 @@ begin
                           end
                      else dados_solic(b4.sq_solic_pai) 
                 end as dados_avo,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
+                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
                 d.emissao,            d.vencimento,                  d.quitacao,
@@ -497,39 +491,39 @@ begin
                 d.banco_estrang,      d.agencia_estrang,             d.cidade_estrang,
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
-                d.tipo as tipo_rubrica,  d.processo,                    d.referencia_inicio,
+                d.tipo as tipo_rubrica,  d.processo,                 d.referencia_inicio,
                 d.referencia_fim,     d.sq_pessoa_conta,             d.sq_solic_vinculo,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
-                d1.receita,           d1.despesa,                    d1.nome nm_tipo_lancamento,
+                d1.receita,           d1.despesa,                    d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
-                coalesce(d3.valor,0) valor_doc,
-                d4.nome nm_forma_pagamento, d4.sigla sg_forma_pagamento, d4.ativo st_forma_pagamento,
-                d5.codigo cd_agencia, d5.nome nm_agencia,
-                d6.sq_banco,          d6.codigo cd_banco,            d6.nome nm_banco,
+                coalesce(d3.valor,0) as valor_doc,
+                d4.nome as nm_forma_pagamento, d4.sigla as sg_forma_pagamento, d4.ativo as st_forma_pagamento,
+                d5.codigo as cd_agencia, d5.nome as nm_agencia,
+                d6.sq_banco,          d6.codigo as cd_banco,            d6.nome as nm_banco,
                 d6.exige_operacao,
-                d7.nome nm_pais,
-                d8.nome nm_tipo_pessoa,
-                coalesce(d9.valor,0) valor_nota,
-                coalesce(da.qtd,0) qtd_nota,
+                d7.nome as nm_pais,
+                d8.nome as nm_tipo_pessoa,
+                coalesce(d9.valor,0) as valor_nota,
+                coalesce(da.qtd,0) as qtd_nota,
                 coalesce(db.existe,0) as notas_parcela,
                 dc.operacao as oper_org, dc.numero as nr_conta_org,
                 dd.codigo as cd_age_org, dd.nome as nm_age_org,
                 de.codigo as cd_ban_org, de.nome as nm_ban_org,
                 de.exige_operacao as exige_oper_org,
-                b.fim-d.dias_aviso aviso,
-                e.sq_tipo_unidade,    e.nome nm_unidade_resp,        e.informal informal_resp,
-                e.vinculada vinc_resp,e.adm_central adm_resp,        e.sigla as sg_unidade_resp,
-                e1.sq_pessoa titular, e2.sq_pessoa substituto,
+                b.fim-d.dias_aviso as aviso,
+                e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
+                e.vinculada as vinc_resp,e.adm_central as adm_resp,  e.sigla as sg_unidade_resp,
+                e1.sq_pessoa as titular,                             e2.sq_pessoa as substituto,
                 f.sq_pais,            f.sq_regiao,                   f.co_uf,
                 f.nome nm_cidade,
-                m1.codigo_interno cd_acordo,
+                m1.codigo_interno as cd_acordo,
                 coalesce(m4.existe,0) as notas_acordo,
-                n.sq_cc,              n.nome nm_cc,                  n.sigla sg_cc,
-                o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
-                p.nome_resumido nm_exec,
-                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end nm_projeto,
-                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end sq_projeto,
-                case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end qtd_rubrica
+                n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc,
+                o.nome_resumido as nm_solic,                         o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
+                p.nome_resumido as nm_exec,
+                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q2.titulo             else m5.titulo end as nm_projeto,
+                case coalesce(m2.sq_siw_solicitacao,0) when 0 then q.sq_siw_solicitacao else m2.sq_siw_solicitacao end as sq_projeto,
+                case coalesce(m3.sq_siw_solicitacao,0) when 0 then q1.qtd_rubrica       else m3.qtd_rubrica        end as qtd_rubrica
            from siw_menu                                    a 
                 inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -551,7 +545,7 @@ begin
                      inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
                      inner        join co_forma_pagamento   d4 on (d.sq_forma_pagamento       = d4.sq_forma_pagamento)
                      inner        join co_tipo_pessoa       d8 on (d.sq_tipo_pessoa           = d8.sq_tipo_pessoa)
-                     left         join (select x.sq_siw_solicitacao, sum(x.valor) valor
+                     left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                           from fn_lancamento_doc          x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                          where y.sq_menu = w_menu
@@ -562,7 +556,7 @@ begin
                      left         join co_agencia           d5 on (d.sq_agencia               = d5.sq_agencia)
                        left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                      left         join co_pais              d7 on (d.sq_pais_estrang          = d7.sq_pais)
-                     left         join (select x.sq_siw_solicitacao, sum(x.valor) valor
+                     left         join (select x.sq_siw_solicitacao, sum(x.valor) as valor
                                           from fn_lancamento_doc          x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                          where y.sq_menu = w_menu
@@ -611,7 +605,7 @@ begin
                                        )                    m4 on (m.sq_siw_solicitacao       = m4.sq_siw_solicitacao)
                    left           join pj_projeto           q  on (b.sq_solic_pai             = q.sq_siw_solicitacao)
                      left         join siw_solicitacao      q2 on (q.sq_siw_solicitacao       = q2.sq_siw_solicitacao)
-                     left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) qtd_rubrica
+                     left         join (select x.sq_siw_solicitacao, count(x.sq_projeto_rubrica) as qtd_rubrica
                                           from pj_rubrica                 x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         group by x.sq_siw_solicitacao
@@ -621,8 +615,7 @@ begin
                      inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                        inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                    left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
-                inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) chave 
+                inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                           from siw_solic_log              x
                                                inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                          where y.sq_menu = w_menu
@@ -642,13 +635,14 @@ begin
                 a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
-                a.envia_dia_util,     a.descricao,                   a.justificativa justif_solic,
-                a1.nome nm_modulo,    a1.sigla sg_modulo,            a1.objetivo_geral,
-                a2.sq_tipo_unidade tp_exec, a2.nome nm_unidade_exec, a2.informal informal_exec,
-                a2.vinculada vinc_exec,a2.adm_central adm_exec,
-                a3.sq_pessoa tit_exec, a31.nome nm_tit_exec,
-                a4.sq_pessoa subst_exec,                
-                a3.sq_pessoa tit_exec,a4.sq_pessoa subst_exec,
+                a.envia_dia_util,     a.descricao,                   a.justificativa as just_menu,
+                a1.nome as nm_modulo, a1.sigla as sg_modulo,         a1.objetivo_geral,
+                a2.sq_tipo_unidade as tp_exec,                       a2.nome as nm_unidade_exec, 
+                a2.informal as informal_exec,                        a2.vinculada as vinc_exec,
+                a2.adm_central as adm_exec,
+                a3.sq_pessoa as tit_exec,                            a31.nome as nm_tit_exec,
+                a4.sq_pessoa as subst_exec,                
+                a3.sq_pessoa as tit_exec,                            a4.sq_pessoa as subst_exec,
                 b.sq_siw_solicitacao, b.sq_siw_tramite,              b.solicitante,
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
@@ -656,10 +650,10 @@ begin
                 b.valor,              b.opiniao,
                 b.sq_solic_pai,       b.sq_unidade,                  b.sq_cidade_origem,
                 b.palavra_chave,      b.protocolo_siw,
-                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  phpdt_inclusao,
-                to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    phpdt_inicio,
-                to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       phpdt_fim,
-                to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') phpdt_conclusao,
+                to_char(b.inclusao,'dd/mm/yyyy, hh24:mi:ss')  as phpdt_inclusao,
+                to_char(b.inicio,'dd/mm/yyyy, hh24:mi:ss')    as phpdt_inicio,
+                to_char(b.fim,'dd/mm/yyyy, hh24:mi:ss')       as phpdt_fim,
+                to_char(b.conclusao,'dd/mm/yyyy, hh24:mi:ss') as phpdt_conclusao,
                 case when b.sq_solic_pai is null 
                      then case when b.sq_plano is null
                                then '---'
@@ -667,19 +661,16 @@ begin
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
-                b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
+                b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
                 b4.prefixo||'.'||substr(1000000+b4.numero_documento,2,6)||'/'||b4.ano||'-'||substr(100+b4.digito,2,2) as protocolo,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
                 d.aviso_prox_conc,    d.dias_aviso,                  d.inicio_real,
                 d.fim_real,           d.concluida,                   d.data_conclusao,
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
-                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end nm_prioridade,
+                case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa sq_prop, d1.tipo tp_missao,             d11.codigo_interno,
-                case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' when 'C' then 'Complementação' end  nm_tipo_missao,
+                d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,       d11.codigo_interno,
                 d1.reserva,           d1.pta,                        d1.justificativa_dia_util,
                 d1.emissao_bilhete,   d1.pagamento_diaria,           d1.pagamento_bilhete,
                 d1.boletim_numero,    d1.boletim_data,               d1.valor_alimentacao,
@@ -790,7 +781,6 @@ begin
                       left             join sg_autenticacao            o1 on (o.sq_pessoa                   = o1.sq_pessoa)
                         left           join eo_unidade                 o2 on (o1.sq_unidade                 = o2.sq_unidade)
                     left               join co_pessoa                  p  on (b.executor                    = p.sq_pessoa)
-                  left                 join eo_unidade                 c  on (a.sq_unid_executora           = c.sq_unidade)
                     inner              join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                                from siw_solic_log x
                                                     inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -850,8 +840,6 @@ begin
                                      when 3 then 'Somente buscar' 
                                      when 4 then 'Abastecimento (uso exclusivo do setor de tráfego)'
                 end as nm_procedimento,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 e.sq_tipo_unidade,    e.nome nm_unidade_solic,        e.informal informal_solic,
                 e.vinculada vinc_solic,e.adm_central adm_solic,       e.sigla as sg_unidade_solic,
                 e1.sq_pessoa titular, e2.sq_pessoa substituto,
@@ -898,7 +886,6 @@ begin
                   left       join co_pessoa                 j  on (b.recebedor           = j.sq_pessoa)                  
                   inner      join co_cidade                 h  on (b.sq_cidade_origem    = h.sq_cidade)
                   left       join ct_cc                     g  on (b.sq_cc               = g.sq_cc)
-                left         join eo_unidade                c  on (a.sq_unid_executora   = c.sq_unidade)
           where b.sq_siw_solicitacao       = p_chave;
    Elsif substr(p_restricao,1,4) = 'PEPR' Then
       -- Recupera os programas que o usuário pode ver
@@ -938,8 +925,6 @@ begin
                 b2.ativo as st_plano,
                 b4.sq_unidade sq_unidade_adm, b4.nome nm_unidade_adm, b4.sigla sg_unidade_adm,
                 b5.sq_pessoa tit_adm, b6.sq_pessoa subst_adm,
-                c.sq_tipo_unidade,    c.nome nm_unidade_exec,        c.informal,
-                c.vinculada,          c.adm_central,
                 d.sq_siw_solicitacao sq_programa,
                 d.sq_pehorizonte,     d.sq_penatureza,               b.codigo_interno, 
                 b.codigo_interno cd_programa,
@@ -1003,7 +988,6 @@ begin
                         left         join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           left       join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
-                   left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    inner             join (select x.sq_siw_solicitacao, max(x.sq_siw_solic_log) as chave 
                                              from siw_solic_log x
                                                   inner join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
@@ -1059,7 +1043,7 @@ begin
                 d.data_recebimento,   d.unidade_int_posse,           d.pessoa_ext_posse,
                 d.tipo_juntada,       d.sq_caixa,                    d.pasta,
                 d.data_setorial,      d.data_central,                d.observacao_setorial,
-                case tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
+                case d.tipo_juntada when 'A' then 'Anexado' when 'P' then 'Apensado' end as nm_tipo_juntada,
                 to_char(d.data_juntada, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_juntada,
                 to_char(d.data_desapensacao,'DD/MM/YYYY, HH24:MI:SS') as phpdt_desapensacao,
                 case d.processo when 'S' then 'Processo' else 'Documento' end as nm_tipo,

@@ -40,7 +40,7 @@ begin
                  left outer join  siw_solicitacao        g  on (e.sq_siw_solicitacao = g.sq_siw_solicitacao)
                inner      join  co_tipo_pessoa           c  on (a.sq_tipo_pessoa     = c.sq_tipo_pessoa)
                inner      join  co_tipo_vinculo          d  on (a.sq_tipo_vinculo    = d.sq_tipo_vinculo)
-               left outer join  (select sq_pessoa, w.sq_pessoa_telefone sq_pessoa_fax, w.numero nr_fax
+               left outer join  (select w.sq_pessoa, w.sq_pessoa_telefone as sq_pessoa_fax, w.numero as nr_fax
                                    from co_pessoa_telefone          w
                                         inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                         inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -49,7 +49,7 @@ begin
                                     and x.ativo              = 'S'
                                     and w.padrao             = 'S'
                                 )                        b  on (a.sq_pessoa          = b.sq_pessoa)
-               left outer join  (select sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero nr_telefone
+               left outer join  (select w.sq_pessoa, w.sq_pessoa_telefone, w.ddd, w.numero as nr_telefone
                                    from co_pessoa_telefone          w
                                         inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                         inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -58,7 +58,7 @@ begin
                                     and x.ativo              = 'S'
                                     and w.padrao             = 'S'
                                 )                        f  on (a.sq_pessoa          = f.sq_pessoa)
-               left outer join  (select sq_pessoa, w.sq_pessoa_telefone sq_pessoa_celular, w.numero nr_celular
+               left outer join  (select w.sq_pessoa, w.sq_pessoa_telefone as sq_pessoa_celular, w.numero as nr_celular
                                    from co_pessoa_telefone          w
                                         inner join co_tipo_telefone x on (w.sq_tipo_telefone   = x.sq_tipo_telefone)
                                         inner join co_pessoa        z on (w.sq_pessoa          = z.sq_pessoa)
@@ -67,7 +67,7 @@ begin
                                     and x.ativo              = 'S'
                                     and w.padrao             = 'S'
                                 )                        l  on (a.sq_pessoa          = l.sq_pessoa)
-               left outer join  (select sq_pessoa, logradouro email
+               left outer join  (select w.sq_pessoa, w.logradouro as email
                                    from co_pessoa_endereco            w
                                         inner   join co_tipo_endereco x on (w.sq_tipo_endereco   = x.sq_tipo_endereco)
                                         inner   join co_pessoa        y on (w.sq_pessoa          = y.sq_pessoa)

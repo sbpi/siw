@@ -33,7 +33,7 @@ begin
                                                          )
              inner     join gp_contrato_colaborador c on (b.sq_unidade              = c.sq_unidade_exercicio and
                                                           (c.inicio                 between b.inicio and coalesce(b.fim,sysdate) or
-                                                           c.fim                    between b.inicio and coalesce(b.fim,sysdate)
+                                                           coalesce(c.fim,b.inicio) between b.inicio and coalesce(b.fim,sysdate)
                                                           )
                                                          )
                inner   join eo_unidade              d on (c.sq_unidade_exercicio    = d.sq_unidade)
