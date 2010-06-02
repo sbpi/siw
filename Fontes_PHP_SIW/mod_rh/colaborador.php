@@ -2498,6 +2498,8 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Executa a operação no banco de dados
+        //exit('essa aqui');
+        //exibeArray($_REQUEST);
         dml_putGPFamiliares::getInstanceOf($dbms,$O,$_REQUEST['w_sq_pessoa'],$w_cliente,$_REQUEST['w_usuario'],
               $_REQUEST['w_cpf'],$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_nascimento'],$_REQUEST['w_sexo'],
               $_REQUEST['w_parentesco'],$_REQUEST['w_seguro_saude'],$_REQUEST['w_seguro_odonto'],$_REQUEST['w_seguro_vida'],

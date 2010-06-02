@@ -6523,6 +6523,7 @@ function PrestarContas() {
         $w_trechos[$i][48] = f($row,'saida_internacional');
         $w_trechos[$i][49] = f($row,'chegada_internacional');
         $w_trechos[$i][50] = f($row,'origem_nacional');
+        $w_trechos[$i][51] = f($row,'destino_nacional');
         // Cria array para guardar o valor total por moeda
         if ($w_trechos[$i][13]>'') $w_total[$w_trechos[$i][13]] = 0;
         if ($w_trechos[$i][18]>'') $w_total[$w_trechos[$i][18]] = 0;
@@ -6587,6 +6588,7 @@ function PrestarContas() {
           ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</b></td>');
           ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</b></td>');
           ShowHTML('       <td>');
+          exibeArray($w_trechos);
           ShowHTML('          <A class="HL" HREF="javascript:altera('.f($row,'sq_siw_solicitacao').',\''.base64_encode(serialize($w_trechos[$i])).'\');" title="Informa as diárias">'.((nvl($w_trechos[$i][1],'')=='') ? '<blink><b><font color="RED">Informar</font></b></blink>' : 'Informar').'</A>&nbsp');
           ShowHTML('       </td>');
         }
@@ -7013,11 +7015,11 @@ function ReembolsoValor() {
         ShowHTML('<INPUT type="hidden" name="w_valor_solicitado" value="'.$w_valor_solicitado.'">');
         ShowHTML('<INPUT type="hidden" name="w_justificativa" value="'.$w_justificativa.'">');
         ShowHTML('      <tr valign="top">');
-        ShowHTML('        <td><b>Valor solicitado:</b><br>'.$w_sg_moeda.' '.$w_valor_solicitado.'</td>');
+        ShowHTML('        <td nowrap><b>Valor solicitado:</b><br>'.$w_sg_moeda.' '.$w_valor_solicitado.'</td>');
         ShowHTML('        <td><b>Justificativa:</b><br>'.crlf2br($w_justificativa).'</TEXTAREA></td>');
         ShowHTML('      </tr>');
       }
-      ShowHTML('      <tr><td><b><u>V</u>alor autorizado:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor_autorizado" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_autorizado.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+      ShowHTML('      <tr><td colspan="2"><b><u>V</u>alor autorizado:</b><br><input type="text" '.$w_Disabled.' accesskey="V" name="w_valor_autorizado" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor_autorizado.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
       ShowHTML('      <tr><td colspan="2"><b><u>O</u>bservação: (obrigatório quando valor solicitado for alterado)</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_observacao" class="STI" ROWS=5 cols=75 title="Se o valor autorizado for diferente do valor solicitado, é obrigatório informar o motivo. Caso contrário, este campo é opcional.">'.$w_observacao.'</TEXTAREA></td>');
     }
     ShowHTML('      <tr><td colspan="5"><table border="0" width="100%">');
@@ -7745,7 +7747,7 @@ function Grava() {
               ScriptOpen('JavaScript');
               ShowHTML('  alert(\'ATENÇÃO: Não há nenhuma pessoa habilitada a cumprir o trâmite "'.f($RS,'nome').'"!\');');
               ScriptClose();
-              retornaFormulario('w_observacao');
+              retornaFormulario('w_despacho');
             }
             if ($_REQUEST['w_envio']=='N') {
               dml_putViagemEnvio::getInstanceOf($dbms,$_REQUEST['w_menu'],$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],null,

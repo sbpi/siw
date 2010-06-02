@@ -816,7 +816,7 @@ function PesquisaPreco() {
         } else {
           ShowHTML('            <td align="center" width="1%" nowrap>'.ExibeSinalPesquisa(false,f($row,'phpdt_inicio'),f($row,'phpdt_fim'),f($row,'aviso')).'</td>');
           ShowHTML('            <td align="center">'.nvl(formataDataEdicao(f($row,'phpdt_fim'),5),'---').'</td>');
-          ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'valor_item'),4),'---').'</td>');
+          ShowHTML('            <td align="center">'.nvl(formatNumber(f($row,'valor_unidade'),4),'---').'</td>');
         }
         ShowHTML('        <td align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'chave').'&w_sq_pessoa='.f($row,'fornecedor').'&w_chave_aux='.f($row,'sq_item_fornecedor').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' &SG='.$SG.MontaFiltro('GET').'" Title="Altera os dados deste registro.">AL</A>&nbsp');
@@ -845,6 +845,7 @@ function PesquisaPreco() {
       }
     } else {
       $RS = db_getMatServ::getInstanceOf($dbms,$w_cliente,$w_usuario,$w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,$w_chave_aux,null,null,'PESQMAT');
+      //exibeArray($RS);
       foreach ($RS as $row) {
         $w_origem      = f($row,'origem');
         $w_nome_item    = f($row,'nome');
@@ -852,7 +853,7 @@ function PesquisaPreco() {
         $w_codigo_item  = f($row,'codigo_interno');
         $w_inicio       = Nvl(formataDataEdicao(f($row,'phpdt_inicio')),formataDataEdicao(time()));
         $w_dias         = f($row,'dias_validade_proposta');
-        $w_valor        = formatNumber(f($row,'valor_item'),4);
+        $w_valor        = formatNumber(f($row,'valor_unidade'),4);
         $w_fabricante   = f($row,'fabricante');
         $w_marca_modelo = f($row,'marca_modelo');
         $w_embalagem    = f($row,'embalagem');

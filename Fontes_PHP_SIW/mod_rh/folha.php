@@ -1222,7 +1222,7 @@ function Lista() {
 	    ShowHTML('        <td align="center">'.Nvl(f($row,'horas_atrasos'),'00:00').'</td>');
 	    ShowHTML('        <td align="center">'.Nvl(f($row,'horas_banco'),'00:00').'</td>');
 	    ShowHTML('        <td>');
-	    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&O=V&w_usuario='.f($row,'sq_pessoa').'&w_chave='.f($row,'sq_contrato_colaborador').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.MontaFiltro('GET').'" target="visualFolha" title="Exibe detalhamento da folha de ponto">Detalhar</a>&nbsp;');
+	    ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Visual&O=V&w_usuario='.f($row,'sq_pessoa').'&w_mes='.$w_mes.'&w_chave='.f($row,'sq_contrato_colaborador').'&R='.$w_pagina.$par.'&SG='.$SG.'&TP='.$TP.MontaFiltro('GET').'" target="visualFolha" title="Exibe detalhamento da folha de ponto">Detalhar</a>&nbsp;');
 	    ShowHTML('        </td>');
 	    ShowHTML('      </tr>');
 	  }

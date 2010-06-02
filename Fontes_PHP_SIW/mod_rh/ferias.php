@@ -650,7 +650,7 @@ function Geral() {
   if (count($RS)) $w_exibe_recurso = true; else $w_exibe_recurso = false;
 
   
-  if ($w_troca>'') {
+  if (nvl($w_troca,'')!='') {
     // Se for recarga da página
     $w_chave            = $_REQUEST['w_chave'];
     $w_chave_pai        = $_REQUEST['w_chave_pai'];
@@ -703,17 +703,18 @@ function Geral() {
       } 
     } 
   } 
-   //Recupera os dados dos contratos do colaborador
-   $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
-   foreach($RSContrato as $row){
-     if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
-       $RSContratos = db_getGPContrato::getInstanceOf($dbms,$w_cliente,f($row,'chave'),$w_usuario,null,null,null,null,null,null,null,null,$w_inicio_data,null);
-     }
-   }
-   foreach($RSContratos as $row){
-     $w_contrato_colaborador = f($row,'chave'); 
-     list($w_admissao,$w_rescisao,$w_inicio_pa,$w_fim_pa,$w_inicio_gozo,$w_fim_gozo,$w_abono,$w_faltas,$w_dias_direito,$w_saldo) = explode('|@|',f($row,'dados_ferias'));
-   }
+  //Recupera os dados dos contratos do colaborador
+  $RSContrato = db_getGPContrato::getInstanceOf($dbms,$w_cliente,null,$w_usuario,null,null,null,null,null,null,null,null,null,null);
+  foreach($RSContrato as $row){
+    if(Nvl(formataDataEdicao(f($row,'fim')),'')==''){
+      $RSContratos = db_getGPContrato::getInstanceOf($dbms,$w_cliente,f($row,'chave'),$w_usuario,null,null,null,null,null,null,null,null,$w_inicio_data,null);
+    }
+  }
+  foreach($RSContratos as $row){
+    $w_contrato_colaborador = f($row,'chave'); 
+    list($w_admissao,$w_rescisao,$w_inicio_pa,$w_fim_pa,$w_inicio_gozo,$w_fim_gozo,$w_abono,$w_faltas,$w_dias_direito,$w_saldo) = explode('|@|',f($row,'dados_ferias'));
+  }
+  $w_abono = nvl($_REQUEST['w_abono'],$w_abono);
   Cabecalho();
   head();
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
@@ -733,19 +734,35 @@ function Geral() {
     CompData('w_fim_data','Término das férias','<=',$w_fim_gozo,'término do período de gozo');
     CompData('w_inicio_data','Início das férias','>=',$w_inicio_gozo,'início do período de gozo');
     ShowHTML('var dias_direito = difDate(theForm.w_inicio_data.value,theForm.w_fim_data.value);');
-    ShowHTML('alert(theForm.w_abono[0].checked);');
+    ShowHTML('var abono = theForm.w_abono[0].checked;');
     ShowHTML('if(dias_direito > '.$w_dias_direito.'){');
     ShowHTML('  alert("Você solicitou " + dias_direito + " dias.\nEntretanto, possui apenas '.$w_dias_direito.' dias disponíveis para o gozo de férias.");');
     ShowHTML('  return false;');
     ShowHTML('}else if('.$w_dias_direito.'==30){');
-    ShowHTML('  if(dias_direito != 20 && dias_direito != 15 && dias_direito != 10){');
+    ShowHTML('  if(theForm.w_abono[0].checked){');
+    ShowHTML('      if(dias_direito != '.(($w_dias_direito/3)*2).' && dias_direito != '.(($w_dias_direito/3)).'){');
+    ShowHTML('        alert("Se deseja o abono pecuniário, você somente pode gozar '.(($w_dias_direito/3)*2).' ou '.(($w_dias_direito/3)).' dias")');
+    ShowHTML('      return false;');
+    ShowHTML('    }');
+    ShowHTML('  } else if(dias_direito != 20 && dias_direito != 15 && dias_direito != 10 && dias_direito != 30){');
     ShowHTML('    alert("Você solicitou " + dias_direito + " dias.\nEntretanto, deve escolher 10,15,20 ou 30 dias");');
     ShowHTML('    return false;');
     ShowHTML('  }');
     ShowHTML('}else if('.$w_dias_direito.'< 30){');
     ShowHTML('  if(dias_direito < '.$w_dias_direito.'){');
-    ShowHTML('    alert("Você deve gozar os '.$w_dias_direito.' dias corridos, sem direito a bipartição.");');
-    ShowHTML('    return false;');
+    //ShowHTML('    alert(theForm.w_abono[0].checked && dias_direito != '.(($w_dias_direito/3)*2).');');
+    ShowHTML('    if(theForm.w_abono[0].checked){');
+    ShowHTML('      if(dias_direito != '.(($w_dias_direito/3)*2).'){');
+    ShowHTML('        alert("Se deseja o abono pecuniário, você somente pode gozar '.(($w_dias_direito/3)*2).' dias.");');
+    ShowHTML('        return false;');
+    //ShowHTML('      }else{');
+    //ShowHTML('        return true;');
+    ShowHTML('      }');
+    //ShowHTML('    }else if(theForm.w_abono[0].checked && dias_direito != '.(($w_dias_direito/3)*2).'){');
+    ShowHTML('    }else{');
+    ShowHTML('      alert("Você deve gozar os '.$w_dias_direito.' dias corridos, sem direito a bipartição.");');
+    ShowHTML('      return false;');
+    ShowHTML('    }');
     ShowHTML('  }');
     ShowHTML('}');
     ShowHTML('function difDate(data1,data2) {');

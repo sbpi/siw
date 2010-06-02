@@ -26,6 +26,11 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $w_forma_pagamento = f($RS,'sg_forma_pagamento');
   $w_internacional   = f($RS,'internacional');
 
+  // Execução financeira da viagem
+  $RSF = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
+        null,null,null,null,null,null,null,null,null,null,$l_chave, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, null, null);
+  
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
     // Se for usuário externa, tem visão resumida
@@ -894,7 +899,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     }
 
     // Pagamento de diárias
-    if($l_diaria=='S' && $w_or_tramite>=11) {
+    if($l_diaria=='S' && $w_or_tramite>=10) {
       unset($w_trechos);
       unset($w_tot_diaria_P);
       $RS1 = db_getPD_Deslocamento::getInstanceOf($dbms,$l_chave,null,'P','PDDIARIA');
@@ -1070,7 +1075,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Dados da prestação de contas
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && $w_or_tramite>=11 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && count($RSF) > 0 && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
@@ -1110,7 +1115,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } elseif (f($RS,'cumprimento')=='C') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo da alteração:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } 
-      if ($w_diferenca) {
+      if ($w_diferenca && count($RSF)>0) {
         $l_html.=chr(13).'      <tr><td><b>Diferença de diárias:</b></td><td>';
         foreach($w_tot_diaria_S as $k => $v) {
           $l_html.=$k.' '.formatNumber($w_tot_diaria_P[$k]-$v).'&nbsp;&nbsp;&nbsp;';
@@ -1436,11 +1441,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'       </table></td></tr>';
       } 
       
-      $RS1 = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
-        null,null,null,null,null,null,null,null,null,null,$l_chave, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null);
-      $RS1 = SortArray($RS1,'inclusao','asc', 'codigo_interno', 'asc');
-      if (count($RS1)>0) {
+      // Execução financeira
+      if (count($RSF)>0) {
+        $RSF = SortArray($RSF,'inclusao','asc', 'codigo_interno', 'asc');
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EXECUÇÃO FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table width=100%  border="1" bordercolor="#00000">';
@@ -1454,7 +1457,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $w_cor=$conTrBgColor;
         $i             = 1;
         $w_total       = 0;
-        foreach ($RS1 as $row) {
+        foreach ($RSF as $row) {
           if (f($row,'sigla')=='FNREVENT') {
             $w_total       -= f($row,'valor');
           } else {
