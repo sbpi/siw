@@ -35,7 +35,8 @@ begin
           from sg_autenticacao a
                inner join co_pessoa b on (a.sq_pessoa = b.sq_pessoa)                
          where b.sq_pessoa_pai = p_cliente
-           and (p_chave is null or p_chave is not null and a.sq_pessoa = p_chave)
+--           and (p_chave is null or p_chave is not null and a.sq_pessoa = p_chave)
+           and (p_chave is not null and a.sq_pessoa = p_chave)
            and (p_cpf is null or p_cpf is not null and username = p_cpf);
         If w_existe > 0 Then
            select a.sq_pessoa
@@ -46,7 +47,7 @@ begin
               and (p_chave is null or p_chave is not null and a.sq_pessoa = p_chave)
               and (p_cpf is null or p_cpf is not null and username = p_cpf);
         Else
-           w_chave_pessoa := 0;
+           w_chave_pessoa := Nvl(p_chave,0);
         End If;
       End If;
    --End If;

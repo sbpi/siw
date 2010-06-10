@@ -44,7 +44,7 @@ begin
             --   após chefia imediata, pedidos de compra até 5mil vão para GERAF, acima de 15mil vão para DIREX, outros vão para presidente ou diretor
             --   após trâmite intermediario, vai para GERAF concluir.
             If w_or_tramite in (3,4) Then
-               If w_solic.valor > 15000 and w_or_tramite = 4 Then
+               If w_solic.valor > 25000 and w_or_tramite = 4 Then
                   select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
                      from siw_tramite a
                     where a.sq_menu = p_menu
