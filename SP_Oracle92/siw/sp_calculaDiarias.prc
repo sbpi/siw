@@ -9,7 +9,6 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
   w_fim       date;
   w_ultimo    number(18) := 0;
   w_tot_dia   number(5,2);
-  w_compromisso_saida   varchar2(1);
   w_compromisso_retorno varchar2(1);
   w_internacional       varchar2(1);
 
@@ -85,7 +84,6 @@ begin
   -- Recupera o último delocamento
   for crec in c_deslocamentos (p_chave, w_fim) loop 
       w_ultimo := crec.sq_deslocamento; 
-      If w_cont = 1 Then w_compromisso_saida := crec.compromisso; End If;
       w_compromisso_retorno := crec.compromisso;
       w_cont := w_cont + 1;
   end loop;
@@ -211,10 +209,16 @@ begin
   
   begin
   for j in diarias.FIRST..diarias.LAST loop
-     update pd_diaria a set a.quantidade = coalesce(diarias(j),0), a.calculo_diaria_qtd = coalesce(diarias(j),0) where sq_diaria = j and a.calculo_diaria_texto is null;
+     -- Verifica se o índice do array tem um registro de diária correspondente
+     select count(*) into w_existe from pd_diaria where sq_diaria = j and sq_siw_solicitacao = p_chave;
+     If w_existe > 0 Then
+        update pd_diaria a set a.quantidade = coalesce(diarias(j),0), a.calculo_diaria_qtd = coalesce(diarias(j),0) where sq_diaria = j and a.calculo_diaria_texto is null;
+     End If;
   end loop;
+  /*
   exception
   when others then null;
+  */
   end;
 end sp_calculaDiarias;
 /

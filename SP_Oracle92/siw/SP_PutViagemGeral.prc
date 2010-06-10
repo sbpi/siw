@@ -131,15 +131,15 @@ begin
       -- Se a demanda foi copiada de outra, grava os dados complementares
       If p_copia is not null Then
          -- Copia as diárias da missão original
-         Insert Into pd_diaria (sq_diaria, sq_siw_solicitacao, sq_cidade, quantidade, valor)
-         (Select sq_diaria.nextval, w_chave, sq_cidade, quantidade, valor
+         Insert Into pd_diaria (sq_diaria, sq_siw_solicitacao, sq_cidade, quantidade, valor, hospedagem, hospedagem_qtd, hospedagem_valor, veiculo, veiculo_qtd, veiculo_valor, sq_valor_diaria, diaria, sq_deslocamento_chegada, sq_deslocamento_saida, sq_valor_diaria_hospedagem, sq_valor_diaria_veiculo, justificativa_diaria, justificativa_veiculo, sq_pdvinculo_diaria, sq_pdvinculo_hospedagem, sq_pdvinculo_veiculo, hospedagem_checkin, hospedagem_checkout, hospedagem_observacao, veiculo_retirada, veiculo_devolucao, tipo, calculo_diaria_qtd, calculo_diaria_texto, calculo_hospedagem_qtd, calculo_hospedagem_texto, calculo_veiculo_qtd, calculo_veiculo_texto)
+         (Select sq_diaria.nextval,        w_chave,            sq_cidade, quantidade, valor, hospedagem, hospedagem_qtd, hospedagem_valor, veiculo, veiculo_qtd, veiculo_valor, sq_valor_diaria, diaria, sq_deslocamento_chegada, sq_deslocamento_saida, sq_valor_diaria_hospedagem, sq_valor_diaria_veiculo, justificativa_diaria, justificativa_veiculo, sq_pdvinculo_diaria, sq_pdvinculo_hospedagem, sq_pdvinculo_veiculo, hospedagem_checkin, hospedagem_checkout, hospedagem_observacao, veiculo_retirada, veiculo_devolucao, tipo, calculo_diaria_qtd, calculo_diaria_texto, calculo_hospedagem_qtd, calculo_hospedagem_texto, calculo_veiculo_qtd, calculo_veiculo_texto
            from pd_diaria a
           where a.sq_siw_solicitacao = p_copia
          );
 
          -- Copia os deslocamentos da missão original
-         Insert Into pd_deslocamento (sq_deslocamento, sq_siw_solicitacao, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho, tipo)
-         (Select sq_deslocamento.nextval,              w_chave,            origem, destino, null,              saida, chegada, null,                  0,            tipo
+         insert into pd_deslocamento (sq_deslocamento, sq_siw_solicitacao, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho, codigo_voo, sq_meio_transporte, passagem, compromisso, sq_bilhete, aeroporto_origem, aeroporto_destino, tipo)
+         (Select sq_deslocamento.nextval,              w_chave,            origem, destino, null,              saida, chegada, null,                  0,            null,       sq_meio_transporte, passagem, compromisso, null,       aeroporto_origem, aeroporto_destino, tipo
            from pd_deslocamento a
           where a.tipo               = 'S'
             and a.sq_siw_solicitacao = p_copia
