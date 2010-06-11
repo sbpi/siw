@@ -465,7 +465,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           
           $w_tot_local = $w_diarias + $w_locacoes;
           
-          if ((($i>1 || ($i==1 && count($w_trechos)==2)) && $i<count($w_trechos) && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || 
+          if ((($i>=1 || ($i==1 && count($w_trechos)==2)) && $i<count($w_trechos) && (($w_trechos[$i][39]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) || 
               ($w_trechos[$i][40]==0 && 
                $w_trechos[$i][41]==0 && 
                ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && 
@@ -617,13 +617,13 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
             
             $w_tot_local = $w_diarias + $w_locacoes;
             
-	          if ((($i>1 || ($i==1 && count($w_trechos)==2)) && $i<count($w_trechos) && ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || 
-	              ($w_trechos[$i][40]==0 && 
-	               $w_trechos[$i][41]==0 && 
-	               ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && 
-	               ($w_tot_local!=0 || $i!=count($w_trechos))
-	              )
-	             ) {
+            if ((($i>=1 || ($i==1 && count($w_trechos)==2)) && $i<count($w_trechos) && (($w_trechos[$i][39]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) || 
+              ($w_trechos[$i][40]==0 && 
+               $w_trechos[$i][41]==0 && 
+               ($w_trechos[$i][42]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim) && 
+               ($w_tot_local!=0 || $i!=count($w_trechos))
+              )
+             ) {
               $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
               
               // Configura a quantidade de linhas do trecho
@@ -1006,8 +1006,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           //if ($w_hospedagens>0) $w_tot_diaria_P[$w_trechos[$i][18]] += $w_hospedagens;
           
           $w_tot_local = $w_diarias + $w_locacoes;
-          
-          if ($w_tot_local!=0 || $w_hospedagens > 0) {
+          echo $w_diarias.'-'.$w_locacoes;
+          echo $w_trechos[$i][5].'-';
+          if ($w_diarias!=0 || $w_hospedagens > 0) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             
             // Configura a quantidade de linhas do trecho

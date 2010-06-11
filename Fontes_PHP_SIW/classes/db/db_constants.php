@@ -23,9 +23,9 @@ define("ORA9_VERSION_TEXT", "Oracle Server 10g");
 // Oracle9 Database Constants
 //define("ORA10_SERVER_NAME", "mercurio");
 define("ORA10_SERVER_NAME", "XE");
-define("ORA10_DB_USERID", "SMSSP");
-define("ORA10_DB_PASSWORD", "SMSSP");
-define("ORA10_DATABASE_NAME", "smssp");
+define("ORA10_DB_USERID", "ABDI_VENUS");
+define("ORA10_DB_PASSWORD", "ABDI_VENUS");
+define("ORA10_DATABASE_NAME", "ABDI_VENUS");
 define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants

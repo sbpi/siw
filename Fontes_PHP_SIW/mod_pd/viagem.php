@@ -1868,7 +1868,7 @@ function Bilhetes() {
   if (f($RS_Solic,'sg_tramite')=='AE') $w_tipo_reg = 'S'; else $w_tipo_reg = 'P';
   
   // Trechos da solicitação
-  $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,null);
+  $RS_Trecho = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,$w_tipo_reg,'COTPASS');
   $RS_Trecho = SortArray($RS_Trecho,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
 
   if ($w_troca>'') {
@@ -2335,7 +2335,15 @@ function AltSolic() {
       $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
       $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
       $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-      if (($i>1 && $i < ($j-1) && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+      if (($i>0 && $i < ($j-1) && (($w_trechos[$i][51]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || 
+                                   ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)
+                                  )
+          ) || 
+          ($w_max_hosp >=0 && 
+           $w_trechos[$i][48]==0 && 
+           $w_trechos[$i][49]==0 && 
+           ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))
+         ) {
         $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
         $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
         $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -4110,12 +4118,21 @@ function Diarias() {
       ShowHTML(MontaFiltro('POST'));
       ShowHTML('       <input type="hidden" name="w_chave" value="">');
       ShowHTML('       <input type="hidden" name="w_trechos" value="">');
+
       while($i!=($j-1)) {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
         
-        if (($i>1 && $i < ($j-1) && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        if (($i>0 && $i < ($j-1) && (($w_trechos[$i][51]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || 
+                                     ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)
+                                    )
+            ) || 
+            ($w_max_hosp >=0 && 
+             $w_trechos[$i][48]==0 && 
+             $w_trechos[$i][49]==0 && 
+             ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))
+           ) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -4766,7 +4783,15 @@ function Diarias_Solic() {
       ShowHTML('       <input type="hidden" name="w_trechos" value="">');
       while($i<count($w_trechos)) {
         $w_max_hosp     = ceil((toDate(formataDataEdicao($w_trechos[$i][7]))-toDate(formataDataEdicao($w_trechos[$i][6])))/86400);
-        if (($i>1 && $i < ($j-1) && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)) || ($w_max_hosp >=0 && $w_trechos[$i][49]==0 && $w_trechos[$i][50]==0 && ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        if (($i>0 && $i < ($j-1) && (($w_trechos[$i][48]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || 
+                                     ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)
+                                    )
+            ) || 
+            ($w_max_hosp >=0 && 
+             $w_trechos[$i][49]==0 && 
+             $w_trechos[$i][50]==0 && 
+             ($w_trechos[$i][51]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))
+           ) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -5145,63 +5170,61 @@ function Encaminhamento() {
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
-    $RS = db_getTramiteList::getInstanceOf($dbms,$w_tramite,$w_chave,'DEVFLUXO',null);
-    $RS = SortArray($RS,'ordem','desc');
-    foreach($RS as $row) { $RS = $row; break; }
-    $w_novo_tramite = f($RS,'sq_siw_tramite');
+    $RS = db_getTramiteList::getInstanceOf($dbms, $w_tramite, $w_chave, 'DEVFLUXO', null);
+    $RS = SortArray($RS, 'ordem', 'desc');
+    foreach ($RS as $row) { $RS = $row; break;    }
+    $w_novo_tramite = f($RS, 'sq_siw_tramite');
   }
 
   // Se for envio, executa verificações nos dados da solicitação
-  if ($O=='V') $w_erro = ValidaViagem($w_cliente,$w_chave,$SG,'PDGERAL',null,null,$w_tramite);
+  if ($O=='V') $w_erro = ValidaViagem($w_cliente, $w_chave, $SG, 'PDGERAL', null, null, $w_tramite);
 
   Cabecalho();
   head();
-  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
+  ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=../' . MontaURL('MESA') . '">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
-  if (substr(Nvl($w_erro,'nulo'),0,1)!='0') {
-    if ($w_sg_tramite=='CI') {
-      if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-        Validate('w_justificativa','Justificativa','','1','1','2000','1','1');
+  if ($w_sg_tramite=='CI' && substr(Nvl($w_erro, 'nulo'), 0, 1)!='0') {
+    if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+      Validate('w_justificativa', 'Justificativa', '', '1', '1', '2000', '1', '1');
+    }
+    if ($w_fim_semana=='S') {
+      Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
+    }
+  } else {
+    if (substr(Nvl($w_erro, 'nulo'), 0, 1)=='0' || $w_sg_tramite=='EE') {
+      Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
+    } else {
+      Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
+      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
+      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
+      ShowHTML('     theForm.w_despacho.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
+      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
+      ShowHTML('     theForm.w_despacho.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      if (Nvl(substr($w_erro, 0, 1), '')=='1' || substr(Nvl($w_erro, 'nulo'), 0, 1)=='2') {
+        if (mktime(0, 0, 0, date(m), date(d), date(Y)) > $w_prazo) {
+          Validate('w_justificativa', 'Justificativa', '', '', '1', '2000', '1', '1');
+          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
+          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
+          ShowHTML('     theForm.w_justificativa.focus();');
+          ShowHTML('     return false;');
+          ShowHTML('}');
+        }
       }
-      if ($w_fim_semana=='S') {
-        Validate('w_justif_dia_util','Justificativa','1','1',5,2000,'1','1');
-      }
-	  } else {
-	    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
-	      Validate('w_despacho','Despacho','1','1','1','2000','1','1');
-	    } else {
-	      Validate('w_despacho','Despacho','','','1','2000','1','1');
-	      ShowHTML('  if (theForm.w_envio[0].checked && theForm.w_despacho.value != \'\') {');
-	      ShowHTML('     alert(\'Informe o despacho apenas se for devolução para a fase anterior!\');');
-	      ShowHTML('     theForm.w_despacho.focus();');
-	      ShowHTML('     return false;');
-	      ShowHTML('  }');
-	      ShowHTML('  if (theForm.w_envio[1].checked && theForm.w_despacho.value==\'\') {');
-	      ShowHTML('     alert(\'Informe um despacho descrevendo o motivo da devolução!\');');
-	      ShowHTML('     theForm.w_despacho.focus();');
-	      ShowHTML('     return false;');
-	      ShowHTML('  }');
-	      if (Nvl(substr($w_erro,0,1),'')=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
-	        if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
-	          Validate('w_justificativa','Justificativa','','','1','2000','1','1');
-	          ShowHTML('if (theForm.w_envio[0].checked && theForm.w_justificativa.value==\'\') {');
-	          ShowHTML('     alert(\'Informe uma justificativa para o não cumprimento do prazo regulamentar!\');');
-	          ShowHTML('     theForm.w_justificativa.focus();');
-	          ShowHTML('     return false;');
-	          ShowHTML('}');
-	        }
-	      }
-	    }
-	  }
-	  Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
-	  if ($P1!=1 || ($P1==1 && $w_tipo=='Volta')) {
-	    // Se não for encaminhamento e nem o sub-menu do cadastramento
-	    ShowHTML('  theForm.Botao[0].disabled=true;');
-	    ShowHTML('  theForm.Botao[1].disabled=true;');
-	  } else {
-	    ShowHTML('  theForm.Botao.disabled=true;');
-	  }
+    }
+  }
+  Validate('w_assinatura', 'Assinatura Eletrônica', '1', '1', '6', '30', '1', '1');
+  if ($P1!=1 || ( $P1==1 && $w_tipo=='Volta')) {
+    // Se não for encaminhamento e nem o sub-menu do cadastramento
+    ShowHTML('  theForm.Botao[0].disabled=true;');
+    ShowHTML('  theForm.Botao[1].disabled=true;');
+  } else {
+    ShowHTML('  theForm.Botao.disabled=true;');
   }
   ValidateClose();
   ScriptClose();
@@ -6567,7 +6590,15 @@ function PrestarContas() {
         $w_max_hosp     = floor(($w_trechos[$i][44]-$w_trechos[$i][43])/86400);
         $w_max_diaria   = ceil(($w_trechos[$i][7]-$w_trechos[$i][6])/86400);
         $w_max_veiculo  = ceil(($w_trechos[$i][47]-$w_trechos[$i][46])/86400);
-        if (($i>0 && $i < ($j-1)) || ($w_max_hosp >=0 && $w_trechos[$i][48]==0 && $w_trechos[$i][49]==0 && ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))) {
+        if (($i>0 && $i < ($j-1) && (($w_trechos[$i][51]=='N' && toDate(FormataDataEdicao($w_trechos[$i][6]))==$w_fim) || 
+                                     ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim)
+                                    )
+            ) || 
+            ($w_max_hosp >=0 && 
+             $w_trechos[$i][48]==0 && 
+             $w_trechos[$i][49]==0 && 
+             ($w_trechos[$i][50]=='S' || toDate(FormataDataEdicao($w_trechos[$i][6]))!=$w_fim))
+           ) {
           $w_diarias      = nvl($w_trechos[$i][8],0)*nvl($w_trechos[$i][9],0);
           $w_locacoes     = (-1*nvl($w_trechos[$i][9],0)*nvl($w_trechos[$i][22],0)/100*nvl($w_trechos[$i][21],0));
           $w_hospedagens  = nvl($w_trechos[$i][16],0)*nvl($w_trechos[$i][17],0);
@@ -6588,7 +6619,6 @@ function PrestarContas() {
           ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][6],4),0,-3).'</b></td>');
           ShowHTML('       <td align="center">'.substr(FormataDataEdicao($w_trechos[$i][7],4),0,-3).'</b></td>');
           ShowHTML('       <td>');
-          exibeArray($w_trechos);
           ShowHTML('          <A class="HL" HREF="javascript:altera('.f($row,'sq_siw_solicitacao').',\''.base64_encode(serialize($w_trechos[$i])).'\');" title="Informa as diárias">'.((nvl($w_trechos[$i][1],'')=='') ? '<blink><b><font color="RED">Informar</font></b></blink>' : 'Informar').'</A>&nbsp');
           ShowHTML('       </td>');
         }
@@ -6620,24 +6650,23 @@ function Reembolso() {
   $w_readonly       = '';
   $w_erro           = '';
 
-  // Recupera as possibilidades de vinculação financeira
-  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null,null);
-  
-  // Recupera as possibilidades de vinculação financeira da devolução de valores
-  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'S',null);
-  
   // Recupera os dados da solicitação
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
   $w_chave_pai = f($RS,'sq_solic_pai');
   $w_or_tramite = f($RS,'or_tramite');
 
+  // Recupera as possibilidades de vinculação financeira
+  $RS_Financ = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,'S',null,null);
+
+  // Recupera as possibilidades de vinculação financeira da devolução de valores
+  $RS_Fin_Dev = db_getPD_Financeiro::getInstanceOf($dbms,$w_cliente,null,$w_chave_pai,null,null,null,null,null,null,null,null,'S',null);
+  
   // Verifica se há necessidade de recarregar os dados da tela a partir
   // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
-  //print_r($RS);
   if ($w_troca>'') {
     // Se for recarga da página
     $w_reembolso                = $_REQUEST['w_reembolso'];
-    $w_reembolso_bd             = $_REQUEST['w_reembolso'];
+    $w_reembolso_bd             = $_REQUEST['w_reembolso_bd'];
     $w_valor                    = $_REQUEST['w_valor'];
     $w_observacao               = $_REQUEST['w_observacao'];
     $w_ressarcimento            = $_REQUEST['w_ressarcimento'];
@@ -6743,8 +6772,8 @@ function Reembolso() {
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
   ShowHTML('  <table width="100%" border="0">');
   ShowHTML('    <tr><td colspan="2"><b>Há reembolso?</b><br>');
-  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').'> Sim');
-  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').'> Não');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Sim');
+  ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').' onClick="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_deposito\'; document.Form.submit();"> Não');
   if ($w_reembolso=='S') {
     if (count($RS_Financ)>1) {
       ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   

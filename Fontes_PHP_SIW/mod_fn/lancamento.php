@@ -418,9 +418,15 @@ function Inicial() {
       $w_parcial=0;
       if($w_tipo!='WORD') $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
       else                $RS1 = $RS;
+      $w_alerta = false;
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        if (f($row,'atraso_pc')>0) {
+          ShowHTML('      <tr bgcolor="'.$conTrBgColorLightRed1.'" valign="top">');
+          $w_alerta = true;
+        } else {
+          ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
+        }
         ShowHTML('        <td nowrap>');
         ShowHTML(ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
         if ($w_tipo!='WORD') ShowHTML('        <A class="hl" HREF="'.$w_dir.$w_pagina.'Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="'.f($row,'obj_acordo').' ::> '.f($row,'descricao').'">'.f($row,'codigo_interno').'&nbsp;</a>');
@@ -571,6 +577,9 @@ function Inicial() {
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
+    if ($w_alerta) {
+      ShowHTML('<tr><td colspan=3><b>Observação: linhas na cor vermelha indicam pendência para pagamento.');
+    }
     ShowHTML('<tr><td align="center" colspan=3>');
     if ($w_tipo!='WORD') {
       ShowHTML('<tr><td align="center" colspan=3>');
