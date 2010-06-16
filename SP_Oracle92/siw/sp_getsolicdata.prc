@@ -1069,6 +1069,7 @@ begin
                 dh.destinacao_final as df_caixa, dh.arquivo_data, dh.sq_arquivo_local,
                 montaNomeArquivoLocal(dh.sq_arquivo_local) as nm_arquivo_local,
                 di.sq_unidade as sq_unid_caixa, di.sigla as sg_unid_caixa, di.nome as nm_unid_caixa,
+                dj.sq_unidade_autua, dj.nm_unidade_autua, dj.sg_unidade_autua,
                 b.fim-k.dias_aviso aviso,
                 e.sq_unidade as sq_unidade_resp,
                 e.sq_tipo_unidade,    e.nome as nm_unidade_resp,     e.informal as informal_resp,
@@ -1132,6 +1133,20 @@ begin
                         left         join pa_documento             dg on (d.sq_documento_pai         = dg.sq_siw_solicitacao)
                         left         join pa_caixa                 dh on (d.sq_caixa                 = dh.sq_caixa)
                           left       join eo_unidade               di on (dh.sq_unidade              = di.sq_unidade)
+                        left         join (select l.sq_siw_solicitacao, l.unidade_origem as sq_unidade_autua, 
+                                                  m.nome as nm_unidade_autua, m.sigla as sg_unidade_autua
+                                             from (select w.sq_siw_solicitacao, max(w.envio) as envio
+                                                     from pa_documento_log              w
+                                                          inner   join siw_solicitacao  x  on (w.sq_siw_solicitacao = x.sq_siw_solicitacao)
+                                                          inner   join pa_tipo_despacho y  on (w.sq_tipo_despacho = y.sq_tipo_despacho)
+                                                    where y.sigla   = 'AUTUAR'
+                                                   group by w.sq_siw_solicitacao
+                                                  )                                        k
+                                                  inner   join pa_documento_log            l on (k.sq_siw_solicitacao = l.sq_siw_solicitacao and
+                                                                                                 k.envio              = l.envio
+                                                                                                )
+                                                    inner join eo_unidade                  m on (l.unidade_origem     = m.sq_unidade)
+                                          )                        dj on (d.sq_siw_solicitacao       = dj.sq_siw_solicitacao)
                         inner        join pa_especie_documento     d7 on (d.sq_especie_documento     = d7.sq_especie_documento)
                         inner        join eo_unidade               e  on (d.unidade_autuacao         = e.sq_unidade)
                           left       join eo_unidade_resp          e1 on (e.sq_unidade               = e1.sq_unidade and
