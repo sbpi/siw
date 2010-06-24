@@ -31,6 +31,7 @@ create or replace procedure SP_PutViagemGeral
     p_copia               in number   default null,
     p_codigo_interno      in out varchar2
    ) is
+   w_arq        varchar2(4000) := ', ';
    w_ano        number(4);
    w_sequencial number(18)     := 0;
    w_existe     number(4);
@@ -39,6 +40,9 @@ create or replace procedure SP_PutViagemGeral
    w_log_esp    number(18);
    w_reg        PD_parametro%rowtype;
    w_financeiro number(18) := p_financeiro;
+
+   cursor c_arquivos is
+      select sq_siw_arquivo from siw_solic_arquivo where sq_siw_solicitacao = p_chave;
    
 begin
    -- Verifica se precisa gravar o tipo de vínculo financeiro
@@ -206,6 +210,13 @@ begin
          -- Atualiza a situação da solicitação
          update siw_solicitacao set sq_siw_tramite = w_chave, conclusao = sysdate where sq_siw_solicitacao = p_chave;
       Else
+        
+         -- Monta string com a chave dos arquivos ligados à solicitação informada
+         for crec in c_arquivos loop
+            w_arq := w_arq || crec.sq_siw_arquivo;
+         end loop;
+         w_arq := substr(w_arq, 3, length(w_arq));
+      
          -- Remove os registros vinculados à missão
          delete pd_missao_solic where sq_solic_missao    = p_chave;
          delete pd_deslocamento where sq_siw_solicitacao = p_chave;
@@ -215,8 +226,13 @@ begin
          -- Remove o registro na tabela de demandas
          delete gd_demanda where sq_siw_solicitacao = p_chave;
          
+         -- Remove os arquivos
+         delete siw_solic_arquivo           where sq_siw_solicitacao = p_chave;
+         delete siw_arquivo                 where sq_siw_arquivo     in (w_arq);
+         
          -- Remove o log da solicitação
          delete siw_solic_log where sq_siw_solicitacao = p_chave;
+
 
          -- Remove o registro na tabela de solicitações
          delete siw_solicitacao where sq_siw_solicitacao = p_chave;
