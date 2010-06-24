@@ -100,7 +100,7 @@ begin
    
    -- Atualiza a data de início e término da missão
    update siw_solicitacao 
-      set (inicio, fim) = (select min(saida), max(chegada) from pd_deslocamento where sq_siw_solicitacao = p_chave)
+      set (inicio, fim) = (select min(saida), max(chegada) from pd_deslocamento where sq_siw_solicitacao = p_chave and tipo = coalesce(p_tipo,'S'))
    where sq_siw_solicitacao = p_chave;
 end SP_PutPD_Deslocamento;
 /

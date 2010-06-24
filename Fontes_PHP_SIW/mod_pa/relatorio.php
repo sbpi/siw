@@ -137,9 +137,9 @@ function Tramitacao() {
         $p_ini, $p_fim, 2, null);
     if (Nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
-      $RS = SortArray($RS,$lista[0],$lista[1],'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
+      $RS = SortArray($RS,$lista[0],$lista[1],'ano_guia','desc','nu_guia','asc','protocolo','asc');
     } else {
-      $RS = SortArray($RS,'sg_unidade','asc', 'ano_guia','desc','nu_guia','asc','protocolo','asc');
+      $RS = SortArray($RS,'ano_guia','desc','nu_guia','asc','protocolo','asc');
     }
   } 
   Cabecalho();
@@ -586,22 +586,27 @@ function Etiqueta() {
       $RS_Cliente = db_getcustomerData::getInstanceOf($dbms,$_SESSION['P_CLIENTE']);
       // Recupera os dados do documento
       $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PADGERAL');
+      //exibeArray($RS);
       ShowHTML('<table cellpadding=0 cellspacing=0 border=1>');
       ShowHTML('<tr><td width="480"  height="200">');
       ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
       ShowHTML('    <tr><td colspan=2><font size=2><b>'.f($RS_Cliente,'nome_resumido').'/'.f($RS,'sg_unidade_resp').'</b></font>');
-      if(nvl(f($RS,'processo'),'')=='S') 
+      if(nvl(f($RS,'processo'),'')=='S') {
         ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>'.f($RS,'protocolo').'</font>');
-      else
+      } else {
         ShowHTML('    <tr><td><font size=2><b>DOCUMENTO: </b>'.f($RS,'protocolo').'</font>');
-      if(nvl(f($RS,'processo'),'')=='S')  
+      }
+      if(nvl(f($RS,'processo'),'')=='S')
         ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
       else
         ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
-      if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
+      if(nvl(f($RS,'nm_pessoa_interes'),'')!='') {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_pessoa_interes')).'</font>');
-      else
+      } elseif(nvl(f($RS,'processo'),'')=='S') {
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_unidade_autua')).'</font>');
+      } else {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_origem')).'</font>');
+      }
       ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.upper(f($RS,'ds_assunto')).'</font>');
       if (strlen(Nvl(f($RS,'descricao'),'-'))>1000) 
         ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(upper(nvl(f($RS,'descricao'),'---')),0,1000).'...</font>');

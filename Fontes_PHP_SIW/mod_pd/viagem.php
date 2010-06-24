@@ -6293,24 +6293,28 @@ function PrestarContas() {
       }
       $RSConta = db_getContaBancoList::getInstanceOf($dbms,$w_cliente,null,'CONTADEV');
       if (count($RS)>0) {
-        $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
-        $contas .= '<tr>';
-        $contas .= '<td width="60%"><b>Banco</b></td>';                  
-        $contas .= '<td width="20%"><b>Agência</b></td>';                        
-        $contas .= '<td width="20%"><b>Conta</b></td>';                              
-        $contas .= '</tr>';      
-        foreach($RSConta as $row) { 
+        $i = 0;      
+        foreach($RSConta as $row) {
+          if ($i==0) {
+		        $contas = '<table cellpadding="2" cellspacing="0" bgcolor="#E5E5E5" style="color:#333333" border="1" width="100%">';
+		        $contas .= '<tr>';
+		        $contas .= '<td width="60%"><b>Banco</b></td>';                  
+		        $contas .= '<td width="20%"><b>Agência</b></td>';                        
+		        $contas .= '<td width="20%"><b>Conta</b></td>';                              
+		        $contas .= '</tr>';
+          }
           $contas .= '<tr>';
           $contas .= '<td>'.f($row,'banco').'</td>';                  
           $contas .= '<td>'.f($row,'agencia').'</td>';                        
           $contas .= '<td>'.f($row,'numero').'</td>';                              
-          $contas .= '</tr>';                  
+          $contas .= '</tr>';
+          $i++;                  
         }
-        $contas .= '</table>';      
-      }    
+        if ($i>0) $contas .= '</table>';      
+      }
       $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
       ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
-      ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
+      if (nvl($contas,'')!='') ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
       ShowHTML('    <blockquote><TABLE BORDER="0">');
       ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
@@ -7096,6 +7100,14 @@ function Grava() {
     case 'PDIDENT':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        if ($O=='E') {
+          $RS = db_getSolicAnexo::getInstanceOf($dbms, $_REQUEST['w_chave'], null, $w_cliente);
+          foreach ($RS as $row) {
+            if (file_exists($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'))){
+              echo($conFilePhysical . $w_cliente . '/' . f($row, 'caminho'));
+            }
+          }
+        }
         dml_putViagemGeral::getInstanceOf($dbms,$O,$w_cliente,
             $_REQUEST['w_chave'],$_REQUEST['w_menu'],$_SESSION['LOTACAO'],$_REQUEST['w_sq_unidade_resp'],
             $_REQUEST['w_sq_prop'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_tipo_missao'],$_REQUEST['w_descricao'],

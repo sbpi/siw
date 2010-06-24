@@ -251,7 +251,7 @@ function Gerencial() {
       case substr(f($RS_Menu,'sigla'),0,3).'PROP':
         if (substr(f($RS_Menu_Origem,'sigla'),0,3)=='GCB')  $w_TP .= ' - Pelo bolsista';
         else                                                $w_TP .= ' - Pela outra parte';
-        $RS1 = SortArray($RS1,'nm_pessoa_resumido_ind','asc');
+        $RS1 = SortArray($RS1,'nm_pessoa_ind','asc');
         break;
       case substr(f($RS_Menu,'sigla'),0,3).'RESP':
         $w_TP=$TP.' - Por responsável';
@@ -537,16 +537,15 @@ function Gerencial() {
             } 
             break;
           case substr(f($RS_Menu,'sigla'),0,3).'PROP':
-            if ($w_nm_quebra!=f($row1,'nm_pessoa_resumido')) {
+            if ($w_nm_quebra!=f($row1,'nm_pessoa')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa_resumido'));
-              } 
-              $w_nm_quebra=f($row1,'nm_pessoa_resumido');
-              $w_chave=f($row1,'nm_pessoa_resumido');
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa'));              } 
+              $w_nm_quebra=f($row1,'nm_pessoa');
+              $w_chave=f($row1,'nm_pessoa');
               $w_chave_aux=-1;
               $w_qt_quebra=0.00;
               $t_solic=0.00;
@@ -707,7 +706,7 @@ function Gerencial() {
             case substr(f($RS_Menu,'sigla'),0,3).'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_etapa'));                    break;
             case substr(f($RS_Menu,'sigla'),0,3).'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo')); break;
             case substr(f($RS_Menu,'sigla'),0,3).'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_'.$agrega_projeto));         break;
-            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa_resumido'));          break;
+            case substr(f($RS_Menu,'sigla'),0,3).'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_pessoa'));                   break;
             case substr(f($RS_Menu,'sigla'),0,3).'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_solic'));                    break;
             case substr(f($RS_Menu,'sigla'),0,3).'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'nm_exec'));                     break;
             case substr(f($RS_Menu,'sigla'),0,3).'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><b>'.f($row1,'sg_cc'));                       break;

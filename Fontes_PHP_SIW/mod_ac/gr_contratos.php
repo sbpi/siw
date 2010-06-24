@@ -276,7 +276,7 @@ function Gerencial() {
       case $sigla.'PROP':
         if ($sigla_origem=='GCB')  $w_TP.=' - Pelo bolsista';
         else                       $w_TP.=' - Pela outra parte';
-        $RS1 = SortArray($RS1,'nm_outra_parte_resumido_ind','asc');
+        $RS1 = SortArray($RS1,'nm_outra_parte_ind','asc');
         break;
       case $sigla.'RESP':
         $w_TP.=' - Por responsável';
@@ -606,16 +606,16 @@ function Gerencial() {
             } 
             break;
           case $sigla.'PROP':
-            if ($w_nm_quebra!=f($row1,'nm_outra_parte_resumido')) {
+            if ($w_nm_quebra!=f($row1,'nm_outra_parte')) {
               if ($w_qt_quebra>0) {
                 ImprimeLinha($t_solic,$t_cad,$t_tram,$t_conc,$t_atraso,$t_aviso,$t_valor,$t_custo,$t_acima,$w_chave,$w_chave_aux);
               } 
               if ($w_embed != 'WORD' || ($w_embed == 'WORD' && $w_linha<=$w_linha_pag)) {
                 // Se for geração de MS-Word, coloca a nova quebra somente se não estourou o limite
-                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));
+                ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte'));
               } 
-              $w_nm_quebra=f($row1,'nm_outra_parte_resumido');
-              $w_chave=f($row1,'nm_outra_parte_resumido');
+              $w_nm_quebra=f($row1,'nm_outra_parte');
+              $w_chave=f($row1,'nm_outra_parte');
               $w_chave_aux=-1;
               $w_qt_quebra=0.00;
               $t_solic=0.00;
@@ -898,20 +898,20 @@ function Gerencial() {
           ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
           ImprimeCabecalho();
           switch ($p_agrega) {
-            case $sigla.'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));                   break;
-            case $sigla.'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));             break;
-            case $sigla.'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));                 break;
-            case $sigla.'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte_resumido'));    break;
-            case $sigla.'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));                   break;
-            case $sigla.'IDCC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idcc'));                    break;
-            case $sigla.'IDEC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idec'));                    break;
-            case $sigla.'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));                    break;
-            case $sigla.'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));                      break;
-            case $sigla.'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));            break;
-            case $sigla.'TITULO':  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));                  break;
-            case $sigla.'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));                      break;
-            case $sigla.'FONTE':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));         break;
-            case $sigla.'ESPEC':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));           break;
+            case $sigla.'ETAPA':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_etapa'));            break;
+            case $sigla.'TIPO':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_tipo_acordo'));      break;
+            case $sigla.'PROJ':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_projeto'));          break;
+            case $sigla.'PROP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_outra_parte'));      break;
+            case $sigla.'RESP':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_solic'));            break;
+            case $sigla.'IDCC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idcc'));             break;
+            case $sigla.'IDEC':    ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_idec'));             break;
+            case $sigla.'RESPATU': ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_exec'));             break;
+            case $sigla.'CC':      ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'sg_cc'));               break;
+            case $sigla.'SETOR':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_unidade_resp'));     break;
+            case $sigla.'TITULO':  ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_acordo'));           break;
+            case $sigla.'LOCAL':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'co_uf'));               break;
+            case $sigla.'FONTE':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_lcfonte_recurso'));  break;
+            case $sigla.'ESPEC':   ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top"><td><font size=1><b>'.f($row1,'nm_espec_despesa'));    break;
           } 
           $w_linha += 1;
         }

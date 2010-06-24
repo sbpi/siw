@@ -1713,9 +1713,11 @@ function Documentos() {
       Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
       Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
       Validate('w_data','Data do documento', 'DATA', '1', '10', '10', '', '0123456789/');
+      /*
       if (Nvl($w_tipo,'-')=='NF') {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
+      */
       Validate('w_valor','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
     }
     ShowHTML('  theForm.Botao[0].disabled=true;');
@@ -1757,7 +1759,7 @@ function Documentos() {
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>Número</td>');
     ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Série</td>');
+    //ShowHTML('          <td><b>Série</td>');
     ShowHTML('          <td><b>Valor</td>');
     //ShowHTML('          <td><b>Patrimônio</td>');
     ShowHTML('          <td><b>Operações</td>');
@@ -1774,7 +1776,7 @@ function Documentos() {
         ShowHTML('        <td>'.f($row,'nm_tipo_documento').'</td>');
         ShowHTML('        <td align="center">'.f($row,'numero').'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data')).'</td>');
-        ShowHTML('        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>');
+        //ShowHTML('        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>');
         //ShowHTML('        <td align="center">'.f($row,'nm_patrimonio').'</td>');
         ShowHTML('        <td align="top" nowrap>');
@@ -1789,7 +1791,7 @@ function Documentos() {
     if ($w_total>0) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td align="center" colspan=4><b>Total</b></td>');
+      ShowHTML('        <td align="center" colspan=3><b>Total</b></td>');
       ShowHTML('        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>');
       ShowHTML('        <td colspan="2">&nbsp;</td>');
       ShowHTML('      </tr>');
@@ -1811,9 +1813,11 @@ function Documentos() {
     SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento.">'.ExibeCalendario('Form','w_data').'</td>');
+    /*
     if (Nvl($w_tipo,'-')=='NF') {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
+    */
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     //MontaRadioNS('<b>Patrimônio?</b>',$w_patrimonio,'w_patrimonio');
     ShowHTML('<INPUT type="hidden" name="w_patrimonio" value="N">');
@@ -1953,9 +1957,11 @@ function RubricaDoc() {
       Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
       Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
       Validate('w_data','Data do documento', 'DATA', '1', '10', '10', '', '0123456789/');
+      /*
       if (Nvl($w_tipo,'-')=='NF') {
         Validate('w_serie','Série do documento', '1', '1', 1, 10, '1', '1');
       } 
+      */
       Validate('w_valor_doc','Valor total do documento', 'VALOR', '1', 4, 18, '', '0123456789.,');
       if(f($RS1,'tipo_rubrica')==1) {
         ShowHTML('       for (i=1; i < document.Form["w_sq_projeto_rubrica[]"].length; i++) {');
@@ -2036,7 +2042,7 @@ function RubricaDoc() {
     ShowHTML('          <td><b>Tipo</td>');
     ShowHTML('          <td><b>Número</td>');
     ShowHTML('          <td><b>Data</td>');
-    ShowHTML('          <td><b>Serie</td>');
+    // ShowHTML('          <td><b>Série</td>');
     ShowHTML('          <td><b>Valor</td>');
     ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
@@ -2053,7 +2059,7 @@ function RubricaDoc() {
         ShowHTML('        <td rowspan="2">'.f($row,'nm_tipo_documento').'</td>');
         ShowHTML('        <td align="center">'.f($row,'numero').'</td>');
         ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'data')).'</td>');
-        ShowHTML('        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>');
+        // ShowHTML('        <td align="center">'.Nvl(f($row,'serie'),'---').'</td>');
         ShowHTML('        <td align="right">'.number_format(f($row,'valor'),2,',','.').'&nbsp;&nbsp;</td>');
         ShowHTML('        <td rowspan="2" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_lancamento_doc').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
@@ -2068,7 +2074,7 @@ function RubricaDoc() {
     if ($w_total>0) {
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-      ShowHTML('        <td align="center" colspan=4><b>Total</b></td>');
+      ShowHTML('        <td align="center" colspan=3><b>Total</b></td>');
       ShowHTML('        <td align="right"><b>'.number_format($w_total,2,',','.').'</b>&nbsp;&nbsp;</td>');
       ShowHTML('        <td colspan="2">&nbsp;</td>');
       ShowHTML('      </tr>');
@@ -2099,9 +2105,11 @@ function RubricaDoc() {
     SelecaoTipoDocumento('<u>T</u>ipo:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
     ShowHTML('          <td><b><u>N</u>úmero:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_numero" class="sti" SIZE="15" MAXLENGTH="30" VALUE="'.$w_numero.'" title="Informe o número do documento."></td>');
     ShowHTML('          <td><b><u>D</u>ata:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data do documento."></td>');
+    /*
     if (Nvl($w_tipo,'-')=='NF') {
       ShowHTML('          <td><b><u>S</u>érie:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_serie" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_serie.'" title="Informado apenas se o documento for NOTA FISCAL. Informe a série ou, se não tiver, digite ÚNICA."></td>');
     } 
+    */
     ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('          <tr><td colspan="5" valign="top" align="center">&nbsp;');    
     ShowHTML('          <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Rubricas</td>');    
