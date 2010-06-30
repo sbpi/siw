@@ -199,9 +199,9 @@ begin
          select count(*) into w_veiculo    from pd_diaria where sq_siw_solicitacao = p_chave and veiculo    = 'S';
          
          update pd_missao
-            set diaria     = case w_diaria     when 0 then null else diaria end,
-                hospedagem = case w_hospedagem when 0 then 'N'  else 'S'    end,
-                veiculo    = case w_veiculo    when 0 then 'N'  else 'S'    end
+            --set diaria     = case (w_diaria + w_veiculo)  when 0 then null else diaria end,
+            set hospedagem = case w_hospedagem            when 0 then 'N'  else 'S'    end,
+                veiculo    = case w_veiculo               when 0 then 'N'  else 'S'    end
          where sq_siw_solicitacao = p_chave;
       End If;
    End If;
