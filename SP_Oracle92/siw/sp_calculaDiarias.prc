@@ -121,12 +121,15 @@ begin
                --                          sem compromisso implica em 1/2 diária nacional
                --    INTERNACIONAL
                --    Toda e qualquer saída será computada com o 1 diária internacional
-               If crec.diaria_inicio = 'S' Then
-                  If crec.destino_nacional = 'N' Then 
-                     diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
-                  Elsif crec.compromisso = 'N' or to_char(crec.saida,'hh24mi') > 1800
-                     Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
-                     Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
+               select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_inicio = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
+               If w_existe <= 1 or w_existe = (i+1) or w_inicio = w_fim Then
+                  If crec.diaria_inicio = 'S' Then
+                     If crec.destino_nacional = 'N' Then 
+                        diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
+                     Elsif crec.compromisso = 'N' or to_char(crec.saida,'hh24mi') > 1800
+                        Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
+                        Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
+                     End If;
                   End If;
                End If;
             Elsif w_cont = (w_fim-w_inicio+1) Then

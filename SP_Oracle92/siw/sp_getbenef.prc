@@ -39,7 +39,7 @@ begin
             coalesce(h.sq_pais,h1.sq_pais,b1.sq_pais,f1.sq_pais,l1.sq_pais) as sq_pais,
             coalesce(m.padrao,m1.padrao) as pd_pais, 
             coalesce(m.nome,m1.nome) as nm_pais,
-            i.email,
+            coalesce(i.email, n.email) as email,
             coalesce(j.cpf,n.username) as cpf, j.nascimento, j.rg_numero, j.rg_emissao, j.rg_emissor, j.passaporte_numero,
             j.sq_pais_passaporte, j.sexo,
             k.cnpj, k.inscricao_estadual, k.inicio_atividade, k.sede,
