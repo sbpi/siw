@@ -80,20 +80,20 @@ begin
    Update gd_demanda set
       inicio_real     = coalesce(p_inicio_real,inicio_real),
       fim_real        = coalesce(p_fim_real,fim_real),
-      nota_conclusao  = coalesce(p_nota_conclusao,nota_conclusao),
+--      nota_conclusao  = coalesce(p_nota_conclusao,nota_conclusao),
       custo_real      = coalesce(p_custo_real,custo_real),
       concluida       = 'S',
       data_conclusao  = w_data_atual
    Where sq_siw_solicitacao = p_chave;
 
    -- Atualiza a situação da solicitação
-   Update siw_solicitacao set
-      sq_siw_tramite = (select sq_siw_tramite 
-                          from siw_tramite 
-                         where sq_menu=p_menu 
-                           and Nvl(sigla,'z')='AT'
-                       )
-   Where sq_siw_solicitacao = p_chave;
+   Update siw_solicitacao
+      set sq_siw_tramite =
+          (select sq_siw_tramite
+             from siw_tramite
+            where sq_menu = p_menu
+              and Nvl(sigla, 'z') = 'AT')
+      Where sq_siw_solicitacao = p_chave;
 
    -- Se foi informado um arquivo, grava.
    If p_caminho is not null Then
