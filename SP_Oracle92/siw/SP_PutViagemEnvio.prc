@@ -138,7 +138,8 @@ create or replace procedure SP_PutViagemEnvio
        where w.sigla              = 'FNDVIA'
          and x.sq_siw_solicitacao = p_chave
          and y.sigla              = 'VG'
-         and z.sq_lancamento      = case when x2.sq_financeiro is null then z.sq_lancamento else x2.sq_tipo_lancamento end;
+         and z.sq_lancamento      = case when x2.sq_financeiro is null then z.sq_lancamento else x2.sq_tipo_lancamento end
+         and x4.valor             > 0;
 
    cursor c_ressarcimento_geral is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
