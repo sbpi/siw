@@ -171,6 +171,27 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           }
           $l_html.=chr(13).'      <tr><td><b>Fax:</b></td><td>'.Nvl(f($row,'nr_fax'),'---').'</td></tr>';
           $l_html.=chr(13).'      <tr><td><b>Celular:</b></td> <td>'.Nvl(f($row,'nr_celular'),'---').'</td></tr>';
+          if (nvl(f($row,'logradouro'),'')!='') {
+            $l_html.=chr(13).'      <tr valign="top"><td><b>Endereço:</b></td><td>'.f($row,'logradouro').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td><b>Complemento:</b></td><td>'.Nvl(f($row,'complemento'),'---').'</td></tr>';
+            $l_html.=chr(13).'      <tr><td><b>Bairro:</b></td><td>'.Nvl(f($row,'bairro'),'---').'</td></tr>';
+            $l_html.=chr(13).'      <tr valign="top">';
+            if (f($row,'pd_pais')=='S') {
+              $l_html.=chr(13).'          <td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'co_uf').'</td></tr>';
+            } else {
+              $l_html.=chr(13).'          <td><b>Cidade:</b></td><td>'.f($row,'nm_cidade').'-'.f($row,'nm_pais').'</td></tr>';
+            } 
+            $l_html.=chr(13).'      <tr><td><b>CEP:</b></td><td>'.f($row,'cep').'</td></tr>';
+          }
+          if (Nvl(f($row,'email'),'nulo')!='nulo') {
+            if ($l_tipo!='WORD') {
+              $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td><a class="hl" href="mailto:'.f($row,'email').'">'.f($row,'email').'</td></tr>';
+            } else {
+              $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>'.f($row,'email').'</td></tr>';
+            } 
+          } else {
+            $l_html.=chr(13).'      <tr><td><b>e-Mail:</b></td><td>---</td></tr>';
+          }  
           if (nvl(f($RS,'sq_forma_pagamento'),'')!='') {
 	          $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Dados para recebimento das diárias</td>';
 	          $l_html.=chr(13).'      <tr><td><b>Forma de recebimento:</b></td><td>'.f($RS,'nm_forma_pagamento').'</td></tr>';
@@ -1006,8 +1027,6 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
           //if ($w_hospedagens>0) $w_tot_diaria_P[$w_trechos[$i][18]] += $w_hospedagens;
           
           $w_tot_local = $w_diarias + $w_locacoes;
-          echo $w_diarias.'-'.$w_locacoes;
-          echo $w_trechos[$i][5].'-';
           if ($w_diarias!=0 || $w_hospedagens > 0) {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             

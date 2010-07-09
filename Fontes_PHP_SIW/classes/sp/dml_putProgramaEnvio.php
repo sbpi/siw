@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putProgramaEnvio
@@ -22,7 +22,7 @@ class dml_putProgramaEnvio {
                    'p_despacho'                  =>array($p_despacho,                                      B_VARCHAR,      2000),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
-                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,        60),
+                   'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),
                    'p_nome'                      =>array(tvl($p_nome),                                     B_VARCHAR,       255)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);

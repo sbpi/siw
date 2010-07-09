@@ -758,10 +758,13 @@ function EmitirEtiqueta () {
         ShowHTML('        <td align="right" nowrap><font size=2><b>AUTUAÇÃO: </b>'.formataDataEdicao(f($RS,'data_autuacao')).'</font>');
       else
         ShowHTML('        <td align="right" nowrap><font size=2><b>REGISTRO: </b>'.formataDataEdicao(f($RS,'inclusao')).'</font>');
-      if(nvl(f($RS,'nm_pessoa_interes'),'')!='')
+      if(nvl(f($RS,'nm_pessoa_interes'),'')!='') {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_pessoa_interes')).'</font>');
-      else
+      } elseif(nvl(f($RS,'processo'),'')=='S') {
+        ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_unidade_autua')).'</font>');
+      } else {
         ShowHTML('    <tr><td colspan=2><font size=1><b>INTERESSADO: </b><br>'.upper(f($RS,'nm_origem')).'</font>');
+      }
       ShowHTML('    <tr><td colspan=2><font size=1><b>CLASSIFICAÇÃO ARQUIVÍSTICA: </b>'.f($RS,'cd_assunto').' - '.upper(f($RS,'ds_assunto')).'</font>');
       if (strlen(Nvl(f($RS,'descricao'),'-'))>100) 
         ShowHTML('    <tr><td colspan=2><font size=1><b>ASSUNTO: </b><br>'.substr(upper(nvl(f($RS,'descricao'),'---')),0,100).'...</font>');

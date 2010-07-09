@@ -550,12 +550,9 @@ function CadastraPessoa() {
     $p_nome           = $_REQUEST['p_nome'];
     $p_tipo_pessoa    = $_REQUEST['p_tipo_pessoa'];
     $p_mandatory      = $_REQUEST['p_mandatory'];
-    if(strpos($p_mandatory,'w_nascimento')!==false){
-      $w_exige_nascimento = true;
-    }else{
-      $w_exige_nascimento = false;
-    }
-
+    if(strpos($p_mandatory,'w_nascimento')!==false) $w_exige_nascimento = true; else $w_exige_nascimento = false;
+    if(strpos($p_mandatory,'w_email')!==false)      $w_exige_email = true;      else $w_exige_email = false;
+    
     // Verifica se há necessidade de recarregar os dados da tela a partir
     // da própria tela (se for recarga da tela) ou do banco de dados (se não for inclusão)
     if ($w_troca>'') {
@@ -701,9 +698,9 @@ function CadastraPessoa() {
     Validate('w_logradouro','Endereço','1','',4,60,'1','1');
     Validate('w_complemento','Complemento','1','',2,20,'1','1');
     Validate('w_bairro','Bairro','1','',2,30,'1','1');
-    Validate('w_sq_pais','País','SELECT','',1,10,'1','1');
-    Validate('w_co_uf','UF','SELECT','',1,10,'1','1');
-    Validate('w_sq_cidade','Cidade','SELECT','',1,10,'','1');
+    Validate('w_sq_pais','País','SELECT',(($w_exige_email)?'1':''),1,10,'1','1');
+    Validate('w_co_uf','UF','SELECT',(($w_exige_email)?'1':''),1,10,'1','1');
+    Validate('w_sq_cidade','Cidade','SELECT',(($w_exige_email)?'1':''),1,10,'','1');
     if (Nvl($w_pd_pais,'S')=='S') {
         Validate('w_cep','CEP','1','',9,9,'','0123456789-');
     } else {
@@ -734,7 +731,7 @@ function CadastraPessoa() {
     ShowHTML('     theForm.w_cep.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    Validate('w_email','E-Mail','1','',4,60,'1','1');
+    Validate('w_email','E-Mail','1',(($w_exige_email)?'1':''),4,60,'1','1');
     ShowHTML('  if ((theForm.w_ddd.value+theForm.w_logradouro.value+theForm.w_email.value)!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
     ShowHTML('     alert(\'Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!\');');
     ShowHTML('     theForm.w_sq_pais.focus();');

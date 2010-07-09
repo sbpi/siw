@@ -387,7 +387,7 @@ function Mesa() {
         ShowHTML('    <td align="center" width="40"><A class="HL" href="'.$w_dir.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.exibeSmile('IDE',f($row,'ide')).'</a></td>');
       } else {
         ShowHTML('<td align="center" width="40"><A class="HL" href="'.$w_dir.'projeto.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'fim'),f($row,'inicio_real'),f($row,'fim_real'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null).'</a></td>');
-        ShowHTML('<td align="center" width="40">&nbsp;</td>');
+        //ShowHTML('<td align="center" width="40">&nbsp;</td>');
       }      
     }
     imagegif($f2, 'mapa.gif');
@@ -624,7 +624,6 @@ function Arquivos() {
   
   if($_REQUEST['p_pesquisa'] == 'S'){
     $RS = db_getUorgAnexo::getInstanceOf($dbms,f($RS_Unidade,'sq_unidade'),null,$p_tipo,$p_titulo,$w_cliente);
-    exibeArray($RS);
     if ($p_ordena>'') { 
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'ordem','asc','nome','asc');

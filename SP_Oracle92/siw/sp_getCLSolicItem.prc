@@ -58,13 +58,15 @@ begin
                       left   join siw_tramite               k  on (j.sq_siw_tramite      = k.sq_siw_tramite and
                                                                    k.sigla              <> 'CA'
                                                                   )
-                left         join (select w.sq_siw_solicitacao, w.sq_solic_vinculo
+                left         join (select w.cliente, w.sq_siw_solicitacao, w.sq_solic_vinculo
                                      from fn_lancamento                     w
                                             inner join siw_solicitacao      x on (w.sq_siw_solicitacao  = x.sq_siw_solicitacao)
                                             inner join siw_tramite         x1 on (x.sq_siw_tramite      = x1.sq_siw_tramite and
                                                                                   x1.sigla              <> 'CA'
                                                                                  )
-                                  )                         l  on (a.sq_siw_solicitacao  = l.sq_solic_vinculo)
+                                  )                         l  on (b.cliente             = l.cliente and
+                                                                   a.sq_siw_solicitacao  = l.sq_solic_vinculo
+                                                                  )
           where (p_chave         is null or (p_chave         is not null and a.sq_solicitacao_item = p_chave))
             and (p_material      is null or (p_material      is not null and a.sq_material         = p_material))
             and (p_solicitacao   is null or (p_solicitacao   is not null and a.sq_siw_solicitacao  = p_solicitacao))

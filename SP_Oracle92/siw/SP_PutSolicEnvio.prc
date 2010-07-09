@@ -38,6 +38,9 @@ begin
          -- Recupera os dados da solicitação
          select * into w_solic from siw_solicitacao where sq_siw_solicitacao = p_chave;
 
+         -- Recupera os dados da solicitação de compra
+         select * into w_solic_cl from cl_solicitacao where sq_siw_solicitacao = p_chave;
+
          -- Decide a tramitação em função do valor do pedido
          If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
             -- Regra da ABDI: 
@@ -60,6 +63,11 @@ begin
                   from siw_tramite a
                  where a.sq_menu = p_menu
                    and a.sigla   = 'AF';
+            Elsif w_or_tramite = 8 and coalesce(w_solic_cl.fundo_fixo,'N') = 'N' Then
+               select sq_siw_tramite, sigla into w_tramite, w_sg_tramite
+                  from siw_tramite a
+                 where a.sq_menu = p_menu
+                   and a.sigla   = 'EE';
             End If;
          Elsif w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLLC' and w_sg_tramite = 'PP' Then
             -- Regra da ABDI: 

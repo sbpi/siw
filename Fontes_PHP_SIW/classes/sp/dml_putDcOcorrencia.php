@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS);
 include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
@@ -22,11 +22,11 @@ class dml_putDcOcorrencia {
                    'p_arquivo_recebido'          =>array(tvl($p_arquivo_recebido),                         B_VARCHAR,       255),
                    'p_caminho_recebido'          =>array(tvl($p_caminho_recebido),                         B_VARCHAR,       255),
                    'p_tamanho_recebido'          =>array(tvl($p_tamanho_recebido),                         B_INTEGER,        32),
-                   'p_tipo_recebido'             =>array(tvl($p_tipo_recebido),                            B_VARCHAR,        60),
+                   'p_tipo_recebido'             =>array(tvl($p_tipo_recebido),                            B_VARCHAR,       100),
                    'p_arquivo_registro'          =>array(tvl($p_arquivo_registro),                         B_VARCHAR,       255),
                    'p_caminho_registro'          =>array(tvl($p_caminho_registro),                         B_VARCHAR,       255),
                    'p_tamanho_registro'          =>array(tvl($p_tamanho_registro),                         B_INTEGER,        32),
-                   'p_tipo_registro'             =>array(tvl($p_tipo_registro),                            B_VARCHAR,        60),
+                   'p_tipo_registro'             =>array(tvl($p_tipo_registro),                            B_VARCHAR,       100),
                    'p_processados'               =>array(tvl($p_processados),                              B_INTEGER,        32),
                    'p_rejeitados'                =>array(tvl($p_rejeitados),                               B_INTEGER,        32),
                    'p_nome_recebido'             =>array(tvl($p_nome_recebido),                            B_VARCHAR,       255),

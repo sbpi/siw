@@ -12,7 +12,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 class dml_putViagemOutra {
    function getInstanceOf($dbms, $operacao, $p_restricao, $p_chave, $p_chave_aux, $p_sq_pessoa, $p_cpf, $p_nome, 
           $p_nome_resumido, $p_sexo, $p_vinculo, $p_rg_numero, $p_rg_emissao, $p_rg_emissor, $p_passaporte,
-          $p_sq_pais_passaporte, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_sq_agencia, $p_op_conta, 
+          $p_sq_pais_passaporte, $p_logradouro, $p_complemento, $p_bairro, $p_sq_cidade, $p_cep, 
+          $p_email, $p_ddd, $p_nr_telefone, $p_nr_fax, $p_nr_celular, $p_sq_agencia, $p_op_conta, 
           $p_nr_conta, $p_sq_pais_estrang, $p_aba_code, $p_swift_code, $p_endereco_estrang, $p_banco_estrang, 
           $p_agencia_estrang, $p_cidade_estrang, $p_informacoes, $p_codigo_deposito, $p_forma_pag) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putViagemOutra';
@@ -31,6 +32,12 @@ class dml_putViagemOutra {
                    'p_rg_emissor'                =>array(tvl($p_rg_emissor),                               B_VARCHAR,        30),
                    'p_passaporte'                =>array(tvl($p_passaporte),                               B_VARCHAR,        20),
                    'p_sq_pais_passaporte'        =>array(tvl($p_sq_pais_passaporte),                       B_INTEGER,        32),
+                   'p_logradouro'                =>array(tvl($p_logradouro),                               B_VARCHAR,        60),
+                   'p_complemento'               =>array(tvl($p_complemento),                              B_VARCHAR,        20),
+                   'p_bairro'                    =>array(tvl($p_bairro),                                   B_VARCHAR,        30),
+                   'p_sq_cidade'                 =>array(tvl($p_sq_cidade),                                B_INTEGER,        32),
+                   'p_cep'                       =>array(tvl($p_cep),                                      B_VARCHAR,         9),
+                   'p_email'                     =>array(tvl($p_email),                                    B_VARCHAR,        60),
                    'p_ddd'                       =>array(tvl($p_ddd),                                      B_VARCHAR,         4),
                    'p_nr_telefone'               =>array(tvl($p_nr_telefone),                              B_VARCHAR,        25),
                    'p_nr_fax'                    =>array(tvl($p_nr_fax),                                   B_VARCHAR,        25),

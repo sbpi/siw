@@ -23,7 +23,9 @@ create or replace procedure SP_PutCLDados
     p_dias_item             in number   default null,
     p_protocolo             in varchar2 default null,
     p_fim                   in date     default null,
-    p_prioridade            in number   default null
+    p_prioridade            in number   default null,
+    p_nota_conclusao        in varchar2 default null,
+    p_fundo_fixo            in varchar2 default null
    ) is
    w_numero_certame cl_solicitacao.numero_certame%type;
    w_sq_modalidade  number(18);
@@ -142,6 +144,11 @@ begin
       Update cl_item_fornecedor set
          vencedor = 'S'
       Where sq_item_fornecedor = p_chave;
+   ElsIf p_restricao = 'AUTORIZ' Then
+      update cl_solicitacao
+         set fundo_fixo           = p_fundo_fixo,
+             nota_conclusao       = p_nota_conclusao
+      where sq_siw_solicitacao = p_chave;
    End If;
 end SP_PutCLDados;
 /

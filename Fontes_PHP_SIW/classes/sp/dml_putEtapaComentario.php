@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putEtapaComentario
@@ -20,7 +20,7 @@ class dml_putEtapaComentario {
                    'p_mail'                 =>array(tvl($p_mail),                         B_VARCHAR,         1),
                    'p_caminho'              =>array(tvl($p_caminho),                      B_VARCHAR,       255),
                    'p_tamanho'              =>array(tvl($p_tamanho),                      B_INTEGER,        32),
-                   'p_tipo'                 =>array(tvl($p_tipo),                         B_VARCHAR,        60),
+                   'p_tipo'                 =>array(tvl($p_tipo),                         B_VARCHAR,       100),
                    'p_nome'                 =>array(tvl($p_nome),                         B_VARCHAR,       255),
                    'p_remove'               =>array(tvl($p_remove),                       B_VARCHAR,         1)
                   );

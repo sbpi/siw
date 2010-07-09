@@ -14,7 +14,7 @@ class dml_putCLDados {
                 $p_numero_certame,$p_numero_ata, $p_tipo_reajuste, $p_indice_base, $p_sq_eoindicador, $p_limite_variacao, 
                 $p_sq_lcfonte_recurso, $p_sq_espec_despesa, $p_sq_lcjulgamento, $p_sq_lcsituacao, $p_financeiro_unico, 
                 $p_homologacao, $p_data_diario, $p_pagina_diario, $p_ordem, $p_dias,$p_dias_item, $p_protocolo,
-                $p_fim, $p_prioridade) {
+                $p_fim, $p_prioridade, $p_observacao, $p_fundo_fixo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putClDados';
      $params=array('p_restricao'              =>array($restricao,                                 B_VARCHAR,        30),
                    'p_chave'                  =>array(tvl($p_chave),                              B_INTEGER,        32),
@@ -40,7 +40,9 @@ class dml_putCLDados {
                    'p_dias_item'              =>array(tvl($p_dias_item),                          B_INTEGER,        32),                   
                    'p_protocolo'              =>array(tvl($p_protocolo),                          B_VARCHAR,        30),
                    'p_fim'                    =>array(tvl($p_fim),                                B_DATE,           32),
-                   'p_prioridade'             =>array(tvl($p_prioridade),                         B_INTEGER,        32)
+                   'p_prioridade'             =>array(tvl($p_prioridade),                         B_INTEGER,        32),
+                   'p_observacao'             =>array(tvl($p_observacao),                         B_VARCHAR,      2000),
+                   'p_fundo_fixo'             =>array(tvl($p_fundo_fixo),                         B_VARCHAR,         1)
                   );
      $l_rs = DatabaseQueriesFactory::getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

@@ -532,6 +532,7 @@ function Inicial() {
               }
             } elseif ($SG=='PDALTERA') {
               ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Alteracoes&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Registro&SG='.$SG).'\',\'Contas\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Registrar alterações.">Registrar</A>&nbsp');
+              ShowHTML('          <A class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.$w_pagina.'Bilhetes&R='.$w_pagina.$par.'&O=L&w_menu='.$w_menu.'&w_chave='.f($row,'sq_siw_solicitacao').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Bilhetes&SG=INFBIL').'\',\'Bilhetes\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Informar os bilhetes emitidos pela agência de viagens.">Bilhetes</A>&nbsp');
             }
           } else {
             if (RetornaGestor(f($row,'sq_siw_solicitacao'),$w_usuario)=='S') {
@@ -956,7 +957,7 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_fim" value="'.nvl($w_fim,formataDataEdicao(time())).'">');
     if ($O=='I' && $w_cadgeral=='S') {
       ShowHTML('      <tr>');
-      SelecaoPessoaOrigem('<u>B</u>eneficiário:','P','Clique na lupa para selecionar o beneficiário.',nvl($w_sq_prop,$_SESSION['SQ_PESSOA']),null,'w_sq_prop','NF,EF',null,null,$SG);
+      SelecaoPessoaOrigem('<u>B</u>eneficiário:','P','Clique na lupa para selecionar o beneficiário.',nvl($w_sq_prop,$_SESSION['SQ_PESSOA']),null,'w_sq_prop','NF,EF',null,null,1,'w_email');
     }
     ShowHTML('      <tr><td><b>Contato na au<u>s</u>ência:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_proponente" class="sti" SIZE="60" MAXLENGTH="90" VALUE="'.$w_proponente.'" title="Indique pessoa para contato durante os dias de ausência."></td>');
     ShowHTML('      <tr><td colspan="4" valign="top"><b>A<u>g</u>enda:</b><br><textarea '.$w_Disabled.' accesskey="G" name="w_assunto" class="STI" ROWS=5 cols=75 title="Agenda das atividades durante todos os dias em que estiver ausente.">'.$w_assunto.'</TEXTAREA></td>');
@@ -1325,6 +1326,38 @@ function OutraParte() {
       ShowHTML('     return false;');
       ShowHTML('  }');
     }
+    Validate('w_logradouro','Endereço','1','',4,60,'1','1');
+    Validate('w_complemento','Complemento','1','',2,20,'1','1');
+    Validate('w_bairro','Bairro','1','',2,30,'1','1');
+    Validate('w_sq_pais','País','SELECT','1',1,10,'1','1');
+    Validate('w_co_uf','UF','SELECT','1',1,10,'1','1');
+    Validate('w_sq_cidade','Cidade','SELECT','1',1,10,'','1');
+    if (Nvl($w_pd_pais,'S')=='S') {
+        Validate('w_cep','CEP','1','',9,9,'','0123456789-');
+    } else {
+        Validate('w_cep','CEP','1','',5,9,'','0123456789');
+    }
+    ShowHTML('  if (theForm.w_ddd.value!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
+    ShowHTML('     alert(\'Se informar telefone, fax ou celular, então informe o país, estado e cidade!\');');
+    ShowHTML('     theForm.w_sq_pais.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if ((theForm.w_complemento.value+theForm.w_bairro.value+theForm.w_cep.value)!="" && theForm.w_logradouro.value=="") {');
+    ShowHTML('     alert(\'O campo logradouro é obrigatório quando informar os campos complemento, bairro ou CEP!\');');
+    ShowHTML('     theForm.w_logradouro.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    ShowHTML('  if (theForm.w_logradouro.value!="" && theForm.w_cep.value=="") {');
+    ShowHTML('     alert(\'O campo CEP é obrigatório quando informar o endereço da pessoa!\');');
+    ShowHTML('     theForm.w_cep.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    Validate('w_email','E-Mail','1','1',4,60,'1','1');
+    ShowHTML('  if ((theForm.w_ddd.value+theForm.w_logradouro.value+theForm.w_email.value)!="" && (theForm.w_sq_pais.value=="" || theForm.w_co_uf.value=="" || theForm.w_sq_cidade.value=="")) {');
+    ShowHTML('     alert(\'Se informar algum telefone, o endereço ou o e-mail da pessoa, então informe o país, estado e cidade!\');');
+    ShowHTML('     theForm.w_sq_pais.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
     if ($w_dados_pagamento) {
       Validate('w_sq_forma_pag','Forma de recebimento','SELECT',1,1,18,'','0123456789');
       if (strpos('CREDITO,DEPOSITO',$w_forma_pagamento)!==false) {
@@ -1483,11 +1516,27 @@ function OutraParte() {
       ShowHTML('      <tr><td colspan="2" align="center" bgcolor="#D0D0D0"><b>Telefones</td></td></tr>');
       ShowHTML('      <tr><td colspan="2" align="center" height="1" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="2"><table border=0 width="100%" cellspacing=0>');
-      ShowHTML('          <tr valign="top">');
+      ShowHTML('        <tr valign="top">');
       ShowHTML('          <td><b><u>D</u>DD:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_ddd" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_ddd.'"></td>');
       ShowHTML('          <td><b>Te<u>l</u>efone:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_nr_telefone" class="sti" SIZE="20" MAXLENGTH="40" VALUE="'.$w_nr_telefone.'"> '.consultaTelefone($w_cliente).'</td>');
       ShowHTML('          <td title="Se a outra parte informar um número de fax, informe-o neste campo."><b>Fa<u>x</u>:</b><br><input '.$w_Disabled.' accesskey="X" type="text" name="w_nr_fax" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_nr_fax.'"></td>');
       ShowHTML('          <td title="Se a outra parte informar um celular institucional, informe-o neste campo."><b>C<u>e</u>lular:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_nr_celular" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_nr_celular.'"></td>');
+      ShowHTML('        <tr valign="top">');
+      ShowHTML('          <td colspan=2><b>En<u>d</u>ereço:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_logradouro" class="sti" SIZE="50" MAXLENGTH="50" VALUE="'.$w_logradouro.'"></td>');
+      ShowHTML('          <td><b>C<u>o</u>mplemento:</b><br><input '.$w_Disabled.' accesskey="O" type="text" name="w_complemento" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_complemento.'"></td>');
+      ShowHTML('          <td><b><u>B</u>airro:</b><br><input '.$w_Disabled.' accesskey="B" type="text" name="w_bairro" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_bairro.'"></td>');
+      ShowHTML('          <tr valign="top">');
+      SelecaoPais('<u>P</u>aís:','P',null,$w_sq_pais,null,'w_sq_pais',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_co_uf\'; document.Form.submit();"');
+      ShowHTML('          <td>');
+      SelecaoEstado('E<u>s</u>tado:','S',null,$w_co_uf,$w_sq_pais,null,'w_co_uf',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_cidade\'; document.Form.submit();"');
+      SelecaoCidade('<u>C</u>idade:','C',null,$w_sq_cidade,$w_sq_pais,$w_co_uf,'w_sq_cidade',null,null);
+      ShowHTML('          <tr valign="top">');
+      if (Nvl($w_pd_pais,'S')=='S') {
+          ShowHTML('              <td><b>C<u>E</u>P:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_cep" class="sti" SIZE="9" MAXLENGTH="9" VALUE="'.$w_cep.'" onKeyDown="FormataCEP(this,event);"></td>');
+      } else {
+          ShowHTML('              <td><b>C<u>E</u>P:</b><br><input '.$w_Disabled.' accesskey="E" type="text" name="w_cep" class="sti" SIZE="9" MAXLENGTH="9" VALUE="'.$w_cep.'"></td>');
+      }
+      ShowHTML('              <td colspan=3 title="Se informar um e-mail institucional, informe-o neste campo."><b>e-<u>M</u>ail:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="w_email" class="sti" SIZE="50" MAXLENGTH="60" VALUE="'.$w_email.'"></td>');
       ShowHTML('          </table>');
       if ($w_dados_pagamento) {
         ShowHTML('      <tr valign="top">');
@@ -7150,13 +7199,16 @@ function Grava() {
             $_REQUEST['w_cpf'],                $_REQUEST['w_nome'],               $_REQUEST['w_nome_resumido'],
             $_REQUEST['w_sexo'],               $_REQUEST['w_sq_tipo_vinculo'],
             $_REQUEST['w_rg_numero'],          $_REQUEST['w_rg_emissao'],         $_REQUEST['w_rg_emissor'],
-            $_REQUEST['w_passaporte'],         $_REQUEST['w_sq_pais_passaporte'],
+            $_REQUEST['w_passaporte'],         $_REQUEST['w_sq_pais_passaporte'], $_REQUEST['w_logradouro'],
+            $_REQUEST['w_complemento'],        $_REQUEST['w_bairro'],             $_REQUEST['w_sq_cidade'],
+            $_REQUEST['w_cep'],                $_REQUEST['w_email'],
             $_REQUEST['w_ddd'],                $_REQUEST['w_nr_telefone'],        $_REQUEST['w_nr_fax'],
             $_REQUEST['w_nr_celular'],         $_REQUEST['w_sq_agencia'],         $_REQUEST['w_operacao'],
             $_REQUEST['w_nr_conta'],           $_REQUEST['w_sq_pais_estrang'],    $_REQUEST['w_aba_code'],
             $_REQUEST['w_swift_code'],         $_REQUEST['w_endereco_estrang'],   $_REQUEST['w_banco_estrang'],
             $_REQUEST['w_agencia_estrang'],    $_REQUEST['w_cidade_estrang'],     $_REQUEST['w_informacoes'],
             $_REQUEST['w_codigo_deposito'],    $_REQUEST['w_sq_forma_pag']);
+            
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();

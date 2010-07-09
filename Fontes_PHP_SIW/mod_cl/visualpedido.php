@@ -11,6 +11,7 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           null,null,null,null,null,null,null,null,null,null,
           $v_chave,null,null,null,null,null,null,
           null,null,null,null,null,null,null,null,null,null,null);
+         
   foreach($RS as $row){$RS=$row; break;}
   $w_tramite        = f($RS,'sq_siw_tramite');
   $w_sigla          = f($RS,'sigla');
@@ -81,7 +82,13 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      <tr><td><b>Justificativa:</b></td><td>'.crlf2br(f($RS,'justificativa')).' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Observações:</b></td><td>'.CRLF2BR(Nvl(f($RS,'observacao'),'---')).' </td></tr>';
-    $l_html.=chr(13).'      <tr><td width="30%"><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
+    $l_html.=chr(13).'      <tr><td><b>Pagamento por fundo fixo?<b></td><td>'.retornaSimNao(f($RS,'fundo_fixo')).'</b></td>';
+    // Dados da conclusão da solicitação, se ela estiver nessa situação
+    if (nvl(f($RS,'nota_conclusao'),'')!='') {
+      //$l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
+    } 
+
     $l_html.=chr(13).'          </table></td></tr>';    
     
     if (nvl(f($RS,'sq_financeiro'),'')!='') {
@@ -120,12 +127,6 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'         </table></td></tr>';
     }
     
-    // Dados da conclusão da solicitação, se ela estiver nessa situação
-    if (nvl(f($RS,'sg_tramite'),'')=='AT') {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DADOS DA CONCLUSÃO<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'   <tr valign="top"><td><b>Nota de conclusão:</b></font></td><td>'.nvl(crlf2br(f($RS,'nota_conclusao')),'---').'</font></td></tr>';
-    } 
-
     //Listagem dos itens do pedido de compra
     $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$v_chave,null,null,null,null,null,null,null,null,null,null,null);
     $RS1 = SortArray($RS1,'nm_tipo_material','asc','nm_tipo_material','asc','nome','asc');
