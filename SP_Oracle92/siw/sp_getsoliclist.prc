@@ -707,38 +707,47 @@ begin
                       inner          join (select sq_siw_solicitacao, calculaIGCC(sq_siw_solicitacao) as igcc
                                              from siw_solicitacao
                                           )                    b5 on (b.sq_siw_solicitacao       = b5.sq_siw_solicitacao)
-                      left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                      left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
+                                                                      b.sq_plano                 = b3.sq_plano
+                                                                     )
                       inner          join ac_acordo            d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
-                        inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
+                        inner        join co_forma_pagamento   d7 on (a.sq_pessoa                = d7.cliente and
+                                                                      d.sq_forma_pagamento       = d7.sq_forma_pagamento
+                                                                     )
                         left         join (select x.sq_siw_solicitacao, sum(z.valor) as valor
-                                             from ac_acordo_parcela              x
-                                                  inner     join fn_lancamento   y on (x.sq_acordo_parcela = y.sq_acordo_parcela)
-                                                    inner   join siw_solicitacao z on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
-                                                      inner join siw_tramite     w on (z.sq_siw_tramite     = w.sq_siw_tramite and
-                                                                                       coalesce(w.sigla,'---')   <> 'CA'
-                                                                                      )
-                                            where x.quitacao is not null
+                                             from fn_lancamento                  y
+                                                    inner   join siw_solicitacao z  on (y.sq_siw_solicitacao = z.sq_siw_solicitacao)
+                                                      inner join siw_tramite     w  on (z.sq_siw_tramite     = w.sq_siw_tramite and
+                                                                                        w.sigla              <> 'CA'
+                                                                                       )
+                                                  inner join ac_acordo_parcela   x  on (x.quitacao           is not null and
+                                                                                        x.sq_acordo_parcela  = y.sq_acordo_parcela
+                                                                                       )
+                                            where y.sq_acordo_parcela  is not null
                                            group by x.sq_siw_solicitacao
-                                          )                   d8 on (d.sq_siw_solicitacao        = d8.sq_siw_solicitacao)
-                        inner        join ac_tipo_acordo       d1 on (d.sq_tipo_acordo           = d1.sq_tipo_acordo)
+                                          )                    d8 on (d.sq_siw_solicitacao       = d8.sq_siw_solicitacao)
+                        inner        join ac_tipo_acordo       d1 on (a.sq_pessoa                = d1.cliente and
+                                                                      d.sq_tipo_acordo           = d1.sq_tipo_acordo
+                                                                     )
                         left         join co_pessoa            d2 on (d.outra_parte              = d2.sq_pessoa)
                           left       join co_pessoa_fisica    d21 on (d2.sq_pessoa               = d21.sq_pessoa)
                           left       join co_pessoa_juridica  d22 on (d2.sq_pessoa               = d22.sq_pessoa)
-                        left         join co_pessoa_conta      d4 on (d.outra_parte              = d4.sq_pessoa and
-                                                                      d4.ativo                   = 'S' and
-                                                                      d4.padrao                  = 'S'
-                                                                     )
-                          left       join co_agencia           d5 on (d4.sq_agencia              = d5.sq_agencia and
-                                                                      d5.ativo                   = 'S'
-                                                                     )
-                          left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco and
-                                                                      d6.ativo                   = 'S'
-                                                                     )
+                        left         join co_pessoa_conta      d4 on (d.outra_parte              = d4.sq_pessoa)
+                          left       join co_agencia           d5 on (d4.sq_agencia              = d5.sq_agencia)
+                          left       join co_banco             d6 on (d5.sq_banco                = d6.sq_banco)
                         left         join co_pessoa            d3 on (d.preposto                 = d3.sq_pessoa)
-                        left         join lc_fonte_recurso     d9 on (d.sq_lcfonte_recurso       = d9.sq_lcfonte_recurso)
-                        left         join ct_especificacao_despesa da on (d.sq_especificacao_despesa = da.sq_especificacao_despesa)
-                        left         join eo_indicador             db on (d.sq_eoindicador       = db.sq_eoindicador)
-                        left         join siw_solicitacao      dc  on (d.sq_solic_compra         = dc.sq_siw_solicitacao)
+                        left         join lc_fonte_recurso     d9 on (a.sq_pessoa                = d9.cliente and
+                                                                      d.sq_lcfonte_recurso       = d9.sq_lcfonte_recurso
+                                                                     )
+                        left         join ct_especificacao_despesa da on (d.sq_especificacao_despesa = da.sq_especificacao_despesa and
+                                                                          d.sq_especificacao_despesa is not null
+                                                                         )
+                        left         join eo_indicador             db on (d.sq_eoindicador       = db.sq_eoindicador and
+                                                                          d.sq_eoindicador       is not null
+                                                                         )
+                        left         join siw_solicitacao      dc  on (d.sq_solic_compra         = dc.sq_siw_solicitacao and
+                                                                       d.sq_solic_compra         is not null
+                                                                      )
                       inner          join eo_unidade           e  on (b.sq_unidade               = e.sq_unidade)
                         left         join eo_unidade_resp      e1 on (e.sq_unidade               = e1.sq_unidade and
                                                                       e1.tipo_respons            = 'T'           and
@@ -751,11 +760,15 @@ begin
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join pj_projeto           m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m1 on (m.sq_siw_solicitacao       = m1.sq_siw_solicitacao)
-                      left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
+                      left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc and
+                                                                      b.sq_cc                    is not null
+                                                                     )
                       inner          join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                         inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
                           inner      join eo_unidade           o2 on (o1.sq_unidade              = o2.sq_unidade)
-                      left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
+                      left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa and
+                                                                     	b.executor                 is not null
+                                                                      )
                    left              join eo_unidade           c  on (a.sq_unid_executora        = c.sq_unidade)
                    left              join (select x.sq_siw_solicitacao, count(x.sq_solicitacao_item) as qtd
                                              from cl_solicitacao_item x
@@ -947,9 +960,13 @@ begin
                                                   inner join siw_menu b on (a.sq_menu = b.sq_menu)
                                             where b.sq_menu = p_menu
                                           )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                      left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
+                      left           join pe_plano             b3 on (a.sq_pessoa                = b3.cliente and
+                                                                      b.sq_plano                 = b3.sq_plano
+                                                                     )
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
-                        left         join pe_plano             b5 on (b4.sq_plano                = b5.sq_plano)
+                        left         join pe_plano             b5 on (a.sq_pessoa                = b5.cliente and
+                                                                      b4.sq_plano                = b5.sq_plano
+                                                                     )
                         left         join ct_cc                b6 on (b4.sq_cc                   = b6.sq_cc)
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
