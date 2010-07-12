@@ -47,15 +47,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
     $l_erro=$l_erro.'<li>O lançamento não pode ter valor zero.';
     $l_tipo=0;
   }
-  if (f($l_rs_solic,'ativo')=='S') {
-    if (substr(f($l_rs_solic,'sigla'),0,3)=='FNR' && f($l_rs_solic,'receita')=='N') {
-      $l_erro=$l_erro.'<li>Para lançamentos de receita, o tipo de lançamento deve ser de receita.';
-      $l_tipo=0;
-    } elseif (substr(f($l_rs_solic,'sigla'),0,3)=='FND' && f($l_rs_solic,'despesa')=='N') {
-      $l_erro=$l_erro.'<li>Para lançamentos de despesa, o tipo de lançamento deve ser de despesa.';
-      $l_tipo=0;
-    }
-  }
+
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
   $l_rs1 = db_getLancamentoDoc::getInstanceOf($dbms,$l_chave,null,'DOCS');
   if (count($l_rs1)<=0) {

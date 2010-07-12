@@ -171,19 +171,19 @@ function VisualPedido($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
         }
         $l_html.=chr(13).'        <td align="center" title="'.f($row,'nm_unidade_medida').'">'.f($row,'sg_unidade_medida').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>';
-        if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+        if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='EC' || $w_sg_tramite=='AT') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'quantidade_autorizada'),0).'</td>';
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
         }
         if ($w_pede_valor_pedido=='N') {
           $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'pesquisa_preco_medio'),4).'</td>';
-          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='EC' || $w_sg_tramite=='AT') {
             $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada')),4).'</td>';
           } else {
             $l_html.=chr(13).'        <td align="right">'.formatNumber((f($row,'pesquisa_preco_medio')*f($row,'quantidade')),4).'</td>';
           }
-          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='AT') {
+          if($w_sg_tramite=='AF' || $w_sg_tramite=='EE' || $w_sg_tramite=='EC' || $w_sg_tramite=='AT') {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade_autorizada'));
           } else {
             $w_total_preco += (f($row,'pesquisa_preco_medio')*f($row,'quantidade'));

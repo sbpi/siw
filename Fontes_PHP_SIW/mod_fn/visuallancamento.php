@@ -479,7 +479,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     if(Nvl($w_tipo_rubrica,0)!=4 && Nvl($w_tipo_rubrica,0)!=5) {
       $l_html.=chr(13).'        <td align="right" colspan=3><b>Total</b></td>';
     } else {
-      $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '4' : '5').'"><b>Total</b></td>';
+      $l_html.=chr(13).'        <td align="right" colspan="'.((Nvl($w_tipo_rubrica,0)==4||f($RS_Menu,'sigla')=='FNDVIA') ? '3' : '4').'"><b>Total</b></td>';
     }
     $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
     if(Nvl($w_tipo_rubrica,0)==0 && Nvl($w_tipo_rubrica,0)==5) $l_html.=chr(13).'          <td align="right">&nbsp;</td>';

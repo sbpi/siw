@@ -848,7 +848,8 @@ function Autuar() {
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,$SG);
   if (count($RS)>0) {
     $w_processo  = f($RS,'processo');
-    $w_descricao = f($RS,'descricao');
+    $w_descricao = nvl($_REQUEST['w_descricao'],f($RS,'descricao'));
+    $w_unidade_autua = nvl($_REQUEST['w_unidade_autua'],f($RS,'sq_unidade_autua'));
   }
 
   // Verifica se o documento a ser autuado já é um processo
@@ -865,6 +866,7 @@ function Autuar() {
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
   ScriptOpen('JavaScript');
   ValidateOpen('Validacao');
+  Validate('w_unidade_autua','Unidade interessada na autuação','SELECT','1',1,18,'','1');
   Validate('w_descricao','Detalhamento do assunto','1','1',1,2000,'1','1');
   Validate('w_assinatura','Assinatura Eletrônica','1','1','6','30','1','1');
   // Se não for encaminhamento
@@ -924,7 +926,8 @@ function Autuar() {
   $RS_Unid = db_getUorgData::getInstanceOf($dbms,$_SESSION['LOTACAO']);
   ShowHTML('    <tr><td width="30%">Unidade autuadora:<td><b>'.f($RS_Unid,'nome').'</b></td></tr>');
   ShowHTML('    <tr><td width="30%">Usuário autuador:<td><b>'.$_SESSION['NOME'].'</b></td></tr>');
-  ShowHTML('    <tr valign="top"><td width="30%">D<u>e</u>talhamento do assunto:<td title="Descreva de forma objetiva o conteúdo do documento."><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75>'.$w_descricao.'</TEXTAREA></td>');    
+  SelecaoUnidade('<U>U</U>nidade interessada:','U','Selecione a unidade interessada na autuação do processo.',$w_unidade_autua,null,'w_unidade_autua','MOD_PA',null,1,'<td>');
+  ShowHTML('    <tr valign="top"><td width="30%"><b>D<u>e</u>talhamento do assunto:</b><td title="Descreva de forma objetiva o conteúdo do documento."><textarea '.$w_Disabled.' accesskey="E" name="w_descricao" class="STI" ROWS=5 cols=75>'.$w_descricao.'</TEXTAREA></td>');    
   
   ShowHTML('    <tr><td colspan=2>&nbsp;</td></tr>');
   ShowHTML('    <tr><td colspan=2><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1902,7 +1905,7 @@ function Grava() {
   } elseif ($SG=='PADAUTUA') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-      dml_putDocumentoAutua::getInstanceOf($dbms,$_REQUEST['w_chave'],$_SESSION['LOTACAO'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao']);
+      dml_putDocumentoAutua::getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_unidade_autua'],$_SESSION['SQ_PESSOA'],$_REQUEST['w_descricao']);
 
       ScriptOpen('JavaScript');
       ShowHTML('  alert(\'Autuação realizada com sucesso!\\nImprima a etiqueta na próxima tela.\');');
