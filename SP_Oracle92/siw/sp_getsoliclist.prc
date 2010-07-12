@@ -993,7 +993,9 @@ begin
                       inner          join co_cidade            f  on (b.sq_cidade_origem         = f.sq_cidade)
                       left           join ac_acordo            m  on (b.sq_solic_pai             = m.sq_siw_solicitacao)
                         left         join siw_solicitacao      m3 on (m.sq_siw_solicitacao       = m3.sq_siw_solicitacao)
-                      left           join ac_acordo_parcela    m1 on (d.sq_acordo_parcela        = m1.sq_acordo_parcela)
+                      left           join ac_acordo_parcela    m1 on (d.sq_acordo_parcela        = m1.sq_acordo_parcela and
+                                                                      d.sq_acordo_parcela        is not null
+                                                                     )
                         left         join (select count(y.sq_acordo_nota) as qtd_nota, y.sq_acordo_parcela
                                              from ac_parcela_nota y
                                             group by y.sq_acordo_parcela

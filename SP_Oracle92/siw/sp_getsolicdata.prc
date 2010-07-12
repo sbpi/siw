@@ -570,12 +570,16 @@ begin
                                            and x.sq_acordo_nota is not null
                                         group by x.sq_siw_solicitacao
                                        )                    da on (d.sq_siw_solicitacao       = da.sq_siw_solicitacao)
-                     left outer   join (select x.sq_acordo_parcela, count(*) as existe
+                     left outer   join (select z.sq_acordo_parcela, w.sq_pessoa, count(*) as existe
                                           from ac_parcela_nota              x
                                                inner join ac_acordo_parcela z on (x.sq_acordo_parcela  = z.sq_acordo_parcela)
                                                inner join siw_solicitacao   y on (z.sq_siw_solicitacao = y.sq_siw_solicitacao)
-                                        group by x.sq_acordo_parcela
-                                       )                    db on (d.sq_acordo_parcela        = db.sq_acordo_parcela)
+                                               inner join siw_menu          w on (y.sq_menu            = w.sq_menu)
+                                        group by z.sq_acordo_parcela, w.sq_pessoa
+                                       )                    db on (d.cliente                  = db.sq_pessoa and
+                                                                   d.sq_acordo_parcela        = db.sq_acordo_parcela and
+                                                                   d.sq_acordo_parcela        is not null
+                                                                  )
                      left         join co_pessoa_conta      dc on (d.sq_pessoa_conta          = dc.sq_pessoa_conta)
                        left       join co_agencia           dd on (dc.sq_agencia              = dd.sq_agencia)
                          left     join co_banco             de on (dd.sq_banco                = de.sq_banco)
