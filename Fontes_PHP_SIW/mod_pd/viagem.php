@@ -5216,6 +5216,7 @@ function Encaminhamento() {
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
   $RS = db_getTramiteData::getInstanceOf($dbms,$w_tramite);
   $w_sg_tramite = f($RS,'sigla');
+  $w_ativo      = f($RS,'ativo');
 
   if ($w_sg_tramite!='CI') {
     //Verifica a fase anterior para a caixa de seleção da fase.
@@ -5241,7 +5242,7 @@ function Encaminhamento() {
       Validate('w_justif_dia_util', 'Justificativa', '1', '1', 5, 2000, '1', '1');
     }
   } else {
-    if (substr(Nvl($w_erro, 'nulo'), 0, 1)=='0' || $w_sg_tramite=='EE') {
+    if (substr(Nvl($w_erro, 'nulo'), 0, 1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
       Validate('w_despacho', 'Despacho', '1', '1', '1', '2000', '1', '1');
     } else {
       Validate('w_despacho', 'Despacho', '', '', '1', '2000', '1', '1');
@@ -5322,7 +5323,7 @@ function Encaminhamento() {
     }
   } else {
     ShowHTML('    <tr><td><b>Tipo do Encaminhamento</b><br>');
-    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE') {
+    if (substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N') {
       ShowHTML('              <input DISABLED class="STR" type="radio" name="w_envio" value="N"> Enviar para a próxima fase <br><input DISABLED class="STR" class="STR" type="radio" name="w_envio" value="S" checked> Devolver para a fase anterior');
       ShowHTML('<INPUT type="hidden" name="w_envio" value="S">');
     } else {
@@ -5335,7 +5336,7 @@ function Encaminhamento() {
     ShowHTML('    <tr>');
     SelecaoFase('<u>F</u>ase: (válido apenas se for devolução)','F','Se deseja devolver a solicitação, selecione a fase para a qual deseja devolvê-la.',$w_novo_tramite,$w_tramite,$w_chave,'w_novo_tramite','DEVFLUXO',null);
     ShowHTML('    <tr><td><b>D<u>e</u>spacho (informar apenas se for devolução):</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_despacho" class="STI" ROWS=5 cols=75 title="Informe o que o destinatário deve fazer quando receber a solicitação.">'.$w_despacho.'</TEXTAREA></td>');
-    if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE')) {
+    if (!(substr(Nvl($w_erro,'nulo'),0,1)=='0' || $w_sg_tramite=='EE' || $w_ativo=='N')) {
       if (substr(Nvl($w_erro,'nulo'),0,1)=='1' || substr(Nvl($w_erro,'nulo'),0,1)=='2') {
         if (mktime(0,0,0,date(m),date(d),date(Y))>$w_prazo) {
           ShowHTML('    <tr><td><b><u>J</u>ustificativa para não cumprimento do prazo regulamentar de '.$w_antecedencia.' dias:</b><br><textarea '.$w_Disabled.' accesskey="J" name="w_justificativa" class="STI" ROWS=5 cols=75 title="Se o início da viagem for anterior a '.FormataDataEdicao($w_envio_regular).', justifique o motivo do não cumprimento do prazo regulamentar para o pedido.">'.$w_justificativa.'</TEXTAREA></td>');
