@@ -706,8 +706,8 @@ function Gerencial() {
     if ($p_agrega=='GRPDPROPOSTO')  ShowHTML(' <option value="GRPDPROPOSTO" selected>Beneficiário'); else ShowHTML(' <option value="GRPDPROPOSTO">Beneficiário');
     if ($p_agrega=='GRPDCIAVIAGEM') ShowHTML(' <option value="GRPDCIAVIAGEM" selected>Cia. Viagem'); else ShowHTML(' <option value="GRPDCIAVIAGEM">Cia. viagem');
     if ($p_agrega=='GRPDCIDADE')    ShowHTML(' <option value="GRPDCIDADE" selected>Cidade destino'); else ShowHTML(' <option value="GRPDCIDADE">Cidade destino');
-    if ($p_agrega=='' || $p_agrega=='GRPDUNIDADE')  ShowHTML(' <option value="GRPDUNIDADE" selected>Unidade proponente'); else ShowHTML(' <option value="GRPDUNIDADE">Unidade proponente');
-    if ($p_agrega=='GRPDPROJ')      ShowHTML(' <option value="GRPDPROJ" selected>Projeto');          else ShowHTML(' <option value="GRPDPROJ">Projeto');
+    if ($p_agrega=='GRPDUNIDADE')  ShowHTML(' <option value="GRPDUNIDADE" selected>Unidade proponente'); else ShowHTML(' <option value="GRPDUNIDADE">Unidade proponente');
+    if ($p_agrega=='' || $p_agrega=='GRPDPROJ')      ShowHTML(' <option value="GRPDPROJ" selected>Projeto');          else ShowHTML(' <option value="GRPDPROJ">Projeto');
     if ($p_agrega=='GRPDDATA')      ShowHTML(' <option value="GRPDDATA" selected>Mês');              else ShowHTML(' <option value="GRPDDATA">Mês');
     if ($p_agrega=='GRPDTIPO')      ShowHTML(' <option value="GRPDTIPO" selected>Tipo');             else ShowHTML(' <option value="GRPDTIPO">Tipo');
     ShowHTML('          </select></td>');

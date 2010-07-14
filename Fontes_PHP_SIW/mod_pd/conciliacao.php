@@ -879,13 +879,13 @@ function Grava() {
                 
                 $w_projeto    = trim($row[10]);
                 // Valida o campo código do projeto
-                $w_result = fValidate(1,$w_projeto,'código do projeto','',1,3,60,'1','1');
+                $w_result = fValidate(1,$w_projeto,'código do projeto','',1,2,60,'1','1');
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Código do projeto: '.$w_result; 
                 } else {
                   // Verifica se o projeto existe
                   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLIST', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
+                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                   }
@@ -1251,13 +1251,13 @@ function Grava() {
                 
                 $w_projeto    = trim($row[7]);
                 // Valida o campo código do projeto
-                $w_result = fValidate(1,$w_projeto,'código do projeto','',1,3,60,'1','1');
+                $w_result = fValidate(1,$w_projeto,'código do projeto','',1,2,60,'1','1');
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Código do projeto: '.$w_result; 
                 } else {
                   // Verifica se o projeto existe
                   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PJCAD');
-                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLIST', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
+                  $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, 'PJLISTIMP', 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_projeto, null, null, null, null, null, null, null);
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código do projeto: na base de dados não há projeto ativo com o código "'.$w_projeto.'"';
                   }
@@ -1415,7 +1415,7 @@ function Grava() {
           // Configura o valor dos campos necessários para gravação
           $w_arquivo_registro   = 'registro.txt';
           $w_tamanho_registro   = filesize($w_caminho.$w_caminho_registro);
-          $w_tipo_registro      = mime_content_type($w_caminho.$w_caminho_registro);
+          $w_tipo_registro  = 'text/plain';
           // Grava o resultado da importação no banco de dados
           dml_putPDImportacao::getInstanceOf($dbms,$O,
                 $_REQUEST['w_chave'],$w_cliente,$w_usuario,$_REQUEST['w_tipo'],$_REQUEST['w_data_arquivo'],

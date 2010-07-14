@@ -1673,7 +1673,7 @@ begin
           where b.sq_menu        = p_menu
             and coalesce(b1.sigla,'-') = 'EE' 
             and acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
-   Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' or p_restricao = 'PJLISTREL' Then
+   Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' or p_restricao = 'PJLISTREL' or p_restricao = 'PJLISTIMP' Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
          select b.sq_siw_solicitacao, b.titulo, b.codigo_interno, b.codigo_externo
@@ -1713,8 +1713,12 @@ begin
                                            )
                 )
             and coalesce(b1.sigla,'-') <> 'CA' 
-            and (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
-                 InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
+            and (p_restricao = 'PJLISTIMP' or
+                 (p_restricao <> 'PJLISTIMP' and 
+                  (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
+                   InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0
+                  )
+                 )
                 );
    Elsif p_restricao = 'PJLISTCAD' or p_restricao = 'ORLISTCAD' Then
       -- Recupera os projetos que o usuário pode ver
