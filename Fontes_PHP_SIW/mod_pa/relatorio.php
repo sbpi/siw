@@ -610,9 +610,9 @@ function Etiqueta() {
       // Recupera os dados do documento
       $RS = db_getSolicData::getInstanceOf($dbms, $w_chave, 'PADGERAL');
       //exibeArray($RS);
-      ShowHTML('<table id="etiqueta" cellpadding=0 cellspacing=0 border=1>');
+      ShowHTML('<table cellpadding=0 cellspacing=0 border=1>');
       ShowHTML('<tr><td width="480"  height="200">');
-      ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
+      ShowHTML('  <table width="100%" cellpadding=3 cellspacing=0 border=0>');
       ShowHTML('    <tr><td colspan=2><font size=2><b>' . f($RS_Cliente, 'nome_resumido') . '/' . f($RS, 'sg_unidade_resp') . '</b></font>');
       if (nvl(f($RS, 'processo'), '') == 'S') {
         ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>' . f($RS, 'protocolo') . '</font></td>');
@@ -791,10 +791,13 @@ function EmitirEtiqueta() {
   ShowHTML('margin-right: auto;');
   ShowHTML('margin-top: auto;');
   ShowHTML('}');
+  ShowHTML('.etiqueta td{');
+  ShowHTML('line-height: 150%;');
+  ShowHTML('}');
   ShowHTML('</style>');
   ShowHTML('<table cellpadding=0 cellspacing=0 border=0>');
   ShowHTML('<tr><td width="480"  height="200">');
-  ShowHTML('  <table width="100%" cellpadding=5 cellspacing=0 border=0>');
+  ShowHTML('  <table width="100%" cellpadding=3 cellspacing=0 border=0>');
   ShowHTML('    <tr><td colspan=2><font size=2><b>' . f($RS_Cliente, 'nome_resumido') . '/' . f($RS, 'sg_unidade_resp') . '</b></font>');
   if (nvl(f($RS, 'processo'), '') == 'S')
     ShowHTML('    <tr><td><font size=2><b>PROCESSO: </b>' . f($RS, 'protocolo') . '</font>');
