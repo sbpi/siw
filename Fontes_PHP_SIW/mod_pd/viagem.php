@@ -1496,8 +1496,13 @@ function OutraParte() {
       
       ShowHTML('              <INPUT type="hidden" name="w_cpf" value="'.$w_cpf.'">');
       ShowHTML('          <tr valign="top">');
-      ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
-      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
+      if (strpos('AE',$O)!==false) {
+        $readonly = ' readonly ';
+      }else{
+        $readonly = '';
+      }
+      ShowHTML('             <td><b><u>N</u>ome completo:</b><br><input '.$w_Disabled.$readonly.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="45" MAXLENGTH="60" VALUE="'.$w_nome.'"></td>');
+      ShowHTML('             <td><b><u>N</u>ome resumido:</b><br><input '.$w_Disabled.$readonly.' accesskey="N" type="text" name="w_nome_resumido" class="sti" SIZE="15" MAXLENGTH="21" VALUE="'.$w_nome_resumido.'"></td>');
       SelecaoSexo('Se<u>x</u>o:','X',null,$w_sexo,null,'w_sexo',null,null);
       if (Nvl($w_sq_tipo_vinculo,'')=='') {
         SelecaoVinculo('Tipo de <u>v</u>ínculo:','V',null,$w_sq_tipo_vinculo,null,'w_sq_tipo_vinculo','S','Física',null);
