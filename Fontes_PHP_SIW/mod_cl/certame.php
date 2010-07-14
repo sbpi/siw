@@ -2017,8 +2017,10 @@ function PesquisaPreco() {
     FormataValor();
     if ($O=='I' || $O=='A') {
       ShowHTML('  function valor(p_indice) {');
+      //ShowHTML('    alert(p_indice); ');
       ShowHTML('    var theForm = document.Form; ');
       ShowHTML('    if (theForm["w_chave_aux[]"][p_indice].checked) { ');
+      //ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_valor[]"][p_indice].disabled=false; ');
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=false; ');
       if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
@@ -2026,13 +2028,13 @@ function PesquisaPreco() {
       ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=false; ');
       ShowHTML('         theForm["w_marca_modelo[]"][p_indice].disabled=false; ');
-      ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=false; ');      
+      ShowHTML('         theForm["w_embalagem[]"][p_indice].disabled=false; ');
       if($w_pesquisa=='N') ShowHTML('         theForm["w_fator[]"][p_indice].disabled=false; ');
       ShowHTML('       }');
       ShowHTML('    } else {');
       ShowHTML('       theForm["w_valor[]"][p_indice].disabled=true; ');
       ShowHTML('       theForm["w_inicio[]"][p_indice].disabled=true; ');
-      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=true; ');
       ShowHTML('       theForm["w_dias[]"][p_indice].disabled=true; ');
       ShowHTML('       if(theForm["w_classe[]"][p_indice].value==3) {');
       ShowHTML('         theForm["w_fabricante[]"][p_indice].disabled=true; ');
@@ -2049,7 +2051,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_chave_aux[]"][i].checked=true;');
       ShowHTML('         theForm["w_valor[]"][i].disabled=false; ');
       ShowHTML('         theForm["w_inicio[]"][i].disabled=false; ');
-      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=false; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=false; ');
       ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=false; ');
@@ -2063,7 +2065,7 @@ function PesquisaPreco() {
       ShowHTML('         theForm["w_chave_aux[]"][i].checked=false;');
       ShowHTML('         theForm["w_valor[]"][i].disabled=true; ');
       ShowHTML('         theForm["w_inicio[]"][i].disabled=true; ');
-      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][p_indice].disabled=false; ');
+      if($w_pesquisa=='S')ShowHTML('       theForm["w_origem[]"][i].disabled=true; ');
       ShowHTML('         theForm["w_dias[]"][i].disabled=true; ');
       ShowHTML('         if(theForm["w_classe[]"][i].value==3) {');
       ShowHTML('           theForm["w_fabricante[]"][i].disabled=true; ');
@@ -2561,6 +2563,11 @@ function PesquisaPreco() {
             if ($w_pesquisa=='N') ShowHTML('              <td><b>Fator de embalagem: </b><input '.$w_Disabled.' type="text" name="w_fator[]" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.nvl($w_fator[$i],f($row,'fator_embalagem')).'"></td>');
             ShowHTML('        </table>');
             ShowHTML('        </tr>');
+          }else{
+            ShowHTML('<INPUT type="hidden" name="w_fabricante[]" value="">');
+            ShowHTML('<INPUT type="hidden" name="w_marca_modelo[]" value="">');
+            ShowHTML('<INPUT type="hidden" name="w_embalagem[]" value="">');
+            ShowHTML('<INPUT type="hidden" name="w_fator[]" value="">');
           }
           $i += 1;
         }
