@@ -1317,7 +1317,7 @@ function Grava() {
                 $w_result = fValidate(1,$w_fim_reg,'fim do período','DATA',1,10,10,'','0123456789/');
                 if ($w_result>'') { $w_erro.=$crlf.'Fim do período: '.$w_result; }
                 
-                $w_valor_reg= trim($row[14]);
+                $w_valor_reg= trim($row[13]);
                 if (strpos($w_valor_reg,',')===false) $w_valor_reg .= ',00';
                 // Valida o campo valor do registro
                 $w_result = fValidate(1,$w_valor_reg,'valor','VALOR',1,3,18,'','0123456789,.');

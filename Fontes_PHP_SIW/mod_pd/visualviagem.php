@@ -1521,14 +1521,14 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $i             = 1;
         $w_total       = 0;
         foreach ($RS1 as $row) {
-          $w_total       += f($row,'valor');
+          $w_total       += f($row,'valor_reg');
           $l_html.=chr(13).'        <tr valign="middle">';
           $l_html.=chr(13).'           <td>'.f($row,'nr_fatura').'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'nm_agencia_res').'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'nm_tipo_reg').'</td>';
           $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'inicio_reg')),'&nbsp;').'</td>';
           $l_html.=chr(13).'           <td align="center">'.nvl(formataDataEdicao(f($row,'fim_reg')),'&nbsp;').'</td>';
-          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+          $l_html.=chr(13).'           <td align="right">'.formatNumber(f($row,'valor_reg')).'</td>';
           $l_html.=chr(13).'           <td>'.f($row,'nm_hotel').'</td>';
           $l_html.=chr(13).'        </tr>';
         } 
