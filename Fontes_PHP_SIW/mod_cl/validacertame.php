@@ -75,9 +75,11 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
           if (f($row,'qt_propostas')==0) {
             $l_erro .= '<li>A licitação não tem nenhuma proposta.';
             $l_tipo  = 0;
+          /*
           } elseif (((f($row,'qt_itens') * f($row,'qt_fornecedores'))!=f($row,'qt_propostas'))) {
             $l_erro .= '<li>Para critério de julgamento global é necessário que cada fornecedor cote todos os itens.';
             $l_tipo  = 0;
+          */
           }
         }
       }
