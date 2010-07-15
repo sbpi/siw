@@ -211,8 +211,8 @@ begin
                                                (c2.sigla      = 'DEFINIR' and
                                                 0            < (select count(*) from eo_unidade_resp where sq_pessoa = p_pessoa and sq_unidade = c.unidade_int_posse and fim is null)
                                                ) or
-                                               -- Se protocolo for solicitação de viagem e o usuário for do setor de viagens
-                                               (c2.sigla      = 'SOVI' and
+                                               -- Se protocolo for solicitação de viagem ou prestação de contas de viagem e o usuário for do setor de viagens
+                                               (c2.sigla      in ('PRCOV','SOVI') and
                                                 0             < (select count(*) from siw_menu where sigla = 'PDINICIAL' and sq_unid_executora = w.sq_unidade)
                                                )
                                               )
