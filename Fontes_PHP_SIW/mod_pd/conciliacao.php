@@ -743,6 +743,10 @@ function Grava() {
           $w_rejeitados = 0;
           $w_cont       = 0;
           
+          ShowHTML('<div align=center><center><br><br><br><br><br><br><br><br><br><br><img src="images/relogio.gif" align="center"> Aguarde: importando <b>'.$w_nome_recebido.'</b><br><br><br><br><br><br><br><br><br><br></center></div>');
+          Rodape();
+          flush();
+          
           //Abre o arquivo recebido para gerar o arquivo registro
           $F2 = csv($w_caminho.$w_caminho_recebido);
           if ($_REQUEST['w_tipo']==0) { // Fatura de bilhetes aéreos
@@ -915,6 +919,9 @@ function Grava() {
                   if ($w_hn_cia) {
                     // Verificações se a companhia aérea for localizada na base de dados
                     $RS_Bilhete = db_getPD_Bilhete::getInstanceOf($dbms,null,null,null,null,$w_bilhete,$w_hn_cia,'S',null);
+                    $w_hn_bilhete  = '';
+                    $w_hn_solic    = '';
+                    $w_solicitacao = '';
                     if (count($RS_Bilhete)==0) {
                       $w_erro.=$crlf.'Número do bilhete: na base de dados não há bilhete com o número "'.$w_bilhete.'" da cia "'.$w_cia.'"';
                     } elseif (count($RS_Bilhete)>1) {
@@ -967,7 +974,7 @@ function Grava() {
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Valor pleno do bilhete: '.$w_result; 
                 } elseif ($w_hn_bilhete) {
-                  if (formatNumber(f($RS_Bil,'valor_bilhete_cheio'))!=$w_valor_pleno) {
+                  if (formatNumber(f($RS_Bil,'valor_bilhete'))!=$w_valor_pleno) {
                     $w_erro.=$crlf.'Valor pleno do bilhete: valor constante do arquivo ('.$w_valor_pleno.') diverge do valor registrado na base de dados ('.formatNumber(f($RS_Bil,'valor_bilhete_cheio')).')'; 
                   }
                 }
