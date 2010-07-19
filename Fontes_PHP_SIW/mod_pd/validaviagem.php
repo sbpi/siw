@@ -205,9 +205,7 @@ function ValidaViagem($v_cliente,$v_chave,$v_sg1,$v_sg2,$v_sg3,$v_sg4,$v_tramite
         } 
 
         if (f($l_rs_tramite,'sigla')=='DF') {
-          $l_rs5 = db_getPD_Deslocamento::getInstanceOf($dbms,$v_chave,null,'S',f($l_rs_tramite,'sigla'));
-          foreach($l_rs5 as $row) {$l_rs5 = $row; break;}
-          if (f($l_rs5,'existe')>0) {
+          if (f($l_rs_solic,'passagem')=='S' && f($l_rs_solic,'internacional')=='S' && f($l_rs_solic,'cotacao_valor')==0) {
             $l_erro .= '<li>É obrigatório informar a cotação de menor valor.';
             $l_tipo  = 0;
           }

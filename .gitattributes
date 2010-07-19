@@ -1325,6 +1325,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Alteracao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Atividade.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Bilhete.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Contas.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_Cotacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura.php -text
@@ -3538,6 +3539,7 @@ SP_Oracle92/siw/SP_PutPD_Alteracao.prc -text
 SP_Oracle92/siw/SP_PutPD_Atividade.prc -text
 SP_Oracle92/siw/SP_PutPD_Bilhete.prc -text
 SP_Oracle92/siw/SP_PutPD_Contas.prc -text
+SP_Oracle92/siw/SP_PutPD_Cotacao.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_PutPD_Fatura.prc -text
 SP_Oracle92/siw/SP_PutPD_Fatura_Outros.prc -text

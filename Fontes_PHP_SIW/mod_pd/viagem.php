@@ -54,6 +54,7 @@ include_once($w_dir_volta.'classes/sp/dml_putViagemEnvio.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Contas.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Reembolso.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_ReembValor.php');
+include_once($w_dir_volta.'classes/sp/dml_putPD_Cotacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Deslocamento.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Alteracao.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Bilhete.php');
@@ -5692,7 +5693,77 @@ function InformarPassagens() {
   ShowHTML('</center>');
   Rodape();
 }
+// =========================================================================
+// Rotina para informação da cotação dos bilhetes
+// -------------------------------------------------------------------------
+function InformarCotacao() {
+  extract($GLOBALS);
+  global $w_Disabled;
 
+  $w_chave  = $_REQUEST['w_chave'];
+  $w_menu   = $_REQUEST['w_menu'];
+
+  $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
+  $w_valor      = nvl($_REQUEST['w_valor'],formatNumber(f($RS,'cotacao_valor')));
+  $w_observacao = nvl($_REQUEST['w_observacao'],f($RS,'cotacao_observacao'));
+  Cabecalho();
+  head();
+  ShowHTML('<TITLE>'.$conSgSistema.' - Informar cotação</TITLE>');
+  ScriptOpen('JavaScript');
+  CheckBranco();
+  SaltaCampo();
+  FormataValor();
+  ValidateOpen('Validacao');
+  Validate('w_valor','Valor estimado','VALOR','1',4,18,'','0123456789,.');
+  CompValor('w_valor','Valor estimado','>','0,00','zero');
+  Validate('w_observacao','Observações','1','',2,2000,'1','1');
+  ShowHTML('  theForm.Botao[0].disabled=true;');
+  ShowHTML('  theForm.Botao[1].disabled=true;');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpen('onLoad=\'this.focus()\';');
+  ShowHTML('<B><FONT COLOR="#000000">'.$w_TP.'</font></B>');
+  ShowHTML('<HR>');
+  ShowHTML('<div align=center><center>');
+  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('    <tr><td align="center" bgcolor="#FAEBD7" colspan="2">');
+  ShowHTML('      <table border=1 width="100%">');
+  ShowHTML('        <tr><td valign="top" colspan="2">');
+  ShowHTML('          <TABLE border=0 WIDTH="100%" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  ShowHTML('            <tr><td>Número:<b><br>'.f($RS,'codigo_interno').' ('.$w_chave.')</td>');
+  ShowHTML('                <td>Primeira saída:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_inicio')).' </b></td>');
+  ShowHTML('                <td>Último retorno:<br><b>'.date('d/m/y, H:i',f($RS,'phpdt_fim')).' </b></td>');
+  $RS1 = db_getBenef::getInstanceOf($dbms,$w_cliente,Nvl(f($RS,'sq_prop'),0),null,null,null,null,1,null,null,null,null,null,null,null);
+  foreach($RS1 as $row) { $RS1 = $row; break; }
+  ShowHTML('            <tr><td colspan="3">Beneficiário:<b><br>'.f($RS1,'nm_pessoa').'</td></tr>');
+  ShowHTML('          </TABLE></td></tr>');
+  ShowHTML('      </table>');
+  ShowHTML('  </table>');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
+  ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
+  ShowHTML('  <table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('    <tr bgcolor="'.$conTrBgColor.'"><td>');
+  ShowHTML('    <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b>Cotação de Bilhetes</td>');
+  ShowHTML('    <tr><td><b><u>V</u>alor:<br><input type="text" accesskey="V" name="w_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor estimado dos bilhetes."></td>');
+  ShowHTML('    <tr><td><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_observacao" class="STI" ROWS=5 cols=75 title="OPCIONAL. Registre observações que julgar relevantes.">'.$w_observacao.'</TEXTAREA></td>');
+  ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('    <tr><td align="center" colspan="2">');
+  ShowHTML('            <input class="STB" type="submit" name="Botao" value="Gravar">');
+  ShowHTML('            <input class="STB" type="button" onClick="window.close();" name="Botao" value="Fechar">');
+  ShowHTML('      </table>');
+  ShowHTML('    </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
+  ShowHTML('</table>');
+  ShowHTML('</center>');
+  Rodape();
+}
+
+
+/*
 // =========================================================================
 // Rotina para informação da cotação dos bilhetes
 // -------------------------------------------------------------------------
@@ -5837,7 +5908,7 @@ function InformarCotacao() {
   ShowHTML('</center>');
   Rodape();
 }
-
+*/
 // =========================================================================
 // Rotina de preparação para envio de e-mail relativo a missões
 // Finalidade: preparar os dados necessários ao envio automático de e-mail
@@ -7368,10 +7439,7 @@ function Grava() {
     case 'COTPASS':
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
-        for ($i=1; $i<=count($_POST['w_sq_deslocamento']); $i++) {
-          dml_putPD_Deslocamento::getInstanceOf($dbms,'C', $_REQUEST['w_chave'],$_POST['w_sq_deslocamento'][$i], null,null,null,null,null,null,
-          $_POST['w_sq_cia_transporte'][$i],Nvl($_POST['w_codigo_voo'][$i],0),null,null,Nvl($_POST['w_valor_trecho'][$i],0),null,null,null,null);
-        }
+        dml_putPD_Cotacao::getInstanceOf($dbms,$_REQUEST['w_chave'],Nvl($_POST['w_valor'],0),$_POST['w_observacao']);
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'InformarCotacao&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$_REQUEST['w_menu'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
