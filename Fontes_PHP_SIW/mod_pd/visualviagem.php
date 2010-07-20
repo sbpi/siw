@@ -128,6 +128,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } 
       $l_html.=chr(13).'      <tr valign="top"><td><b>Período:</b></td><td>'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Categoria da diária:</b></td><td>'.Nvl(f($RS,'nm_diaria'),'---').' </b></td></tr>';
+      if (f($RS,'internacional')=='N') {
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Diária em fim de semana:</b></td><td>'.retornaSimNao(f($RS,'diaria_fim_semana')).' </b></td></tr>';
+      }
       $l_html.=chr(13).'      <tr valign="top"><td><b>Contato na ausência:</b></td><td>'.nvl(f($RS,'proponente'),'---').' </b></td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td><b>Agenda:</b></td><td>'.nvl(crLf2Br(f($RS,'assunto')),'---').' </b></td></tr>';
       if (Nvl(f($RS,'justificativa_dia_util'),'')>'') {

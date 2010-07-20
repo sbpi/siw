@@ -1,5 +1,6 @@
 create or replace procedure SP_GetSolicLog
    (p_chave     in number,
+    p_chave_aux in number   default null,
     p_tipo      in number   default null, -- 0: encaminhamentos; 1: anotaçoes; 2: versões
     p_restricao in varchar2,
     p_result    out sys_refcursor) is
@@ -36,8 +37,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
@@ -51,10 +51,11 @@ begin
                    left       join siw_solic_log_arq j on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left     join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
-                                                               (p_tipo =  2 and a.observacao =  '*** Nova versão')
-                                                              )
-                                      )
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_demanda_log = p_chave_aux))
+               and (p_tipo      is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
+                                                                    (p_tipo =  2 and a.observacao =  '*** Nova versão')
+                                                                   )
+                                           )
                    )
             UNION
             select b.sq_demanda_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
@@ -63,7 +64,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from gd_demanda_log                     b 
@@ -74,10 +75,11 @@ begin
                    left outer join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
                      left outer join siw_arquivo      k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
-               and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
-                                                               (p_tipo = 1 and b.destinatario is null)
-                                                              )
-                                      )
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_demanda_log = p_chave_aux))
+               and (p_tipo      is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
+                                                                    (p_tipo = 1 and b.destinatario is null)
+                                                                   )
+                                           )
                    )
                and b.sq_siw_solicitacao = p_chave;
       End If;
@@ -95,8 +97,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
                    coalesce(k.caminho,m.caminho) as caminho,
                    coalesce(k.tipo,m.tipo) as tipo,
@@ -115,6 +116,7 @@ begin
                    left       join siw_solic_log_arq  l  on (a.sq_siw_solic_log   = l.sq_siw_solic_log)
                      left     join siw_arquivo        m  on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_projeto_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -127,7 +129,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pj_projeto_log                        b 
@@ -138,6 +140,7 @@ begin
                       left outer join pj_projeto_log_arq j on (b.sq_projeto_log     = j.sq_projeto_log)
                          left outer join siw_arquivo     k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_projeto_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
                                                               )
@@ -159,8 +162,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    coalesce(k.sq_siw_arquivo, m.sq_siw_arquivo) as sq_siw_arquivo,
                    coalesce(k.caminho,m.caminho) as caminho,
                    coalesce(k.tipo,m.tipo) as tipo,
@@ -179,6 +181,7 @@ begin
                    left       join siw_solic_log_arq     l  on (a.sq_siw_solic_log   = l.sq_siw_solic_log)
                      left     join siw_arquivo           m  on (l.sq_siw_arquivo     = m.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_programa_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -191,7 +194,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pe_programa_log                        b 
@@ -202,6 +205,7 @@ begin
                       left       join pe_programa_log_arq j on (b.sq_programa_log    = j.sq_programa_log)
                          left    join siw_arquivo         k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_programa_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
                                                               )
@@ -224,8 +228,7 @@ begin
                    h1.sq_tipo_log, h1.nome as nm_tipo_log, h1.sigla as sg_tipo_log,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    null as tipo_anotacao
@@ -241,6 +244,7 @@ begin
                    left outer   join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_acordo_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -254,7 +258,7 @@ begin
                    b1.sq_tipo_log, b1.nome as nm_tipo_log, b1.sigla as sg_tipo_log,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data,
                    case when despacho is null then 'Anotação' else b.observacao end as tipo_anotacao
@@ -267,6 +271,7 @@ begin
                    left outer   join ac_acordo_log_arq j on (b.sq_acordo_log      = j.sq_acordo_log)
                      left outer join siw_arquivo       k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_acordo_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
                                                               )
@@ -288,8 +293,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                       a
@@ -303,6 +307,7 @@ begin
                    left outer   join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_lancamento_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -315,7 +320,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from fn_lancamento_log                       b 
@@ -326,6 +331,7 @@ begin
                    left outer   join fn_lancamento_log_arq j on (b.sq_lancamento_log  = j.sq_lancamento_log)
                      left outer join siw_arquivo           k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_lancamento_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
                                                               )
@@ -345,8 +351,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite, 
+                   f.nome as fase, e.nome as tramite, f.descricao,  f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                       a
@@ -360,6 +365,7 @@ begin
                    left outer   join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo       k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_demanda_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -373,7 +379,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from gd_demanda_log                           b
@@ -384,6 +390,7 @@ begin
                    left outer     join gd_demanda_log_arq j on (b.sq_demanda_log     = j.sq_demanda_log)
                      left outer   join siw_arquivo        k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_demanda_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo = 0 and b.destinatario is not null) or
                                                                (p_tipo = 1 and b.destinatario is null)
                                                               )
@@ -395,12 +402,11 @@ begin
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 
-            select a.sq_siw_solic_log, a.sq_siw_tramite,a.data, a.observacao as despacho,
+            select a.sq_siw_solic_log as chave_log, a.sq_siw_tramite,a.data, a.observacao as despacho,
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite, 
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
@@ -412,6 +418,7 @@ begin
                    left outer join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and a.sq_siw_solic_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão' and substr(a.observacao,1,9) <> 'Anotação:') or
                                                                (p_tipo =  1 and substr(a.observacao,1,9) = 'Anotação:') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
@@ -433,8 +440,7 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite,
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log   a
@@ -448,6 +454,7 @@ begin
                      left     join pe_programa_log_arq j  on (h.sq_programa_log    = j.sq_programa_log)
                        left   join siw_arquivo         k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_programa_log = p_chave_aux))
             UNION
             select b.sq_programa_log as chave_log, b.sq_siw_solic_log, null, b.data_inclusao,  coalesce(b.despacho, b.observacao),
                    null as nm_tramite_log,
@@ -455,7 +462,7 @@ begin
                    c.sq_pessoa,
                    d.nome_resumido as destinatario,
                    d.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, f.nome as tramite, f.descricao,
+                   f.nome as fase, f.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(b.data_inclusao, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from pe_programa_log                     b 
@@ -466,6 +473,7 @@ begin
                    left       join pe_programa_log_arq j on (b.sq_programa_log    = j.sq_programa_log)
                       left outer join siw_arquivo      k on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where b.sq_siw_solic_log   is null
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_programa_log = p_chave_aux))
                and b.sq_siw_solicitacao = p_chave;
       End If;
    Elsif w_opcao = 'PADCAD' Then -- Se for o registro de protocolos
@@ -500,8 +508,7 @@ begin
                    case when i.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when i.sq_pessoa is not null then i.sq_pessoa     else l.sq_unidade end as sq_destinatario,
                    case when i.sq_pessoa is not null then i.nome_resumido else l.sigla      end as nm_destinatario,
-                   e.nome as tramite,
-                   f.nome as fase, f.descricao,
+                   e.nome as tramite, f.nome as fase, f.descricao, f.ativo,
                    h.interno, h.pessoa_externa,h.unidade_externa,
                    to_char(h.envio, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_envio, to_char(h.recebimento, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_receb,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
@@ -524,6 +531,7 @@ begin
                   pa_parametro                      p
              where a.sq_siw_solicitacao = p_chave
                and p.cliente            = a1.sq_pessoa_pai
+               and (p_chave_aux is null or (p_chave_aux is not null and h.sq_documento_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')
                                                               )
@@ -546,7 +554,7 @@ begin
                    case when d.sq_pessoa is not null then 'PESSOA'        else 'UNIDADE'    end as tipo_destinatario,
                    case when d.sq_pessoa is not null then d.sq_pessoa     else h.sq_unidade end as sq_destinatario,
                    case when d.sq_pessoa is not null then d.nome_resumido else h.sigla      end as nm_destinatario,
-                   f.nome as tramite, f.nome as fase, f.descricao,
+                   f.nome as tramite, f.nome as fase, f.descricao, f.ativo,
                    b.interno, b.pessoa_externa, b.unidade_externa,
                    to_char(b.envio, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_envio, to_char(b.recebimento, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_receb,
                    null as sq_siw_arquivo, null as caminho, null as tipo, null as tamanho, 
@@ -564,6 +572,7 @@ begin
                      inner  join siw_tramite          f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
              where b.sq_siw_solic_log   is null
                and b.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and b.sq_documento_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and (p_tipo <>  2)));
       End If;
    Elsif w_modulo = 'PA' Then -- Se for o módulo de protocolo
@@ -577,8 +586,7 @@ begin
                    a1.nome as nm_tramite_log,
                    c.nome_resumido as responsavel,
                    c.sq_pessoa,
-                   f.nome as fase, f.descricao,
-                   e.nome as tramite, 
+                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                     a
@@ -590,6 +598,7 @@ begin
                    left outer join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)
                      left outer join siw_arquivo     k  on (j.sq_siw_arquivo     = k.sq_siw_arquivo)
              where a.sq_siw_solicitacao = p_chave
+               and (p_chave_aux is null or (p_chave_aux is not null and a.sq_siw_solic_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and ((p_tipo =  0 and a.observacao <> '*** Nova versão' and substr(a.observacao,1,9) <> 'Anotação:') or
                                                                (p_tipo =  1 and substr(a.observacao,1,9) = 'Anotação:') or
                                                                (p_tipo =  2 and a.observacao =  '*** Nova versão')

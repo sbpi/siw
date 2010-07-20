@@ -226,7 +226,6 @@ begin
              inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
                inner join eo_unidade_resp c on (b.sq_unidade         = c.sq_unidade and
-                                                a.sq_pessoa          = c.sq_pessoa and
                                                 c.sq_pessoa          = p_pessoa and
                                                 c.tipo_respons       = 'T' and
                                                 c.fim                is null

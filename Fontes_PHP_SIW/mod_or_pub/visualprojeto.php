@@ -744,7 +744,7 @@ function VisualProjeto($l_chave,$O,$w_usuario,$P1,$P4) {
         } 
       } 
       // Encaminhamentos
-      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc','sq_siw_solic_log','desc');
       $l_html .=chr(13).'     <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIA E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';  
       $l_html.=chr(13).'      <tr><td colspan="2"><div align="center">';

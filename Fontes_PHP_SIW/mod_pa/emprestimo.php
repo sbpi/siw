@@ -1700,7 +1700,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'</tr>';
 
     //Recupera o último log
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
     foreach ($RS as $row) { $RS = $row; break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');

@@ -166,7 +166,7 @@ function VisualGeral($l_chave,$O,$l_usuario,$l_sg,$l_tipo) {
   } 
   // Encaminhamentos
   $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></td></tr>';
-  $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
+  $RS1 = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
   $RS1 = SortArray($RS1,'phpdt_data','desc','sq_siw_solic_log','desc');
   $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
   $l_html.=chr(13).'     <table width=100%  border="1" bordercolor="#00000">';

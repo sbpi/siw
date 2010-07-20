@@ -692,7 +692,7 @@ begin
                 d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
                 d1.ressarcimento_data,d1.sq_pdvinculo_ressarcimento, d1.sq_arquivo_comprovante,
                 d1.nacional,          d1.internacional,              d1.deposito_identificado,
-                d1.cotacao_valor,     d1.cotacao_observacao,
+                d1.cotacao_valor,     d1.cotacao_observacao,         d1.diaria_fim_semana,
                 case d1.passagem    when 'S' then 'Sim' else 'Não' end as nm_passagem,
                 case d1.hospedagem  when 'S' then 'Sim' else 'Não' end as nm_hospedagem,
                 case d1.veiculo     when 'S' then 'Sim' else 'Não' end as nm_veiculo,

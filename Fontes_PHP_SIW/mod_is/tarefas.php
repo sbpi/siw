@@ -1660,7 +1660,7 @@ function SolicMail($p_solic,$p_tipo) {
     if ($p_tipo==2) {
       // Se for tramitação
       // Encaminhamentos
-      $RS = db_getSolicLog::getInstanceof($dbms,$p_solic,null,'LISTA');   
+      $RS = db_getSolicLog::getInstanceof($dbms,$p_solic,null,null,'LISTA');   
       $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
       foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
       $w_html.=$crlf.'      <tr><td valign="top" colspan="2" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="1"><b>ÚLTIMO ENCAMINHAMENTO</td>';
@@ -1742,7 +1742,7 @@ function Grava() {
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
         // Se for operação de exclusão, verifica se é necessário excluir os arquivos físicos
         if ($O=='E') {
-          $RS = db_getSolicLog::getInstanceof($dbms,$_REQUEST['w_chave'],null,'LISTA');
+          $RS = db_getSolicLog::getInstanceof($dbms,$_REQUEST['w_chave'],null,null,'LISTA');
           // Mais de um registro de log significa que deve ser cancelada, e não excluída.
           // Nessa situação, não é necessário excluir os arquivos.
           if (count($RS)<=1) {

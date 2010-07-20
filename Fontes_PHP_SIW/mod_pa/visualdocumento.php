@@ -370,7 +370,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
   // Encaminhamentos
   if ($l_ocorrencia=='S') {
     // Versões
-    $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,2,'LISTA');
+    $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,2,'LISTA');
     $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
     if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -399,7 +399,7 @@ function VisualDocumento($l_chave,$l_o,$l_usuario,$l_p1,$l_formato,$l_identifica
     }
 
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,0,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc', 'sq_siw_solic_log', 'desc');
     if (count($RS)>0 && $l_ocorrencia=='S') {
       $i=0;

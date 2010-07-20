@@ -11,6 +11,7 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
   w_tot_dia   number(5,2);
   w_compromisso_retorno varchar2(1);
   w_internacional       varchar2(1);
+  w_fim_semana          varchar2(1);
 
   type diaria is table of number(10,1) index by binary_integer;
   
@@ -71,7 +72,12 @@ begin
      end loop;
   End If;
   -- Recupera informação sobre viagem internacional
-  select internacional into w_internacional from pd_missao where sq_siw_solicitacao = p_chave;
+  select internacional, diaria_fim_semana into w_internacional, w_fim_semana from pd_missao where sq_siw_solicitacao = p_chave;
+  
+  -- Decide se será paga diária em final de semana. (Internacional sempre paga. Nacional depende de indicação na tela da solicitação)
+  If w_internacional = 'S' or w_fim_semana = 'S' Then
+     w_fim_semana := 'S';
+  End If;
    
   -- Recupera o início e o fim da viagem
   select min(trunc(a.saida)), max(trunc(a.chegada)) into w_inicio, w_fim 
@@ -111,8 +117,8 @@ begin
      -- Calcula as diárias
      for crec in c_deslocamentos (p_chave, w_atual) loop
        If w_tot_dia < 1  Then
-         -- Não concede diária em fim de semana para viagem nacional
-         If (w_internacional = 'S' or (w_internacional = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
+         -- Verifica diária em fim de semana
+         If (w_fim_semana = 'S' or (w_fim_semana = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
             If w_cont = 1 Then
                -- No primeiro dia:
                --    NACIONAL
@@ -202,7 +208,7 @@ begin
        End If;
      end loop;
      If i = 0 Then
-        If w_diaria = 'S' and (w_internacional = 'S' or (w_internacional = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
+        If w_diaria = 'S' and (w_fim_semana = 'S' or (w_fim_semana = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
            diarias(w_sq_diaria) := diarias(w_sq_diaria) + 1; 
         End If;
      End If;

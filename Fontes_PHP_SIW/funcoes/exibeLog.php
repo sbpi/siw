@@ -45,17 +45,18 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   $l_html.=chr(13). '</script>';
   
   // Anotações
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,1,'LISTA');
+  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,1,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   if (count($RS_Log)>0) {
-      $l_html.=chr(13).'      <tr id="anotacoes"><td colspan="2"><br><span id="colxanot"></span><font size="2"><b>ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr id="anotacoes"><td colspan="2"><br><span id="colxanot"></span><font size="2"><b>ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
     $l_html.=chr(13).'      <tr><td colspan="2" align="center">';
     $l_html.=chr(13).'        <table id="encanot" width="100%"  border="1" bordercolor="#00000">';    
     $l_html.=chr(13).'          <tr align="center">';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Data</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Anotação</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Observação</b></td>';
     $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Responsável</b></td>';
-    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+    if (substr($SG,0,2)=='GC') $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Tipo</b></td>';
+    if ($l_formato=='HTML') $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Operações</b></td>';
     $l_html.=chr(13).'          </tr>';
     $w_cor=$conTrBgColor;
     $i = 0;
@@ -69,14 +70,24 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
       } 
       if ($l_formato=='HTML') $l_html.=chr(13).'        <td width="1%" nowrap>'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'sq_pessoa'),$TP,f($row,'responsavel')).'</td>';
       else                    $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'responsavel').'</td>';
-      $l_html.=chr(13).'        <td width="1%" nowrap>'.nvl(f($row,'nm_tipo_log'),nvl(f($row,'tipo_anotacao'),Anotação)).'</td>';
+      if (substr($SG,0,2)=='GC') $l_html.=chr(13).'        <td width="1%" nowrap>'.f($row,'nm_tipo_log').'</td>';
+      if ($l_formato=='HTML') {
+	      // Se o usuário registrou a anotação, ele pode alterá-la
+	      if ($w_usuario==f($row,'sq_pessoa') && f($row,'ativo')=='S') {
+	        $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp';
+	        $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=A&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Alterar a anotação">AL</A>&nbsp';
+	        $l_html.=chr(13).'          <A class="HL" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'anotacao.php?par=Inicial&R='.$w_pagina.$par.'&O=E&p_chave='.$l_chave.'&p_chave_aux='.f($row,'chave_log').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'\',\'Anotacao\',\'width=730,height=500,top=30,left=30,status=yes,resizable=yes,scrollbars=yes,toolbar=no\');" title="Excluir a anotação">EX</A>&nbsp';
+	      } else {
+	        $l_html.=chr(13).'        <td width="1%" nowrap>&nbsp;---';
+	      }
+      }
       $l_html.=chr(13).'      </tr>';
     } 
     $l_html.=chr(13).'         </table></td></tr>';
   } 
 
   // Versões
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,2,'LISTA');
+  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,2,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   if (count($RS_Log)>0) {
       $l_html.=chr(13).'      <tr id="versoes"><td colspan="2"><br><span id="colxver"></span><font size="2"><b>VERSÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
@@ -105,7 +116,7 @@ function exibeLog($l_chave,$l_O,$l_usuario,$l_tramite_ativo,$l_formato) {
   }
 
   // Encaminhamentos
-  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,0,'LISTA');
+  $RS_Log = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,0,'LISTA');
   $RS_Log = SortArray($RS_Log,'phpdt_data','desc','sq_siw_solic_log','desc');
   $l_html.=chr(13).'      <tr id="encaminhamentos"><td colspan="2"><br><span id="colxenc"></span><font size="2"><b>ENCAMINHAMENTOS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
   $l_html.=chr(13).'      <tr><td colspan="2" align="center">';

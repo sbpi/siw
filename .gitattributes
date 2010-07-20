@@ -517,6 +517,7 @@ Fontes_ASP_SIW/mod_tt/VisualListaTelWord.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticular.asp -text
 Fontes_ASP_SIW/mod_tt/VisualResumoLigacaoParticularWord.asp -text
 Fontes_ASP_SIW/results.asp -text
+Fontes_PHP_SIW/anotacao.php -text
 Fontes_PHP_SIW/branco.htm -text
 Fontes_PHP_SIW/calendario.php -text
 Fontes_PHP_SIW/check.php -text
@@ -1165,6 +1166,7 @@ Fontes_PHP_SIW/classes/sp/dml_putAfastamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAgreeType.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAlmoxarifado.php -text
 Fontes_PHP_SIW/classes/sp/dml_putAlmoxarifadoLocal.php -text
+Fontes_PHP_SIW/classes/sp/dml_putAnotacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putArquivo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putArquivoLocal_PA.php -text
 Fontes_PHP_SIW/classes/sp/dml_putArquivo_PA.php -text
@@ -1330,6 +1332,7 @@ Fontes_PHP_SIW/classes/sp/dml_putPD_Deslocamento.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Diaria.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Fatura_Outros.php -text
+Fontes_PHP_SIW/classes/sp/dml_putPD_FimSemana.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Missao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_ReembValor.php -text
 Fontes_PHP_SIW/classes/sp/dml_putPD_Reembolso.php -text
@@ -3543,6 +3546,7 @@ SP_Oracle92/siw/SP_PutPD_Cotacao.prc -text
 SP_Oracle92/siw/SP_PutPD_Deslocamento.prc -text
 SP_Oracle92/siw/SP_PutPD_Fatura.prc -text
 SP_Oracle92/siw/SP_PutPD_Fatura_Outros.prc -text
+SP_Oracle92/siw/SP_PutPD_FimSemana.prc -text
 SP_Oracle92/siw/SP_PutPD_ReembValor.prc -text
 SP_Oracle92/siw/SP_PutPD_Reembolso.prc -text
 SP_Oracle92/siw/SP_PutPdDiaria.prc -text
@@ -3912,6 +3916,7 @@ SP_Oracle92/siw/sp_getviagembenef.prc -text
 SP_Oracle92/siw/sp_getvinckinddata.prc -text
 SP_Oracle92/siw/sp_getvinckindlist.prc -text
 SP_Oracle92/siw/sp_putAcordoFornecimento.prc -text
+SP_Oracle92/siw/sp_putAnotacao.prc -text
 SP_Oracle92/siw/sp_putArquivo_PE.prc -text
 SP_Oracle92/siw/sp_putCLARPItem.prc -text
 SP_Oracle92/siw/sp_putCLParametro.prc -text

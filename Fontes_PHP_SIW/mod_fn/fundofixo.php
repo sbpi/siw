@@ -2196,7 +2196,7 @@ function SolicMail($p_solic,$p_tipo) {
       } 
       if (Nvl(f($RSM,'nm_cc'),'')>'') {
         // Se for vinculado a classificação, envia aos que participaram da tramitação
-        $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+        $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
         $RS = SortArray($RS,'phpdt_data','desc');
         foreach($RS as $row) {
           if (f($row,'sq_pessoa_destinatario')>'') {
@@ -2213,7 +2213,7 @@ function SolicMail($p_solic,$p_tipo) {
       }
     }
     //Recupera o último log
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
     foreach ($RS as $row) { $RS = $row; if(nvl(f($row,'destinatario'),'')!='') break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');

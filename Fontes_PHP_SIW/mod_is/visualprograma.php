@@ -1,4 +1,4 @@
-<?
+<?php
 // =========================================================================
 // Rotina de visualização dos dados do programa
 // -------------------------------------------------------------------------
@@ -141,7 +141,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     } 
     // Encaminhamentos
     $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc');
     if (count($RS)>0) {
       $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';
@@ -502,7 +502,7 @@ function VisualPrograma($l_chave,$O,$l_usuario,$P1,$P4,$l_identificacao,$l_respo
     // Encaminhamentos
     if (upper($l_ocorrencia)==upper('sim')) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>OCORRÊNCIAS E ANOTAÇÕES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,'LISTA');
+      $RS = db_getSolicLog::getInstanceOf($dbms,$l_chave,null,null,'LISTA');
       $RS = SortArray($RS,'phpdt_data','desc');
       if (count($RS)>0) {
         $l_html.=chr(13).'   <tr><td colspan="2"><div align="center">';

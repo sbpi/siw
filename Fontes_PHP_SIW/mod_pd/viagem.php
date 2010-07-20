@@ -55,6 +55,7 @@ include_once($w_dir_volta.'classes/sp/dml_putPD_Contas.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Reembolso.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_ReembValor.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Cotacao.php');
+include_once($w_dir_volta.'classes/sp/dml_putPD_FimSemana.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Deslocamento.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Alteracao.php');
 include_once($w_dir_volta.'classes/sp/dml_putPD_Bilhete.php');
@@ -2205,13 +2206,12 @@ function AltSolic() {
 
   // Recupera os dados da solicitação e do cliente
   $RS_Solic   = db_getSolicData::getInstanceOf($dbms,$w_chave,'PDGERAL');
-  $w_nm_diaria = f($RS_Solic,'nm_diaria');
+  $w_nm_diaria  = f($RS_Solic,'nm_diaria');
+  $w_fim_semana = nvl($_REQUEST['w_fim_semana'],f($RS_Solic,'diaria_fim_semana')); 
   
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpenClean('onLoad=\'document.Form.'.(($w_numero=='S') ? $w_troca : 'Botao[0]').'.focus()\';');
-  } elseif ($O=='I' || $O=='A') {
-    BodyOpenClean('onLoad=\'document.Form.w_data.focus()\';');
   } else {
     BodyOpenClean('onLoad=\'this.focus()\';');
   }
@@ -2235,7 +2235,20 @@ function AltSolic() {
   
   ShowHTML('<tr><td><br>&nbsp;');
   ShowHTML('<tr><td><a accesskey="F" class="ss" href="javascript:window.close(); opener.focus();"><u>F</u>echar</a>&nbsp;');
-  ShowHTML('<tr><td><br><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'trechos&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG=PDTRECHO'.MontaFiltro('GET').'"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
+  ShowHTML('<tr><td><hr NOSHADE color=#000000 SIZE=1>&nbsp;');
+
+  if (f($RS_Solic,'internacional')=='N') {
+    AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return true;',null,$P1,$P2,$P3,$P4,$TP,'PDDIARIAFS',$w_pagina.$par,'A');
+    ShowHTML(MontaFiltro('POST'));
+    ShowHTML('       <input type="hidden" name="w_chave" value='.$w_chave.'>');
+    ShowHTML('        <tr valign="top">');
+    MontaRadioNS('<b>Pagar diárias em fim de semana?</b>',$w_fim_semana,'w_fim_semana');
+    ShowHTML('        <tr valign="top"><td>');
+    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar" onClick="Botao.value=this.value;">');
+    ShowHTML('</FORM>');
+  }
+
+  ShowHTML('<tr><td><b>Deslocamentos solicitados: (<a accesskey="I" class="SS" href="'.$w_dir.$w_pagina.'trechos&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG=PDTRECHO'.MontaFiltro('GET').'"><u>I</u>ncluir</a>)<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
   $RS = db_getPD_Deslocamento::getInstanceOf($dbms,$w_chave,null,'S','PDTRECHO');
   $RS = SortArray($RS,'phpdt_saida','asc', 'phpdt_chegada', 'asc');
   ShowHTML('<tr><td><table width="100%" border="0">');
@@ -5976,7 +5989,7 @@ function SolicMail($p_solic,$p_tipo) {
     $w_html .= $crlf.'</tr>';
 
     //Recupera o último log
-    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,'LISTA');
+    $RS = db_getSolicLog::getInstanceOf($dbms,$p_solic,null,null,'LISTA');
     $RS = SortArray($RS,'phpdt_data','desc','despacho','desc');
     foreach ($RS as $row) { $RS = $row; if(strpos(f($row,'despacho'),'*** Nova versão')===false) break; }
     $w_data_encaminhamento = f($RS,'phpdt_data');
@@ -6291,6 +6304,7 @@ function PrestarContas() {
   // Monta o código JavaScript necessário para validação de campos e preenchimento automático de máscara,
   // tratando as particularidades de cada serviço
   ScriptOpen('JavaScript');
+  CheckBranco();
   FormataValor();
   ValidateOpen('Validacao');
   Validate('w_cumprimento','Tipo de cumprimento','SELECT','1',1,1,'1','1');
@@ -6310,7 +6324,9 @@ function PrestarContas() {
       }
       //if ($w_cumprimento=='P') Validate('["w_tipo[]"]','Utilização','SELECT','1',1,1,'1','1');
     }
-    if ($w_cumprimento!='C' && $w_cumprimento!='N') Validate('w_relatorio','Relatório de viagem','','1',1,4000,'1','1');
+    if ($w_cumprimento!='C' && $w_cumprimento!='N') {
+      Validate('w_relatorio','Relatório de viagem','','1',1,4000,'1','1');
+    }
     if ($w_reembolso=='S' && count($RS_Financ)>1) {
       Validate('w_rubrica','Rubrica para pagamento do reembolso','SELECT','1',1,18,'','1');
       Validate('w_lancamento','Tipo de lançamento para pagamento do reembolso','SELECT','1',1,18,'','1');
@@ -6325,6 +6341,11 @@ function PrestarContas() {
         Validate('w_lan_dev','Tipo de lançamento para devolução do valor','SELECT','1',1,18,'','1');
       }
       Validate('w_ressarcimento_observacao','Observação sobre a devolução','','1',1,2000,'1','1');
+    }
+    if ($w_cumprimento!='C' && $w_cumprimento!='N' && nvl($w_atual,'')!='') {
+      ShowHTML('  if (theForm.w_caminho.value!="" && theForm.w_atual.value!="") {');
+      ShowHTML('    alert("ATENÇÃO: Foi informado outro anexo do relatório de viagem.\nO ARQUIVO EXISTENTE SERÁ SUBSTITUÍDO!");');
+      ShowHTML('  }');
     }
   }
   /* 
@@ -6389,7 +6410,15 @@ function PrestarContas() {
     $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
     ShowHTML('      <tr><td colspan="2"><br><b>Relatório de viagem:</b></font></td></tr>');   
     ShowHTML('      <tr><td colspan="2"><textarea '.$w_Disabled.' name="w_relatorio" class="STI" ROWS=5 cols=75>'.$w_relatorio.'</TEXTAREA></td>');
-
+    
+    ShowHTML('      <tr><td colspan="2"><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS_Cliente,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
+    ShowHTML('        <INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
+    ShowHTML('      <tr><td colspan="2"><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="'.$w_caminho.'" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+    if (nvl($w_atual,'')!='') {
+      ShowHTML('      &nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
+      ShowHTML('      &nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
+    }
+    
     ShowHTML('    <tr><td colspan="2"><br><b>Há reembolso?</b> ');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="S" '.(($w_reembolso=='S') ? 'checked' : '').'> Sim');
     ShowHTML('      <input '.$w_Disabled.' type="radio" name="w_reembolso" value="N" '.(($w_reembolso=='S') ? '' : 'checked').'> Não');
@@ -6442,7 +6471,7 @@ function PrestarContas() {
       $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
       ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       if (nvl($contas,'')!='') ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
-      ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('    <tr><td colspan="2"><blockquote><TABLE BORDER="0">');
       ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
@@ -6458,17 +6487,10 @@ function PrestarContas() {
         ShowHTML('<INPUT type="hidden" name="w_fin_dev" value="'.f($RS_Fin_Dev,'chave').'">');
       }
       ShowHTML('      <tr><td colspan="2"><b>O<u>b</u>servação:</b><br><textarea '.$w_Disabled.' accesskey="B" name="w_ressarcimento_observacao" class="STI" ROWS=10 cols=75>'.$w_ressarcimento_observacao.'</TEXTAREA></td></tr>');
-      ShowHTML('    </table></blockquote>');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_ressarcimento_valor" value="0,00">');
     }
-    ShowHTML('<tr><td colspan="2"><br><b>Anexo do relatório (máximo de '.formatNumber((f($RS_Cliente,'upload_maximo')/1024),0).' KBytes)</b></font></td></tr>');   
-    ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS_Cliente,'upload_maximo').'">');
-    ShowHTML('<tr><td colspan="2"><input '.$w_Disabled.' type="file" name="w_caminho" class="STI" SIZE="80" MAXLENGTH="100" VALUE="'.$w_caminho.'" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
-    if (nvl($w_atual,'')!='') {
-      ShowHTML('&nbsp;'.LinkArquivo('HL',$w_cliente,$w_atual,'_blank','Clique para exibir o arquivo em outra janela.','Exibir',null));
-      ShowHTML('&nbsp;<input '.$w_Disabled.' type="checkbox" name="w_exclui_arquivo" value="S" '.((nvl($w_exclui_aruivo,'nulo')!='nulo') ? 'checked' : '').'>  Remover arquivo atual');
-    }
+    ShowHTML('    </table></blockquote>');
   } elseif ($w_cumprimento=='C') {
     ShowHTML('<tr><td colspan="2"><br><b>Motivo do cancelamento:</b></font></td></tr>');   
     ShowHTML('      <tr><td valign="top" colspan="2"><textarea '.$w_Disabled.' name="w_nota_conclusao" class="STI" ROWS=5 cols=75>'.$w_nota_conclusao.'</TEXTAREA></td>');
@@ -6502,7 +6524,7 @@ function PrestarContas() {
       $w_ressarcimento_data = Nvl($w_ressarcimento_data,formataDataEdicao(Date('d/m/Y')));
       ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');   
       ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> '.$w_devolucao.'<br>'.$contas.'</font></td></tr>');          
-      ShowHTML('    <blockquote><TABLE BORDER="0">');
+      ShowHTML('    <tr><td colspan="2"><blockquote><TABLE BORDER="0">');
       ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_ressarcimento_data.'" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="'.$w_deposito.'" title="Informe o código do depósito identificado."></td>');
@@ -6524,11 +6546,12 @@ function PrestarContas() {
     }
   }
 
-  ShowHTML('    <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
-  ShowHTML('    <tr><td align="center" colspan="3">');
+  ShowHTML('    <tr><td align="center" colspan="2" height="1" bgcolor="#000000"></TD></TR>');
+  ShowHTML('    <tr><td align="center" colspan="2">');
   ShowHTML('        <input class="stb" type="submit" name="Botao" value="Gravar">');
   ShowHTML('        <input class="stb" type="button" onClick="javascript:window.close(); opener.focus();" name="Botao" value="Fechar">');
   ShowHTML('    </tr>');
+  ShowHTML('    </table>');
   ShowHTML('</FORM>');
   
   if (nvl($w_cumprimento,'')!='' && $w_reembolso=='S' && $w_reembolso_bd=='S') {
@@ -7317,6 +7340,20 @@ function Grava() {
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$R.'&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
+        ScriptClose();
+      } else {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert(\'Assinatura Eletrônica inválida!\');');
+        ScriptClose();
+        retornaFormulario('w_assinatura');
+      }
+      break;
+    case 'PDDIARIAFS':
+      // Verifica se a Assinatura Eletrônica é válida
+      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],upper($_REQUEST['w_assinatura'])) || $w_assinatura=='') {
+        dml_putPD_FimSemana::getInstanceOf($dbms,$_REQUEST['w_chave'],$_POST['w_fim_semana']);
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'AltSolic&O='.$O.'&w_chave='.$_REQUEST['w_chave'].'&w_menu='.$_REQUEST['w_menu'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'\';');
         ScriptClose();
       } else {
         ScriptOpen('JavaScript');
