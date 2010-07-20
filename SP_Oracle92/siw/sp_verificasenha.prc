@@ -25,6 +25,8 @@ begin
    If w_reg = 0 Then
       -- Atualiza as pesquisas de preço de todos os itens do catálogo
       sp_ajustapesquisamaterial(p_cliente, null, 'TODOS');
+      -- Atualiza pagamentos de diárias pendentes de prestação de contas
+      sp_ajustaFasePagamento(p_cliente, null, 'TODOS');
       -- Registra que o ajuste já foi executado na data atual
       update cl_parametro set data_ajuste_pesquisa = sysdate where cliente = p_cliente;
    End If;

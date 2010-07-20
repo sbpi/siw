@@ -21,15 +21,30 @@ create or replace procedure SP_PutViagemEnvio
    i               number(18);
    w_ci            number(18);
    w_ee            number(18);
+   w_pp            number(18);
    w_salto         number(4)    := 0;
    w_reembolso     pd_missao.reembolso%type;
    w_ressarcimento pd_missao.ressarcimento%type;
    w_conta         co_pessoa_conta%rowtype;
    w_beneficiario  number(18);
    w_especial      number(18);
+   w_pendencia     number(18);
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
+      
+   cursor c_financeiro_pendente (l_cliente in number, l_pessoa in number) is
+      select w.sq_siw_solicitacao, w2.sq_menu
+        from fn_lancamento                  w
+             inner     join siw_solicitacao w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
+               inner   join siw_menu        w2 on (w1.sq_menu            = w2.sq_menu and 
+                                                   w2.sigla              = 'FNDVIA' and
+                                                   w2.sq_pessoa          = l_cliente
+                                                  )
+               inner   join siw_tramite     w3 on (w1.sq_siw_tramite     = w3.sq_siw_tramite and
+                                                   w3.sigla              = 'PP'
+                                                  )
+       where w.pessoa = l_pessoa;
       
    cursor c_reembolso is
       select x.codigo_interno as cd_interno, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
@@ -208,7 +223,7 @@ create or replace procedure SP_PutViagemEnvio
    
 begin
    -- Recupera os dados da solicitação.
-   select reembolso,ressarcimento into w_reembolso, w_ressarcimento from pd_missao where sq_siw_solicitacao = p_chave;
+   select reembolso,ressarcimento,sq_pessoa into w_reembolso, w_ressarcimento, w_beneficiario from pd_missao where sq_siw_solicitacao = p_chave;
    
    -- Recupera a chave do cliente
    select sq_pessoa into w_cliente from siw_menu where sq_menu = p_menu;
@@ -220,6 +235,19 @@ begin
          from siw_tramite a
         where sq_siw_tramite = p_tramite;
   
+
+      -- Verifica se há pendência na prestação de contas de alguma viagem
+      select count(*) into w_pendencia
+        from pd_missao                    a
+             inner   join siw_solicitacao b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+               inner join siw_tramite     c on (b.sq_siw_tramite      = c.sq_siw_tramite and
+                                                c.sigla               in ('PC','AP')
+                                               )
+               inner join siw_menu        d on (b.sq_menu             = d.sq_menu)
+               inner join pd_parametro    e on (d.sq_pessoa           = e.cliente)
+       where 0           > soma_dias(e.cliente,trunc(b.fim),e.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+         and a.sq_pessoa = w_beneficiario;
+
       -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo
       select count(*) into w_existe
         from pd_missao                    a
@@ -309,14 +337,6 @@ begin
             End If;
          End If;
       Elsif w_sg_tramite = 'VP' Then
-         -- ABDI: Se tiver reembolso, vai para o próximo trâmite. Senão, pula para o trâmite seguinte.
-         If w_reembolso = 'S' Then 
-            w_salto := w_salto + 1;
-         Elsif w_ressarcimento = 'S' Then
-            w_salto := w_salto + 2;
-         Else w_salto := w_salto + 3;
-         End If;
-      Elsif w_sg_tramite = 'VP' Then
          If w_reembolso = 'S' Then        -- ABDI: Se tiver reembolso, vai para aprovação da GERPE.
             w_salto := w_salto + 1;
          Elsif w_ressarcimento = 'S' Then -- ABDI: Se tiver ressarcimento, vai para envio à GERAF.
@@ -399,7 +419,25 @@ begin
    End If;
    
    If p_devolucao = 'N' Then
-      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
+      If w_sg_tramite = 'VP' Then
+         -- Libera pagamentos pendentes de prestação de contas se não houver pendência
+         If w_pendencia = 0 Then
+            for crec in c_financeiro_pendente (w_cliente, w_beneficiario) loop
+               select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
+               select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
+                   
+               sp_putlancamentoenvio(
+                                p_menu          => crec.sq_menu,
+                                p_chave         => crec.sq_siw_solicitacao,
+                                p_pessoa        => p_pessoa,
+                                p_tramite       => w_pp,
+                                p_novo_tramite  => w_ee,
+                                p_devolucao     => 'N',
+                                p_despacho      => 'Liberação automática de pagamento.'
+                               );
+            end loop;   
+         End If;
+      Elsif w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
          If w_reembolso = 'S' or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
@@ -445,7 +483,7 @@ begin
                       cidade_estrang   = drec.cidade_estrang,
                       informacoes      = drec.informacoes,
                       codigo_deposito  = drec.codigo_deposito
-                    where sq_siw_solicitacao = w_sq_financ;
+                   where sq_siw_solicitacao = w_sq_financ;
                 End Loop;
                 sp_putlancamentodoc(
                                   p_operacao           => case when crec.sq_documento is null then 'I' else 'A' end,
@@ -479,15 +517,17 @@ begin
                              );
    
                 If crec.sq_financeiro is null Then
-                   -- Coloca a solicitação na fase de liquidação
+                   -- Coloca a solicitação na fase de pagamento ou de pendência
                    select sq_siw_tramite into w_ci from siw_tramite where sq_menu = crec.sq_menu and sigla='CI';
                    select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
+                   select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
+                   
                    sp_putlancamentoenvio(
                                     p_menu          => crec.sq_menu,
                                     p_chave         => w_sq_financ,
                                     p_pessoa        => p_pessoa,
                                     p_tramite       => w_ci,
-                                    p_novo_tramite  => w_ee,
+                                    p_novo_tramite  => case w_pendencia when 0 then w_ee else w_pp end,
                                     p_devolucao     => 'N',
                                     p_despacho      => case w_sg_tramite 
                                                             when 'EE' 
