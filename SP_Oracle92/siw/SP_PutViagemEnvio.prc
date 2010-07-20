@@ -225,7 +225,8 @@ begin
         from pd_missao                    a
              inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
-               inner join eo_unidade_resp c on (b.sq_unidade         = c.sq_unidade and
+               inner join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+               inner join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
                                                 c.sq_pessoa          = p_pessoa and
                                                 c.tipo_respons       = 'T' and
                                                 c.fim                is null
