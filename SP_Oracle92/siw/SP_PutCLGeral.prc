@@ -84,7 +84,7 @@ begin
       End If;
    End If;
    
-   If p_operacao <> 'I' Then -- Inclusão
+   If p_operacao not in ('I','T') Then -- Inclusão nem atendimento
       -- Remove as vinculações existentes para a solicitação
       delete siw_solicitacao_objetivo where sq_siw_solicitacao = coalesce(w_chave, p_chave);
    End If;
@@ -199,6 +199,17 @@ begin
              and cancelado          = 'N'
          );
       End If;
+   Elsif p_operacao = 'T' Then -- Atendimento
+      -- Atualiza a tabela de solicitações
+      Update siw_solicitacao set
+          sq_plano         = p_plano,
+          sq_cc            = p_sqcc,
+          sq_solic_pai     = p_solic_pai,
+          ultima_alteracao = w_data
+      where sq_siw_solicitacao = p_chave;
+
+      -- Atualiza a tabela de compras
+      Update cl_solicitacao set sq_financeiro = w_financeiro where sq_siw_solicitacao = p_chave;
    Elsif p_operacao = 'A' Then -- Alteração
       -- Atualiza a tabela de solicitações
       Update siw_solicitacao set
@@ -314,7 +325,7 @@ begin
       Else p_chave_nova := w_chave;
    End If;
 
-   If p_operacao in ('I','A') and p_objetivo is not null Then
+   If p_operacao in ('I','A','T') and p_objetivo is not null Then
       -- Para cada objetivo estratégico, grava um registro na tabela de vinculações
       Loop
          w_item  := Trim(substr(w_objetivo,1,Instr(w_objetivo,',')-1));

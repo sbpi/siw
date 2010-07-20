@@ -598,14 +598,14 @@ function Geral() {
       $w_solic_pai              = $_REQUEST['w_solic_pai'];
     }
     $w_codigo                   = $_REQUEST['w_codigo'];
-    $w_chave_pai                = $_REQUEST['w_chave_pai'];    
+    $w_chave_pai                = $_REQUEST['w_chave_pai'];
+    $w_solic_pai                = $_REQUEST['w_solic_pai'];    
     $w_plano                    = $_REQUEST['w_plano'];
     $w_sqcc                     = $_REQUEST['w_sqcc'];
     $w_objetivo                 = explodeArray($_REQUEST['w_objetivo']);
     $w_prioridade               = $_REQUEST['w_prioridade'];
     $w_aviso                    = $_REQUEST['w_aviso'];
     $w_dias                     = $_REQUEST['w_dias'];
-    $w_chave_pai                = $_REQUEST['w_chave_pai'];
     $w_chave_aux                = $_REQUEST['w_chave_aux'];
     $w_sq_menu                  = $_REQUEST['w_sq_menu'];
     $w_sq_unidade               = $_REQUEST['w_sq_unidade'];
@@ -1840,13 +1840,39 @@ function Atender() {
   $RS = db_getSolicCL::getInstanceOf($dbms,null,$w_usuario,$SG,5,null,null,null,null,null,null,null,null,null,null,
           $w_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
+  $w_dados_pai      = explode('|@|',f($RS,'dados_pai'));
+  $w_sq_menu_relac  = $w_dados_pai[3];
+  if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
+  $w_solic_pai      = f($RS,'sq_solic_pai');
+  $w_chave_pai      = f($RS,'sq_solic_pai');
   $w_fundo_fixo     = f($RS,'fundo_fixo');
   $w_nota_conclusao = f($RS,'nota_conclusao');
+  $w_financeiro     = f($RS,'sq_financeiro');
+  $w_rubrica        = f($RS,'sq_projeto_rubrica');
+  $w_lancamento     = f($RS,'sq_tipo_lancamento');
+  if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
   
   if (nvl($w_troca,'')!='') {
+    // Se for recarga da página
+    $w_sq_menu_relac  = $_REQUEST['w_sq_menu_relac'];    
+    if($w_sq_menu_relac=='CLASSIF') {
+      $w_solic_pai    = '';
+    } else {
+      $w_solic_pai    = $_REQUEST['w_solic_pai'];
+    }
+    $w_chave_pai      = $_REQUEST['w_chave_pai'];    
+    $w_financeiro     = $_REQUEST['w_financeiro'];
+    $w_rubrica        = $_REQUEST['w_rubrica'];
+    $w_lancamento     = $_REQUEST['w_lancamento'];
     $w_fundo_fixo     = $_REQUEST['w_fundo_fixo'];
     $w_nota_conclusao = $_REQUEST['w_nota_conclusao'];
   }
+
+  if ($w_solic_pai>'') {
+    // Recupera as possibilidades de vinculação financeira
+    $RS_Financ = db_getCLFinanceiro::getInstanceOf($dbms,$w_cliente,$w_menu,$w_solic_pai,null,null,null,null,null,null,null,null);
+  }
+  
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=../'.MontaURL('MESA').'">');
@@ -1855,6 +1881,19 @@ function Atender() {
   formatavalor();
   ValidateOpen('Validacao');
 
+  if(nvl($w_sq_menu_relac,'')!='') {
+    Validate('w_sq_menu_relac','Vincular a','SELECT',1,1,18,1,1);
+    if ($w_sq_menu_relac=='CLASSIF') {
+      Validate('w_sqcc','Classificação','SELECT',1,1,18,1,1);
+    } else {
+      Validate('w_solic_pai','Vinculação','SELECT',1,1,18,1,1);
+    }
+  }
+  if (count($RS_Financ)>1) {
+    Validate('w_rubrica','Rubrica','SELECT',1,1,18,'','0123456789');
+    Validate('w_lancamento','Tipo de lançamento','SELECT',1,1,18,'','0123456789');
+  }
+  
   ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
   Validate('["w_quantidade[]"][ind]','Quantidade autorizada','VALOR','1',1,18,'','0123456789.');
   CompValor('["w_quantidade[]"][ind]','Quantidade autorizada','<=','["w_qtd_ant[]"][ind]','Quantidade solicitada');
@@ -1880,14 +1919,9 @@ function Atender() {
   // Chama a rotina de visualização dos dados da PCD, na opção 'Listagem'
   ShowHTML(VisualPedido($w_chave,'L',$w_usuario,$P1,$P4));
   ShowHTML('<HR>');
-  ShowHTML('<FORM action="'.$w_dir.$w_pagina.'Grava&SG=CLPCATEND&O='.$O.'&w_menu='.$w_menu.'" name="Form" onSubmit="return(Validacao(this));" method="POST">');
-  ShowHTML('<INPUT type="hidden" name="P1" value="'.$P1.'">');
-  ShowHTML('<INPUT type="hidden" name="P2" value="'.$P2.'">');
-  ShowHTML('<INPUT type="hidden" name="P3" value="'.$P3.'">');
-  ShowHTML('<INPUT type="hidden" name="P4" value="'.$P4.'">');
-  ShowHTML('<INPUT type="hidden" name="TP" value="'.$TP.'">');
-  ShowHTML('<INPUT type="hidden" name="R" value="'.$w_pagina.$par.'">');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'CLPCATEND',$w_pagina.$par,'T');
   ShowHTML(MontaFiltro('POST'));
+  ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.f($RS,'sq_siw_tramite').'">');
@@ -1897,6 +1931,36 @@ function Atender() {
   ShowHTML('<INPUT type="hidden" name="w_material[]" value="">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
   ShowHTML('  <table width="100%" border="0">');
+
+  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Vinculação Orçamentária-Financeira</td></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr valign="top">');
+  selecaoServico('<U>V</U>incular a:', 'S', null, $w_sq_menu_relac, $w_menu, null, 'w_sq_menu_relac', 'MENURELAC', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_sq_menu_relac\'; document.Form.submit();"', $w_acordo, $w_acao, $w_viagem);
+  if(Nvl($w_sq_menu_relac,'')!='') {
+    ShowHTML('          <tr valign="top">');
+    if ($w_sq_menu_relac=='CLASSIF') {
+      SelecaoSolic('Classificação:',null,null,$w_cliente,$w_sqcc,$w_sq_menu_relac,null,'w_sqcc','SIWSOLIC',null,null,'<BR />',2);
+    } else {
+      SelecaoSolic('Vinculação:',null,null,$w_cliente,$w_solic_pai,$w_sq_menu_relac,f($RS_Menu,'sq_menu'),'w_solic_pai',f($RS_Relac,'sigla'),'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',$w_chave_pai,'<BR />',2);
+    }
+  }
+  if ($w_solic_pai>'') {
+    if (count($RS_Financ)>1) {
+      ShowHTML('      <tr valign="top">');
+      SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', $w_rubrica,$w_solic_pai,'T','w_rubrica','CLFINANC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_rubrica\'; document.Form.submit();"');
+      SelecaoTipoLancamento('<u>T</u>ipo de lançamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_lancamento,null,$w_cliente,'w_lancamento','CLPC'.str_pad($w_solic_pai,10,'0',STR_PAD_LEFT).str_pad($w_rubrica,10,'0',STR_PAD_LEFT).'T',null);
+    } elseif (count($RS_Financ)==1) {
+      foreach($RS_Financ as $row) { $RS_Financ = $row; break; }
+      ShowHTML('<INPUT type="hidden" name="w_financeiro" value="'.f($RS_Financ,'chave').'">');
+    }
+  }
+  
+  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Quantidades Autorizadas</td></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   $RS1 = db_getCLSolicItem::getInstanceOf($dbms,null,$w_chave,null,null,null,null,null,null,null,null,null,null,null);
   $RS1 = SortArray($RS1,'nm_tipo_material','asc','nome','asc'); 
   ShowHTML('<tr><td colspan=4><b>Informe para cada item a quantidade autorizada para compra:</b>');
@@ -1932,6 +1996,10 @@ function Atender() {
   }
   ShowHTML('    </table>');
   ShowHTML('      <tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Dados Gerais</td></td></tr>');
+  ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
   MontaRadioNS('<b>Pagamento por fundo fixo? <font color="#BC3131"></font></b>',$w_fundo_fixo,'w_fundo_fixo');
   ShowHTML('    <tr><td colspan="4"><b>Nota d<u>e</u> conclusão: <font color="#BC3131">(preencher apenas se o pagamento por fundo fixo)</font></b><br><textarea '.$w_Disabled.' accesskey="E" name="w_nota_conclusao" class="STI" ROWS=5 cols=75 title="Se pagamento por fundo fixo, você pode registrar uma nota de conclusão opcional.">'.$w_nota_conclusao.'</TEXTAREA></td>');
   ShowHTML('    <tr><td colspan=4><b><U>A</U>ssinatura Eletrônica:<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -2485,6 +2553,13 @@ function Grava() {
             }
           }
 
+          // Grava vinculação orçamentária-financeira
+          dml_putCLGeral::getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$_REQUEST['w_menu'],null,
+	          null,null,null,$_REQUEST['w_plano'],explodeArray($_REQUEST['w_objetivo']),$_REQUEST['w_sqcc'],
+	          $_REQUEST['w_solic_pai'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+	          $_REQUEST['w_financeiro'],$_REQUEST['w_rubrica'],$_REQUEST['w_lancamento'],null,&$w_chave_nova,null);
+	          
+          // Grava tipo de pagamento e nota de conclusão
           dml_putCLDados::getInstanceOf($dbms,'AUTORIZ',$_REQUEST['w_chave'],null,null,null,null,null,null,null,
             null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
             $_REQUEST['w_nota_conclusao'],$_REQUEST['w_fundo_fixo']);
