@@ -111,7 +111,7 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.sq_projeto,         m.nm_projeto,
-                case when (b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                    a
                   inner          join  eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer   join  eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade  and
@@ -129,6 +129,7 @@ begin
                                       )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        left     join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
                         inner    join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
@@ -182,7 +183,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -250,7 +251,7 @@ begin
                 p.nome_resumido nm_exec,
                 m.sq_projeto,         m.nm_projeto,
                 n.sq_atividade,       n.nm_atividade,
-                case when (b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                    a
                   inner          join  eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer   join  eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade  and
@@ -269,6 +270,7 @@ begin
                     left         join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        left     join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
                         inner    join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
@@ -329,7 +331,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -397,7 +399,7 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.sq_cia_transporte, m.nm_cia_viagem,
-                case when (b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                    a
                   inner          join  eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer   join  eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade  and
@@ -416,6 +418,7 @@ begin
                     left         join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                        left     join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
                         inner    join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
@@ -472,7 +475,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -540,7 +543,7 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.destino, m.nm_destino, acentos(m.nm_destino) as nm_destino_ind,
-                case when (b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                    a
                   inner          join  eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer   join  eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade  and
@@ -559,7 +562,8 @@ begin
                     left         join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                     inner        join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner      join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
-                        inner    join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
+                        left     join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
+                        inner    join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                         inner    join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner  join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner  join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -617,7 +621,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
@@ -696,7 +700,7 @@ begin
                 o.nome_resumido nm_solic, o.nome_resumido||' ('||o2.sigla||')' nm_resp,
                 p.nome_resumido nm_exec,
                 m.nm_mes, m.cd_mes,
-                case when (b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu             a
                   inner              join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                     left outer       join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -715,7 +719,8 @@ begin
                     left             join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                     inner            join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                       inner          join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
-                        inner        join siw_solicitacao      d11 on (d1.sq_siw_solicitacao     = d11.sq_siw_solicitacao)
+                        left         join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
+                        inner        join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                         inner        join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                           inner      join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
                           inner      join co_pessoa_fisica     d4 on (d2.sq_pessoa               = d4.sq_pessoa)
@@ -771,7 +776,7 @@ begin
             and (p_usu_resp       is null or (p_usu_resp    is not null and 0 < (select count(distinct(sq_deslocamento)) from pd_deslocamento x where x.tipo = 'S' and x.sq_cia_transporte = p_usu_resp and x.sq_siw_solicitacao = b.sq_siw_solicitacao)))
             and (p_fim_i          is null or (p_fim_i       is not null and m.nm_mes = to_char(p_fim_i,'yyyy/mm')))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + a5.dias_prestacao_contas + 1 - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla='PC' and trunc(b.fim) + coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1 - trunc(sysdate)<0))
             and ((p_tipo         = 1     and Nvl(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and Nvl(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or

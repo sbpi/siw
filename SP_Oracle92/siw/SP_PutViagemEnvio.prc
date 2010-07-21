@@ -238,14 +238,15 @@ begin
 
       -- Verifica se há pendência na prestação de contas de alguma viagem
       select count(*) into w_pendencia
-        from pd_missao                    a
-             inner   join siw_solicitacao b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-               inner join siw_tramite     c on (b.sq_siw_tramite      = c.sq_siw_tramite and
-                                                c.sigla               in ('PC','AP')
-                                               )
-               inner join siw_menu        d on (b.sq_menu             = d.sq_menu)
-               inner join pd_parametro    e on (d.sq_pessoa           = e.cliente)
-       where 0           > soma_dias(e.cliente,trunc(b.fim),e.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+        from pd_missao                        a
+             inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
+             inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+               inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
+                                                    c.sigla               in ('PC','AP')
+                                                   )
+               inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
+               inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
+       where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
          and a.sq_pessoa = w_beneficiario;
 
       -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo

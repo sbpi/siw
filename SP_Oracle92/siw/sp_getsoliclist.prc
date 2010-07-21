@@ -1022,18 +1022,19 @@ begin
                       left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)
                         left         join siw_solicitacao      r1 on (r.sq_siw_solicitacao       = r1.sq_siw_solicitacao)
                       left           join (select w.sq_siw_solicitacao, count(*) as atraso_pc
-                                             from fn_lancamento                  w
-                                                  inner     join siw_solicitacao w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
-                                                    inner   join siw_menu        w2 on (w1.sq_menu            = w2.sq_menu and 
-                                                                                        w2.sigla              = 'FNDVIA' and
-                                                                                        w2.sq_menu            = p_menu
-                                                                                       )
-                                                      inner join pd_parametro    w3 on (w2.sq_pessoa          = w3.cliente)
-                                                  inner     join pd_missao       w4 on (w.pessoa              = w4.sq_pessoa)
-                                                    inner   join siw_solicitacao w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
-                                                      inner join siw_tramite     w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite)
+                                             from fn_lancamento                      w
+                                                  inner     join siw_solicitacao     w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
+                                                    inner   join siw_menu            w2 on (w1.sq_menu            = w2.sq_menu and 
+                                                                                            w2.sigla              = 'FNDVIA' and
+                                                                                            w2.sq_menu            = p_menu
+                                                                                           )
+                                                      inner join pd_parametro        w3 on (w2.sq_pessoa          = w3.cliente)
+                                                  inner     join pd_missao           w4 on (w.pessoa              = w4.sq_pessoa)
+                                                    inner   join pd_categoria_diaria w7 on (w4.diaria             = w7.sq_categoria_diaria)
+                                                    inner   join siw_solicitacao     w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
+                                                      inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite)
                                             where w6.sigla in ('PC','AP')
-                                              and 0       > soma_dias(w2.sq_pessoa,trunc(w5.fim),w3.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+                                              and 0       > soma_dias(w2.sq_pessoa,trunc(w5.fim),w7.dias_prestacao_contas + 1,'U') - trunc(sysdate)
                                            group by w.sq_siw_solicitacao
                            	              )                    s  on (b.sq_siw_solicitacao      = s.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
@@ -1149,7 +1150,7 @@ begin
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
                 d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
-                d1.ressarcimento_data,
+                d1.ressarcimento_data,d1.nacional,                   d1.internacional,
                 d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res, d2.nome_indice as nm_prop_ind, d2.nome_resumido_ind as nm_prop_res_ind,
                 d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
@@ -1162,7 +1163,7 @@ begin
                 d5.limite_passagem, d5.limite_diaria,
                 to_char(r.saida,'dd/mm/yyyy, hh24:mi:ss') as phpdt_saida, to_char(r.chegada,'dd/mm/yyyy, hh24:mi:ss') as phpdt_chegada,
                 pd_retornatrechos(b.sq_siw_solicitacao) as trechos,
-                case when (b1.sigla in ('PC','AP') and soma_dias(a.sq_pessoa,trunc(b.fim),a5.dias_prestacao_contas + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
+                case when (b1.sigla in ('PC','AP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0) then 'S' else 'N' end as atraso_pc
            from siw_menu                                a
                 inner         join eo_unidade           a2 on (a.sq_unid_executora        = a2.sq_unidade)
                   left        join eo_unidade_resp      a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -1181,6 +1182,7 @@ begin
                   left           join pe_plano          b3 on (b.sq_plano                 = b3.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
+                      left    join pd_categoria_diaria  d6 on (d1.diaria                  = d6.sq_categoria_diaria)
                       inner   join siw_solicitacao     d11 on (d1.sq_siw_solicitacao      = d11.sq_siw_solicitacao)
                       inner   join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
                         inner join co_tipo_vinculo      d3 on (d2.sq_tipo_vinculo         = d3.sq_tipo_vinculo)
@@ -1259,7 +1261,7 @@ begin
                                              )
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
-            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP') and soma_dias(a.sq_pessoa,trunc(b.fim),a5.dias_prestacao_contas + 1,'U') - trunc(sysdate)<0))
+            and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0))
             and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
