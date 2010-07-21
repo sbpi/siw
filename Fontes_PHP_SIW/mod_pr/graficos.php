@@ -1,4 +1,4 @@
-<?
+<?php
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -26,7 +26,7 @@ include_once($w_dir_volta.'classes/gantt/gantt.class.php');
 // Versao   : 1.0.0.0
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
-// 
+//
 // Parâmetros recebidos:
 //    R (referência) = usado na rotina de gravação, com conteúdo igual ao parâmetro T
 //    O (operação)   = I   : Inclusão
@@ -40,22 +40,22 @@ include_once($w_dir_volta.'classes/gantt/gantt.class.php');
 // Verifica se o usuário está autenticado
 if ($_SESSION['LOGON']!='Sim') { EncerraSessao(); }
 // Declaração de variáveis
-$dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
+$db = new abreSessao();
+$dbms = $db->getInstanceOf($_SESSION['DBMS']);
 // Carrega variáveis locais com os dados dos parâmetros recebidos
-$par        = upper($_REQUEST['par']);
-$P1         = nvl($_REQUEST['P1'],0);
-$P2         = nvl($_REQUEST['P2'],0);
-$P3         = nvl($_REQUEST['P3'],1);
-$P4         = nvl($_REQUEST['P4'],$conPageSize);
-$TP         = $_REQUEST['TP'];
-$SG         = upper($_REQUEST['SG']);
-$R          = $_REQUEST['R'];
-$O          = upper($_REQUEST['O']);
-
+$par = (isset($_REQUEST['par']) ? upper($_REQUEST['par']) : null);
+$P1 = (isset($_REQUEST['P1']) ? $_REQUEST['P1'] : 0);
+$P2 = (isset($_REQUEST['P2']) ? $_REQUEST['P2'] : 0);
+$P3 = (isset($_REQUEST['P3']) ? $_REQUEST['P3'] : 1);
+$P4 = (isset($_REQUEST['P4']) ? $_REQUEST['P4'] : $conPageSize);
+$TP = (isset($_REQUEST['TP']) ? $_REQUEST['TP'] : null);
+$SG = (isset($_SGEQUEST['SG']) ? upper($_SGEQUEST['SG']) : null);
+$R = (isset($_REQUEST['R']) ? $_REQUEST['R'] : null);
+$O = (isset($_REQUEST['O']) ? $_REQUEST['O'] : null);
 $w_chave    = upper($_REQUEST['w_chave']);
 $w_scale    = nvl($_REQUEST['w_scale'],'m');
 
-$w_assinatura   = upper($_REQUEST['w_assinatura']);
+$w_assinatura = (isset($_REQUEST['w_assinatura']) ? $_REQUEST['w_assinatura'] : null);
 $w_pagina       = 'graficos.php?par=';
 $w_Disabled     = 'ENABLED';
 $w_dir          = 'mod_pr/';
@@ -69,28 +69,32 @@ switch ($O) {
   case 'V': $w_TP=$TP.' - Envio';       break;
   case 'H': $w_TP=$TP.' - Herança';     break;
   default:  $w_TP=$TP.' - Listagem';    break;
-} 
+}
 $w_cliente  = RetornaCliente();
 $w_usuario  = RetornaUsuario();
 $w_menu     = RetornaMenu($w_cliente,$SG);
 $w_ano      = RetornaAno();
 // Verifica se o documento tem sub-menu. Se tiver, agrega no HREF uma chamada para montagem do mesmo.
-$RS = db_getLinkSubMenu::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
-if (count($RS)>0) {
+$submenu = new db_getLinkSubMenu();
+$RS = $submenu->getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $SG);
+if (count($RS) > 0) {
   $w_submenu = 'Existe';
 } else {
   $w_submenu = '';
 }
 // Recupera a configuração do serviço
-if ($P2>0) {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$P2);
+if ($P2 > 0) {
+  $menu = new db_getMenuData();
+  $RS_Menu = $menu->getInstanceOf($dbms, $P2);
 } else {
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
+  $menu = new db_getMenuData();
+  $RS_Menu = $menu->getInstanceOf($dbms, $w_menu);
 }
 // Se for sub-menu, pega a configuração do pai
-if (f($RS_Menu,'ultimo_nivel')=='S') { 
-  $RS_Menu = db_getMenuData::getInstanceOf($dbms,f($RS_Menu,'sq_menu_pai'));
-} 
+if (f($RS_Menu, 'ultimo_nivel') == 'S') {
+  $menu = new db_getMenuData();
+  $RS_Menu = $menu->getInstanceOf($dbms, f($RS_Menu, 'sq_menu_pai'));
+}
 Main();
 FechaSessao($dbms);
 exit;
@@ -101,7 +105,7 @@ exit;
 function Hierarquico() {
   extract($GLOBALS);
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');  
+  $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');
 
   $diagram = new DiagramExtended(gera_hierarquico(true));
   $data = $diagram->getNodePositions();
@@ -124,7 +128,7 @@ function Hierarquico() {
   ShowHTML('</center>');
   ShowHTML('</body>');
   ShowHTML('</html>');
-} 
+}
 
 function echo_map($l_chave, &$node, $selected) {
   extract($GLOBALS);
@@ -147,7 +151,7 @@ function Gera_Hierarquico($l_gera) {
 
   $l_xml = '<?xml version="1.0" encoding="iso-8859-1"?>';
   $l_xml .= chr(13).'<diagram bgcolor="#f" bgcolor2="#d9e3ed">';
-  
+
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
   $l_xml .= chr(13).'  <node name="    '.base64encodeIdentificada(f($RS,'ac_titulo')).'    " fitname="1" align="left" namecolor="#f" bgcolor="#d9e3ed" bgcolor2="#f" namebgcolor="#d9e3ed" namebgcolor2="#526e88" bordercolor="#526e88">';
   $l_xml .= chr(13).'     Periodo: '.formataDataEdicao(f($RS,'inicio')).' a '.formataDataEdicao(f($RS,'fim')).'\nIDE em '.formataDataEdicao(time()).': '.formatNumber(f($RS,'ide'),2).'%'.'\nIGE: '.formatNumber(f($RS,'ige'),2).'%';
@@ -196,7 +200,7 @@ function Gera_Hierarquico($l_gera) {
     $diagram->loadXmlData($l_xml);
     $diagram->Draw();
   }
-} 
+}
 
 // =========================================================================
 // Gera gráfico de Gantt
@@ -204,7 +208,7 @@ function Gera_Hierarquico($l_gera) {
 function Gantt() {
   extract($GLOBALS);
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
-  $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');  
+  $w_cabecalho   = $w_chave.' - '.f($RS,'titulo');
 
   // Recupera o logo do cliente a ser usado nas listagens
   $RS = db_getCustomerData::getInstanceOf($dbms,$w_cliente);
@@ -233,7 +237,7 @@ function Gantt() {
   ShowHTML('</center>');
   ShowHTML('</body>');
   ShowHTML('</html>');
-} 
+}
 
 // =========================================================================
 // Gera imagem do gráfico de Gantt
@@ -246,10 +250,10 @@ function Gera_Gantt() {
   $definitions['planned']['height']= 8; // height in pixels -> planned/baseline
   $definitions['planned_adjusted']['y'] = 25; // relative vertical position in pixels -> adjusted planning
   $definitions['planned_adjusted']['height']= 8; // height in pixels -> adjusted planning
-  $definitions['real']['y']=20; // relative vertical position in pixels -> real/realized time 
-  $definitions['real']['height']=5; // height in pixels -> real/realized time 
+  $definitions['real']['y']=20; // relative vertical position in pixels -> real/realized time
+  $definitions['real']['height']=5; // height in pixels -> real/realized time
   $definitions['progress']['y']=11; // relative vertical position in pixels -> progress
-  $definitions['progress']['height']=2; // height in pixels -> progress 
+  $definitions['progress']['height']=2; // height in pixels -> progress
   $definitions['img_bg_color'] = array(230,230, 255); //color of background
   $definitions['title_color'] = array(0, 0, 0); //color of title
   $definitions['text']['color'] = array(0, 0, 0); //color of title
@@ -327,29 +331,29 @@ function Gera_Gantt() {
   $definitions['legend']['ydiff'] = 20; //diference between lines of legend
 
   //other settings
-  $definitions['progress']['bar_type']='planned'; //  if you want set progress bar on planned bar (the x point), if not set, default is on planned_adjusted bar -> you need to adjust $definitions['progress']['y'] to progress y stay over planned bar or whatever you want; 
+  $definitions['progress']['bar_type']='planned'; //  if you want set progress bar on planned bar (the x point), if not set, default is on planned_adjusted bar -> you need to adjust $definitions['progress']['y'] to progress y stay over planned bar or whatever you want;
   $definitions["not_show_groups"] = false; // if set to true not show groups, but still need to set phases to a group
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // THIS IS THE BEGINNING OF YOUR CHART SETTINGS 
+  // THIS IS THE BEGINNING OF YOUR CHART SETTINGS
   //global definitions to graphic
   // change to you project data/needs
   $RS = db_getSolicData::getInstanceOf($dbms,$w_chave,'PJGERAL');
 
   $definitions['title_string'] = f($RS,'titulo'); //project title
-  $definitions['locale'] = "pt_BR";//change to language you need -> en = english, pt_BR = Brazilian Portuguese etc 
+  $definitions['locale'] = "pt_BR";//change to language you need -> en = english, pt_BR = Brazilian Portuguese etc
   //define the scale of the chart
   $definitions['limit']['detail'] = $w_scale; //w week, m month , d day
 
   //define data information about the graphic. this limits will be adjusted in month and week scales to fit to
   //start of month of start date and end of month in end date, when the scale is month
   // and to start of week of start date and end of week in the end date, when the scale is week
-  
+
   //these settings will define the size of graphic and time limits
   if (f($RS,'inicio')<=nvl(f($RS,'inicio_etapa_real'),f($RS,'inicio'))) {
-    $definitions['limit']['start'] = f($RS,'inicio'); 
+    $definitions['limit']['start'] = f($RS,'inicio');
   } else {
-    $definitions['limit']['start'] = f($RS,'inicio_etapa_real'); 
+    $definitions['limit']['start'] = f($RS,'inicio_etapa_real');
   }
   if (f($RS,'fim')>=nvl(f($RS,'fim_etapa_real'),f($RS,'fim'))) {
     $definitions['limit']['end'] = addDays(f($RS,'fim'),1);
@@ -357,7 +361,7 @@ function Gera_Gantt() {
     $definitions['limit']['end'] = addDays(f($RS,'fim_etapa_real'),1);
   }
 
-  // define the data to draw a line as "today" 
+  // define the data to draw a line as "today"
   $definitions['today']['data']= time(); //time();//draw a line in this date
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +393,7 @@ function Gera_Gantt() {
       $definitions['groups']['group'][$i]['phase'][$j] = $j;
 
       //you have to set planned phase name even when show only planned adjusted
-      $ordem1 = montaOrdemEtapa(f($row,'sq_projeto_etapa')); 
+      $ordem1 = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
       if (strlen($ordem1.'. '.f($row1,'titulo')) > 45) $l_titulo = substr($ordem1.'. '.f($row1,'titulo'),0,45).'..'; else $l_titulo = $ordem1.'. '.f($row1,'titulo');
       $definitions['planned']['phase'][$j]['name'] = $l_titulo;
 
@@ -411,7 +415,7 @@ function Gera_Gantt() {
   $definitions['image']['jpg_quality'] = 100; // quality value for jpeg imagens -> if not set default is 100
 
   new gantt($definitions);
-} 
+}
 
 // =========================================================================
 // Soma quantidade de dias
@@ -467,7 +471,7 @@ include_once ($w_dir_volta."classes/jpgraph/jpgraph.php");
 include_once ($w_dir_volta."classes/jpgraph/jpgraph_gantt.php");
 
 $RS = db_getSolicEtapa::getInstanceOf($dbms,$w_chave,null,'ARVORE',null);
-// 
+//
 // The data for the graphs
 //
 $i = 0;
@@ -501,7 +505,7 @@ $ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
   $array = '';
 
   $i++;
-  
+
   if (f($row,'fim_real')!=null && f($row,'pacote_trabalho')=='S') {
     $array = array($i,
                    ACTYPE_NORMAL,
@@ -513,8 +517,8 @@ $ordem = montaOrdemEtapa(f($row,'sq_projeto_etapa'));
     array_push($data, $array);
 
 
-	$realExecutado = array(	"id"        => $i , 
-							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real')	,7) , 
+	$realExecutado = array(	"id"        => $i ,
+							"dt_inicio" =>  formataDataEdicao(f($row,'inicio_real')	,7) ,
 							"dt_fim"    =>  formataDataEdicao(f($row,'fim_real')	,7)
 	);
 
@@ -539,7 +543,7 @@ $graph->SetFrame(false);
 $graph->scale->SetDateLocale('pt_BR');
 
 foreach($execReal as $row){
-	$activity = new GanttBar($row["id"],"",$row["dt_inicio"],$row["dt_fim"]);	
+	$activity = new GanttBar($row["id"],"",$row["dt_inicio"],$row["dt_fim"]);
 	$activity->SetPattern(BAND_RDIAG,"green");
 	$activity->SetFillColor("green");
     $activity->SetHeight(0.2);
@@ -553,7 +557,7 @@ if($maiorData  != 0 &&  $menorData  != 9999999999){
 	$menorData = formataDataEdicao(addDays($menorData,-17),7);
 	$maiorData = formataDataEdicao(addDays($maiorData,20),7);
 
-	$activity = new GanttBar($i,"", $menorData , $maiorData );	
+	$activity = new GanttBar($i,"", $menorData , $maiorData );
 	$activity->SetPattern(BAND_SOLID,"white");
 	$activity->SetFillColor("white");
 	$activity->SetHeight(0.001);
@@ -562,21 +566,21 @@ if($maiorData  != 0 &&  $menorData  != 9999999999){
 
 // Setup scale
 switch ($w_scale) {
-  case 'd' : 
-    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY); 
+  case 'd' :
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY);
     $graph->scale->day->SetStyle(DAYSTYLE_SHORTDATE4);
     break;
-  case 'w' : 
-    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY | GANTT_HWEEK); 
+  case 'w' :
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH | GANTT_HDAY | GANTT_HWEEK);
     $graph->scale->week->SetStyle(WEEKSTYLE_FIRSTDAY2WNBR);
     break;
-  case 'm' : 
-    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH ); 
+  case 'm' :
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH );
     $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
 //	$graph->scale->week->SetStyle(MONTHSTYLE_SHORTNAME);
     break;
-  default  : 
-    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH); 
+  default  :
+    $graph->ShowHeaders(GANTT_HYEAR | GANTT_HMONTH);
     $graph->scale->month->SetStyle(MONTHSTYLE_SHORTNAME);
 }
 
@@ -592,7 +596,7 @@ $graph->CreateSimple($data,$constrains,$progress);
 // .. and stroke the graph
 $graph->Stroke();
 
-} 
+}
 
 // =========================================================================
 // Rotina principal
@@ -607,7 +611,7 @@ function Main() {
     case 'GERA_GANTT1':  Gera_Gantt1();            break;
     default:
       cabecalho();
-      ShowHTML('<BASE HREF="'.$conRootSIW.'">');      
+      ShowHTML('<BASE HREF="'.$conRootSIW.'">');
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();
@@ -619,6 +623,6 @@ function Main() {
       Estrutura_Fecha();
       Estrutura_Fecha();
       Rodape();
-  } 
+  }
 }
 ?>
