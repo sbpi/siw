@@ -1253,7 +1253,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $w_tot_fatura   = 0;
         $w_total       = 0;
         foreach ($RS1 as $row) {
-          $w_tot_bilhete  = f($row,'valor_bilhete')+f($row,'valor_pta')+f($row,'valor_taxa_embarque');
+          $w_tot_bilhete  = f($row,'valor_bilhete_cheio')+f($row,'valor_pta')+f($row,'valor_taxa_embarque');
           $w_tot_cheio    += f($row,'valor_bilhete_cheio');
           $w_tot_bil      += f($row,'valor_bilhete');
           $w_tot_pta      += f($row,'valor_pta');
