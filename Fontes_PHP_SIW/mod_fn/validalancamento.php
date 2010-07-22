@@ -188,7 +188,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
         }
       }
       // Se pagamento de viagem, verifica se há prestação de contas pendente
-      if (f($l_rs_tramite,'sigla')=='EE' && f($l_rs_solic,'sigla')=='FNDVIA') {
+      if ((f($l_rs_tramite,'sigla')=='EE' || f($l_rs_tramite,'sigla')=='PP') && f($l_rs_solic,'sigla')=='FNDVIA') {
         $l_rsm = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
         $l_rs1 = db_getSolicList::getInstanceOf($dbms,f($l_rsm,'sq_menu'),$w_usuario,f($l_rsm,'sigla'),5,
             null,null,null,null,'S',null,null,null,null,null,null, null, null,null,null,null,null,null,null,null,null,null,null,null,null, 
