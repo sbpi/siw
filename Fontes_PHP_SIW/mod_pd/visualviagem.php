@@ -1098,7 +1098,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Dados da prestação de contas
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && count($RSF) > 0 && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
