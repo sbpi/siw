@@ -203,7 +203,7 @@ function Inicial() {
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=8 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       // Lista os registros selecionados para listagem
       foreach($RS as $row) {
@@ -431,7 +431,7 @@ function Help() {
   ShowHTML('        <td align="center">Sim</td>');
   ShowHTML('        <td>Data válida</td>');
   ShowHTML('        <td>DD/MM/YYYY</td>');
-  ShowHTML('        <td>Deve estar contida no decêndio da fatura');
+  ShowHTML('        <td>&nbsp;');
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td>10</td>');
@@ -664,7 +664,7 @@ function Help() {
   ShowHTML('        <td align="center">Sim</td>');
   ShowHTML('        <td>Data válida</td>');
   ShowHTML('        <td>DD/MM/YYYY</td>');
-  ShowHTML('        <td>Data de início da hospedagem, locação ou seguro. Deve estar contida no decêndio da fatura.<td>');
+  ShowHTML('        <td>Data de início da hospedagem, locação ou seguro.<td>');
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td>13</td>');
@@ -673,7 +673,7 @@ function Help() {
   ShowHTML('        <td align="center">Sim</td>');
   ShowHTML('        <td>Data válida</td>');
   ShowHTML('        <td>DD/MM/YYYY</td>');
-  ShowHTML('        <td>Data de término da hospedagem, locação ou seguro. Deve estar contida no decêndio da fatura.</td>');
+  ShowHTML('        <td>Data de término da hospedagem, locação ou seguro.</td>');
   ShowHTML('      </tr>');
   ShowHTML('      <tr valign="top">');
   ShowHTML('        <td>14</td>');
@@ -952,9 +952,6 @@ function Grava() {
                   $w_erro.=$crlf.'Data de emissão do bilhete: '.$w_result; 
                 } else {
                   $w_temp = toDate($w_emissao_bil);
-                  if ($w_temp<toDate($faturas[$w_fatura]['inicio']) || $w_temp>toDate($faturas[$w_fatura]['fim'])) {
-                    $w_erro.=$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): deve estar contida no decêndio da fatura'; 
-                  }
                   if ($w_hn_bilhete) {
                     if (f($RS_Bil,'data')!=$w_temp) {
                       $w_erro.=$crlf.'Data de emissão do bilhete ('.$w_emissao_bil.'): valor constante do arquivo diverge do valor registrado na base de dados ('.formataDataEdicao(f($RS_Bil,'data')).')'; 
@@ -1288,6 +1285,8 @@ function Grava() {
                   // Verifica se o código da viagem existe
                   $RS = db_getLinkData::getInstanceOf($dbms,$w_cliente,'PDINICIAL');
                   $RS = db_getSolicList::getInstanceOf($dbms, f($RS,'sq_menu'), $w_usuario, f($RS,'sigla'), 5, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $w_solic, null);
+                  $w_hn_solic    = '';
+                  $w_solicitacao = '';
                   if (count($RS)==0) {
                     $w_erro.=$crlf.'Código da viagem: na base de dados não há viagem com o código "'.$w_solic.'"';
                   } else {
@@ -1413,7 +1412,7 @@ function Grava() {
           }
           if (is_array($linhas)) {
             for ($i=0;$i<$w_cont;$i++) {
-              fwrite($F1,$crlf.$crlf.'[Linha '.$i.'] '.$linhas[$i]['conteudo']);
+              fwrite($F1,$crlf.$crlf.'[Linha '.($i+1).'] '.$linhas[$i]['conteudo']);
               fwrite($F1,$crlf.'Fatura: '.$linhas[$i]['fatura']);
               if (nvl($linhas[$i]['solicitacao'],'')!='') fwrite($F1,' - '.$linhas[$i]['solicitacao']);
               fwrite($F1,$crlf.$linhas[$i]['erro']);
