@@ -1868,6 +1868,7 @@ Fontes_PHP_SIW/mod_pa/visualemprestimo.php -text
 Fontes_PHP_SIW/mod_pd/conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text
+Fontes_PHP_SIW/mod_pd/gr_conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text
 Fontes_PHP_SIW/mod_pd/relatorios.php -text
 Fontes_PHP_SIW/mod_pd/tabelas.php -text

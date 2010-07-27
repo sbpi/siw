@@ -18,6 +18,9 @@ begin
                 case a.faturado  when 'S' then 'Sim' else 'Não' end as nm_faturado,
                 b.codigo_interno,
                 c.codigo_interno as cd_pai,
+                c1.nome as nm_tramite,
+                d.cumprimento,
+                case d.cumprimento when 'I' then 'Não' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 e.nome as nm_beneficiario,
                 f.nome as nm_cia_transporte,
                 h.faixa_inicio, h.faixa_fim, h.desconto,
@@ -28,6 +31,7 @@ begin
            from pd_bilhete                       a
                 left    join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
                   left  join siw_solicitacao     c on (b.sq_solic_pai        = c.sq_siw_solicitacao)
+                  left  join siw_tramite        c1 on (c.sq_siw_tramite      = c1.sq_siw_tramite)
                 left    join pd_missao           d on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
                   left  join co_pessoa           e on (d.sq_pessoa           = e.sq_pessoa)
                 inner   join pd_cia_transporte   f on (a.sq_cia_transporte   = f.sq_cia_transporte)

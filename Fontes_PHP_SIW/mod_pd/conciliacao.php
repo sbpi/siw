@@ -931,6 +931,9 @@ function Grava() {
                       $w_hn_bilhete  = f($RS_Bil,'chave');
                       $w_hn_solic    = f($RS_Bil,'sq_siw_solicitacao');
                       $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario');
+                      if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
+                        $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
+                      }
                       $RS_FatBil = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,
                                     null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
                       if (count($RS_FatBil)>0) {
@@ -1277,6 +1280,8 @@ function Grava() {
                 }
                 
                 $w_solic      = trim($row[8]);
+                $w_temp       = explode('/',$w_solic);
+                $w_solic      = 'SV-'.intVal($w_temp[0]).'/'.$w_temp[1];
                 // Valida o campo Código da viagem
                 $w_result = fValidate(1,$w_solic,'Código da viagem','',1,1,60,'1','1');
                 if ($w_result>'') { 
@@ -1292,7 +1297,7 @@ function Grava() {
                   } else {
                     foreach($RS as $row1) { $RS = $row1; break; } 
                     $w_hn_solic    = f($RS,'sq_siw_solicitacao');
-                    $w_solicitacao = f($RS,'codigo_interno').' - '.f($RS,'nm_prop');
+                    $w_solicitacao = f($RS,'codigo_interno').' - '.f($RS,'nm_prop').' - Fase: '.f($RS,'nm_tramite').' - Viagem alterada? '.f($RS,'nm_cumprimento');
                     $l_array       = explode('|@|', f($RS,'dados_pai'));
                     $l_cd_pai      = $l_array[1];
                     if ($l_cd_pai!=$faturas[$w_fatura]['cd_projeto']) {

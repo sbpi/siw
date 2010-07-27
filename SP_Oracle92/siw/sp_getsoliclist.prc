@@ -1151,6 +1151,8 @@ begin
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
                 d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
                 d1.ressarcimento_data,d1.nacional,                   d1.internacional,
+                d1.cumprimento,
+                case d1.cumprimento when 'I' then 'Não' when 'P' then 'Sim' when 'C' then 'Cancelada' else 'Não informada' end as nm_cumprimento,
                 d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res, d2.nome_indice as nm_prop_ind, d2.nome_resumido_ind as nm_prop_res_ind,
                 d3.sq_tipo_vinculo,   d3.nome as nm_tipo_vinculo,
                 d4.sexo,              d4.cpf,
