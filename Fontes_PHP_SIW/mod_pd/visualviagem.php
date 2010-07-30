@@ -30,6 +30,16 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
   $RSF = db_getSolicList::getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
         null,null,null,null,null,null,null,null,null,null,$l_chave, null, null, null, null, null, null,
         null, null, null, null, null, null, null, null, null);
+        
+  $w_financeiro = false;
+  if (count($RSF)>0) {
+    foreach($RSF as $row) {
+      if (f($row,'sg_tramite')!='CA') {
+        $w_financeiro = true;
+        break;
+      }
+    }
+  }
   
   // Recupera o tipo de visão do usuário
   if ($_SESSION['INTERNO']=='N') {
@@ -1098,7 +1108,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Dados da prestação de contas
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && $w_financeiro && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
@@ -1108,6 +1118,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Devido';
         if (is_array($w_tot_diaria_P)) {
           foreach($w_tot_diaria_P as $k => $v) {
+            if(count($w_tot_diaria_P) <= 1){
+              $l_html.=chr(13).'       <TD><FONT SIZE=2>0,00';
+            }
             $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
           }
         } else {
@@ -1136,9 +1149,9 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       if (f($RS,'cumprimento')=='P') {
         $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo da alteração:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } elseif (f($RS,'cumprimento')=='C') {
-        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo da alteração:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
+        $l_html.=chr(13).'      <tr valign="top"><td><b>Motivo do cancelamento:</b></td><td>'.nvl(CRLF2BR(f($RS,'nota_conclusao')),'---').'</td></tr>';
       } 
-      if ($w_diferenca && count($RSF)>0) {
+      if ($w_diferenca && $w_financeiro) {
         $l_html.=chr(13).'      <tr><td><b>Diferença de diárias:</b></td><td>';
         foreach($w_tot_diaria_S as $k => $v) {
           $l_html.=$k.' '.formatNumber($w_tot_diaria_P[$k]-$v).'&nbsp;&nbsp;&nbsp;';
@@ -1428,7 +1441,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       } 
       
       // Execução financeira
-      if (count($RSF)>0) {
+      if ($w_financeiro) {
         $RSF = SortArray($RSF,'inclusao','asc', 'codigo_interno', 'asc');
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>EXECUÇÃO FINANCEIRA<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
