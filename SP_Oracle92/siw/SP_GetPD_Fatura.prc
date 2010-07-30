@@ -7,6 +7,7 @@ create or replace procedure SP_GetPD_Fatura
     p_arquivo             in  number   default null,
     p_cia_trans           in  number   default null,
     p_solic_viagem        in  number   default null,
+    p_codigo_viagem       in  varchar2 default null,
     p_solic_pai           in  number   default null,
     p_numero_bil          in  varchar2 default null,
     p_ini_dec             in  date     default null,
@@ -102,25 +103,26 @@ begin
                   inner       join pd_cia_transporte      c6 on (c.sq_cia_transporte     = c6.sq_cia_transporte)
                 inner         join co_pessoa              d  on (a.agencia_viagem        = d.sq_pessoa)
           where b.cliente            = p_cliente
-            and (p_arquivo           is null or (p_arquivo      is not null and p_arquivo            = b.sq_arquivo_eletronico))
-            and (p_solic_viagem      is null or (p_solic_viagem is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
-            and (p_solic_pai         is null or (p_solic_pai    is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
-            and (p_fatura            is null or (p_fatura       is not null and a.sq_fatura_agencia   = p_fatura))
-            and (p_agencia           is null or (p_agencia      is not null and a.agencia_viagem      = p_agencia))
-            and (p_numero_fat        is null or (p_numero_fat   is not null and a.numero              = p_numero_fat))
-            and (p_ini_dec           is null or (p_ini_dec      is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
-                                                                                 a.fim_decendio       between p_ini_dec         and p_fim_dec or
-                                                                                 p_ini_dec            between a.inicio_decendio and a.fim_decendio or
-                                                                                 p_fim_dec            between a.inicio_decendio and a.fim_decendio
-                                                                                )
+            and (p_arquivo           is null or (p_arquivo       is not null and p_arquivo            = b.sq_arquivo_eletronico))
+            and (p_solic_viagem      is null or (p_solic_viagem  is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
+            and (p_codigo_viagem     is null or (p_codigo_viagem is not null and c2.sq_siw_solicitacao is not null and c2.codigo_interno like '%'||p_codigo_viagem||'%'))
+            and (p_solic_pai         is null or (p_solic_pai     is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
+            and (p_fatura            is null or (p_fatura        is not null and a.sq_fatura_agencia   = p_fatura))
+            and (p_agencia           is null or (p_agencia       is not null and a.agencia_viagem      = p_agencia))
+            and (p_numero_fat        is null or (p_numero_fat    is not null and a.numero              = p_numero_fat))
+            and (p_ini_dec           is null or (p_ini_dec       is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
+                                                                                  a.fim_decendio       between p_ini_dec         and p_fim_dec or
+                                                                                  p_ini_dec            between a.inicio_decendio and a.fim_decendio or
+                                                                                  p_fim_dec            between a.inicio_decendio and a.fim_decendio
+                                                                                 )
                                                 )
                 )
-            and (p_ini_emifat        is null or (p_ini_emifat   is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
-            and (p_ini_ven           is null or (p_ini_ven      is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)))
-            and (p_bilhete           is null or (p_bilhete      is not null and c.sq_bilhete          = p_bilhete))
-            and (p_numero_bil        is null or (p_numero_bil   is not null and c.numero              = p_numero_bil))
-            and (p_cia_trans         is null or (p_cia_trans    is not null and c.sq_cia_transporte   = p_cia_trans))
-            and (p_ini_emibil        is null or (p_ini_emibil   is not null and c.data                between p_ini_emibil      and p_fim_emibil));
+            and (p_ini_emifat        is null or (p_ini_emifat    is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
+            and (p_ini_ven           is null or (p_ini_ven       is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)))
+            and (p_bilhete           is null or (p_bilhete       is not null and c.sq_bilhete          = p_bilhete))
+            and (p_numero_bil        is null or (p_numero_bil    is not null and c.numero              = p_numero_bil))
+            and (p_cia_trans         is null or (p_cia_trans     is not null and c.sq_cia_transporte   = p_cia_trans))
+            and (p_ini_emibil        is null or (p_ini_emibil    is not null and c.data                between p_ini_emibil      and p_fim_emibil));
    Elsif p_restricao = 'OUTROS' Then
       -- Recupera locações, hospedagens e seguros ligados a faturas
       open p_result for
@@ -156,21 +158,22 @@ begin
                   inner       join co_pessoa              c6 on (c.sq_pessoa             = c6.sq_pessoa)
                 inner         join co_pessoa              d  on (a.agencia_viagem        = d.sq_pessoa)
           where b.cliente            = p_cliente
-            and (p_arquivo           is null or (p_arquivo      is not null and p_arquivo            = b.sq_arquivo_eletronico))
-            and (p_solic_viagem      is null or (p_solic_viagem is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
-            and (p_solic_pai         is null or (p_solic_pai    is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
-            and (p_fatura            is null or (p_fatura       is not null and a.sq_fatura_agencia   = p_fatura))
-            and (p_agencia           is null or (p_agencia      is not null and a.agencia_viagem      = p_agencia))
-            and (p_numero_fat        is null or (p_numero_fat   is not null and a.numero              = p_numero_fat))
-            and (p_ini_dec           is null or (p_ini_dec      is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
-                                                                                 a.fim_decendio       between p_ini_dec         and p_fim_dec or
-                                                                                 p_ini_dec            between a.inicio_decendio and a.fim_decendio or
-                                                                                 p_fim_dec            between a.inicio_decendio and a.fim_decendio
-                                                                                )
+            and (p_arquivo           is null or (p_arquivo       is not null and p_arquivo            = b.sq_arquivo_eletronico))
+            and (p_solic_viagem      is null or (p_solic_viagem  is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
+            and (p_codigo_viagem     is null or (p_codigo_viagem is not null and c2.sq_siw_solicitacao is not null and c2.codigo_interno like '%'||p_codigo_viagem||'%'))
+            and (p_solic_pai         is null or (p_solic_pai     is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
+            and (p_fatura            is null or (p_fatura        is not null and a.sq_fatura_agencia   = p_fatura))
+            and (p_agencia           is null or (p_agencia       is not null and a.agencia_viagem      = p_agencia))
+            and (p_numero_fat        is null or (p_numero_fat    is not null and a.numero              = p_numero_fat))
+            and (p_ini_dec           is null or (p_ini_dec       is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
+                                                                                  a.fim_decendio       between p_ini_dec         and p_fim_dec or
+                                                                                  p_ini_dec            between a.inicio_decendio and a.fim_decendio or
+                                                                                  p_fim_dec            between a.inicio_decendio and a.fim_decendio
+                                                                                 )
                                                 )
                 )
-            and (p_ini_emifat        is null or (p_ini_emifat   is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
-            and (p_ini_ven           is null or (p_ini_ven      is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)));
+            and (p_ini_emifat        is null or (p_ini_emifat    is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
+            and (p_ini_ven           is null or (p_ini_ven       is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)));
       Elsif p_restricao = 'TODOS' Then
       -- Recupera os bilhetes ligados a faturas
       open p_result for
@@ -206,25 +209,30 @@ begin
                     left      join siw_solicitacao        e3 on (e2.sq_solic_pai         = e3.sq_siw_solicitacao)
                 inner         join co_pessoa              d  on (a.agencia_viagem        = d.sq_pessoa)
           where b.cliente            = p_cliente
-            and (p_arquivo           is null or (p_arquivo      is not null and p_arquivo            = b.sq_arquivo_eletronico))
-            and (p_solic_viagem      is null or (p_solic_viagem is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
-            and (p_solic_pai         is null or (p_solic_pai    is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
-            and (p_fatura            is null or (p_fatura       is not null and a.sq_fatura_agencia   = p_fatura))
-            and (p_agencia           is null or (p_agencia      is not null and a.agencia_viagem      = p_agencia))
-            and (p_numero_fat        is null or (p_numero_fat   is not null and a.numero              = p_numero_fat))
-            and (p_ini_dec           is null or (p_ini_dec      is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
-                                                                                 a.fim_decendio       between p_ini_dec         and p_fim_dec or
-                                                                                 p_ini_dec            between a.inicio_decendio and a.fim_decendio or
-                                                                                 p_fim_dec            between a.inicio_decendio and a.fim_decendio
-                                                                                )
+            and (p_arquivo           is null or (p_arquivo       is not null and p_arquivo            = b.sq_arquivo_eletronico))
+            and (p_solic_viagem      is null or (p_solic_viagem  is not null and p_solic_viagem        = coalesce(c2.sq_siw_solicitacao,0)))
+            and (p_codigo_viagem     is null or (p_codigo_viagem is not null and ((c2.sq_siw_solicitacao is not null and c2.codigo_interno like '%'||p_codigo_viagem||'%') or
+                                                                                  (e2.sq_siw_solicitacao is not null and e2.codigo_interno like '%'||p_codigo_viagem||'%')
+                                                                                 )
                                                 )
                 )
-            and (p_ini_emifat        is null or (p_ini_emifat   is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
-            and (p_ini_ven           is null or (p_ini_ven      is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)))
-            and (p_bilhete           is null or (p_bilhete      is not null and c.sq_bilhete          = p_bilhete))
-            and (p_numero_bil        is null or (p_numero_bil   is not null and c.numero              = p_numero_bil))
-            and (p_cia_trans         is null or (p_cia_trans    is not null and c.sq_cia_transporte   = p_cia_trans))
-            and (p_ini_emibil        is null or (p_ini_emibil   is not null and c.data                between p_ini_emibil      and p_fim_emibil));   
+            and (p_solic_pai         is null or (p_solic_pai     is not null and p_solic_pai           = coalesce(c3.sq_siw_solicitacao,0)))
+            and (p_fatura            is null or (p_fatura        is not null and a.sq_fatura_agencia   = p_fatura))
+            and (p_agencia           is null or (p_agencia       is not null and a.agencia_viagem      = p_agencia))
+            and (p_numero_fat        is null or (p_numero_fat    is not null and a.numero              like '%'||p_numero_fat||'%'))
+            and (p_ini_dec           is null or (p_ini_dec       is not null and (a.inicio_decendio    between p_ini_dec         and p_fim_dec or
+                                                                                  a.fim_decendio       between p_ini_dec         and p_fim_dec or
+                                                                                  p_ini_dec            between a.inicio_decendio and a.fim_decendio or
+                                                                                  p_fim_dec            between a.inicio_decendio and a.fim_decendio
+                                                                                 )
+                                                )
+                )
+            and (p_ini_emifat        is null or (p_ini_emifat    is not null and (a.emissao            between p_ini_emifat      and p_fim_emifat)))
+            and (p_ini_ven           is null or (p_ini_ven       is not null and (a.vencimento         between p_ini_ven         and p_fim_ven)))
+            and (p_bilhete           is null or (p_bilhete       is not null and c.sq_bilhete          = p_bilhete))
+            and (p_numero_bil        is null or (p_numero_bil    is not null and c.numero              = p_numero_bil))
+            and (p_cia_trans         is null or (p_cia_trans     is not null and c.sq_cia_transporte   = p_cia_trans))
+            and (p_ini_emibil        is null or (p_ini_emibil    is not null and c.data                between p_ini_emibil      and p_fim_emibil));   
    End If;
 End SP_GetPD_Fatura;
 /
