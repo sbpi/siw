@@ -41,6 +41,7 @@ create or replace procedure SP_PutFinanceiroGeral
    w_reg        fn_parametro%rowtype;
    w_inicio     date;
    w_fim        date;
+   w_parcela    ac_acordo_parcela.sq_acordo_parcela%type;
 
    w_protocolo_siw             number(18);
 
@@ -186,6 +187,22 @@ begin
          
          -- Atualiza a situação da solicitação
          update siw_solicitacao set sq_siw_tramite = w_chave, conclusao = sysdate where sq_siw_solicitacao = p_chave;
+         
+         -- Remove data da quitação da parcela se o lançamento financeiro for ligado a uma parcela de contrato
+         select count(*) into w_existe
+           from fn_lancamento
+          where sq_siw_solicitacao = p_chave
+            and sq_acordo_parcela  is not null;
+         
+         If w_existe > 0 Then
+            select sq_acordo_parcela into w_parcela
+              from fn_lancamento
+             where sq_siw_solicitacao = p_chave;
+           
+            update ac_acordo_parcela 
+               set quitacao = null 
+             where sq_acordo_parcela = w_parcela;
+         End If;
       Else
          -- Monta string com a chave dos arquivos ligados à solicitação informada
          for crec in c_arquivos loop
