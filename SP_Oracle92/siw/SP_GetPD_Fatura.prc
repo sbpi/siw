@@ -85,8 +85,8 @@ begin
                 c1.faixa_inicio, c1.faixa_fim, c1.desconto,
                 c2.sq_siw_solicitacao as sq_solic_viagem, c2.codigo_interno as cd_solic_viagem,
                 c3.sq_siw_solicitacao as sq_solic_pai,    c3.codigo_interno as cd_solic_pai,
-                c5.nome as nm_beneficiario,
-                c6.nome as nm_cia_transporte,
+                c5.nome as nm_beneficiario, c5.sq_pessoa as sq_beneficiario,
+                c6.nome as nm_cia_transporte, c6.sq_cia_transporte as sq_cia_transporte,
                 d.nome as nm_agencia, d.nome_resumido as nm_agencia_res
            from pd_fatura_agencia                         a
                 inner         join pd_arquivo_eletronico  b  on (a.sq_arquivo_eletronico = b.sq_arquivo_eletronico)
@@ -140,7 +140,8 @@ begin
                 c2.sq_siw_solicitacao as sq_solic_viagem, c2.codigo_interno as cd_solic_viagem,
                 c3.sq_siw_solicitacao as sq_solic_pai,    c3.codigo_interno as cd_solic_pai,
                 c5.nome as nm_beneficiario,
-                c6.nome as nm_hotel,
+                c5.sq_pessoa as sq_beneficiario,
+                c6.nome as nm_hotel, c6.sq_pessoa as sq_hotel,
                 d.nome as nm_agencia, d.nome_resumido as nm_agencia_res
            from pd_fatura_agencia                         a
                 inner         join pd_arquivo_eletronico  b  on (a.sq_arquivo_eletronico = b.sq_arquivo_eletronico)
@@ -175,7 +176,7 @@ begin
       open p_result for
          select distinct a.sq_fatura_agencia, a.sq_arquivo_eletronico, a.agencia_viagem, a.numero as nr_fatura, a.fim_decendio, a.emissao as emissao_fat, a.vencimento, a.valor, 
                 a.registros as reg_fatura, a.importados as imp_fatura, a.rejeitados as rej_fatura, 
-                case a.tipo when 0 then 'Aéreos' when 1 then 'Outros' else null end as tp_fatura,
+                case a.tipo when 0 then 'Aéreos' when 1 then 'Outros' else null end as nm_tp_fatura,
                 b.data_importacao, b.data_arquivo, b.registros as reg_arquivo, b.importados as imp_arquivo, b.rejeitados as rej_arquivo, 
                 b.sq_pessoa as sq_resp_imp, b.arquivo_recebido, b.arquivo_registro,
                 to_char(b.data_importacao, 'DD/MM/YYYY, HH24:MI:SS') phpdt_data_importacao,
