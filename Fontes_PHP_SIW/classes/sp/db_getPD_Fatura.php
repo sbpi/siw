@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class db_getPD_Fatura {
    function getInstanceOf($dbms, $p_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
-        $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
+        $p_codigo_viagem, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
         $p_ini_emibil, $p_fim_emibil, $p_restricao) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_getPD_Fatura';
      $params=array('p_cliente'            =>array(tvl($p_cliente),                  B_INTEGER,        32),
@@ -22,6 +22,7 @@ class db_getPD_Fatura {
                    'p_arquivo'            =>array(tvl($p_arquivo),                  B_INTEGER,        32),
                    'p_cia_trans'          =>array(tvl($p_cia_trans),                B_INTEGER,        32),
                    'p_solic_viagem'       =>array(tvl($p_solic_viagem),             B_INTEGER,        32),
+                   'p_codigo_viagem'      =>array(tvl($p_codigo_viagem),            B_VARCHAR,        60),
                    'p_solic_pai'          =>array(tvl($p_solic_pai),                B_INTEGER,        32),
                    'p_numero_bil'         =>array(tvl($p_numero_bil),               B_VARCHAR,        20),
                    'p_ini_dec'            =>array(tvl($p_ini_dec),                  B_DATE,           32),

@@ -786,7 +786,7 @@ function Grava() {
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Número da fatura: '.$w_result; 
                 } else {
-                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,
+                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
                                   null, null, null, null, null, null, null, null, null, null, null);
                   if (count($RS_Fatura)>0) {
                     foreach($RS_Fatura as $row1) { $RS_Fatura = $row1; break; } 
@@ -934,7 +934,7 @@ function Grava() {
                       if (nvl(f($RS_Bil,'cumprimento'),'')!='') {
                         $w_solicitacao = f($RS_Bil,'codigo_interno').' - '.f($RS_Bil,'nm_beneficiario').' - Fase: '.f($RS_Bil,'nm_tramite').' - Viagem alterada? '.f($RS_Bil,'nm_cumprimento');
                       }
-                      $RS_FatBil = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,
+                      $RS_FatBil = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, $w_hn_cia, null,null,
                                     null, $w_bilhete, null, null, null, null, null, null, null, null, 'BILHETE');
                       if (count($RS_FatBil)>0) {
                         foreach($RS_FatBil as $row1) { $RS_FatBil = $row1; break; } 
@@ -1178,7 +1178,7 @@ function Grava() {
                 if ($w_result>'') { 
                   $w_erro.=$crlf.'Número da fatura: '.$w_result; 
                 } else {
-                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,
+                  $RS_Fatura = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,$w_agencia,null, null, $w_fatura, null, null, null,null,
                                   null, null, null, null, null, null, null, null, null, null, 'OUTROS');
                   if (count($RS_Fatura)>0) {
                     foreach($RS_Fatura as $row1) { $RS_Fatura = $row1; break; } 

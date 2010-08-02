@@ -38,6 +38,7 @@ include_once($w_dir_volta . 'funcoes/selecaoRegiao.php');
 include_once($w_dir_volta . 'funcoes/selecaoEstado.php');
 include_once($w_dir_volta . 'funcoes/selecaoCidade.php');
 include_once($w_dir_volta . 'funcoes/selecaoFaseCheck.php');
+include_once('visualfatura.php');
 
 // =========================================================================
 //  gr_conciliacao.php
@@ -100,41 +101,43 @@ $w_usuario = RetornaUsuario();
 $w_menu = $P2;
 $w_ano = RetornaAno();
 
-/*$p_tipo = upper($_REQUEST['w_tipo']);
-$p_projeto = upper($_REQUEST['p_projeto']);
-$p_atividade = upper($_REQUEST['p_atividade']);
-$p_graf = upper($_REQUEST['p_graf']);
-$p_ativo = upper($_REQUEST['p_ativo']);
-$p_solicitante = upper($_REQUEST['p_solicitante']);
-$p_prioridade = upper($_REQUEST['p_prioridade']);
-$p_unidade = upper($_REQUEST['p_unidade']);
-$p_proponente = upper($_REQUEST['p_proponente']);
-$p_sq_prop = upper($_REQUEST['p_sq_prop']);
-$p_ordena = lower($_REQUEST['p_ordena']);
-$p_ini_i = upper($_REQUEST['p_ini_i']);
-$p_ini_f = upper($_REQUEST['p_ini_f']);
-$p_fim_i = upper($_REQUEST['p_fim_i']);
-$p_fim_f = upper($_REQUEST['p_fim_f']);
-$p_atraso = upper($_REQUEST['p_atraso']);
-$p_codigo = upper($_REQUEST['p_codigo']);
-$p_chave = upper($_REQUEST['p_chave']);
-$p_assunto = upper($_REQUEST['p_assunto']);
-$p_pais = upper($_REQUEST['p_pais']);
-$p_regiao = upper($_REQUEST['p_regiao']);
-$p_uf = upper($_REQUEST['p_uf']);
-$p_cidade = upper($_REQUEST['p_cidade']);
-$p_usu_resp = upper($_REQUEST['p_usu_resp']);
-$p_uorg_resp = upper($_REQUEST['p_uorg_resp']);
-$p_palavra = upper($_REQUEST['p_palavra']);
-$p_prazo = upper($_REQUEST['p_prazo']);
-$p_fase = explodeArray($_REQUEST['p_fase']);
-$p_sqcc = upper($_REQUEST['p_sqcc']);
-$p_agrega = upper($_REQUEST['p_agrega']);*/
+/* $p_tipo = upper($_REQUEST['w_tipo']);
+  $p_projeto = upper($_REQUEST['p_projeto']);
+  $p_atividade = upper($_REQUEST['p_atividade']);
+  $p_graf = upper($_REQUEST['p_graf']);
+  $p_ativo = upper($_REQUEST['p_ativo']);
+  $p_solicitante = upper($_REQUEST['p_solicitante']);
+  $p_prioridade = upper($_REQUEST['p_prioridade']);
+  $p_unidade = upper($_REQUEST['p_unidade']);
+  $p_proponente = upper($_REQUEST['p_proponente']);
+  $p_sq_prop = upper($_REQUEST['p_sq_prop']);
+  $p_ordena = lower($_REQUEST['p_ordena']);
+  $p_ini_i = upper($_REQUEST['p_ini_i']);
+  $p_ini_f = upper($_REQUEST['p_ini_f']);
+  $p_fim_i = upper($_REQUEST['p_fim_i']);
+  $p_fim_f = upper($_REQUEST['p_fim_f']);
+  $p_atraso = upper($_REQUEST['p_atraso']);
+  $p_codigo = upper($_REQUEST['p_codigo']);
+  $p_chave = upper($_REQUEST['p_chave']);
+  $p_assunto = upper($_REQUEST['p_assunto']);
+  $p_pais = upper($_REQUEST['p_pais']);
+  $p_regiao = upper($_REQUEST['p_regiao']);
+  $p_uf = upper($_REQUEST['p_uf']);
+  $p_cidade = upper($_REQUEST['p_cidade']);
+  $p_usu_resp = upper($_REQUEST['p_usu_resp']);
+  $p_uorg_resp = upper($_REQUEST['p_uorg_resp']);
+  $p_palavra = upper($_REQUEST['p_palavra']);
+  $p_prazo = upper($_REQUEST['p_prazo']);
+  $p_fase = explodeArray($_REQUEST['p_fase']);
+  $p_sqcc = upper($_REQUEST['p_sqcc']);
+  $p_agrega = upper($_REQUEST['p_agrega']); */
 
+$p_ordena = lower($_REQUEST['p_ordena']);
 $p_agencia = $_REQUEST['p_agencia'];
-$p_fatura = $_REQUEST['p_fatura'];
+$p_numero_fat = $_REQUEST['p_numero_fat'];
 $p_codigo = $_REQUEST['p_codigo'];
 $p_bilhete = $_REQUEST['p_bilhete'];
+$p_fatura = $_REQUEST['p_fatura'];
 $p_numero_fat = $_REQUEST['p_numero_fat'];
 $p_arquivo = $_REQUEST['p_arquivo'];
 $p_cia_trans = $_REQUEST['p_cia_trans'];
@@ -169,11 +172,17 @@ function Conciliacao() {
   if ($O == 'L' || $O == 'V' || $p_tipo == 'WORD' || $p_tipo == 'PDF') {
     $w_filtro = '';
     $RS1 = db_getPD_Fatura::getInstanceOf($dbms, $w_cliente, $p_agencia, $p_fatura, $p_bilhete, $p_numero_fat, $p_arquivo, $p_cia_trans, $p_solic_viagem,
-                    $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
+                    $p_codigo, $p_solic_pai, $p_numero_bil, $p_ini_dec, $p_fim_dec, $p_ini_emifat, $p_fim_emifat, $p_ini_ven, $p_fim_ven,
                     $p_ini_emibil, $p_fim_emibil, 'TODOS');
-    if ($p_fatura > '') {
+    if (nvl($p_ordena, '') > '') {
+      $lista = explode(',', str_replace(' ', ',', $p_ordena));
+      $RS1 = SortArray($RS1, $lista[0], $lista[1], 'nr_fatura', 'asc', 'nm_tp_fatura', 'asc', 'cd_projeto', 'asc', 'emissao_fat', 'asc');
+    } else {
+      $RS1 = SortArray($RS1, 'nr_fatura', 'asc', 'nm_tp_fatura', 'asc', 'cd_projeto', 'asc', 'emissao_fat', 'asc');
+    }
+    if ($p_numero_fat > '') {
       $w_linha++;
-      $w_filtro .= '<tr valign="top"><td align="right">Número da fatura<td>[<b>' . $p_fatura . '</b>]';
+      $w_filtro .= '<tr valign="top"><td align="right">Número da fatura<td>[<b>' . $p_numero_fat . '</b>]';
     }
 
     if ($p_bilhete > '') {
@@ -271,17 +280,35 @@ function Conciliacao() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_codigo', 'Código da viagem', '', '', '2', '60', '1', '1');
-      Validate('p_assunto', 'Assunto', '', '', '2', '90', '1', '1');
-      Validate('p_proponente', 'Beneficiário', '', '', '2', '60', '1', '');
-      Validate('p_palavra', 'CPF', 'CPF', '', '14', '14', '', '0123456789-.');
-      Validate('p_ini_i', 'Primeira saída', 'DATA', '', '10', '10', '', '0123456789/');
-      Validate('p_ini_f', 'Último retorno', 'DATA', '', '10', '10', '', '0123456789/');
-      ShowHTML('  if ((theForm.p_ini_i.value != \'\' && theForm.p_ini_f.value == \'\') || (theForm.p_ini_i.value == \'\' && theForm.p_ini_f.value != \'\')) {');
+      //Validate('p_assunto', 'Assunto', '', '', '2', '90', '1', '1');
+      //Validate('p_proponente', 'Beneficiário', '', '', '2', '60', '1', '');
+      //Validate('p_palavra', 'CPF', 'CPF', '', '14', '14', '', '0123456789-.');
+      Validate('p_ini_emibil', 'Emissão do bilhete', 'DATA', '', '10', '10', '', '0123456789/');
+      Validate('p_ini_emifat', 'Emissão da fatura', 'DATA', '', '10', '10', '', '0123456789/');
+      ShowHTML('  if ((theForm.p_ini_emibil.value != \'\' && theForm.p_fim_emibil.value == \'\') || (theForm.p_ini_emibil.value == \'\' && theForm.p_fim_emibil.value != \'\')) {');
       ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
-      ShowHTML('     theForm.p_ini_i.focus();');
+      ShowHTML('     theForm.p_ini_emibil.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      CompData('p_ini_i', 'Primeira saída', '<=', 'p_ini_f', 'Último retorno');
+      ShowHTML('  if ((theForm.p_ini_emifat.value != \'\' && theForm.p_fim_emifat.value == \'\') || (theForm.p_ini_emifat.value == \'\' && theForm.p_fim_emifat.value != \'\')) {');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+      ShowHTML('     theForm.p_ini_emifat.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if ((theForm.p_ini_dec.value != \'\' && theForm.p_fim_dec.value == \'\') || (theForm.p_ini_dec.value == \'\' && theForm.p_fim_dec.value != \'\')) {');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+      ShowHTML('     theForm.p_ini_dec.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      ShowHTML('  if ((theForm.p_ini_ven.value != \'\' && theForm.p_fim_ven.value == \'\') || (theForm.p_ini_ven.value == \'\' && theForm.p_fim_ven.value != \'\')) {');
+      ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
+      ShowHTML('     theForm.p_ini_ven.focus();');
+      ShowHTML('     return false;');
+      ShowHTML('  }');
+      CompData('p_ini_emifat', 'Primeira data', '<=', 'p_fim_emifat', 'Última data');
+      CompData('p_ini_emibil', 'Primeira data', '<=', 'p_fim_emibil', 'Última data');
+      CompData('p_ini_dec', 'Primeira data do decêndio', '<=', 'p_fim_dec', 'Última data do decêndio');
+      CompData('p_ini_ven', 'Primeira data do vencimento', '<=', 'p_fim_ven', 'Última data do vencimento');
       ValidateClose();
       ScriptClose();
     } else {
@@ -297,7 +324,7 @@ function Conciliacao() {
       if ($P1 == 1) { // Se for cadastramento
         BodyOpen('onLoad=\'document.Form.p_ordena.focus()\';');
       } else {
-        BodyOpen('onLoad=\'document.Form.p_agrega.focus()\';');
+        BodyOpen('onLoad=\'this.focus()\';');
       }
     } else {
       BodyOpenClean('onLoad=this.focus();');
@@ -316,7 +343,9 @@ function Conciliacao() {
   }
 
   ShowHTML('<div align=center><center>');
+
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+  ShowHTML('    <tr><td align="right"><b>Registros: ' . count($RS1));
   if ($O == 'L' || $w_embed == 'WORD') {
     if ($w_embed != 'WORD') {
       ShowHTML('<tr><td>');
@@ -327,25 +356,28 @@ function Conciliacao() {
       }
     }
     ImprimeCabecalho();
-    if (!count($RS) <= 0) {
+    if (count($RS1) <= 0) {
       ShowHTML('      <tr bgcolor="' . $conTrBgColor . '"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       foreach ($RS1 as $row) {
+        $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         //if ($w_embed == 'WORD' && $w_linha > $w_linha_pag) {
-        ShowHTML('<tr valign="top">');
-        ShowHTML('<td align="center">'.f($row,'nr_fatura').'</td>');
+        ShowHTML('<tr bgcolor="' . $w_cor . '" valign="top">');
+        ShowHTML('<td align="center">' . exibeFatura($w_cliente, f($row, 'sq_fatura_agencia'), f($row, 'nr_fatura')) . '</td>');
         ShowHTML('<td>');
-        if ($w_embed!='WORD') ShowHTML('        <A class="HL" HREF="'.$w_dir.'viagem.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_volta=volta&w_chave='.f($row,'sq_projeto').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exibe as informações deste registro.">'.f($row,'cd_projeto').'&nbsp;</a>');
-        else                  ShowHTML('        '.f($row,'cd_projeto').'');
-        ShowHTML('<td>'.f($row,'tp_fatura').'</td>');
-        ShowHTML('<td>'.f($row,'nm_agencia_res').'</td>');
-        ShowHTML('<td align="center">'.formataDataEdicao(f($row,'emissao_fat'),5).'</td>');
-        ShowHTML('<td align="center">'.formataDataEdicao(f($row,'vencimento'),5).'</td>');
-        ShowHTML('<td align="right">'.formatNumber(f($row,'valor')).'</td>');
-        ShowHTML('<td align="center">'.formataDataEdicao(f($row,'data_importacao'),5).'</td>');
-        ShowHTML('<td align="center">'.f($row,'reg_fatura').'</td>');
-        /*ShowHTML('<td align="center">'.f($row,'imp_fatura').'</td>');
-        ShowHTML('<td align="center">'.f($row,'rej_fatura').'</td>');*/
+        if ($w_embed != 'WORD')
+          ShowHTML(exibeSolic($w_dir,f($row, 'sq_projeto'),f($row, 'cd_projeto'),'N',$w_embed));
+        else
+          ShowHTML('        ' . f($row, 'cd_projeto') . '');
+        ShowHTML('<td>' . f($row, 'nm_tp_fatura') . '</td>');
+        ShowHTML('<td>' . f($row, 'nm_agencia_res') . '</td>');
+        ShowHTML('<td align="center">' . formataDataEdicao(f($row, 'emissao_fat'), 5) . '</td>');
+        ShowHTML('<td align="center">' . formataDataEdicao(f($row, 'vencimento'), 5) . '</td>');
+        ShowHTML('<td align="right">' . formatNumber(f($row, 'valor')) . '</td>');
+        ShowHTML('<td align="center">' . formataDataEdicao(f($row, 'data_importacao'), 5) . '</td>');
+        ShowHTML('<td align="center">' . f($row, 'reg_fatura') . '</td>');
+        /* ShowHTML('<td align="center">'.f($row,'imp_numero_fat').'</td>');
+          ShowHTML('<td align="center">'.f($row,'rej_fatura').'</td>'); */
         ShowHTML('</tr>');
         //}
       }
@@ -390,7 +422,7 @@ function Conciliacao() {
     ShowHTML('     <td colspan="2"><fieldset class="rh_fieldset"><legend><big>Faturas</big></legend>');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('   <tr valign="top">');
-    ShowHTML('     <td><b>Número da fatura</b><br><input ' . $w_Disabled . ' type="text" name="p_fatura" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fatura . '" title="Caso deseje pesquisar por este critério, informe o valor do mesmo.">');
+    ShowHTML('     <td><b>Número da fatura</b><br><input ' . $w_Disabled . ' type="text" name="p_numero_fat" class="STI" SIZE="10" MAXLENGTH="10" VALUE="' . $p_numero_fat . '" title="Caso deseje pesquisar por este critério, informe o valor do mesmo.">');
     ShowHTML('   <tr valign="top">');
     ShowHTML('     <td><b><U>C</U>ódigo da viagem:<br><INPUT ACCESSKEY="C" ' . $w_Disabled . ' class="STI" type="text" name="p_codigo" size="20" maxlength="60" value="' . $p_codigo . '"></td>');
     ShowHTML('   <tr valign="top">');
@@ -439,70 +471,63 @@ function ImprimeCabecalho() {
   ShowHTML('<tr><td align="center">');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-  ShowHTML('          <td><b>Número</td>');
-  ShowHTML('          <td><b>Projeto</td>');
-  ShowHTML('          <td><b>Tipo</td>');
-  ShowHTML('          <td><b>Agência de Viagem</td>');
-  ShowHTML('          <td><b>Data de emissão</td>');
-  ShowHTML('          <td><b>Vencimento</td>');
-  ShowHTML('          <td><b>Valor</td>');
-  ShowHTML('          <td><b>Data de importação</td>');
-  ShowHTML('          <td colspan="3"><b>Registros</td>');
-/*
-  ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-  ShowHTML('          <td><b>Total</td>');
-  ShowHTML('          <td><b>Importados</td>');
-  ShowHTML('          <td><b>Rejeitados</td>');
-*/
+  ShowHTML('          <td><b>' . LinkOrdena('Número', 'nr_fatura') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Projeto', 'cd_projeto') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Tipo', 'nm_tp_fatura') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Agência de Viagem', 'nm_agencia_res') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Data de emissão', 'emissao_fat') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Vencimento', 'vencimento') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Valor', 'valor') . '</td>');
+  ShowHTML('          <td><b>' . LinkOrdena('Data de importação', 'data_importacao') . '</td>');
+  ShowHTML('          <td colspan="3"><b>' . LinkOrdena('Registros', 'reg_fatura') . '</td>');
   ShowHTML('        </tr>');
 }
 
-// =========================================================================
-// Rotina de impressao da linha resumo
-// -------------------------------------------------------------------------
-function ImprimeLinha($l_solic, $l_cad, $l_tram, $l_conc, $l_atraso, $l_aviso, $l_valor, $l_custo, $l_acima, $l_chave, $l_agrega) {
+function Visual() {
   extract($GLOBALS);
-  if ($p_tipo == 'PDF') {
-    $w_embed = 'WORD';
-  }
+  global $w_Disabled;
 
-  if ($w_embed != 'WORD')
-    ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\'' . $l_chave . '\', -1, -1, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">' . number_format($l_solic, 0, ',', '.') . '</a>&nbsp;</td>'); else
-    ShowHTML('          <td align="center">' . number_format($l_solic, 0, ',', '.') . '&nbsp;</td>');
-  if ($l_cad > 0 && $w_embed != 'WORD')
-    ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\'' . $l_chave . '\', 0, -1, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">' . number_format($l_cad, 0, ',', '.') . '</a>&nbsp;</td>'); else
-    ShowHTML('          <td align="center">' . number_format($l_cad, 0, ',', '.') . '&nbsp;</td>');
-  if ($l_tram > 0 && $w_embed != 'WORD')
-    ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\'' . $l_chave . '\', -1, 0, -1, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">' . number_format($l_tram, 0, ',', '.') . '</a>&nbsp;</td>'); else
-    ShowHTML('          <td align="center">' . number_format($l_tram, 0, ',', '.') . '&nbsp;</td>');
-  if ($l_conc > 0 && $w_embed != 'WORD')
-    ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\'' . $l_chave . '\', -1, -1, 0, -1);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true">' . number_format($l_conc, 0, ',', '.') . '</a>&nbsp;</td>'); else
-    ShowHTML('          <td align="center">' . number_format($l_conc, 0, ',', '.') . '&nbsp;</td>');
-  if ($l_atraso > 0 && $w_embed != 'WORD')
-    ShowHTML('          <td align="center"><a class="hl" href="javascript:lista(\'' . $l_chave . '\', -1, -1, -1, 0);" onMouseOver="window.status=\'Exibe as viagens.\'; return true" onMouseOut="window.status=\'\'; return true"><font color="red"><b>' . number_format($l_atraso, 0, ',', '.') . '</a>&nbsp;</td>'); else
-    ShowHTML('          <td align="center"><b>' . $l_atraso . '&nbsp;</td>');
-  /*
-    if ($l_agrega=='GRPDCIAVIAGEM' || $l_agrega=='GRPDCIDADE' || $l_agrega=='GRPDDATA') {
-    ShowHTML('          <td align="right">---&nbsp;</td>');
-    ShowHTML('          <td align="right">---&nbsp;</td>');
-    ShowHTML('          <td align="right">---&nbsp;</td>');
-    ShowHTML('          <td align="right">---&nbsp;</td>');
+  $w_chave = $_REQUEST['w_chave'];
+  $w_tipo = upper(trim($_REQUEST['w_tipo']));
+
+  if ($w_tipo == 'PDF') {
+    headerpdf('Visualização de ' . f($RS_Menu, 'nome'), $w_pag);
+    $w_embed = 'WORD';
+  } elseif ($w_tipo == 'WORD') {
+    HeaderWord($_REQUEST['orientacao']);
+    CabecalhoWord($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 0);
+    $w_embed = 'WORD';
+  } else {
+    Cabecalho();
+    head();
+    ShowHTML('<TITLE>' . $conSgSistema . ' - Visualização de fatura eletrônica</TITLE>');
+    ShowHTML('</HEAD>');
+    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    BodyOpenClean('onLoad=\'this.focus()\'; ');
+    if ($w_tipo != 'WORD')
+      CabecalhoRelatorio($w_cliente, 'Visualização de ' . f($RS_Menu, 'nome'), 4, $w_chave);
+    $w_embed = 'HTML';
+  }
+  if ($w_embed != 'WORD' && nvl($_REQUEST['w_volta'], '') != '') {
+    if ($_REQUEST['w_volta'] == 'fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
     } else {
-    ShowHTML('          <td align="right">'.number_format($l_valor,2,',','.').'&nbsp;</td>');
-    ShowHTML('          <td align="right">'.number_format($l_custo,2,',','.').'&nbsp;</td>');
-    if ($l_aviso>0 && $O=='L') {
-    ShowHTML('          <td align="right"><font color="red"><b>'.number_format($l_aviso,0,',','.').'&nbsp;</td>');
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
+    }
+  }
+  // Chama a rotina de visualização dos dados da solicitação, na opção 'Listagem'
+  ShowHTML(VisualFatura($w_chave, 'L', $w_usuario, $P1, $w_embed));
+  if ($w_embed != 'WORD' && nvl($_REQUEST['w_volta'], '') != '') {
+    if ($_REQUEST['w_volta'] == 'fecha') {
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:window.close();">aqui</a> para fechar esta tela</b></center>');
     } else {
-    ShowHTML('          <td align="right"><b>'.$l_aviso.'&nbsp;</td>');
+      ShowHTML('<center><B><font size=1>Clique <a class="HL" href="javascript:history.back();">aqui</a> para voltar à tela anterior</b></center>');
     }
-    if ($l_acima>0) {
-    ShowHTML('          <td align="right"><font color="red"><b>'.number_format($l_acima,0,',','.').'&nbsp;</td>');
-    } else {
-    ShowHTML('          <td align="right"><b>'.$l_acima.'&nbsp;</td>');
-    }
-    }
-   */
-  ShowHTML('        </tr>');
+  }
+  if ($w_tipo == 'PDF')
+    RodapePDF();
+  elseif ($w_tipo != 'WORD')
+    Rodape();
 }
 
 // =========================================================================
@@ -512,6 +537,8 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
+    case 'VISUAL': Visual();
+      break;
     case 'GERENCIAL': Gerencial();
       break;
     case 'CONCILIACAO': Conciliacao();

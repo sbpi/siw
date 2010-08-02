@@ -21,7 +21,7 @@ function visualfornecedor($l_sq_pessoa,$O) {
     $w_html.=chr(13).'      <tr><td valign="top"><b>CNPJ:</b></td>';
     $w_html.=chr(13).'          <td>'.Nvl(f($l_RS,'cnpj'),'---').'</td></tr>';
     $w_html.=chr(13).'      <tr><td valign="top"><b>Inscrição Estadual:</b></td>';
-    $w_html.=chr(13).'          <td>'.f($l_RS,'inscricao_estadual').'</td></tr>';
+    $w_html.=chr(13).'          <td>'.nvl(f($l_RS,'inscricao_estadual'),'---').'</td></tr>';
   } else {
     $w_html.=chr(13).'      <tr><td valign="top"><b>CPF:</b></td>';
     $w_html.=chr(13).'          <td>'.Nvl(f($l_RS,'cpf'),'---').'</td></tr>';
