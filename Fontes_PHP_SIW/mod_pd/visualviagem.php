@@ -1105,23 +1105,40 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }    
     }
     $w_diferenca = false;
+    
     // Dados da prestação de contas
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
       if($l_diaria=='S' && $w_financeiro && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+		    // Garante que os arrays dos pagamentos previsto e realizado têm as mesmas moedas.
+		    if (count($w_tot_diaria_S)>0) {
+		      foreach($w_tot_diaria_S as $k => $v) {
+		        if (!isset($w_tot_diaria_P[$k])) {
+		          $w_tot_diaria_P[$k] = '0';
+		        }
+		      }
+		      ksort($w_tot_diaria_P);
+		    }
+		    if (count($w_tot_diaria_P)>0) {
+		      foreach($w_tot_diaria_P as $k => $v) {
+		        if (!isset($w_tot_diaria_S[$k])) {
+		          $w_tot_diaria_S[$k] = '0';
+		        }
+		      }
+		      ksort($w_tot_diaria_S);
+		    }
+      
         $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>DIFERENÇA DE DIÁRIAS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';   
         $l_html.=chr(13).'      <tr><td colspan="2">';
         $l_html.=chr(13).'        <table border="1" bordercolor="#00000">';
         $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center"><TD><B><FONT SIZE=2>VALOR';
-        foreach($w_tot_diaria_S as $k => $v) $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.$k;
+        foreach($w_tot_diaria_S as $k => $v) $l_html.=chr(13).'       <TD><B><FONT SIZE=2>'.$k; 
+        
         $l_html.=chr(13).'       </tr>';
         $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Devido';
         if (is_array($w_tot_diaria_P)) {
           foreach($w_tot_diaria_P as $k => $v) {
-            if(count($w_tot_diaria_P) <= 1){
-              $l_html.=chr(13).'       <TD><FONT SIZE=2>0,00';
-            }
-            $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
+              $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($v);
           }
         } else {
           foreach($w_tot_diaria_S as $k => $v) {
@@ -1130,7 +1147,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         }
         $l_html.=chr(13).'       <tr align="RIGHT"><TD><FONT SIZE=2>Recebido';
         foreach($w_tot_diaria_S as $k => $v) {
-          $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]);
+            $l_html.=chr(13).'       <TD><FONT SIZE=2>'.formatNumber($w_tot_diaria_S[$k]);
         }
         $l_html.=chr(13).'       </tr>';
         $l_html.=chr(13).'       </tr>';
@@ -1480,7 +1497,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       }
 
       // Exibe outros valores associados à viagem
-      $RS1 = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null,
+      $RS1 = db_getPD_Fatura::getInstanceOf($dbms,$w_cliente,null,null, null, null, null, null, $l_chave, null, null,
         null, null, null, null, null, null, null, null, null, 'OUTROS');
       $RS1 = SortArray($RS1,'nr_fatura','asc','nm_tipo_reg','asc', 'inicio_reg', 'asc', 'fim_reg', 'asc');
       if (count($RS1)>0) {
