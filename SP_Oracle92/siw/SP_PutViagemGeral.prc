@@ -219,8 +219,8 @@ begin
       
          -- Remove os registros vinculados à missão
          delete pd_missao_solic where sq_solic_missao    = p_chave;
-         delete pd_deslocamento where sq_siw_solicitacao = p_chave;
          delete pd_diaria       where sq_siw_solicitacao = p_chave;
+         delete pd_deslocamento where sq_siw_solicitacao = p_chave;
          delete pd_missao       where sq_siw_solicitacao = p_chave;
             
          -- Remove o registro na tabela de demandas
