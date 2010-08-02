@@ -802,13 +802,14 @@ function VisualAcordo($l_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
           if (Nvl(f($row,'quitacao'),'')!='') $w_real += f($row,'vl_lancamento');
           $w_tot_parc += f($row,'vl_lancamento');
           $w_tot_liq  += f($row,'vl_lancamento');
+          $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
         } else {
           $l_html.=chr(13).'        <td align="center">---</td>';
           $l_html.=chr(13).'        <td align="center">---</td>';
           $l_html.=chr(13).'        <td align="center">---</td>';
           $l_html.=chr(13).'        <td align="center">---</td>';
+          $l_html.=chr(13).'        <td align="center">---</td>';
         } 
-        $l_html.=chr(13).'        <td align="center">'.Nvl(FormataDataEdicao(f($row,'quitacao'),5),'---').'</td>';
         $l_html.=chr(13).'      </tr>';
       }
       if ($w_total>0 || $w_real>0) {

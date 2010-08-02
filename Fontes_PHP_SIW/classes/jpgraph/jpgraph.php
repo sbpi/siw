@@ -468,6 +468,7 @@ if( INSTALL_PHP_ERR_HANDLER ) {
 //Check if there were any warnings, perhaps some wrong includes by the
 //user
 //
+//var_dump($GLOBALS);
 if( isset($GLOBALS['php_errormsg']) && CATCH_PHPERRMSG ) {
     JpGraphError::Raise("General PHP error : ".$GLOBALS['php_errormsg']);
 }

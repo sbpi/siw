@@ -21,6 +21,10 @@ if ($_SESSION['DBMS']=='' || isset($_POST['p_dbms'])) {
     else { $_SESSION['DBMS']=$_POST['p_dbms']; }
 }
 
+if (isset($_POST['p_root'])) {
+  $_SESSION['ROOT']=$_POST['p_root'];
+}
+
 $w_dir_volta = '';
 include_once('constants.inc');
 include_once('jscript.php');
