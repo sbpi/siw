@@ -384,11 +384,13 @@ function Inicial() {
         ShowHTML('          <td><b>'.LinkOrdena('Contrato (Parcela)','cd_acordo').'</td>');
         ShowHTML('          <td><b>'.LinkOrdena('Projeto débito','cd_solic_vinculo').'</td>');
       } else                                ShowHTML ('          <td><b>'.LinkOrdena('Vinculação','dados_pai').'</td>');
-      if (strpos('CONT',substr($SG,3))!==false) {
-        ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
-      }
       if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
         ShowHTML('          <td><b>'.LinkOrdena('Projeto','dados_avo').'</td>');
+      }
+      if (strpos('CONT',substr($SG,3))!==false) {
+        ShowHTML('          <td><b>'.LinkOrdena('Referência','referencia_fim').'</td>');
+      } elseif (f($RS_Menu,'sigla')=='FNDVIA') {
+        ShowHTML('          <td><b>'.LinkOrdena('Período da viagem','referencia_inicio').'</td>');
       }
       ShowHTML('          <td><b>'.LinkOrdena('Vencimento','vencimento').'</td>');
       ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
@@ -402,11 +404,13 @@ function Inicial() {
         ShowHTML('          <td><b>Projeto débito</td>');
       }
       else                                ShowHTML('          <td><b>Vinculação</td>');
-      if (strpos('CONT',substr($SG,3))!==false) {
-        ShowHTML('          <td><b>Referência</td>');
-      }
       if (f($RS_Menu,'sigla')=='FNDVIA' || f($RS_Menu,'sigla')=='FNREVENT') {
         ShowHTML('          <td><b>Projeto</td>');
+      }
+      if (strpos('CONT',substr($SG,3))!==false) {
+        ShowHTML('          <td><b>Referência</td>');
+      } elseif (f($RS_Menu,'sigla')=='FNDVIA') {
+        ShowHTML('          <td><b>Período da viagem</td>');
       }
       ShowHTML('          <td><b>Vencimento</td>');
       ShowHTML('          <td><b>Valor</td>');
@@ -421,7 +425,7 @@ function Inicial() {
       $w_alerta = false;
       foreach($RS1 as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        if (f($row,'atraso_pc')>0) {
+        if (f($row,'sg_tramite')=='PP') {
           ShowHTML('      <tr bgcolor="'.$conTrBgColorLightRed1.'" valign="top">');
           $w_alerta = true;
         } else {
@@ -463,7 +467,7 @@ function Inicial() {
             ShowHTML('        <td>---</td>');
           }
         }
-        if (strpos('CONT',substr($SG,3))!==false) {
+        if (f($RS_Menu,'sigla')=='FNDVIA' || strpos('CONT',substr($SG,3))!==false) {
           if (nvl(f($row,'referencia_inicio'),'')!='') {
             ShowHTML('        <td align="center">'.FormataDataEdicao(f($row,'referencia_inicio'),5).' a '.FormataDataEdicao(f($row,'referencia_fim'),5).'</td>');
           } else {
@@ -544,7 +548,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
             ShowHTML('          <td colspan=4 align="right"><b>Total desta página&nbsp;</td>');
-          } elseif (strpos('CONT',substr($SG,3))!==false) {
+          } elseif (f($RS_Menu,'sigla')=='FNDVIA' || strpos('CONT',substr($SG,3))!==false) {
             ShowHTML('          <td colspan=6 align="right"><b>Total desta página&nbsp;</td>');
           } else {
             ShowHTML('          <td colspan=5 align="right"><b>Total desta página&nbsp;</td>');
@@ -562,7 +566,7 @@ function Inicial() {
           ShowHTML('        <tr bgcolor="'.$conTrBgColor.'">');
           if (strpos('CONT',substr($SG,3))===false && f($RS_Menu,'sigla')!='FNDVIA' && f($RS_Menu,'sigla')!='FNREVENT') {
             ShowHTML('          <td colspan=4 align="right"><b>Total da listagem&nbsp;</td>');
-          } elseif (strpos('CONT',substr($SG,3))!==false) {
+          } elseif (f($RS_Menu,'sigla')=='FNDVIA' || strpos('CONT',substr($SG,3))!==false) {
             ShowHTML('          <td colspan=6 align="right"><b>Total da listagem&nbsp;</td>');
           } else {
             ShowHTML('          <td colspan=5 align="right"><b>Total da listagem&nbsp;</td>');

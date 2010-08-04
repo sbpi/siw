@@ -293,7 +293,8 @@ begin
                    c.sq_pessoa,
                    i.nome_resumido as destinatario,
                    i.sq_pessoa sq_pessoa_destinatario,
-                   f.nome as fase, e.nome as tramite, f.descricao, f.ativo,
+                   case when (f.sigla = 'AT' and l.quitacao >= trunc(sysdate)) then 'Agendado' else f.nome end as fase, 
+                   e.nome as tramite, f.descricao, f.ativo,
                    k.sq_siw_arquivo, k.caminho, k.tipo, k.tamanho, 
                    to_char(a.data, 'DD/MM/YYYY, HH24:MI:SS') as phpdt_data
               from siw_solic_log                       a
@@ -302,6 +303,7 @@ begin
                    inner        join siw_tramite       e  on (a.sq_siw_tramite     = e.sq_siw_tramite)
                    inner        join siw_solicitacao   g  on (a.sq_siw_solicitacao = g.sq_siw_solicitacao)
                      inner      join siw_tramite       f  on (g.sq_siw_tramite     = f.sq_siw_tramite)
+                     inner      join fn_lancamento     l  on (g.sq_siw_solicitacao = l.sq_siw_solicitacao)
                    left outer   join fn_lancamento_log h  on (a.sq_siw_solic_log   = h.sq_siw_solic_log)
                      left outer join co_pessoa         i  on (h.destinatario       = i.sq_pessoa)
                    left outer   join siw_solic_log_arq j  on (a.sq_siw_solic_log   = j.sq_siw_solic_log)

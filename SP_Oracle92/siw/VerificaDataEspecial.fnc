@@ -48,7 +48,7 @@ begin
   -- Recupera o país, estado e cidade padrão da organização
   select b.sq_cidade, b.co_uf, b.sq_pais
     into w_cidade,    w_uf,    w_pais
-    from siw_cliente a 
+    from siw_cliente          a 
          inner join co_cidade b on (a.sq_cidade_padrao = b.sq_cidade)
    where a.sq_pessoa = coalesce(p_cliente,1);
    
@@ -68,6 +68,7 @@ begin
   select count(*) into w_reg
     from eo_data_especial a
    where a.cliente       = w_cliente
+     and a.ativo         = 'S'
      and a.expediente    = 'N' 
      and ((a.abrangencia in ('I','O')) or
           (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
@@ -93,6 +94,7 @@ begin
      select count(*) into w_reg
        from eo_data_especial a
       where a.cliente       = w_cliente
+        and a.ativo         = 'S'
         and a.expediente    = 'M'
         and ((a.abrangencia in ('I','O')) or
              (a.abrangencia = 'N' and a.sq_pais   = w_pais) or
@@ -118,6 +120,7 @@ begin
         select count(*) into w_reg
           from eo_data_especial a
          where a.cliente       = w_cliente
+           and a.ativo         = 'S'
            and a.expediente    = 'T'
            and ((a.abrangencia in ('I','O')) or
                 (a.abrangencia = 'N' and a.sq_pais   = w_pais) or

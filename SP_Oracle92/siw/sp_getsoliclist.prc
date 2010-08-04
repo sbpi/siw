@@ -172,8 +172,12 @@ begin
                 coalesce(b.codigo_interno,to_char(b.sq_siw_solicitacao)) as codigo_interno,
                 coalesce(b.codigo_interno,b.titulo,to_char(b.sq_siw_solicitacao)) as titulo,
                 b.titulo as ac_titulo,
-                b1.sq_siw_tramite,    b1.nome nm_tramite,            b1.ordem or_tramite,
+                b1.sq_siw_tramite,    b1.ordem or_tramite,
                 b1.sigla sg_tramite,  b1.ativo,                      b1.envia_mail,
+                case a.sigla when 'FNDVIA'
+                             then case when b2.quitacao >= trunc(sysdate) then 'Agendado' else b1.nome end
+                             else b1.nome 
+                end as nm_tramite,
                 calculaIGE(b.sq_siw_solicitacao) as ige, calculaIDE(b.sq_siw_solicitacao,null,null)  as ide,
                 calculaIGC(b.sq_siw_solicitacao) as igc, calculaIDC(b.sq_siw_solicitacao,null,null)  as idc,
                 o.nome_resumido as nm_solic, o.nome_resumido_ind as nm_solic_ind
@@ -181,6 +185,7 @@ begin
                 inner          join siw_modulo                a1 on (a.sq_modulo           = a1.sq_modulo)
                 inner          join siw_solicitacao           b  on (a.sq_menu             = b.sq_menu)
                   inner        join siw_tramite               b1 on (b.sq_siw_tramite      = b1.sq_siw_tramite and b1.sigla <> 'CA')
+                    left       join fn_lancamento             b2 on (b.sq_siw_solicitacao  = b2.sq_siw_solicitacao)
                     left       join co_pessoa                 o  on (b.solicitante         = o.sq_pessoa)
                       inner    join sg_autenticacao           o1 on (o.sq_pessoa           = o1.sq_pessoa)
                         inner  join eo_unidade                o2 on (o1.sq_unidade         = o2.sq_unidade)
@@ -940,8 +945,7 @@ begin
                 o.nome_resumido as nm_solic, o.nome_resumido||' ('||o2.sigla||')' as nm_resp,
                 p.nome_resumido as nm_exec,
                 q1.titulo as nm_projeto,
-                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo,
-                coalesce(s.atraso_pc,0) as atraso_pc
+                r1.codigo_interno as cd_solic_vinculo, r1.titulo as nm_solic_vinculo
            from siw_menu                                       a 
                    inner        join eo_unidade                a2 on (a.sq_unid_executora        = a2.sq_unidade)
                      left       join eo_unidade_resp           a3 on (a2.sq_unidade              = a3.sq_unidade and
@@ -1021,22 +1025,6 @@ begin
                         left         join siw_solicitacao      q1 on (q.sq_siw_solicitacao       = q1.sq_siw_solicitacao)
                       left           join pj_projeto           r  on (d.sq_solic_vinculo         = r.sq_siw_solicitacao)
                         left         join siw_solicitacao      r1 on (r.sq_siw_solicitacao       = r1.sq_siw_solicitacao)
-                      left           join (select w.sq_siw_solicitacao, count(*) as atraso_pc
-                                             from fn_lancamento                      w
-                                                  inner     join siw_solicitacao     w1 on (w.sq_siw_solicitacao  = w1.sq_siw_solicitacao)
-                                                    inner   join siw_menu            w2 on (w1.sq_menu            = w2.sq_menu and 
-                                                                                            w2.sigla              = 'FNDVIA' and
-                                                                                            w2.sq_menu            = p_menu
-                                                                                           )
-                                                      inner join pd_parametro        w3 on (w2.sq_pessoa          = w3.cliente)
-                                                  inner     join pd_missao           w4 on (w.pessoa              = w4.sq_pessoa)
-                                                    inner   join pd_categoria_diaria w7 on (w4.diaria             = w7.sq_categoria_diaria)
-                                                    inner   join siw_solicitacao     w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
-                                                      inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite)
-                                            where w6.sigla in ('PC','AP')
-                                              and 0       > soma_dias(w2.sq_pessoa,trunc(w5.fim),w7.dias_prestacao_contas + 1,'U') - trunc(sysdate)
-                                           group by w.sq_siw_solicitacao
-                           	              )                    s  on (b.sq_siw_solicitacao      = s.sq_siw_solicitacao)
                       left           join ct_cc                n  on (b.sq_cc                    = n.sq_cc)
                       left           join co_pessoa            o  on (b.solicitante              = o.sq_pessoa)
                         inner        join sg_autenticacao      o1 on (o.sq_pessoa                = o1.sq_pessoa)
