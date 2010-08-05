@@ -41,11 +41,13 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
              inner    join co_pais               e  on (d.sq_pais                    = e.sq_pais)
            left       join pd_diaria             f  on (a.sq_siw_solicitacao         = f.sq_siw_solicitacao and
                                                         a.destino                    = f.sq_cidade and
-                                                        a.sq_deslocamento            = f.sq_deslocamento_saida
+                                                        a.sq_deslocamento            = f.sq_deslocamento_saida and
+                                                        a.tipo                       = f.tipo
                                                        )
            left       join pd_diaria             h  on (a.sq_siw_solicitacao         = h.sq_siw_solicitacao and
                                                         a.origem                     = h.sq_cidade and
-                                                        a.sq_deslocamento            = h.sq_deslocamento_chegada
+                                                        a.sq_deslocamento            = h.sq_deslocamento_chegada and
+                                                        a.tipo                       = h.tipo
                                                        )
      where a.sq_siw_solicitacao = w_chave
        and (w_data              = trunc(a.saida) or w_data = trunc(a.chegada))
@@ -118,7 +120,7 @@ begin
      for crec in c_deslocamentos (p_chave, w_atual) loop
        If w_tot_dia < 1  Then
          -- Verifica diária em fim de semana
-         If (w_fim_semana = 'S' or (w_fim_semana = 'N' and to_char(w_atual,'d') not in (1,7))) Then 
+         If (w_fim_semana = 'S' or (w_fim_semana = 'N' and to_char(crec.saida,'d') not in (1,7) and to_char(w_atual,'d') not in (1,7))) Then 
             If w_cont = 1 Then
                -- No primeiro dia:
                --    NACIONAL
@@ -127,7 +129,15 @@ begin
                --                          sem compromisso implica em 1/2 diária nacional
                --    INTERNACIONAL
                --    Toda e qualquer saída será computada com o 1 diária internacional
-               select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_inicio = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
+               select count(distinct a.sq_deslocamento) into w_existe
+                 from pd_deslocamento      a 
+                      inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                      inner join siw_tramite     c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                      left  join pd_diaria       d on (a.sq_deslocamento    = d.sq_deslocamento_chegada)
+                where a.sq_siw_solicitacao = p_chave 
+                  and (d.sq_diaria is null or (d.sq_diaria is not null and d.diaria = 'S'))
+                  and w_inicio = trunc(a.saida) 
+                  and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
                If w_existe <= 1 or w_existe = (i+1) or w_inicio = w_fim Then
                   If crec.diaria_inicio = 'S' Then
                      If crec.destino_nacional = 'N' Then 
@@ -148,7 +158,6 @@ begin
                --    Toda e qualquer chegada será computada com o 1/2 diária internacional
                If crec.origem_nacional = 'N' Then
                   If crec.diaria_fim = 'S' Then diarias(crec.sq_diaria_fim) := diarias(crec.sq_diaria_fim) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
-                  If w_compromisso_retorno = 'S' and crec.sq_diaria_inicio is not null Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  End If;
                   i := i + 1;
                   exit;
                Elsif crec.diaria_fim = 'S' Then
@@ -175,17 +184,24 @@ begin
                  --    Se há alteração de cidade na data:
                  --       Para destino internacional, conta 1 diária na cidade de destino, não importando horários;
                  --       Para destino nacional, conta 1/2 diária na cidade de origem e 1/2 diária na cidade de destino, não importando horários
-                 If crec.origem_nacional = 'N' and crec.destino_nacional = 'S' Then
-                    -- vindo do exterior e não sendo o último dia de viagem, 0,5 diária para a origem e para o destino
-                    If crec.sq_diaria_inicio is not null and crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
-                    If crec.sq_diaria_fim    is not null and crec.diaria_fim    = 'S' Then diarias(crec.sq_diaria_fim)    := diarias(crec.sq_diaria_fim) + 0.5;     w_tot_dia := w_tot_dia + 0.5; End If;
-                    w_diaria    := crec.diaria_inicio;
-                    w_sq_diaria := crec.sq_diaria_inicio;
-                    i := i + 1;
-                    exit;
-                Else
-                    select count(*) into w_existe from pd_deslocamento a join siw_solicitacao b on a.sq_siw_solicitacao = b.sq_siw_solicitacao join siw_tramite c on b.sq_siw_tramite = c.sq_siw_tramite where a.sq_siw_solicitacao = p_chave and w_atual = trunc(a.saida) and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
-                    If w_existe <= 1 or w_existe = (i+1) Then
+                 select count(distinct a.sq_deslocamento) into w_existe
+                   from pd_deslocamento      a 
+                        inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                        inner join siw_tramite     c on (b.sq_siw_tramite     = c.sq_siw_tramite)
+                        left  join pd_diaria       d on (a.sq_deslocamento    = d.sq_deslocamento_chegada)
+                  where a.sq_siw_solicitacao = p_chave 
+                    and (d.sq_diaria is null or (d.sq_diaria is not null and d.diaria = 'S'))
+                    and (w_atual = trunc(a.saida) or w_atual = trunc(a.chegada))
+                    and a.tipo = coalesce(p_tipo,case c.sigla when 'CI' then 'S' else 'P' end);
+                 If w_existe <= 1 or w_existe = (i+1) Then
+                    If crec.origem_nacional = 'N' and crec.destino_nacional = 'S' Then
+                       -- vindo do exterior e não sendo o último dia de viagem, 0,5 diária para a origem e para o destino
+                       If crec.sq_diaria_inicio is not null and crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5;  w_tot_dia := w_tot_dia + 0.5; End If;
+                       If crec.sq_diaria_fim    is not null and crec.diaria_fim    = 'S' Then diarias(crec.sq_diaria_fim)    := diarias(crec.sq_diaria_fim) + 0.5;     w_tot_dia := w_tot_dia + 0.5; End If;
+                       w_diaria    := crec.diaria_inicio;
+                       w_sq_diaria := crec.sq_diaria_inicio;
+                       i := i + 1;
+                   Else
                        If crec.destino_nacional = 'N' Then
                           If crec.diaria_inicio = 'S' Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;  w_tot_dia := w_tot_dia + 1; End If;
                        Else

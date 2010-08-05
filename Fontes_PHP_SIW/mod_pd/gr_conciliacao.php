@@ -1,4 +1,5 @@
 <?php
+
 header('Expires: ' . -1500);
 session_start();
 $w_dir_volta = '../';
@@ -132,6 +133,7 @@ $w_ano = RetornaAno();
   $p_sqcc = upper($_REQUEST['p_sqcc']);
   $p_agrega = upper($_REQUEST['p_agrega']); */
 
+$p_tipo = upper($_REQUEST['w_tipo']);
 $p_ordena = lower($_REQUEST['p_ordena']);
 $p_agencia = $_REQUEST['p_agencia'];
 $p_numero_fat = $_REQUEST['p_numero_fat'];
@@ -363,10 +365,14 @@ function Conciliacao() {
         $w_cor = ($w_cor == $conTrBgColor || $w_cor == '') ? $w_cor = $conTrAlternateBgColor : $w_cor = $conTrBgColor;
         //if ($w_embed == 'WORD' && $w_linha > $w_linha_pag) {
         ShowHTML('<tr bgcolor="' . $w_cor . '" valign="top">');
-        ShowHTML('<td align="center">' . exibeFatura($w_cliente, f($row, 'sq_fatura_agencia'), f($row, 'nr_fatura')) . '</td>');
+        if ($p_tipo != 'WORD' && $p_tipo != 'PDF') {
+          ShowHTML('<td align="center">' . exibeFatura($w_cliente, f($row, 'sq_fatura_agencia'), f($row, 'nr_fatura')) . '</td>');
+        } else {
+          ShowHTML('<td align="center">' . f($row, 'nr_fatura') . '</td>');
+        }
         ShowHTML('<td>');
-        if ($w_embed != 'WORD')
-          ShowHTML(exibeSolic($w_dir,f($row, 'sq_projeto'),f($row, 'cd_projeto'),'N',$w_embed));
+        if ($p_tipo != 'WORD' || $p_tipo != 'PDF')
+          ShowHTML(exibeSolic($w_dir, f($row, 'sq_projeto'), f($row, 'cd_projeto'), 'N', $w_embed));
         else
           ShowHTML('        ' . f($row, 'cd_projeto') . '');
         ShowHTML('<td>' . f($row, 'nm_tp_fatura') . '</td>');
@@ -471,15 +477,27 @@ function ImprimeCabecalho() {
   ShowHTML('<tr><td align="center">');
   ShowHTML('    <TABLE WIDTH="100%" bgcolor="' . $conTableBgColor . '" BORDER="' . $conTableBorder . '" CELLSPACING="' . $conTableCellSpacing . '" CELLPADDING="' . $conTableCellPadding . '" BorderColorDark="' . $conTableBorderColorDark . '" BorderColorLight="' . $conTableBorderColorLight . '">');
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
-  ShowHTML('          <td><b>' . LinkOrdena('Número', 'nr_fatura') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Projeto', 'cd_projeto') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Tipo', 'nm_tp_fatura') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Agência de Viagem', 'nm_agencia_res') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Data de emissão', 'emissao_fat') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Vencimento', 'vencimento') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Valor', 'valor') . '</td>');
-  ShowHTML('          <td><b>' . LinkOrdena('Data de importação', 'data_importacao') . '</td>');
-  ShowHTML('          <td colspan="3"><b>' . LinkOrdena('Registros', 'reg_fatura') . '</td>');
+  if (!$p_tipo == 'WORD' || $p_tipo == 'PDF') {
+    ShowHTML('          <td><b>' . LinkOrdena('Número', 'nr_fatura') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Projeto', 'cd_projeto') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Tipo', 'nm_tp_fatura') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Agência de Viagem', 'nm_agencia_res') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Data de emissão', 'emissao_fat') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Vencimento', 'vencimento') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Valor', 'valor') . '</td>');
+    ShowHTML('          <td><b>' . LinkOrdena('Data de importação', 'data_importacao') . '</td>');
+    ShowHTML('          <td colspan="3"><b>' . LinkOrdena('Registros', 'reg_fatura') . '</td>');
+  } else {
+    ShowHTML('          <td><b>Número</b></td>');
+    ShowHTML('          <td><b>Projeto</b></td>');
+    ShowHTML('          <td><b>Tipo</b></td>');
+    ShowHTML('          <td><b>Agência de Viagem</b></td>');
+    ShowHTML('          <td><b>Data de emissão</b></td>');
+    ShowHTML('          <td><b>Vencimento</b></td>');
+    ShowHTML('          <td><b>Valor</b></td>');
+    ShowHTML('          <td><b>Data de importação</b></td>');
+    ShowHTML('          <td colspan="3"><b>Registros</b></td>');
+  }
   ShowHTML('        </tr>');
 }
 
@@ -488,7 +506,7 @@ function Visual() {
   global $w_Disabled;
 
   $w_chave = $_REQUEST['w_chave'];
-  $w_tipo = upper(trim($_REQUEST['w_tipo']));
+  $w_tipo = upper(trim(nvl($_REQUEST['w_tipo'], $_REQUEST['p_tipo'])));
 
   if ($w_tipo == 'PDF') {
     headerpdf('Visualização de ' . f($RS_Menu, 'nome'), $w_pag);

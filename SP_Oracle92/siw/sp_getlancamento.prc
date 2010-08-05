@@ -3,6 +3,10 @@ create or replace procedure SP_GetLancamento
     p_restricao in varchar2 default null,
     p_dt_ini    in date     default null,
     p_dt_fim    in date     default null,
+    p_pg_ini    in date     default null,
+    p_pg_fim    in date     default null,
+    p_co_ini    in date     default null,
+    p_co_fim    in date     default null,
     p_sq_pessoa in number   default null,
     p_fase      in varchar2 default null,
     p_result    out sys_refcursor) is
@@ -42,7 +46,11 @@ begin
              inner      join co_pessoa          g  on (a.pessoa             = g.sq_pessoa)
        where 1 = 1 
          and ((Instr(p_restricao,'FLUXO') > 0 and (a.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
-              (Instr(p_restricao,'FLUXO') = 0 and (a.vencimento between p_dt_ini and p_dt_fim))
+              (Instr(p_restricao,'FLUXO') = 0 and ((p_dt_ini is null or (p_dt_ini is not null and a.vencimento       between p_dt_ini and p_dt_fim)) or
+                                                   (p_pg_ini is null or (p_pg_ini is not null and a.quitacao         between p_pg_ini and p_pg_fim)) or
+                                                   (p_co_ini is null or (p_co_ini is not null and trunc(b.conclusao) between p_co_ini and p_co_fim))
+                                                  )
+              )
              )
          and (Instr(p_restricao,'FLUXOPR') = 0 or (Instr(p_restricao,'FLUXOPR') > 0 and a.quitacao is null))
          and (Instr(p_restricao,'FLUXORE') = 0 or (Instr(p_restricao,'FLUXORE') > 0 and a.quitacao is not null))
@@ -87,7 +95,11 @@ begin
                                )                      h  on (d.sq_acordo_parcela  = h.sq_acordo_parcela)
        where h.sq_siw_solicitacao is null
          and ((Instr(p_restricao,'FLUXO') > 0 and (d.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
-              (Instr(p_restricao,'FLUXO') = 0 and (d.vencimento between p_dt_ini and p_dt_fim))
+              (Instr(p_restricao,'FLUXO') = 0 and (d.vencimento between p_dt_ini and p_dt_fim and
+                                                   p_pg_ini     is null and
+                                                   p_co_ini     is null
+                                                  )
+              )
              )
          and (Instr(p_restricao,'FLUXOPR') = 0 or (Instr(p_restricao,'FLUXOPR') > 0 and h.quitacao is null))
          and (Instr(p_restricao,'FLUXORE') = 0 or (Instr(p_restricao,'FLUXORE') > 0 and h.quitacao is not null))
