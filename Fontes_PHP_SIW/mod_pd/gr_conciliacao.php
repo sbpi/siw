@@ -1,5 +1,4 @@
 <?php
-
 header('Expires: ' . -1500);
 session_start();
 $w_dir_volta = '../';
@@ -22,7 +21,7 @@ include_once($w_dir_volta . 'classes/sp/db_getStateData.php');
 include_once($w_dir_volta . 'classes/sp/db_getCityData.php');
 include_once($w_dir_volta . 'classes/sp/db_getCiaTrans.php');
 include_once($w_dir_volta . 'classes/sp/db_getSolicViagem.php');
-include_once($w_dir_volta . 'classes/sp/db_getPd_Fatura.php');
+include_once($w_dir_volta . 'classes/sp/db_getPD_Fatura.php');
 include_once($w_dir_volta . 'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta . 'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta . 'classes/sp/db_getSolicEtapa.php');
