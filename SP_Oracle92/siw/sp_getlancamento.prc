@@ -45,11 +45,10 @@ begin
                left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
              left outer join ct_cc              f  on (b.sq_cc              = f.sq_cc)
              inner      join co_pessoa          g  on (a.pessoa             = g.sq_pessoa)
-       where 1 = 1 
-         and ((Instr(p_restricao,'FLUXO') > 0 and (a.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
-              (Instr(p_restricao,'FLUXO') = 0 and ((p_dt_ini is null or (p_dt_ini is not null and a.vencimento       between p_dt_ini and p_dt_fim)) or
-                                                   (p_pg_ini is null or (p_pg_ini is not null and a.quitacao         between p_pg_ini and p_pg_fim)) or
-                                                   (p_co_ini is null or (p_co_ini is not null and trunc(b.conclusao) between p_co_ini and p_co_fim))
+       where ((Instr(p_restricao,'FLUXO') > 0 and (a.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
+              (Instr(p_restricao,'FLUXO') = 0 and ((p_dt_ini is not null and a.vencimento       between p_dt_ini and p_dt_fim) or
+                                                   (p_pg_ini is not null and a.quitacao         between p_pg_ini and p_pg_fim) or
+                                                   (p_co_ini is not null and trunc(b.conclusao) between p_co_ini and p_co_fim)
                                                   )
               )
              )
@@ -107,6 +106,6 @@ begin
          and (Instr(p_restricao,'FLUXOPR') = 0 or (Instr(p_restricao,'FLUXOPR') > 0 and h.quitacao is null))
          and (Instr(p_restricao,'FLUXORE') = 0 or (Instr(p_restricao,'FLUXORE') > 0 and h.quitacao is not null))
          and (p_sq_pessoa is null or (p_sq_pessoa is not null and a.outra_parte     = p_sq_pessoa))
-      order by 2,11;
+      order by 2,12;
 End SP_GetLancamento;
 /
