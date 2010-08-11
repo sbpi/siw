@@ -126,6 +126,10 @@ begin
          select sq_etapa_pai into w_pai from pj_projeto_etapa where sq_projeto_etapa = p_chave_aux;
       End If;
 
+      -- Remove o registro de comentários na tabela de etapas do projeto
+      delete pj_etapa_comentario
+       where sq_projeto_etapa   = p_chave_aux;
+
       -- Remove o registro na tabela de etapas do projeto
       delete pj_projeto_etapa
        where sq_siw_solicitacao = p_chave
