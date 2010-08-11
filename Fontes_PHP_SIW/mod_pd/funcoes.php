@@ -1,4 +1,4 @@
-<?
+<?php
   session_start();
   session_register("dbms_session");
   session_register("schema_session");

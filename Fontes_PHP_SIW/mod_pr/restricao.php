@@ -586,7 +586,7 @@ function ComentarioEtapa() {
   head();
   ShowHTML('<TITLE>Comentários</TITLE>');
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
-  if (strpos('IAEP',$O)!==false) {
+  if (strpos('IAEPV',$O)!==false) {
     ScriptOpen('JavaScript');
     ValidateOpen('Validacao');
     if (strpos('IA',$O)!==false) {
