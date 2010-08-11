@@ -39,10 +39,14 @@ begin
           and b.sq_siw_tramite = p_novo_tramite
       );
 
-      -- Atualiza a situação da demanda
+      -- Atualiza a situação da solicitação
       Update siw_solicitacao set
-         sq_siw_tramite = p_novo_tramite
+         sq_siw_tramite = p_novo_tramite,
+         conclusao      = null
       Where sq_siw_solicitacao = p_chave;
+
+      -- Atualiza a situação do lançamento financeiro
+      Update fn_lancamento set quitacao = null Where sq_siw_solicitacao = p_chave;
    End If;
 
    -- Verifica se o envio é na/para fase de cadastramento. Se for, atualiza o cadastrador.

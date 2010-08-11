@@ -15,17 +15,17 @@ begin
    -- dependendo dos parâmetros informados
    If p_restricao is null or p_restricao = 'PERIODO' or p_restricao = 'PARCELA' Then
       open p_result for 
-         select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, a.quitacao,
+         select a.sq_acordo_parcela, a.sq_siw_solicitacao, a.ordem, a.emissao, a.vencimento, 
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 a.sq_acordo_aditivo, a.valor_inicial, a.valor_excedente, a.valor_reajuste,
-                b.sq_siw_solicitacao sq_lancamento, b.codigo_interno cd_lancamento, 
-                b.vencimento dt_lancamento, b.valor vl_lancamento, b.sg_tramite fn_tramite,
+                b.sq_siw_solicitacao as sq_lancamento, b.codigo_interno as cd_lancamento, b.quitacao,
+                b.vencimento as dt_lancamento, b.valor as vl_lancamento, b.sg_tramite as fn_tramite,
                 b.referencia_inicio, b.referencia_fim,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao
            from ac_acordo_parcela                  a
-                left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
+                left     join (select x.sq_acordo_parcela, x.sq_siw_solicitacao, x.quitacao, y.valor,
                                       y.codigo_interno, x.vencimento, x.referencia_inicio, x.referencia_fim,
-                                      z.sigla sg_tramite
+                                      z.sigla as sg_tramite
                                  from fn_lancamento                x
                                       inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
                                         inner join siw_tramite     z on (y.sq_siw_tramite     = z.sq_siw_tramite and
@@ -75,7 +75,7 @@ begin
                 a.documento_interno, a.documento_externo, a.observacao, a.valor, a.inicio, a.fim,
                 a.sq_acordo_aditivo,
                 c.prorrogacao, c.acrescimo, c.supressao, c.revisao,
-                e.data dt_nota, e.abrange_inicial, e.abrange_acrescimo, e.abrange_reajuste,
+                e.data as dt_nota, e.abrange_inicial, e.abrange_acrescimo, e.abrange_reajuste,
                 f.sq_siw_solicitacao as sq_lancamento, f.codigo_interno as cd_lancamento, 
                 f.vencimento as dt_lancamento, f.valor as vl_lancamento, f.sg_tramite as fn_tramite,
                 f.processo, f.referencia_inicio, f.referencia_fim,
@@ -89,7 +89,7 @@ begin
                     left      join (select w.sq_acordo_nota, w.valor_inicial, w.valor_excedente, w.valor_reajuste,
                                            x.sq_acordo_parcela, x.sq_siw_solicitacao, y.valor,
                                            y.codigo_interno, x.vencimento, 
-                                           z.sigla sg_tramite, x.processo, x.referencia_inicio, x.referencia_fim
+                                           z.sigla as sg_tramite, x.processo, x.referencia_inicio, x.referencia_fim
                                        from fn_lancamento_doc              w
                                             inner     join fn_lancamento   x on (w.sq_siw_solicitacao = x.sq_siw_solicitacao and
                                                                                  x.sq_acordo_parcela  is not null
@@ -116,7 +116,7 @@ begin
                coalesce(c1.existe,0) as notas_parcela,
                g.nome_resumido,
                f.sq_tipo_lancamento,
-               case when h.sq_pessoa is null then i.cnpj else h.cpf end cnpjcpf
+               case when h.sq_pessoa is null then i.cnpj else h.cpf end as cnpjcpf
           from siw_solicitacao                          a
                inner            join ac_acordo          b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                    left outer   join (select x.sq_siw_solicitacao, count(*) as existe
@@ -142,7 +142,7 @@ begin
                                                                                )
                                       group by x.sq_acordo_parcela
                                      )                  d  on (c.sq_acordo_parcela  = d.sq_acordo_parcela)
-                 left outer     join (select w.sq_siw_solicitacao, max(w.sq_acordo_parcela) sq_acordo_parcela, max(x.sq_siw_solicitacao) sq_lancamento
+                 left outer     join (select w.sq_siw_solicitacao, max(w.sq_acordo_parcela) as sq_acordo_parcela, max(x.sq_siw_solicitacao) as sq_lancamento
                                         from ac_acordo_parcela            w
                                              inner join fn_lancamento     x on (w.sq_acordo_parcela = x.sq_acordo_parcela)
                                              inner   join siw_solicitacao y on (x.sq_siw_solicitacao = y.sq_siw_solicitacao)
