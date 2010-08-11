@@ -237,17 +237,44 @@ begin
   
       -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo
       select count(*) into w_existe
-        from pd_missao                    a
-             inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-               inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
-               inner join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
-               inner join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
-                                                c.sq_pessoa          = p_pessoa and
-                                                c.tipo_respons       = 'T' and
-                                                c.fim                is null
-                                               )
-       where a.sq_siw_solicitacao = p_chave
-         and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH');
+        from (select 1
+                from pd_missao                    a
+                     inner   join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                       inner join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
+                       inner join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                       inner join eo_unidade      f on (e.sq_unidade_resp    = f.sq_unidade)
+                       inner join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
+                                                        c.sq_pessoa          = p_pessoa and
+                                                        c.tipo_respons       = 'T' and
+                                                        c.fim                is null
+                                                       )
+               where a.sq_siw_solicitacao = p_chave
+                 and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
+              UNION
+              select 1
+                from pd_missao                        a
+                     inner       join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                       inner     join siw_tramite     d on (b.sq_siw_tramite     = d.sq_siw_tramite)
+                       inner     join gd_demanda      e on (a.sq_siw_solicitacao = e.sq_siw_solicitacao)
+                       inner     join siw_solic_log   f on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                         inner   join (select w.sq_siw_solic_log, max(w.data) as data
+                                         from siw_solic_log          w
+                                              inner join siw_tramite x on (w.sq_siw_tramite = x.sq_siw_tramite and x.sigla = 'CI')
+                                        where w.observacao like 'Envio%'
+                                          and w.devolucao  = 'N'
+                                       group by w.sq_siw_solic_log
+                                      )               g on (f.sq_siw_solic_log   = g.sq_siw_solic_log and
+                                                            f.data               = g.data
+                                                           )
+                       inner     join eo_unidade_resp c on (e.sq_unidade_resp    = c.sq_unidade and
+                                                            c.sq_pessoa          = f.sq_pessoa and
+                                                            c.tipo_respons       = 'T' and
+                                                            c.fim                is null
+                                                           )
+               where a.sq_siw_solicitacao = p_chave
+                 and d.ordem              < (select ordem from siw_tramite where sq_menu = b.sq_menu and sigla = 'CH')
+                 and d.ordem              > 1
+             );
       -- Se sim, pula autorização pelo chefe imediato.
       If w_existe > 0 
          Then w_salto := 1;
