@@ -631,10 +631,6 @@ Fontes_PHP_SIW/classes/db/DatabaseQueries.php -text
 Fontes_PHP_SIW/classes/db/DatabaseQueriesFactory.php -text
 Fontes_PHP_SIW/classes/db/abreSessao.php -text
 Fontes_PHP_SIW/classes/db/db_constants.php -text
-Fontes_PHP_SIW/classes/db/db_getDeskTop.php -text
-Fontes_PHP_SIW/classes/db/db_getDeskTop_TT.php -text
-Fontes_PHP_SIW/classes/db/db_getPersonData.php -text
-Fontes_PHP_SIW/classes/db/db_getSiwCliModLis.php -text
 Fontes_PHP_SIW/classes/file/File.php -text
 Fontes_PHP_SIW/classes/gantt/gantt.class.php -text
 Fontes_PHP_SIW/classes/googlegraph/GoogleGraph.php -text
