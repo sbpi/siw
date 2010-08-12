@@ -1109,7 +1109,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
     // Dados da prestação de contas
     if ($w_or_tramite>=10 && f($RS,'cumprimento')!='N') {
       // Acerto de contas da viagem
-      if($l_diaria=='S' && $w_financeiro && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
+      if($l_diaria=='S' && (is_array($w_tot_diaria_P) || $w_financeiro) && $w_or_tramite>=10 && (is_array($w_tot_diaria_P) || f($RS,'cumprimento')=='C')) {
 		    // Garante que os arrays dos pagamentos previsto e realizado têm as mesmas moedas.
 		    if (count($w_tot_diaria_S)>0) {
 		      foreach($w_tot_diaria_S as $k => $v) {

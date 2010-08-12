@@ -3833,6 +3833,7 @@ function BodyOpenClean($cProperties) {
   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.MultiFile.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
