@@ -4,8 +4,8 @@
 function fCompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
   extract($GLOBALS);
   $w_erro='';
-  if (strlen($data1)>0 && strlen($data2)>0) {
-    if (strlen($data1)==17) {
+  if (strlen($Date1)>0 && strlen($Date2)>0) {
+    if (strlen($Date1)==17) {
       $d1=substr($Date1,0,2);
       $m1=substr($Date1,3,2);
       $a1=substr($Date1,6,4);
@@ -16,7 +16,7 @@ function fCompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
       $h2=substr($Date2,12,2).substr($Date2,15,2);
       $data1=$a1.$m1.$d1.$h1;
       $data2=$a2.$m2.$d2.$h2;
-    } elseif (strlen($data1)==10) {
+    } elseif (strlen($Date1)==10) {
       $d1=substr($Date1,0,2);
       $m1=substr($Date1,3,2);
       $a1=substr($Date1,6,4);
@@ -25,7 +25,7 @@ function fCompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
       $a2=substr($Date2,6,4);
       $data1=$a1.$m1.$d1;
       $data2=$a2.$m2.$d2;
-    } elseif (strlen($data1)==7) {
+    } elseif (strlen($Date1)==7) {
       $d1='01';
       $m1=substr($Date1,0,2);
       $a1=substr($Date1,3,4);
@@ -36,14 +36,14 @@ function fCompData($Date1,$DisplayName1,$Operator,$Date2,$DisplayName2) {
       $data2=$a2.$m2.$d2;
     } 
     switch ($Operator) {
-      case '=':     if (!($Data1==$Data2))  $w_erro=$DisplayName1.' deve ser igual a '.$DisplayName2;           break;
-      case '<>':    if (!($Data1!=$Data2))  $w_erro=$DisplayName1.' deve ser diferente de '.$DisplayName2;      break;
-      case '>':     if (!($Data1>$Data2))   $w_erro=$DisplayName1.' deve ser maior que '.$DisplayName2;         break;
-      case '<':     if (!($Data1<$Data2))   $w_erro=$DisplayName1.' deve ser menor que '.$DisplayName2;         break;
-      case '>=':    if (!($Data1>=$Data2))  $w_erro=$DisplayName1.' deve ser maior ou igual a '.$DisplayName2;  break;
-      case '=>':    if (!($Data1>=$Data2))  $w_erro=$DisplayName1.' deve ser maior ou igual a '.$DisplayName2;  break;
-      case '<=':    if (!($Data1<=$Data2))  $w_erro=$DisplayName1.' deve ser menor ou igual a '.$DisplayName2;  break;
-      case '=<':    if (!($Data1<=$Data2))  $w_erro=$DisplayName1.' deve ser menor ou igual a '.$DisplayName2;break;
+      case '=':     if (!($data1==$data2))  $w_erro=$DisplayName1.' deve ser igual a '.$DisplayName2;           break;
+      case '<>':    if (!($data1!=$data2))  $w_erro=$DisplayName1.' deve ser diferente de '.$DisplayName2;      break;
+      case '>':     if (!($data1>$data2))   $w_erro=$DisplayName1.' deve ser maior que '.$DisplayName2;         break;
+      case '<':     if (!($data1<$data2))   $w_erro=$DisplayName1.' deve ser menor que '.$DisplayName2;         break;
+      case '>=':    if (!($data1>=$data2))  $w_erro=$DisplayName1.' deve ser maior ou igual a '.$DisplayName2;  break;
+      case '=>':    if (!($data1>=$data2))  $w_erro=$DisplayName1.' deve ser maior ou igual a '.$DisplayName2;  break;
+      case '<=':    if (!($data1<=$data2))  $w_erro=$DisplayName1.' deve ser menor ou igual a '.$DisplayName2;  break;
+      case '=<':    if (!($data1<=$data2))  $w_erro=$DisplayName1.' deve ser menor ou igual a '.$DisplayName2;break;
     } 
   } 
   return $w_erro;

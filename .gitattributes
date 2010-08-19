@@ -615,6 +615,11 @@ Fontes_PHP_SIW/cl_renapi/validaevento.php -text
 Fontes_PHP_SIW/cl_renapi/visualevento.php -text
 Fontes_PHP_SIW/cl_renapi/visualmonitor.php -text
 Fontes_PHP_SIW/cl_renapi/visualprojeto.php -text
+Fontes_PHP_SIW/cl_terracap/autenticacao.php -text
+Fontes_PHP_SIW/cl_terracap/cadastro.php -text
+Fontes_PHP_SIW/cl_terracap/indicador.php -text
+Fontes_PHP_SIW/cl_terracap/visual.php -text
+Fontes_PHP_SIW/cl_terracap/visualprograma.php -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Area2D.swf -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Column2D.swf -text
 Fontes_PHP_SIW/classes/FusionCharts/FCF_Column3D.swf -text
@@ -4617,3 +4622,15 @@ hooks/pre-unlock.tmpl -text
 hooks/start-commit.tmpl -text
 locks/db-logs.lock -text
 locks/db.lock -text
+matricial/cadastro.php -text
+matricial/default.htm -text
+matricial/funcoes.js -text
+matricial/indicador.php -text
+matricial/jquery.js -text
+matricial/jscript.php -text
+matricial/modal/css/modal-message.css -text
+matricial/modal/js/ajax-dynamic-content.js -text
+matricial/modal/js/ajax.js -text
+matricial/modal/js/modal-message.js -text
+matricial/visual.php -text
+matricial/xPandMenu.css -text

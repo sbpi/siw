@@ -7,10 +7,12 @@ function VisualPrograma($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao,
   include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicRecursos.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicMeta.php');
+  include_once($w_dir_volta.'classes/sp/db_getSolicInter.php');
+  include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
+  include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
   include_once($w_dir_volta.'classes/sp/db_getSolicIndicador.php');
   $l_html='';
-  $l_html.='<BASE HREF="'.$conRootSIW.'">';
-    
+  
   // Recupera os dados do programa
   $RS = db_getSolicData::getInstanceOf($dbms,$l_chave,'PEPRGERAL');
   $w_tramite_ativo = f($RS,'ativo');

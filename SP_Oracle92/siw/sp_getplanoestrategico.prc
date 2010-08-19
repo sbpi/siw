@@ -12,8 +12,8 @@ begin
    If upper(p_restricao) = 'ARQUIVOS' Then
      -- Recupera o plano pai do informado
       open p_result for
-         select a.sq_plano chave,
-                b.sq_siw_arquivo chave_aux, b.cliente, b.nome, b.descricao, 
+         select a.sq_plano AS chave,
+                b.sq_siw_arquivo AS chave_aux, b.cliente, b.nome, b.descricao, 
                 b.inclusao, b.tamanho, b.tipo, b.caminho
            from pe_plano_arq           a
                 inner join siw_arquivo b on (a.sq_siw_arquivo = b.sq_siw_arquivo)
@@ -23,7 +23,7 @@ begin
    Elsif upper(p_restricao) = 'SUBTODOS' or upper(p_restricao) = 'SUBHERDA' Then
      -- Recupera os planos estratégicos aos quais o atual pode ser subordinado
       open p_result for
-         select a.sq_plano chave,a.titulo nome, a.codigo_externo,
+         select a.sq_plano as chave,a.titulo as nome, a.codigo_externo,
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
@@ -44,7 +44,7 @@ begin
    Elsif upper(p_restricao) = 'SUBPARTE' Then
      -- Se for alteração, não deixa vincular a si mesmo nem a algum filho
       open p_result for
-         select a.sq_plano chave,a.titulo nome, a.codigo_externo,
+         select a.sq_plano as chave,a.titulo as nome, a.codigo_externo,
                 coalesce(d.qtd,0) as qt_solic,
                 coalesce(e.qtd,0) as qt_menu
            from pe_plano    a
@@ -71,7 +71,7 @@ begin
    Elsif upper(p_restricao) = 'IRMAOS' Then
      -- Recupera todos os planos estratégicos vinculados ao mesmo pai do plano informado, menos o que foi informado
       open p_result for
-         select a.sq_plano chave,a.titulo nome, a.inicio, a.fim
+         select a.sq_plano as chave,a.titulo as nome, a.inicio, a.fim
            from pe_plano              a
           where a.cliente        =  p_cliente
             and a.sq_plano_pai =  p_chave_pai

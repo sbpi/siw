@@ -66,6 +66,7 @@ function selecaoSolic($label,$accesskey,$hint,$cliente,$chave,$chaveAux,$chaveAu
                 null,null,null,null,
                 null,null,null,null,null,null,null,
                 null,null,null,$l_fase,null,null,null,null,null);
+      
       ShowHTML('          <td '.(($separador=='<BR />') ? 'colspan="'.$colspan.'" ' : ' ').((isset($hint)) ? 'title="'.$hint.'"' : '').'><b>'.$label.'</b>'.$separador.'<SELECT ACCESSKEY="'.$accesskey.'" CLASS="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
       $l_cont = 0;
       $l_RS1 = db_getMenuData::getInstanceOf($dbms,$chaveAux);

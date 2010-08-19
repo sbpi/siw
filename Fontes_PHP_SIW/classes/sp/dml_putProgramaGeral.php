@@ -1,4 +1,4 @@
-<?
+<?php
 extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 /**
 * class dml_putProgramaGeral
@@ -13,8 +13,7 @@ class dml_putProgramaGeral {
         $p_unidade, $p_solicitante, $p_unid_resp, $p_horizonte, $p_natureza, $p_inicio, $p_fim, $p_parcerias, 
         $p_ln_programa, $p_cadastrador, $p_executor, $p_solic_pai, $p_valor, $p_data_hora, $p_aviso, $p_dias, 
         $p_chave_nova) {
-     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); 
-     $sql=$strschema.'sp_putProgramaGeral';
+     extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putProgramaGeral';
      $params=array('p_operacao'       =>array($operacao,                    B_VARCHAR,         1),
                    'p_chave'          =>array(tvl($p_chave),                B_INTEGER,        32),
                    'p_copia'          =>array(tvl($p_copia),                B_INTEGER,        32),

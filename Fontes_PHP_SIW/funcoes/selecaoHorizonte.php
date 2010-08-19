@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getHorizonte_PE.php');
 // =========================================================================
 // Montagem da seleção do horizonte temporal dos programas do PPA

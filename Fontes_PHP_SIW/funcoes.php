@@ -1622,7 +1622,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     }
 
     if ($l_imagem!='') {
-      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
+      $l_string = '           <img src="'.$conRootSIW.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
     }
   }
 
@@ -3947,5 +3947,4 @@ switch ($data) {
     $i = count($matches['browser'])-1;
     return array($matches['browser'][$i] => $matches['version'][$i]);
   }  
-
 ?>

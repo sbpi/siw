@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($w_dir_volta.'classes/sp/db_getNatureza_PE.php');
 // =========================================================================
 // Montagem da seleção da natureza dos programas do PPA
