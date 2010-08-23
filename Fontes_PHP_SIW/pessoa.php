@@ -960,6 +960,7 @@ function BuscaPessoa() {
     $p_cpf         = $_REQUEST['p_cpf'];
     $p_cnpj        = $_REQUEST['p_cnpj'];
     $p_tipo_pessoa = nvl($_REQUEST['p_tipo_pessoa'],'NF,NJ,EF,EJ');
+    var_dump($_REQUEST['p_tipo_pessoa']);
     $w_pessoa      = $_REQUEST['w_pessoa'];
     $p_restricao   = nvl($_REQUEST['restricao'],$_REQUEST['p_restricao']);
     $p_campo       = nvl($_REQUEST['campo'],$_REQUEST['p_campo']);

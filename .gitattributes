@@ -1028,6 +1028,7 @@ Fontes_PHP_SIW/classes/sp/db_getSolicObjetivo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicPA.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecurso.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRecursos.php -text
+Fontes_PHP_SIW/classes/sp/db_getSolicRelAnexo.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicResp_IS.php -text
 Fontes_PHP_SIW/classes/sp/db_getSolicRestricao.php -text
@@ -1404,6 +1405,7 @@ Fontes_PHP_SIW/classes/sp/dml_putSolicInter.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicOpiniao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecAlocacao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRecurso.php -text
+Fontes_PHP_SIW/classes/sp/dml_putSolicRelAnexo.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicRestricao.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolicTransp.php -text
 Fontes_PHP_SIW/classes/sp/dml_putSolic_Vinculo.php -text
@@ -1873,6 +1875,7 @@ Fontes_PHP_SIW/mod_pd/gr_conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text
 Fontes_PHP_SIW/mod_pd/relatorios.php -text
 Fontes_PHP_SIW/mod_pd/tabelas.php -text
+Fontes_PHP_SIW/mod_pd/upload.php -text
 Fontes_PHP_SIW/mod_pd/validaviagem.php -text
 Fontes_PHP_SIW/mod_pd/viagem.php -text
 Fontes_PHP_SIW/mod_pd/visualfatura.php -text
@@ -3562,6 +3565,7 @@ SP_Oracle92/siw/SP_PutSolicEvento.prc -text
 SP_Oracle92/siw/SP_PutSolicGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfGeral.prc -text
 SP_Oracle92/siw/SP_PutSolicInfTransp.prc -text
+SP_Oracle92/siw/SP_PutSolicRelAnexo.prc -text
 SP_Oracle92/siw/SP_PutSolicTransp.prc -text
 SP_Oracle92/siw/SP_PutUsuarioTemp.prc -text
 SP_Oracle92/siw/SP_PutValorDiaria.prc -text
@@ -3866,6 +3870,7 @@ SP_Oracle92/siw/sp_getsoliclist.prc -text
 SP_Oracle92/siw/sp_getsoliclog.prc -text
 SP_Oracle92/siw/sp_getsolicpa.prc -text
 SP_Oracle92/siw/sp_getsolicrecurso.prc -text
+SP_Oracle92/siw/sp_getsolicrelanexo.prc -text
 SP_Oracle92/siw/sp_getsolicresp.prc -text
 SP_Oracle92/siw/sp_getsolicrubrica.prc -text
 SP_Oracle92/siw/sp_getsolicviagem.prc -text

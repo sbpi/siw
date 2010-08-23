@@ -1622,7 +1622,7 @@ function ExibeImagemSolic($l_tipo,$l_inicio,$l_fim,$l_inicio_real,$l_fim_real,$l
     }
 
     if ($l_imagem!='') {
-      $l_string = '           <img src="'.$conRootSIW.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
+      $l_string = '           <img src="'.$l_imagem.'" title="'.$l_title.'" border=0 width=10 heigth=10>';
     }
   }
 
@@ -3833,7 +3833,8 @@ function BodyOpenClean($cProperties) {
   ShowHTML('<link rel="stylesheet" href="js/modal/css/modal-message.css" type="text/css" media="screen" />');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/funcoes.js"></script>');
   ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.js"></script>');
-  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.MultiFile.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/swfobject.js"></script>');
+  ShowHTML('<script language="javascript" type="text/javascript" src="js/jquery.uploadify.v2.1.0.min.js"></script>');
   ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css">');
   ShowHTML('<body Text="'.$conBodyText.'" Link="'.$conBodyLink.'" Alink="'.$conBodyALink.'" '.
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
@@ -3947,4 +3948,5 @@ switch ($data) {
     $i = count($matches['browser'])-1;
     return array($matches['browser'][$i] => $matches['version'][$i]);
   }  
+
 ?>
