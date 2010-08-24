@@ -163,7 +163,7 @@ if (count($_POST) > 0) {
 				    // Chamada PHP para uma URL passando variáveis com o método POST. Em <b>$response</b> será armazenado o resultado do processamento.
 				    //http_redirect($conRootSIW.'/mod_pe/relatorios.php', $campos, true, HTTP_REDIRECT_PERM);
 				    //$relatorio = http_post_fields($conRootSIW.'/mod_pe/relatorios.php', $campos);
-				    $relatorio = VisualPrograma(f($row,'sq_siw_solicitacao'),'V',$w_usuario,3,'WORD','N','N','N','S','S','S','S','S','S','N','S');
+				    $relatorio = VisualPrograma(f($row,'sq_siw_solicitacao'),'V',$w_usuario,3,'WORD','S','N','N','S','S','S','S','S','S','N','S');
           }
         }
       }

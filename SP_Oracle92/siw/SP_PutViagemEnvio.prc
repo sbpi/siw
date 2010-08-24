@@ -28,7 +28,7 @@ create or replace procedure SP_PutViagemEnvio
    w_conta         co_pessoa_conta%rowtype;
    w_beneficiario  number(18);
    w_especial      number(18);
-   w_pendencia     number(18);
+   w_pendencia     number(18) := 0;
    
    cursor c_missao is
       select * from pd_missao where sq_siw_solicitacao = p_chave;
@@ -235,6 +235,20 @@ begin
          from siw_tramite a
         where sq_siw_tramite = p_tramite;
   
+      -- Verifica se há pendência na prestação de contas de alguma viagem
+      select count(*) into w_pendencia
+        from pd_missao                        a
+             inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
+             inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
+               inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
+                                                    c.sigla               in ('PC','AP')
+                                                   )
+               inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
+               inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
+       where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+         and p_chave    <> a.sq_siw_solicitacao
+         and a.sq_pessoa = w_beneficiario;
+
       -- Se o trâmite for de chefia imediata e o beneficiário da viagem é também titular da unidade, pula para o próximo
       select count(*) into w_existe
         from (select 1
@@ -358,6 +372,25 @@ begin
          Else                             -- ABDI: Senão, vai para arquivamento.
             w_salto := w_salto + 3;
          End If;
+
+         -- Libera pagamentos pendentes de prestação de contas se não houver pendência
+         If w_pendencia = 0 Then
+            for crec in c_financeiro_pendente (w_cliente, w_beneficiario) loop
+               select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
+               select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
+                   
+               sp_putlancamentoenvio(
+                                p_menu          => crec.sq_menu,
+                                p_chave         => crec.sq_siw_solicitacao,
+                                p_pessoa        => p_pessoa,
+                                p_tramite       => w_pp,
+                                p_novo_tramite  => w_ee,
+                                p_devolucao     => 'N',
+                                p_despacho      => 'Liberação automática de pagamento.'
+                               );
+            end loop;   
+         End If;
+
       Else
          w_salto := w_salto + 1;
       End If;
@@ -432,40 +465,8 @@ begin
        );
    End If;
    
-   -- Verifica se há pendência na prestação de contas de alguma viagem
-   select count(*) into w_pendencia
-     from pd_missao                        a
-          inner   join pd_categoria_diaria f on (a.diaria              = f.sq_categoria_diaria)
-          inner   join siw_solicitacao     b on (a.sq_siw_solicitacao  = b.sq_siw_solicitacao)
-            inner join siw_tramite         c on (b.sq_siw_tramite      = c.sq_siw_tramite and
-                                                 c.sigla               in ('PC','AP')
-                                                )
-            inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
-            inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
-    where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
-      and p_chave    <> a.sq_siw_solicitacao
-      and a.sq_pessoa = w_beneficiario;
-
    If p_devolucao = 'N' Then
-      If w_sg_tramite = 'VP' Then
-         -- Libera pagamentos pendentes de prestação de contas se não houver pendência
-         If w_pendencia = 0 Then
-            for crec in c_financeiro_pendente (w_cliente, w_beneficiario) loop
-               select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
-               select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
-                   
-               sp_putlancamentoenvio(
-                                p_menu          => crec.sq_menu,
-                                p_chave         => crec.sq_siw_solicitacao,
-                                p_pessoa        => p_pessoa,
-                                p_tramite       => w_pp,
-                                p_novo_tramite  => w_ee,
-                                p_devolucao     => 'N',
-                                p_despacho      => 'Liberação automática de pagamento.'
-                               );
-            end loop;   
-         End If;
-      Elsif w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
+      If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S')) Then
          If w_reembolso = 'S' or w_sg_tramite = 'PC' Then
              -- Cria/atualiza lançamento financeiro para o reembolso
             for crec in c_reembolso loop
