@@ -6,6 +6,7 @@ create or replace procedure sp_calculaDiarias(p_chave in number, p_todos in varc
   w_sq_diaria number(18);
   w_diaria    varchar2(1);
   w_inicio    date;
+  w_ini_hora  number(4);
   w_fim       date;
   w_ultimo    number(18) := 0;
   w_tot_dia   number(5,2);
@@ -129,6 +130,12 @@ begin
                --                          sem compromisso implica em 1/2 diária nacional
                --    INTERNACIONAL
                --    Toda e qualquer saída será computada com o 1 diária internacional
+               
+               If i = 0 Then
+                 -- Grava o horário da primeira saída
+                 w_ini_hora := to_number(to_char(w_inicio,'hh24mi'));
+               End If;
+               
                select count(distinct a.sq_deslocamento) into w_existe
                  from pd_deslocamento      a 
                       inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
@@ -142,7 +149,7 @@ begin
                   If crec.diaria_inicio = 'S' Then
                      If crec.destino_nacional = 'N' Then 
                         diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1; w_tot_dia := w_tot_dia + 1;
-                     Elsif crec.compromisso = 'N' or to_char(crec.saida,'hh24mi') > 1800
+                     Elsif crec.compromisso = 'N' or w_ini_hora > 1800
                         Then diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 0.5; w_tot_dia := w_tot_dia + 0.5;
                         Else diarias(crec.sq_diaria_inicio) := diarias(crec.sq_diaria_inicio) + 1;   w_tot_dia := w_tot_dia + 1;
                      End If;

@@ -443,6 +443,7 @@ begin
             inner join siw_menu            d on (b.sq_menu             = d.sq_menu)
             inner join pd_parametro        e on (d.sq_pessoa           = e.cliente)
     where 0           > soma_dias(e.cliente,trunc(b.fim),f.dias_prestacao_contas + 1,'U') - trunc(sysdate)
+      and p_chave    <> a.sq_siw_solicitacao
       and a.sq_pessoa = w_beneficiario;
 
    If p_devolucao = 'N' Then

@@ -12,7 +12,7 @@ create or replace procedure sp_ajustaFasePagamento(p_cliente in number, p_pessoa
                 inner join siw_tramite         h  on (w2.sq_menu            = h.sq_menu and h.sigla = 'EE')
                 inner join pd_parametro        w3 on (w2.sq_pessoa          = w3.cliente)
               inner   join siw_tramite         i  on (w1.sq_siw_tramite     = i.sq_siw_tramite and i.sigla = 'EE')
-            inner     join pd_missao           w4 on (w.pessoa              = w4.sq_pessoa)
+            inner     join pd_missao           w4 on (w.pessoa              = w4.sq_pessoa and w1.sq_solic_pai <> w4.sq_siw_solicitacao)
               inner   join pd_categoria_diaria w7 on (w4.diaria             = w7.sq_categoria_diaria)
               inner   join siw_solicitacao     w5 on (w4.sq_siw_solicitacao = w5.sq_siw_solicitacao)
                 inner join siw_tramite         w6 on (w5.sq_siw_tramite     = w6.sq_siw_tramite)
