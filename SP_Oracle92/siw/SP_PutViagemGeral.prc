@@ -140,6 +140,14 @@ begin
            from pd_diaria a
           where a.sq_siw_solicitacao = p_copia
          );
+         
+         -- Copia a informação e define se a viagem é internacional ou não
+        Update pd_missao
+           set internacional =
+               (select internacional
+                  from pd_missao
+                 where sq_siw_solicitacao = p_copia)
+         where sq_siw_solicitacao = w_chave;
 
          -- Copia os deslocamentos da missão original
          insert into pd_deslocamento (sq_deslocamento, sq_siw_solicitacao, origem, destino, sq_cia_transporte, saida, chegada, codigo_cia_transporte, valor_trecho, codigo_voo, sq_meio_transporte, passagem, compromisso, sq_bilhete, aeroporto_origem, aeroporto_destino, tipo)
