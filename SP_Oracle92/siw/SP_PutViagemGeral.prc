@@ -141,7 +141,7 @@ begin
           where a.sq_siw_solicitacao = p_copia
          );
          
-         -- Copia a informação e define se a viagem é internacional ou não
+        -- Copia a informação e define se a viagem é internacional ou não
         Update pd_missao
            set internacional =
                (select internacional
