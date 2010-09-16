@@ -1,4 +1,4 @@
-ÔªøCREATE OR REPLACE FUNCTION to_number(bpchar)
+CREATE OR REPLACE FUNCTION to_number(bpchar)
   RETURNS int8 AS
 $BODY$
  DECLARE
@@ -6,7 +6,7 @@ $BODY$
  cCAMPO bpchar;
  vCAMPO int8;
 BEGIN
- cCAMPO := trim(translate(upper(pCAMPO),'√ö√Å√â√ç√ì√î√õ√é√Ç√ä√É√ï√ú√ô√Ä√à√å√í 
+ cCAMPO := trim(translate(upper(pCAMPO),'⁄¡…Õ”‘€Œ¬ √’‹Ÿ¿»Ã“ 
 QWERTYUIOP[]ASDFGHJKL;ZXCVBNM,./<>?|{}:"-_=+)(*&[EMAIL PROTECTED]',''));
  if (cCAMPO='') then
    cCAMPO='0';

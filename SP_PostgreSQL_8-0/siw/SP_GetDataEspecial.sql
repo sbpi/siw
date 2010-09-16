@@ -14,7 +14,7 @@ begin
    If p_restricao is null Then
       -- Recupera todas ou muma das modalidades de contratação
       open p_result for 
-         select a.sq_data_especial as chave, a.cliente, a.sq_pais, a.co_uf, a.sq_cidade, a.tipo,
+         select a.sq_data_especial chave, a.cliente, a.sq_pais, a.co_uf, a.sq_cidade, a.tipo,
                 a.data_especial, a.nome, a.abrangencia, a.expediente, a.ativo,
                 case a.tipo 
                      when 'E' then to_date(a.data_especial,'dd/mm/yyyy')

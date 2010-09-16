@@ -79,7 +79,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -226,7 +226,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -410,7 +410,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -621,7 +621,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -803,7 +803,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -815,16 +815,16 @@ begin
                 b.cadastrador,        b.executor,                    b.descricao,
                 b.justificativa,      b.inicio,                      b.fim,
                 b.inclusao,           b.ultima_alteracao,            b.conclusao,
-                b.opiniao,            b.sq_solic_pai,
+                b.opiniao,            b.sq_solic_pai,                b.codigo_interno,
                 b.sq_unidade,         b.sq_cidade_origem,            b.palavra_chave,
                 b.valor,              cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 case when b.sq_solic_pai is null 
-                     then case when b3.sq_peobjetivo is null
+                     then case when b.sq_plano is null
                                then case when n.sq_cc is null
                                          then '???'
                                          else 'Classif: '||n.nome 
                                     end
-                               else 'Plano: '||b4.titulo
+                               else ' Plano: '||b3.titulo
                           end
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
@@ -838,7 +838,7 @@ begin
                 d.nota_conclusao,     d.custo_real,                  d.proponente,
                 case d.prioridade when 0 then 'Alta' when 1 then 'Média' else 'Normal' end as nm_prioridade,
                 d.ordem,
-                d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,       d1.codigo_interno,
+                d1.sq_pessoa as sq_prop, d1.tipo as tp_missao,
                 case d1.tipo when 'I' then 'Inicial' when 'P' then 'Prorrogação' else 'Complementação' end as nm_tp_missao,
                 d1.valor_adicional,   d1.desconto_alimentacao,       d1.desconto_transporte,
                 d2.nome as nm_prop,   d2.nome_resumido as nm_prop_res,
@@ -867,8 +867,7 @@ begin
                   inner       join (select sq_siw_solicitacao, acesso(sq_siw_solicitacao, p_pessoa) as acesso
                                       from siw_solicitacao
                                    )                    b2 on (b.sq_siw_solicitacao       = b2.sq_siw_solicitacao)
-                  left        join pe_objetivo          b3 on (b.sq_peobjetivo            = b3.sq_peobjetivo)
-                    left      join pe_plano             b4 on (b3.sq_plano                = b4.sq_plano)
+                  left        join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                   inner       join gd_demanda           d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                     inner     join pd_missao            d1 on (d.sq_siw_solicitacao       = d1.sq_siw_solicitacao)
                       inner   join co_pessoa            d2 on (d1.sq_pessoa               = d2.sq_pessoa)
@@ -919,7 +918,7 @@ begin
           where a.sq_menu         = p_menu
             and (p_projeto        is null or (p_projeto     is not null and 0 < (select count(distinct(x1.sq_siw_solicitacao)) from pd_missao_solic x1 , siw_solicitacao y1 where x1.sq_siw_solicitacao = y1.sq_siw_solicitacao and y1.sq_solic_pai = p_projeto and x1.sq_solic_missao = b.sq_siw_solicitacao)))
             and (p_atividade      is null or (p_atividade   is not null and 0 < (select count(distinct(x2.sq_siw_solicitacao)) from pd_missao_solic x2 join pj_etapa_demanda x3 on (x2.sq_siw_solicitacao = x3.sq_siw_solicitacao and x3.sq_projeto_etapa = p_atividade) where x2.sq_solic_missao = b.sq_siw_solicitacao)))
-            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d1.codigo_interno like '%'||p_sq_acao_ppa||'%'))
+            and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and b.codigo_interno like '%'||p_sq_acao_ppa||'%'))
             and (p_assunto        is null or (p_assunto     is not null and acentos(b.descricao,null) like '%'||acentos(p_assunto,null)||'%'))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
@@ -961,7 +960,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
@@ -1102,7 +1101,7 @@ begin
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,
                 a.acesso_geral,       a.como_funciona,               
-                a.sq_unid_executora,  a.finalidade,                  a.arquivo_proced,
+                a.sq_unid_executora,  a.finalidade,
                 a.emite_os,           a.consulta_opiniao,            a.envia_email,
                 a.exibe_relatorio,    a.vinculacao,                  a.data_hora,
                 a.envia_dia_util,     a.descricao,                   a.justificativa,
