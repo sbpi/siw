@@ -16,34 +16,101 @@ create or replace procedure SP_PutSiwUsuario
     p_gestor_sistema      in  varchar2 default null,
     p_tipo_autenticacao   in  varchar2 default null
    ) is
-   w_existe number(18);
-   w_chave  number(18);
+   w_existe            number(18);
+   w_chave             co_pessoa.sq_pessoa%type               := p_chave;
+   w_cpf               co_pessoa_fisica.cpf%type              := p_cpf;
+   w_sexo              co_pessoa_fisica.sexo%type             := p_sexo;
+   w_nome              co_pessoa.nome%type                    := p_nome; -- Obrigatório
+   w_nome_resumido     co_pessoa.nome_resumido%type           := p_nome_resumido;
+   w_vinculo           co_pessoa.sq_tipo_vinculo%type         := p_vinculo;
+   w_tipo_pessoa       co_tipo_pessoa.nome%type               := p_tipo_pessoa;
+   w_unidade           eo_unidade.sq_unidade%type             := p_unidade;
+   w_localizacao       eo_localizacao.sq_localizacao%type     := p_localizacao;
+   w_email             sg_autenticacao.email%type             := p_email; -- Obrigatório
+   w_gestor_seguranca  sg_autenticacao.gestor_seguranca%type  := p_gestor_seguranca;
+   w_gestor_sistema    sg_autenticacao.gestor_sistema%type    := p_gestor_sistema;
+   w_tipo_autenticacao sg_autenticacao.tipo_autenticacao%type := p_tipo_autenticacao;
 begin
-   w_chave := p_chave;
-   
-   -- Verifica se o usuário já existe em CO_PESSOA_FISICA
-   if p_cpf is not null then
+   -- Verifica se o usuário já existe em CO_PESSOA_FISICA ou em SG_AUTENTICACAO
+   if w_cpf is not null or p_username is not null then
      select count(a.sq_pessoa) into w_existe 
        from co_pessoa_fisica a
             join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-      where cpf = p_cpf;
+      where cpf = coalesce(w_cpf,'0');
      if w_existe > 0 then
-        select a.sq_pessoa into w_chave
-          from co_pessoa_fisica a
-               join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-         where cpf = p_cpf;
-     else
-        select count(a.sq_pessoa) into w_existe 
-          from sg_autenticacao  a
-               join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-         where username = p_cpf;
-        if w_existe > 0 then
-           select a.sq_pessoa into w_chave
-             from sg_autenticacao  a
-                  join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-            where username = p_cpf;
-        end if;
+        select a.sq_pessoa, a.sexo, b.nome_resumido, c.nome into w_chave, w_sexo, w_nome_resumido, w_tipo_pessoa
+          from co_pessoa_fisica      a
+               join   co_pessoa      b on (a.sq_pessoa      = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
+                 join co_tipo_pessoa c on (b.sq_tipo_pessoa = c.sq_tipo_pessoa)
+         where cpf = w_cpf;
      end if;
+     
+     select count(a.sq_pessoa) into w_existe 
+       from sg_autenticacao  a
+            join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
+      where username = coalesce(p_username,'0');
+     if w_existe > 0 then
+        select a.sq_pessoa, a.gestor_seguranca, a.gestor_sistema, a.tipo_autenticacao, a.sq_unidade, a.sq_localizacao, b.nome_resumido, c.nome
+          into w_chave,     w_gestor_seguranca, w_gestor_sistema, w_tipo_autenticacao, w_unidade,    w_localizacao,    w_nome_resumido, w_tipo_pessoa
+          from sg_autenticacao       a
+               join   co_pessoa      b on (a.sq_pessoa      = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
+                 join co_tipo_pessoa c on (b.sq_tipo_pessoa = c.sq_tipo_pessoa)
+         where username = p_username;
+     end if;
+   end if;
+   
+   if w_cpf is null then
+     -- Se não recebeu CPF, gera um .
+     w_cpf := geraCPFEspecial(1);
+   end if;
+
+   -- Inicializa variáveis caso não sejam recebidas na chamada da procedure
+   w_sexo              := coalesce(p_sexo,w_sexo,'M'); -- Default: masculino
+   w_nome_resumido     := coalesce(p_nome_resumido,w_nome_resumido, substr(w_nome,1,instr(w_nome,' ')-1)); -- Default: primeiro nome
+   w_tipo_pessoa       := coalesce(p_tipo_pessoa,w_tipo_pessoa,'Física'); -- Default: Pessoa física nacional
+   w_gestor_seguranca  := coalesce(p_gestor_seguranca,w_gestor_seguranca,'N'); -- Default: Não
+   w_gestor_sistema    := coalesce(p_gestor_sistema,w_gestor_sistema,'N'); -- Default: Não
+   w_tipo_autenticacao := coalesce(p_tipo_autenticacao,w_tipo_autenticacao,'B'); -- Default: autenticação pelo banco de dados
+
+   if p_vinculo is null and w_vinculo is null then
+      -- Default: primeiro vinculo interno ordenado alfabeticamente
+      select sq_tipo_vinculo into w_vinculo
+        from (select sq_tipo_vinculo, nome
+                from co_tipo_vinculo x
+               where x.cliente    = p_cliente
+                 and x.interno    = 'S'
+                 and x.contratado = 'S'
+                 and x.ativo      = 'S'
+              order by padrao desc, nome
+             )
+      where rownum = 1;
+   end if;
+   
+   if p_unidade is null and w_unidade is null then
+      -- Define unidade padrão
+      select sq_unidade into w_unidade
+        from (select sq_unidade
+                from eo_unidade x
+               where x.sq_pessoa       = p_cliente
+                 and x.sq_unidade_pai  is null
+                 and x.sq_area_atuacao is not null
+                 and x.ativo           = 'S'
+                 and x.externo         = 'N'
+              order by x.sq_unidade
+             )
+       where rownum = 1;
+   end if;
+   
+   if p_localizacao is null and w_localizacao is null then
+      -- Define localização padrão
+      select sq_localizacao into w_localizacao
+        from (select sq_localizacao
+                from eo_localizacao x
+               where x.sq_unidade = w_unidade
+                 and x.ativo           = 'S'
+              order by x.nome
+             )
+       where rownum = 1;
    end if;
    
    If InStr('IA',p_operacao) > 0 Then
@@ -59,23 +126,23 @@ begin
             sq_pessoa,      sq_pessoa_pai, sq_tipo_vinculo,
             sq_tipo_pessoa, nome,          nome_resumido)
          (select
-            w_Chave,        p_cliente,     p_vinculo,
-            sq_tipo_pessoa, p_nome,        p_nome_resumido
+            w_Chave,        p_cliente,     coalesce(p_vinculo, w_vinculo),
+            sq_tipo_pessoa, p_nome,        w_nome_resumido
             from co_tipo_pessoa
            where ativo         = 'S'
-             and nome          = p_tipo_pessoa
+             and nome          = w_tipo_pessoa
          );
          
          -- Insere registro em CO_PESSOA_FISICA
-         insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, p_cpf, p_sexo, p_cliente);
+         insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, w_cpf, w_sexo, p_cliente);
          
       -- Se existir, executa a alteração
       Else
          -- Atualiza tabela corporativa de pessoas
          Update co_pessoa set
-             sq_tipo_vinculo  = p_vinculo,
+             sq_tipo_vinculo  = coalesce(p_vinculo, w_vinculo),
              nome             = trim(p_nome), 
-             nome_resumido    = trim(p_nome_resumido)
+             nome_resumido    = trim(w_nome_resumido)
          where sq_pessoa      = w_chave;
 
          -- Verifica se o registro existe em CO_PESSOA_FISICA, para garantir que o registro existe
@@ -83,14 +150,14 @@ begin
          select count(a.sq_pessoa) into w_existe 
            from co_pessoa_fisica a
                 join co_pessoa   b on (a.sq_pessoa = b.sq_pessoa and b.sq_pessoa_pai = p_cliente)
-          where a.cpf       = p_cpf
+          where a.cpf       = w_cpf
              or a.sq_pessoa = coalesce(w_chave,0);
          if w_existe = 0 then
-            insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, p_cpf, p_sexo, p_cliente);
+            insert into co_pessoa_fisica (sq_pessoa, cpf, sexo, cliente) values (w_chave, w_cpf, w_sexo, p_cliente);
          else
             Update co_pessoa_fisica 
-               set sexo  = p_sexo,
-                   cpf   = coalesce(p_cpf,cpf)
+               set sexo  = w_sexo,
+                   cpf   = coalesce(w_cpf,cpf)
              where sq_pessoa = w_chave;
          end if;
        End If;
@@ -107,12 +174,10 @@ begin
               assinatura,           tipo_autenticacao
             )
          Values
-            ( w_chave,              p_unidade,        p_localizacao,
-              p_cliente,            p_username,       p_email,
-              coalesce(p_gestor_seguranca,'N'),       coalesce(p_gestor_sistema,'N'), 
-              case p_tipo_autenticacao  when 'B' then criptografia(p_username) else 'Externa' end,
-              criptografia(p_username) , 
-              p_tipo_autenticacao
+            ( w_chave,              coalesce(p_unidade, w_unidade), coalesce(p_localizacao, w_localizacao),
+              p_cliente,            p_username,       w_email,
+              w_gestor_seguranca,   w_gestor_sistema, case w_tipo_autenticacao  when 'B' then criptografia(p_username) else 'Externa' end,
+              criptografia(p_username), w_tipo_autenticacao
             );
          
          -- Insere registros de configuração de e-mail
@@ -131,13 +196,13 @@ begin
          -- Atualiza registro na tabela de segurança
          Update sg_autenticacao set
              username              = p_username,
-             senha                 = case p_tipo_autenticacao  when 'B' then senha else 'Externa' end,
-             sq_unidade            = p_unidade,
-             sq_localizacao        = p_localizacao,
-             gestor_seguranca      = coalesce(p_gestor_seguranca,gestor_seguranca),
-             gestor_sistema        = coalesce(p_gestor_sistema,gestor_sistema),
-             email                 = p_email,
-             tipo_autenticacao     = p_tipo_autenticacao                             
+             senha                 = case w_tipo_autenticacao  when 'B' then senha else 'Externa' end,
+             sq_unidade            = coalesce(p_unidade, w_unidade),
+             sq_localizacao        = coalesce(p_localizacao, w_localizacao),
+             gestor_seguranca      = coalesce(p_gestor_seguranca, w_gestor_seguranca),
+             gestor_sistema        = coalesce(p_gestor_sistema, w_gestor_sistema),
+             email                 = w_email,
+             tipo_autenticacao     = w_tipo_autenticacao                             
          where sq_pessoa      = w_chave;
        End If;
           

@@ -136,7 +136,7 @@ function Mesa() {
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad=this.focus();');
+  BodyOpen('onLoad=\'this.focus()\';');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   ShowHTML('    <td align="right">');

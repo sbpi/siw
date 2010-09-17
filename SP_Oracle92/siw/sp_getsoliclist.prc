@@ -147,7 +147,7 @@ begin
                                                                          )
                                           )
                 )
-            and 0 < acesso(b.sq_siw_solicitacao, p_pessoa)
+            and (a1.sigla = 'PR' or (a1.sigla <> 'PR' and 0 < acesso(b.sq_siw_solicitacao, p_pessoa)))
          connect by prior b.sq_siw_solicitacao = b.sq_solic_pai
          start with b.sq_solic_pai =  p_chave
          order by 1;
@@ -233,7 +233,7 @@ begin
                      else dados_solic(b.sq_solic_pai) 
                 end as dados_pai,
                 b1.sq_siw_tramite,    b1.nome as nm_tramite,         b1.ordem as or_tramite,
-                b1.sigla as sg_tramite, b1.ativo,                    b1.envia_mail,
+                b1.sigla sg_tramite, b1.ativo,                    b1.envia_mail,
                 c.sq_tipo_unidade,    c.nome as nm_unidade_exec,     c.informal,
                 c.vinculada,          c.adm_central,
                 d.sq_unidade_resp,    d.assunto,                     d.prioridade,
@@ -324,8 +324,8 @@ begin
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,b.sq_siw_tramite) > 0))
             and (p_prazo          is null or (p_prazo       is not null and d.concluida            = 'N' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade           = p_prioridade))
-            and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (coalesce(b1.sigla,'-') = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
-            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (coalesce(b1.sigla,'-') = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
+            and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla     <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
+            and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla     <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
             and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida            = 'N' and b.fim+1-sysdate<0))
             and (p_proponente     is null or (p_proponente  is not null and acentos(d.proponente,null) like '%'||acentos(p_proponente,null)||'%'))
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp      = p_unidade))
@@ -334,14 +334,14 @@ begin
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d.sq_demanda_pai       = p_sq_acao_ppa))
             and (p_sq_orprior     is null or (p_sq_orprior  is not null and d.sq_siw_restricao     = p_sq_orprior))            
             and (p_empenho        is null or (p_empenho     is not null and d1.sq_demanda_tipo     = p_empenho))            
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador          = p_pessoa) or
-                 (p_tipo         = 2     and coalesce(b1.sigla,'-') <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
-                 --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador          = p_pessoa) or
+                 (p_tipo         = 2     and b1.sigla <> 'CI'  and b.executor             = p_pessoa and d.concluida = 'N') or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 5     and coalesce(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 5     and b1.sigla <> 'CA') or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
              and ((p_restricao <> 'GRDMETAPA'    and p_restricao <> 'GRDMPROP' and
@@ -562,8 +562,8 @@ begin
             and (p_palavra        is null or (p_palavra     is not null and acentos(b.palavra_chave,null) like '%'||acentos(p_palavra,null)||'%'))
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and d.concluida          = 'N' and cast(cast(b.fim as date)-cast(sysdate as date) as integer)+1 <=p_prazo))
-            and (p_ini_i          is null or (p_ini_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (coalesce(b1.sigla,'-') = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
-            and (p_fim_i          is null or (p_fim_i       is not null and (coalesce(b1.sigla,'-')   <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (coalesce(b1.sigla,'-') = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
+            and (p_ini_i          is null or (p_ini_i       is not null and (b1.sigla   <> 'AT' and b.inicio between p_ini_i and p_ini_f) or (b1.sigla = 'AT' and d.inicio_real between p_ini_i and p_ini_f)))
+            and (p_fim_i          is null or (p_fim_i       is not null and (b1.sigla   <> 'AT' and b.fim                between p_fim_i and p_fim_f) or (b1.sigla = 'AT' and d.fim_real between p_fim_i and p_fim_f)))
             and (coalesce(p_atraso,'N') = 'N'  or (p_atraso      = 'S'       and d.concluida          = 'N' and b.fim+1-sysdate<0))
             and (p_proponente     is null or (p_proponente  is not null and (acentos(d.proponente,null)     like '%'||acentos(p_proponente,null)||'%') or 
                                                                             (acentos(d1.nome,null)          like '%'||acentos(p_proponente,null)||'%') or 
@@ -573,16 +573,16 @@ begin
             and (p_unidade        is null or (p_unidade     is not null and d.sq_unidade_resp    = p_unidade))
             and (p_prioridade     is null or (p_prioridade  is not null and d.prioridade         = p_prioridade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
-            and ((p_tipo          = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo          = 2     and coalesce(b1.sigla,'-') <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
+            and ((p_tipo          = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo          = 2     and b1.sigla <> 'CI'  and d.concluida          = 'N' and ((a.sigla <> 'PJCAD' and b.executor = p_pessoa) or
                                                                                                                   (a.sigla =  'PJCAD' and b2.acesso  >= 8)
                                                                                                                  )
                  ) or
                  (p_tipo          = 3     and b2.acesso > 0) or
                  (p_tipo          = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo          = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo          = 5     and coalesce(b1.sigla,'-') <> 'CA') or
+                 (p_tipo          = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo          = 4     and b1.sigla <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo          = 5     and b1.sigla <> 'CA') or
                  (p_tipo          = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')or
                  (p_tipo          = 7     and b1.ativo          = 'S' and b2.acesso > 0)
                 )
@@ -836,13 +836,13 @@ begin
                 )
             and (p_empenho        is null or (p_empenho     is not null and upper(d.empenho)     = upper(p_empenho)))
             and (p_processo       is null or (p_processo    is not null and upper(d.processo)    = upper(p_processo)))
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 --(p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 --(p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b.conclusao is null and b1.ativo = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 )
@@ -1065,12 +1065,12 @@ begin
                                                                             (acentos(d2.nome_resumido,null) like '%'||acentos(p_proponente,null)||'%')
                                              )
                 )
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
@@ -1252,12 +1252,12 @@ begin
                 )
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (coalesce(p_atraso,'N') = 'N' or (p_atraso  = 'S'       and b1.sigla in ('PC','AP','VP') and soma_dias(a.sq_pessoa,trunc(b.fim),coalesce(d6.dias_prestacao_contas, a5.dias_prestacao_contas) + 1,'U') - trunc(sysdate)<0))
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI'   and b.cadastrador        = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador        = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA') or
+                 (p_tipo         = 4     and b1.sigla <> 'CA') or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI')
                 );
@@ -1416,7 +1416,7 @@ begin
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_palavra        is null or (p_palavra     is not null and b.codigo_interno     like '%'||p_palavra||'%'))
             and ((p_tipo         = 1     and b1.sigla = 'CI'   and b.cadastrador = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b.executor = p_pessoa and b.conclusao is null) or
                  (p_tipo         = 3     and b4.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 4     and b1.sigla <> 'CA' and b4.acesso > 0) or
@@ -1625,11 +1625,11 @@ begin
                                                                                 )
                                              )
                 )
-            and ((p_tipo         = 1     and coalesce(b1.sigla,'-') = 'CI' and b.cadastrador     = p_pessoa) or
-                 (p_tipo         = 2     and b1.ativo = 'S' and coalesce(b1.sigla,'-') <> 'CI' and b2.acesso > 15) or
+            and ((p_tipo         = 1     and b1.sigla = 'CI' and b.cadastrador     = p_pessoa) or
+                 (p_tipo         = 2     and b1.ativo = 'S' and b1.sigla <> 'CI' and b2.acesso > 15) or
                  (p_tipo         = 3     and b2.acesso > 0) or
                  (p_tipo         = 3     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
-                 (p_tipo         = 4     and coalesce(b1.sigla,'-') <> 'CA'  and b2.acesso > 0) or
+                 (p_tipo         = 4     and b1.sigla <> 'CA'  and b2.acesso > 0) or
                  (p_tipo         = 4     and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
                  (p_tipo         = 5) or
                  (p_tipo         = 6     and b1.ativo          = 'S' and b2.acesso > 0 and b1.sigla <> 'CI') or
@@ -1663,7 +1663,7 @@ begin
                    inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
                    inner   join pj_projeto    d  on (b.sq_siw_solicitacao = d.sq_siw_solicitacao)
           where b.sq_menu        = p_menu
-            and coalesce(b1.sigla,'-') = 'EE' 
+            and b1.sigla = 'EE' 
             and acesso(b.sq_siw_solicitacao,p_pessoa) > 15;
    Elsif p_restricao = 'PJLIST' or p_restricao = 'ORLIST' or p_restricao = 'PJLISTREL' or p_restricao = 'PJLISTIMP' Then
       -- Recupera as demandas que o usuário pode ver
@@ -1704,7 +1704,7 @@ begin
                                                                          )
                                            )
                 )
-            and coalesce(b1.sigla,'-') <> 'CA' 
+            and b1.sigla <> 'CA' 
             and (p_restricao = 'PJLISTIMP' or
                  (p_restricao <> 'PJLISTIMP' and 
                   (acesso(b.sq_siw_solicitacao,p_pessoa) > 0 or
@@ -1733,7 +1733,7 @@ begin
                 inner   join siw_tramite   b1 on (b.sq_siw_tramite     = b1.sq_siw_tramite)
                 inner   join pe_programa   c  on (b.sq_siw_solicitacao = c.sq_siw_solicitacao)
           where b.sq_menu         = p_menu
-            and coalesce(b1.sigla,'-') not in ('CA','AT')
+            and b1.sigla not in ('CA','AT')
             and ((p_projeto      is null and b.sq_solic_pai is null) or (p_projeto is not null and b.sq_solic_pai = p_projeto))
             and (p_sq_acao_ppa   is null  or (p_sq_acao_ppa is not null and 0                    < (select count(x.sq_siw_solicitacao)
                                                                                                       from siw_solicitacao                     x

@@ -39,9 +39,8 @@ include_once($w_dir_volta.'classes/sp/db_getPlanoEstrategico.php');
 include_once($w_dir_volta.'classes/sp/db_getObjetivo_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getHorizonte_PE.php');
 include_once($w_dir_volta.'classes/sp/db_getNatureza_PE.php');
-include_once($w_dir_volta.'classes/sp/dml_putProgramaGeral.php');
-include_once($w_dir_volta.'classes/sp/dml_putProgramaEnvio.php');
-include_once($w_dir_volta.'classes/sp/dml_putProgramaConc.php');
+include_once($w_dir_volta.'classes/sp/dml_putSiwUsuario.php');
+include_once($w_dir_volta.'classes/sp/db_updatePassword.php');
 include_once('autenticacao.php');
 include_once('visualprograma.php');
 // =========================================================================
@@ -72,25 +71,58 @@ if (count($_POST) > 0) {
   $w_cliente   = $_SESSION['P_CLIENTE'];  
 
 	$w_username  = trim(substr(base64_decode($_POST['uid']),0,20));
-  $w_senha     = trim(substr(base64_decode($_POST['pwd']),0,20));
+  $w_senha     = upper(trim(substr(base64_decode($_POST['pwd']),0,20)));
+  $w_nome      = trim(substr(base64_decode($_POST['nome']),0,60));
+  $w_mail      = trim(substr(base64_decode($_POST['mail']),0,60));
   $w_codigo    = trim(substr($_POST['codigo'],0,20));
 
   // Abre conexão com o banco de dados
   $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);
 	
-  // Autentica o usuário, recupera variáveis de sessão e grava log de acesso
+  // Verifica se o usuário existe
+  $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
+  $O = 'I';
+  if (count($RS)>0) {
+    $O                  = 'A';
+    $w_chave            = f($RS,'SQ_PESSOA');
+    $w_nome_resumido    = f($RS,'NOME_RESUMIDO');
+    $w_cpf              = f($RS,'CPF');
+    $w_sexo             = f($RS,'SEXO');
+    $w_sq_tipo_vinculo  = f($RS,'SQ_TIPO_VINCULO');
+    $w_tipo_pessoa      = f($RS,'SQ_TIPO_PESSOA');
+    $w_unidade          = f($RS,'SQ_UNIDADE');
+    $w_localizacao      = f($RS,'SQ_LOCALIZACAO');
+    $w_gestor_seguranca = f($RS,'GESTOR_SEGURANCA');
+    $w_gestor_sistema   = f($RS,'GESTOR_SISTEMA');
+    $w_tipo             = f($RS,'TIPO_AUTENTICACAO');
+  }        
+
+  // Cria ou atualiza o usuário
+  dml_putSiwUsuario::getInstanceOf($dbms, $O, $w_chave, $w_cliente, $w_nome, $w_nome_resumido, $w_cpf, $w_sexo,
+        $w_sq_tipo_vinculo, $w_tipo_pessoa, $w_unidade, $w_localizacao, $w_username, $w_mail, $w_gestor_seguranca, 
+        $w_gestor_sistema, $w_tipo);
+
+  // Recupera a chave do usuário
+  $RS = DB_GetUserData::getInstanceOf($dbms, $_SESSION['P_CLIENTE'], $w_username);
+  $w_chave  = f($RS,'SQ_PESSOA');
+  
+  // Atualiza a senha e a assinatura eletrônica do usuário
+  db_updatePassword::getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'PASSWORD');
+  db_updatePassword::getInstanceOf($dbms,$w_cliente,$w_chave,$w_senha,'SIGNATURE');
+        
+  //Autentica o usuário, recupera variáveis de sessão e grava log de acesso
   $auth = Valida();
   if ($auth>'') {
-    // Erro de autenticação 
     $response = '500'.$crlf.$auth;
   } else {
-	  // Configura variáveis de uso global
+    
+    // Configura variáveis de uso global
 	  $SG         = 'PEPROCAD';
 	  $P1         = 5; // Recupera qualquer programa, independentemente da fase ou de estar cancelado
     $w_usuario  = RetornaUsuario();
 	  $w_menu     = RetornaMenu($w_cliente,$SG);
 	  $w_ano      = RetornaAno();
-
+	  
     // Retorna os dados do menu
 	  $RS_Menu = db_getMenuData::getInstanceOf($dbms,$w_menu);
 	  
@@ -112,9 +144,9 @@ if (count($_POST) > 0) {
 			  if (f($row,'sigla')!='CA') $w_fase.=','.f($row,'sq_siw_tramite');
 			}
 			$w_fase = substr($w_fase,1);
-
+			
       // Verifica se o programa existe
-      $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,$SG,$P1,
+      $RS = db_getSolicList::getInstanceOf($dbms,$w_menu,$w_usuario,'PEPROCAD',$P1,
           $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
           $p_unidade,$p_prioridade,$p_ativo,$p_parcerias,
           $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
@@ -124,72 +156,31 @@ if (count($_POST) > 0) {
           
       $w_cont = 0;
       foreach ($RS as $row) {
-        if (nvl(f($row,'ln_programa'),'')==$w_username && nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
+        if (nvl(f($row,'ln_programa'),'')=='MATRICIALNET' && nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
           $w_cont++;
+          $p_plano    = f($row,'sq_plano');
+          $p_programa = f($row,'sq_siw_solicitacao');
         }
       }
       
       if ($w_cont==0) {
-        if (nvl($w_codigo,'')=='') {
-          $response = '501'.$crlf.'Nenhum programa vinculado ao ['.$w_username.'] foi encontrado na base de dados';
-        } else {
-          $response = '501'.$crlf.'Não existe programa ['.$w_codigo.'] criado pelo ['.$w_username.']';
-        }
+        $SG = 'MESA';
+        $content='';
       } else {
-        $response = '200';
-        $w_cont = 0;
-        reset($RS);
-        foreach ($RS as $row) {
-          if (nvl(f($row,'ln_programa'),'')==$w_username && nvl($w_codigo,f($row,'codigo_interno'))==f($row,'codigo_interno')) {
-            $w_chave = f($row,'sq_siw_solicitacao');
-            $w_cont++;
-            
-				    // Criação de um array PHP com os pares variável-valor do formulário. Os nomes das variáveis devem ser exatamente iguais aos indicados.
-				    $campos = array('par' => 'REL_EXECUTIVO',
-							              'P3'  => 1,
-							              'P4'  => 30,
-							              'SG' => 'RELPJPROG',
-				                    'O'  => 'L',
-				                    'p_plano'  => f($row,'sq_plano'),
-                            'p_programa' => f($row,'sq_siw_solicitacao'),
-                            'w_marca_bloco' => 'S',
-                            'p_legenda' => 'S',
-                            'p_projeto' => 'S',
-                            'p_resumo' => 'S',
-                            'Botao'  => 'Exibir',
-				                    'PHPSESSID' => PHPSESSID
-							             );
-				
-				    // Chamada PHP para uma URL passando variáveis com o método POST. Em <b>$response</b> será armazenado o resultado do processamento.
-				    //http_redirect($conRootSIW.'/mod_pe/relatorios.php', $campos, true, HTTP_REDIRECT_PERM);
-				    //$relatorio = http_post_fields($conRootSIW.'/mod_pe/relatorios.php', $campos);
-				    $relatorio = VisualPrograma(f($row,'sq_siw_solicitacao'),'V',$w_usuario,3,'WORD','S','N','N','S','S','S','S','S','S','N','S');
-          }
-        }
+        // Se o programa não foi informado, recupera todo o relatorio
+        if ($w_cont > 1) $p_programa = '';
+        
+        $SG = 'RELPJPROG';
+        $RS1 = db_getLinkData::getInstanceOf($dbms,$_SESSION['P_CLIENTE'],$SG);
+        $content = base64_encode(montaURL_JS($w_dir,f($RS1,'link').'&O=L&p_plano='.$p_plano.'&p_programa='.$p_programa.'&p_legenda=S&p_projeto=S&p_resumo=S&w_menu='.f($RS1,'sq_menu').'&P1='.f($RS1,'p1').'&P2='.f($RS1,'p2').'&P3='.f($RS1,'p3').'&P4='.f($RS1,'p4').'&TP='.f($RS1,'nome').'&SG='.f($RS1,'sigla')));
       }
-    }
-    
-    // Se a geração de log estiver ativada, registra a saída.
-    if ($conLog) {
-      // Define o caminho fisico do diretório e do arquivo de log
-      $l_caminho = $conLogPath;
-      $l_arquivo = $l_caminho.$_SESSION['P_CLIENTE'].'/'.date(Ymd).'.log';
-  
-      // Verifica a necessidade de criação dos diretórios de log
-      if (!file_exists($l_caminho)) mkdir($l_caminho);
-      if (!file_exists($l_caminho.$_SESSION['P_CLIENTE'])) mkdir($l_caminho.$_SESSION['P_CLIENTE']);
-        
-      // Abre o arquivo de log
-      $l_log = @fopen($l_arquivo, 'a');
-        
-      fwrite($l_log, '['.date(ymd.'_'.Gis.'_'.time()).']'.$crlf);
-      fwrite($l_log, 'Usuário: '.$_SESSION['NOME_RESUMIDO'].' ('.$_SESSION['SQ_PESSOA'].')'.$crlf);
-      fwrite($l_log, 'IP     : '.$_SERVER['REMOTE_ADDR'].$crlf);
-      fwrite($l_log, 'Ação   : LOGOUT REMOTO'.$crlf.$crlf);
-  
-      // Fecha o arquivo e o diretório de log
-      @fclose($l_log);
-      @closedir($l_caminho); 
+      
+      // Abre SIW-GP em nova janela
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href="'.montaURL_JS(null,$conRootSIW.'menu.php?par=Frames&content='.$content).'";');
+      ScriptClose();
+      exit();
+
     }
   }
 	

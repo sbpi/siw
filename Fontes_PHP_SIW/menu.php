@@ -83,8 +83,12 @@ function Frames() {
   Estrutura_CSS($w_cliente);
   ShowHTML('  <TITLE>'.$conSgSistema.' - '.$conNmSistema.'</TITLE> ');
   ShowHTML('  </HEAD> ');
+  
+  $content = '';
+  if (nvl($_REQUEST['content'],'')!='') $content = base64_decode($_REQUEST['content']);
+
   ShowHTML('    <FRAMESET COLS="20%,80%"> ');
-  ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
+  ShowHTML('     <FRAME SRC="menu.php?par=ExibeDocs&$content='.$content.'" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="menu"> ');
   ShowHTML('     <FRAME SRC="branco.htm" SCROLLING="AUTO" FRAMEBORDER="0" FRAMESPACING=0 NAME="content"> ');
   ShowHTML('    <NOFRAMES> ');
   ShowHTML('     <BODY BGCOLOR="#FFFFFF" BACKGROUND="images/bg.jpg" BGPROPERTIES="FIXED"> ');
@@ -281,7 +285,7 @@ function ExibeDocs() {
 
   $RS = db_getCustomerData::getInstanceOf($dbms, $p_cliente);
   print '<BODY topmargin=0 bgcolor="#FFFFFF" BACKGROUND="'.LinkArquivo(null,$p_cliente,'img/'.f($RS,'fundo'),null,null,null,'EMBED').'" BGPROPERTIES="FIXED" text="#000000" link="#000000" vlink="#000000" alink="#FF0000" ';
-  if ($SG=='') {
+  if ($SG=='' && nvl($_REQUEST['content'],'')=='') {
     $RS = db_getLinkData::getInstanceOf($dbms, $p_cliente, 'MESA');
     if (count($RS)>0) {
       if (f($RS,'IMAGEM')>'') {
