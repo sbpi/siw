@@ -5871,7 +5871,7 @@ class Image {
 
     // Get the specific height for a text string
     function GetTextHeight($txt="",$angle=0) {
-	$tmp = split("\n",$txt);
+	$tmp = explode("\n",$txt);
 	$n = count($tmp);
 	$m=0;
 	for($i=0; $i< $n; ++$i)
@@ -5916,7 +5916,7 @@ class Image {
     // Get actual width of text in absolute pixels
     function GetTextWidth($txt,$angle=0) {
 
-	$tmp = split("\n",$txt);
+	$tmp = explode("\n",$txt);
 	$n = count($tmp);
 	if( $this->font_family <= FF_FONT2+1 ) {
 
@@ -6068,8 +6068,8 @@ class Image {
 	}
 	else {
 	
-	    if( ereg("\n",$txt) ) { 
-		$tmp = split("\n",$txt);
+	  if( preg_match("/\n/",$txt) ) { 
+		$tmp = explode("\n",$txt);
 		for($i=0; $i < count($tmp); ++$i) {
 		    $w1 = $this->GetTextWidth($tmp[$i]);
 		    if( $paragraph_align=="left" ) {
@@ -6198,7 +6198,7 @@ class Image {
 	    $oy=$y;
 	}
 
-	if( !ereg("\n",$txt) || ($dir>0 && ereg("\n",$txt)) ) {
+	if( !preg_match("\n",$txt) || ($dir>0 && preg_match("\n",$txt)) ) {
 	    // Format a single line
 
 	    $txt = $this->AddTxtCR($txt);
@@ -6274,7 +6274,7 @@ class Image {
 	    $w=$this->GetTextWidth($txt);
 
 	    $y -= $linemargin/2;
-	    $tmp = split("\n",$txt);
+	    $tmp = explode("\n",$txt);
 	    $nl = count($tmp);
 	    $h = $nl * $fh;
 

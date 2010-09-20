@@ -54,7 +54,7 @@ if (!empty($_FILES)) {
 
   // $fileTypes  = str_replace('*.','',$_REQUEST['fileext']);
   // $fileTypes  = str_replace(';','|',$fileTypes);
-  // $typesArray = split('\|',$fileTypes);
+  // $typesArray = explode('\|',$fileTypes);
   // $fileParts  = pathinfo($_FILES['Filedata']['name']);
   // if (in_array($fileParts['extension'],$typesArray)) {
   // Uncomment the following line if you want to make the directory if it doesn't exist

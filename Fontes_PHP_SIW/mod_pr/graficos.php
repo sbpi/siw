@@ -136,7 +136,7 @@ function echo_map($l_chave, &$node, $selected) {
   if (nvl($node['chave'],'')!='') {
     $RS = db_getSolicEtapa::getInstanceOf($dbms,$l_chave,$node['chave'],'LISTA',null);
     foreach($RS as $row) { $RS = $row; break; }
-    echo "<a style=\"TEXT-DECORATION: none\" HREF=\"#\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
+    echo "<a style=\"TEXT-DECORATION: none\" HREF=\"javascript:this.status.value;\" onClick=\"window.open('{$conRootSIW}projeto.php?par=AtualizaEtapa&w_chave={$l_chave}&O=V&w_chave_aux=".f($RS,'sq_projeto_etapa')."&w_tipo={$p_tipo}&TP=Diagrama hierárquico &SG={$p_sg}','Etapa','width=780,height=550,top=50,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no'); return false;\"><div style=\"position:absolute;left:{$node['x']};top:{$node['y']};width:{$node['w']};height:{$node['h']};\">?</div></a>\n";
   }
   for ($i = 0; $i < count($node['childs']); $i++) {
     echo_map($l_chave, $node['childs'][$i], $selected);

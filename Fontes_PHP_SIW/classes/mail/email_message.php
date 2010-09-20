@@ -586,7 +586,7 @@ class email_message_class
       $length=strlen($address);
       for($position=0;$position<$length;)
       {
-        $match=split($this->email_address_pattern,strtolower(substr($address,$position)),2);
+        $match=explode($this->email_address_pattern,strtolower(substr($address,$position)),2);
         if(count($match)<2)
           break;
         $position+=strlen($match[0]);
@@ -3317,10 +3317,10 @@ class email_message_class
     $content_type="";
     while(strlen($additional_headers))
     {
-      ereg("([^\r\n]+)(\r?\n)?(.*)\$",$additional_headers,$matches);
+      preg_match("/([^\r\n]+)(\r?\n)?(.*)\$/",$additional_headers,$matches);
       $header=$matches[1];
       $additional_headers=$matches[3];
-      if(!ereg("^([^:]+):[ \t]+(.+)\$",$header,$matches))
+      if(!preg_match("/^([^:]+):[ \t]+(.+)\$/",$header,$matches))
       {
         $this->error="invalid header \"$header\"";
         return(0);
@@ -3339,7 +3339,7 @@ class email_message_class
     }
     if(strlen($additional_parameters))
     {
-      if(ereg("^[ \t]*-f[ \t]*([^@]+@[^ \t]+)[ \t]*(.*)\$"/*"^[ \t]?-f([^@]@[^ \t]+)[ \t]?(.*)\$"*/,$additional_parameters,$matches))
+      if(preg_match("/^[ \t]*-f[ \t]*([^@]+@[^ \t]+)[ \t]*(.*)\$/"/*"^[ \t]?-f([^@]@[^ \t]+)[ \t]?(.*)\$"*/,$additional_parameters,$matches))
       {
         if(!eregi($this->email_regular_expression,$matches[1]))
         {
