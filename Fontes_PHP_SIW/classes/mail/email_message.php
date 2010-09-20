@@ -337,7 +337,7 @@ class email_message_class
   </variable>
 {/metadocument}
 */
-  var $email_regular_expression="^([-!#\$%&'*+./0-9=?A-Z^_`a-z{|}~])+@([-!#\$%&'*+/0-9=?A-Z^_`a-z{|}~]+\\.)+[a-zA-Z]{2,6}\$";
+  var $email_regular_expression="/^([-!#\$%&'*+./0-9=?A-Z^_`a-z{|}~])+@([-!#\$%&'*+/0-9=?A-Z^_`a-z{|}~]+\\.)+[a-zA-Z]{2,6}\$/i";
 
 /*
 {metadocument}
@@ -639,7 +639,7 @@ class email_message_class
     $host=$this->Tokenize(" @");
     if($host[strlen($host)-1]=="-")
       $host=substr($host,0,strlen($host)-1);
-    return($this->FormatHeader("Message-ID","<".strftime("%Y%m%d%H%M%S",$seconds).substr($micros,1,5).".".ereg_replace("[^A-Za-z]","-",$local)."@".$host.">"));
+    return($this->FormatHeader("Message-ID","<".strftime("%Y%m%d%H%M%S",$seconds).substr($micros,1,5).".".preg_replace("[^A-Za-z]","-",$local)."@".$host.">"));
   }
 
   Function SendMail($to,$subject,&$body,&$headers,$return_path)
@@ -933,7 +933,7 @@ class email_message_class
 */
   Function ValidateEmailAddress($address)
   {
-    return(eregi($this->email_regular_expression,$address));
+    return(preg_match($this->email_regular_expression,$address));
   }
 /*
 {metadocument}
@@ -3341,7 +3341,7 @@ class email_message_class
     {
       if(preg_match("/^[ \t]*-f[ \t]*([^@]+@[^ \t]+)[ \t]*(.*)\$/"/*"^[ \t]?-f([^@]@[^ \t]+)[ \t]?(.*)\$"*/,$additional_parameters,$matches))
       {
-        if(!eregi($this->email_regular_expression,$matches[1]))
+        if(!preg_match($this->email_regular_expression,$matches[1]))
         {
           $this->error="it was specified an invalid e-mail address for the additional parameter -f";
           return(0);

@@ -568,7 +568,7 @@ function  extenso($valor = 0, $maiusculas = false) {
   } else {
 
     if ($rt)
-      $rt = ereg_replace(" E ", " e ", ucwords($rt));
+      $rt = preg_replace(" E ", " e ", ucwords($rt));
     return (($rt) ? ($rt) : "Zero");
   }
 
@@ -2725,7 +2725,7 @@ function enviaSyslog($tipo, $objeto, $mensagem) {
 
     // Recupera informações para configurar o remetente da mensagem e o serviço de entrega
     $RS_Cliente = db_getCustomerData::getInstanceOf($dbms, $_SESSION['P_CLIENTE']);
-
+    
     if (nvl(f($RS_Cliente,'syslog_server_name'),'')!='' &&
         (($tipo=='LV' && nvl(f($RS_Cliente,'syslog_level_pass_ok'),'')!='') ||
          ($tipo=='LI' && nvl(f($RS_Cliente,'syslog_level_pass_er'),'')!='') ||

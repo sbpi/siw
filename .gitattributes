@@ -1885,7 +1885,6 @@ Fontes_PHP_SIW/mod_pa/visualdocumento.php -text
 Fontes_PHP_SIW/mod_pa/visualeliminacao.php -text
 Fontes_PHP_SIW/mod_pa/visualemprestimo.php -text
 Fontes_PHP_SIW/mod_pd/conciliacao.php -text
-Fontes_PHP_SIW/mod_pd/funcoes.php -text
 Fontes_PHP_SIW/mod_pd/geragrafico.php -text
 Fontes_PHP_SIW/mod_pd/gr_conciliacao.php -text
 Fontes_PHP_SIW/mod_pd/gr_viagem.php -text
@@ -1926,7 +1925,6 @@ Fontes_PHP_SIW/mod_rh/visualFicha.php -text
 Fontes_PHP_SIW/mod_rh/visualferias.php -text
 Fontes_PHP_SIW/mod_rh_pub/cv.php -text
 Fontes_PHP_SIW/mod_rh_pub/visualcurriculo.php -text
-Fontes_PHP_SIW/mod_rh_pub/visualcurriculoword.php -text
 Fontes_PHP_SIW/mod_sf/sicof.php -text
 Fontes_PHP_SIW/mod_sg/relatorios.php -text
 Fontes_PHP_SIW/mod_sr/geral.php -text
