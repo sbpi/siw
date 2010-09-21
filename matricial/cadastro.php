@@ -88,14 +88,14 @@ ShowHTML('<link rel="stylesheet" type="text/css" href="xPandMenu.css">');
     <?php
     // Criação de um array PHP com os pares variável-valor do formulário. Os nomes das variáveis devem ser exatamente iguais aos indicados.
     $campos = array('cli' => $_POST["cli"],
-              'uid' => base64_encode($_POST["uid"]),
-              'pwd' => base64_encode($_POST["pwd"]),
-              'codigo' => $_POST["codigo"],
-              'titulo' => $_POST["titulo"],
-              'inicio' => $_POST["inicio"],
-              'termino' => $_POST["termino"],
-              'valor' => $_POST["valor"],
-              'situacao' => $_POST["situacao"]
+              'uid' => base64_encode(utf8_encode($_POST["uid"])),
+              'pwd' => base64_encode(utf8_encode($_POST["pwd"])),
+              'codigo' => utf8_encode($_POST["codigo"]),
+              'titulo' => utf8_encode($_POST["titulo"]),
+              'inicio' => utf8_encode($_POST["inicio"]),
+              'termino' => utf8_encode($_POST["termino"]),
+              'valor' => utf8_encode($_POST["valor"]),
+              'situacao' => utf8_encode($_POST["situacao"])
              );
 
     // Chamada PHP para uma URL passando variáveis com o método POST. Em <b>$response</b> será armazenado o resultado do processamento.

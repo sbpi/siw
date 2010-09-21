@@ -79,14 +79,14 @@ if (count($_POST) > 0) {
   // Recupera parâmetros
   $w_cliente   = $_SESSION['P_CLIENTE'];  
 
-	$w_username  = trim(substr(base64_decode($_POST['uid']),0,20));
-  $w_senha     = trim(substr(base64_decode($_POST['pwd']),0,20));
-  $w_codigo    = trim(substr($_POST['codigo'],0,20));
-  $w_titulo    = trim(substr($_POST['titulo'],0,100));
-  $w_inicio    = trim(substr($_POST['inicio'],0,10));
-  $w_fim       = trim(substr($_POST['termino'],0,10));
-  $w_valor     = trim(substr($_POST['valor'],0,20));
-  $w_situacao  = trim(substr($_POST['situacao'],0,1));
+	$w_username  = utf8_decode(trim(substr(base64_decode($_POST['uid']),0,20)));
+  $w_senha     = utf8_decode(trim(substr(base64_decode($_POST['pwd']),0,20)));
+  $w_codigo    = utf8_decode(trim(substr($_POST['codigo'],0,20)));
+  $w_titulo    = utf8_decode(trim(substr($_POST['titulo'],0,100)));
+  $w_inicio    = utf8_decode(trim(substr($_POST['inicio'],0,10)));
+  $w_fim       = utf8_decode(trim(substr($_POST['termino'],0,10)));
+  $w_valor     = utf8_decode(trim(substr($_POST['valor'],0,20)));
+  $w_situacao  = utf8_decode(trim(substr($_POST['situacao'],0,1)));
 
   // Abre conexão com o banco de dados
   $dbms = abreSessao::getInstanceOf($_SESSION['DBMS']);

@@ -59,12 +59,12 @@ ScriptClose();
     </font></TD></TR></table>
     <p>Em caso de sucesso, a rotina abrirá uma janela do navegador com o SIW-GP logado no usuário informado, apresentando o relatório executivo do programa informado; se o programa não existir, o SIW-GP apresentará a mesa de trabalho.</p>
 	  <form name="Form1" action="http://www2.sbpi.com.br/siw/cl_terracap/visual.php" method="POST" target="SIW">
-	    <input type="hidden" name="cli" value="<?php echo $_POST["cli"]?>"></input>
-	    <input type="hidden" name="uid" value="<?php echo base64_encode($_POST["uid"])?>">
-	    <input type="hidden" name="pwd" value="<?php echo base64_encode($_POST["pwd"])?>">
-	    <input type="hidden" name="nome" value="<?php echo base64_encode($_POST["nome"])?>">
-	    <input type="hidden" name="mail" value="<?php echo base64_encode($_POST["mail"])?>">
-	    <input type="hidden" name="codigo" value="<?php echo $_POST["codigo"]?>">
+	    <input type="hidden" name="cli" value="<?php echo utf8_encode($_POST["cli"])?>"></input>
+	    <input type="hidden" name="uid" value="<?php echo base64_encode(utf8_encode($_POST["uid"]))?>">
+	    <input type="hidden" name="pwd" value="<?php echo base64_encode(utf8_encode($_POST["pwd"]))?>">
+	    <input type="hidden" name="nome" value="<?php echo base64_encode(utf8_encode($_POST["nome"]))?>">
+	    <input type="hidden" name="mail" value="<?php echo base64_encode(utf8_encode($_POST["mail"]))?>">
+	    <input type="hidden" name="codigo" value="<?php echo utf8_encode($_POST["codigo"])?>">
 	  </form>
     <SCRIPT LANGUAGE="JAVASCRIPT"><!--
       document.Form1.submit(); 

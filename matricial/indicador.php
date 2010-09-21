@@ -77,10 +77,10 @@ ScriptClose();
     </dl>
     <?php
     // Criação de um array PHP com os pares variável-valor do formulário. Os nomes das variáveis devem ser exatamente iguais aos indicados.
-    $campos = array('cli' => $_POST["cli"],
-              'uid' => base64_encode($_POST["uid"]),
-              'pwd' => base64_encode($_POST["pwd"]),
-              'codigo' => $_POST["codigo"]
+    $campos = array('cli' => utf8_encode($_POST["cli"]),
+              'uid' => base64_encode(utf8_encode($_POST["uid"])),
+              'pwd' => base64_encode(utf8_encode($_POST["pwd"])),
+              'codigo' => utf8_encode($_POST["codigo"])
              );
 
     // Chamada PHP para uma URL passando variáveis com o método POST. Em <b>$response</b> será armazenado o resultado do processamento.
