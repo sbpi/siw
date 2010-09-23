@@ -1502,7 +1502,6 @@ Fontes_PHP_SIW/classes/syslog/syslog.php -text
 Fontes_PHP_SIW/classes/uploadify/Bmp_32.gif -text
 Fontes_PHP_SIW/classes/uploadify/BookSheet.gif -text
 Fontes_PHP_SIW/classes/uploadify/BookSheetOpen.gif -text
-Fontes_PHP_SIW/classes/uploadify/Thumbs.db -text
 Fontes_PHP_SIW/classes/uploadify/cancel.png -text
 Fontes_PHP_SIW/classes/uploadify/check.php -text
 Fontes_PHP_SIW/classes/uploadify/expressInstall.swf -text
@@ -1772,10 +1771,12 @@ Fontes_PHP_SIW/inputsql.html -text
 Fontes_PHP_SIW/js/funcoes.js -text
 Fontes_PHP_SIW/js/jquery.MultiFile.js -text
 Fontes_PHP_SIW/js/jquery.js -text
+Fontes_PHP_SIW/js/jquery.uploadify.v2.1.0.min.js -text
 Fontes_PHP_SIW/js/modal/css/modal-message.css -text
 Fontes_PHP_SIW/js/modal/js/ajax-dynamic-content.js -text
 Fontes_PHP_SIW/js/modal/js/ajax.js -text
 Fontes_PHP_SIW/js/modal/js/modal-message.js -text
+Fontes_PHP_SIW/js/swfobject.js -text
 Fontes_PHP_SIW/js/tooltip.js -text
 Fontes_PHP_SIW/jscript.php -text
 Fontes_PHP_SIW/mail_envio.php -text
