@@ -39,7 +39,10 @@ begin
          select * into w_solic from siw_solicitacao where sq_siw_solicitacao = p_chave;
 
          -- Recupera os dados da solicitação de compra
---         select * into w_solic_cl from cl_solicitacao where sq_siw_solicitacao = p_chave;
+         select count(*) into w_cont from cl_solicitacao where sq_siw_solicitacao = p_chave;
+         If w_cont > 0 Then
+            select * into w_solic_cl from cl_solicitacao where sq_siw_solicitacao = p_chave;
+         End If;
 
          -- Decide a tramitação em função do valor do pedido
          If w_menu.sq_pessoa = 10135 and substr(w_menu.sigla,1,4)='CLPC' Then
